@@ -167,6 +167,10 @@ public class DSALExercises {
         ) {
             Object input = DSALExercises.parseInput(options);
             int[] array = null;
+			double[] darray = null;
+			int m = 0;
+			double[] params = null;
+			int[] in = null;
             String anchor = null;
             switch (options.get(Flag.ALGORITHM)) {
                 case "selectionsort":
@@ -350,6 +354,163 @@ public class DSALExercises {
                         options.containsKey(Flag.PREPRINT) ? writerSpace : null
                     );
                     break;
+				case "hashDivision":
+					darray = (double[])input;
+					m = (int)darray[0];
+					in = new int[darray.length - 1];
+					for(int i = 1; i < darray.length; ++i)
+					{
+						in[i-1] = (int)darray[i];
+					}
+					if (options.containsKey(Flag.PREPRINT)) {
+						if (DSALExercises.STUDENT_MODE) {
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Division--Hashing ohne Sondierung ein:");
+							writerSpace.newLine();
+							for(int i = 0; i<in.length - 1; ++i)
+							{
+								writerSpace.write(in[i] + ", ");
+							}
+							writerSpace.write(in[in.length-1]);
+							writerSpace.newLine();
+						}
+					}
+					params = new double[2];
+					params[0] = 1.0;
+					params[1] = 0.0;
+					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					break;
+				case "hashDivisionLinear":
+					darray = (double[])input;
+					m = (int)darray[0];
+					in = new int[darray.length - 1];
+					for(int i = 1; i < darray.length; ++i)
+					{
+						in[i-1] = (int)darray[i];
+					}
+					if (options.containsKey(Flag.PREPRINT)) {
+						if (DSALExercises.STUDENT_MODE) {
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Division--Hashing mit linearer Sondierung ein:");
+							writerSpace.newLine();
+							for(int i = 0; i<in.length - 1; ++i)
+							{
+								writerSpace.write(in[i] + ", ");
+							}
+							writerSpace.write(in[in.length-1]);
+							writerSpace.newLine();
+						}
+					}
+					params = new double[2];
+					params[0] = 1;
+					params[1] = 1;
+					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					break;
+				case "hashDivisionQuadratic":
+					darray = (double[])input;
+					m = (int)darray[0];
+					in = new int[darray.length - 3];
+					for(int i = 3; i < darray.length; ++i)
+					{
+						in[i-3] = (int)darray[i];
+					}
+					if (options.containsKey(Flag.PREPRINT)) {
+						if (DSALExercises.STUDENT_MODE) {
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Division--Hashing mit quadratischer Sondierung ein:");
+							writerSpace.newLine();
+							for(int i = 0; i<in.length - 1; ++i)
+							{
+								writerSpace.write(in[i] + ", ");
+							}
+							writerSpace.write(in[in.length-1]);
+							writerSpace.newLine();
+						}
+					}
+					params = new double[4];
+					params[0] = 1;
+					params[1] = 2;
+					params[2] = darray[1];
+					params[3] = darray[2];
+					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					break;
+				case "hashMultiplication":
+					darray = (double[])input;
+					m = (int)darray[0];
+					in = new int[darray.length - 2];
+					for(int i = 2; i < darray.length; ++i)
+					{
+						in[i-2] = (int)darray[i];
+					}
+					if (options.containsKey(Flag.PREPRINT)) {
+						if (DSALExercises.STUDENT_MODE) {
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Multiplication--Hashing ohne Sondierung ein:");
+							writerSpace.newLine();
+							for(int i = 0; i<in.length - 1; ++i)
+							{
+								writerSpace.write(in[i] + ", ");
+							}
+							writerSpace.write(in[in.length-1]);
+							writerSpace.newLine();
+						}
+					}
+					params = new double[3];
+					params[0] = 2;
+					params[1] = 0;
+					params[2] = darray[1];
+					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					break;
+				case "hashMultiplicationLinear":
+					darray = (double[])input;
+					m = (int)darray[0];
+					in = new int[darray.length - 2];
+					for(int i = 2; i < darray.length; ++i)
+					{
+						in[i-2] = (int)darray[i];
+					}
+					if (options.containsKey(Flag.PREPRINT)) {
+						if (DSALExercises.STUDENT_MODE) {
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Multiplication--Hashing ohne Sondierung ein:");
+							writerSpace.newLine();
+							for(int i = 0; i<in.length - 1; ++i)
+							{
+								writerSpace.write(in[i] + ", ");
+							}
+							writerSpace.write(in[in.length-1]);
+							writerSpace.newLine();
+						}
+					}
+					params = new double[3];
+					params[0] = 2;
+					params[1] = 1;
+					params[2] = darray[1];
+					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					break;
+				case "hashMultiplicationQuadratic":
+					darray = (double[])input;
+					m = (int)darray[0];
+					in = new int[darray.length - 4];
+					for(int i = 4; i < darray.length; ++i)
+					{
+						in[i-4] = (int)darray[i];
+					}
+					if (options.containsKey(Flag.PREPRINT)) {
+						if (DSALExercises.STUDENT_MODE) {
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Multiplication--Hashing ohne Sondierung ein:");
+							writerSpace.newLine();
+							for(int i = 0; i<in.length - 1; ++i)
+							{
+								writerSpace.write(in[i] + ", ");
+							}
+							writerSpace.write(in[in.length-1]);
+							writerSpace.newLine();
+						}
+					}
+					params = new double[5];
+					params[0] = 2;
+					params[1] = 2;
+					params[2] = darray[1];
+					params[3] = darray[2];
+					params[4] = darray[3];
+					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					break;
                 default:
                     System.out.println("Unknown algorithm!");
                     return;
@@ -359,8 +520,139 @@ public class DSALExercises {
         }
     }
 
+	private static void Hashing(
+		int[] in,
+		int m,
+		double[] params,
+		BufferedWriter writer,
+		BufferedWriter writerSpace
+	) throws IOException {
+		int[] indizes = new int[in.length];
+		int algorithm = (int)params[0];
+		int probe = (int)params[1];
+		String anchor = "";
+		double c = 0.0;
+		double c1 = 0.0;
+		double c2 = 0.0;
+		switch(probe)
+		{
+			case 2:
+				c1 = params[2];
+				c2 = params[3];
+				switch(algorithm)
+				{
+					case 1: // Division Hashing
+						break;
+					case 2: // Multiplication Hashing
+						c = params[4];
+						break;
+				}
+			default:
+				switch(algorithm)
+				{
+					case 1: // Division Hashing
+						break;
+					case 2: // Multiplication Hashing
+						c = params[2];
+						break;
+				}
+				break;
+		}
+		if( probe != 0)
+		{
+			DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
+			DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
+			for(int i = 0; i < in.length; ++i)
+			{
+				indizes[i] = i;
+			}
+			anchor = DSALExercises.printArray(indizes, null, null, null, writerSpace);
+			anchor = DSALExercises.printEmptyArray(in.length, anchor, writerSpace);
+			
+			int[] solution = new int[m];
+			for(int i = 0; i < solution.length; ++i)
+			{
+				solution[i] = 0; // Todo: Improve, as 0 might be an input value
+			}
+			for(int i = 0; i < in.length; ++i)
+			{
+				System.out.println("Try to insert:" + in[i]);
+				if(solution[in[i]%m] == 0)
+				{
+					System.out.println("Insert at:" + in[i]%m);
+					solution[in[i]%m] = in[i];
+				}
+				else
+				{
+					int off = 1;
+					switch(probe)
+					{
+						case 1: // lineares sondieren
+							while(solution[(in[i]%m+off)%m] != 0)
+							{
+								++off;
+							}
+							solution[(in[i]%m+off)%m] = in[i];
+							break;
+						case 2: // quadratisches sondieren
+							System.out.println("Try position: " + ((int)Math.floor(in[i]%m + c1*off + c2*off*off))%m);
+							while(solution[((int)Math.floor(in[i]%m + c1*off + c2*off*off))%m] != 0)
+							{
+								++off;
+							}
+							solution[((int)Math.floor(in[i]%m + c1*off + c2*off*off))%m] = in[i];
+							System.out.println("Insert at new pos: " + ((int)Math.floor(in[i]%m + c1*off + c2*off*off))%m);
+							break;
+						case 3: // doppeltes hashing
+							break;
+						default:
+					}
+				}
+			}
+			anchor = DSALExercises.printArray(solution, null, null, null, writer);
+		}
+		else // probe == 0
+		{
+			DSALExercises.printTikzBeginning(TikZStyle.BORDERLESS, writerSpace);
+			DSALExercises.printTikzBeginning(TikZStyle.BORDERLESS, writer);
+			String[] solution = new String[m];
+			for(int i = 0; i < m; ++i)
+			{
+				solution[i] = i + ":";
+			}
+			anchor = DSALExercises.printVerticalStringArray(solution, null, null, null, writerSpace);
+			
+			
+			for(int i = 0; i < in.length; ++i)
+			{
+				int pos = 0;
+				switch(algorithm)
+				{
+					case 1: // Division Hashing
+						pos = in[i]%m;
+						break;
+					case 2: // Multiplication Hashing
+						pos = (int)Math.floor(m * ((in[i] * c) - (int)(in[i] * c)));
+						break;
+				}
+				if(solution[pos].substring(solution[pos].length()-1).equals(":"))
+				{
+					solution[pos] += " " + in[i];
+				}
+				else
+				{
+					solution[pos] += ", " + in[i];
+				}
+			}
+			anchor = DSALExercises.printVerticalStringArray(solution, null, null, null, writer);
+		}
+		
+		DSALExercises.printTikzEnd(writerSpace);
+		DSALExercises.printTikzEnd(writer);
+	}
+	
     /**
-     * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified B-tree and 
+     * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified B-tree and
      * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
      * @param tree The B-tree.
      * @param ops The operations.
@@ -872,7 +1164,7 @@ public class DSALExercises {
             case "mergesortWithSplitting":
             case "heapsort":
             case "heapsortWithTrees":
-                if (options.containsKey(Flag.SOURCE)) {
+				if (options.containsKey(Flag.SOURCE)) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                         nums = reader.readLine().split(",");
                     } catch (IOException e) {
@@ -900,6 +1192,40 @@ public class DSALExercises {
                     array[i] = Integer.parseInt(nums[i].trim());
                 }
                 return array;
+			case "hashDivision":
+			case "hashDivisionLinear":
+			case "hashDivisionQuadratic":
+			case "hashMultiplication":
+			case "hashMultiplicationLinear":
+			case "hashMultiplicationQuadratic":
+                if (options.containsKey(Flag.SOURCE)) {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                        nums = reader.readLine().split(",");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                } else if (DSALExercises.STUDENT_MODE) {
+                    final int length;
+                    Random gen = new Random();
+                    if (options.containsKey(Flag.LINES)) {
+                        length = Integer.parseInt(options.get(Flag.LINES));
+                    } else {
+                        length = gen.nextInt(16) + 5;
+                    }
+                    double[] darray = new double[length];
+                    for (int i = 0; i < array.length; i++) {
+                        array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+                    }
+                    return darray;
+                } else {
+                    nums = options.get(Flag.INPUT).split(",");
+                }
+                double[] darray = new double[nums.length];
+                for (int i = 0; i < darray.length; i++) {
+                    darray[i] = Double.parseDouble(nums[i].trim());
+                }
+                return darray;
             case "btree":
                 if (options.containsKey(Flag.SOURCE)) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
@@ -1142,6 +1468,176 @@ public class DSALExercises {
         for (int i = 1; i < length; i++) {
             writer.write("\\node[node] (n" + DSALExercises.number++);
             writer.write(") [right=of n" + (DSALExercises.number - 2));
+            writer.write("] {\\phantom{00}};");
+            writer.newLine();
+        }
+        return firstName;
+    }
+	
+	/**
+     * Prints a colum of nodes with the contents of the array.
+     * @param array The array of values.
+     * @param separate An array indicating which nodes should be separated vertically. Must have a size exactly one
+     *                 less than array or be null.
+     * @param mark An array indicating which node should be marked by a grey background. Must have the same size as
+     *             array or be null.
+     * @param left The name of the top-most node in the colum left of the current colum.
+     * @param writer The writer to send the output to.
+     * @return The name of the left-most node of the current row.
+     * @throws IOException If some I/O error occurs.
+     */
+	private static String printVerticalArray(
+		int[] array,
+		boolean[] separate,
+		boolean[] mark,
+		String left,
+		BufferedWriter writer
+	) throws IOException {
+		String firstName = "n" + DSALExercises.number++;
+		if( left == null )
+		{
+			writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            int val = array[0];
+            writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            writer.write("};");
+            writer.newLine();
+        } else {
+            writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            writer.write(") [right=of ");
+            writer.write(left);
+            int val = array[0];
+            writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            writer.write("};");
+            writer.newLine();
+		}
+		for (int i = 1; i < array.length; i++) {
+            writer.write("\\node[node");
+            if (mark != null && mark[i]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write("n" + DSALExercises.number++);
+            writer.write(") [below=");
+            if (separate != null && separate[i - 1]) {
+                writer.write("0.1 ");
+            }
+            writer.write("of ");
+            writer.write("n" + (DSALExercises.number - 2));
+            int val = array[i];
+            writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            writer.write("};");
+            writer.newLine();
+        }
+		return firstName;
+	}
+	
+	/**
+     * Prints a colum of nodes with the contents of the array.
+     * @param array The array of values.
+     * @param separate An array indicating which nodes should be separated vertically. Must have a size exactly one
+     *                 less than array or be null.
+     * @param mark An array indicating which node should be marked by a grey background. Must have the same size as
+     *             array or be null.
+     * @param left The name of the top-most node in the colum left of the current colum.
+     * @param writer The writer to send the output to.
+     * @return The name of the left-most node of the current row.
+     * @throws IOException If some I/O error occurs.
+     */
+	private static String printVerticalStringArray(
+		String[] array,
+		boolean[] separate,
+		boolean[] mark,
+		String left,
+		BufferedWriter writer
+		) throws IOException {
+		String firstName = "n" + DSALExercises.number++;
+		if( left == null )
+		{
+			writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            String val = array[0];
+            writer.write(") {" + val);
+            writer.write("};");
+            writer.newLine();
+        } else {
+            writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            writer.write(") [right=of ");
+            writer.write(left);
+            String val = array[0];
+            writer.write("] {" + val);
+            writer.write("};");
+            writer.newLine();
+		}
+		for (int i = 1; i < array.length; i++) {
+            writer.write("\\node[node");
+            if (mark != null && mark[i]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write("n" + DSALExercises.number++);
+            writer.write(") [below=");
+            if (separate != null && separate[i - 1]) {
+                writer.write("0.1 ");
+            }
+            writer.write("of ");
+            writer.write("n" + (DSALExercises.number - 2));
+            String val = array[i];
+            writer.write("] {" + val);
+            writer.write("};");
+            writer.newLine();
+        }
+		return firstName;
+	}
+	
+	/**
+     * Prints a colum of empty nodes as solution space for the contents of the array.
+     * @param length The length of the array.
+     * @param left The name of the top-most node in the colum left of the current colum.
+     * @param writer The writer to send the output to.
+     * @return The name of the top-most node of the current colum.
+     * @throws IOException If some I/O error occurs.
+     */
+    private static String printEmptyVerticalArray(
+		int length,
+		String left,
+		BufferedWriter writer
+		) throws IOException {
+        String firstName = "n" + DSALExercises.number++;
+        if (left == null) {
+            writer.write("\\node[node] (");
+            writer.write(firstName);
+            writer.write(") {\\phantom{00}};");
+            writer.newLine();
+        } else {
+            writer.write("\\node[node] (");
+            writer.write(firstName);
+            writer.write(") [right=of ");
+            writer.write(left);
+            writer.write("] {\\phantom{00}};");
+            writer.newLine();
+        }
+        for (int i = 1; i < length; i++) {
+            writer.write("\\node[node] (n" + DSALExercises.number++);
+            writer.write(") [below=of n" + (DSALExercises.number - 2));
             writer.write("] {\\phantom{00}};");
             writer.newLine();
         }
@@ -1525,6 +2021,11 @@ public class DSALExercises {
          * Array style.
          */
         ARRAY("[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]"),
+		
+		/**
+		 * Borderless Array style (for String-Arrays).
+		 */
+		BORDERLESS("[node/.style={draw=none,thick,inner sep=5pt, text width = 10cm}, node distance=0.25 and 0]"),
         
         /**
          * B-tree style.
