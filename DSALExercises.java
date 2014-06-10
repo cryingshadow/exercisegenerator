@@ -42,7 +42,7 @@ public class DSALExercises {
     /**
      * Flag used to turn off some options for the student version.
      */
-    private static final boolean STUDENT_MODE = false;
+    private static final boolean STUDENT_MODE = true;
     
     /**
      * @param array An int array containing the keys in ascending order.
@@ -167,10 +167,9 @@ public class DSALExercises {
         ) {
             Object input = DSALExercises.parseInput(options);
             int[] array = null;
-			double[] darray = null;
 			int m = 0;
 			double[] params = null;
-			int[] in = null;
+			Pair<double[], int[]> in = new Pair<double[], int[]>(null, null);
             String anchor = null;
             switch (options.get(Flag.ALGORITHM)) {
                 case "selectionsort":
@@ -355,161 +354,149 @@ public class DSALExercises {
                     );
                     break;
 				case "hashDivision":
-					darray = (double[])input;
-					m = (int)darray[0];
-					in = new int[darray.length - 1];
-					for(int i = 1; i < darray.length; ++i)
-					{
-						in[i-1] = (int)darray[i];
-					}
+					in = (Pair<double[], int[]>)input;
+					array = in.y;
+					m = (int)in.x[0];
+					
 					if (options.containsKey(Flag.PREPRINT)) {
 						if (DSALExercises.STUDENT_MODE) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Division--Hashing ohne Sondierung ein:");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing ohne Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
-							for(int i = 0; i<in.length - 1; ++i)
+							for(int i = 0; i<array.length - 1; ++i)
 							{
-								writerSpace.write(in[i] + ", ");
+								writerSpace.write(array[i] + ", ");
 							}
-							writerSpace.write(in[in.length-1]);
+							writerSpace.write(array[array.length-1] + ".");
+							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
 						}
 					}
 					params = new double[2];
-					params[0] = 1.0;
-					params[1] = 0.0;
-					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					params[0] = 1;
+					params[1] = 0;
+					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashDivisionLinear":
-					darray = (double[])input;
-					m = (int)darray[0];
-					in = new int[darray.length - 1];
-					for(int i = 1; i < darray.length; ++i)
-					{
-						in[i-1] = (int)darray[i];
-					}
+					in = (Pair<double[], int[]>)input;
+					array = in.y;
+					m = (int)in.x[0];
+					
 					if (options.containsKey(Flag.PREPRINT)) {
 						if (DSALExercises.STUDENT_MODE) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Division--Hashing mit linearer Sondierung ein:");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing mit linearer Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
-							for(int i = 0; i<in.length - 1; ++i)
+							for(int i = 0; i<array.length - 1; ++i)
 							{
-								writerSpace.write(in[i] + ", ");
+								writerSpace.write(array[i] + ", ");
 							}
-							writerSpace.write(in[in.length-1]);
+							writerSpace.write(array[array.length-1] + ".");
+							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
 						}
 					}
 					params = new double[2];
 					params[0] = 1;
 					params[1] = 1;
-					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashDivisionQuadratic":
-					darray = (double[])input;
-					m = (int)darray[0];
-					in = new int[darray.length - 3];
-					for(int i = 3; i < darray.length; ++i)
-					{
-						in[i-3] = (int)darray[i];
-					}
+					in = (Pair<double[], int[]>)input;
+					array = in.y;
+					m = (int)in.x[0];
+					
 					if (options.containsKey(Flag.PREPRINT)) {
 						if (DSALExercises.STUDENT_MODE) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Division--Hashing mit quadratischer Sondierung ein:");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing mit quadratischer Sondierung ($c_1$= " + in.x[1] + ", $c_2$= "+ in.x[2] + " ) ein:\\\\[2ex]");
 							writerSpace.newLine();
-							for(int i = 0; i<in.length - 1; ++i)
+							for(int i = 0; i<array.length - 1; ++i)
 							{
-								writerSpace.write(in[i] + ", ");
+								writerSpace.write(array[i] + ", ");
 							}
-							writerSpace.write(in[in.length-1]);
+							writerSpace.write(array[array.length-1] + ".");
+							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
 						}
 					}
 					params = new double[4];
 					params[0] = 1;
 					params[1] = 2;
-					params[2] = darray[1];
-					params[3] = darray[2];
-					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					params[2] = in.x[1];
+					params[3] = in.x[2];
+					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashMultiplication":
-					darray = (double[])input;
-					m = (int)darray[0];
-					in = new int[darray.length - 2];
-					for(int i = 2; i < darray.length; ++i)
-					{
-						in[i-2] = (int)darray[i];
-					}
+					in = (Pair<double[], int[]>)input;
+					array = in.y;
+					m = (int)in.x[0];
+					
 					if (options.containsKey(Flag.PREPRINT)) {
 						if (DSALExercises.STUDENT_MODE) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Multiplication--Hashing ohne Sondierung ein:");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[1] +") ohne Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
-							for(int i = 0; i<in.length - 1; ++i)
+							for(int i = 0; i<array.length - 1; ++i)
 							{
-								writerSpace.write(in[i] + ", ");
+								writerSpace.write(array[i] + ", ");
 							}
-							writerSpace.write(in[in.length-1]);
+							writerSpace.write(array[array.length-1] + ".");
+							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
 						}
 					}
 					params = new double[3];
 					params[0] = 2;
 					params[1] = 0;
-					params[2] = darray[1];
-					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					params[2] = in.x[1];
+					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashMultiplicationLinear":
-					darray = (double[])input;
-					m = (int)darray[0];
-					in = new int[darray.length - 2];
-					for(int i = 2; i < darray.length; ++i)
-					{
-						in[i-2] = (int)darray[i];
-					}
+					in = (Pair<double[], int[]>)input;
+					array = in.y;
+					m = (int)in.x[0];
+					
 					if (options.containsKey(Flag.PREPRINT)) {
 						if (DSALExercises.STUDENT_MODE) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Multiplication--Hashing ohne Sondierung ein:");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[1] +") mit linearer Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
-							for(int i = 0; i<in.length - 1; ++i)
+							for(int i = 0; i<array.length - 1; ++i)
 							{
-								writerSpace.write(in[i] + ", ");
+								writerSpace.write(array[i] + ", ");
 							}
-							writerSpace.write(in[in.length-1]);
+							writerSpace.write(array[array.length-1] + ".");
+							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
 						}
 					}
 					params = new double[3];
 					params[0] = 2;
 					params[1] = 1;
-					params[2] = darray[1];
-					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					params[2] = in.x[1];
+					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashMultiplicationQuadratic":
-					darray = (double[])input;
-					m = (int)darray[0];
-					in = new int[darray.length - 4];
-					for(int i = 4; i < darray.length; ++i)
-					{
-						in[i-4] = (int)darray[i];
-					}
+					in = (Pair<double[], int[]>)input;
+					array = in.y;
+					m = (int)in.x[0];
+					
 					if (options.containsKey(Flag.PREPRINT)) {
 						if (DSALExercises.STUDENT_MODE) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + in.length +  " unter Verwendung von Multiplication--Hashing ohne Sondierung ein:");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[3] +") mit quadratischer Sondierung ($c_1$= " + in.x[1] + ", $c_2$= "+ in.x[2] + " ) ein:\\\\[2ex]");
 							writerSpace.newLine();
-							for(int i = 0; i<in.length - 1; ++i)
+							for(int i = 0; i<array.length - 1; ++i)
 							{
-								writerSpace.write(in[i] + ", ");
+								writerSpace.write(array[i] + ", ");
 							}
-							writerSpace.write(in[in.length-1]);
+							writerSpace.write(array[array.length-1] + ".");
+							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
 						}
 					}
 					params = new double[5];
 					params[0] = 2;
 					params[1] = 2;
-					params[2] = darray[1];
-					params[3] = darray[2];
-					params[4] = darray[3];
-					DSALExercises.Hashing(in, m, params, writer, writerSpace);
+					params[2] = in.x[1];
+					params[3] = in.x[2];
+					params[4] = in.x[3];
+					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
                 default:
                     System.out.println("Unknown algorithm!");
@@ -527,7 +514,7 @@ public class DSALExercises {
 		BufferedWriter writer,
 		BufferedWriter writerSpace
 	) throws IOException {
-		int[] indizes = new int[in.length];
+		int[] indizes = new int[m];
 		int algorithm = (int)params[0];
 		int probe = (int)params[1];
 		String anchor = "";
@@ -542,32 +529,38 @@ public class DSALExercises {
 				switch(algorithm)
 				{
 					case 1: // Division Hashing
+						writer.write("m = " + m + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
 						break;
 					case 2: // Multiplication Hashing
 						c = params[4];
+						writer.write("m = " + m + ", c = " + c + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
 						break;
 				}
+				break;
 			default:
 				switch(algorithm)
 				{
 					case 1: // Division Hashing
+						writer.write("m = " + m + ":\\\\[2ex]");
 						break;
 					case 2: // Multiplication Hashing
 						c = params[2];
+						writer.write("m = " + m + ", c = " + c + ":\\\\[2ex]");
 						break;
 				}
 				break;
 		}
+		
 		if( probe != 0)
 		{
 			DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
 			DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
-			for(int i = 0; i < in.length; ++i)
+			for(int i = 0; i < m; ++i)
 			{
 				indizes[i] = i;
 			}
 			anchor = DSALExercises.printArray(indizes, null, null, null, writerSpace);
-			anchor = DSALExercises.printEmptyArray(in.length, anchor, writerSpace);
+			anchor = DSALExercises.printEmptyArray(m, anchor, writerSpace);
 			
 			int[] solution = new int[m];
 			for(int i = 0; i < solution.length; ++i)
@@ -576,11 +569,19 @@ public class DSALExercises {
 			}
 			for(int i = 0; i < in.length; ++i)
 			{
-				System.out.println("Try to insert:" + in[i]);
-				if(solution[in[i]%m] == 0)
+				int pos = 0;
+				switch(algorithm)
 				{
-					System.out.println("Insert at:" + in[i]%m);
-					solution[in[i]%m] = in[i];
+					case 1: // Division Hashing
+						pos = in[i]%m;
+						break;
+					case 2: // Multiplication Hashing
+						pos = (int)Math.floor(m * ((in[i] * c) - (int)(in[i] * c)));
+						break;
+				}
+				if(solution[pos] == 0)
+				{
+					solution[pos] = in[i];
 				}
 				else
 				{
@@ -588,20 +589,27 @@ public class DSALExercises {
 					switch(probe)
 					{
 						case 1: // lineares sondieren
-							while(solution[(in[i]%m+off)%m] != 0)
+							while(solution[(pos+off)%m] != 0 && off < m)
 							{
 								++off;
 							}
-							solution[(in[i]%m+off)%m] = in[i];
+							if(solution[(pos+off)%m] != 0)
+							{
+								throw new IOException("The array size was chosen too small!");
+							}
+							solution[(pos+off)%m] = in[i];
 							break;
 						case 2: // quadratisches sondieren
-							System.out.println("Try position: " + ((int)Math.floor(in[i]%m + c1*off + c2*off*off))%m);
-							while(solution[((int)Math.floor(in[i]%m + c1*off + c2*off*off))%m] != 0)
+							while(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != 0 && off < m)
 							{
 								++off;
 							}
-							solution[((int)Math.floor(in[i]%m + c1*off + c2*off*off))%m] = in[i];
-							System.out.println("Insert at new pos: " + ((int)Math.floor(in[i]%m + c1*off + c2*off*off))%m);
+							if(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != 0)
+							{
+								String errormsg = "The array size was chosen too small or the constants for quadratic probing are chosen badly: Insertion of " + in[i] + " failed!";
+								throw new IOException(errormsg);
+							}
+							solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] = in[i];
 							break;
 						case 3: // doppeltes hashing
 							break;
@@ -1198,8 +1206,11 @@ public class DSALExercises {
 			case "hashMultiplication":
 			case "hashMultiplicationLinear":
 			case "hashMultiplicationQuadratic":
+				Pair<double[], int[]> input = new Pair<double[], int[]>(null,null);
+				String[] paramString = null;
                 if (options.containsKey(Flag.SOURCE)) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+						paramString = reader.readLine().split(",");
                         nums = reader.readLine().split(",");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -1210,22 +1221,38 @@ public class DSALExercises {
                     Random gen = new Random();
                     if (options.containsKey(Flag.LINES)) {
                         length = Integer.parseInt(options.get(Flag.LINES));
+						System.out.println("Lines set to: " + length);
                     } else {
                         length = gen.nextInt(16) + 5;
+						System.out.println("Lines chosen to: " + length);
                     }
-                    double[] darray = new double[length];
+                    array = new int[length];
                     for (int i = 0; i < array.length; i++) {
                         array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                     }
-                    return darray;
+					double[] params = new double[options.get(Flag.DEGREE).split(",").length];
+					nums = options.get(Flag.DEGREE).split(",");
+					for(int i = 0; i < params.length; ++i)
+					{
+						params[i] = Double.parseDouble(nums[i].trim());
+					}
+					input = new Pair<double[], int[]>(params,array);
+                    return input;
                 } else {
                     nums = options.get(Flag.INPUT).split(",");
+					paramString = options.get(Flag.DEGREE).split(",");
                 }
-                double[] darray = new double[nums.length];
-                for (int i = 0; i < darray.length; i++) {
-                    darray[i] = Double.parseDouble(nums[i].trim());
+                array = new int[nums.length];
+                for (int i = 0; i < array.length; i++) {
+                    array[i] = Integer.parseInt(nums[i].trim());
                 }
-                return darray;
+				double[] params = new double[paramString.length];
+				for(int i = 0; i < params.length; ++i)
+				{
+					params[i] = Double.parseDouble(paramString[i].trim());
+				}
+				input = new Pair<double[], int[]>(params, array);
+                return input;
             case "btree":
                 if (options.containsKey(Flag.SOURCE)) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
