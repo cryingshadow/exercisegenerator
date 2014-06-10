@@ -1421,7 +1421,7 @@ public class DSALExercises {
 			}
             else
 			{
-				writer.write(") {\\vspace{2ex}");
+				writer.write(") {\\phantom{00}");
 			}
             writer.write("};");
             writer.newLine();
@@ -1437,11 +1437,11 @@ public class DSALExercises {
             if(array[0] != null)
 			{
 				int val = array[0];
-				writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+				writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
 			}
             else
 			{
-				writer.write(") {\\vspace{2ex}");
+				writer.write("] {\\phantom{00}");
 			}
             writer.write("};");
             writer.newLine();
@@ -1462,11 +1462,11 @@ public class DSALExercises {
             if(array[i] != null)
 			{
 				int val = array[i];
-				writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+				writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
 			}
             else
 			{
-				writer.write(") {\\vspace{2ex}");
+				writer.write("] {\\phantom{00}");
 			}
             writer.write("};");
             writer.newLine();
