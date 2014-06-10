@@ -54,15 +54,15 @@ public class DSALExercises {
      *         first element within the interval greater than the key to search for is returned. If no such element 
      *         exists, the returned index is one bigger than the end index.  
      */
-    public static int binarySearch(int[] array, int key, int from, int to) {
+    public static Integer binarySearch(Integer[] array, Integer key, Integer from, Integer to) {
         if (to - from <= 0) {
             if (to - from == 0 && array[from] < key) {
                 return from + 1;
             }
             return from;
         }
-        int index = from + ((to - from) / 2);
-        int there = array[index];
+        Integer index = from + ((to - from) / 2);
+        Integer there = array[index];
         if (there == key) {
             return index;
         } else if (there < key) {
@@ -166,14 +166,14 @@ public class DSALExercises {
                 );    
         ) {
             Object input = DSALExercises.parseInput(options);
-            int[] array = null;
-			int m = 0;
+            Integer[] array = null;
+			Integer m = 0;
 			double[] params = null;
-			Pair<double[], int[]> in = new Pair<double[], int[]>(null, null);
+			Pair<double[], Integer[]> in = new Pair<double[], Integer[]>(null, null);
             String anchor = null;
             switch (options.get(Flag.ALGORITHM)) {
                 case "selectionsort":
-                    array = (int[])input;
+                    array = (Integer[])input;
                     if (options.containsKey(Flag.PREPRINT)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write(
@@ -195,7 +195,7 @@ public class DSALExercises {
                     }
                     break;
                 case "bubblesort":
-                    array = (int[])input;
+                    array = (Integer[])input;
                     if (options.containsKey(Flag.PREPRINT)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Bubblesort.");
@@ -215,7 +215,7 @@ public class DSALExercises {
                     }
                     break;
                 case "insertionsort":
-                    array = (int[])input;
+                    array = (Integer[])input;
                     if (options.containsKey(Flag.PREPRINT)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write(
@@ -240,7 +240,7 @@ public class DSALExercises {
                     }
                     break;
                 case "quicksort":
-                    array = (int[])input;
+                    array = (Integer[])input;
                     if (options.containsKey(Flag.PREPRINT)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Quicksort.");
@@ -263,7 +263,7 @@ public class DSALExercises {
                     }
                     break;
                 case "mergesort":
-                    array = (int[])input;
+                    array = (Integer[])input;
                     if (options.containsKey(Flag.PREPRINT)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Mergesort.");
@@ -283,7 +283,7 @@ public class DSALExercises {
                     }
                     break;
                 case "mergesortWithSplitting":
-                    array = (int[])input;
+                    array = (Integer[])input;
                     if (options.containsKey(Flag.PREPRINT)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Mergesort.");
@@ -303,7 +303,7 @@ public class DSALExercises {
                     }
                     break;
                 case "heapsort":
-                    array = (int[])input;
+                    array = (Integer[])input;
                     if (options.containsKey(Flag.PREPRINT)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Heapsort.");
@@ -323,7 +323,7 @@ public class DSALExercises {
                     }
                     break;
                 case "heapsortWithTrees":
-                    array = (int[])input;
+                    array = (Integer[])input;
                     if (options.containsKey(Flag.PREPRINT)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Heapsort.");
@@ -354,7 +354,7 @@ public class DSALExercises {
                     );
                     break;
 				case "hashDivision":
-					in = (Pair<double[], int[]>)input;
+					in = (Pair<double[], Integer[]>)input;
 					array = in.y;
 					m = (int)in.x[0];
 					
@@ -377,7 +377,7 @@ public class DSALExercises {
 					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashDivisionLinear":
-					in = (Pair<double[], int[]>)input;
+					in = (Pair<double[], Integer[]>)input;
 					array = in.y;
 					m = (int)in.x[0];
 					
@@ -400,7 +400,7 @@ public class DSALExercises {
 					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashDivisionQuadratic":
-					in = (Pair<double[], int[]>)input;
+					in = (Pair<double[], Integer[]>)input;
 					array = in.y;
 					m = (int)in.x[0];
 					
@@ -425,7 +425,7 @@ public class DSALExercises {
 					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashMultiplication":
-					in = (Pair<double[], int[]>)input;
+					in = (Pair<double[], Integer[]>)input;
 					array = in.y;
 					m = (int)in.x[0];
 					
@@ -449,7 +449,7 @@ public class DSALExercises {
 					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashMultiplicationLinear":
-					in = (Pair<double[], int[]>)input;
+					in = (Pair<double[], Integer[]>)input;
 					array = in.y;
 					m = (int)in.x[0];
 					
@@ -473,7 +473,7 @@ public class DSALExercises {
 					DSALExercises.Hashing(array, m, params, writer, writerSpace);
 					break;
 				case "hashMultiplicationQuadratic":
-					in = (Pair<double[], int[]>)input;
+					in = (Pair<double[], Integer[]>)input;
 					array = in.y;
 					m = (int)in.x[0];
 					
@@ -507,14 +507,23 @@ public class DSALExercises {
         }
     }
 
+	/**
+     * Performs hashing in different variations (divisionmethod(1), multiplicationmethod(2), linear probing(1), quadratic probing(2), no probing (0)).
+     * @param in The array containing the values, which are to be hashed.
+     * @param m The length of the hashtable.
+     * @param params The array containing the parameters in this order: Algorithm (1,2), probe-mode (0,1,2), additional parameters: c, c1, c2
+     * @param writer The writer for the solution.
+     * @param writerSpace The writer for the exercise.
+     * @throws IOException If some error occurs during output or if in.size > m or if c1 and c2 are badly chosen.
+     */
 	private static void Hashing(
-		int[] in,
+		Integer[] in,
 		int m,
 		double[] params,
 		BufferedWriter writer,
 		BufferedWriter writerSpace
 	) throws IOException {
-		int[] indizes = new int[m];
+		Integer[] indizes = new Integer[m];
 		int algorithm = (int)params[0];
 		int probe = (int)params[1];
 		String anchor = "";
@@ -524,15 +533,17 @@ public class DSALExercises {
 		switch(probe)
 		{
 			case 2:
-				c1 = params[2];
-				c2 = params[3];
 				switch(algorithm)
 				{
 					case 1: // Division Hashing
+						c1 = params[2];
+						c2 = params[3];
 						writer.write("m = " + m + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
 						break;
 					case 2: // Multiplication Hashing
-						c = params[4];
+						c = params[2];
+						c1 = params[3];
+						c2 = params[4];
 						writer.write("m = " + m + ", c = " + c + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
 						break;
 				}
@@ -551,7 +562,7 @@ public class DSALExercises {
 				break;
 		}
 		
-		if( probe != 0)
+		if( probe != 0) // probing
 		{
 			DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
 			DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
@@ -562,10 +573,10 @@ public class DSALExercises {
 			anchor = DSALExercises.printArray(indizes, null, null, null, writerSpace);
 			anchor = DSALExercises.printEmptyArray(m, anchor, writerSpace);
 			
-			int[] solution = new int[m];
+			Integer[] solution = new Integer[m];
 			for(int i = 0; i < solution.length; ++i)
 			{
-				solution[i] = 0; // Todo: Improve, as 0 might be an input value
+				solution[i] = null;
 			}
 			for(int i = 0; i < in.length; ++i)
 			{
@@ -579,7 +590,10 @@ public class DSALExercises {
 						pos = (int)Math.floor(m * ((in[i] * c) - (int)(in[i] * c)));
 						break;
 				}
-				if(solution[pos] == 0)
+				
+				System.out.println("Insert: " + in[i] + " at " + pos);
+				
+				if(solution[pos] == null)
 				{
 					solution[pos] = in[i];
 				}
@@ -588,23 +602,23 @@ public class DSALExercises {
 					int off = 1;
 					switch(probe)
 					{
-						case 1: // lineares sondieren
-							while(solution[(pos+off)%m] != 0 && off < m)
+						case 1: // linear probing
+							while(solution[(pos+off)%m] != null && off < m)
 							{
 								++off;
 							}
-							if(solution[(pos+off)%m] != 0)
+							if(solution[(pos+off)%m] != null)
 							{
 								throw new IOException("The array size was chosen too small!");
 							}
 							solution[(pos+off)%m] = in[i];
 							break;
-						case 2: // quadratisches sondieren
-							while(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != 0 && off < m)
+						case 2: // quadratic probing
+							while(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != null && off < m)
 							{
 								++off;
 							}
-							if(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != 0)
+							if(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != null)
 							{
 								String errormsg = "The array size was chosen too small or the constants for quadratic probing are chosen badly: Insertion of " + in[i] + " failed!";
 								throw new IOException(errormsg);
@@ -619,7 +633,7 @@ public class DSALExercises {
 			}
 			anchor = DSALExercises.printArray(solution, null, null, null, writer);
 		}
-		else // probe == 0
+		else // probe == 0 -> no probing
 		{
 			DSALExercises.printTikzBeginning(TikZStyle.BORDERLESS, writerSpace);
 			DSALExercises.printTikzBeginning(TikZStyle.BORDERLESS, writer);
@@ -813,7 +827,7 @@ public class DSALExercises {
      * @return The number of rows needed for the solution (excluding the original array).
      * @throws IOException If some error occurs while outputting the solution.
      */
-    private static int bubblesort(int[] array, BufferedWriter writer) throws IOException {
+    private static int bubblesort(Integer[] array, BufferedWriter writer) throws IOException {
         DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor = DSALExercises.printArray(array, null, null, null, writer);
         int res = 0;
@@ -858,7 +872,7 @@ public class DSALExercises {
      * @throws IOException If some error occurs during solution output.
      */
     private static Object[] heapify(
-        int[] array,
+        Integer[] array,
         int from,
         int to,
         String anchor,
@@ -898,7 +912,7 @@ public class DSALExercises {
      * @throws IOException If some error occurs during solution output.
      */
     private static int heapifyWithTrees(
-        int[] array,
+        Integer[] array,
         int from,
         int to,
         boolean[] separate,
@@ -936,7 +950,7 @@ public class DSALExercises {
      * @return The number of rows needed for the solution (excluding the original array).
      * @throws IOException If some error occurs while outputting the solution.
      */
-    private static int heapsort(int[] array, BufferedWriter writer) throws IOException {
+    private static int heapsort(Integer[] array, BufferedWriter writer) throws IOException {
         DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor = DSALExercises.printArray(array, null, null, null, writer);
         int res = 0;
@@ -980,7 +994,7 @@ public class DSALExercises {
      * @return The number of rows needed for the solution (excluding the original array).
      * @throws IOException If some error occurs while outputting the solution.
      */
-    private static int heapsortWithTrees(int[] array, BufferedWriter writer) throws IOException {
+    private static int heapsortWithTrees(Integer[] array, BufferedWriter writer) throws IOException {
         int step = 0;
         DSALExercises.printSamePageBeginning(step++, writer);
         DSALExercises.printTree(array, array.length - 1, writer);
@@ -1023,7 +1037,7 @@ public class DSALExercises {
      * @return The number of rows needed for the solution (excluding the original array).
      * @throws IOException If some error occurs while outputting the solution.
      */
-    private static int insertionsort(int[] array, BufferedWriter writer) throws IOException {
+    private static int insertionsort(Integer[] array, BufferedWriter writer) throws IOException {
         DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor = DSALExercises.printArray(array, null, null, null, writer);
         int res = 0;
@@ -1050,8 +1064,8 @@ public class DSALExercises {
      * @param middle The middle index.
      * @param end The end index.
      */
-    private static void merge(int[] array, int start, int middle, int end) {
-        int[] copy = new int[end - start + 1];
+    private static void merge(Integer[] array, int start, int middle, int end) {
+        Integer[] copy = new Integer[end - start + 1];
         int i = 0;
         int j = start;
         int k = middle + 1;
@@ -1079,7 +1093,7 @@ public class DSALExercises {
      * @return The number of rows needed for the solution (excluding the original array).
      * @throws IOException If some error occurs while outputting the solution.
      */
-    private static int mergesort(int[] array, boolean printSplitting, BufferedWriter writer) throws IOException {
+    private static int mergesort(Integer[] array, boolean printSplitting, BufferedWriter writer) throws IOException {
         DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
         boolean[] separate = new boolean[array.length - 1];
         Arrays.fill(separate, !printSplitting);
@@ -1117,7 +1131,7 @@ public class DSALExercises {
      * @throws IOException If some error occurs during solution output.
      */
     private static Object[] mergesort(
-        int[] array,
+        Integer[] array,
         int start,
         int end,
         String anchor,
@@ -1187,7 +1201,7 @@ public class DSALExercises {
                     } else {
                         length = gen.nextInt(16) + 5;
                     }
-                    int[] array = new int[length];
+                    Integer[] array = new Integer[length];
                     for (int i = 0; i < array.length; i++) {
                         array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                     }
@@ -1195,7 +1209,7 @@ public class DSALExercises {
                 } else {
                     nums = options.get(Flag.INPUT).split(",");
                 }
-                int[] array = new int[nums.length];
+                Integer[] array = new Integer[nums.length];
                 for (int i = 0; i < array.length; i++) {
                     array[i] = Integer.parseInt(nums[i].trim());
                 }
@@ -1206,7 +1220,7 @@ public class DSALExercises {
 			case "hashMultiplication":
 			case "hashMultiplicationLinear":
 			case "hashMultiplicationQuadratic":
-				Pair<double[], int[]> input = new Pair<double[], int[]>(null,null);
+				Pair<double[], Integer[]> input = new Pair<double[], Integer[]>(null,null);
 				String[] paramString = null;
                 if (options.containsKey(Flag.SOURCE)) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
@@ -1226,7 +1240,7 @@ public class DSALExercises {
                         length = gen.nextInt(16) + 5;
 						System.out.println("Lines chosen to: " + length);
                     }
-                    array = new int[length];
+                    array = new Integer[length];
                     for (int i = 0; i < array.length; i++) {
                         array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                     }
@@ -1236,13 +1250,13 @@ public class DSALExercises {
 					{
 						params[i] = Double.parseDouble(nums[i].trim());
 					}
-					input = new Pair<double[], int[]>(params,array);
+					input = new Pair<double[], Integer[]>(params,array);
                     return input;
                 } else {
                     nums = options.get(Flag.INPUT).split(",");
 					paramString = options.get(Flag.DEGREE).split(",");
                 }
-                array = new int[nums.length];
+                array = new Integer[nums.length];
                 for (int i = 0; i < array.length; i++) {
                     array[i] = Integer.parseInt(nums[i].trim());
                 }
@@ -1251,7 +1265,7 @@ public class DSALExercises {
 				{
 					params[i] = Double.parseDouble(paramString[i].trim());
 				}
-				input = new Pair<double[], int[]>(params, array);
+				input = new Pair<double[], Integer[]>(params, array);
                 return input;
             case "btree":
                 if (options.containsKey(Flag.SOURCE)) {
@@ -1354,7 +1368,7 @@ public class DSALExercises {
      * @param end The end index.
      * @return The index of the Pivot element after partitioning.
      */
-    private static int partition(int[] array, int start, int end) {
+    private static int partition(Integer[] array, int start, int end) {
         int i = start - 1;
         int j = end;
         while (i < j) {
@@ -1386,7 +1400,7 @@ public class DSALExercises {
      * @throws IOException If some I/O error occurs.
      */
     private static String printArray(
-        int[] array,
+        Integer[] array,
         boolean[] separate,
         boolean[] mark,
         String below,
@@ -1400,8 +1414,15 @@ public class DSALExercises {
             }
             writer.write("] (");
             writer.write(firstName);
-            int val = array[0];
-            writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+			if(array[0] != null)
+			{
+				int val = array[0];
+				writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+			}
+            else
+			{
+				writer.write(") {\\vspace{2ex}");
+			}
             writer.write("};");
             writer.newLine();
         } else {
@@ -1413,8 +1434,15 @@ public class DSALExercises {
             writer.write(firstName);
             writer.write(") [below=of ");
             writer.write(below);
-            int val = array[0];
-            writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            if(array[0] != null)
+			{
+				int val = array[0];
+				writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+			}
+            else
+			{
+				writer.write(") {\\vspace{2ex}");
+			}
             writer.write("};");
             writer.newLine();
         }
@@ -1431,8 +1459,15 @@ public class DSALExercises {
             }
             writer.write("of ");
             writer.write("n" + (DSALExercises.number - 2));
-            int val = array[i];
-            writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            if(array[i] != null)
+			{
+				int val = array[i];
+				writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+			}
+            else
+			{
+				writer.write(") {\\vspace{2ex}");
+			}
             writer.write("};");
             writer.newLine();
         }
@@ -1514,7 +1549,7 @@ public class DSALExercises {
      * @throws IOException If some I/O error occurs.
      */
 	private static String printVerticalArray(
-		int[] array,
+		Integer[] array,
 		boolean[] separate,
 		boolean[] mark,
 		String left,
@@ -1773,7 +1808,7 @@ public class DSALExercises {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    private static void printTree(int[] array, int to, BufferedWriter writer) throws IOException {
+    private static void printTree(Integer[] array, int to, BufferedWriter writer) throws IOException {
         if (to < 0) {
             return;
         }
@@ -1797,7 +1832,7 @@ public class DSALExercises {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    private static void printTree(int[] array, int start, int end, BufferedWriter writer) throws IOException {
+    private static void printTree(Integer[] array, int start, int end, BufferedWriter writer) throws IOException {
         final int next = 2 * start + 1;
         if (next <= end) {
             writer.write(" [." + array[start]);
@@ -1833,7 +1868,7 @@ public class DSALExercises {
      * @return The number of rows needed for the solution (excluding the original array).
      * @throws IOException If some error occurs while outputting the solution.
      */
-    private static int quicksort(int[] array, BufferedWriter writer) throws IOException {
+    private static int quicksort(Integer[] array, BufferedWriter writer) throws IOException {
         DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
         boolean[] separate = new boolean[array.length - 1];
         boolean[] mark = new boolean[array.length];
@@ -1869,7 +1904,7 @@ public class DSALExercises {
      * @throws IOException If some error occurs during solution output.
      */
     private static Object[] quicksort(
-        int[] array,
+        Integer[] array,
         int start,
         int end,
         String anchor,
@@ -1920,7 +1955,7 @@ public class DSALExercises {
      * @return The number of rows needed for the solution (excluding the original array).
      * @throws IOException If some error occurs while outputting the solution.
      */
-    private static int selectionsort(int[] array, BufferedWriter writer)
+    private static int selectionsort(Integer[] array, BufferedWriter writer)
     throws IOException {
         DSALExercises.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor = DSALExercises.printArray(array, null, null, null, writer);
@@ -1950,7 +1985,7 @@ public class DSALExercises {
      * @param a The first index.
      * @param b The second index.
      */
-    private static void swap(int[] array, int a, int b) {
+    private static void swap(Integer[] array, int a, int b) {
         if (a >= 0 && b >= 0) {
             int store = array[a];
             array[a] = array[b];
@@ -2001,7 +2036,7 @@ public class DSALExercises {
         /**
          * Source file containing the input. Must not be specified together with -i, but one of them must be specified.
          */
-        SOURCE("-s", "Source file", false),
+        SOURCE("-s", "Source file", true),
         
         /**
          * Target file to store the LaTeX code in. If not specified, the solution is sent to the standard output.
