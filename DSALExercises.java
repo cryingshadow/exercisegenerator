@@ -42,7 +42,7 @@ public class DSALExercises {
     /**
      * Flag used to turn off some options for the student version.
      */
-    private static final boolean STUDENT_MODE = true;
+    private static final boolean STUDENT_MODE = false;
     
     /**
      * @param array An int array containing the keys in ascending order.
@@ -359,7 +359,6 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-						if (DSALExercises.STUDENT_MODE) {
 							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing ohne Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
@@ -369,7 +368,7 @@ public class DSALExercises {
 							writerSpace.write(array[array.length-1] + ".");
 							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
-						}
+						
 					}
 					params = new double[2];
 					params[0] = 1;
@@ -382,7 +381,6 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-						if (DSALExercises.STUDENT_MODE) {
 							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing mit linearer Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
@@ -392,7 +390,7 @@ public class DSALExercises {
 							writerSpace.write(array[array.length-1] + ".");
 							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
-						}
+						
 					}
 					params = new double[2];
 					params[0] = 1;
@@ -405,7 +403,6 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-						if (DSALExercises.STUDENT_MODE) {
 							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing mit quadratischer Sondierung ($c_1$= " + in.x[1] + ", $c_2$= "+ in.x[2] + " ) ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
@@ -415,7 +412,7 @@ public class DSALExercises {
 							writerSpace.write(array[array.length-1] + ".");
 							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
-						}
+						
 					}
 					params = new double[4];
 					params[0] = 1;
@@ -430,7 +427,6 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-						if (DSALExercises.STUDENT_MODE) {
 							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[1] +") ohne Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
@@ -440,7 +436,7 @@ public class DSALExercises {
 							writerSpace.write(array[array.length-1] + ".");
 							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
-						}
+						
 					}
 					params = new double[3];
 					params[0] = 2;
@@ -454,7 +450,6 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-						if (DSALExercises.STUDENT_MODE) {
 							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[1] +") mit linearer Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
@@ -464,7 +459,7 @@ public class DSALExercises {
 							writerSpace.write(array[array.length-1] + ".");
 							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
-						}
+						
 					}
 					params = new double[3];
 					params[0] = 2;
@@ -478,8 +473,7 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-						if (DSALExercises.STUDENT_MODE) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[3] +") mit quadratischer Sondierung ($c_1$= " + in.x[1] + ", $c_2$= "+ in.x[2] + " ) ein:\\\\[2ex]");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[1] +") mit quadratischer Sondierung ($c_1$= " + in.x[2] + ", $c_2$= "+ in.x[3] + " ) ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
 							{
@@ -488,7 +482,7 @@ public class DSALExercises {
 							writerSpace.write(array[array.length-1] + ".");
 							writerSpace.write("\\\\[2ex]");
 							writerSpace.newLine();
-						}
+						
 					}
 					params = new double[5];
 					params[0] = 2;
@@ -523,6 +517,7 @@ public class DSALExercises {
 		BufferedWriter writer,
 		BufferedWriter writerSpace
 	) throws IOException {
+		int collisionCount = 0;
 		Integer[] indizes = new Integer[m];
 		int algorithm = (int)params[0];
 		int probe = (int)params[1];
@@ -591,8 +586,6 @@ public class DSALExercises {
 						break;
 				}
 				
-				System.out.println("Insert: " + in[i] + " at " + pos);
-				
 				if(solution[pos] == null)
 				{
 					solution[pos] = in[i];
@@ -606,6 +599,7 @@ public class DSALExercises {
 							while(solution[(pos+off)%m] != null && off < m)
 							{
 								++off;
+								++collisionCount;
 							}
 							if(solution[(pos+off)%m] != null)
 							{
@@ -617,6 +611,7 @@ public class DSALExercises {
 							while(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != null && off < m)
 							{
 								++off;
+								++collisionCount;
 							}
 							if(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != null)
 							{
@@ -630,6 +625,10 @@ public class DSALExercises {
 						default:
 					}
 				}
+			}
+			if(!DSALExercises.STUDENT_MODE)
+			{
+				System.out.println("#collisions by probing: " + collisionCount);
 			}
 			anchor = DSALExercises.printArray(solution, null, null, null, writer);
 		}
