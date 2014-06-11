@@ -1244,12 +1244,27 @@ public class DSALExercises {
                     for (int i = 0; i < array.length; i++) {
                         array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                     }
-					double[] params = new double[options.get(Flag.DEGREE).split(",").length];
-					nums = options.get(Flag.DEGREE).split(",");
-					for(int i = 0; i < params.length; ++i)
+					double[] params = new double[4]; // create all possible constants per default.
+					int m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+					int c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+					int c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+					
+					while(!DSALExercises.arePrime(m,c1,c2))
 					{
-						params[i] = Double.parseDouble(nums[i].trim());
+						m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+						if(DSALExercises.arePrime(m,c1,c2))
+							break;
+						c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+						if(DSALExercises.arePrime(m,c1,c2))
+							break;
+						c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
 					}
+					double c = gen.nextDouble();
+					params[0] = m;
+					params[1] = c;
+					params[2] = c1;
+					params[3] = c2;
+					
 					input = new Pair<double[], Integer[]>(params,array);
                     return input;
                 } else {
@@ -1991,6 +2006,41 @@ public class DSALExercises {
             array[a] = array[b];
             array[b] = store;
         }
+    }
+	
+	/**
+	 * Checks for a given number if it is a prime.
+	 * @param number The number to be checked.
+	 * @return true, if the number is a prime, false otherwise.
+	 */
+	private static boolean isPrime(int number) {
+        int sqrt = (int) Math.sqrt(number) + 1;
+        for (int i = 2; i < sqrt; i++) {
+            if (number % i == 0) {
+                // number is perfectly divisible - no prime
+                return false;
+            }
+        }
+        return true;
+    }
+	
+	private static boolean arePrime(int a, int b, int c)
+	{
+		return DSALExercises.gcd(a,b) == 1 && DSALExercises.gcd(b,c) == 1 && DSALExercises.gcd(a,c);
+	}
+	
+	/**
+	 * Computes the gcd of two numbers by using the Eucilidian algorithm.
+	 * @param number1 The first of the two numbers.
+	 * @param number2 The second of the two numbers.
+	 * @return The greates common divisor of number1 and number2.
+	 */
+	private static int gcd(int number1, int number2) {
+        //base case
+        if(number2 == 0){
+            return number1;
+        }
+        return gcd(number2, number1%number2);
     }
 
     /**
