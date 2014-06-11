@@ -2026,7 +2026,7 @@ public class DSALExercises {
 	
 	private static boolean arePrime(int a, int b, int c)
 	{
-		return DSALExercises.gcd(a,b) == 1 && DSALExercises.gcd(b,c) == 1 && DSALExercises.gcd(a,c);
+		return DSALExercises.gcd(a,b) == 1 && DSALExercises.gcd(b,c) == 1 && DSALExercises.gcd(a,c) == 1;
 	}
 	
 	/**
