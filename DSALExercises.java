@@ -359,7 +359,7 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing ohne Sondierung ein:\\\\[2ex]");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung der Divisionsmethode ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
 							{
@@ -381,7 +381,7 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing mit linearer Sondierung ein:\\\\[2ex]");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung der Divisionsmethode mit linearer Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
 							{
@@ -403,7 +403,7 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Division--Hashing mit quadratischer Sondierung ($c_1$= " + in.x[1] + ", $c_2$= "+ in.x[2] + " ) ein:\\\\[2ex]");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung der Divisionsmethode mit quadratischer Sondierung ($c_1$= " + in.x[1] + ", $c_2$= "+ in.x[2] + " ) ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
 							{
@@ -427,7 +427,7 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[1] +") ohne Sondierung ein:\\\\[2ex]");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
 							{
@@ -450,7 +450,7 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[1] +") mit linearer Sondierung ein:\\\\[2ex]");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") mit linearer Sondierung ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
 							{
@@ -473,7 +473,7 @@ public class DSALExercises {
 					m = (int)in.x[0];
 					
 					if (options.containsKey(Flag.PREPRINT)) {
-							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung von Multiplication--Hashing (c = " + in.x[1] +") mit quadratischer Sondierung ($c_1$= " + in.x[2] + ", $c_2$= "+ in.x[3] + " ) ein:\\\\[2ex]");
+							writerSpace.write("\\noindent Fügen Sie die folgenden Werte in das unten stehende Array der Länge " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") mit quadratischer Sondierung ($c_1$= " + in.x[2] + ", $c_2$= "+ in.x[3] + " ) ein:\\\\[2ex]");
 							writerSpace.newLine();
 							for(int i = 0; i<array.length - 1; ++i)
 							{
@@ -582,7 +582,7 @@ public class DSALExercises {
 						pos = in[i]%m;
 						break;
 					case 2: // Multiplication Hashing
-						pos = (int)Math.floor(m * ((in[i] * c) - (int)(in[i] * c)));
+						pos = (int)Math.floor(m * (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0));
 						break;
 				}
 				
@@ -653,7 +653,8 @@ public class DSALExercises {
 						pos = in[i]%m;
 						break;
 					case 2: // Multiplication Hashing
-						pos = (int)Math.floor(m * ((in[i] * c) - (int)(in[i] * c)));
+						System.out.println("Test: " + Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0 + ", m is: " + m);
+						pos = (int)Math.floor( m * Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0 );
 						break;
 				}
 				if(solution[pos].substring(solution[pos].length()-1).equals(":"))
