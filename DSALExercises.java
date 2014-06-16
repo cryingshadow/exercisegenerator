@@ -9,14 +9,29 @@ import java.util.*;
 public class DSALExercises {
 
     /**
+     * The set of (in student mode only enabled) hashing algorithms.
+     */
+    private static final Set<String> HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
+
+    /**
      * Limit for random numbers in student mode.
      */
     private static final int NUMBER_LIMIT = 100;
 
     /**
+     * The set of (in student mode only enabled) sorting algorithms.
+     */
+    private static final Set<String> SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
+
+    /**
      * Flag used to turn off some options for the student version.
      */
     private static final boolean STUDENT_MODE = false;
+
+    /**
+     * The help text displayed when just called with -h. Each entry is separated by a newline.
+     */
+    private static final String[] HELP = {"TODO helptext"};
 
     /**
      * Reads an input from a source file, executes the specified algorithm on this input, and outputs the solution in 
@@ -39,8 +54,28 @@ public class DSALExercises {
      */
     @SuppressWarnings({"resource", "unchecked"})
     public static void main(String[] args) {
-        if (args == null || args.length < 4) {
-            System.out.println("You need to provide at least an input and an algorithm!");
+        if (args == null || args.length < 1) {
+            System.out.println("You need to provide arguments! Type -h for help.");
+            return;
+        }
+        if ("-h".equals(args[0])) {
+            if (args.length == 1) {
+                for (String text : DSALExercises.HELP) {
+                    System.out.println(text);
+                }
+            } else if (args.length > 2) {
+                System.out.println("You can only ask for help on one algorithm at a time!");
+            } else {
+                String input = args[1];
+                for (Algorithm alg : Algorithm.values()) {
+                    if (alg.name.equals(input)) {
+                        for (String text : alg.docu) {
+                            System.out.println(text);
+                        }
+                        break;
+                    }
+                }
+            }
             return;
         }
         if (args.length % 2 != 0) {
@@ -319,7 +354,7 @@ public class DSALExercises {
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 0;
-                    DSALExercises.Hashing(array, m, params, writer, writerSpace);
+                    DSALExercises.hashing(array, m, params, writer, writerSpace);
                     break;
                 case "hashDivisionLinear":
                     in = (Pair<double[], Integer[]>)input;
@@ -341,7 +376,7 @@ public class DSALExercises {
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 1;
-                    DSALExercises.Hashing(array, m, params, writer, writerSpace);
+                    DSALExercises.hashing(array, m, params, writer, writerSpace);
                     break;
                 case "hashDivisionQuadratic":
                     in = (Pair<double[], Integer[]>)input;
@@ -365,7 +400,7 @@ public class DSALExercises {
                     params[1] = 2;
                     params[2] = in.x[1];
                     params[3] = in.x[2];
-                    DSALExercises.Hashing(array, m, params, writer, writerSpace);
+                    DSALExercises.hashing(array, m, params, writer, writerSpace);
                     break;
                 case "hashMultiplication":
                     in = (Pair<double[], Integer[]>)input;
@@ -388,7 +423,7 @@ public class DSALExercises {
                     params[0] = 2;
                     params[1] = 0;
                     params[2] = in.x[1];
-                    DSALExercises.Hashing(array, m, params, writer, writerSpace);
+                    DSALExercises.hashing(array, m, params, writer, writerSpace);
                     break;
                 case "hashMultiplicationLinear":
                     in = (Pair<double[], Integer[]>)input;
@@ -411,7 +446,7 @@ public class DSALExercises {
                     params[0] = 2;
                     params[1] = 1;
                     params[2] = in.x[1];
-                    DSALExercises.Hashing(array, m, params, writer, writerSpace);
+                    DSALExercises.hashing(array, m, params, writer, writerSpace);
                     break;
                 case "hashMultiplicationQuadratic":
                     in = (Pair<double[], Integer[]>)input;
@@ -436,7 +471,7 @@ public class DSALExercises {
                     params[2] = in.x[1];
                     params[3] = in.x[2];
                     params[4] = in.x[3];
-                    DSALExercises.Hashing(array, m, params, writer, writerSpace);
+                    DSALExercises.hashing(array, m, params, writer, writerSpace);
                     break;
                 default:
                     System.out.println("Unknown algorithm!");
@@ -445,6 +480,24 @@ public class DSALExercises {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static boolean arePrime(int a, int b, int c) {
+        return DSALExercises.gcd(a,b) == 1 && DSALExercises.gcd(b,c) == 1 && DSALExercises.gcd(a,c) == 1;
+    }
+
+    /**
+     * Computes the gcd of two numbers by using the Eucilidian algorithm.
+     * @param number1 The first of the two numbers.
+     * @param number2 The second of the two numbers.
+     * @return The greates common divisor of number1 and number2.
+     */
+    private static int gcd(int number1, int number2) {
+        //base case
+        if(number2 == 0){
+            return number1;
+        }
+        return DSALExercises.gcd(number2, number1%number2);
     }
 
     /**
@@ -456,7 +509,7 @@ public class DSALExercises {
      * @param writerSpace The writer for the exercise.
      * @throws IOException If some error occurs during output or if in.size > m or if c1 and c2 are badly chosen.
      */
-    private static void Hashing(
+    private static void hashing(
         Integer[] in,
         int m,
         double[] params,
@@ -620,161 +673,226 @@ public class DSALExercises {
     }
 
     /**
+     * @return The set of (in student mode only enabled) hashing algorithms.
+     */
+    @SuppressWarnings("unused")
+    private static Set<String> initHashingAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HASH_DIV.enabled) {
+            res.add(Algorithm.HASH_DIV.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HASH_DIV_LIN.enabled) {
+            res.add(Algorithm.HASH_DIV_LIN.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HASH_DIV_QUAD.enabled) {
+            res.add(Algorithm.HASH_DIV_QUAD.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HASH_MULT.enabled) {
+            res.add(Algorithm.HASH_MULT.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HASH_MULT_LIN.enabled) {
+            res.add(Algorithm.HASH_MULT_LIN.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HASH_MULT_QUAD.enabled) {
+            res.add(Algorithm.HASH_MULT_QUAD.name);
+        }
+        return res;
+    }
+
+    /**
+     * @return The set of (in student mode only enabled) sorting algorithms.
+     */
+    @SuppressWarnings("unused")
+    private static Set<String> initSortingAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.BUBBLESORT.enabled) {
+            res.add(Algorithm.BUBBLESORT.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HEAPSORT.enabled) {
+            res.add(Algorithm.HEAPSORT.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HEAPSORT_TREE.enabled) {
+            res.add(Algorithm.HEAPSORT_TREE.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.INSERTIONSORT.enabled) {
+            res.add(Algorithm.INSERTIONSORT.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.MERGESORT.enabled) {
+            res.add(Algorithm.MERGESORT.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.MERGESORT_SPLIT.enabled) {
+            res.add(Algorithm.MERGESORT_SPLIT.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.QUICKSORT.enabled) {
+            res.add(Algorithm.QUICKSORT.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SELECTIONSORT.enabled) {
+            res.add(Algorithm.SELECTIONSORT.name);
+        }
+        return res;
+    }
+
+    /**
+     * Checks for a given number if it is a prime.
+     * @param num The number to be checked.
+     * @return true, if the number is a prime, false otherwise.
+     */
+    private static boolean isPrime(int num) {
+        int sqrt = (int) Math.sqrt(num) + 1;
+        for (int i = 2; i < sqrt; i++) {
+            if (num % i == 0) {
+                // number is perfectly divisible - no prime
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @param options The option flags.
      * @return The input specified by the options.
      */
     private static Object parseInput(Map<Flag, String> options) {
         String[] nums = null;
-        switch (options.get(Flag.ALGORITHM)) {
-            case "selectionsort":
-            case "bubblesort":
-            case "insertionsort":
-            case "quicksort":
-            case "mergesort":
-            case "mergesortWithSplitting":
-            case "heapsort":
-            case "heapsortWithTrees":
-                if (options.containsKey(Flag.SOURCE)) {
-                    try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                        nums = reader.readLine().split(",");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                } else if (DSALExercises.STUDENT_MODE) {
-                    final int length;
-                    Random gen = new Random();
-                    if (options.containsKey(Flag.LINES)) {
-                        length = Integer.parseInt(options.get(Flag.LINES));
-                    } else {
-                        length = gen.nextInt(16) + 5;
-                    }
-                    Integer[] array = new Integer[length];
-                    for (int i = 0; i < array.length; i++) {
-                        array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    }
-                    return array;
-                } else {
-                    nums = options.get(Flag.INPUT).split(",");
+        String alg = options.get(Flag.ALGORITHM);
+        if (DSALExercises.SORTING_ALGORITHMS.contains(alg)) {
+            if (options.containsKey(Flag.SOURCE)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    nums = reader.readLine().split(",");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
                 }
-                Integer[] array = new Integer[nums.length];
+            } else if (DSALExercises.STUDENT_MODE) {
+                final int length;
+                Random gen = new Random();
+                if (options.containsKey(Flag.LINES)) {
+                    length = Integer.parseInt(options.get(Flag.LINES));
+                } else {
+                    length = gen.nextInt(16) + 5;
+                }
+                Integer[] array = new Integer[length];
                 for (int i = 0; i < array.length; i++) {
-                    array[i] = Integer.parseInt(nums[i].trim());
+                    array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 }
                 return array;
-            case "hashDivision":
-            case "hashDivisionLinear":
-            case "hashDivisionQuadratic":
-            case "hashMultiplication":
-            case "hashMultiplicationLinear":
-            case "hashMultiplicationQuadratic":
-                Pair<double[], Integer[]> input = new Pair<double[], Integer[]>(null,null);
-                String[] paramString = null;
-                if (options.containsKey(Flag.SOURCE)) {
-                    try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                        paramString = reader.readLine().split(",");
-                        nums = reader.readLine().split(",");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                } else if (DSALExercises.STUDENT_MODE) {
-                    final int length;
-                    Random gen = new Random();
-                    if (options.containsKey(Flag.LINES)) {
-                        length = Integer.parseInt(options.get(Flag.LINES));
-                        System.out.println("Lines set to: " + length);
-                    } else {
-                        length = gen.nextInt(16) + 5;
-                        System.out.println("Lines chosen to: " + length);
-                    }
-                    array = new Integer[length];
-                    for (int i = 0; i < array.length; i++) {
-                        array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    }
-                    double[] params = new double[4]; // create all possible constants per default.
-                    int m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    int c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    int c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    
-                    while(!DSALExercises.arePrime(m,c1,c2))
-                    {
-                        m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                        if(DSALExercises.arePrime(m,c1,c2)) {
-                            break;
-                        }
-                        c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                        if(DSALExercises.arePrime(m,c1,c2)) {
-                            break;
-                        }
-                        c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    }
-                    double c = gen.nextDouble();
-                    params[0] = m;
-                    params[1] = c;
-                    params[2] = c1;
-                    params[3] = c2;
-                    
-                    input = new Pair<double[], Integer[]>(params,array);
-                    return input;
-                } else {
-                    nums = options.get(Flag.INPUT).split(",");
-                    paramString = options.get(Flag.DEGREE).split(",");
+            } else {
+                nums = options.get(Flag.INPUT).split(",");
+            }
+            Integer[] array = new Integer[nums.length];
+            for (int i = 0; i < array.length; i++) {
+                array[i] = Integer.parseInt(nums[i].trim());
+            }
+            return array;
+        } else if (DSALExercises.HASHING_ALGORITHMS.contains(alg)) {
+            Pair<double[], Integer[]> input = new Pair<double[], Integer[]>(null,null);
+            String[] paramString = null;
+            Integer[] array;
+            if (options.containsKey(Flag.SOURCE)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    paramString = reader.readLine().split(",");
+                    nums = reader.readLine().split(",");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
                 }
-                array = new Integer[nums.length];
+            } else if (DSALExercises.STUDENT_MODE) {
+                final int length;
+                Random gen = new Random();
+                if (options.containsKey(Flag.LINES)) {
+                    length = Integer.parseInt(options.get(Flag.LINES));
+                    System.out.println("Lines set to: " + length);
+                } else {
+                    length = gen.nextInt(16) + 5;
+                    System.out.println("Lines chosen to: " + length);
+                }
+                array = new Integer[length];
                 for (int i = 0; i < array.length; i++) {
-                    array[i] = Integer.parseInt(nums[i].trim());
+                    array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 }
-                double[] params = new double[paramString.length];
-                for(int i = 0; i < params.length; ++i)
+                double[] params = new double[4]; // create all possible constants per default.
+                int m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+                int c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+                int c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+
+                while(!DSALExercises.arePrime(m,c1,c2))
                 {
-                    params[i] = Double.parseDouble(paramString[i].trim());
+                    m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+                    if(DSALExercises.arePrime(m,c1,c2)) {
+                        break;
+                    }
+                    c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+                    if(DSALExercises.arePrime(m,c1,c2)) {
+                        break;
+                    }
+                    c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 }
-                input = new Pair<double[], Integer[]>(params, array);
+                double c = gen.nextDouble();
+                params[0] = m;
+                params[1] = c;
+                params[2] = c1;
+                params[3] = c2;
+
+                input = new Pair<double[], Integer[]>(params,array);
                 return input;
-            case "btree":
-                if (options.containsKey(Flag.SOURCE)) {
-                    try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                        nums = reader.readLine().split(",");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                } else if (DSALExercises.STUDENT_MODE) {
-                    final int length;
-                    Random gen = new Random();
-                    if (options.containsKey(Flag.LINES)) {
-                        length = Integer.parseInt(options.get(Flag.LINES));
-                    } else {
-                        length = gen.nextInt(16) + 5;
-                    }
-                    Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
-                    List<Integer> in = new ArrayList<Integer>();
-                    for (int i = 0; i < length; i++) {
-                        if (in.isEmpty() || gen.nextInt(3) > 0) {
-                            int next = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                            deque.offer(new Pair<Integer, Boolean>(next, true));
-                            in.add(next);
-                        } else {
-                            deque.offer(new Pair<Integer, Boolean>(in.remove(gen.nextInt(in.size())), false));
-                        }
-                    }
-                    return deque;
+            } else {
+                nums = options.get(Flag.INPUT).split(",");
+                paramString = options.get(Flag.DEGREE).split(",");
+            }
+            array = new Integer[nums.length];
+            for (int i = 0; i < array.length; i++) {
+                array[i] = Integer.parseInt(nums[i].trim());
+            }
+            double[] params = new double[paramString.length];
+            for(int i = 0; i < params.length; ++i)
+            {
+                params[i] = Double.parseDouble(paramString[i].trim());
+            }
+            input = new Pair<double[], Integer[]>(params, array);
+            return input;
+        } else if (Algorithm.BTREE.name.equals(alg)) {
+            if (options.containsKey(Flag.SOURCE)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    nums = reader.readLine().split(",");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else if (DSALExercises.STUDENT_MODE) {
+                final int length;
+                Random gen = new Random();
+                if (options.containsKey(Flag.LINES)) {
+                    length = Integer.parseInt(options.get(Flag.LINES));
                 } else {
-                    nums = options.get(Flag.INPUT).split(",");
+                    length = gen.nextInt(16) + 5;
                 }
                 Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
-                for (String num : nums) {
-                    String trimmed = num.trim();
-                    if (trimmed.startsWith("~")) {
-                        deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed.substring(1)), false));
+                List<Integer> in = new ArrayList<Integer>();
+                for (int i = 0; i < length; i++) {
+                    if (in.isEmpty() || gen.nextInt(3) > 0) {
+                        int next = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+                        deque.offer(new Pair<Integer, Boolean>(next, true));
+                        in.add(next);
                     } else {
-                        deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed), true));
+                        deque.offer(new Pair<Integer, Boolean>(in.remove(gen.nextInt(in.size())), false));
                     }
                 }
                 return deque;
-            default:
-                return null;
+            } else {
+                nums = options.get(Flag.INPUT).split(",");
+            }
+            Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
+            for (String num : nums) {
+                String trimmed = num.trim();
+                if (trimmed.startsWith("~")) {
+                    deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed.substring(1)), false));
+                } else {
+                    deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed), true));
+                }
+            }
+            return deque;
+        } else {
+            return null;
         }
     }
 
@@ -823,37 +941,113 @@ public class DSALExercises {
     }
 
     /**
-     * Checks for a given number if it is a prime.
-     * @param num The number to be checked.
-     * @return true, if the number is a prime, false otherwise.
+     * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
+     * @author cryingshadow
+     * @version $Id$
      */
-    private static boolean isPrime(int num) {
-        int sqrt = (int) Math.sqrt(num) + 1;
-        for (int i = 2; i < sqrt; i++) {
-            if (num % i == 0) {
-                // number is perfectly divisible - no prime
-                return false;
-            }
-        }
-        return true;
-    }
+    private static enum Algorithm {
 
-    private static boolean arePrime(int a, int b, int c) {
-        return DSALExercises.gcd(a,b) == 1 && DSALExercises.gcd(b,c) == 1 && DSALExercises.gcd(a,c) == 1;
-    }
+        /**
+         * Insertion and deletion in B-trees with int values.
+         */
+        BTREE("btree", new String[]{"TODO"}, true),
 
-    /**
-     * Computes the gcd of two numbers by using the Eucilidian algorithm.
-     * @param number1 The first of the two numbers.
-     * @param number2 The second of the two numbers.
-     * @return The greates common divisor of number1 and number2.
-     */
-    private static int gcd(int number1, int number2) {
-        //base case
-        if(number2 == 0){
-            return number1;
+        /**
+         * Bubblesort on Integer arrays.
+         */
+        BUBBLESORT("bubblesort", new String[]{"TODO"}, true),
+
+        /**
+         * Linked hashing on Integer arrays with the division method.
+         */
+        HASH_DIV("hashDivision", new String[]{"TODO"}, true),
+
+        /**
+         * Hashing on Integer arrays with the division method and linear probing.
+         */
+        HASH_DIV_LIN("hashDivisionLinear", new String[]{"TODO"}, true),
+
+        /**
+         * Hashing on Integer arrays with the division method and quadratic probing.
+         */
+        HASH_DIV_QUAD("hashDivisionQuadratic", new String[]{"TODO"}, true),
+
+        /**
+         * Linked hashing on Integer arrays with the multiplication method.
+         */
+        HASH_MULT("hashMultiplication", new String[]{"TODO"}, true),
+
+        /**
+         * Hashing on Integer arrays with the multiplication method and linear probing.
+         */
+        HASH_MULT_LIN("hashMultiplicationLinear", new String[]{"TODO"}, true),
+
+        /**
+         * Hashing on Integer arrays with the multiplication method and quadratic probing.
+         */
+        HASH_MULT_QUAD("hashMultiplicationQuadratic", new String[]{"TODO"}, true),
+
+        /**
+         * Heapsort on Integer arrays.
+         */
+        HEAPSORT( "heapsort", new String[]{"TODO"}, true),
+
+        /**
+         * Heapsort on Integer arrays where the tree interpretation of the current array is explicitly displayed.
+         */
+        HEAPSORT_TREE("heapsortWithTrees", new String[]{"TODO"}, true),
+
+        /**
+         * Insertionsort on Integer arrays.
+         */
+        INSERTIONSORT("insertionsort", new String[]{"TODO"}, true),
+
+        /**
+         * Mergesort on Integer arrays.
+         */
+        MERGESORT("mergesort", new String[]{"TODO"}, true),
+
+        /**
+         * Mergesort on Integer arrays where splitting is explicitly displayed.
+         */
+        MERGESORT_SPLIT("mergesortWithSplitting", new String[]{"TODO"}, true),
+
+        /**
+         * Quicksort on Integer arrays.
+         */
+        QUICKSORT("quicksort", new String[]{"TODO"}, true),
+
+        /**
+         * Selectionsort on Integer arrays.
+         */
+        SELECTIONSORT("selectionsort", new String[]{"TODO"}, true);
+
+        /**
+         * The documentation for this algorithm.
+         */
+        private String[] docu;
+
+        /**
+         * Flag indicating whether the algorithm is enabled in student mode.
+         */
+        private boolean enabled;
+
+        /**
+         * The name of the algorithm.
+         */
+        private String name;
+
+        /**
+         * @param nameParam The name of the algorithm.
+         * @param docuParam The documentation for this algorithm.
+         * @param enabledParam Flag indicating whether the algorithm is enabled in student mode.
+         */
+        private Algorithm(String nameParam, String[] docuParam, boolean enabledParam) {
+            this.name = nameParam;
+            this.docu = docuParam;
+            this.enabled = enabledParam;
         }
-        return DSALExercises.gcd(number2, number1%number2);
+
     }
 
     /**
@@ -934,5 +1128,5 @@ public class DSALExercises {
         }
 
     }
-    
+
 }
