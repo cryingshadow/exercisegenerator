@@ -1,3 +1,6 @@
+import java.io.*;
+import java.util.*;
+
 /**
  * B-tree with ints as keys.
  * @author cryingshadow
@@ -27,6 +30,12 @@ public class IntBTree {
 //        }
 //    }
     
+    /**
+     * Since there are three different names for B-trees of degree 2, this String can be used to customize the output 
+     * for a lecture.
+     */
+    private static final String NAME_OF_BTREE_WITH_DEGREE_2 = "2--3--4--Baum";
+
     /**
      * Filling degree of this B-tree. Must be greater than 1.
      */
@@ -104,6 +113,168 @@ public class IntBTree {
     }
 
     /**
+     * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified B-tree and
+     * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
+     * @param tree The B-tree.
+     * @param ops The operations.
+     * @param construction The operations used to construct the start structure.
+     * @param writer The writer for the solution.
+     * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code> 
+     *                    operations). May be null if this tree should not be displayed separately.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void btree(
+        IntBTree tree,
+        Deque<Pair<Integer, Boolean>> ops,
+        Deque<Pair<Integer, Boolean>> construction,
+        BufferedWriter writer,
+        BufferedWriter writerSpace
+    ) throws IOException {
+        if (ops.isEmpty()) {
+            return;
+        }
+        while (!construction.isEmpty()) {
+            Pair<Integer, Boolean> operation = construction.poll();
+            if (operation.y) {
+                tree.add(operation.x);
+            } else {
+                tree.remove(operation.x);
+            }
+        }
+        if (writerSpace != null) {
+            int degree = tree.getDegree();
+            if (ops.size() > 1) {
+                if (tree.isEmpty()) {
+                    writerSpace.write(
+                        "\\noindent F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren "
+                        + (
+                            degree == 2 ?
+                                IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
+                                    "B-Baum mit Grad $t = " + degree + "$"
+                        ) + " aus und geben Sie die dabei jeweils entstehenden B\\\"aume an:\\\\\\\\"
+                    );
+                    writerSpace.newLine();
+                } else {
+                    writerSpace.write(
+                        "\\noindent Betrachten Sie den folgenden "
+                        + (
+                            degree == 2 ?
+                                IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
+                                    "B-Baum mit Grad $t = " + degree + "$"
+                        ) + ":\\\\[2ex]"
+                    );
+                    writerSpace.newLine();
+                    writerSpace.newLine();
+                    TikZUtils.printBeginning(TikZUtils.CENTER, writerSpace);
+                    TikZUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
+                    IntBTree.printBTree(tree, writerSpace);
+                    TikZUtils.printTikzEnd(writerSpace);
+                    TikZUtils.printEnd(TikZUtils.CENTER, writerSpace);
+                    writerSpace.newLine();
+                    writerSpace.newLine();
+                    writerSpace.write("\\vspace*{1ex}");
+                    writerSpace.newLine();
+                    writerSpace.write(
+                        "\\noindent F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
+                        + "und geben Sie die dabei jeweils entstehenden B\\\"aume an:\\\\\\\\"
+                    );
+                    writerSpace.newLine();
+                }
+                TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
+                for (Pair<Integer, Boolean> op : ops) {
+                    if (op.y) {
+                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
+                    } else {
+                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
+                    }
+                    writerSpace.newLine();
+                }
+                TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
+            } else {
+                Pair<Integer, Boolean> op = ops.peek();
+                if (tree.isEmpty()) {
+                    if (op.y) {
+                        writerSpace.write(
+                            "\\noindent F\\\"ugen Sie den Wert "
+                            + op.x
+                            + " in einen leeren "
+                            + (
+                                degree == 2 ?
+                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
+                                        "B-Baum mit Grad $t = " + degree + "$"
+                            ) + " ein und geben Sie den dabei entstehenden Baum an."
+                        );
+                    } else {
+                        // this case is nonsense 
+                        return;
+                    }
+                } else {
+                    if (op.y) {
+                        writerSpace.write(
+                            "\\noindent F\\\"ugen Sie den Wert "
+                            + op.x
+                            + " in den folgenden "
+                            + (
+                                degree == 2 ?
+                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
+                                        "B-Baum mit Grad $t = " + degree + "$"
+                            ) + " ein und geben Sie den dabei entstehenden Baum an:\\\\[2ex]"
+                        );
+                    } else {
+                        writerSpace.write(
+                            "\\noindent L\\\"oschen Sie den Wert "
+                            + op.x
+                            + " aus dem folgenden "
+                            + (
+                                degree == 2 ?
+                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
+                                        "B-Baum mit Grad $t = " + degree + "$"
+                            ) + " und geben Sie den dabei entstehenden Baum an:\\\\[2ex]"
+                        );
+                    }
+                    writerSpace.newLine();
+                    writerSpace.newLine();
+                    TikZUtils.printBeginning(TikZUtils.CENTER, writerSpace);
+                    TikZUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
+                    IntBTree.printBTree(tree, writerSpace);
+                    TikZUtils.printTikzEnd(writerSpace);
+                    TikZUtils.printEnd(TikZUtils.CENTER, writerSpace);
+                    writerSpace.newLine();
+                }
+            }
+        }
+        int step = 1;
+        while (!ops.isEmpty()) {
+            Pair<Integer, Boolean> operation = ops.poll();
+            if (operation.y) {
+                tree.add(operation.x);
+            } else {
+                tree.remove(operation.x);
+            }
+            TikZUtils.printSamePageBeginning(step++, operation, writer);
+            TikZUtils.printTikzBeginning(TikZStyle.BTREE, writer);
+            IntBTree.printBTree(tree, writer);
+            TikZUtils.printTikzEnd(writer);
+            TikZUtils.printSamePageEnd(writer);
+        }
+    }
+
+    /**
+     * Prints a B-tree to the specified writer.
+     * @param tree The B-tree.
+     * @param writer The writer.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printBTree(IntBTree tree, BufferedWriter writer) throws IOException {
+        if (tree.hasJustRoot()) {
+            writer.write("\\node[draw=black,rounded corners,thick,inner sep=5pt] " + tree.toString() + ";");
+        } else {
+            writer.write("\\Tree " + tree.toString() + ";");
+        }
+        writer.newLine();
+    }
+
+    /**
      * A node in a B-tree of ints.
      * @author cryingshadow
      * @version $Id$
@@ -118,7 +289,7 @@ public class IntBTree {
         /**
          * The keys stored in this node. Entries from <code>filled</code> to the end of the array are garbage.
          */
-        private final int[] keys;
+        private final Integer[] keys;
         
         /**
          * Flag indicating whether this node is a leaf.
@@ -136,7 +307,7 @@ public class IntBTree {
          * successor nodes.
          */
         private IntBTreeNode() {
-            this.keys = new int[2 * IntBTree.this.fillingDegree - 1];
+            this.keys = new Integer[2 * IntBTree.this.fillingDegree - 1];
             this.nodes = new IntBTreeNode[2 * IntBTree.this.fillingDegree];
             this.filled = 0;
             this.leaf = false;
@@ -215,12 +386,12 @@ public class IntBTree {
                     }
                     father.nodes[fatherIndex + 1] = right;
                     father.filled++;
-                    int index = DSALExercises.binarySearch(father.keys, key, 0, father.filled - 1);
+                    int index = ArrayUtils.binarySearch(father.keys, key, 0, father.filled - 1);
                     father.nodes[index].add(key, father, index);
                     return;
                 }
             }
-            int index = DSALExercises.binarySearch(this.keys, key, 0, this.filled - 1);
+            int index = ArrayUtils.binarySearch(this.keys, key, 0, this.filled - 1);
             if (this.leaf) {
                 for (int i = this.filled; i > index; i--) {
                     this.keys[i] = this.keys[i - 1];
@@ -294,7 +465,7 @@ public class IntBTree {
          * @return True if at least one occurrence of the specified key did exist. False otherwise.
          */
         private boolean remove(int key, IntBTree tree) {
-            int index = DSALExercises.binarySearch(this.keys, key, 0, this.filled - 1);
+            int index = ArrayUtils.binarySearch(this.keys, key, 0, this.filled - 1);
             if (this.leaf) {
                 if (this.keys[index] != key) {
                     return false;
