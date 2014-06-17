@@ -4,35 +4,48 @@ import java.util.*;
 /**
  * Programm for creating solutions for DSAL exercises.
  * @author cryingshadow
- * @version $Id$
  */
 public class DSALExercises {
 
     /**
      * The set of (in student mode only enabled) hashing algorithms.
      */
-    private static final Set<String> HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
-
-    /**
-     * Limit for random numbers in student mode.
-     */
-    private static final int NUMBER_LIMIT = 100;
-
-    /**
-     * The set of (in student mode only enabled) sorting algorithms.
-     */
-    private static final Set<String> SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
-
-    /**
-     * Flag used to turn off some options for the student version.
-     */
-    private static final boolean STUDENT_MODE = false;
+    private static final Set<String> HASHING_ALGORITHMS;
 
     /**
      * The help text displayed when just called with -h. Each entry is separated by a newline.
      */
-    private static final String[] HELP = {"TODO helptext"};
+    private static final String[] HELP;
 
+    /**
+     * Limit for random numbers in student mode.
+     */
+    private static final int NUMBER_LIMIT;
+
+    /**
+     * The set of (in student mode only enabled) sorting algorithms.
+     */
+    private static final Set<String> SORTING_ALGORITHMS;
+
+    /**
+     * Flag used to turn off some options for the student version.
+     */
+    private static final boolean STUDENT_MODE;
+    
+    /**
+     * The version of this program.
+     */
+    private static final String VERSION;
+
+    static {
+        VERSION = "1.0";
+        NUMBER_LIMIT = 100;
+        STUDENT_MODE = false;
+        HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
+        SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
+        HELP = DSALExercises.initHelpText();
+    }
+    
     /**
      * Reads an input from a source file, executes the specified algorithm on this input, and outputs the solution in 
      * LaTeX code to the specified target file(s).
@@ -354,7 +367,7 @@ public class DSALExercises {
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 0;
-                    DSALExercises.hashing(array, m, params, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
                     break;
                 case "hashDivisionLinear":
                     in = (Pair<double[], Integer[]>)input;
@@ -376,7 +389,7 @@ public class DSALExercises {
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 1;
-                    DSALExercises.hashing(array, m, params, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
                     break;
                 case "hashDivisionQuadratic":
                     in = (Pair<double[], Integer[]>)input;
@@ -400,7 +413,7 @@ public class DSALExercises {
                     params[1] = 2;
                     params[2] = in.x[1];
                     params[3] = in.x[2];
-                    DSALExercises.hashing(array, m, params, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
                     break;
                 case "hashMultiplication":
                     in = (Pair<double[], Integer[]>)input;
@@ -423,7 +436,7 @@ public class DSALExercises {
                     params[0] = 2;
                     params[1] = 0;
                     params[2] = in.x[1];
-                    DSALExercises.hashing(array, m, params, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
                     break;
                 case "hashMultiplicationLinear":
                     in = (Pair<double[], Integer[]>)input;
@@ -446,7 +459,7 @@ public class DSALExercises {
                     params[0] = 2;
                     params[1] = 1;
                     params[2] = in.x[1];
-                    DSALExercises.hashing(array, m, params, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
                     break;
                 case "hashMultiplicationQuadratic":
                     in = (Pair<double[], Integer[]>)input;
@@ -471,7 +484,7 @@ public class DSALExercises {
                     params[2] = in.x[1];
                     params[3] = in.x[2];
                     params[4] = in.x[3];
-                    DSALExercises.hashing(array, m, params, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
                     break;
                 default:
                     System.out.println("Unknown algorithm!");
@@ -482,7 +495,13 @@ public class DSALExercises {
         }
     }
 
-    private static boolean arePrime(int a, int b, int c) {
+    /**
+     * @param a Some number.
+     * @param b Another number.
+     * @param c Yet another number.
+     * @return True if the three numbers are coprime to each other. False otherwise.
+     */
+    private static boolean areCoprime(int a, int b, int c) {
         return DSALExercises.gcd(a,b) == 1 && DSALExercises.gcd(b,c) == 1 && DSALExercises.gcd(a,c) == 1;
     }
 
@@ -501,181 +520,8 @@ public class DSALExercises {
     }
 
     /**
-     * Performs hashing in different variations (divisionmethod(1), multiplicationmethod(2), linear probing(1), quadratic probing(2), no probing (0)).
-     * @param in The array containing the values, which are to be hashed.
-     * @param m The length of the hashtable.
-     * @param params The array containing the parameters in this order: Algorithm (1,2), probe-mode (0,1,2), additional parameters: c, c1, c2
-     * @param writer The writer for the solution.
-     * @param writerSpace The writer for the exercise.
-     * @throws IOException If some error occurs during output or if in.size > m or if c1 and c2 are badly chosen.
-     */
-    private static void hashing(
-        Integer[] in,
-        int m,
-        double[] params,
-        BufferedWriter writer,
-        BufferedWriter writerSpace
-    ) throws IOException {
-        int collisionCount = 0;
-        Integer[] indizes = new Integer[m];
-        int algorithm = (int)params[0];
-        int probe = (int)params[1];
-        String anchor = "";
-        double c = 0.0;
-        double c1 = 0.0;
-        double c2 = 0.0;
-        switch(probe)
-        {
-            case 2:
-                switch(algorithm)
-                {
-                    case 1: // Division Hashing
-                        c1 = params[2];
-                        c2 = params[3];
-                        writer.write("m = " + m + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
-                        break;
-                    case 2: // Multiplication Hashing
-                        c = params[2];
-                        c1 = params[3];
-                        c2 = params[4];
-                        writer.write("m = " + m + ", c = " + c + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
-                        break;
-                }
-                break;
-            default:
-                switch(algorithm)
-                {
-                    case 1: // Division Hashing
-                        writer.write("m = " + m + ":\\\\[2ex]");
-                        break;
-                    case 2: // Multiplication Hashing
-                        c = params[2];
-                        writer.write("m = " + m + ", c = " + c + ":\\\\[2ex]");
-                        break;
-                }
-                break;
-        }
-        
-        if( probe != 0) // probing
-        {
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            for(int i = 0; i < m; ++i)
-            {
-                indizes[i] = i;
-            }
-            anchor = ArrayUtils.printArray(indizes, null, null, null, writerSpace);
-            anchor = ArrayUtils.printEmptyArray(m, anchor, writerSpace);
-            
-            Integer[] solution = new Integer[m];
-            for(int i = 0; i < solution.length; ++i)
-            {
-                solution[i] = null;
-            }
-            for(int i = 0; i < in.length; ++i)
-            {
-                int pos = 0;
-                switch(algorithm)
-                {
-                    case 1: // Division Hashing
-                        pos = in[i]%m;
-                        break;
-                    case 2: // Multiplication Hashing
-                        pos = (int)Math.floor(m * (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0));
-                        break;
-                }
-                
-                if(solution[pos] == null)
-                {
-                    solution[pos] = in[i];
-                }
-                else
-                {
-                    int off = 1;
-                    switch(probe)
-                    {
-                        case 1: // linear probing
-                            while(solution[(pos+off)%m] != null && off < m)
-                            {
-                                ++off;
-                                ++collisionCount;
-                            }
-                            if(solution[(pos+off)%m] != null)
-                            {
-                                throw new IOException("The array size was chosen too small!");
-                            }
-                            solution[(pos+off)%m] = in[i];
-                            break;
-                        case 2: // quadratic probing
-                            while(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != null && off < m)
-                            {
-                                ++off;
-                                ++collisionCount;
-                            }
-                            if(solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != null)
-                            {
-                                String errormsg = "The array size was chosen too small or the constants for quadratic probing are chosen badly: Insertion of " + in[i] + " failed!";
-                                throw new IOException(errormsg);
-                            }
-                            solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] = in[i];
-                            break;
-                        case 3: // doppeltes hashing
-                            break;
-                        default:
-                    }
-                }
-            }
-            if(!DSALExercises.STUDENT_MODE)
-            {
-                System.out.println("#collisions by probing: " + collisionCount);
-            }
-            anchor = ArrayUtils.printArray(solution, null, null, null, writer);
-        }
-        else // probe == 0 -> no probing
-        {
-            TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writerSpace);
-            TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
-            String[] solution = new String[m];
-            for(int i = 0; i < m; ++i)
-            {
-                solution[i] = i + ":";
-            }
-            anchor = ArrayUtils.printVerticalStringArray(solution, null, null, null, writerSpace);
-            
-            
-            for(int i = 0; i < in.length; ++i)
-            {
-                int pos = 0;
-                switch(algorithm)
-                {
-                    case 1: // Division Hashing
-                        pos = in[i]%m;
-                        break;
-                    case 2: // Multiplication Hashing
-                        //System.out.println("Test: " + Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0 + ", m is: " + m);
-                        pos = (int)Math.floor( m * Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0 );
-                        break;
-                }
-                if(solution[pos].substring(solution[pos].length()-1).equals(":"))
-                {
-                    solution[pos] += " " + in[i];
-                }
-                else
-                {
-                    solution[pos] += ", " + in[i];
-                }
-            }
-            anchor = ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
-        }
-        
-        TikZUtils.printTikzEnd(writerSpace);
-        TikZUtils.printTikzEnd(writer);
-    }
-
-    /**
      * @return The set of (in student mode only enabled) hashing algorithms.
      */
-    @SuppressWarnings("unused")
     private static Set<String> initHashingAlgorithms() {
         Set<String> res = new LinkedHashSet<String>();
         if (!DSALExercises.STUDENT_MODE || Algorithm.HASH_DIV.enabled) {
@@ -700,9 +546,30 @@ public class DSALExercises {
     }
 
     /**
+     * @return The general help text as String array.
+     */
+    private static String[] initHelpText() {
+        List<String> text = new ArrayList<String>();
+        text.add("This is ExerciseCreator version " + DSALExercises.VERSION + (DSALExercises.STUDENT_MODE ? " (student)." : "."));
+        text.add(
+            "You can create exercises and solutions automatically using the following flags, where each flag needs to "
+            + "be followed by exactly one argument:"
+        );
+        for (Flag flag : Flag.values()) {
+            if (!DSALExercises.STUDENT_MODE || flag.forStudents) {
+                text.add("");
+                text.add(flag.shortName);
+                text.add(flag.docu);
+            }
+        }
+        String[] res = new String[text.size()];
+        res = text.toArray(res);
+        return res;
+    }
+
+    /**
      * @return The set of (in student mode only enabled) sorting algorithms.
      */
-    @SuppressWarnings("unused")
     private static Set<String> initSortingAlgorithms() {
         Set<String> res = new LinkedHashSet<String>();
         if (!DSALExercises.STUDENT_MODE || Algorithm.BUBBLESORT.enabled) {
@@ -730,22 +597,6 @@ public class DSALExercises {
             res.add(Algorithm.SELECTIONSORT.name);
         }
         return res;
-    }
-
-    /**
-     * Checks for a given number if it is a prime.
-     * @param num The number to be checked.
-     * @return true, if the number is a prime, false otherwise.
-     */
-    private static boolean isPrime(int num) {
-        int sqrt = (int) Math.sqrt(num) + 1;
-        for (int i = 2; i < sqrt; i++) {
-            if (num % i == 0) {
-                // number is perfectly divisible - no prime
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -814,15 +665,13 @@ public class DSALExercises {
                 int m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 int c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 int c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-
-                while(!DSALExercises.arePrime(m,c1,c2))
-                {
+                while (!DSALExercises.areCoprime(m,c1,c2)) {
                     m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    if(DSALExercises.arePrime(m,c1,c2)) {
+                    if (DSALExercises.areCoprime(m,c1,c2)) {
                         break;
                     }
                     c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    if(DSALExercises.arePrime(m,c1,c2)) {
+                    if (DSALExercises.areCoprime(m,c1,c2)) {
                         break;
                     }
                     c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
@@ -832,7 +681,6 @@ public class DSALExercises {
                 params[1] = c;
                 params[2] = c1;
                 params[3] = c2;
-
                 input = new Pair<double[], Integer[]>(params,array);
                 return input;
             } else {
@@ -844,8 +692,7 @@ public class DSALExercises {
                 array[i] = Integer.parseInt(nums[i].trim());
             }
             double[] params = new double[paramString.length];
-            for(int i = 0; i < params.length; ++i)
-            {
+            for (int i = 0; i < params.length; ++i) {
                 params[i] = Double.parseDouble(paramString[i].trim());
             }
             input = new Pair<double[], Integer[]>(params, array);
@@ -1051,6 +898,26 @@ public class DSALExercises {
     }
 
     /**
+     * @return The names of the supported algorithms, separated by commas.
+     */
+    private static String algorithmNames() {
+        StringBuilder res = new StringBuilder();
+        boolean first = true;
+        for (Algorithm alg : Algorithm.values()) {
+            if (DSALExercises.STUDENT_MODE && !alg.enabled) {
+                continue;
+            }
+            if (first) {
+                first = false;
+            } else {
+                res.append(", ");
+            }
+            res.append(alg.name);
+        }
+        return res.toString();
+    }
+    
+    /**
      * Option flags for the program arguments.
      * @author cryingshadow
      * @version $Id$
@@ -1058,47 +925,54 @@ public class DSALExercises {
     private static enum Flag {
 
         /**
-         * The algorithm to apply to the input. Currently, selectionsort, bubblesort, insertionsort, quicksort, 
-         * mergesort, and heapsort are implemented. Must be specified.
+         * The algorithm to apply to the input. Must be specified.
          */
-        ALGORITHM("-a", "Algorithm", true),
+        ALGORITHM(
+            "-a",
+            "Algorithm",
+            "The algorithm. Currently, the supported algorithms are: "
+            + DSALExercises.algorithmNames()
+            + ". To see detailed help for one of the supported algorithms, call this program with \"-h <alg>\" where "
+            + "<alg> is the name of the algorithm.",
+            true
+        ),
 
         /**
          * Degree (e.g., of a B-tree).
          */
-        DEGREE("-d", "Degree", true),
+        DEGREE("-d", "Degree", "TODO", true),
 
         /**
          * Input directly specified as a String. Must not be specified together with -s, but one of them must be 
          * specified.
          */
-        INPUT("-i", "Input", false),
+        INPUT("-i", "Input", "TODO", false),
 
         /**
          * Additional lines for pre-prints. Defaults to 0 if not set. Ignored if -p is not set.
          */
-        LINES("-l", "Additional lines", true),
+        LINES("-l", "Additional lines", "TODO", true),
 
         /**
          * File containing operations used to construct a start structure.
          */
-        OPERATIONS("-o", "Operations for start structure", false),
+        OPERATIONS("-o", "Operations for start structure", "TODO", false),
 
         /**
          * File to store LaTeX code for a pre-print where to solve an exercise. E.g., for sorting this might be the 
          * input array followed by a number of empty arrays. If not set, no pre-print will be generated.
          */
-        PREPRINT("-p", "Pre-print file", true),
+        PREPRINT("-p", "Pre-print file", "TODO", true),
 
         /**
          * Source file containing the input. Must not be specified together with -i, but one of them must be specified.
          */
-        SOURCE("-s", "Source file", true),
+        SOURCE("-s", "Source file", "TODO", true),
 
         /**
          * Target file to store the LaTeX code in. If not specified, the solution is sent to the standard output.
          */
-        TARGET("-t", "Target file", true);
+        TARGET("-t", "Target file", "TODO", true);
 
         /**
          * Flag indicating whether this option is available for students.
@@ -1111,6 +985,11 @@ public class DSALExercises {
         private final String longName;
 
         /**
+         * The docu for this flag.
+         */
+        private final String docu;
+        
+        /**
          * The name of the option flag as to be given by the user.
          */
         private final String shortName;
@@ -1119,11 +998,13 @@ public class DSALExercises {
          * Creates an option flag with the specified short and long names.
          * @param s The short name.
          * @param l The long name.
+         * @param d The documentation.
          * @param a Flag indicating whether this option is available for students.
          */
-        private Flag(String s, String l, boolean a) {
+        private Flag(String s, String l, String d, boolean a) {
             this.shortName = s;
             this.longName = l;
+            this.docu = d;
             this.forStudents = a;
         }
 
