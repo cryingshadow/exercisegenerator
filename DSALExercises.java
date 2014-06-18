@@ -35,7 +35,7 @@ public class DSALExercises {
     /**
      * The set of (in student mode only enabled) tree algorithms.
      */
-    private static final Set<String> TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
+    private static final Set<String> TREE_ALGORITHMS;
     
     /**
      * The version of this program.
@@ -48,6 +48,7 @@ public class DSALExercises {
         STUDENT_MODE = true;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
+        TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
         HELP = DSALExercises.initHelpText();
     }
     
@@ -602,7 +603,11 @@ public class DSALExercises {
      */
     private static String[] initHelpText() {
         List<String> text = new ArrayList<String>();
-        text.add("This is ExerciseCreator version " + DSALExercises.VERSION + (DSALExercises.STUDENT_MODE ? " (student)." : "."));
+        text.add(
+            "This is ExerciseCreator version "
+            + DSALExercises.VERSION
+            + (DSALExercises.STUDENT_MODE ? " (student)." : ".")
+        );
         text.add(
             "You can create exercises and solutions automatically using the following flags, where each flag needs to "
             + "be followed by exactly one argument:"
@@ -881,12 +886,35 @@ public class DSALExercises {
         /**
          * Insertion and deletion in B-trees with int values.
          */
-        BTREE("btree", new String[]{"TODO"}, true),
+        BTREE(
+            "btree",
+            new String[]{
+                "Insertion and deletion of keys in a B-tree. The flag -d can be used to set the degree of the B-tree "
+                + "(an integer greater than 1, if not specified, the degree defaults to 2).",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies how many operations should be performed on the B-tree." :
+                            "TODO"
+                )
+            },
+            true
+        ),
 
         /**
          * Bubblesort on Integer arrays.
          */
-        BUBBLESORT("bubblesort", new String[]{"TODO"}, true),
+        BUBBLESORT(
+            "bubblesort",
+            new String[]{
+                "Perform Bubblesort on an array of integers.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )                
+            },
+            true
+        ),
 
         /**
          * Linked hashing on Integer arrays with the division method.
@@ -897,7 +925,7 @@ public class DSALExercises {
                 "Use the division method in combination with linking for hashing into integer arrays.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "The length parameter specifies how many elements will be added to the hash table." :
+                        "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap)"
                 )
             },
@@ -913,7 +941,7 @@ public class DSALExercises {
                 "Use the division method in combination with linear probing for hashing into integer arrays.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "The length parameter specifies how many elements will be added to the hash table." :
+                        "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap)"
                 )
             },
@@ -929,7 +957,7 @@ public class DSALExercises {
                 "Use the division method in combination with quadratic probing for hashing into integer arrays.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "The length parameter specifies how many elements will be added to the hash table." :
+                        "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"
                 )
             },
@@ -945,7 +973,7 @@ public class DSALExercises {
                 "Use the multiplication method in combination with linking for hashing into integer arrays.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "The length parameter specifies how many elements will be added to the hash table." :
+                        "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
                             + "multiplication method)"
                 )                
@@ -962,7 +990,7 @@ public class DSALExercises {
                 "Use the multiplication method in combination with linear probing for hashing into integer arrays.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "The length parameter specifies how many elements will be added to the hash table." :
+                        "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
                             + "multiplication method)"
                 )                
@@ -979,11 +1007,10 @@ public class DSALExercises {
                 "Use the multiplication method in combination with quadratic probing for hashing into integer arrays.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "The length parameter specifies how many elements will be added to the hash table." :
+                        "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
                             + "multiplication method), c1 and c2 (constants for quadratic probing)"
                 )                
-                
             },
             true
         ),
@@ -991,32 +1018,100 @@ public class DSALExercises {
         /**
          * Heapsort on Integer arrays.
          */
-        HEAPSORT( "heapsort", new String[]{"TODO"}, true),
+        HEAPSORT(
+            "heapsort",
+            new String[]{
+                "Perform Heapsort on an array of integers.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )                
+            },
+            true
+        ),
 
         /**
          * Heapsort on Integer arrays where the tree interpretation of the current array is explicitly displayed.
          */
-        HEAPSORT_TREE("heapsortWithTrees", new String[]{"TODO"}, true),
+        HEAPSORT_TREE(
+            "heapsortWithTrees",
+            new String[]{
+                "Perform Heapsort on an array of integers. Additionally output the heap interpretation of each array "
+                + "in the solution as trees.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )                
+            },
+            true
+        ),
 
         /**
          * Insertionsort on Integer arrays.
          */
-        INSERTIONSORT("insertionsort", new String[]{"TODO"}, true),
+        INSERTIONSORT(
+            "insertionsort",
+            new String[]{
+                "Perform Insertionsort on an array of integers.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )                
+            },
+            true
+        ),
 
         /**
          * Mergesort on Integer arrays.
          */
-        MERGESORT("mergesort", new String[]{"TODO"}, true),
+        MERGESORT(
+            "mergesort",
+            new String[]{
+                "Perform Mergesort on an array of integers.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )                
+            },
+            true
+        ),
 
         /**
          * Mergesort on Integer arrays where splitting is explicitly displayed.
          */
-        MERGESORT_SPLIT("mergesortWithSplitting", new String[]{"TODO"}, true),
+        MERGESORT_SPLIT(
+            "mergesortWithSplitting",
+            new String[]{
+                "Perform Mergesort on an array of integers. Additionally output the split operations in the solution, "
+                + "although they do not change the array content.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )                
+            },
+            true
+        ),
 
         /**
          * Quicksort on Integer arrays.
          */
-        QUICKSORT("quicksort", new String[]{"TODO"}, true),
+        QUICKSORT(
+            "quicksort",
+            new String[]{
+                "Perform Quicksort on an array of integers.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )                
+            },
+            true
+        ),
 
         /**
          * Insertion and deletion in Red-Black-trees with int values.
@@ -1026,7 +1121,18 @@ public class DSALExercises {
         /**
          * Selectionsort on Integer arrays.
          */
-        SELECTIONSORT("selectionsort", new String[]{"TODO"}, true);
+        SELECTIONSORT(
+            "selectionsort",
+            new String[]{
+                "Perform Selectionsort on an array of integers.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )                
+            },
+            true
+        );
 
         /**
          * The documentation for this algorithm.
