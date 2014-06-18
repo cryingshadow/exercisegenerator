@@ -338,6 +338,9 @@ public class DSALExercises {
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 0;
+					params[2] = 0;
+                    params[3] = 0;
+                    params[4] = 0;
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
             } else if (Algorithm.HASH_DIV_LIN.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
@@ -358,6 +361,9 @@ public class DSALExercises {
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 1;
+					params[2] = 0;
+                    params[3] = 0;
+                    params[4] = 0;
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
             } else if (Algorithm.HASH_DIV_QUAD.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
@@ -382,8 +388,9 @@ public class DSALExercises {
                     params = new double[4];
                     params[0] = 1;
                     params[1] = 2;
-                    params[2] = in.x[1];
-                    params[3] = in.x[2];
+					params[2] = 0;
+                    params[3] = in.x[1];
+                    params[4] = in.x[2];
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
             } else if (Algorithm.HASH_MULT.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
@@ -403,10 +410,12 @@ public class DSALExercises {
                         exerciseWriter.write(array[array.length-1] + ".");
                         exerciseWriter.write("\\\\[2ex]");
                         exerciseWriter.newLine();
-                    params = new double[3];
+                    params = new double[5];
                     params[0] = 2;
                     params[1] = 0;
                     params[2] = in.x[1];
+					params[3] = 0;
+					params[4] = 0;
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
             } else if (Algorithm.HASH_MULT_LIN.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
@@ -426,10 +435,12 @@ public class DSALExercises {
                         exerciseWriter.write(array[array.length-1] + ".");
                         exerciseWriter.write("\\\\[2ex]");
                         exerciseWriter.newLine();
-                    params = new double[3];
+                    params = new double[5];
                     params[0] = 2;
                     params[1] = 1;
                     params[2] = in.x[1];
+					params[3] = 0;
+					params[4] = 0;
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
             } else if (Algorithm.HASH_MULT_QUAD.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
@@ -513,10 +524,20 @@ public class DSALExercises {
         return DSALExercises.gcd(number2, number1%number2);
     }
 	
+	/**
+	 * Returns the next prime (up to 100) after or equal to the input.
+	 * @param start Value, which defines the lower bound for the resulting prime.
+	 * @return The next largest prime after or equal to input.
+	 */
 	private static int getNextPrime(int start)
 	{
 		int[] primes = new int[]{5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
-		
+		int current = 0;
+		while(primes[current] < start && current < primes.length-1)
+		{
+			current++;
+		}
+		return primes[current];
 	}
 
 	private static Integer[] getAllUpToNextPrimes(int start)
@@ -749,11 +770,18 @@ public class DSALExercises {
                 int m = 0;
 				if(alg == "hashDivision" || alg == "hashMultiplication")
 				{
-					m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+					int[] primes = getAllUpToNextPrimes(length);
+					int index = gen.nextInt(primes.length);
+					m = primes[index];
 				}
 				else
 				{
-					m = length;
+					m = getNextPrime(length);
+					boolean skip = gen.nextBoolean();
+					if(skip)
+					{
+						m = getNextPrime(m+1);
+					}
 				}
                 int c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 int c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
