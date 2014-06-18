@@ -13,6 +13,11 @@ public class DSALExercises {
     private static final Set<String> HASHING_ALGORITHMS;
 
     /**
+     * The set of (in student mode only enabled) hashing algorithms.
+     */
+    private static final Set<String> TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
+
+    /**
      * The help text displayed when just called with -h. Each entry is separated by a newline.
      */
     private static final String[] HELP;
@@ -347,6 +352,24 @@ public class DSALExercises {
                         options.containsKey(Flag.PREPRINT) ? writerSpace : null
                     );
                     break;
+                case "rbtree":
+                    IntRBTree.rbtree(
+                        new IntRBTree(),
+                        (Deque<Pair<Integer,Boolean>>)input,
+                        DSALExercises.parseOperations(options),
+                        writer,
+                        options.containsKey(Flag.PREPRINT) ? writerSpace : null
+                    );
+                    break;
+                case "avltree":
+                    IntAVLTree.avltree(
+                        new IntAVLTree(),
+                        (Deque<Pair<Integer,Boolean>>)input,
+                        DSALExercises.parseOperations(options),
+                        writer,
+                        options.containsKey(Flag.PREPRINT) ? writerSpace : null
+                    );
+                    break;
                 case "hashDivision":
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
@@ -544,6 +567,24 @@ public class DSALExercises {
         }
         return res;
     }
+    
+    /**
+     * @return The set of (in student mode only enabled) tree algorithms.
+     */
+    @SuppressWarnings("unused")
+    private static Set<String> initTreeAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.BTREE.enabled) {
+            res.add(Algorithm.BTREE.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.RBTREE.enabled) {
+            res.add(Algorithm.RBTREE.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.AVLTREE.enabled) {
+            res.add(Algorithm.AVLTREE.name);
+        }
+        return res;
+    }
 
     /**
      * @return The general help text as String array.
@@ -707,7 +748,7 @@ public class DSALExercises {
             }
             input = new Pair<double[], Integer[]>(params, array);
             return input;
-        } else if (Algorithm.BTREE.name.equals(alg)) {
+        } else if (DSALExercises.TREE_ALGORITHMS.contains(alg)) {
             if (options.containsKey(Flag.SOURCE)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                     nums = reader.readLine().split(",");
@@ -808,6 +849,16 @@ public class DSALExercises {
          * Insertion and deletion in B-trees with int values.
          */
         BTREE("btree", new String[]{"TODO"}, true),
+
+        /**
+         * Insertion and deletion in AVL-trees with int values.
+         */
+        AVLTREE("avltree", new String[]{"TODO"}, true),
+
+        /**
+         * Insertion and deletion in Red-Black-trees with int values.
+         */
+        RBTREE("rbtree", new String[]{"TODO"}, true),
 
         /**
          * Bubblesort on Integer arrays.
