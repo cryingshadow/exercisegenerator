@@ -335,7 +335,7 @@ public class DSALExercises {
                         exerciseWriter.write(array[array.length-1] + ".");
                         exerciseWriter.write("\\\\[2ex]");
                         exerciseWriter.newLine();
-                    params = new double[2];
+                    params = new double[5];
                     params[0] = 1;
                     params[1] = 0;
 					params[2] = 0;
@@ -358,7 +358,7 @@ public class DSALExercises {
                         exerciseWriter.write(array[array.length-1] + ".");
                         exerciseWriter.write("\\\\[2ex]");
                         exerciseWriter.newLine();
-                    params = new double[2];
+                    params = new double[5];
                     params[0] = 1;
                     params[1] = 1;
 					params[2] = 0;
@@ -373,9 +373,9 @@ public class DSALExercises {
                             "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
                             + m
                             + " unter Verwendung der Divisionsmethode mit quadratischer Sondierung ($c_1$= "
-                            + in.x[1]
-                            + ", $c_2$= "
                             + in.x[2]
+                            + ", $c_2$= "
+                            + in.x[3]
                             + " ) ein:\\\\[2ex]"
                         );
                         exerciseWriter.newLine();
@@ -385,12 +385,12 @@ public class DSALExercises {
                         exerciseWriter.write(array[array.length-1] + ".");
                         exerciseWriter.write("\\\\[2ex]");
                         exerciseWriter.newLine();
-                    params = new double[4];
+                    params = new double[5];
                     params[0] = 1;
                     params[1] = 2;
 					params[2] = 0;
-                    params[3] = in.x[1];
-                    params[4] = in.x[2];
+                    params[3] = in.x[2];
+                    params[4] = in.x[3];
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
             } else if (Algorithm.HASH_MULT.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
@@ -813,10 +813,31 @@ public class DSALExercises {
             for (int i = 0; i < array.length; i++) {
                 array[i] = Integer.parseInt(nums[i].trim());
             }
-            double[] params = new double[paramString.length];
+            double[] params = new double[4];
             for (int i = 0; i < params.length; ++i) {
                 params[i] = Double.parseDouble(paramString[i].trim());
             }
+			switch(alg)
+			{
+				case "hashDivision":
+				case "hashDivisionLinear":
+					params[1] = 0;
+					params[2] = 0;
+					params[3] = 0;
+					break;
+				case "hashMultiplication":
+				case "hashMultiplicationLinear":
+					params[2] = 0;
+					params[3] = 0;
+					break;
+				case "hashDivisionQuadratic":
+					params[3] = params[2];
+					params[2] = params[1];
+					params[1] = 0;
+					break;
+				default:
+			}
+			
             input = new Pair<double[], Integer[]>(params, array);
             return input;
         } else if (DSALExercises.TREE_ALGORITHMS.contains(alg)) {
