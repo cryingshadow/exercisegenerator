@@ -770,7 +770,7 @@ public class DSALExercises {
                 int m = 0;
 				if(alg == "hashDivision" || alg == "hashMultiplication")
 				{
-					int[] primes = getAllUpToNextPrimes(length);
+					Integer[] primes = getAllUpToNextPrimes(length);
 					int index = gen.nextInt(primes.length);
 					m = primes[index];
 				}
