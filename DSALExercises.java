@@ -519,10 +519,10 @@ public class DSALExercises {
 		
 	}
 
-	private static int[] getAllUpToNextPrimes(int start)
+	private static Integer[] getAllUpToNextPrimes(int start)
 	{
 		int[] primes = new int[]{5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
-		ArrayList<Integer> result;
+		List<Integer> result = new ArrayList<Integer>();
 		int current = 0;
 		while(primes[current] < start)
 		{
@@ -530,7 +530,7 @@ public class DSALExercises {
 			current++;
 		}
 		result.add(primes[current]);
-		return result.toArray(new int[result.size()]);
+		return result.toArray(new Integer[result.size()]);
 	}
 	
     /**
