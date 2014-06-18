@@ -8,14 +8,14 @@ import java.util.*;
 public class DSALExercises {
 
     /**
-     * The set of (in student mode only enabled) hashing algorithms.
+     * Flag used to turn off some options for the student version.
      */
-    private static final Set<String> HASHING_ALGORITHMS;
+    public static final boolean STUDENT_MODE;
 
     /**
      * The set of (in student mode only enabled) hashing algorithms.
      */
-    private static final Set<String> TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
+    private static final Set<String> HASHING_ALGORITHMS;
 
     /**
      * The help text displayed when just called with -h. Each entry is separated by a newline.
@@ -33,9 +33,9 @@ public class DSALExercises {
     private static final Set<String> SORTING_ALGORITHMS;
 
     /**
-     * Flag used to turn off some options for the student version.
+     * The set of (in student mode only enabled) tree algorithms.
      */
-    private static final boolean STUDENT_MODE;
+    private static final Set<String> TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
     
     /**
      * The version of this program.
@@ -147,8 +147,8 @@ public class DSALExercises {
             return;
         }
         int rows =
-            !DSALExercises.STUDENT_MODE && options.containsKey(Flag.LINES) ?
-                Integer.parseInt(options.get(Flag.LINES)) :
+            !DSALExercises.STUDENT_MODE && options.containsKey(Flag.LENGTH) ?
+                Integer.parseInt(options.get(Flag.LENGTH)) :
                     0;
         try (
             BufferedWriter writer =
@@ -159,8 +159,8 @@ public class DSALExercises {
                 );
             BufferedWriter writerSpace =
                 new BufferedWriter(
-                    options.containsKey(Flag.PREPRINT) ?
-                        new FileWriter(options.get(Flag.PREPRINT)) :
+                    options.containsKey(Flag.EXERCISE) ?
+                        new FileWriter(options.get(Flag.EXERCISE)) :
                             new OutputStreamWriter(System.out)
                 );    
         ) {
@@ -173,7 +173,7 @@ public class DSALExercises {
             switch (options.get(Flag.ALGORITHM)) {
                 case "selectionsort":
                     array = (Integer[])input;
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write(
                                 "\\noindent Sortieren Sie das folgende Array mithilfe von Selectionsort."
@@ -186,7 +186,7 @@ public class DSALExercises {
                         anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
                     }
                     rows += Sorting.selectionsort(array, writer);
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
                             anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
                         }
@@ -195,7 +195,7 @@ public class DSALExercises {
                     break;
                 case "bubblesort":
                     array = (Integer[])input;
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Bubblesort.");
                             writerSpace.newLine();
@@ -206,7 +206,7 @@ public class DSALExercises {
                         anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
                     }
                     rows += Sorting.bubblesort(array, writer);
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
                             anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
                         }
@@ -215,7 +215,7 @@ public class DSALExercises {
                     break;
                 case "insertionsort":
                     array = (Integer[])input;
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write(
                                 "\\noindent Sortieren Sie das folgende Array mithilfe von Insertionsort."
@@ -231,7 +231,7 @@ public class DSALExercises {
                         anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
                     }
                     rows += Sorting.insertionsort(array, writer);
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
                             anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
                         }
@@ -240,7 +240,7 @@ public class DSALExercises {
                     break;
                 case "quicksort":
                     array = (Integer[])input;
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Quicksort.");
                             writerSpace.newLine();
@@ -254,7 +254,7 @@ public class DSALExercises {
                         anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
                     }
                     rows += Sorting.quicksort(array, writer);
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
                             anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
                         }
@@ -263,7 +263,7 @@ public class DSALExercises {
                     break;
                 case "mergesort":
                     array = (Integer[])input;
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Mergesort.");
                             writerSpace.newLine();
@@ -274,7 +274,7 @@ public class DSALExercises {
                         anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
                     }
                     rows += Sorting.mergesort(array, false, writer);
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
                             anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
                         }
@@ -283,7 +283,7 @@ public class DSALExercises {
                     break;
                 case "mergesortWithSplitting":
                     array = (Integer[])input;
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Mergesort.");
                             writerSpace.newLine();
@@ -294,7 +294,7 @@ public class DSALExercises {
                         anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
                     }
                     rows += Sorting.mergesort(array, true, writer);
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
                             anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
                         }
@@ -303,7 +303,7 @@ public class DSALExercises {
                     break;
                 case "heapsort":
                     array = (Integer[])input;
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Heapsort.");
                             writerSpace.newLine();
@@ -314,7 +314,7 @@ public class DSALExercises {
                         anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
                     }
                     rows += Sorting.heapsort(array, writer);
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
                             anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
                         }
@@ -323,7 +323,7 @@ public class DSALExercises {
                     break;
                 case "heapsortWithTrees":
                     array = (Integer[])input;
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
                             writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Heapsort.");
                             writerSpace.newLine();
@@ -334,7 +334,7 @@ public class DSALExercises {
                         anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
                     }
                     rows += Sorting.heapsortWithTrees(array, writer);
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
                             anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
                         }
@@ -349,7 +349,7 @@ public class DSALExercises {
                         (Deque<Pair<Integer,Boolean>>)input,
                         DSALExercises.parseOperations(options),
                         writer,
-                        options.containsKey(Flag.PREPRINT) ? writerSpace : null
+                        options.containsKey(Flag.EXERCISE) ? writerSpace : null
                     );
                     break;
                 case "rbtree":
@@ -358,7 +358,7 @@ public class DSALExercises {
                         (Deque<Pair<Integer,Boolean>>)input,
                         DSALExercises.parseOperations(options),
                         writer,
-                        options.containsKey(Flag.PREPRINT) ? writerSpace : null
+                        options.containsKey(Flag.EXERCISE) ? writerSpace : null
                     );
                     break;
                 case "avltree":
@@ -367,26 +367,26 @@ public class DSALExercises {
                         (Deque<Pair<Integer,Boolean>>)input,
                         DSALExercises.parseOperations(options),
                         writer,
-                        options.containsKey(Flag.PREPRINT) ? writerSpace : null
+                        options.containsKey(Flag.EXERCISE) ? writerSpace : null
                     );
                     break;
                 case "hashDivision":
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                    
-                    //if (options.containsKey(Flag.PREPRINT)) {
-                            writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Divisionsmethode ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]");
-                            writerSpace.newLine();
-                            for(int i = 0; i<array.length - 1; ++i)
-                            {
-                                writerSpace.write(array[i] + ", ");
-                            }
-                            writerSpace.write(array[array.length-1] + ".");
-                            writerSpace.write("\\\\[2ex]");
-                            writerSpace.newLine();
-                        
-                    //}
+                        writerSpace.write(
+                            "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
+                            + m
+                            + " unter Verwendung der Divisionsmethode ohne Sondierung (also durch Verkettung) "
+                            + "ein:\\\\[2ex]"
+                        );
+                        writerSpace.newLine();
+                        for (int i = 0; i < array.length - 1; ++i) {
+                            writerSpace.write(array[i] + ", ");
+                        }
+                        writerSpace.write(array[array.length-1] + ".");
+                        writerSpace.write("\\\\[2ex]");
+                        writerSpace.newLine();
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 0;
@@ -396,19 +396,18 @@ public class DSALExercises {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                    
-                    //if (options.containsKey(Flag.PREPRINT)) {
-                            writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Divisionsmethode mit linearer Sondierung ein:\\\\[2ex]");
-                            writerSpace.newLine();
-                            for(int i = 0; i<array.length - 1; ++i)
-                            {
-                                writerSpace.write(array[i] + ", ");
-                            }
-                            writerSpace.write(array[array.length-1] + ".");
-                            writerSpace.write("\\\\[2ex]");
-                            writerSpace.newLine();
-                        
-                    //}
+                        writerSpace.write(
+                            "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
+                            + m
+                            + " unter Verwendung der Divisionsmethode mit linearer Sondierung ein:\\\\[2ex]"
+                        );
+                        writerSpace.newLine();
+                        for (int i = 0; i < array.length - 1; ++i) {
+                            writerSpace.write(array[i] + ", ");
+                        }
+                        writerSpace.write(array[array.length-1] + ".");
+                        writerSpace.write("\\\\[2ex]");
+                        writerSpace.newLine();
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 1;
@@ -418,19 +417,22 @@ public class DSALExercises {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                    
-                    //if (options.containsKey(Flag.PREPRINT)) {
-                            writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Divisionsmethode mit quadratischer Sondierung ($c_1$= " + in.x[1] + ", $c_2$= "+ in.x[2] + " ) ein:\\\\[2ex]");
-                            writerSpace.newLine();
-                            for(int i = 0; i<array.length - 1; ++i)
-                            {
-                                writerSpace.write(array[i] + ", ");
-                            }
-                            writerSpace.write(array[array.length-1] + ".");
-                            writerSpace.write("\\\\[2ex]");
-                            writerSpace.newLine();
-                        
-                    //}
+                        writerSpace.write(
+                            "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
+                            + m
+                            + " unter Verwendung der Divisionsmethode mit quadratischer Sondierung ($c_1$= "
+                            + in.x[1]
+                            + ", $c_2$= "
+                            + in.x[2]
+                            + " ) ein:\\\\[2ex]"
+                        );
+                        writerSpace.newLine();
+                        for (int i = 0; i < array.length - 1; ++i) {
+                            writerSpace.write(array[i] + ", ");
+                        }
+                        writerSpace.write(array[array.length-1] + ".");
+                        writerSpace.write("\\\\[2ex]");
+                        writerSpace.newLine();
                     params = new double[4];
                     params[0] = 1;
                     params[1] = 2;
@@ -442,19 +444,20 @@ public class DSALExercises {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                    
-                    //if (options.containsKey(Flag.PREPRINT)) {
-                            writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]");
-                            writerSpace.newLine();
-                            for(int i = 0; i<array.length - 1; ++i)
-                            {
-                                writerSpace.write(array[i] + ", ");
-                            }
-                            writerSpace.write(array[array.length-1] + ".");
-                            writerSpace.write("\\\\[2ex]");
-                            writerSpace.newLine();
-                        
-                    //}
+                        writerSpace.write(
+                            "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
+                            + m
+                            + " unter Verwendung der Multiplikationsmethode (c = "
+                            + in.x[1]
+                            + ") ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]"
+                        );
+                        writerSpace.newLine();
+                        for (int i = 0; i < array.length - 1; ++i) {
+                            writerSpace.write(array[i] + ", ");
+                        }
+                        writerSpace.write(array[array.length-1] + ".");
+                        writerSpace.write("\\\\[2ex]");
+                        writerSpace.newLine();
                     params = new double[3];
                     params[0] = 2;
                     params[1] = 0;
@@ -465,19 +468,20 @@ public class DSALExercises {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                    
-                    //if (options.containsKey(Flag.PREPRINT)) {
-                            writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") mit linearer Sondierung ein:\\\\[2ex]");
-                            writerSpace.newLine();
-                            for(int i = 0; i<array.length - 1; ++i)
-                            {
-                                writerSpace.write(array[i] + ", ");
-                            }
-                            writerSpace.write(array[array.length-1] + ".");
-                            writerSpace.write("\\\\[2ex]");
-                            writerSpace.newLine();
-                        
-                    //}
+                        writerSpace.write(
+                            "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
+                            + m
+                            + " unter Verwendung der Multiplikationsmethode (c = "
+                            + in.x[1]
+                            + ") mit linearer Sondierung ein:\\\\[2ex]"
+                        );
+                        writerSpace.newLine();
+                        for (int i = 0; i < array.length - 1; ++i) {
+                            writerSpace.write(array[i] + ", ");
+                        }
+                        writerSpace.write(array[array.length-1] + ".");
+                        writerSpace.write("\\\\[2ex]");
+                        writerSpace.newLine();
                     params = new double[3];
                     params[0] = 2;
                     params[1] = 1;
@@ -488,19 +492,24 @@ public class DSALExercises {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                    
-                    //if (options.containsKey(Flag.PREPRINT)) {
-                            writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") mit quadratischer Sondierung ($c_1$= " + in.x[2] + ", $c_2$= "+ in.x[3] + " ) ein:\\\\[2ex]");
-                            writerSpace.newLine();
-                            for(int i = 0; i<array.length - 1; ++i)
-                            {
-                                writerSpace.write(array[i] + ", ");
-                            }
-                            writerSpace.write(array[array.length-1] + ".");
-                            writerSpace.write("\\\\[2ex]");
-                            writerSpace.newLine();
-                        
-                    //}
+                        writerSpace.write(
+                            "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
+                            + m
+                            + " unter Verwendung der Multiplikationsmethode (c = "
+                            + in.x[1]
+                            + ") mit quadratischer Sondierung ($c_1$= "
+                            + in.x[2]
+                            + ", $c_2$= "
+                            + in.x[3]
+                            + " ) ein:\\\\[2ex]"
+                        );
+                        writerSpace.newLine();
+                        for (int i = 0; i < array.length - 1; ++i) {
+                            writerSpace.write(array[i] + ", ");
+                        }
+                        writerSpace.write(array[array.length-1] + ".");
+                        writerSpace.write("\\\\[2ex]");
+                        writerSpace.newLine();
                     params = new double[5];
                     params[0] = 2;
                     params[1] = 2;
@@ -516,6 +525,26 @@ public class DSALExercises {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @return The names of the supported algorithms, separated by commas.
+     */
+    private static String algorithmNames() {
+        StringBuilder res = new StringBuilder();
+        boolean first = true;
+        for (Algorithm alg : Algorithm.values()) {
+            if (DSALExercises.STUDENT_MODE && !alg.enabled) {
+                continue;
+            }
+            if (first) {
+                first = false;
+            } else {
+                res.append(", ");
+            }
+            res.append(alg.name);
+        }
+        return res.toString();
     }
 
     /**
@@ -568,24 +597,6 @@ public class DSALExercises {
         return res;
     }
     
-    /**
-     * @return The set of (in student mode only enabled) tree algorithms.
-     */
-    @SuppressWarnings("unused")
-    private static Set<String> initTreeAlgorithms() {
-        Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.BTREE.enabled) {
-            res.add(Algorithm.BTREE.name);
-        }
-        if (!DSALExercises.STUDENT_MODE || Algorithm.RBTREE.enabled) {
-            res.add(Algorithm.RBTREE.name);
-        }
-        if (!DSALExercises.STUDENT_MODE || Algorithm.AVLTREE.enabled) {
-            res.add(Algorithm.AVLTREE.name);
-        }
-        return res;
-    }
-
     /**
      * @return The general help text as String array.
      */
@@ -641,6 +652,23 @@ public class DSALExercises {
     }
 
     /**
+     * @return The set of (in student mode only enabled) tree algorithms.
+     */
+    private static Set<String> initTreeAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.BTREE.enabled) {
+            res.add(Algorithm.BTREE.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.RBTREE.enabled) {
+            res.add(Algorithm.RBTREE.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.AVLTREE.enabled) {
+            res.add(Algorithm.AVLTREE.name);
+        }
+        return res;
+    }
+
+    /**
      * @param options The option flags.
      * @return The input specified by the options.
      */
@@ -658,8 +686,8 @@ public class DSALExercises {
             } else if (DSALExercises.STUDENT_MODE) {
                 final int length;
                 Random gen = new Random();
-                if (options.containsKey(Flag.LINES)) {
-                    length = Integer.parseInt(options.get(Flag.LINES));
+                if (options.containsKey(Flag.LENGTH)) {
+                    length = Integer.parseInt(options.get(Flag.LENGTH));
                 } else {
                     length = gen.nextInt(16) + 5;
                 }
@@ -691,9 +719,9 @@ public class DSALExercises {
             } else if (DSALExercises.STUDENT_MODE) {
                 final int length;
                 Random gen = new Random();
-                if (options.containsKey(Flag.LINES)) {
-                    length = Integer.parseInt(options.get(Flag.LINES));
-					System.out.println("Lines set to: " + length);
+                if (options.containsKey(Flag.LENGTH)) {
+                    length = Integer.parseInt(options.get(Flag.LENGTH));
+                    System.out.println("Lines set to: " + length);
                 } else {
                     length = gen.nextInt(16) + 5;
                     System.out.println("Lines chosen to: " + length);
@@ -759,8 +787,8 @@ public class DSALExercises {
             } else if (DSALExercises.STUDENT_MODE) {
                 final int length;
                 Random gen = new Random();
-                if (options.containsKey(Flag.LINES)) {
-                    length = Integer.parseInt(options.get(Flag.LINES));
+                if (options.containsKey(Flag.LENGTH)) {
+                    length = Integer.parseInt(options.get(Flag.LENGTH));
                 } else {
                     length = gen.nextInt(16) + 5;
                 }
@@ -846,19 +874,14 @@ public class DSALExercises {
     private static enum Algorithm {
 
         /**
-         * Insertion and deletion in B-trees with int values.
-         */
-        BTREE("btree", new String[]{"TODO"}, true),
-
-        /**
          * Insertion and deletion in AVL-trees with int values.
          */
         AVLTREE("avltree", new String[]{"TODO"}, true),
 
         /**
-         * Insertion and deletion in Red-Black-trees with int values.
+         * Insertion and deletion in B-trees with int values.
          */
-        RBTREE("rbtree", new String[]{"TODO"}, true),
+        BTREE("btree", new String[]{"TODO"}, true),
 
         /**
          * Bubblesort on Integer arrays.
@@ -868,38 +891,102 @@ public class DSALExercises {
         /**
          * Linked hashing on Integer arrays with the division method.
          */
-        HASH_DIV("hashDivision", new String[]{"Use the division method in combination with linking for hashing into integer arrays.",
-											  "Parameters are: m (size of the hashmap)"}, true),
+        HASH_DIV(
+            "hashDivision",
+            new String[]{
+                "Use the division method in combination with linking for hashing into integer arrays.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The length parameter specifies how many elements will be added to the hash table." :
+                            "Parameters are: m (size of the hashmap)"
+                )
+            },
+            true
+        ),
 
         /**
          * Hashing on Integer arrays with the division method and linear probing.
          */
-        HASH_DIV_LIN("hashDivisionLinear", new String[]{"Use the division method in combination with linear probing for hashing into integer arrays.",
-														"Parameters are: m (size of the hashmap)"}, true),
+        HASH_DIV_LIN(
+            "hashDivisionLinear",
+            new String[]{
+                "Use the division method in combination with linear probing for hashing into integer arrays.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The length parameter specifies how many elements will be added to the hash table." :
+                            "Parameters are: m (size of the hashmap)"
+                )
+            },
+            true
+        ),
 
         /**
          * Hashing on Integer arrays with the division method and quadratic probing.
          */
-        HASH_DIV_QUAD("hashDivisionQuadratic", new String[]{"Use the division method in combination with quadratic probing for hashing into integer arrays.",
-															"Parameters are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"}, true),
+        HASH_DIV_QUAD(
+            "hashDivisionQuadratic",
+            new String[]{
+                "Use the division method in combination with quadratic probing for hashing into integer arrays.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The length parameter specifies how many elements will be added to the hash table." :
+                            "Parameters are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"
+                )
+            },
+            true
+        ),
 
         /**
          * Linked hashing on Integer arrays with the multiplication method.
          */
-        HASH_MULT("hashMultiplication", new String[]{"Use the multiplication method in combination with linking for hashing into integer arrays.",
-													 "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the multiplication method)"}, true),
+        HASH_MULT(
+            "hashMultiplication",
+            new String[]{
+                "Use the multiplication method in combination with linking for hashing into integer arrays.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The length parameter specifies how many elements will be added to the hash table." :
+                            "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
+                            + "multiplication method)"
+                )                
+            },
+            true
+        ),
 
         /**
          * Hashing on Integer arrays with the multiplication method and linear probing.
          */
-        HASH_MULT_LIN("hashMultiplicationLinear", new String[]{"Use the multiplication method in combination with linear probing for hashing into integer arrays.",
-															   "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the multiplication method)"}, true),
+        HASH_MULT_LIN(
+            "hashMultiplicationLinear",
+            new String[]{
+                "Use the multiplication method in combination with linear probing for hashing into integer arrays.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The length parameter specifies how many elements will be added to the hash table." :
+                            "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
+                            + "multiplication method)"
+                )                
+            },
+            true
+        ),
 
         /**
          * Hashing on Integer arrays with the multiplication method and quadratic probing.
          */
-        HASH_MULT_QUAD("hashMultiplicationQuadratic", new String[]{"Use the multiplication method in combination with quadratic probing for hashing into integer arrays.",
-																   "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the multiplication method), c1 and c2 (constants for quadratic probing)"}, true),
+        HASH_MULT_QUAD(
+            "hashMultiplicationQuadratic",
+            new String[]{
+                "Use the multiplication method in combination with quadratic probing for hashing into integer arrays.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The length parameter specifies how many elements will be added to the hash table." :
+                            "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
+                            + "multiplication method), c1 and c2 (constants for quadratic probing)"
+                )                
+                
+            },
+            true
+        ),
 
         /**
          * Heapsort on Integer arrays.
@@ -930,6 +1017,11 @@ public class DSALExercises {
          * Quicksort on Integer arrays.
          */
         QUICKSORT("quicksort", new String[]{"TODO"}, true),
+
+        /**
+         * Insertion and deletion in Red-Black-trees with int values.
+         */
+        RBTREE("rbtree", new String[]{"TODO"}, true),
 
         /**
          * Selectionsort on Integer arrays.
@@ -965,26 +1057,6 @@ public class DSALExercises {
     }
 
     /**
-     * @return The names of the supported algorithms, separated by commas.
-     */
-    private static String algorithmNames() {
-        StringBuilder res = new StringBuilder();
-        boolean first = true;
-        for (Algorithm alg : Algorithm.values()) {
-            if (DSALExercises.STUDENT_MODE && !alg.enabled) {
-                continue;
-            }
-            if (first) {
-                first = false;
-            } else {
-                res.append(", ");
-            }
-            res.append(alg.name);
-        }
-        return res.toString();
-    }
-    
-    /**
      * Option flags for the program arguments.
      * @author cryingshadow
      * @version $Id$
@@ -1007,7 +1079,13 @@ public class DSALExercises {
         /**
          * Degree (e.g., of a B-tree).
          */
-        DEGREE("-d", "Degree", "TODO", true),
+        DEGREE("-d", "Degree", "Used to specify the degree, e.g., of a B-tree. Not relevant for all algorithms.", true),
+
+        /**
+         * File to store LaTeX code for the exercise. E.g., for sorting this might be the 
+         * input array followed by a number of empty arrays. If not set, no exercise will be generated.
+         */
+        EXERCISE("-e", "Exercise file", "Path to the file where to store the exercise text in LaTeX code.", true),
 
         /**
          * Input directly specified as a String. Must not be specified together with -s, but one of them must be 
@@ -1016,9 +1094,14 @@ public class DSALExercises {
         INPUT("-i", "Input", "TODO", false),
 
         /**
-         * Additional lines for pre-prints. Defaults to 0 if not set. Ignored if -p is not set.
+         * Length used for several purposes. Its use depends on the algorithm.
          */
-        LINES("-l", "Additional lines", "TODO", true),
+        LENGTH(
+            "-l",
+            "Length",
+            "Used to specify a length, e.g., of an array. Its use depends on the chosen algorithm.",
+            true
+        ),
 
         /**
          * File containing operations used to construct a start structure.
@@ -1026,20 +1109,19 @@ public class DSALExercises {
         OPERATIONS("-o", "Operations for start structure", "TODO", false),
 
         /**
-         * File to store LaTeX code for a pre-print where to solve an exercise. E.g., for sorting this might be the 
-         * input array followed by a number of empty arrays. If not set, no pre-print will be generated.
-         */
-        PREPRINT("-p", "Pre-print file", "TODO", true),
-
-        /**
          * Source file containing the input. Must not be specified together with -i, but one of them must be specified.
          */
-        SOURCE("-s", "Source file", "TODO", true),
+        SOURCE("-s", "Source file", "TODO", false),
 
         /**
          * Target file to store the LaTeX code in. If not specified, the solution is sent to the standard output.
          */
-        TARGET("-t", "Target file", "TODO", true);
+        TARGET("-t", "Target file", "Path to the file where to store the solution text in LaTeX code.", true);
+
+        /**
+         * The docu for this flag.
+         */
+        private final String docu;
 
         /**
          * Flag indicating whether this option is available for students.
@@ -1051,11 +1133,6 @@ public class DSALExercises {
          */
         private final String longName;
 
-        /**
-         * The docu for this flag.
-         */
-        private final String docu;
-        
         /**
          * The name of the option flag as to be given by the user.
          */
