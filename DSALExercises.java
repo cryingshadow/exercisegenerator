@@ -652,7 +652,7 @@ public class DSALExercises {
                 Random gen = new Random();
                 if (options.containsKey(Flag.LINES)) {
                     length = Integer.parseInt(options.get(Flag.LINES));
-                    System.out.println("Lines set to: " + length);
+					System.out.println("Lines set to: " + length);
                 } else {
                     length = gen.nextInt(16) + 5;
                     System.out.println("Lines chosen to: " + length);
@@ -662,20 +662,30 @@ public class DSALExercises {
                     array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 }
                 double[] params = new double[4]; // create all possible constants per default.
-                int m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+                int m = 0;
+				if(alg == "hashDivision" || alg == "hashMultiplication")
+				{
+					m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+				}
+				else
+				{
+					m = length;
+				}
                 int c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 int c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                while (!DSALExercises.areCoprime(m,c1,c2)) {
-                    m = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    if (DSALExercises.areCoprime(m,c1,c2)) {
-                        break;
-                    }
-                    c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                    if (DSALExercises.areCoprime(m,c1,c2)) {
-                        break;
-                    }
-                    c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                }
+				if(alg == "hashDivisionQuadratic" || alg == "hashMultiplicationQuadratic")
+				{
+					while (!DSALExercises.areCoprime(m,c1,c2)) {
+						c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+						if (DSALExercises.areCoprime(m,c1,c2)) {
+							break;
+						}
+						c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
+						if (DSALExercises.areCoprime(m,c1,c2)) {
+							break;
+						}
+					}
+				}
                 double c = gen.nextDouble();
                 params[0] = m;
                 params[1] = c;
@@ -807,32 +817,38 @@ public class DSALExercises {
         /**
          * Linked hashing on Integer arrays with the division method.
          */
-        HASH_DIV("hashDivision", new String[]{"TODO"}, true),
+        HASH_DIV("hashDivision", new String[]{"Use the division method in combination with linking for hashing into integer arrays.",
+											  "Parameters are: m (size of the hashmap)"}, true),
 
         /**
          * Hashing on Integer arrays with the division method and linear probing.
          */
-        HASH_DIV_LIN("hashDivisionLinear", new String[]{"TODO"}, true),
+        HASH_DIV_LIN("hashDivisionLinear", new String[]{"Use the division method in combination with linear probing for hashing into integer arrays.",
+														"Parameters are: m (size of the hashmap)"}, true),
 
         /**
          * Hashing on Integer arrays with the division method and quadratic probing.
          */
-        HASH_DIV_QUAD("hashDivisionQuadratic", new String[]{"TODO"}, true),
+        HASH_DIV_QUAD("hashDivisionQuadratic", new String[]{"Use the division method in combination with quadratic probing for hashing into integer arrays.",
+															"Parameters are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"}, true),
 
         /**
          * Linked hashing on Integer arrays with the multiplication method.
          */
-        HASH_MULT("hashMultiplication", new String[]{"TODO"}, true),
+        HASH_MULT("hashMultiplication", new String[]{"Use the multiplication method in combination with linking for hashing into integer arrays.",
+													 "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the multiplication method)"}, true),
 
         /**
          * Hashing on Integer arrays with the multiplication method and linear probing.
          */
-        HASH_MULT_LIN("hashMultiplicationLinear", new String[]{"TODO"}, true),
+        HASH_MULT_LIN("hashMultiplicationLinear", new String[]{"Use the multiplication method in combination with linear probing for hashing into integer arrays.",
+															   "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the multiplication method)"}, true),
 
         /**
          * Hashing on Integer arrays with the multiplication method and quadratic probing.
          */
-        HASH_MULT_QUAD("hashMultiplicationQuadratic", new String[]{"TODO"}, true),
+        HASH_MULT_QUAD("hashMultiplicationQuadratic", new String[]{"Use the multiplication method in combination with quadratic probing for hashing into integer arrays.",
+																   "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the multiplication method), c1 and c2 (constants for quadratic probing)"}, true),
 
         /**
          * Heapsort on Integer arrays.
