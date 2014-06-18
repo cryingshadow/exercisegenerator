@@ -101,50 +101,11 @@ public class DSALExercises {
             System.out.println("The number of arguments must be even (flag/value pairs)!");
             return;
         }
-        Map<Flag, String> options = new LinkedHashMap<Flag, String>();
-        outer: for (int i = 0; i < args.length - 1; i += 2) {
-            String option = args[i];
-            for (Flag flag : Flag.values()) {
-                if (DSALExercises.STUDENT_MODE) {
-                    if (!flag.forStudents) {
-                        continue;
-                    }
-                }
-                if (!flag.shortName.equals(option)) {
-                    continue;
-                }
-                if (options.containsKey(flag)) {
-                    System.out.println(flag.longName + " flag must not be specified more than once!");
-                    return;
-                }
-                switch (flag) {
-                    case SOURCE:
-                        if (options.containsKey(Flag.INPUT)) {
-                            System.out.println("Input must not be specified by a file and a string together!");
-                            return;
-                        }
-                        break;
-                    case INPUT:
-                        if (options.containsKey(Flag.SOURCE)) {
-                            System.out.println("Input must not be specified by a file and a string together!");
-                            return;
-                        }
-                        break;
-                    default:
-                        // do nothing
-                }
-                options.put(flag, args[i + 1]);
-                continue outer;
-            }
-            System.out.println("Unknown option specified (" + option + ")!");
-            return;
-        }
-        if (!options.containsKey(Flag.ALGORITHM)) {
-            System.out.println("No algorithm specified!");
-            return;
-        }
-        if (!DSALExercises.STUDENT_MODE && !options.containsKey(Flag.SOURCE) && !options.containsKey(Flag.INPUT)) {
-            System.out.println("No input specified!");
+        Map<Flag, String> options;
+        try {
+            options = DSALExercises.parseFlags(args);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return;
         }
         int rows =
@@ -597,7 +558,7 @@ public class DSALExercises {
         }
         return res;
     }
-    
+
     /**
      * @return The general help text as String array.
      */
@@ -623,7 +584,7 @@ public class DSALExercises {
         res = text.toArray(res);
         return res;
     }
-
+    
     /**
      * @return The set of (in student mode only enabled) sorting algorithms.
      */
@@ -669,6 +630,55 @@ public class DSALExercises {
         }
         if (!DSALExercises.STUDENT_MODE || Algorithm.AVLTREE.enabled) {
             res.add(Algorithm.AVLTREE.name);
+        }
+        return res;
+    }
+
+    /**
+     * @param args The program arguments.
+     * @return A map from Flags to their values parsed from the program arguments.
+     * @throws Exception If the program arguments are not of the desired form.
+     */
+    private static Map<Flag, String> parseFlags(String[] args) throws Exception {
+        Map<Flag, String> res = new LinkedHashMap<Flag, String>();
+        outer: for (int i = 0; i < args.length - 1; i += 2) {
+            String option = args[i];
+            for (Flag flag : Flag.values()) {
+                if (DSALExercises.STUDENT_MODE) {
+                    if (!flag.forStudents) {
+                        continue;
+                    }
+                }
+                if (!flag.shortName.equals(option)) {
+                    continue;
+                }
+                if (res.containsKey(flag)) {
+                    throw new Exception(flag.longName + " flag must not be specified more than once!");
+                }
+                switch (flag) {
+                    case SOURCE:
+                        if (res.containsKey(Flag.INPUT)) {
+                            throw new Exception("Input must not be specified by a file and a string together!");
+                        }
+                        break;
+                    case INPUT:
+                        if (res.containsKey(Flag.SOURCE)) {
+                            throw new Exception("Input must not be specified by a file and a string together!");
+                        }
+                        break;
+                    default:
+                        // do nothing
+                }
+                res.put(flag, args[i + 1]);
+                continue outer;
+            }
+            throw new Exception("Unknown option specified (" + option + ")!");
+        }
+        if (!res.containsKey(Flag.ALGORITHM)) {
+            throw new Exception("No algorithm specified!");
+        }
+        if (!DSALExercises.STUDENT_MODE && !res.containsKey(Flag.SOURCE) && !res.containsKey(Flag.INPUT)) {
+            throw new Exception("No input specified!");
         }
         return res;
     }
