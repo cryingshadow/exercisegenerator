@@ -113,13 +113,13 @@ public class DSALExercises {
                 Integer.parseInt(options.get(Flag.LENGTH)) :
                     0;
         try (
-            BufferedWriter writer =
+            BufferedWriter solutionWriter =
                 new BufferedWriter(
                     options.containsKey(Flag.TARGET) ?
                         new FileWriter(options.get(Flag.TARGET)) :
                             new OutputStreamWriter(System.out)
                 );
-            BufferedWriter writerSpace =
+            BufferedWriter exerciseWriter =
                 new BufferedWriter(
                     options.containsKey(Flag.EXERCISE) ?
                         new FileWriter(options.get(Flag.EXERCISE)) :
@@ -137,170 +137,170 @@ public class DSALExercises {
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
-                            writerSpace.write(
+                            exerciseWriter.write(
                                 "\\noindent Sortieren Sie das folgende Array mithilfe von Selectionsort."
                             );
-                            writerSpace.newLine();
-                            writerSpace.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
-                            writerSpace.newLine();
+                            exerciseWriter.newLine();
+                            exerciseWriter.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
+                            exerciseWriter.newLine();
                         }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-                        anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
+                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
                     }
-                    rows += Sorting.selectionsort(array, writer);
+                    rows += Sorting.selectionsort(array, solutionWriter);
                     if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
+                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                         }
-                        TikZUtils.printTikzEnd(writerSpace);
+                        TikZUtils.printTikzEnd(exerciseWriter);
                     }
                     break;
                 case "bubblesort":
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
-                            writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Bubblesort.");
-                            writerSpace.newLine();
-                            writerSpace.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
-                            writerSpace.newLine();
+                            exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Bubblesort.");
+                            exerciseWriter.newLine();
+                            exerciseWriter.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
+                            exerciseWriter.newLine();
                         }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-                        anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
+                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
                     }
-                    rows += Sorting.bubblesort(array, writer);
+                    rows += Sorting.bubblesort(array, solutionWriter);
                     if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
+                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                         }
-                        TikZUtils.printTikzEnd(writerSpace);
+                        TikZUtils.printTikzEnd(exerciseWriter);
                     }
                     break;
                 case "insertionsort":
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
-                            writerSpace.write(
+                            exerciseWriter.write(
                                 "\\noindent Sortieren Sie das folgende Array mithilfe von Insertionsort."
                             );
-                            writerSpace.newLine();
-                            writerSpace.write(
+                            exerciseWriter.newLine();
+                            exerciseWriter.write(
                                 "Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife "
                                 + "an.\\\\[2ex]"
                             );
-                            writerSpace.newLine();
+                            exerciseWriter.newLine();
                         }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-                        anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
+                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
                     }
-                    rows += Sorting.insertionsort(array, writer);
+                    rows += Sorting.insertionsort(array, solutionWriter);
                     if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
+                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                         }
-                        TikZUtils.printTikzEnd(writerSpace);
+                        TikZUtils.printTikzEnd(exerciseWriter);
                     }
                     break;
                 case "quicksort":
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
-                            writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Quicksort.");
-                            writerSpace.newLine();
-                            writerSpace.write(
+                            exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Quicksort.");
+                            exerciseWriter.newLine();
+                            exerciseWriter.write(
                                 "Geben Sie dazu das Array nach jeder Partition-Operation an und markieren Sie das "
                                 + "jeweils verwendete Pivot-Element.\\\\[2ex]"
                             );
-                            writerSpace.newLine();
+                            exerciseWriter.newLine();
                         }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-                        anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
+                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
                     }
-                    rows += Sorting.quicksort(array, writer);
+                    rows += Sorting.quicksort(array, solutionWriter);
                     if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
+                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                         }
-                        TikZUtils.printTikzEnd(writerSpace);
+                        TikZUtils.printTikzEnd(exerciseWriter);
                     }
                     break;
                 case "mergesort":
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
-                            writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Mergesort.");
-                            writerSpace.newLine();
-                            writerSpace.write("Geben Sie dazu das Array nach jeder Merge-Operation an.\\\\[2ex]");
-                            writerSpace.newLine();
+                            exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Mergesort.");
+                            exerciseWriter.newLine();
+                            exerciseWriter.write("Geben Sie dazu das Array nach jeder Merge-Operation an.\\\\[2ex]");
+                            exerciseWriter.newLine();
                         }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-                        anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
+                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
                     }
-                    rows += Sorting.mergesort(array, false, writer);
+                    rows += Sorting.mergesort(array, false, solutionWriter);
                     if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
+                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                         }
-                        TikZUtils.printTikzEnd(writerSpace);
+                        TikZUtils.printTikzEnd(exerciseWriter);
                     }
                     break;
                 case "mergesortWithSplitting":
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
-                            writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Mergesort.");
-                            writerSpace.newLine();
-                            writerSpace.write("Geben Sie dazu das Array nach jeder Merge-Operation an.\\\\[2ex]");
-                            writerSpace.newLine();
+                            exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Mergesort.");
+                            exerciseWriter.newLine();
+                            exerciseWriter.write("Geben Sie dazu das Array nach jeder Merge-Operation an.\\\\[2ex]");
+                            exerciseWriter.newLine();
                         }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-                        anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
+                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
                     }
-                    rows += Sorting.mergesort(array, true, writer);
+                    rows += Sorting.mergesort(array, true, solutionWriter);
                     if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
+                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                         }
-                        TikZUtils.printTikzEnd(writerSpace);
+                        TikZUtils.printTikzEnd(exerciseWriter);
                     }
                     break;
                 case "heapsort":
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
-                            writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Heapsort.");
-                            writerSpace.newLine();
-                            writerSpace.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
-                            writerSpace.newLine();
+                            exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Heapsort.");
+                            exerciseWriter.newLine();
+                            exerciseWriter.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
+                            exerciseWriter.newLine();
                         }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-                        anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
+                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
                     }
-                    rows += Sorting.heapsort(array, writer);
+                    rows += Sorting.heapsort(array, solutionWriter);
                     if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
+                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                         }
-                        TikZUtils.printTikzEnd(writerSpace);
+                        TikZUtils.printTikzEnd(exerciseWriter);
                     }
                     break;
                 case "heapsortWithTrees":
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
-                            writerSpace.write("\\noindent Sortieren Sie das folgende Array mithilfe von Heapsort.");
-                            writerSpace.newLine();
-                            writerSpace.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
-                            writerSpace.newLine();
+                            exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Heapsort.");
+                            exerciseWriter.newLine();
+                            exerciseWriter.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
+                            exerciseWriter.newLine();
                         }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-                        anchor = ArrayUtils.printArray(array, null, null, null, writerSpace);
+                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
                     }
-                    rows += Sorting.heapsortWithTrees(array, writer);
+                    rows += Sorting.heapsortWithTrees(array, solutionWriter);
                     if (options.containsKey(Flag.EXERCISE)) {
                         for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, writerSpace);
+                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                         }
-                        TikZUtils.printTikzEnd(writerSpace);
+                        TikZUtils.printTikzEnd(exerciseWriter);
                     }
                     break;
                 case "btree":
@@ -310,8 +310,8 @@ public class DSALExercises {
                         ),
                         (Deque<Pair<Integer,Boolean>>)input,
                         DSALExercises.parseOperations(options),
-                        writer,
-                        options.containsKey(Flag.EXERCISE) ? writerSpace : null
+                        solutionWriter,
+                        options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                     );
                     break;
                 case "rbtree":
@@ -319,8 +319,8 @@ public class DSALExercises {
                         new IntRBTree(),
                         (Deque<Pair<Integer,Boolean>>)input,
                         DSALExercises.parseOperations(options),
-                        writer,
-                        options.containsKey(Flag.EXERCISE) ? writerSpace : null
+                        solutionWriter,
+                        options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                     );
                     break;
                 case "avltree":
@@ -328,58 +328,58 @@ public class DSALExercises {
                         new IntAVLTree(),
                         (Deque<Pair<Integer,Boolean>>)input,
                         DSALExercises.parseOperations(options),
-                        writer,
-                        options.containsKey(Flag.EXERCISE) ? writerSpace : null
+                        solutionWriter,
+                        options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                     );
                     break;
                 case "hashDivision":
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                        writerSpace.write(
+                        exerciseWriter.write(
                             "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
                             + m
                             + " unter Verwendung der Divisionsmethode ohne Sondierung (also durch Verkettung) "
                             + "ein:\\\\[2ex]"
                         );
-                        writerSpace.newLine();
+                        exerciseWriter.newLine();
                         for (int i = 0; i < array.length - 1; ++i) {
-                            writerSpace.write(array[i] + ", ");
+                            exerciseWriter.write(array[i] + ", ");
                         }
-                        writerSpace.write(array[array.length-1] + ".");
-                        writerSpace.write("\\\\[2ex]");
-                        writerSpace.newLine();
+                        exerciseWriter.write(array[array.length-1] + ".");
+                        exerciseWriter.write("\\\\[2ex]");
+                        exerciseWriter.newLine();
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 0;
-                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
                     break;
                 case "hashDivisionLinear":
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                        writerSpace.write(
+                        exerciseWriter.write(
                             "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
                             + m
                             + " unter Verwendung der Divisionsmethode mit linearer Sondierung ein:\\\\[2ex]"
                         );
-                        writerSpace.newLine();
+                        exerciseWriter.newLine();
                         for (int i = 0; i < array.length - 1; ++i) {
-                            writerSpace.write(array[i] + ", ");
+                            exerciseWriter.write(array[i] + ", ");
                         }
-                        writerSpace.write(array[array.length-1] + ".");
-                        writerSpace.write("\\\\[2ex]");
-                        writerSpace.newLine();
+                        exerciseWriter.write(array[array.length-1] + ".");
+                        exerciseWriter.write("\\\\[2ex]");
+                        exerciseWriter.newLine();
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 1;
-                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
                     break;
                 case "hashDivisionQuadratic":
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                        writerSpace.write(
+                        exerciseWriter.write(
                             "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
                             + m
                             + " unter Verwendung der Divisionsmethode mit quadratischer Sondierung ($c_1$= "
@@ -388,73 +388,73 @@ public class DSALExercises {
                             + in.x[2]
                             + " ) ein:\\\\[2ex]"
                         );
-                        writerSpace.newLine();
+                        exerciseWriter.newLine();
                         for (int i = 0; i < array.length - 1; ++i) {
-                            writerSpace.write(array[i] + ", ");
+                            exerciseWriter.write(array[i] + ", ");
                         }
-                        writerSpace.write(array[array.length-1] + ".");
-                        writerSpace.write("\\\\[2ex]");
-                        writerSpace.newLine();
+                        exerciseWriter.write(array[array.length-1] + ".");
+                        exerciseWriter.write("\\\\[2ex]");
+                        exerciseWriter.newLine();
                     params = new double[4];
                     params[0] = 1;
                     params[1] = 2;
                     params[2] = in.x[1];
                     params[3] = in.x[2];
-                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
                     break;
                 case "hashMultiplication":
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                        writerSpace.write(
+                        exerciseWriter.write(
                             "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
                             + m
                             + " unter Verwendung der Multiplikationsmethode (c = "
                             + in.x[1]
                             + ") ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]"
                         );
-                        writerSpace.newLine();
+                        exerciseWriter.newLine();
                         for (int i = 0; i < array.length - 1; ++i) {
-                            writerSpace.write(array[i] + ", ");
+                            exerciseWriter.write(array[i] + ", ");
                         }
-                        writerSpace.write(array[array.length-1] + ".");
-                        writerSpace.write("\\\\[2ex]");
-                        writerSpace.newLine();
+                        exerciseWriter.write(array[array.length-1] + ".");
+                        exerciseWriter.write("\\\\[2ex]");
+                        exerciseWriter.newLine();
                     params = new double[3];
                     params[0] = 2;
                     params[1] = 0;
                     params[2] = in.x[1];
-                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
                     break;
                 case "hashMultiplicationLinear":
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                        writerSpace.write(
+                        exerciseWriter.write(
                             "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
                             + m
                             + " unter Verwendung der Multiplikationsmethode (c = "
                             + in.x[1]
                             + ") mit linearer Sondierung ein:\\\\[2ex]"
                         );
-                        writerSpace.newLine();
+                        exerciseWriter.newLine();
                         for (int i = 0; i < array.length - 1; ++i) {
-                            writerSpace.write(array[i] + ", ");
+                            exerciseWriter.write(array[i] + ", ");
                         }
-                        writerSpace.write(array[array.length-1] + ".");
-                        writerSpace.write("\\\\[2ex]");
-                        writerSpace.newLine();
+                        exerciseWriter.write(array[array.length-1] + ".");
+                        exerciseWriter.write("\\\\[2ex]");
+                        exerciseWriter.newLine();
                     params = new double[3];
                     params[0] = 2;
                     params[1] = 1;
                     params[2] = in.x[1];
-                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
                     break;
                 case "hashMultiplicationQuadratic":
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
-                        writerSpace.write(
+                        exerciseWriter.write(
                             "\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
                             + m
                             + " unter Verwendung der Multiplikationsmethode (c = "
@@ -465,20 +465,20 @@ public class DSALExercises {
                             + in.x[3]
                             + " ) ein:\\\\[2ex]"
                         );
-                        writerSpace.newLine();
+                        exerciseWriter.newLine();
                         for (int i = 0; i < array.length - 1; ++i) {
-                            writerSpace.write(array[i] + ", ");
+                            exerciseWriter.write(array[i] + ", ");
                         }
-                        writerSpace.write(array[array.length-1] + ".");
-                        writerSpace.write("\\\\[2ex]");
-                        writerSpace.newLine();
+                        exerciseWriter.write(array[array.length-1] + ".");
+                        exerciseWriter.write("\\\\[2ex]");
+                        exerciseWriter.newLine();
                     params = new double[5];
                     params[0] = 2;
                     params[1] = 2;
                     params[2] = in.x[1];
                     params[3] = in.x[2];
                     params[4] = in.x[3];
-                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, writer, writerSpace);
+                    Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
                     break;
                 default:
                     System.out.println("Unknown algorithm!");
@@ -921,7 +921,7 @@ public class DSALExercises {
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies the length of the array to sort." :
                             "TODO"
-                )                
+                )
             },
             true
         ),
@@ -986,7 +986,7 @@ public class DSALExercises {
                         "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
                             + "multiplication method)"
-                )                
+                )
             },
             true
         ),
@@ -1003,7 +1003,7 @@ public class DSALExercises {
                         "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
                             + "multiplication method)"
-                )                
+                )
             },
             true
         ),
@@ -1020,7 +1020,7 @@ public class DSALExercises {
                         "The flag -l specifies how many elements will be added to the hash table." :
                             "Parameters are: m (size of the hashmap), c (constant between 0 and 1 for the "
                             + "multiplication method), c1 and c2 (constants for quadratic probing)"
-                )                
+                )
             },
             true
         ),
@@ -1036,7 +1036,7 @@ public class DSALExercises {
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies the length of the array to sort." :
                             "TODO"
-                )                
+                )
             },
             true
         ),
@@ -1053,7 +1053,7 @@ public class DSALExercises {
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies the length of the array to sort." :
                             "TODO"
-                )                
+                )
             },
             true
         ),
@@ -1069,7 +1069,7 @@ public class DSALExercises {
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies the length of the array to sort." :
                             "TODO"
-                )                
+                )
             },
             true
         ),
@@ -1085,7 +1085,7 @@ public class DSALExercises {
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies the length of the array to sort." :
                             "TODO"
-                )                
+                )
             },
             true
         ),
@@ -1102,7 +1102,7 @@ public class DSALExercises {
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies the length of the array to sort." :
                             "TODO"
-                )                
+                )
             },
             true
         ),
@@ -1118,7 +1118,7 @@ public class DSALExercises {
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies the length of the array to sort." :
                             "TODO"
-                )                
+                )
             },
             true
         ),
@@ -1139,7 +1139,7 @@ public class DSALExercises {
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies the length of the array to sort." :
                             "TODO"
-                )                
+                )
             },
             true
         );
