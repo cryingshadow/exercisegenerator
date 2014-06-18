@@ -34,7 +34,7 @@ public class IntBTree {
      * Since there are three different names for B-trees of degree 2, this String can be used to customize the output 
      * for a lecture.
      */
-    private static final String NAME_OF_BTREE_WITH_DEGREE_2 = "2--3--4--Baum";
+    public static final String NAME_OF_BTREE_WITH_DEGREE_2 = "2--3--4--Baum";
 
     /**
      * Filling degree of this B-tree. Must be greater than 1.
@@ -146,7 +146,7 @@ public class IntBTree {
             if (ops.size() > 1) {
                 if (tree.isEmpty()) {
                     writerSpace.write(
-                        "\\noindent F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren "
+                        "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren "
                         + (
                             degree == 2 ?
                                 IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
@@ -156,7 +156,7 @@ public class IntBTree {
                     writerSpace.newLine();
                 } else {
                     writerSpace.write(
-                        "\\noindent Betrachten Sie den folgenden "
+                        "Betrachten Sie den folgenden "
                         + (
                             degree == 2 ?
                                 IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
@@ -175,7 +175,7 @@ public class IntBTree {
                     writerSpace.write("\\vspace*{1ex}");
                     writerSpace.newLine();
                     writerSpace.write(
-                        "\\noindent F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
+                        "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
                         + "und geben Sie die dabei jeweils entstehenden B\\\"aume an:\\\\\\\\"
                     );
                     writerSpace.newLine();
@@ -195,7 +195,7 @@ public class IntBTree {
                 if (tree.isEmpty()) {
                     if (op.y) {
                         writerSpace.write(
-                            "\\noindent F\\\"ugen Sie den Wert "
+                            "F\\\"ugen Sie den Wert "
                             + op.x
                             + " in einen leeren "
                             + (
@@ -211,7 +211,7 @@ public class IntBTree {
                 } else {
                     if (op.y) {
                         writerSpace.write(
-                            "\\noindent F\\\"ugen Sie den Wert "
+                            "F\\\"ugen Sie den Wert "
                             + op.x
                             + " in den folgenden "
                             + (
@@ -222,7 +222,7 @@ public class IntBTree {
                         );
                     } else {
                         writerSpace.write(
-                            "\\noindent L\\\"oschen Sie den Wert "
+                            "L\\\"oschen Sie den Wert "
                             + op.x
                             + " aus dem folgenden "
                             + (

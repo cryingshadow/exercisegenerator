@@ -40,7 +40,7 @@ class RBNode {
     
     void setLeft(RBNode _left) {
         this.mLeft = _left;
-        updateHeight();
+        this.updateHeight();
     }
     
     RBNode getRight() {
@@ -49,7 +49,7 @@ class RBNode {
     
     void setRight(RBNode _right) {
         this.mRight = _right;
-        updateHeight();
+        this.updateHeight();
     }
     
     RBNode getSucc(boolean _left) {
@@ -66,11 +66,11 @@ class RBNode {
         } else {
             this.mRight = _node;
         }
-        updateHeight();
+        this.updateHeight();
     }
     
     int getHeight() {
-        return mHeight;
+        return this.mHeight;
     }
     
     void updateHeight() {
@@ -85,17 +85,17 @@ class RBNode {
         } else {
             this.mHeight = this.mRight.getHeight() + 1;
         }
-        if (mFather != null) {
-            mFather.updateHeight();
+        if (this.mFather != null) {
+            this.mFather.updateHeight();
         }
     }
     
     boolean isBlack() {
-        return mIsBlack;
+        return this.mIsBlack;
     }
     
     void setBlack(boolean _black) {
-        mIsBlack = _black;
+        this.mIsBlack = _black;
     }
 }
 
@@ -112,22 +112,22 @@ public class IntRBTree {
     private int mStepCounter;
     
     public boolean isEmpty() {
-        return mRoot == null;
+        return this.mRoot == null;
     }
     
     /**
      * Creates an Red-Black-Tree exercise with an empty tree and the step counter being initially 1.
      */
     public IntRBTree() {
-       mRoot = null;
-       mStepCounter = 0;
+       this.mRoot = null;
+       this.mStepCounter = 0;
     }
     
     /**
      * Sets the step counter back to 1.
      */
     public void resetStepCounter() {
-        mStepCounter = 0;
+        this.mStepCounter = 0;
     }
     
     public RBNode insert(int _value) {
@@ -162,19 +162,19 @@ public class IntRBTree {
      * @param writer A Boolean, which is true if the Red-Black-Tree has to be printed after each rotation.
      */
     void rbInsert(int _value, BufferedWriter writer, boolean write) throws IOException {
-        RBNode node = insert(_value);
-        if (node == mRoot) {
+        RBNode node = this.insert(_value);
+        if (node == this.mRoot) {
             node.setBlack(true); // If it is the first added node, make it black.
             if (write) {
-                print("f\"uge " + _value + " ein", writer);
+                this.print("f\"uge " + _value + " ein", writer);
             }
         } else {
             node.setBlack(false); // first, the added node is red
             if (write) {
-                print("f\"uge " + _value + " ein", writer);
+                this.print("f\"uge " + _value + " ein", writer);
             }
             // restore the red-black-property 
-            balanceAfterInsert(node, writer, write);
+            this.balanceAfterInsert(node, writer, write);
         }
     }
     
@@ -188,15 +188,15 @@ public class IntRBTree {
         RBNode node = _node;
         while (node.getFather() != null && !node.getFather().isBlack()) {
             if (node.getFather() == node.getFather().getFather().getLeft()) {
-                node = adjust(true, node, writer, write);
+                node = this.adjust(true, node, writer, write);
             } else {
-                node = adjust(false, node, writer, write);
+                node = this.adjust(false, node, writer, write);
             }
         }
-        if( !mRoot.isBlack() ) {
-            mRoot.setBlack(true);
+        if( !this.mRoot.isBlack() ) {
+            this.mRoot.setBlack(true);
             if (write) {
-                print("Wurzel schwarz f\"arben", writer);
+                this.print("Wurzel schwarz f\"arben", writer);
             }
         }
     }
@@ -215,24 +215,24 @@ public class IntRBTree {
             node.getFather().setBlack(true); // father
             uncle.setBlack(true); // uncle
             if (write) {
-                print("Fall 1: umf\"arben", writer);
+                this.print("Fall 1: umf\"arben", writer);
             }
             return node.getFather().getFather(); // checks red-red further to the top 
         } else {
             if (node == node.getFather().getSucc(!_left)) {
                 // case 2
-                node = rotate(_left, node.getFather(), writer, write, new String("Fall 2: "));
+                node = this.rotate(_left, node.getFather(), writer, write, new String("Fall 2: "));
             }
             else
             {
                 node = node.getFather();
             }
             // case 3
-            node = rotate(!_left, node.getFather(), writer, write, new String("Fall 3: "));
+            node = this.rotate(!_left, node.getFather(), writer, write, new String("Fall 3: "));
             node.setBlack(true);
             node.getSucc(!_left).setBlack(false);
             if (write) {
-                print("Fall 3: umf\"arben", writer);
+                this.print("Fall 3: umf\"arben", writer);
             }
             return node.getSucc(_left); // ready, node.getFather().isBlack() == true
         }
@@ -279,7 +279,7 @@ public class IntRBTree {
             _newNode.setFather(_oldNode.getFather());
         }
         if (_oldNode.getFather() == null) { // root
-            mRoot = _newNode;
+            this.mRoot = _newNode;
         } else if (_oldNode == _oldNode.getFather().getLeft()) {
             // left child
             _oldNode.getFather().setLeft(_newNode);
@@ -298,7 +298,7 @@ public class IntRBTree {
         if (_newNode.getRight() != null) {
             _newNode.getRight().setFather(_newNode);
         }
-        replace(_oldNode, _newNode);
+        this.replace(_oldNode, _newNode);
     }
     
     /**
@@ -313,15 +313,15 @@ public class IntRBTree {
             brother.setBlack(true);
             node.getFather().setBlack(false);
             if (write) {
-                print("Fall 1: umf\"arben", writer);
+                this.print("Fall 1: umf\"arben", writer);
             }
-            rotate(_left, node.getFather(), writer, write, "Fall 1: ");
+            this.rotate(_left, node.getFather(), writer, write, "Fall 1: ");
             brother = node.getFather().getSucc(!_left);
         }
         if ((brother.getLeft() == null || brother.getLeft().isBlack()) && (brother.getRight() == null || brother.getRight().isBlack()) ) {
             brother.setBlack(false);
             if (write) {
-                print("Fall 2: umf\"arben", writer);
+                this.print("Fall 2: umf\"arben", writer);
             }
             return node.getFather();
         } else {
@@ -330,9 +330,9 @@ public class IntRBTree {
                 brother.getSucc(_left).setBlack(true);
                 brother.setBlack(false);
                 if (write) {
-                    print("Fall 3: umf\"arben", writer);
+                    this.print("Fall 3: umf\"arben", writer);
                 }
-                rotate(!_left, brother, writer, write, "Fall 3: ");
+                this.rotate(!_left, brother, writer, write, "Fall 3: ");
                 brother = node.getFather().getSucc(!_left);
             }
             // case 4
@@ -340,10 +340,10 @@ public class IntRBTree {
             node.getFather().setBlack(true);
             brother.getSucc(!_left).setBlack(true);
             if (write) {
-                print("Fall 4: umf\"arben", writer);
+                this.print("Fall 4: umf\"arben", writer);
             }
-            rotate(_left, node.getFather(), writer, write, "Fall 4: ");
-            return mRoot;
+            this.rotate(_left, node.getFather(), writer, write, "Fall 4: ");
+            return this.mRoot;
         }
     }
     
@@ -357,21 +357,21 @@ public class IntRBTree {
         if (!_node.isBlack()) {
             _node.setBlack( true );
             if (write) {
-                print("Knoten schwarz f\"arben", writer);
+                this.print("Knoten schwarz f\"arben", writer);
             }
         } else {
             RBNode node = _old;
             while (node.getFather() != null && node.isBlack()) {
                 if (node == node.getFather().getLeft()) {
-                    node = rmAdjust(true, node, writer, write);
+                    node = this.rmAdjust(true, node, writer, write);
                 } else {
-                    node = rmAdjust(false, node, writer, write);
+                    node = this.rmAdjust(false, node, writer, write);
                 }
             }
             if (!node.isBlack()) {
                 node.setBlack( true );
                 if (write) {
-                    print("Knoten schwarz f\"arben", writer);
+                    this.print("Knoten schwarz f\"arben", writer);
                 }
             }
         }
@@ -380,7 +380,7 @@ public class IntRBTree {
     public void remove(RBNode _node, BufferedWriter writer, boolean write) throws IOException {
         RBNode node = _node;
         if (node.getLeft() != null && node.getRight() != null) { // zwei Kinder 
-            RBNode tmp = minimum(node.getRight());
+            RBNode tmp = this.minimum(node.getRight());
             int tmpValue = tmp.getValue();
             if (write) {
                 writer.write("Wir l\"oschen den Knoten mit dem n\"achst gr\"o\\ss eren Wert " + tmpValue);
@@ -388,30 +388,30 @@ public class IntRBTree {
                 writer.newLine();
                 writer.newLine();
             }
-            remove(tmp, writer, write);
-            swap(node, tmp);
+            this.remove(tmp, writer, write);
+            this.swap(node, tmp);
             tmp.setBlack(node.isBlack());
             if (write) {
-                print("f\"uge " + tmpValue + " in den zu l\"oschenden Knoten ein", writer);
+                this.print("f\"uge " + tmpValue + " in den zu l\"oschenden Knoten ein", writer);
             }
         } else {
             if (node.getLeft() != null) { // ein Kind, links 
-                balanceAfterRemove(node, node.getLeft(), writer, write);
+                this.balanceAfterRemove(node, node.getLeft(), writer, write);
                 int value = node.getValue();
-                replace(node, node.getLeft());
+                this.replace(node, node.getLeft());
                 if (write) {
-                    print("ersetze " + value + " durch linkes Kind", writer);
+                    this.print("ersetze " + value + " durch linkes Kind", writer);
                 }
             } else { // ein Kind, oder kein Kind (node.right == null) 
                 if (node.getRight() == null) {
-                    balanceAfterRemove(node, node, writer, write);
+                    this.balanceAfterRemove(node, node, writer, write);
                 } else {
-                    balanceAfterRemove(node, node.getRight(), writer, write);
+                    this.balanceAfterRemove(node, node.getRight(), writer, write);
                 }
                 int value = node.getValue();
-                replace(node, node.getRight());
+                this.replace(node, node.getRight());
                 if (write) {
-                    print("ersetze " + value + " durch rechtes Kind", writer);
+                    this.print("ersetze " + value + " durch rechtes Kind", writer);
                 }
             }
         }
@@ -448,9 +448,9 @@ public class IntRBTree {
         _node.setFather(node2);
         if (write) {
             if (_left) {
-                print(_prefix + "rotiere " + _node.getValue() + " nach links", writer);
+                this.print(_prefix + "rotiere " + _node.getValue() + " nach links", writer);
             } else {
-                print(_prefix + "rotiere " + _node.getValue() + " nach rechts", writer);
+                this.print(_prefix + "rotiere " + _node.getValue() + " nach rechts", writer);
             }
         }
         return node2;
@@ -478,12 +478,12 @@ public class IntRBTree {
             }
             result += _node.getValue() + " };";
             if (_node.getLeft() != null) {
-                result += toString(_node.getLeft());
+                result += this.toString(_node.getLeft());
             } else {
                 result += " \\edge[draw=none];\\node[draw=none]{};";
             }
             if (_node.getRight() != null) {
-                result += toString(_node.getRight());
+                result += this.toString(_node.getRight());
             } else {
                 result += " \\edge[draw=none];\\node[draw=none]{};";
             }
@@ -498,21 +498,21 @@ public class IntRBTree {
      * @throws IOException If some error occurs during output.
      */
     private void print(String _headline, BufferedWriter writer) throws IOException  {
-        printVerticalSpace(writer);
-        printSamePageBeginning(_headline, writer);
-        printTikzBeginning(writer);
-        if (mRoot == null) {
+        this.printVerticalSpace(writer);
+        this.printSamePageBeginning(_headline, writer);
+        this.printTikzBeginning(writer);
+        if (this.mRoot == null) {
             writer.write("\\Tree [.\\phantom{0} ];");
-        } else if (mRoot.getLeft() == null && mRoot.getRight() == null ) {
-            writer.write("\\Tree [." + mRoot.getValue() + " ];");
+        } else if (this.mRoot.getLeft() == null && this.mRoot.getRight() == null ) {
+            writer.write("\\Tree [." + this.mRoot.getValue() + " ];");
         } else {
             writer.write("\\Tree");
-            writer.write(toString(mRoot));
+            writer.write(this.toString(this.mRoot));
         }
         writer.newLine();
-        printTikzEnd(writer);
-        printProtectedNewline(writer);
-        printSamePageEnd(writer);
+        this.printTikzEnd(writer);
+        this.printProtectedNewline(writer);
+        this.printSamePageEnd(writer);
     }
     
     /**
@@ -532,9 +532,9 @@ public class IntRBTree {
      * @throws IOException If some error occurs during output.
      */
     private void printSamePageBeginning(String _headline, BufferedWriter writer) throws IOException {
-        if( mRoot.getHeight() < 9 ) {
-            int minipagewidth = mRoot.getHeight()+1;
-            if (mRoot.getHeight() == 0) {
+        if( this.mRoot.getHeight() < 9 ) {
+            int minipagewidth = this.mRoot.getHeight()+1;
+            if (this.mRoot.getHeight() == 0) {
                 minipagewidth++;
             }
             writer.write("\\begin{minipage}[t]{0." + minipagewidth + " \\columnwidth}");
@@ -556,7 +556,7 @@ public class IntRBTree {
     private void printSamePageEnd(BufferedWriter writer) throws IOException {
         writer.write("\\end{center}");
         writer.newLine();
-        if( mRoot.getHeight() < 9 ) {
+        if( this.mRoot.getHeight() < 9 ) {
             writer.write("\\end{minipage}");
             writer.newLine();
         }
@@ -572,7 +572,7 @@ public class IntRBTree {
     private void printTikzBeginning(BufferedWriter writer) throws IOException {
         writer.write("\\begin{tikzpicture}");
         writer.newLine();
-        if (mRoot.isBlack()) {
+        if (this.mRoot.isBlack()) {
             writer.write("[every tree node/.style={rectangle,draw=black,thick,inner sep=5pt}");
         } else {
             writer.write("[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}");
@@ -600,18 +600,18 @@ public class IntRBTree {
      * @throws IOException If some error occurs during output.
      */
     private void printVerticalSpace(BufferedWriter writer) throws IOException {
-        mStepCounter += mRoot.getHeight()+1;
-        if (mRoot.getHeight() == 0) {
-            mStepCounter++;
+        this.mStepCounter += this.mRoot.getHeight()+1;
+        if (this.mRoot.getHeight() == 0) {
+            this.mStepCounter++;
         }
-        if (mStepCounter >= 10) {
+        if (this.mStepCounter >= 10) {
             writer.newLine();
             writer.write("~\\\\");
             writer.newLine();
             writer.newLine();
-            mStepCounter = mRoot.getHeight()+1;
-            if (mRoot.getHeight() == 0) {
-                mStepCounter++;
+            this.mStepCounter = this.mRoot.getHeight()+1;
+            if (this.mRoot.getHeight() == 0) {
+                this.mStepCounter++;
             }
         }
     }
@@ -652,14 +652,14 @@ public class IntRBTree {
             if (ops.size() > 1) {
                 if (tree.isEmpty()) {
                     writerSpace.write(
-                        "\\noindent F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren"
+                        "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren"
                         + " AVL-Baum aus und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge- "
                         + "und L\\\"oschoperation sowie jeder Rotation an:\\\\\\\\"
                     );
                     writerSpace.newLine();
                 } else {
                     writerSpace.write(
-                        "\\noindent Betrachten Sie den folgenden AVL-Baum:\\\\[2ex]"
+                        "Betrachten Sie den folgenden AVL-Baum:\\\\[2ex]"
                     );
                     writerSpace.newLine();
                     writerSpace.newLine();
@@ -669,7 +669,7 @@ public class IntRBTree {
                     writerSpace.write("\\vspace*{1ex}");
                     writerSpace.newLine();
                     writerSpace.write(
-                        "\\noindent F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
+                        "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
                         + "und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge- "
                         + "und L\\\"oschoperation sowie jeder Rotation an:\\\\\\\\"
                     );
@@ -690,7 +690,7 @@ public class IntRBTree {
                 if (tree.isEmpty()) {
                     if (op.y) {
                         writerSpace.write(
-                            "\\noindent F\\\"ugen Sie den Wert "
+                            "F\\\"ugen Sie den Wert "
                             + op.x
                             + " in einen leeren AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
                             + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an."
@@ -702,14 +702,14 @@ public class IntRBTree {
                 } else {
                     if (op.y) {
                         writerSpace.write(
-                            "\\noindent F\\\"ugen Sie den Wert "
+                            "F\\\"ugen Sie den Wert "
                             + op.x
                             + " in den folgenden AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
                             + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"
                         );
                     } else {
                         writerSpace.write(
-                            "\\noindent L\\\"oschen Sie den Wert "
+                            "L\\\"oschen Sie den Wert "
                             + op.x
                             + " aus dem folgenden AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
                             + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"

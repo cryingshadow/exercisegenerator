@@ -23,6 +23,17 @@ public abstract class TikZUtils {
     public static final String ITEM = "\\item";
 
     /**
+     * Prints the beginning of the specified environment.
+     * @param environment The environment.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printBeginning(String environment, BufferedWriter writer) throws IOException {
+        writer.write("\\begin{" + environment + "}");
+        writer.newLine();
+    }
+
+    /**
      * Prints the end of the specified environment.
      * @param environment The environment.
      * @param writer The writer to send the output to.
@@ -34,23 +45,49 @@ public abstract class TikZUtils {
     }
 
     /**
+     * Prints the header of a LaTeX file with the required packages and settings for our exercise environment.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printLaTeXBeginning(BufferedWriter writer) throws IOException {
+        writer.write("\\documentclass{article}");
+        writer.newLine();
+        writer.newLine();
+        writer.write("\\usepackage[a4paper,margin=1cm]{geometry}");
+        writer.write("\\usepackage{tikz}");
+        writer.write(
+            "\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,"
+            + "matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,trees}"
+        );
+        writer.write("\\usepackage{tikz-qtree}");
+        writer.newLine();
+        writer.newLine();
+        writer.write("\\setlength{\\parindent}{0pt}");
+        writer.newLine();
+        writer.newLine();
+        writer.write("\\begin{document}");
+        writer.newLine();
+        writer.newLine();
+    }
+
+    /**
+     * Prints the end of a LaTeX document.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printLaTeXEnd(BufferedWriter writer) throws IOException {
+        writer.newLine();
+        writer.write("\\end{document}");
+        writer.newLine();
+    }
+
+    /**
      * Prints a protected whitespace and a line terminator to the specified writer.
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
     public static void printProtectedNewline(BufferedWriter writer) throws IOException {
         writer.write("~\\\\*\\vspace*{1ex}");
-        writer.newLine();
-    }
-
-    /**
-     * Prints the beginning of the specified environment.
-     * @param environment The environment.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printBeginning(String environment, BufferedWriter writer) throws IOException {
-        writer.write("\\begin{" + environment + "}");
         writer.newLine();
     }
 
@@ -67,7 +104,7 @@ public abstract class TikZUtils {
         writer.newLine();
         writer.write("Schritt " + step + ":\\\\[-2ex]");
         writer.newLine();
-        printBeginning(CENTER, writer);
+        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
     }
 
     /**
@@ -90,7 +127,7 @@ public abstract class TikZUtils {
             writer.write("Schritt " + step + ": L\\\"osche " + op.x + "\\\\[-2ex]");
         }
         writer.newLine();
-        printBeginning(CENTER, writer);
+        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
     }
 
     /**
@@ -99,7 +136,7 @@ public abstract class TikZUtils {
      * @throws IOException If some error occurs during output.
      */
     public static void printSamePageEnd(BufferedWriter writer) throws IOException {
-        printEnd(CENTER, writer);
+        TikZUtils.printEnd(TikZUtils.CENTER, writer);
         writer.write("\\end{minipage}");
         writer.newLine();
     }

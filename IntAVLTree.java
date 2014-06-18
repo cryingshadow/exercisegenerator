@@ -38,7 +38,7 @@ class AVLNode {
     
     void setLeft(AVLNode _left) {
         this.mLeft = _left;
-        updateHeight();
+        this.updateHeight();
     }
     
     AVLNode getRight() {
@@ -47,11 +47,11 @@ class AVLNode {
     
     void setRight(AVLNode _right) {
         this.mRight = _right;
-        updateHeight();
+        this.updateHeight();
     }
     
     int getHeight() {
-        return mHeight;
+        return this.mHeight;
     }
     
     void updateHeight() {
@@ -66,8 +66,8 @@ class AVLNode {
         } else {
             this.mHeight = this.mRight.getHeight() + 1;
         }
-        if (mFather != null) {
-            mFather.updateHeight();
+        if (this.mFather != null) {
+            this.mFather.updateHeight();
         }
     }
 }
@@ -88,19 +88,19 @@ public class IntAVLTree {
      * Creates an AVL-tree exercise with an empty tree and the step counter being initially 1.
      */
     public IntAVLTree() {
-       mRoot = null;
-       mStepCounter = 0;
+       this.mRoot = null;
+       this.mStepCounter = 0;
     }
     
     public boolean isEmpty() {
-        return mRoot == null;
+        return this.mRoot == null;
     }
     
     /**
      * Sets the step counter back to 1.
      */
     public void resetStepCounter() {
-        mStepCounter = 0;
+        this.mStepCounter = 0;
     }
     
     /**
@@ -157,10 +157,10 @@ public class IntAVLTree {
             parent.setRight(node);
         }
         if (write) {
-            print("f\"uge " + _value + " ein", writer);
+            this.print("f\"uge " + _value + " ein", writer);
         }
         // Balanciere den Baum
-        balance(node, true, writer, write);
+        this.balance(node, true, writer, write);
     }
     
     /**
@@ -173,7 +173,7 @@ public class IntAVLTree {
             _newNode.setFather(_oldNode.getFather());
         }
         if (_oldNode.getFather() == null) { // root
-            mRoot = _newNode;
+            this.mRoot = _newNode;
         } else if (_oldNode == _oldNode.getFather().getLeft()) {
             // left child
             _oldNode.getFather().setLeft(_newNode);
@@ -192,30 +192,30 @@ public class IntAVLTree {
         if (_newNode.getRight() != null) {
             _newNode.getRight().setFather(_newNode);
         }
-        replace(_oldNode, _newNode);
+        this.replace(_oldNode, _newNode);
     }
     
     public void del(AVLNode _node, BufferedWriter writer, boolean write) throws IOException {
         int value = _node.getValue();
-        AVLNode tmp = remove(_node);
+        AVLNode tmp = this.remove(_node);
         if (write) {
-            print("entferne " + value, writer);
+            this.print("entferne " + value, writer);
         }
         // Balance the tree
-        balance(tmp, false, writer, write);
+        this.balance(tmp, false, writer, write);
     }
     
     public AVLNode remove(AVLNode _node) throws IOException {
         if (_node.getLeft() != null && _node.getRight() != null) { // zwei Kinder 
-            AVLNode tmp = minimum(_node.getRight());
-            AVLNode tmp2 = remove(tmp);
-            swap(_node, tmp);
+            AVLNode tmp = this.minimum(_node.getRight());
+            AVLNode tmp2 = this.remove(tmp);
+            this.swap(_node, tmp);
             return tmp2;
         } else {
             if (_node.getLeft() != null) { // ein Kind, links 
-                replace(_node, _node.getLeft());
+                this.replace(_node, _node.getLeft());
             } else { // ein Kind, oder kein Kind (node.right == null) 
-                replace(_node, _node.getRight());
+                this.replace(_node, _node.getRight());
             }
             return _node;
         }
@@ -238,12 +238,12 @@ public class IntAVLTree {
         AVLNode currentNode = _node;
         while (true) {
             if (currentNode.getLeft() == null && currentNode.getRight() != null && currentNode.getRight().getHeight() > 0) {
-                currentNode = balanceRightToLeft(currentNode, writer, write);
+                currentNode = this.balanceRightToLeft(currentNode, writer, write);
                 if (_afterInsertion) {
                     return;
                 }
             } else if (currentNode.getRight() == null && currentNode.getLeft() != null && currentNode.getLeft().getHeight() > 0) {
-                currentNode = balanceLeftToRight(currentNode, writer, write);
+                currentNode = this.balanceLeftToRight(currentNode, writer, write);
                 if (_afterInsertion) {
                     return;
                 }
@@ -251,9 +251,9 @@ public class IntAVLTree {
                 int diff = currentNode.getLeft().getHeight() - currentNode.getRight().getHeight();
                 if (java.lang.Math.abs(diff) > 1) {
                     if (diff > 0) { // Linker Teilbaum groesser
-                        currentNode = balanceLeftToRight(currentNode, writer, write);
+                        currentNode = this.balanceLeftToRight(currentNode, writer, write);
                     } else { // Rechter Teilbaum groesser
-                        currentNode = balanceRightToLeft(currentNode, writer, write);
+                        currentNode = this.balanceRightToLeft(currentNode, writer, write);
                     }
                     if (_afterInsertion) {
                         return;
@@ -282,10 +282,10 @@ public class IntAVLTree {
         AVLNode b = _node.getRight(); 
         // Rechter Teilbaum von b ist groesser
         if (b.getLeft() == null || (b.getRight() != null && b.getLeft().getHeight() < b.getRight().getHeight())) {
-            return leftRotate(_node, writer, write);
+            return this.leftRotate(_node, writer, write);
         } else { // Linker Teilbaum von b ist groesser (oder gleich?)
-            rightRotate(b, writer, write);
-            return leftRotate(_node, writer, write);
+            this.rightRotate(b, writer, write);
+            return this.leftRotate(_node, writer, write);
         }
     }
     
@@ -303,10 +303,10 @@ public class IntAVLTree {
         AVLNode b = _node.getLeft();
         // Linker Teilbaum von b ist groesser
         if (b.getRight() == null || (b.getLeft() != null && b.getRight().getHeight() < b.getLeft().getHeight())) {
-            return rightRotate(_node, writer, write);
+            return this.rightRotate(_node, writer, write);
         } else { // Linker Teilbaum von b ist groesser (oder gleich?)
-            leftRotate(b, writer, write);
-            return rightRotate(_node, writer, write);
+            this.leftRotate(b, writer, write);
+            return this.rightRotate(_node, writer, write);
         }
     }
     
@@ -339,7 +339,7 @@ public class IntAVLTree {
         node2.setLeft(_node);
         _node.setFather(node2);
         if (write) {
-            print("rotiere " + _node.getValue() + " nach links", writer);
+            this.print("rotiere " + _node.getValue() + " nach links", writer);
         }
         return node2;
     }
@@ -373,7 +373,7 @@ public class IntAVLTree {
         node2.setRight(_node);
         _node.setFather(node2);
         if (write) {
-            print("rotiere " + _node.getValue() + " nach rechts", writer);
+            this.print("rotiere " + _node.getValue() + " nach rechts", writer);
         }
         return node2;
     }
@@ -390,12 +390,12 @@ public class IntAVLTree {
         } else {
             result += " [." + _node.getValue();
             if (_node.getLeft() != null) {
-                result += toString(_node.getLeft());
+                result += this.toString(_node.getLeft());
             } else {
                 result += " \\edge[draw=none];\\node[draw=none]{};";
             }
             if (_node.getRight() != null) {
-                result += toString(_node.getRight());
+                result += this.toString(_node.getRight());
             } else {
                 result += " \\edge[draw=none];\\node[draw=none]{};";
             }
@@ -410,21 +410,21 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      */
     private void print(String _headline, BufferedWriter writer) throws IOException  {
-        printVerticalSpace(writer);
-        printSamePageBeginning(_headline, writer);
-        printTikzBeginning(writer);
-        if (mRoot == null) {
+        this.printVerticalSpace(writer);
+        this.printSamePageBeginning(_headline, writer);
+        this.printTikzBeginning(writer);
+        if (this.mRoot == null) {
             writer.write("\\Tree [.\\phantom{0} ];");
-        } else if (mRoot.getLeft() == null && mRoot.getRight() == null ) {
-            writer.write("\\Tree [." + mRoot.getValue() + " ];");
+        } else if (this.mRoot.getLeft() == null && this.mRoot.getRight() == null ) {
+            writer.write("\\Tree [." + this.mRoot.getValue() + " ];");
         } else {
             writer.write("\\Tree");
-            writer.write(toString(mRoot));
+            writer.write(this.toString(this.mRoot));
         }
         writer.newLine();
-        printTikzEnd(writer);
-        printProtectedNewline(writer);
-        printSamePageEnd(writer);
+        this.printTikzEnd(writer);
+        this.printProtectedNewline(writer);
+        this.printSamePageEnd(writer);
     }
     
     /**
@@ -444,8 +444,8 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      */
     private void printSamePageBeginning(String _headline, BufferedWriter writer) throws IOException {
-        if( mRoot.getHeight() < 9 ) {
-            writer.write("\\begin{minipage}[t]{0." + (mRoot.getHeight()+1) + " \\columnwidth}");
+        if( this.mRoot.getHeight() < 9 ) {
+            writer.write("\\begin{minipage}[t]{0." + (this.mRoot.getHeight()+1) + " \\columnwidth}");
             writer.newLine();
         } 
         if (!_headline.equals("")) {
@@ -464,7 +464,7 @@ public class IntAVLTree {
     private void printSamePageEnd(BufferedWriter writer) throws IOException {
         writer.write("\\end{center}");
         writer.newLine();
-        if( mRoot.getHeight() < 9 ) {
+        if( this.mRoot.getHeight() < 9 ) {
             writer.write("\\end{minipage}");
             writer.newLine();
         }
@@ -503,13 +503,13 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      */
     private void printVerticalSpace(BufferedWriter writer) throws IOException {
-        mStepCounter += mRoot.getHeight()+1;
-        if (mStepCounter >= 10) {
+        this.mStepCounter += this.mRoot.getHeight()+1;
+        if (this.mStepCounter >= 10) {
             writer.newLine();
             writer.write("~\\\\");
             writer.newLine();
             writer.newLine();
-            mStepCounter = mRoot.getHeight()+1;
+            this.mStepCounter = this.mRoot.getHeight()+1;
         }
     }
     
@@ -549,14 +549,14 @@ public class IntAVLTree {
             if (ops.size() > 1) {
                 if (tree.isEmpty()) {
                     writerSpace.write(
-                        "\\noindent F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren"
+                        "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren"
                         + " AVL-Baum aus und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge- "
                         + "und L\\\"oschoperation sowie jeder Rotation an:\\\\\\\\"
                     );
                     writerSpace.newLine();
                 } else {
                     writerSpace.write(
-                        "\\noindent Betrachten Sie den folgenden AVL-Baum:\\\\[2ex]"
+                        "Betrachten Sie den folgenden AVL-Baum:\\\\[2ex]"
                     );
                     writerSpace.newLine();
                     writerSpace.newLine();
@@ -566,7 +566,7 @@ public class IntAVLTree {
                     writerSpace.write("\\vspace*{1ex}");
                     writerSpace.newLine();
                     writerSpace.write(
-                        "\\noindent F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
+                        "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
                         + "und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge- "
                         + "und L\\\"oschoperation sowie jeder Rotation an:\\\\\\\\"
                     );
@@ -587,7 +587,7 @@ public class IntAVLTree {
                 if (tree.isEmpty()) {
                     if (op.y) {
                         writerSpace.write(
-                            "\\noindent F\\\"ugen Sie den Wert "
+                            "F\\\"ugen Sie den Wert "
                             + op.x
                             + " in einen leeren AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
                             + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an."
@@ -599,14 +599,14 @@ public class IntAVLTree {
                 } else {
                     if (op.y) {
                         writerSpace.write(
-                            "\\noindent F\\\"ugen Sie den Wert "
+                            "F\\\"ugen Sie den Wert "
                             + op.x
                             + " in den folgenden AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
                             + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"
                         );
                     } else {
                         writerSpace.write(
-                            "\\noindent L\\\"oschen Sie den Wert "
+                            "L\\\"oschen Sie den Wert "
                             + op.x
                             + " aus dem folgenden AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
                             + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"
