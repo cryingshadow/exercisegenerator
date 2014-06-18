@@ -65,8 +65,7 @@ public class DSALExercises {
      *             -p : File to store LaTeX code for a pre-print where to solve an exercise. E.g., for sorting this 
      *                  might be the input array followed by a number of empty arrays. If not set, no pre-print will be 
      *                  generated.<br>
-     *             -a : The algorithm to apply to the input. Currently, selectionsort, bubblesort, insertionsort, 
-     *                  quicksort, mergesort, and heapsort are implemented. Must be specified.<br>
+     *             -a : The algorithm to apply to the input. Must be specified.<br>
      *             -l : Additional lines for pre-prints. Defaults to 0 if not set. Ignored if -p is not set.<br>
      *             -d : Degree (e.g., of a B-tree).<br>
      *             -o : File containing operations used to construct a start structure.
@@ -126,56 +125,52 @@ public class DSALExercises {
                             new OutputStreamWriter(System.out)
                 );    
         ) {
-            Object input = DSALExercises.parseInput(options);
+            final Object input = DSALExercises.parseInput(options);
             Integer[] array = null;
             Integer m = 0;
             double[] params = null;
             Pair<double[], Integer[]> in = new Pair<double[], Integer[]>(null, null);
             String anchor = null;
-            switch (options.get(Flag.ALGORITHM)) {
-                case "selectionsort":
-                    array = (Integer[])input;
-                    if (options.containsKey(Flag.EXERCISE)) {
-                        if (DSALExercises.STUDENT_MODE) {
-                            exerciseWriter.write(
-                                "\\noindent Sortieren Sie das folgende Array mithilfe von Selectionsort."
-                            );
-                            exerciseWriter.newLine();
-                            exerciseWriter.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
-                            exerciseWriter.newLine();
-                        }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
-                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
+            final String alg = options.get(Flag.ALGORITHM);
+            if (Algorithm.SELECTIONSORT.name.equals(alg)) {
+                array = (Integer[])input;
+                if (options.containsKey(Flag.EXERCISE)) {
+                    if (DSALExercises.STUDENT_MODE) {
+                        exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Selectionsort.");
+                        exerciseWriter.newLine();
+                        exerciseWriter.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
+                        exerciseWriter.newLine();
                     }
-                    rows += Sorting.selectionsort(array, solutionWriter);
-                    if (options.containsKey(Flag.EXERCISE)) {
-                        for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
-                        }
-                        TikZUtils.printTikzEnd(exerciseWriter);
+                    TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                    anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
+                }
+                rows += Sorting.selectionsort(array, solutionWriter);
+                if (options.containsKey(Flag.EXERCISE)) {
+                    for (int i = 0; i < rows; i++) {
+                        anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                     }
-                    break;
-                case "bubblesort":
-                    array = (Integer[])input;
-                    if (options.containsKey(Flag.EXERCISE)) {
-                        if (DSALExercises.STUDENT_MODE) {
-                            exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Bubblesort.");
-                            exerciseWriter.newLine();
-                            exerciseWriter.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
-                            exerciseWriter.newLine();
-                        }
-                        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
-                        anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
+                    TikZUtils.printTikzEnd(exerciseWriter);
+                }
+            } else if (Algorithm.BUBBLESORT.name.equals(alg)) {
+                array = (Integer[])input;
+                if (options.containsKey(Flag.EXERCISE)) {
+                    if (DSALExercises.STUDENT_MODE) {
+                        exerciseWriter.write("\\noindent Sortieren Sie das folgende Array mithilfe von Bubblesort.");
+                        exerciseWriter.newLine();
+                        exerciseWriter.write("Geben Sie dazu das Array nach jeder Swap-Operation an.\\\\[2ex]");
+                        exerciseWriter.newLine();
                     }
-                    rows += Sorting.bubblesort(array, solutionWriter);
-                    if (options.containsKey(Flag.EXERCISE)) {
-                        for (int i = 0; i < rows; i++) {
-                            anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
-                        }
-                        TikZUtils.printTikzEnd(exerciseWriter);
+                    TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+                    anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
+                }
+                rows += Sorting.bubblesort(array, solutionWriter);
+                if (options.containsKey(Flag.EXERCISE)) {
+                    for (int i = 0; i < rows; i++) {
+                        anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
                     }
-                    break;
-                case "insertionsort":
+                    TikZUtils.printTikzEnd(exerciseWriter);
+                }
+            } else if (Algorithm.INSERTIONSORT.name.equals(alg)) {
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
@@ -199,8 +194,7 @@ public class DSALExercises {
                         }
                         TikZUtils.printTikzEnd(exerciseWriter);
                     }
-                    break;
-                case "quicksort":
+            } else if (Algorithm.QUICKSORT.name.equals(alg)) {
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
@@ -222,8 +216,7 @@ public class DSALExercises {
                         }
                         TikZUtils.printTikzEnd(exerciseWriter);
                     }
-                    break;
-                case "mergesort":
+            } else if (Algorithm.MERGESORT.name.equals(alg)) {
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
@@ -242,8 +235,7 @@ public class DSALExercises {
                         }
                         TikZUtils.printTikzEnd(exerciseWriter);
                     }
-                    break;
-                case "mergesortWithSplitting":
+            } else if (Algorithm.MERGESORT_SPLIT.name.equals(alg)) {
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
@@ -262,8 +254,7 @@ public class DSALExercises {
                         }
                         TikZUtils.printTikzEnd(exerciseWriter);
                     }
-                    break;
-                case "heapsort":
+            } else if (Algorithm.HEAPSORT.name.equals(alg)) {
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
@@ -282,8 +273,7 @@ public class DSALExercises {
                         }
                         TikZUtils.printTikzEnd(exerciseWriter);
                     }
-                    break;
-                case "heapsortWithTrees":
+            } else if (Algorithm.HEAPSORT_TREE.name.equals(alg)) {
                     array = (Integer[])input;
                     if (options.containsKey(Flag.EXERCISE)) {
                         if (DSALExercises.STUDENT_MODE) {
@@ -302,8 +292,7 @@ public class DSALExercises {
                         }
                         TikZUtils.printTikzEnd(exerciseWriter);
                     }
-                    break;
-                case "btree":
+            } else if (Algorithm.BTREE.name.equals(alg)) {
                     IntBTree.btree(
                         new IntBTree(
                             options.containsKey(Flag.DEGREE) ? Integer.parseInt(options.get(Flag.DEGREE)) : 2
@@ -313,8 +302,7 @@ public class DSALExercises {
                         solutionWriter,
                         options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                     );
-                    break;
-                case "rbtree":
+            } else if (Algorithm.RBTREE.name.equals(alg)) {
                     IntRBTree.rbtree(
                         new IntRBTree(),
                         (Deque<Pair<Integer,Boolean>>)input,
@@ -322,8 +310,7 @@ public class DSALExercises {
                         solutionWriter,
                         options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                     );
-                    break;
-                case "avltree":
+            } else if (Algorithm.AVLTREE.name.equals(alg)) {
                     IntAVLTree.avltree(
                         new IntAVLTree(),
                         (Deque<Pair<Integer,Boolean>>)input,
@@ -331,8 +318,7 @@ public class DSALExercises {
                         solutionWriter,
                         options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                     );
-                    break;
-                case "hashDivision":
+            } else if (Algorithm.HASH_DIV.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
@@ -353,8 +339,7 @@ public class DSALExercises {
                     params[0] = 1;
                     params[1] = 0;
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
-                    break;
-                case "hashDivisionLinear":
+            } else if (Algorithm.HASH_DIV_LIN.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
@@ -374,8 +359,7 @@ public class DSALExercises {
                     params[0] = 1;
                     params[1] = 1;
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
-                    break;
-                case "hashDivisionQuadratic":
+            } else if (Algorithm.HASH_DIV_QUAD.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
@@ -401,8 +385,7 @@ public class DSALExercises {
                     params[2] = in.x[1];
                     params[3] = in.x[2];
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
-                    break;
-                case "hashMultiplication":
+            } else if (Algorithm.HASH_MULT.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
@@ -425,8 +408,7 @@ public class DSALExercises {
                     params[1] = 0;
                     params[2] = in.x[1];
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
-                    break;
-                case "hashMultiplicationLinear":
+            } else if (Algorithm.HASH_MULT_LIN.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
@@ -449,8 +431,7 @@ public class DSALExercises {
                     params[1] = 1;
                     params[2] = in.x[1];
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
-                    break;
-                case "hashMultiplicationQuadratic":
+            } else if (Algorithm.HASH_MULT_QUAD.name.equals(alg)) {
                     in = (Pair<double[], Integer[]>)input;
                     array = in.y;
                     m = (int)in.x[0];
@@ -479,10 +460,9 @@ public class DSALExercises {
                     params[3] = in.x[2];
                     params[4] = in.x[3];
                     Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
-                    break;
-                default:
-                    System.out.println("Unknown algorithm!");
-                    return;
+            } else {
+                System.out.println("Unknown algorithm!");
+                return;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -1167,17 +1147,17 @@ public class DSALExercises {
         /**
          * The documentation for this algorithm.
          */
-        private String[] docu;
+        private final String[] docu;
 
         /**
          * Flag indicating whether the algorithm is enabled in student mode.
          */
-        private boolean enabled;
+        private final boolean enabled;
 
         /**
          * The name of the algorithm.
          */
-        private String name;
+        private final String name;
 
         /**
          * @param nameParam The name of the algorithm.
@@ -1205,7 +1185,7 @@ public class DSALExercises {
         ALGORITHM(
             "-a",
             "Algorithm",
-            "The algorithm. Currently, the supported algorithms are: "
+            "The algorithm (must be specified). Currently, the supported algorithms are: "
             + DSALExercises.algorithmNames()
             + ". To see detailed help for one of the supported algorithms, call this program with \"-h <alg>\" where "
             + "<alg> is the name of the algorithm.",
