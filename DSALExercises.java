@@ -532,7 +532,27 @@ public class DSALExercises {
         }
         return DSALExercises.gcd(number2, number1%number2);
     }
+	
+	private static int getNextPrime(int start)
+	{
+		int[] primes = new int[]{5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
+		
+	}
 
+	private static int[] getAllUpToNextPrimes(int start)
+	{
+		int[] primes = new int[]{5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
+		ArrayList<Integer> result;
+		int current = 0;
+		while(primes[current] < start)
+		{
+			result.add(primes[current]);
+			current++;
+		}
+		result.add(primes[current]);
+		return result.toArray(new int[result.size()]);
+	}
+	
     /**
      * @return The set of (in student mode only enabled) hashing algorithms.
      */
