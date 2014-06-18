@@ -45,7 +45,7 @@ public class DSALExercises {
     static {
         VERSION = "1.0";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = false;
+        STUDENT_MODE = true;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         HELP = DSALExercises.initHelpText();
@@ -375,7 +375,7 @@ public class DSALExercises {
                     array = in.y;
                     m = (int)in.x[0];
                     
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    //if (options.containsKey(Flag.PREPRINT)) {
                             writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Divisionsmethode ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]");
                             writerSpace.newLine();
                             for(int i = 0; i<array.length - 1; ++i)
@@ -386,7 +386,7 @@ public class DSALExercises {
                             writerSpace.write("\\\\[2ex]");
                             writerSpace.newLine();
                         
-                    }
+                    //}
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 0;
@@ -397,7 +397,7 @@ public class DSALExercises {
                     array = in.y;
                     m = (int)in.x[0];
                     
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    //if (options.containsKey(Flag.PREPRINT)) {
                             writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Divisionsmethode mit linearer Sondierung ein:\\\\[2ex]");
                             writerSpace.newLine();
                             for(int i = 0; i<array.length - 1; ++i)
@@ -408,7 +408,7 @@ public class DSALExercises {
                             writerSpace.write("\\\\[2ex]");
                             writerSpace.newLine();
                         
-                    }
+                    //}
                     params = new double[2];
                     params[0] = 1;
                     params[1] = 1;
@@ -419,7 +419,7 @@ public class DSALExercises {
                     array = in.y;
                     m = (int)in.x[0];
                     
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    //if (options.containsKey(Flag.PREPRINT)) {
                             writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Divisionsmethode mit quadratischer Sondierung ($c_1$= " + in.x[1] + ", $c_2$= "+ in.x[2] + " ) ein:\\\\[2ex]");
                             writerSpace.newLine();
                             for(int i = 0; i<array.length - 1; ++i)
@@ -430,7 +430,7 @@ public class DSALExercises {
                             writerSpace.write("\\\\[2ex]");
                             writerSpace.newLine();
                         
-                    }
+                    //}
                     params = new double[4];
                     params[0] = 1;
                     params[1] = 2;
@@ -443,7 +443,7 @@ public class DSALExercises {
                     array = in.y;
                     m = (int)in.x[0];
                     
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    //if (options.containsKey(Flag.PREPRINT)) {
                             writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]");
                             writerSpace.newLine();
                             for(int i = 0; i<array.length - 1; ++i)
@@ -454,7 +454,7 @@ public class DSALExercises {
                             writerSpace.write("\\\\[2ex]");
                             writerSpace.newLine();
                         
-                    }
+                    //}
                     params = new double[3];
                     params[0] = 2;
                     params[1] = 0;
@@ -466,7 +466,7 @@ public class DSALExercises {
                     array = in.y;
                     m = (int)in.x[0];
                     
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    //if (options.containsKey(Flag.PREPRINT)) {
                             writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") mit linearer Sondierung ein:\\\\[2ex]");
                             writerSpace.newLine();
                             for(int i = 0; i<array.length - 1; ++i)
@@ -477,7 +477,7 @@ public class DSALExercises {
                             writerSpace.write("\\\\[2ex]");
                             writerSpace.newLine();
                         
-                    }
+                    //}
                     params = new double[3];
                     params[0] = 2;
                     params[1] = 1;
@@ -489,7 +489,7 @@ public class DSALExercises {
                     array = in.y;
                     m = (int)in.x[0];
                     
-                    if (options.containsKey(Flag.PREPRINT)) {
+                    //if (options.containsKey(Flag.PREPRINT)) {
                             writerSpace.write("\\noindent F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange " + m +  " unter Verwendung der Multiplikationsmethode (c = " + in.x[1] +") mit quadratischer Sondierung ($c_1$= " + in.x[2] + ", $c_2$= "+ in.x[3] + " ) ein:\\\\[2ex]");
                             writerSpace.newLine();
                             for(int i = 0; i<array.length - 1; ++i)
@@ -500,7 +500,7 @@ public class DSALExercises {
                             writerSpace.write("\\\\[2ex]");
                             writerSpace.newLine();
                         
-                    }
+                    //}
                     params = new double[5];
                     params[0] = 2;
                     params[1] = 2;

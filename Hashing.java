@@ -40,8 +40,8 @@ public abstract class Hashing {
                 switch (algorithm) {
                     case 1:
                         // Division Hashing
-                        c1 = params[2];
-                        c2 = params[3];
+                        c1 = params[3];
+                        c2 = params[4];
                         writer.write("m = " + m + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
                         break;
                     case 2:
