@@ -53,7 +53,7 @@ public abstract class TikZUtils {
         writer.write("\\documentclass{article}");
         writer.newLine();
         writer.newLine();
-        writer.write("\\usepackage[a4paper,margin=1cm]{geometry}");
+        writer.write("\\usepackage[a4paper,margin=2cm]{geometry}");
         writer.write("\\usepackage{tikz}");
         writer.write(
             "\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,"

@@ -16,25 +16,24 @@ public abstract class Hashing {
      *               parameters: c, c1, c2
      * @param debug Flag indicating whether debug output should be printed on stdout.
      * @param writer The writer for the solution.
-     * @param writerSpace The writer for the exercise.
-     * @throws IOException If some error occurs during output or if in.size > m or if c1 and c2 are badly chosen.
+     * @throws IOException If some error occurs during output.
+     * @throws HashException If in.size > m or if c1 and c2 are badly chosen.
      */
     public static void hashing(
         Integer[] in,
         int m,
         double[] params,
         boolean debug,
-        BufferedWriter writer,
-        BufferedWriter writerSpace
-    ) throws IOException {
+        BufferedWriter writer
+    ) throws IOException, HashException {
         int collisionCount = 0;
-        Integer[] indizes = new Integer[m];
         int algorithm = (int)params[0];
         int probe = (int)params[1];
-        String anchor = "";
+//        String anchor = "";
         double c = 0.0;
         double c1 = 0.0;
         double c2 = 0.0;
+        String init = "";
         switch (probe) {
             case 2:
                 switch (algorithm) {
@@ -42,14 +41,14 @@ public abstract class Hashing {
                         // Division Hashing
                         c1 = params[3];
                         c2 = params[4];
-                        writer.write("m = " + m + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
+                        init ="m = " + m + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]";
                         break;
                     case 2:
                         // Multiplication Hashing
                         c = params[2];
                         c1 = params[3];
                         c2 = params[4];
-                        writer.write("m = " + m + ", c = " + c + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]");
+                        init = "m = " + m + ", c = " + c + ", $c_1$ = " + c1 + ", $c_2$ = " + c2 + ":\\\\[2ex]";
                         break;
                 }
                 break;
@@ -57,25 +56,18 @@ public abstract class Hashing {
                 switch (algorithm) {
                     case 1:
                         // Division Hashing
-                        writer.write("m = " + m + ":\\\\[2ex]");
+                        init = "m = " + m + ":\\\\[2ex]";
                         break;
                     case 2:
                         // Multiplication Hashing
                         c = params[2];
-                        writer.write("m = " + m + ", c = " + c + ":\\\\[2ex]");
+                        init = "m = " + m + ", c = " + c + ":\\\\[2ex]";
                         break;
                 }
                 break;
         }
         if (probe != 0) {
             // probing
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writerSpace);
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            for (int i = 0; i < m; ++i) {
-                indizes[i] = i;
-            }
-            anchor = ArrayUtils.printArray(indizes, null, null, null, writerSpace);
-            anchor = ArrayUtils.printEmptyArray(m, anchor, writerSpace);
             Integer[] solution = new Integer[m];
             for (int i = 0; i < solution.length; ++i) {
                 solution[i] = null;
@@ -105,7 +97,7 @@ public abstract class Hashing {
                                 ++collisionCount;
                             }
                             if (solution[(pos+off)%m] != null) {
-                                throw new IOException("The array size was chosen too small!");
+                                throw new HashException("The array size was chosen too small!");
                             }
                             solution[(pos+off)%m] = in[i];
                             break;
@@ -116,7 +108,7 @@ public abstract class Hashing {
                                 ++collisionCount;
                             }
                             if (solution[((int)Math.floor(pos + c1*off + c2*off*off))%m] != null) {
-                                throw new IOException(
+                                throw new HashException(
                                     "The array size was chosen too small or the constants for quadratic probing are "
                                     + "chosen badly: Insertion of "
                                     + in[i]
@@ -135,16 +127,17 @@ public abstract class Hashing {
             if (debug) {
                 System.out.println("#collisions by probing: " + collisionCount);
             }
-            anchor = ArrayUtils.printArray(solution, null, null, null, writer);
+            writer.write(init);
+            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+            ArrayUtils.printArray(solution, null, null, null, writer);
         } else {
             // probe == 0 -> no probing
-            TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writerSpace);
+            writer.write(init);
             TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
             String[] solution = new String[m];
             for (int i = 0; i < m; ++i) {
                 solution[i] = i + ":";
             }
-            anchor = ArrayUtils.printVerticalStringArray(solution, null, null, null, writerSpace);
             for (int i = 0; i < in.length; ++i) {
                 int pos = 0;
                 switch (algorithm) {
@@ -169,9 +162,49 @@ public abstract class Hashing {
                     solution[pos] += ", " + in[i];
                 }
             }
-            anchor = ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
+            ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
         }
-        TikZUtils.printTikzEnd(writerSpace);
+        TikZUtils.printTikzEnd(writer);
+    }
+
+    /**
+     * Prints the exercise text for this hashing exercise.
+     * @param input 
+     * @param size The size of the hash table.
+     * @param probing Flag indicating whether probing is used.
+     * @param longname 
+     * @param constants 
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printExercise(
+        Integer[] input,
+        int size,
+        boolean probing,
+        BufferedWriter writer
+    ) throws IOException {
+        writer.newLine();
+        for (int i = 0; i < input.length - 1; ++i) {
+            writer.write(input[i] + ", ");
+        }
+        writer.write(input[input.length-1] + ".");
+        writer.write("\\\\[2ex]");
+        writer.newLine();
+        if (probing) {
+            Integer[] indizes = new Integer[size];
+            for (int i = 0; i < size; ++i) {
+                indizes[i] = i;
+            }
+            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+            ArrayUtils.printEmptyArray(size, ArrayUtils.printArray(indizes, null, null, null, writer), writer);
+        } else {
+            String[] solution = new String[size];
+            for (int i = 0; i < size; ++i) {
+                solution[i] = i + ":";
+            }
+            TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
+            ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
+        }
         TikZUtils.printTikzEnd(writer);
     }
 

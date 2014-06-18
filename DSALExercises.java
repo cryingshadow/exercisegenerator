@@ -51,7 +51,7 @@ public class DSALExercises {
     static {
         VERSION = "1.0";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = true;
+        STUDENT_MODE = false;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
@@ -133,7 +133,13 @@ public class DSALExercises {
         ) {
             if (DSALExercises.STUDENT_MODE) {
                 TikZUtils.printLaTeXBeginning(exerciseWriter);
+                exerciseWriter.write("{\\large Aufgabe}\\\\[3ex]");
+                exerciseWriter.newLine();
+                exerciseWriter.newLine();
                 TikZUtils.printLaTeXBeginning(solutionWriter);
+                solutionWriter.write("{\\large L\\\"osung}\\\\[3ex]");
+                solutionWriter.newLine();
+                solutionWriter.newLine();
             }
             final Object input = DSALExercises.parseInput(options);
             Integer[] array = null;
@@ -142,6 +148,17 @@ public class DSALExercises {
             Pair<double[], Integer[]> in = new Pair<double[], Integer[]>(null, null);
             String anchor = null;
             final String alg = options.get(Flag.ALGORITHM);
+            final String hash1 = "F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange ";
+            final String hash2 = " unter Verwendung der ";
+            final String hash3 = " ein:\\\\[2ex]";
+            final String linProb = " mit linearer Sondierung";
+            final String quadProb1 = " mit quadratischer Sondierung ($c_1 = ";
+            final String quadProb2 = "$, $c_2 = ";
+            final String quadProb3 = "$)";
+            final String mult1 = "Multiplikationsmethode ($c = ";
+            final String mult2 = "$)";
+            final String div = "Divisionsmethode";
+            final String noProb = " ohne Sondierung (also durch Verkettung)";
             if (Algorithm.SELECTIONSORT.name.equals(alg)) {
                 array = (Integer[])input;
                 anchor =
@@ -274,157 +291,164 @@ public class DSALExercises {
                 );
             } else if (Algorithm.HASH_DIV.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
-                array = in.y;
                 m = (int)in.x[0];
-                exerciseWriter.write(
-                    "F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
-                    + m
-                    + " unter Verwendung der Divisionsmethode ohne Sondierung (also durch Verkettung) "
-                    + "ein:\\\\[2ex]"
-                );
-                exerciseWriter.newLine();
-                for (int i = 0; i < array.length - 1; ++i) {
-                    exerciseWriter.write(array[i] + ", ");
-                }
-                exerciseWriter.write(array[array.length-1] + ".");
-                exerciseWriter.write("\\\\[2ex]");
-                exerciseWriter.newLine();
                 params = new double[5];
                 params[0] = 1;
                 params[1] = 0;
                 params[2] = 0;
                 params[3] = 0;
                 params[4] = 0;
-                Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
+                try {
+                    Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
+                } catch (HashException e) {
+                    throw new IllegalStateException("Could not hash without probing - this should be impossible...");
+                }
+                exerciseWriter.write(hash1 + m + hash2 + div + noProb + hash3);
+                Hashing.printExercise(in.y, m, false, exerciseWriter);
             } else if (Algorithm.HASH_DIV_LIN.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
-                array = in.y;
                 m = (int)in.x[0];
-                exerciseWriter.write(
-                    "F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
-                    + m
-                    + " unter Verwendung der Divisionsmethode mit linearer Sondierung ein:\\\\[2ex]"
-                );
-                exerciseWriter.newLine();
-                for (int i = 0; i < array.length - 1; ++i) {
-                    exerciseWriter.write(array[i] + ", ");
-                }
-                exerciseWriter.write(array[array.length-1] + ".");
-                exerciseWriter.write("\\\\[2ex]");
-                exerciseWriter.newLine();
                 params = new double[5];
                 params[0] = 1;
                 params[1] = 1;
                 params[2] = 0;
                 params[3] = 0;
                 params[4] = 0;
-                Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
+                try {
+                    Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
+                } catch (HashException e) {
+                    throw new IllegalStateException("Could not hash with linear probing - this should not happen...");
+                }
+                exerciseWriter.write(hash1 + m + hash2 + div + linProb + hash3);
+                Hashing.printExercise(in.y, m, true, exerciseWriter);
             } else if (Algorithm.HASH_DIV_QUAD.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
-                array = in.y;
                 m = (int)in.x[0];
-                exerciseWriter.write(
-                    "F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
-                    + m
-                    + " unter Verwendung der Divisionsmethode mit quadratischer Sondierung ($c_1$= "
-                    + in.x[2]
-                    + ", $c_2$= "
-                    + in.x[3]
-                    + " ) ein:\\\\[2ex]"
-                );
-                exerciseWriter.newLine();
-                for (int i = 0; i < array.length - 1; ++i) {
-                    exerciseWriter.write(array[i] + ", ");
-                }
-                exerciseWriter.write(array[array.length-1] + ".");
-                exerciseWriter.write("\\\\[2ex]");
-                exerciseWriter.newLine();
+                double c1 = in.x[2];
+                double c2 = in.x[3];
                 params = new double[5];
                 params[0] = 1;
                 params[1] = 2;
                 params[2] = 0;
-                params[3] = in.x[2];
-                params[4] = in.x[3];
-                Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
+                params[3] = c1;
+                params[4] = c2;
+                boolean fail;
+                do {
+                    try {
+                        fail = false;
+                        Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
+                    } catch (HashException e) {
+                        Random gen = new Random();
+                        int c1int = gen.nextInt(m);
+                        int c2int = gen.nextInt(m);
+                        while (!DSALExercises.areCoprime(m, c1int, c2int)) {
+                            c1int = gen.nextInt(m);
+                            if (DSALExercises.areCoprime(m, c1int, c2int)) {
+                                break;
+                            }
+                            c2int = gen.nextInt(m);
+                            if (DSALExercises.areCoprime(m, c1int, c2int)) {
+                                break;
+                            }
+                        }
+                        c1 = c1int;
+                        c2 = c2int;
+                        params[3] = c1;
+                        params[4] = c2;
+                        fail = true;
+                    }
+                } while (fail);
+                exerciseWriter.write(hash1 + m + hash2 + div + quadProb1 + c1 + quadProb2 + c2 + quadProb3 + hash3);
+                Hashing.printExercise(in.y, m, true, exerciseWriter);
             } else if (Algorithm.HASH_MULT.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
-                array = in.y;
                 m = (int)in.x[0];
-                exerciseWriter.write(
-                    "F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
-                    + m
-                    + " unter Verwendung der Multiplikationsmethode (c = "
-                    + in.x[1]
-                    + ") ohne Sondierung (also durch Verkettung) ein:\\\\[2ex]"
-                );
-                exerciseWriter.newLine();
-                for (int i = 0; i < array.length - 1; ++i) {
-                    exerciseWriter.write(array[i] + ", ");
-                }
-                exerciseWriter.write(array[array.length-1] + ".");
-                exerciseWriter.write("\\\\[2ex]");
-                exerciseWriter.newLine();
+                double c = in.x[1];
                 params = new double[5];
                 params[0] = 2;
                 params[1] = 0;
-                params[2] = in.x[1];
+                params[2] = c;
                 params[3] = 0;
                 params[4] = 0;
-                Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
+                try {
+                    Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
+                } catch (HashException e) {
+                    throw new IllegalStateException("Could not hash without probing - this should be impossible...");
+                }
+                exerciseWriter.write(hash1 + m + hash2 + mult1 + c + mult2 + noProb + hash3);
+                Hashing.printExercise(in.y, m, false, exerciseWriter);
             } else if (Algorithm.HASH_MULT_LIN.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
-                array = in.y;
                 m = (int)in.x[0];
-                exerciseWriter.write(
-                    "F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
-                    + m
-                    + " unter Verwendung der Multiplikationsmethode (c = "
-                    + in.x[1]
-                    + ") mit linearer Sondierung ein:\\\\[2ex]"
-                );
-                exerciseWriter.newLine();
-                for (int i = 0; i < array.length - 1; ++i) {
-                    exerciseWriter.write(array[i] + ", ");
-                }
-                exerciseWriter.write(array[array.length-1] + ".");
-                exerciseWriter.write("\\\\[2ex]");
-                exerciseWriter.newLine();
+                double c = in.x[1];
                 params = new double[5];
                 params[0] = 2;
                 params[1] = 1;
-                params[2] = in.x[1];
+                params[2] = c;
                 params[3] = 0;
                 params[4] = 0;
-                Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
+                try {
+                    Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
+                } catch (HashException e) {
+                    throw new IllegalStateException("Could not hash with linear probing - this should not happen...");
+                }
+                exerciseWriter.write(hash1 + m + hash2 + mult1 + c + mult2 + linProb + hash3);
+                Hashing.printExercise(in.y, m, true, exerciseWriter);
             } else if (Algorithm.HASH_MULT_QUAD.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
-                array = in.y;
                 m = (int)in.x[0];
-                exerciseWriter.write(
-                    "F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange "
-                    + m
-                    + " unter Verwendung der Multiplikationsmethode (c = "
-                    + in.x[1]
-                    + ") mit quadratischer Sondierung ($c_1$= "
-                    + in.x[2]
-                    + ", $c_2$= "
-                    + in.x[3]
-                    + " ) ein:\\\\[2ex]"
-                );
-                exerciseWriter.newLine();
-                for (int i = 0; i < array.length - 1; ++i) {
-                    exerciseWriter.write(array[i] + ", ");
-                }
-                exerciseWriter.write(array[array.length-1] + ".");
-                exerciseWriter.write("\\\\[2ex]");
-                exerciseWriter.newLine();
+                double c = in.x[1];
+                double c1 = in.x[2];
+                double c2 = in.x[3];
                 params = new double[5];
                 params[0] = 2;
                 params[1] = 2;
-                params[2] = in.x[1];
-                params[3] = in.x[2];
-                params[4] = in.x[3];
-                Hashing.hashing(array, m, params, !DSALExercises.STUDENT_MODE, solutionWriter, exerciseWriter);
+                params[2] = c;
+                params[3] = c1;
+                params[4] = c2;
+                boolean fail;
+                do {
+                    try {
+                        fail = false;
+                        Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
+                    } catch (HashException e) {
+                        Random gen = new Random();
+                        int c1int = gen.nextInt(m);
+                        int c2int = gen.nextInt(m);
+                        while (!DSALExercises.areCoprime(m, c1int, c2int)) {
+                            c1int = gen.nextInt(m);
+                            if (DSALExercises.areCoprime(m, c1int, c2int)) {
+                                break;
+                            }
+                            c2int = gen.nextInt(m);
+                            if (DSALExercises.areCoprime(m, c1int, c2int)) {
+                                break;
+                            }
+                        }
+                        c = gen.nextDouble();
+                        c1 = c1int;
+                        c2 = c2int;
+                        params[2] = c;
+                        params[3] = c1;
+                        params[4] = c2;
+                        fail = true;
+                    }
+                } while (fail);
+                exerciseWriter.write(
+                    hash1
+                    + m
+                    + hash2
+                    + mult1
+                    + c
+                    + mult2
+                    + quadProb1
+                    + c1
+                    + quadProb2
+                    + c2
+                    + quadProb3
+                    + hash3
+                );
+                Hashing.printExercise(in.y, m, true, exerciseWriter);
             } else {
                 System.out.println("Unknown algorithm!");
                 return;
@@ -799,43 +823,38 @@ public class DSALExercises {
                 Random gen = new Random();
                 if (options.containsKey(Flag.LENGTH)) {
                     length = Integer.parseInt(options.get(Flag.LENGTH));
-                    System.out.println("Lines set to: " + length);
+//                    System.out.println("Length set to: " + length);
                 } else {
                     length = gen.nextInt(16) + 5;
-                    System.out.println("Lines chosen to: " + length);
+//                    System.out.println("Length chosen to: " + length);
                 }
                 array = new Integer[length];
                 for (int i = 0; i < array.length; i++) {
                     array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                 }
-                double[] params = new double[4]; // create all possible constants per default.
+                double[] params = new double[4];
+                // create all possible constants per default.
                 int m = 0;
-                if(alg == "hashDivision" || alg == "hashMultiplication")
-                {
+                if (alg == "hashDivision" || alg == "hashMultiplication") {
                     Integer[] primes = DSALExercises.getAllUpToNextPrimes(length);
                     int index = gen.nextInt(primes.length);
                     m = primes[index];
-                }
-                else
-                {
+                } else {
                     m = DSALExercises.getNextPrime(length);
-                    boolean skip = gen.nextBoolean();
-                    if(skip)
-                    {
+                    while (gen.nextBoolean()) {
                         m = DSALExercises.getNextPrime(m+1);
                     }
                 }
-                int c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                int c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                if(alg == "hashDivisionQuadratic" || alg == "hashMultiplicationQuadratic")
-                {
-                    while (!DSALExercises.areCoprime(m,c1,c2)) {
-                        c1 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                        if (DSALExercises.areCoprime(m,c1,c2)) {
+                int c1 = gen.nextInt(m);
+                int c2 = gen.nextInt(m);
+                if (alg == "hashDivisionQuadratic" || alg == "hashMultiplicationQuadratic") {
+                    while (!DSALExercises.areCoprime(m, c1, c2)) {
+                        c1 = gen.nextInt(m);
+                        if (DSALExercises.areCoprime(m, c1, c2)) {
                             break;
                         }
-                        c2 = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                        if (DSALExercises.areCoprime(m,c1,c2)) {
+                        c2 = gen.nextInt(m);
+                        if (DSALExercises.areCoprime(m, c1, c2)) {
                             break;
                         }
                     }
@@ -981,7 +1000,19 @@ public class DSALExercises {
         /**
          * Insertion and deletion in AVL-trees with int values.
          */
-        AVLTREE("avltree", "AVL-Baum", new String[]{"TODO"}, true),
+        AVLTREE(
+            "avltree",
+            "AVL-Baum",
+            new String[]{
+                "Insertion and deletion of keys in an AVL-Tree.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies how many operations should be performed on the AVL-Tree." :
+                            "TODO"
+                )
+            },
+            true
+        ),
 
         /**
          * Insertion and deletion in B-trees with int values.
@@ -990,11 +1021,11 @@ public class DSALExercises {
             "btree",
             IntBTree.NAME_OF_BTREE_WITH_DEGREE_2,
             new String[]{
-                "Insertion and deletion of keys in a B-tree. The flag -d can be used to set the degree of the B-tree "
+                "Insertion and deletion of keys in a B-tree. The flag -d can be used to set the degree of the B-Tree "
                 + "(an integer greater than 1, if not specified, the degree defaults to 2).",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "The flag -l specifies how many operations should be performed on the B-tree." :
+                        "The flag -l specifies how many operations should be performed on the B-Tree." :
                             "TODO"
                 )
             },
@@ -1230,7 +1261,19 @@ public class DSALExercises {
         /**
          * Insertion and deletion in Red-Black-trees with int values.
          */
-        RBTREE("rbtree", "Rot-Schwarz-Baum", new String[]{"TODO"}, true),
+        RBTREE(
+            "rbtree",
+            "Rot-Schwarz-Baum",
+            new String[]{
+                "Insertion and deletion of keys in a Red-Black-Tree.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies how many operations should be performed on the Red-Black-Tree." :
+                            "TODO"
+                )
+            },
+            true
+        ),
 
         /**
          * Selectionsort on Integer arrays.
