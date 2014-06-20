@@ -96,6 +96,18 @@ public class IntAVLTree {
         return this.mRoot == null;
     }
     
+    public AVLNode root() {
+        return mRoot;
+    }
+    
+    public int getHeight() {
+        if (mRoot == null) {
+            return -1;
+        } else {
+            return mRoot.getHeight();
+        }
+    }
+    
     /**
      * Sets the step counter back to 1.
      */
@@ -197,12 +209,23 @@ public class IntAVLTree {
     
     public void del(AVLNode _node, BufferedWriter writer, boolean write) throws IOException {
         int value = _node.getValue();
-        AVLNode tmp = this.remove(_node);
-        if (write) {
-            this.print("entferne " + value, writer);
+        if (mRoot.getLeft() == null && mRoot.getRight() == null ) {
+            if (_node == mRoot) {
+                mRoot = null;
+                if (write) {
+                    this.print("entferne " + value, writer);
+                }
+            }
+        } else {
+            AVLNode tmp = this.remove(_node);
+            if (write) {
+                this.print("entferne " + value, writer);
+            }
+            // Balance the tree
+            if (mRoot != null) {
+                this.balance(tmp, false, writer, write);
+            }
         }
-        // Balance the tree
-        this.balance(tmp, false, writer, write);
     }
     
     public AVLNode remove(AVLNode _node) throws IOException {
@@ -385,6 +408,7 @@ public class IntAVLTree {
      */
     private String toString(AVLNode _node) {
         String result = new String("");
+        if (_node == null) return result; 
         if (_node.getLeft() == null && _node.getRight() == null) {
             result += " " + _node.getValue();
         } else {
@@ -444,8 +468,11 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      */
     private void printSamePageBeginning(String _headline, BufferedWriter writer) throws IOException {
-        if( this.mRoot.getHeight() < 9 ) {
-            writer.write("\\begin{minipage}[t]{0." + (this.mRoot.getHeight()+1) + " \\columnwidth}");
+        if (this.getHeight() <= 0) {
+            writer.write("\\begin{minipage}[t]{0.2 \\columnwidth}");
+            writer.newLine();
+        } else if (this.getHeight() < 9) {
+            writer.write("\\begin{minipage}[t]{0." + (this.getHeight()+1) + " \\columnwidth}");
             writer.newLine();
         } 
         if (!_headline.equals("")) {
@@ -464,7 +491,7 @@ public class IntAVLTree {
     private void printSamePageEnd(BufferedWriter writer) throws IOException {
         writer.write("\\end{center}");
         writer.newLine();
-        if( this.mRoot.getHeight() < 9 ) {
+        if( this.getHeight() < 9 ) {
             writer.write("\\end{minipage}");
             writer.newLine();
         }
@@ -503,13 +530,17 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      */
     private void printVerticalSpace(BufferedWriter writer) throws IOException {
-        this.mStepCounter += this.mRoot.getHeight()+1;
+        this.mStepCounter += this.getHeight()+1;
         if (this.mStepCounter >= 10) {
             writer.newLine();
             writer.write("~\\\\");
             writer.newLine();
             writer.newLine();
-            this.mStepCounter = this.mRoot.getHeight()+1;
+            if (this.getHeight() <= 0) {
+                this.mStepCounter = 2;
+            } else {
+                this.mStepCounter = this.getHeight()+1;
+            }
         }
     }
     
@@ -537,13 +568,18 @@ public class IntAVLTree {
         while (!construction.isEmpty()) {
             Pair<Integer, Boolean> operation = construction.poll();
             if (operation.y) {
+                //System.out.println("insert " + operation.x + " in:");
+                //System.out.println(tree.toString(tree.root()));
                 tree.insert(operation.x, writer, false);
             } else {
+                //System.out.println("remove " + operation.x + " in:");
                 AVLNode toRemove = tree.find(operation.x);
                 if (toRemove != null) {
                     tree.del(toRemove, writer, false);
                 }
             }
+            //System.out.println("results in:");
+            //System.out.println(tree.toString(tree.mRoot));
         }
         if (writerSpace != null) {
             if (ops.size() > 1) {
@@ -623,8 +659,12 @@ public class IntAVLTree {
         while (!ops.isEmpty()) {
             Pair<Integer, Boolean> operation = ops.poll();
             if (operation.y) {
+                //System.out.println("insert " + operation.x + " in:");
+                //System.out.println(tree.toString(tree.root()));
                 tree.insert(operation.x, writer, true);
             } else {
+                //System.out.println("remove " + operation.x + " in:");
+                //System.out.println(tree.toString(tree.root()));
                 AVLNode toRemove = tree.find(operation.x);
                 if (toRemove != null) {
                     tree.del(toRemove, writer, true);
@@ -632,6 +672,8 @@ public class IntAVLTree {
                     tree.print(operation.x + " kommt nicht vor", writer);
                 }
             }
+            //System.out.println("results in:");
+            //System.out.println(tree.toString(tree.mRoot));
         }
     }
 }
