@@ -169,7 +169,7 @@ public class IntAVLTree {
             parent.setRight(node);
         }
         if (write) {
-            this.print("f\"uge " + _value + " ein", writer);
+            this.print("f\\\"uge " + _value + " ein", writer);
         }
         // Balanciere den Baum
         this.balance(node, true, writer, write);
@@ -180,7 +180,7 @@ public class IntAVLTree {
      * @param _oldNode The node to replace.
      * @param _newNode The node to replace by.
      */
-    void replace (AVLNode _oldNode, AVLNode _newNode) {
+    AVLNode replace (AVLNode _oldNode, AVLNode _newNode) {
         if (_newNode != null) { // _newNode could be null
             _newNode.setFather(_oldNode.getFather());
         }
@@ -192,6 +192,7 @@ public class IntAVLTree {
         } else { // right child
             _oldNode.getFather().setRight(_newNode);
         }
+        return _newNode;
     }
     
     void swap (AVLNode _oldNode, AVLNode _newNode) {
@@ -222,7 +223,7 @@ public class IntAVLTree {
                 this.print("entferne " + value, writer);
             }
             // Balance the tree
-            if (mRoot != null) {
+            if (tmp != null) {
                 this.balance(tmp, false, writer, write);
             }
         }
@@ -236,11 +237,10 @@ public class IntAVLTree {
             return tmp2;
         } else {
             if (_node.getLeft() != null) { // ein Kind, links 
-                this.replace(_node, _node.getLeft());
+                return this.replace(_node, _node.getLeft());
             } else { // ein Kind, oder kein Kind (node.right == null) 
-                this.replace(_node, _node.getRight());
+                return this.replace(_node, _node.getRight());
             }
-            return _node;
         }
     }
     
