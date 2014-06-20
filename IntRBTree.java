@@ -534,9 +534,9 @@ public class IntRBTree {
      * @throws IOException If some error occurs during output.
      */
     private void printSamePageBeginning(String _headline, BufferedWriter writer) throws IOException {
-        if( this.mRoot.getHeight() < 9 ) {
+        if (this.mRoot == null || this.mRoot.getHeight() < 9 ) {
             int minipagewidth = this.mRoot.getHeight()+1;
-            if (this.mRoot.getHeight() == 0) {
+            if (this.mRoot == null || this.mRoot.getHeight() == 0) {
                 minipagewidth++;
             }
             writer.write("\\begin{minipage}[t]{0." + minipagewidth + " \\columnwidth}");
@@ -558,7 +558,7 @@ public class IntRBTree {
     private void printSamePageEnd(BufferedWriter writer) throws IOException {
         writer.write("\\end{center}");
         writer.newLine();
-        if( this.mRoot.getHeight() < 9 ) {
+        if (this.mRoot == null || this.mRoot.getHeight() < 9) {
             writer.write("\\end{minipage}");
             writer.newLine();
         }
