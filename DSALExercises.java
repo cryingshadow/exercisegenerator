@@ -49,7 +49,7 @@ public class DSALExercises {
     private static final String VERSION;
     
     static {
-        VERSION = "1.0";
+        VERSION = "1.0.1";
         NUMBER_LIMIT = 100;
         STUDENT_MODE = false;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
@@ -425,7 +425,7 @@ public class DSALExercises {
                                 break;
                             }
                         }
-                        c = gen.nextDouble();
+                        c = Math.round(100.0 * gen.nextDouble()) / 100.0;
                         c1 = c1int;
                         c2 = c2int;
                         params[2] = c;
@@ -859,7 +859,7 @@ public class DSALExercises {
                         }
                     }
                 }
-                double c = gen.nextDouble();
+                double c = Math.round(100.0 * gen.nextDouble()) / 100.0;
                 params[0] = m;
                 params[1] = c;
                 params[2] = c1;

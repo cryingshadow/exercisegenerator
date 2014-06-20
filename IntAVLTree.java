@@ -97,14 +97,14 @@ public class IntAVLTree {
     }
     
     public AVLNode root() {
-        return mRoot;
+        return this.mRoot;
     }
     
     public int getHeight() {
-        if (mRoot == null) {
+        if (this.mRoot == null) {
             return -1;
         } else {
-            return mRoot.getHeight();
+            return this.mRoot.getHeight();
         }
     }
     
@@ -210,9 +210,9 @@ public class IntAVLTree {
     
     public void del(AVLNode _node, BufferedWriter writer, boolean write) throws IOException {
         int value = _node.getValue();
-        if (mRoot.getLeft() == null && mRoot.getRight() == null ) {
-            if (_node == mRoot) {
-                mRoot = null;
+        if (this.mRoot.getLeft() == null && this.mRoot.getRight() == null ) {
+            if (_node == this.mRoot) {
+                this.mRoot = null;
                 if (write) {
                     this.print("entferne " + value, writer);
                 }
@@ -245,7 +245,7 @@ public class IntAVLTree {
     }
     
     /**
-     * Balances the tree. The given node is a leave and possibly part of an unbalanced subtree of this AVL-tree.
+     * Balances the tree. The given node is a leaf and possibly part of an unbalanced subtree of this AVL-tree.
      * This method checks for every node on the path from the given node to the root, whether it is the root
      * of an unbalanced subtree and then balances it. If the given Boolean _afterInsertion is false, it continues
      * this until reaching the root. 
@@ -408,7 +408,9 @@ public class IntAVLTree {
      */
     private String toString(AVLNode _node) {
         String result = new String("");
-        if (_node == null) return result; 
+        if (_node == null) {
+            return result;
+        } 
         if (_node.getLeft() == null && _node.getRight() == null) {
             result += " " + _node.getValue();
         } else {
