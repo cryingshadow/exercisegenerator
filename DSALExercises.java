@@ -1015,7 +1015,7 @@ public class DSALExercises {
                                 entry = -1;
                             } else if (rndNumber >= 12 && rndNumber < 16) {
                                 entry = 1;
-                            } else if (rndNumber == 15) {
+                            } else if (rndNumber == 16) {
                                 entry = 2;
                             } 
                             if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
