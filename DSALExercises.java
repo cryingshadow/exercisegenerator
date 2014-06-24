@@ -56,7 +56,7 @@ public class DSALExercises {
     static {
         VERSION = "1.0.1";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = false;
+        STUDENT_MODE = true;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
@@ -1007,7 +1007,7 @@ public class DSALExercises {
                 final int length;
                 Random gen = new Random();
                 for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
-                    for (int j = 0; j < graph.numOfNodesInSparseAdjacencyMatrix(); j++) {
+                    for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
                         if (graph.isNecessarySparseMatrixEntry(i,j) ) {
                             int rndNumber = gen.nextInt(17); 
                             int entry = 0;
@@ -1037,7 +1037,7 @@ public class DSALExercises {
                 }
                 for (int i = 0; i < nodes.length; i++) {
                     String[] neighbors = nodes[i].split(",");
-                    if (neighbors.length != graph.numOfNodesInSparseAdjacencyMatrix()) {
+                    if (neighbors.length != graph.numOfNeighborsInSparseAdjacencyMatrix()) {
                         System.out.println(errorMessage);
                         return null;
                     }
