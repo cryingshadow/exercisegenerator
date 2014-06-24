@@ -56,7 +56,7 @@ public class DSALExercises {
     static {
         VERSION = "1.0.1";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = true;
+        STUDENT_MODE = false;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
@@ -1015,7 +1015,7 @@ public class DSALExercises {
                                 entry = -1;
                             } else if (rndNumber >= 12 && rndNumber < 16) {
                                 entry = 1;
-                            } else {
+                            } else if (rndNumber == 15) {
                                 entry = 2;
                             } 
                             if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
