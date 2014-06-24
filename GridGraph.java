@@ -428,16 +428,16 @@ public class GridGraph {
         graph.createGraph(sparseAdjacencyMatrix);
         switch(operation) {
         case "find_sccs":
-            writer.write(
-                  "Geben Sie alle starken Zusammenhangskomponenten im folgenden Graph an. F\\\"ur jede dieser "
-                + "starken Zusammenhangskomponenten reicht es die Menge der Knoten anzugeben, die darin auftreten."
-            );
-            writer.newLine();
-            graph.printGraph(writer, false);
             if (writerSpace != null) {
-                graph.printSCCs(writerSpace, false);
+                writerSpace.write(
+                      "Geben Sie alle starken Zusammenhangskomponenten im folgenden Graph an. F\\\"ur jede dieser "
+                    + "starken Zusammenhangskomponenten reicht es die Menge der Knoten anzugeben, die darin auftreten."
+                );
                 writerSpace.newLine();
+                graph.printGraph(writerSpace, false);
             }
+            graph.printSCCs(writer, false);
+            writer.newLine();
         default:
             
         }
