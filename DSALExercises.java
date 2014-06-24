@@ -1009,13 +1009,13 @@ public class DSALExercises {
                 for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
                     for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
                         if (graph.isNecessarySparseMatrixEntry(i,j) ) {
-                            int rndNumber = gen.nextInt(17); 
+                            int rndNumber = gen.nextInt(18); 
                             int entry = 0;
-                            if (rndNumber >= 8 && rndNumber < 12) {
+                            if (rndNumber >= 10 && rndNumber < 13) {
                                 entry = -1;
-                            } else if (rndNumber >= 12 && rndNumber < 16) {
+                            } else if (rndNumber >= 13 && rndNumber < 16) {
                                 entry = 1;
-                            } else if (rndNumber == 16) {
+                            } else if (rndNumber >= 16) {
                                 entry = 2;
                             } 
                             if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
