@@ -42,6 +42,11 @@ public class DSALExercises {
      * The set of (in student mode only enabled) tree algorithms.
      */
     private static final Set<String> TREE_ALGORITHMS;
+    
+    /**
+     * The set of (in student mode only enabled) graph algorithms.
+     */
+    private static final Set<String> GRAPH_ALGORITHMS;
 
     /**
      * The version of this program.
@@ -55,6 +60,7 @@ public class DSALExercises {
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
+        GRAPH_ALGORITHMS = DSALExercises.initGraphAlgorithms();
         HELP = DSALExercises.initHelpText();
     }
 
@@ -286,6 +292,14 @@ public class DSALExercises {
                     new IntAVLTree(),
                     (Deque<Pair<Integer,Boolean>>)input,
                     DSALExercises.parseOperations(options),
+                    solutionWriter,
+                    options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
+                );
+            } else if (Algorithm.SCC.name.equals(alg)) {
+                GridGraph.gridGraph(
+                    new GridGraph(),
+                    (int[][])input,
+                    "find_sccs", // viel Spass beim implementieren :)
                     solutionWriter,
                     options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                 );
@@ -693,6 +707,17 @@ public class DSALExercises {
         }
         return res;
     }
+    
+    /**
+     * @return The set of (in student mode only enabled) graph algorithms.
+     */
+    private static Set<String> initGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
+            res.add(Algorithm.SCC.name);
+        }
+        return res;
+    }
 
     /**
      * @param value Some value.
@@ -941,6 +966,97 @@ public class DSALExercises {
                 }
             }
             return deque;
+        } else if (DSALExercises.GRAPH_ALGORITHMS.contains(alg)) {
+            GridGraph graph = new GridGraph();
+            int[][] sparseAdjacencyMatrix = new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
+            String errorMessage = new String( "You need to provide "
+                                        + graph.numOfNodesInSparseAdjacencyMatrix()
+                                        + " lines and each line has to carry "
+                                        + graph.numOfNeighborsInSparseAdjacencyMatrix()
+                                        + " numbers being either 0, -1, 1 or 2 and the number separated by a comma (',')!" );
+            if (options.containsKey(Flag.SOURCE)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    String line = null;
+                    int rowNum = 0;
+                    while ((line = reader.readLine()) != null) {
+                        String[] nodes = line.split(",");
+                        if (nodes.length != graph.numOfNeighborsInSparseAdjacencyMatrix()) {
+                            System.out.println(errorMessage);
+                            return null;
+                        }
+                        for (int i = 0; i < graph.numOfNeighborsInSparseAdjacencyMatrix(); i++) {
+                            if (graph.isNecessarySparseMatrixEntry(rowNum,i) ) {
+                                int entry = Integer.parseInt(nodes[i].trim());
+                                if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                                    sparseAdjacencyMatrix[rowNum][i] = entry;
+                                } else {
+                                    System.out.println(errorMessage);
+                                    return null;
+                                }
+                            } else {
+                                sparseAdjacencyMatrix[rowNum][i] = 0;
+                            }
+                        }
+                        rowNum++;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else if (DSALExercises.STUDENT_MODE) {
+                final int length;
+                Random gen = new Random();
+                for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
+                    for (int j = 0; j < graph.numOfNodesInSparseAdjacencyMatrix(); j++) {
+                        if (graph.isNecessarySparseMatrixEntry(i,j) ) {
+                            int rndNumber = gen.nextInt(17); 
+                            int entry = 0;
+                            if (rndNumber >= 8 && rndNumber < 12) {
+                                entry = -1;
+                            } else if (rndNumber >= 12 && rndNumber < 16) {
+                                entry = 1;
+                            } else {
+                                entry = 2;
+                            } 
+                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                                sparseAdjacencyMatrix[i][j] = entry;
+                            } else {
+                                System.out.println(errorMessage);
+                                return null;
+                            }
+                        } else {
+                            sparseAdjacencyMatrix[i][j] = 0;
+                        }
+                    }
+                }
+            } else {
+                String[] nodes = options.get(Flag.INPUT).split("|");
+                if (nodes.length != graph.numOfNodesInSparseAdjacencyMatrix()) {
+                    System.out.println(errorMessage);
+                    return null;
+                }
+                for (int i = 0; i < nodes.length; i++) {
+                    String[] neighbors = nodes[i].split(",");
+                    if (neighbors.length != graph.numOfNodesInSparseAdjacencyMatrix()) {
+                        System.out.println(errorMessage);
+                        return null;
+                    }
+                    for (int j = 0; j < neighbors.length; j++) {
+                        if (graph.isNecessarySparseMatrixEntry(i,j) ) {
+                            int entry = Integer.parseInt(neighbors[j].trim());
+                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                                sparseAdjacencyMatrix[i][j] = entry;
+                            } else {
+                                System.out.println(errorMessage);
+                                return null;
+                            }
+                        } else {
+                            sparseAdjacencyMatrix[i][j] = 0;
+                        }
+                    }
+                }
+            }
+            return sparseAdjacencyMatrix;
         } else {
             return null;
         }
@@ -1269,6 +1385,23 @@ public class DSALExercises {
                 (
                     DSALExercises.STUDENT_MODE ?
                         "The flag -l specifies how many operations should be performed on the Red-Black-Tree." :
+                            "TODO"
+                )
+            },
+            true
+        ),
+
+        /**
+         * Detection of strongly connected components.
+         */
+        SCC(
+            "scc",
+            "Starke Zusammenhangskomponenten",
+            new String[]{
+                "Detection of strongly connected components.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "TODO" :
                             "TODO"
                 )
             },
