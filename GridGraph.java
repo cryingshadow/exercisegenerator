@@ -528,7 +528,9 @@ public class GridGraph {
 			if (writerSpace != null) {
 				writerSpace.write(
 					  "Geben Sie eine topologische Sortierung des folgenden Graphen an. Daf\\\"ur reicht es, "
-					  + "eine geordnete Liste der Knoten anzugeben. Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel)."
+					  + "eine geordnete Liste der Knoten mit dem dazugeh\\\"origen Topologiewert in Klammern anzugeben. "
+					  + "Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel). "
+					  + "Desweiteren ist jedes Array, welches Knoten beinhaltet aufsteigend nach deren Schl\\\"usseln sortiert."
 				);
 				writerSpace.newLine();
 				graph.printGraph(writerSpace, false);
