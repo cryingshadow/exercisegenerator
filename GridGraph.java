@@ -247,7 +247,7 @@ public class GridGraph {
 		Arrays.fill(color, 0);
 		int topoNum = 0;
 		for(int nodeIndex = 0; nodeIndex < numOfAllNodes(); ++nodeIndex){
-			if(color[nodeIndex] == 0 && getNeighbors(nodeIndex).length > 0){
+			if(color[nodeIndex] == 0 && nodeHasAdjacentNodes(nodeIndex)){
 				try{
 					dfsTopologicOrdering(nodeIndex, color, topoNum, result);
 				}
