@@ -133,6 +133,21 @@ public class GridGraph {
             }
         } 
     }
+	
+	int[] getNeighbors(int nodeIndex){
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		for(int index = 0; index < mAdjacencyMatrix[nodeIndex].length; ++index){
+			if(mAdjacencyMatrix[nodeIndex][index] == true){
+				result.add(index);
+			}
+		}
+		int[] ret = new int[result.size()];
+		for (int i=0; i < ret.length; i++)
+		{
+			ret[i] = result.get(i).intValue();
+		}
+		return ret;
+	}
     
     void dfsWalk(int from, int[] color, List<Integer> result, int ccNum, int[] cc, int directions, Stack<Integer> blackColoringOrder) {
         if (color == null) {
@@ -205,6 +220,44 @@ public class GridGraph {
         }
         return result;
     }
+	
+	int dfsTopologicOrdering(int start, int[] colors, int topoNum, Integer[] topo) throws IOException {
+		colors[start] = 1;
+		int[] neighbors = getNeighbors(start);
+		for(int index = 0; index < neighbors.length; ++index){
+			System.out.println("Start: " + start + ", Neighbor: " + neighbors[index]);
+			if(colors[neighbors[index]]==1){
+				throw new IOException("The given graph is cyclic!");
+			}
+			if(colors[neighbors[index]] == 0){
+				topoNum = dfsTopologicOrdering(neighbors[index], colors, topoNum, topo);
+			}
+		}
+		topoNum +=1;
+		topo[start] = topoNum;
+		System.out.println("Set topo of " + start + " to " + topoNum);
+		colors[start] = 2;
+		return topoNum;
+    }
+	
+	Integer[] topologicSort() {
+		Integer[] result = new Integer[numOfAllNodes()];
+		Arrays.fill(result, null);
+		int[] color = new int[numOfAllNodes()];
+		Arrays.fill(color, 0);
+		int topoNum = 0;
+		for(int nodeIndex = 0; nodeIndex < numOfAllNodes(); ++nodeIndex){
+			if(color[nodeIndex] == 0 && getNeighbors(nodeIndex).length > 0){
+				try{
+					dfsTopologicOrdering(nodeIndex, color, topoNum, result);
+				}
+				catch ( IOException e ){
+					System.out.println("ERROR");
+				}
+			}
+		}
+		return result;
+	}
     
     /**
      * Adds the entries into the adjacency matrix if the graph of this exercise, between the nodes of the given numbers.
@@ -343,6 +396,38 @@ public class GridGraph {
         writer.newLine();
         writer.newLine();
     }
+	
+	/**
+     * Prints the topological order of the graph of this exercise.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    private void printTopologicalOrder(BufferedWriter writer, boolean withSingletons) throws IOException {
+        Integer[] nodeValues = topologicSort();
+        
+        writer.write("Der gegebene Graph hat die folgende topologische Sortierung:\\\\");
+        writer.newLine();
+		writer.newLine();
+		int min = 1;
+		int first = 0;
+		for(int index = 0; index < nodeValues.length; ++index){
+			if(nodeValues[index] != null && nodeValues[index] == min){
+				writer.write(index + "("+ nodeValues[index] + ")");
+				first = index;
+				break;
+			}
+		}
+		while(min < nodeValues.length){
+			for(int index = 0; index < nodeValues.length; ++index){
+				if(nodeValues[index] != null && nodeValues[index] == min && first != index){
+					writer.write(", " + index + "("+ nodeValues[index] + ")");
+				}
+			}
+			++min;
+		}
+        writer.write("\\\\");
+        writer.newLine();
+    }
     
     /**
      * Prints the beginning of the TikZ picture environment to the specified writer, including style settings for 
@@ -438,6 +523,19 @@ public class GridGraph {
             }
             graph.printSCCs(writer, false);
             writer.newLine();
+			break;
+		case "topologicSort":
+			if (writerSpace != null) {
+				writerSpace.write(
+					  "Geben Sie eine topologische Sortierung des folgenden Graphen an. Daf\\\"ur reicht es, "
+					  + "eine geordnete Liste der Knoten anzugeben. Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel)."
+				);
+				writerSpace.newLine();
+				graph.printGraph(writerSpace, false);
+			}
+			graph.printTopologicalOrder(writer, false);
+			writer.newLine();
+			break;
         default:
             
         }

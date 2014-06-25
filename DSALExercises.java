@@ -303,6 +303,14 @@ public class DSALExercises {
                     solutionWriter,
                     options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                 );
+			} else if (Algorithm.TOPOLOGICSORT.name.equals(alg)) {
+                GridGraph.gridGraph(
+					new GridGraph(),
+					(int[][])input,
+					"topologicSort",
+					solutionWriter,
+					options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
+				);
             } else if (Algorithm.HASH_DIV.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
                 m = (int)in.x[0];
@@ -716,6 +724,9 @@ public class DSALExercises {
         if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
             res.add(Algorithm.SCC.name);
         }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
+            res.add(Algorithm.TOPOLOGICSORT.name);
+        }
         return res;
     }
 
@@ -900,7 +911,7 @@ public class DSALExercises {
                 array[i] = Integer.parseInt(nums[i].trim());
             }
             double[] params = new double[4];
-            for (int i = 0; i < params.length; ++i) {
+            for (int i = 0; i < paramString.length; ++i) {
                 params[i] = Double.parseDouble(paramString[i].trim());
             }
             switch(alg)
@@ -1407,6 +1418,20 @@ public class DSALExercises {
             },
             true
         ),
+		
+		TOPOLOGICSORT(
+			"topologicSort",
+			"Topologisches Sortieren",
+			new String[]{
+				"Perform topological sort.",
+				(
+					DSALExercises.STUDENT_MODE ?
+						"TODO" :
+						"TODO"
+				)
+			},
+			true
+		),
 
         /**
          * Selectionsort on Integer arrays.
