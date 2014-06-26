@@ -32,6 +32,14 @@ enum TikZStyle {
         "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, "
         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]"
+    ),
+    
+    /**
+     * Graph style.
+     */
+    GRAPH(
+        "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, "
+        + "p/.style={->, thin, shorten <=2pt, shorten >=2pt}]"
     );
 
     /**

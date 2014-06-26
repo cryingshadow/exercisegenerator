@@ -1043,7 +1043,6 @@ public class DSALExercises {
                     return null;
                 }
             } else if (DSALExercises.STUDENT_MODE) {
-                final int length;
                 Random gen = new Random();
                 for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
                     for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
@@ -1447,6 +1446,9 @@ public class DSALExercises {
             true
         ),
 		
+		/**
+		 * Topological sorting of a graph.
+		 */
 		TOPOLOGICSORT(
 			"topologicSort",
 			"Topologisches Sortieren",
@@ -1455,7 +1457,7 @@ public class DSALExercises {
 				(
 					DSALExercises.STUDENT_MODE ?
 						"TODO" :
-						"TODO"
+						    "TODO"
 				)
 			},
 			true
