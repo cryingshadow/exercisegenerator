@@ -240,7 +240,7 @@ public class GridGraph {
 		return topoNum;
     }
 	
-	Integer[] topologicSort() {
+	Integer[] topologicSort() throws IOException {
 		Integer[] result = new Integer[numOfAllNodes()];
 		Arrays.fill(result, null);
 		int[] color = new int[numOfAllNodes()];
@@ -249,7 +249,7 @@ public class GridGraph {
 		for(int nodeIndex = 0; nodeIndex < numOfAllNodes(); ++nodeIndex){
 			if(color[nodeIndex] == 0 && nodeHasAdjacentNodes(nodeIndex)){
 				try{
-					dfsTopologicOrdering(nodeIndex, color, topoNum, result);
+					topoNum = dfsTopologicOrdering(nodeIndex, color, topoNum, result);
 				}
 				catch ( IOException e ){
 					System.out.println("ERROR");
@@ -402,17 +402,26 @@ public class GridGraph {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    private void printTopologicalOrder(BufferedWriter writer, boolean withSingletons) throws IOException {
+    private void printTopologicalOrder(BufferedWriter exerciseWriter, BufferedWriter solutionWriter, boolean withSingletons) throws IOException {
         Integer[] nodeValues = topologicSort();
-        
-        writer.write("Der gegebene Graph hat die folgende topologische Sortierung:\\\\");
-        writer.newLine();
-		writer.newLine();
+        if (exerciseWriter != null) {
+			exerciseWriter.write(
+							  "Geben Sie eine topologische Sortierung des folgenden Graphen an. Daf\\\"ur reicht es, "
+							  + "eine geordnete Liste der Knoten mit dem dazugeh\\\"origen Topologiewert in Klammern anzugeben. "
+							  + "Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel). "
+							  + "Desweiteren ist jedes Array, welches Knoten beinhaltet aufsteigend nach deren Schl\\\"usseln sortiert."
+							  );
+			exerciseWriter.newLine();
+			printGraph(exerciseWriter, false);
+		}
+        solutionWriter.write("Der gegebene Graph hat die folgende topologische Sortierung:\\\\");
+        solutionWriter.newLine();
+		solutionWriter.newLine();
 		int min = 1;
 		int first = 0;
 		for(int index = 0; index < nodeValues.length; ++index){
 			if(nodeValues[index] != null && nodeValues[index] == min){
-				writer.write(index + "("+ nodeValues[index] + ")");
+				solutionWriter.write(index + "("+ nodeValues[index] + ")");
 				first = index;
 				break;
 			}
@@ -420,13 +429,13 @@ public class GridGraph {
 		while(min < nodeValues.length){
 			for(int index = 0; index < nodeValues.length; ++index){
 				if(nodeValues[index] != null && nodeValues[index] == min && first != index){
-					writer.write(", " + index + "("+ nodeValues[index] + ")");
+					solutionWriter.write(", " + index + "("+ nodeValues[index] + ")");
 				}
 			}
 			++min;
 		}
-        writer.write("\\\\");
-        writer.newLine();
+        solutionWriter.write("\\\\");
+        solutionWriter.newLine();
     }
     
     /**
@@ -525,18 +534,7 @@ public class GridGraph {
             writer.newLine();
 			break;
 		case "topologicSort":
-			if (writerSpace != null) {
-				writerSpace.write(
-					  "Geben Sie eine topologische Sortierung des folgenden Graphen an. Daf\\\"ur reicht es, "
-					  + "eine geordnete Liste der Knoten mit dem dazugeh\\\"origen Topologiewert in Klammern anzugeben. "
-					  + "Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel). "
-					  + "Desweiteren ist jedes Array, welches Knoten beinhaltet aufsteigend nach deren Schl\\\"usseln sortiert."
-				);
-				writerSpace.newLine();
-				graph.printGraph(writerSpace, false);
-			}
-			graph.printTopologicalOrder(writer, false);
-			writer.newLine();
+			graph.printTopologicalOrder(writerSpace, writer, false);
 			break;
         default:
             
