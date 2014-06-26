@@ -248,12 +248,12 @@ public class GridGraph {
 		int topoNum = 0;
 		for(int nodeIndex = 0; nodeIndex < numOfAllNodes(); ++nodeIndex){
 			if(color[nodeIndex] == 0 && nodeHasAdjacentNodes(nodeIndex)){
-				try{
+				//try{
 					topoNum = dfsTopologicOrdering(nodeIndex, color, topoNum, result);
-				}
-				catch ( IOException e ){
-					System.out.println("ERROR");
-				}
+				//}
+				//catch ( IOException e ){
+				//	System.out.println("Found cycle!");
+				//}
 			}
 		}
 		return result;

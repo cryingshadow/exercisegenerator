@@ -307,32 +307,26 @@ public class DSALExercises {
 				boolean fail;
 				GridGraph graph = new GridGraph();
 				int[][] sparseAdjacencyMatrix = new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
+				sparseAdjacencyMatrix = (int[][])input;
                 do {
 					try{
 						fail = false;
 						GridGraph.gridGraph(
 							graph,
-							(int[][])input,
+							sparseAdjacencyMatrix,
 							"topologicSort",
 							solutionWriter,
 							options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
 						);
 					} catch (IOException e) {
+						System.out.println("Caught cycle-exception.");
 						fail = true;
-						final int length;
 						Random gen = new Random();
 						for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
 							for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
 								if (graph.isNecessarySparseMatrixEntry(i,j) ) {
-									int rndNumber = gen.nextInt(18);
-									int entry = 0;
-									if (rndNumber >= 10 && rndNumber < 13) {
-										entry = -1;
-									} else if (rndNumber >= 13 && rndNumber < 16) {
-										entry = 1;
-									} else if (rndNumber >= 16) {
-										entry = 2;
-									}
+									int entry = gen.nextInt(3);
+									entry = entry == 2 ? -1 : entry;
 									if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
 										sparseAdjacencyMatrix[i][j] = entry;
 									} else {
