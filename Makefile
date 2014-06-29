@@ -1,4 +1,5 @@
 DSALExercises:
+	@rm *.class
 ifeq ($(wildcard META-INF/MANIFEST.MF),) 
 	@echo "Creating Manifest."
 	@mkdir META-INF

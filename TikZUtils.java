@@ -1,4 +1,5 @@
 import java.io.*;
+import java.math.*;
 
 /**
  * This abstract class provides methods for creating TikZ output.
@@ -11,6 +12,11 @@ public abstract class TikZUtils {
      * The name of the center environment.
      */
     public static final String CENTER = "center";
+
+    /**
+     * Style for drawing edges.
+     */
+    public static final String EDGE_STYLE = "[p, bend right = 10]";
 
     /**
      * The name of the enumerate environment.
@@ -30,6 +36,37 @@ public abstract class TikZUtils {
      */
     public static void printBeginning(String environment, BufferedWriter writer) throws IOException {
         writer.write("\\begin{" + environment + "}");
+        writer.newLine();
+    }
+
+    /**
+     * Prints a String representation of the edge from the specified from node to the specified to node with the 
+     * specified label suitable for TikZ output to the specified writer.
+     * @param from The ID of the from node.
+     * @param style The edge style (may be empty, but not null).
+     * @param label The edge label (may be null).
+     * @param to The ID of the to node.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static <E> void printEdge(String style, BigInteger from, E label, BigInteger to, BufferedWriter writer)
+    throws IOException {
+        StringBuilder res = new StringBuilder();
+        res.append("\\draw");
+        res.append(style);
+        res.append(" (n");
+        res.append(from.toString());
+        res.append(") to ");
+        if (label != null) {
+            res.append("node[auto, swap] {");
+            res.append(label.toString());
+            res.append("} ");
+        }
+        res.append("(n");
+        res.append(to.toString());
+        res.append(")");
+        res.append(";");
+        writer.write(res.toString());
         writer.newLine();
     }
 
@@ -54,12 +91,20 @@ public abstract class TikZUtils {
         writer.newLine();
         writer.newLine();
         writer.write("\\usepackage[a4paper,margin=2cm]{geometry}");
+        writer.newLine();
         writer.write("\\usepackage{tikz}");
+        writer.newLine();
         writer.write(
             "\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,"
             + "matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,trees}"
         );
+        writer.newLine();
         writer.write("\\usepackage{tikz-qtree}");
+        writer.newLine();
+        writer.write("\\usepackage{array}");
+        writer.newLine();
+        writer.newLine();
+        writer.write("\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}");
         writer.newLine();
         writer.newLine();
         writer.write("\\setlength{\\parindent}{0pt}");
@@ -78,6 +123,33 @@ public abstract class TikZUtils {
     public static void printLaTeXEnd(BufferedWriter writer) throws IOException {
         writer.newLine();
         writer.write("\\end{document}");
+        writer.newLine();
+    }
+
+    /**
+     * Prints a String representation of the specified node suitable for TikZ output to the specified writer.
+     * @param node The node to print.
+     * @param style The node style (may be empty, but not null).
+     * @param position The position of the node (may be empty, but not null).
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static <N> void printNode (Node<N> node, String style, String position, BufferedWriter writer)
+    throws IOException {
+        StringBuilder res = new StringBuilder();
+        res.append("\\node");
+        res.append(style);
+        res.append(" (n");
+        res.append(node.getID().toString());
+        res.append(") ");
+        res.append(position);
+        res.append("{");
+        N label = node.getLabel();
+        if (label != null) {
+            res.append(label.toString());
+        }
+        res.append("};");
+        writer.write(res.toString());
         writer.newLine();
     }
 
@@ -139,6 +211,35 @@ public abstract class TikZUtils {
         TikZUtils.printEnd(TikZUtils.CENTER, writer);
         writer.write("\\end{minipage}");
         writer.newLine();
+    }
+
+    /**
+     * Prints a table by centering each column.
+     * @param table A two-dimensional table of Strings.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printTable(String[][] table, BufferedWriter writer) throws IOException {
+        int cols = table.length;
+        int rows = table[0].length;
+        writer.write("\\begin{tabular}{|*{" + cols + "}{C{2cm}|}}");
+        writer.newLine();
+        writer.write("\\hline");
+        writer.newLine();
+        for (int row = 0; row < rows; row++) {
+            boolean first = true;
+            for (int col = 0; col < cols; col++) {
+                if (first) {
+                    first = false;
+                } else {
+                    writer.write(" & ");
+                }
+                writer.write(table[col][row]);
+            }
+            writer.write("\\\\\\hline");
+            writer.newLine();
+        }
+        writer.write("\\end{tabular}");
     }
 
     /**

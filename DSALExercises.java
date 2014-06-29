@@ -44,6 +44,11 @@ public class DSALExercises {
     private static final Set<String> TREE_ALGORITHMS;
     
     /**
+     * The set of (in student mode only enabled) grid graph algorithms.
+     */
+    private static final Set<String> GRID_GRAPH_ALGORITHMS;
+
+    /**
      * The set of (in student mode only enabled) graph algorithms.
      */
     private static final Set<String> GRAPH_ALGORITHMS;
@@ -60,6 +65,7 @@ public class DSALExercises {
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
+        GRID_GRAPH_ALGORITHMS = DSALExercises.initGridGraphAlgorithms();
         GRAPH_ALGORITHMS = DSALExercises.initGraphAlgorithms();
         HELP = DSALExercises.initHelpText();
     }
@@ -98,6 +104,9 @@ public class DSALExercises {
             } else {
                 String input = args[1];
                 for (Algorithm alg : Algorithm.values()) {
+                    if (DSALExercises.STUDENT_MODE && !alg.enabled) {
+                        continue;
+                    }
                     if (alg.name.equals(input)) {
                         for (String text : alg.docu) {
                             System.out.println(text);
@@ -499,6 +508,9 @@ public class DSALExercises {
                     + hash3
                 );
                 Hashing.printExercise(in.y, m, true, exerciseWriter);
+            } else if (Algorithm.DIJKSTRA.name.equals(alg)) {
+                Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
+                GraphAlgorithms.dijkstra(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
             } else {
                 System.out.println("Unknown algorithm!");
                 return;
@@ -743,17 +755,28 @@ public class DSALExercises {
         }
         return res;
     }
-    
+
+    /**
+     * @return The set of (in student mode only enabled) grid graph algorithms.
+     */
+    private static Set<String> initGridGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
+            res.add(Algorithm.SCC.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
+            res.add(Algorithm.TOPOLOGICSORT.name);
+        }
+        return res;
+    }
+
     /**
      * @return The set of (in student mode only enabled) graph algorithms.
      */
     private static Set<String> initGraphAlgorithms() {
         Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
-            res.add(Algorithm.SCC.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
-            res.add(Algorithm.TOPOLOGICSORT.name);
+        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+            res.add(Algorithm.DIJKSTRA.name);
         }
         return res;
     }
@@ -1005,14 +1028,18 @@ public class DSALExercises {
                 }
             }
             return deque;
-        } else if (DSALExercises.GRAPH_ALGORITHMS.contains(alg)) {
+        } else if (DSALExercises.GRID_GRAPH_ALGORITHMS.contains(alg)) {
             GridGraph graph = new GridGraph();
-            int[][] sparseAdjacencyMatrix = new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
-            String errorMessage = new String( "You need to provide "
-                                        + graph.numOfNodesInSparseAdjacencyMatrix()
-                                        + " lines and each line has to carry "
-                                        + graph.numOfNeighborsInSparseAdjacencyMatrix()
-                                        + " numbers being either 0, -1, 1 or 2 and the number separated by a comma (',')!" );
+            int[][] sparseAdjacencyMatrix =
+                new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
+            String errorMessage =
+                new String(
+                    "You need to provide "
+                    + graph.numOfNodesInSparseAdjacencyMatrix()
+                    + " lines and each line has to carry "
+                    + graph.numOfNeighborsInSparseAdjacencyMatrix()
+                    + " numbers being either 0, -1, 1 or 2 and the number separated by a comma (',')!"
+                );
             if (options.containsKey(Flag.SOURCE)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                     String line = null;
@@ -1095,6 +1122,38 @@ public class DSALExercises {
                 }
             }
             return sparseAdjacencyMatrix;
+        } else if (DSALExercises.GRAPH_ALGORITHMS.contains(alg)) {
+            Graph<String, Integer> graph = new Graph<String, Integer>();
+            if (options.containsKey(Flag.SOURCE)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            } else if (DSALExercises.STUDENT_MODE) {
+                throw new UnsupportedOperationException("Not yet implemented!");
+            } else {
+                try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
+                    graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+            Node<String> node = null;
+            if (options.containsKey(Flag.OPERATIONS)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
+                    Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
+                    if (!nodes.isEmpty()) {
+                        node = nodes.iterator().next();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+            return new Pair<Graph<String, Integer>, Node<String>>(graph, node);
         } else {
             return null;
         }
@@ -1201,6 +1260,23 @@ public class DSALExercises {
                 )
             },
             true
+        ),
+
+        /**
+         * Dijkstra's algorithm to find shortest paths from a single source.
+         */
+        DIJKSTRA(
+            "dijkstra",
+            "Dijkstra Algorithmus",
+            new String[]{
+                "Dijkstra's algorithm to find the shortest paths from a single source to all other nodes.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies how many elements will be added to the hash table." :
+                            "Parameters are: m (size of the hashmap)"
+                )
+            },
+            false
         ),
 
         /**
