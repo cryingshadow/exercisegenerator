@@ -257,7 +257,7 @@ public class GridGraph {
     }
     
     public String nodeName(int n) {
-        System.out.println("bla0");
+        if (n < 0) return "0";
         int c = 1;
         for (int i = 0; i < numOfAllNodes(); i++) {
             if (i == n) {
@@ -354,7 +354,6 @@ public class GridGraph {
         int[] color = new int[this.numOfAllNodes()];
         
         // split all connected components into strongly connected components
-        int sccNum = 0;
         int[] lastOfS = new int[1]; // Array storing only one int, as it is not possible to call primitive types in java by reference..
         lastOfS[0] = -1;
         int[] S = new int[this.numOfAllNodes()];
@@ -400,9 +399,8 @@ public class GridGraph {
                 List<Integer> walk = new ArrayList<Integer>();
                 this.dfsWalk(v, colorB, walk, 0, null, -1, null, null);
                 for (Integer node : walk) {
-                    result[node] = sccNum;
+                    result[node] = v;
                 }
-                sccNum++;
                 if(write && nodeHasAdjacentNodes(v)) {
                     printS(writer, S, lastOfS);
                     printColor(writer, colorB);
