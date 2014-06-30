@@ -99,7 +99,7 @@ public class GridGraph {
                     + "Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
                     + "Geben Sie zudem das Array \\texttt{scc} nach jeder Schleifeniteration der zweiten Phase (also "
                     + "nach Zeile 22) an, falls \\texttt{DFS2} ausgef\\\"uhrt wurde. Nehmen Sie hierbei an, dass \\texttt{scc}"
-                    + " initial mit \\texttt{-1} gef\\\"ullt ist."
+                    + " initial mit Nullen gef\\\"ullt ist."
                 );
                 writerSpace.newLine();
                 graph.printGraph(writerSpace, false);
@@ -258,7 +258,7 @@ public class GridGraph {
     
     public String nodeName(int n) {
         System.out.println("bla0");
-        int c = 0;
+        int c = 1;
         for (int i = 0; i < numOfAllNodes(); i++) {
             if (i == n) {
                 break;
