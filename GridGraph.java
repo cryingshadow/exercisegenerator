@@ -96,12 +96,12 @@ public class GridGraph {
                 writerSpace.write(
                     "Wenden Sie Sharir's Algorithmus an (siehe Folien zur Vorlesung) um die starken" 
                     + " Zusammenhangskomponenten des folgenden Graphen zu finden. Geben Sie das Array \\texttt{color}"
-                    + " und den Stack \\texttt{S} nach jeder Schleifeniteration der ersten und zweiten Phase (also nach "
-                    + "Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
-                    + "Geben Sie zudem das Array \\texttt{scc} nach jeder Schleifeniteration der zweiten Phase (also "
-                    + "nach Zeile 22) an, falls \\texttt{DFS2} ausgef\\\"uhrt wurde. Nehmen Sie hierbei an, dass \\texttt{scc}"
-                    + " initial mit Nullen gef\\\"ullt ist und der $i$-te Eintrag in der Adjazenzliste"
-                    + " dem Knoten $i+1$ entspricht."
+                    + " und den Stack \\texttt{S} nach jeder Schleifeniteration der ersten und zweiten Phase (also nach"
+                    + " Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
+                    + " Geben Sie zudem das Array \\texttt{scc} nach jeder Schleifeniteration der zweiten Phase (also"
+                    + " nach Zeile 22) an, falls \\texttt{DFS2} ausgef\\\"uhrt wurde. Nehmen Sie hierbei an, dass \\texttt{scc}"
+                    + " initial mit Nullen gef\\\"ullt ist und der Knoten $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat,"
+                    + " also der Knoten $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
                 );
                 writerSpace.newLine();
                 graph.printGraph(writerSpace, false);
@@ -518,7 +518,11 @@ public class GridGraph {
         writer.newLine();
         for (int i = 0; i < this.numOfAllNodes(); i++) {
             if (withSingletons || this.nodeHasAdjacentNodes(i)) {
-                writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + nodeName(i) + "};");
+                if (withSingletons) {
+                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + i + "};");
+                } else {
+                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + nodeName(i) + "};");
+                }
                 writer.newLine();
             }
         }
@@ -604,11 +608,13 @@ public class GridGraph {
         if (exerciseWriter != null) {
             if (withText) {
                 exerciseWriter.write(
-                              "Geben Sie eine topologische Sortierung des folgenden Graphen an. Daf\\\"ur reicht es, "
+                              "Wenden Sie den Algorithmus \\texttt{topoSort} (siehe Folien zur Vorlesung) an um eine topologische Sortierung"
+                              + "auf folgendem Graphen zu finden. Daf\\\"ur reicht es, "
                               + "eine geordnete Liste der Knoten mit dem dazugeh\\\"origen Topologiewert in Klammern anzugeben. "
                               + "Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel). "
                               + "Des Weiteren ist jedes Array, welches Knoten beinhaltet aufsteigend nach deren Schl\\\"usseln sortiert."
-                              + "Beachten Sie, dass der $i$-te Eintrag in der Adjazenzliste dem Knoten $i+1$ entspricht."
+                              + "Beachten Sie, dass der Knoten $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat, also"
+                              + " der Knoten $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
                               );
                 exerciseWriter.newLine();
             }
@@ -621,7 +627,7 @@ public class GridGraph {
         int first = 0;
         for(int index = 0; index < nodeValues.length; ++index){
             if(nodeValues[index] != null && nodeValues[index] == min){
-                solutionWriter.write(nodeName(index) + "("+ nodeName(nodeValues[index]) + ")");
+                solutionWriter.write(nodeName(index) + "("+ nodeValues[index] + ")");
                 first = index;
                 break;
             }
@@ -629,7 +635,7 @@ public class GridGraph {
         while(min < nodeValues.length){
             for(int index = 0; index < nodeValues.length; ++index){
                 if(nodeValues[index] != null && nodeValues[index] == min && first != index){
-                    solutionWriter.write(", " + nodeName(index) + "("+ nodeName(nodeValues[index]) + ")");
+                    solutionWriter.write(", " + nodeName(index) + "("+ nodeValues[index] + ")");
                 }
             }
             ++min;
