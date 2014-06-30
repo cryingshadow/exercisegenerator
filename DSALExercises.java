@@ -308,7 +308,15 @@ public class DSALExercises {
                 GridGraph.gridGraph(
                     new GridGraph(),
                     (int[][])input,
-                    "find_sccs", // viel Spass beim implementieren :)
+                    "find_sccs",
+                    solutionWriter,
+                    options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
+                );
+			} else if (Algorithm.SHARIR.name.equals(alg)) {
+                GridGraph.gridGraph(
+                    new GridGraph(),
+                    (int[][])input,
+                    "sharir",
                     solutionWriter,
                     options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                 );
@@ -764,7 +772,10 @@ public class DSALExercises {
         if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
             res.add(Algorithm.SCC.name);
         }
-        if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SHARIR.enabled) {
+            res.add(Algorithm.SHARIR.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
             res.add(Algorithm.TOPOLOGICSORT.name);
         }
         return res;
@@ -1038,7 +1049,11 @@ public class DSALExercises {
                     + graph.numOfNodesInSparseAdjacencyMatrix()
                     + " lines and each line has to carry "
                     + graph.numOfNeighborsInSparseAdjacencyMatrix()
-                    + " numbers being either 0, -1, 1 or 2 and the number separated by a comma (',')!"
+                    + " numbers being either 0, -1, 1 or 2, which are separated by ','!\n"
+                    + "Example:\n"
+                    + "x,0,0,x,x,x\nx,0,0,0,0,x\nx,0,0,0,0,x\nx,x,0,0,0,x\n0,2,0,1,1,0\n0,0,2,1,1,0\n0,0,0,0,0,0\n2,-1,0,x,x,x\n0,1,2,1,-1,1\n"
+                    + "0,0,0,0,0,0\n0,x,0,0,0,0\n1,2,0,0,0,1\n0,0,0,0,0,0\n0,0,0,0,0,0\n0,0,x,x,x,x\n0,0,x,x,0,0\n0,0,x,x,0,0\n0,x,x,x,0,0\n\n"
+                    + "where x can be anything and will not affect the resulting graph."
                 );
             if (options.containsKey(Flag.SOURCE)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
@@ -1095,6 +1110,18 @@ public class DSALExercises {
                     }
                 }
             } else {
+                errorMessage =
+                    new String(
+                        "You need to provide "
+                        + graph.numOfNodesInSparseAdjacencyMatrix()
+                        + " sections, which are separated by '|' and each section has to carry "
+                        + graph.numOfNeighborsInSparseAdjacencyMatrix()
+                        + " numbers being either 0, -1, 1 or 2, which are separated by ','!\n"
+                        + "Example:\n"
+                        + "x,0,0,x,x,x|x,0,0,0,0,x|x,0,0,0,0,x|x,x,0,0,0,x|0,2,0,1,1,0|0,0,2,1,1,0|0,0,0,0,0,0|2,-1,0,x,x,x|0,1,2,1,-1,1|"
+                        + "0,0,0,0,0,0|0,x,0,0,0,0|1,2,0,0,0,1|0,0,0,0,0,0|0,0,0,0,0,0|0,0,x,x,x,x|0,0,x,x,0,0|0,0,x,x,0,0|0,x,x,x,0,0\n\n"
+                        + "where x can be anything and will not affect the resulting graph."
+                    );
                 String[] nodes = options.get(Flag.INPUT).split("|");
                 if (nodes.length != graph.numOfNodesInSparseAdjacencyMatrix()) {
                     System.out.println(errorMessage);
@@ -1513,6 +1540,23 @@ public class DSALExercises {
             "Starke Zusammenhangskomponenten",
             new String[]{
                 "Detection of strongly connected components.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "TODO" :
+                            "TODO"
+                )
+            },
+            true
+        ),
+        
+        /**
+         * Detection of strongly connected components using Sharir's algorithm.
+         */
+        SHARIR(
+            "sharir",
+            "Starke Zusammenhangskomponenten finden mit Sharir's Algorithmus",
+            new String[]{
+                "Detection of strongly connected components using Sharir's algorithm.",
                 (
                     DSALExercises.STUDENT_MODE ?
                         "TODO" :

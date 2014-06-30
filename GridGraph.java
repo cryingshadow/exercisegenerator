@@ -81,13 +81,30 @@ public class GridGraph {
         case "find_sccs":
             if (writerSpace != null) {
                 writerSpace.write(
-                      "Geben Sie alle starken Zusammenhangskomponenten im folgenden Graph an. F\\\"ur jede dieser "
+                    "Geben Sie alle starken Zusammenhangskomponenten im folgenden Graph an. F\\\"ur jede dieser "
                     + "starken Zusammenhangskomponenten reicht es die Menge der Knoten anzugeben, die darin auftreten."
                 );
                 writerSpace.newLine();
                 graph.printGraph(writerSpace, false);
             }
-            graph.printSCCs(writer, false);
+            graph.printSCCs(writer, false, false);
+            writer.newLine();
+            break;
+        case "sharir":
+            if (writerSpace != null) {
+                writerSpace.write(
+                    "Wenden Sie Sharir's Algorithmus an (siehe Folien zur Vorlesung) um die starken" 
+                    + " Zusammenhangskomponenten des folgenden Graphen zu finden. Geben Sie das Array \\texttt{color}"
+                    + " und den Stack \\texttt{S} nach jeder Schleifeniteration der ersten und zweiten Phase (also nach "
+                    + "Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
+                    + "Geben Sie zudem das Array \\texttt{scc} nach jeder Schleifeniteration der zweiten Phase (also "
+                    + "nach Zeile 22) an, falls \\texttt{DFS2} ausgef\\\"uhrt wurde. Nehmen Sie hierbei an, dass \\texttt{scc}"
+                    + " initial mit \\texttt{-1} gef\\\"ullt ist."
+                );
+                writerSpace.newLine();
+                graph.printGraph(writerSpace, false);
+            }
+            graph.printSCCs(writer, false, true) ;
             writer.newLine();
             break;
         case "topologicSort":
@@ -238,6 +255,22 @@ public class GridGraph {
     public int numOfRowsInGrid() {
         return GridGraph.mNumOfRowsInGrid;
     }
+    
+    public String nodeName(int n) {
+        System.out.println("bla0");
+        int c = 0;
+        for (int i = 0; i < numOfAllNodes(); i++) {
+            if (i == n) {
+                break;
+            }
+            if (nodeHasAdjacentNodes(i)) {
+                c++;
+            }
+            
+        }
+        System.out.println("bla0x");
+        return "" + c;
+    }
 
     /**
      * Adds the entries into the adjacency matrix if the graph of this exercise, between the nodes of the given numbers.
@@ -288,7 +321,7 @@ public class GridGraph {
         return topoNum;
     }
 
-    void dfsWalk(int from, int[] color, List<Integer> result, int ccNum, int[] cc, int directions, Stack<Integer> blackColoringOrder) {
+    void dfsWalk(int from, int[] color, List<Integer> result, int ccNum, int[] cc, int directions, int[] S, int[] lastOfS) {
         if (color == null) {
             color = new int[this.numOfAllNodes()];
         }
@@ -301,69 +334,150 @@ public class GridGraph {
         }
         for (int i = 0; i < this.numOfAllNodes(); i++) {
             if (color[i] == 0 && ((directions >= 0 && this.mAdjacencyMatrix[from][i]) || (directions <= 0 && this.mAdjacencyMatrix[i][from]))) {
-                this.dfsWalk(i, color, result, ccNum, cc, directions, blackColoringOrder);
+                this.dfsWalk(i, color, result, ccNum, cc, directions, S, lastOfS);
             }
         }
         color[from] = 2;
-        if (blackColoringOrder != null) {
-            blackColoringOrder.push(from);
+        if (S != null) {
+            lastOfS[0]++;
+            S[lastOfS[0]] = from;
         }
     }
 
-    int[] findSCCs() {
+    int[] findSCCs(BufferedWriter writer, boolean write) throws IOException {
         int[] result = new int[this.numOfAllNodes()];
+        for (int w = 0; w < this.numOfAllNodes(); w++) {
+            result[w] = -1;
+        }
                 
         // get the connected components
         int[] color = new int[this.numOfAllNodes()];
-        int[] cc = new int[this.numOfAllNodes()];
-        int ccNum = 0;
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (color[i] == 0) {
-                this.dfsWalk(i, color, null, ccNum++, cc, 0, null);
-            }
-        }
-        //System.out.println("");
-        //for (int i = 0; i < numOfAllNodes(); i++) {
-        //    System.out.println("" + i + ": color(" + color[i] + "), cc(" + cc[i] + ")");
-        //}
         
         // split all connected components into strongly connected components
         int sccNum = 0;
-        Stack<Integer> blackColoringOrder = new Stack<Integer>();
+        int[] lastOfS = new int[1]; // Array storing only one int, as it is not possible to call primitive types in java by reference..
+        lastOfS[0] = -1;
+        int[] S = new int[this.numOfAllNodes()];
         int[] colorA = new int[this.numOfAllNodes()];
         // phase 1
-        while (blackColoringOrder.size() < this.numOfAllNodes()) {
-            int w = 0;
-            while (w < this.numOfAllNodes() && colorA[w] != 0) {
-                w++;
-            }
-            if (w < this.numOfAllNodes()) {
-                this.dfsWalk(w, colorA, null, 0, null, 1, blackColoringOrder);
+        if(write) {
+            writer.newLine();
+            writer.write("Phase 1:");
+            writer.newLine();
+            writer.newLine();
+            writer.write("\\medskip");
+            writer.newLine();
+        }
+        for (int w = 0; w < this.numOfAllNodes(); w++) {
+            if (colorA[w] == 0) {
+                this.dfsWalk(w, colorA, null, 0, null, 1, S, lastOfS);
+                
+                if(write && nodeHasAdjacentNodes(w)) {
+                    printS(writer, S, lastOfS);
+                    printColor(writer, colorA);
+                    writer.write("\\medskip");
+                    writer.newLine(); 
+                }
             }
         }
         // phase 2
+        if(write) {
+            writer.write("\\medskip");
+            writer.newLine();
+            writer.write("Phase 2:");
+            writer.newLine();
+            writer.newLine();
+            writer.write("\\medskip");
+            writer.newLine();
+        }
         int[] colorB = new int[this.numOfAllNodes()];
-        while (!blackColoringOrder.empty()) {
-            Integer v = blackColoringOrder.pop();
+        System.out.println("blaaaaaaaaaaaaaaaaaa4");
+        while (lastOfS[0] > 0) {
+            Integer v = S[lastOfS[0]];
+            lastOfS[0]--;
             //System.out.println("current element from stack: " + v + " with color " + colorB[v]);
             if (colorB[v] == 0) {
                 List<Integer> walk = new ArrayList<Integer>();
-                this.dfsWalk(v, colorB, walk, 0, null, -1, null);
-                //System.out.println("");
-                //for (int k = 0; k < numOfAllNodes(); k++) {
-                //    System.out.println("" + k + ": colorB(" + colorB[k] + ")");
-                //}
-                //System.out.println("");
-                //System.out.print("Found walk is: ");
+                this.dfsWalk(v, colorB, walk, 0, null, -1, null, null);
                 for (Integer node : walk) {
-                 //   System.out.print(" " + node);
                     result[node] = sccNum;
                 }
-                //System.out.println("");
                 sccNum++;
+                if(write && nodeHasAdjacentNodes(v)) {
+                    printS(writer, S, lastOfS);
+                    printColor(writer, colorB);
+                    printScc(writer, result);
+                    writer.write("\\medskip");
+                    writer.newLine(); 
+                }
             }
         }
+        System.out.println("blaaaaaaaaaaaaaaaaaa4x");
         return result;
+    }
+    
+    void printColor(BufferedWriter writer, int[] color) throws IOException {
+    System.out.println("bla1");
+        boolean firstWritten = false;
+        writer.write("color: ");
+        for (int i = 0; i < numOfAllNodes(); i++) {
+            if (nodeHasAdjacentNodes(i)) {
+                if (firstWritten) {
+                    writer.write(", ");
+                } else {
+                    firstWritten = true;
+                }
+                writer.write("(" + nodeName(i) + ", ");
+                if (color[i] == 0) {
+                    writer.write("w)");
+                } else if (color[i] == 1) {
+                    writer.write("g)"); 
+                } else {
+                    writer.write("s)"); 
+                }
+            }
+        }
+        writer.newLine();
+        writer.newLine();  
+        System.out.println("bla1x");
+    }
+    
+    void printS(BufferedWriter writer, int[] S, int[] lastOfS) throws IOException {
+    System.out.println("bla2");
+        boolean firstWritten = false;
+        writer.write("S: ");
+        for (int i = 0; i < lastOfS[0]; i++) {
+            if (nodeHasAdjacentNodes(i)) {
+                if (firstWritten) {
+                    writer.write(", ");
+                } else {
+                    firstWritten = true;
+                }
+                writer.write("" + nodeName(S[i]));
+            }
+        }
+        writer.newLine();
+        writer.newLine();
+        System.out.println("bla2x");
+    }
+    
+    void printScc(BufferedWriter writer, int[] scc) throws IOException {
+        System.out.println("bla3");
+        boolean firstWritten = false;
+        writer.write("scc: ");
+        for (int i = 0; i < numOfAllNodes(); i++) {
+            if (nodeHasAdjacentNodes(i)) {
+                if (firstWritten) {
+                    writer.write(", ");
+                } else {
+                    firstWritten = true;
+                }
+                writer.write("(" + nodeName(i) + ", " + nodeName(scc[i]) + ")");
+            }
+        }
+        writer.newLine();
+        writer.newLine();  
+        System.out.println("bla3x");
     }
 
     int[] getNeighbors(int nodeIndex){
@@ -413,7 +527,7 @@ public class GridGraph {
         writer.newLine();
         for (int i = 0; i < this.numOfAllNodes(); i++) {
             if (withSingletons || this.nodeHasAdjacentNodes(i)) {
-                writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + i + "};");
+                writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + nodeName(i) + "};");
                 writer.newLine();
             }
         }
@@ -445,9 +559,9 @@ public class GridGraph {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    private void printSCCs(BufferedWriter writer, boolean withSingletons) throws IOException {
-        int[] sccs = this.findSCCs();
-        int sccNum = 0;
+    private void printSCCs(BufferedWriter writer, boolean withSingletons, boolean write) throws IOException {
+        int[] sccs = this.findSCCs(writer, write);
+        int sccNum = -1;
         int checkedNodes = 0;
         int i = 0;
         boolean newScc = true;
@@ -462,9 +576,9 @@ public class GridGraph {
             if (sccs[i] == sccNum) {
                 if (withSingletons || this.nodeHasAdjacentNodes(i)) {
                     if (newScc) {
-                        writer.write("        \\{ " + i);
+                        writer.write("        \\{ " + nodeName(i));
                     } else {
-                        writer.write(",\\ " + i);
+                        writer.write(",\\ " + nodeName(i));
                     }
                     newScc = false;
                 }
