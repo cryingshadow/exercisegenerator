@@ -310,7 +310,8 @@ public class DSALExercises {
                     (int[][])input,
                     "find_sccs",
                     solutionWriter,
-                    options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
+                    options.containsKey(Flag.EXERCISE) ? exerciseWriter : null,
+                    true
                 );
 			} else if (Algorithm.SHARIR.name.equals(alg)) {
                 GridGraph.gridGraph(
@@ -318,7 +319,8 @@ public class DSALExercises {
                     (int[][])input,
                     "sharir",
                     solutionWriter,
-                    options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
+                    options.containsKey(Flag.EXERCISE) ? exerciseWriter : null,
+                    true
                 );
 			} else if (Algorithm.TOPOLOGICSORT.name.equals(alg)) {
 				boolean fail;
@@ -328,12 +330,17 @@ public class DSALExercises {
                 do {
 					try{
 						fail = false;
+						boolean writeText = true;
+						if (options.containsKey(Flag.SOURCE) || !DSALExercises.STUDENT_MODE) {
+						    writeText = false;
+						}
 						GridGraph.gridGraph(
 							graph,
 							sparseAdjacencyMatrix,
 							"topologicSort",
 							solutionWriter,
-							options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
+							options.containsKey(Flag.EXERCISE) ? exerciseWriter : null,
+							writeText
 						);
 					} catch (IOException e) {
 						System.out.println("Caught cycle-exception.");

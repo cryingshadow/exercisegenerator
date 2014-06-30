@@ -74,7 +74,8 @@ public class GridGraph {
         int[][] sparseAdjacencyMatrix,
         String operation,
         BufferedWriter writer,
-        BufferedWriter writerSpace
+        BufferedWriter writerSpace,
+        boolean withText
     ) throws IOException {
         graph.createGraph(sparseAdjacencyMatrix);
         switch(operation) {
@@ -99,7 +100,8 @@ public class GridGraph {
                     + "Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
                     + "Geben Sie zudem das Array \\texttt{scc} nach jeder Schleifeniteration der zweiten Phase (also "
                     + "nach Zeile 22) an, falls \\texttt{DFS2} ausgef\\\"uhrt wurde. Nehmen Sie hierbei an, dass \\texttt{scc}"
-                    + " initial mit Nullen gef\\\"ullt ist."
+                    + " initial mit Nullen gef\\\"ullt ist und der $i$-te Eintrag in der Adjazenzliste"
+                    + " dem Knoten $i+1$ entspricht."
                 );
                 writerSpace.newLine();
                 graph.printGraph(writerSpace, false);
@@ -108,7 +110,7 @@ public class GridGraph {
             writer.newLine();
             break;
         case "topologicSort":
-            graph.printTopologicalOrder(writerSpace, writer, false);
+            graph.printTopologicalOrder(writerSpace, writer, false, withText);
             break;
         default:
             
@@ -268,7 +270,6 @@ public class GridGraph {
             }
             
         }
-        System.out.println("bla0x");
         return "" + c;
     }
 
@@ -390,7 +391,6 @@ public class GridGraph {
             writer.newLine();
         }
         int[] colorB = new int[this.numOfAllNodes()];
-        System.out.println("blaaaaaaaaaaaaaaaaaa4");
         while (lastOfS[0] > 0) {
             Integer v = S[lastOfS[0]];
             lastOfS[0]--;
@@ -410,12 +410,10 @@ public class GridGraph {
                 }
             }
         }
-        System.out.println("blaaaaaaaaaaaaaaaaaa4x");
         return result;
     }
     
     void printColor(BufferedWriter writer, int[] color) throws IOException {
-    System.out.println("bla1");
         boolean firstWritten = false;
         writer.write("color: ");
         for (int i = 0; i < numOfAllNodes(); i++) {
@@ -437,11 +435,9 @@ public class GridGraph {
         }
         writer.newLine();
         writer.newLine();  
-        System.out.println("bla1x");
     }
     
     void printS(BufferedWriter writer, int[] S, int[] lastOfS) throws IOException {
-    System.out.println("bla2");
         boolean firstWritten = false;
         writer.write("S: ");
         for (int i = 0; i < lastOfS[0]; i++) {
@@ -456,11 +452,9 @@ public class GridGraph {
         }
         writer.newLine();
         writer.newLine();
-        System.out.println("bla2x");
     }
     
     void printScc(BufferedWriter writer, int[] scc) throws IOException {
-        System.out.println("bla3");
         boolean firstWritten = false;
         writer.write("scc: ");
         for (int i = 0; i < numOfAllNodes(); i++) {
@@ -475,7 +469,6 @@ public class GridGraph {
         }
         writer.newLine();
         writer.newLine();  
-        System.out.println("bla3x");
     }
 
     int[] getNeighbors(int nodeIndex){
@@ -606,16 +599,19 @@ public class GridGraph {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    private void printTopologicalOrder(BufferedWriter exerciseWriter, BufferedWriter solutionWriter, boolean withSingletons) throws IOException {
+    private void printTopologicalOrder(BufferedWriter exerciseWriter, BufferedWriter solutionWriter, boolean withSingletons, boolean withText) throws IOException {
         Integer[] nodeValues = this.topologicSort();
         if (exerciseWriter != null) {
-            exerciseWriter.write(
+            if (withText) {
+                exerciseWriter.write(
                               "Geben Sie eine topologische Sortierung des folgenden Graphen an. Daf\\\"ur reicht es, "
                               + "eine geordnete Liste der Knoten mit dem dazugeh\\\"origen Topologiewert in Klammern anzugeben. "
                               + "Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel). "
-                              + "Desweiteren ist jedes Array, welches Knoten beinhaltet aufsteigend nach deren Schl\\\"usseln sortiert."
+                              + "Des Weiteren ist jedes Array, welches Knoten beinhaltet aufsteigend nach deren Schl\\\"usseln sortiert."
+                              + "Beachten Sie, dass der $i$-te Eintrag in der Adjazenzliste dem Knoten $i+1$ entspricht."
                               );
-            exerciseWriter.newLine();
+                exerciseWriter.newLine();
+            }
             this.printGraph(exerciseWriter, false);
         }
         solutionWriter.write("Der gegebene Graph hat die folgende topologische Sortierung:\\\\");
@@ -625,7 +621,7 @@ public class GridGraph {
         int first = 0;
         for(int index = 0; index < nodeValues.length; ++index){
             if(nodeValues[index] != null && nodeValues[index] == min){
-                solutionWriter.write(index + "("+ nodeValues[index] + ")");
+                solutionWriter.write(nodeName(index) + "("+ nodeName(nodeValues[index]) + ")");
                 first = index;
                 break;
             }
@@ -633,7 +629,7 @@ public class GridGraph {
         while(min < nodeValues.length){
             for(int index = 0; index < nodeValues.length; ++index){
                 if(nodeValues[index] != null && nodeValues[index] == min && first != index){
-                    solutionWriter.write(", " + index + "("+ nodeValues[index] + ")");
+                    solutionWriter.write(", " + nodeName(index) + "("+ nodeName(nodeValues[index]) + ")");
                 }
             }
             ++min;
