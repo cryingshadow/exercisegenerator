@@ -100,8 +100,8 @@ public class GridGraph {
                     + " Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
                     + " Geben Sie zudem das Array \\texttt{scc} nach jeder Schleifeniteration der zweiten Phase (also"
                     + " nach Zeile 22) an, falls \\texttt{DFS2} ausgef\\\"uhrt wurde. Nehmen Sie hierbei an, dass \\texttt{scc}"
-                    + " initial mit Nullen gef\\\"ullt ist und der Knoten $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat,"
-                    + " also der Knoten $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
+                    + " initial mit Nullen gef\\\"ullt ist und der Knoten mit Schl\\\"ussel $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat,"
+                    + " also der Knoten mit Schl\\\"ussel $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
                 );
                 writerSpace.newLine();
                 graph.printGraph(writerSpace, false);
@@ -613,8 +613,8 @@ public class GridGraph {
                               + "eine geordnete Liste der Knoten mit dem dazugeh\\\"origen Topologiewert in Klammern anzugeben. "
                               + "Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel). "
                               + "Des Weiteren ist jedes Array, welches Knoten beinhaltet aufsteigend nach deren Schl\\\"usseln sortiert."
-                              + "Beachten Sie, dass der Knoten $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat, also"
-                              + " der Knoten $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
+                              + "Beachten Sie, dass der Knoten mit Schl\\\"ussel $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat, also"
+                              + " der Knoten mit Schl\\\"ussel $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
                               );
                 exerciseWriter.newLine();
             }
