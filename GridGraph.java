@@ -441,7 +441,7 @@ public class GridGraph {
         boolean firstWritten = false;
         writer.write("S: ");
         for (int i = 0; i <= lastOfS[0]; i++) {
-            if (nodeHasAdjacentNodes(i)) {
+            if (nodeHasAdjacentNodes(S[i])) {
                 if (firstWritten) {
                     writer.write(", ");
                 } else {
