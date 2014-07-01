@@ -440,7 +440,7 @@ public class GridGraph {
     void printS(BufferedWriter writer, int[] S, int[] lastOfS) throws IOException {
         boolean firstWritten = false;
         writer.write("S: ");
-        for (int i = 0; i < lastOfS[0]; i++) {
+        for (int i = 0; i <= lastOfS[0]; i++) {
             if (nodeHasAdjacentNodes(i)) {
                 if (firstWritten) {
                     writer.write(", ");
