@@ -111,6 +111,7 @@ public class Graph<N, E> {
         Map<Pair<Integer, Integer>, Node<N>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<N>>();
         Map<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>> edges =
             new LinkedHashMap<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>>();
+        int maxRow = 0;
         for (int num = 0; line != null; num++) {
             line.trim();
             if ("".equals(line)) {
@@ -118,6 +119,7 @@ public class Graph<N, E> {
             }
             String[] commaSeparated = line.split(",");
             int row = num / 2;
+            maxRow = Math.max(maxRow, row);
             if (num % 2 == 0) {
                 // even line
                 for (int i = 0; i < commaSeparated.length; i++) {
@@ -196,10 +198,13 @@ public class Graph<N, E> {
                 }
             }
         }
-        // everything is alright - build the graph
+        // everything is alright - mirror and build the graph
         this.adjacencyLists.clear();
+        Map<Pair<Integer, Integer>, Node<N>> mirroredGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<N>>();
         for (Pair<Integer, Integer> pos : nodes) {
-            this.adjacencyLists.put(newGrid.get(pos), new ArrayList<Pair<E, Node<N>>>());
+            Node<N> node = newGrid.get(pos);
+            this.adjacencyLists.put(node, new ArrayList<Pair<E, Node<N>>>());
+            mirroredGrid.put(new Pair<Integer, Integer>(pos.x, maxRow - pos.y), node);
         }
         for (Entry<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>> edge : edges.entrySet()) {
             List<Pair<E, Node<N>>> list = this.adjacencyLists.get(newGrid.get(edge.getKey()));
@@ -207,7 +212,7 @@ public class Graph<N, E> {
                 list.add(new Pair<E, Node<N>>(pair.x, newGrid.get(pair.y)));
             }
         }
-        this.grid = newGrid;
+        this.grid = mirroredGrid;
     }
 
     /**
