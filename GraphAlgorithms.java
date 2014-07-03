@@ -314,7 +314,10 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-        exWriter.write("F\\\"uhren Sie den Algorithmus von Ford auf diesem Graphen aus. ");
+		if(!warshall)
+			exWriter.write("F\\\"uhren Sie den Algorithmus von Floyd auf diesem Graphen aus. ");
+		else
+			exWriter.write("F\\\"uhren Sie den Algorithmus von Warshall auf diesem Graphen aus. ");
 		exWriter.write("Geben Sie dazu nach jedem Durchlauf der \\\"au{\\ss}eren Schleife die aktuellen Entfernungen in einer Tabelle an.");
 		int count = 0;
 		for (int iteration = 0; iteration < solutions.size(); ++iteration) {
