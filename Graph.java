@@ -198,8 +198,9 @@ public class Graph<N, E> {
                 }
             }
         }
-        // everything is alright - mirror and build the graph
+        // everything is alright - build the graph
         this.adjacencyLists.clear();
+        // mirror the positions vertically as TikZ positions are mirrored that way compared to the input format
         Map<Pair<Integer, Integer>, Node<N>> mirroredGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<N>>();
         for (Pair<Integer, Integer> pos : nodes) {
             Node<N> node = newGrid.get(pos);
