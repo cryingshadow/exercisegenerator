@@ -189,6 +189,7 @@ public abstract class GraphAlgorithms {
      */
     public static <N> void floyd(
 		Graph<N, Integer> graph,
+		boolean warshall,
 		Comparator<Node<N>> comp,
 		BufferedWriter exWriter,
 		BufferedWriter solWriter
@@ -199,6 +200,7 @@ public abstract class GraphAlgorithms {
 		final ArrayList<String[][]> solutions = new ArrayList<String[][]>();
 		String[][] currentSolution = new String[size+1][size+1];
 		Integer[][] weights = new Integer[size][size];
+		boolean[][] changed = new boolean[size][size];
 		// initialize ids
 		Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
 		for (int current = 0 ; current < size; ++current) {
@@ -215,16 +217,25 @@ public abstract class GraphAlgorithms {
 			
 			// prepare weights and solution array
 			for (int i = 0; i < size; ++i) {
-				currentSolution[current+1][i+1] = "$\\infty$";
+				if(!warshall)
+					currentSolution[current+1][i+1] = "$\\infty$";
+				else
+					currentSolution[current+1][i+1] = "false";
 				weights[current][i] = null;
 			}
 			for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
 				weights[current][ids.get(edge.y)] = edge.x;
-				currentSolution[current+1][ids.get(edge.y)+1] = edge.x.toString();
-				System.out.println("Add: " + currentNode.getLabel() + " -" + currentSolution[current][ids.get(edge.y)] + "-> " + edge.y.getLabel());
+				if(!warshall)
+					currentSolution[current+1][ids.get(edge.y)+1] = edge.x.toString();
+				else
+					currentSolution[current+1][ids.get(edge.y)+1] = "true";
+				//System.out.println("Add: " + currentNode.getLabel() + " -" + currentSolution[current][ids.get(edge.y)] + "-> " + edge.y.getLabel());
 			}
 			weights[current][current] = 0;
-			currentSolution[current+1][current+1] = "0";
+			if(!warshall)
+				currentSolution[current+1][current+1] = "0";
+			else
+				currentSolution[current+1][current+1] = "true";
 		}
 		
 		solutions.add(currentSolution);
@@ -242,6 +253,7 @@ public abstract class GraphAlgorithms {
 		for (int intermediate = 0; intermediate < size; ++intermediate) {
 			for (int start = 0; start < size; ++start) {
 				for (int target = 0; target < size; ++target) {
+					Integer oldValue = weights[start][target];
 					if(weights[start][target] != null) {
 						if(weights[start][intermediate] != null && weights[intermediate][target] != null) {
 							weights[start][target] = Integer.compare(weights[start][target], weights[start][intermediate] + weights[intermediate][target]) < 0 ?
@@ -253,6 +265,7 @@ public abstract class GraphAlgorithms {
 					else if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
 						weights[start][target] = weights[start][intermediate] + weights[intermediate][target];
 					}
+					changed[start][target] = (oldValue != weights[start][target]);
 				}
 			}
 			
@@ -260,12 +273,24 @@ public abstract class GraphAlgorithms {
 			for (int i = 0; i < size; ++i) {
 				for (int j = 0; j < size; ++j)
 				{
+					if(changed[i][j])
+						currentSolution[i+1][j+1] = "\\textbf{";
+					else
+						currentSolution[i+1][j+1] = "";
 					if(weights[i][j] == null) {
-						currentSolution[i+1][j+1] = "$\\infty$";
+						if(!warshall)
+							currentSolution[i+1][j+1] += "$\\infty$";
+						else
+							currentSolution[i+1][j+1] += "false";
 					}
 					else {
-						currentSolution[i+1][j+1] = "" + weights[i][j];
+						if(!warshall)
+							currentSolution[i+1][j+1] += "" + weights[i][j];
+						else
+							currentSolution[i+1][j+1] += "true";
 					}
+					if(changed[i][j])
+						currentSolution[i+1][j+1] += "}";
 				}
 			}
 			solutions.add(currentSolution);
@@ -278,6 +303,7 @@ public abstract class GraphAlgorithms {
 				currentSolution[0][current+1] = currentNode.getLabel().toString();
 				currentSolution[current+1][0] = currentNode.getLabel().toString();
 			}
+			changed = new boolean[size][size];
 		}
 		
 		// create output

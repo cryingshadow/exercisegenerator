@@ -528,7 +528,10 @@ public class DSALExercises {
                 GraphAlgorithms.dijkstra(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
 			} else if (Algorithm.FLOYD.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
-                GraphAlgorithms.floyd(pair.x, new StringNodeComparator(), exerciseWriter, solutionWriter);
+                GraphAlgorithms.floyd(pair.x, false, new StringNodeComparator(), exerciseWriter, solutionWriter);
+			} else if (Algorithm.WARSHALL.name.equals(alg)) {
+                Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
+                GraphAlgorithms.floyd(pair.x, true, new StringNodeComparator(), exerciseWriter, solutionWriter);
             } else {
                 System.out.println("Unknown algorithm!");
                 return;
@@ -801,6 +804,9 @@ public class DSALExercises {
         }
 		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
             res.add(Algorithm.FLOYD.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
+            res.add(Algorithm.WARSHALL.name);
         }
         return res;
     }
@@ -1320,7 +1326,7 @@ public class DSALExercises {
         ),
 		
 		/**
-         * Dijkstra's algorithm to find shortest paths from a single source.
+         * Floyd's algorithm to find shortest paths from a single source.
          */
         FLOYD(
 			"floyd",
@@ -1331,6 +1337,23 @@ public class DSALExercises {
 					DSALExercises.STUDENT_MODE ?
 						"TODO" :
 							"TODO"
+				)
+			},
+			false
+		),
+		
+		/**
+         * Warshall's algorithm to find shortest paths from a single source.
+         */
+        WARSHALL(
+			"warshall",
+			"Warshall Algorithmus",
+			new String[]{
+				"Warshall's algorithm to find the transitive hull.",
+				(
+				DSALExercises.STUDENT_MODE ?
+				   "TODO" :
+						"TODO"
 				)
 			},
 			false
