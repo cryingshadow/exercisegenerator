@@ -219,10 +219,10 @@ public abstract class TikZUtils {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static void printTable(String[][] table, BufferedWriter writer) throws IOException {
+    public static void printTable(String[][] table, double width, BufferedWriter writer) throws IOException {
         int cols = table.length;
         int rows = table[0].length;
-        writer.write("\\begin{tabular}{|*{" + cols + "}{C{2cm}|}}");
+        writer.write("\\begin{tabular}{|*{" + cols + "}{C{"+width+"cm}|}}");
         writer.newLine();
         writer.write("\\hline");
         writer.newLine();

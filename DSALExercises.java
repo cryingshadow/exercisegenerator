@@ -526,6 +526,9 @@ public class DSALExercises {
             } else if (Algorithm.DIJKSTRA.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
                 GraphAlgorithms.dijkstra(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
+			} else if (Algorithm.FLOYD.name.equals(alg)) {
+                Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
+                GraphAlgorithms.floyd(pair.x, new StringNodeComparator(), exerciseWriter, solutionWriter);
             } else {
                 System.out.println("Unknown algorithm!");
                 return;
@@ -795,6 +798,9 @@ public class DSALExercises {
         Set<String> res = new LinkedHashSet<String>();
         if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
             res.add(Algorithm.DIJKSTRA.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
+            res.add(Algorithm.FLOYD.name);
         }
         return res;
     }
@@ -1312,6 +1318,23 @@ public class DSALExercises {
             },
             false
         ),
+		
+		/**
+         * Dijkstra's algorithm to find shortest paths from a single source.
+         */
+        FLOYD(
+			"floyd",
+			"Floyd Algorithmus",
+			new String[]{
+				"Floyd's algorithm to find all shortest paths to all other nodes.",
+				(
+					DSALExercises.STUDENT_MODE ?
+						"TODO" :
+							"TODO"
+				)
+			},
+			false
+		),
 
         /**
          * Linked hashing on Integer arrays with the division method.

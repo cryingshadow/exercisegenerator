@@ -169,13 +169,147 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         solWriter.write("\\renewcommand{\\arraystretch}{1.5}");
         solWriter.newLine();
-        TikZUtils.printTable(exTable, exWriter);
-        TikZUtils.printTable(solTable, solWriter);
+        TikZUtils.printTable(exTable, 2.0, exWriter);
+        TikZUtils.printTable(solTable, 2.0, solWriter);
         exWriter.write("\\renewcommand{\\arraystretch}{1}");
         exWriter.newLine();
         solWriter.write("\\renewcommand{\\arraystretch}{1}");
         solWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
     }
+	
+	/**
+     * Prints exercise and solution for the Floyd Algorithm.
+     * @param graph The graph.
+     * @param start The start node.
+     * @param comp A comparator for sorting the nodes in the table (may be null - then no sorting is applied).
+     * @param exWriter The writer to send the exercise output to.
+     * @param solWriter The writer to send the solution output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static <N> void floyd(
+		Graph<N, Integer> graph,
+		Comparator<Node<N>> comp,
+		BufferedWriter exWriter,
+		BufferedWriter solWriter
+	) throws IOException {
+		final int tableCount = 2;
+		final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
+		final int size = nodes.size();
+		final ArrayList<String[][]> solutions = new ArrayList<String[][]>();
+		String[][] currentSolution = new String[size+1][size+1];
+		Integer[][] weights = new Integer[size][size];
+		// initialize ids
+		Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
+		for (int current = 0 ; current < size; ++current) {
+			Node<N> currentNode = nodes.get(current);
+			ids.put(currentNode, current);
+		}
+		currentSolution[0][0] = "";
+		// initialize weights
+		for (int current = 0 ; current < size; ++current) {
+			Node<N> currentNode = nodes.get(current);
+			// set labels
+			currentSolution[0][current+1] = currentNode.getLabel().toString();
+			currentSolution[current+1][0] = currentNode.getLabel().toString();
+			
+			// prepare weights and solution array
+			for (int i = 0; i < size; ++i) {
+				currentSolution[current+1][i+1] = "$\\infty$";
+				weights[current][i] = null;
+			}
+			for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
+				weights[current][ids.get(edge.y)] = edge.x;
+				currentSolution[current+1][ids.get(edge.y)+1] = edge.x.toString();
+				System.out.println("Add: " + currentNode.getLabel() + " -" + currentSolution[current][ids.get(edge.y)] + "-> " + edge.y.getLabel());
+			}
+			weights[current][current] = 0;
+			currentSolution[current+1][current+1] = "0";
+		}
+		
+		solutions.add(currentSolution);
+		// clear solution and reset
+		currentSolution = new String[size+1][size+1];
+		currentSolution[0][0] = "";
+		for (int current = 0 ; current < size; ++current) {
+			Node<N> currentNode = nodes.get(current);
+			// set labels
+			currentSolution[0][current+1] = currentNode.getLabel().toString();
+			currentSolution[current+1][0] = currentNode.getLabel().toString();
+		}
+	
+		// actual algorithm
+		for (int intermediate = 0; intermediate < size; ++intermediate) {
+			for (int start = 0; start < size; ++start) {
+				for (int target = 0; target < size; ++target) {
+					if(weights[start][target] != null) {
+						if(weights[start][intermediate] != null && weights[intermediate][target] != null) {
+							weights[start][target] = Integer.compare(weights[start][target], weights[start][intermediate] + weights[intermediate][target]) < 0 ?
+							weights[start][target] :
+							weights[start][intermediate] + weights[intermediate][target];
+						}
+						// no else here as we can keep the old value as the path is currently infinite (null)
+					}
+					else if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
+						weights[start][target] = weights[start][intermediate] + weights[intermediate][target];
+					}
+				}
+			}
+			
+			// write solution
+			for (int i = 0; i < size; ++i) {
+				for (int j = 0; j < size; ++j)
+				{
+					if(weights[i][j] == null) {
+						currentSolution[i+1][j+1] = "$\\infty$";
+					}
+					else {
+						currentSolution[i+1][j+1] = "" + weights[i][j];
+					}
+				}
+			}
+			solutions.add(currentSolution);
+			// clear solution and reset.
+			currentSolution = new String[size+1][size+1];
+			currentSolution[0][0] = "";
+			for (int current = 0 ; current < size; ++current) {
+				Node<N> currentNode = nodes.get(current);
+				// set labels
+				currentSolution[0][current+1] = currentNode.getLabel().toString();
+				currentSolution[current+1][0] = currentNode.getLabel().toString();
+			}
+		}
+		
+		// create output
+		exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
+        exWriter.newLine();
+        TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+        graph.printTikZ(exWriter);
+        exWriter.newLine();
+        TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+        exWriter.newLine();
+        exWriter.write("F\\\"uhren Sie den Algorithmus von Ford auf diesem Graphen aus. ");
+		exWriter.write("Geben Sie dazu nach jedem Durchlauf der \\\"au{\\ss}eren Schleife die aktuellen Entfernungen in einer Tabelle an.");
+		int count = 0;
+		for (int iteration = 0; iteration < solutions.size(); ++iteration) {
+			if(count < tableCount) {
+				TikZUtils.printTable(solutions.get(iteration), 0.8, solWriter);
+				solWriter.newLine();
+				solWriter.write("\\hspace{2em}");
+				solWriter.newLine();
+				++count;
+			}
+			else
+			{
+				solWriter.write("\\\\[2ex]");
+				solWriter.newLine();
+				TikZUtils.printTable(solutions.get(iteration), 0.8, solWriter);
+				solWriter.newLine();
+				solWriter.write("\\hspace{2em}");
+				solWriter.newLine();
+				count = 1;
+			}
+		}
+	}
 
 }
