@@ -183,8 +183,8 @@ public abstract class GraphAlgorithms {
         solWriter.write("\\vspace*{1ex}");
         solWriter.newLine();
         solWriter.newLine();
-        solWriter.write("Die grau unterlegten Zellen markieren, an welcher Stelle für welchen Knoten die minimale ");
-        solWriter.write("Distanz sicher berechnet worden ist.");
+        solWriter.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
+        solWriter.write(" Distanz sicher berechnet worden ist.");
         solWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
     }
