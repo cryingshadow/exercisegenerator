@@ -1,4 +1,5 @@
 DSALExercises:
+	@touch a.class
 	@rm *.class
 ifeq ($(wildcard META-INF/MANIFEST.MF),) 
 	@echo "Creating Manifest."
