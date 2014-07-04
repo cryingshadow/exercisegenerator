@@ -296,10 +296,11 @@ public abstract class GraphAlgorithms {
                     } else if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
                         weights[start][target] = weights[start][intermediate] + weights[intermediate][target];
                     }
-                    if(!warshall)
+                    if(!warshall) {
                         changed[start][target] = (oldValue != weights[start][target]);
-                    else
+                    } else {
                         changed[start][target] = (oldValue == null && weights[start][target] != null);
+                    }
                 }
             }
             // write solution
@@ -382,6 +383,25 @@ public abstract class GraphAlgorithms {
         }
         TikZUtils.printArrayStretch(1.0, exWriter);
         TikZUtils.printArrayStretch(1.0, solWriter);
+    }
+
+    /**
+     * Prints exercise and solution for the Ford-Fulkerson method.
+     * @param graph The flow network.
+     * @param source The source node.
+     * @param sink The sink node.
+     * @param exWriter The writer to send the exercise output to.
+     * @param solWriter The writer to send the solution output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static <N> void fordFulkerson(
+        Graph<N, Pair<Integer, Integer>> graph,
+        Node<N> source,
+        Node<N> sink,
+        BufferedWriter exWriter,
+        BufferedWriter solWriter
+    ) throws IOException {
+        //TODO
     }
 
     /**

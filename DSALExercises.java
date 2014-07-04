@@ -526,6 +526,10 @@ public class DSALExercises {
             } else if (Algorithm.DIJKSTRA.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
                 GraphAlgorithms.dijkstra(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
+            } else if (Algorithm.FORD_FULKERSON.name.equals(alg)) {
+                Pair<Graph<String, Pair<Integer, Integer>>, Pair<Node<String>, Node<String>>> pair =
+                    (Pair<Graph<String, Pair<Integer, Integer>>, Pair<Node<String>, Node<String>>>)input;
+                GraphAlgorithms.fordFulkerson(pair.x, pair.y.x, pair.y.y, exerciseWriter, solutionWriter);
 			} else if (Algorithm.FLOYD.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
                 GraphAlgorithms.floyd(pair.x, false, new StringNodeComparator(), exerciseWriter, solutionWriter);
@@ -1200,6 +1204,47 @@ public class DSALExercises {
                 }
             }
             return new Pair<Graph<String, Integer>, Node<String>>(graph, node);
+        } else if (Algorithm.FORD_FULKERSON.name.equals(alg)) {
+            Graph<String, Pair<Integer, Integer>> graph = new Graph<String, Pair<Integer, Integer>>();
+            if (options.containsKey(Flag.SOURCE)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    graph.setGraphFromInput(reader, new StringLabelParser(), new IntPairLabelParser());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            } else if (DSALExercises.STUDENT_MODE) {
+                throw new UnsupportedOperationException("Not yet implemented!");
+            } else {
+                try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
+                    graph.setGraphFromInput(reader, new StringLabelParser(), new IntPairLabelParser());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+            Node<String> source = null;
+            Node<String> sink = null;
+            if (options.containsKey(Flag.OPERATIONS)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
+                    Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
+                    if (!nodes.isEmpty()) {
+                        source = nodes.iterator().next();
+                    }
+                    nodes = graph.getNodesWithLabel(reader.readLine().trim());
+                    if (!nodes.isEmpty()) {
+                        sink = nodes.iterator().next();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+            return
+                new Pair<Graph<String, Pair<Integer, Integer>>, Pair<Node<String>, Node<String>>>(
+                    graph,
+                    new Pair<Node<String>, Node<String>>(source, sink)
+                );
         } else {
             return null;
         }
@@ -1651,6 +1696,23 @@ public class DSALExercises {
                 )
             },
             true
+        ),
+
+        /**
+         * Ford-Fulkerson for flow networks.
+         */
+        FORD_FULKERSON(
+            "fordfulkerson",
+            "Ford-Fulkerson",
+            new String[]{
+                "Perform Ford-Fulkerson (Diniz) on a flow network.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "TODO" :
+                            "TODO"
+                )
+            },
+            false
         );
 
         /**
