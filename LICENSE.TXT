@@ -1,0 +1,10 @@
+This software can be used freely for non-commercial or educational purposes only. It may be freely distributed without 
+modifications.
+
+All remaining rights are preserved by the authors Florian Corzilius, Stefan Schupp, and Thomas Ströder. In particular, 
+it is forbidden to alter this software, use it for commercial purposes, disassemble the software, or using only parts 
+of it in another software. It is, however, allowed to use the software as a whole in another software if that software 
+is only used for non-commercial or educational purposes and this license is added to that software.
+
+The authors do not guarantee any functionality or security of this software. Any harm caused by the use of this 
+software is in the responsibility of the user of this software only.

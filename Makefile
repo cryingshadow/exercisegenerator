@@ -10,6 +10,6 @@ else
 	@echo "Found Manifest."
 endif
 	@javac DSALExercises.java
-	@jar cvmf META-INF/MANIFEST.MF DSALExercises.jar *.class
+	@jar cvmf META-INF/MANIFEST.MF DSALExercises.jar *.class LICENSE.TXT
 	@mv DSALExercises.jar ../style/
 	@echo "Finished."
