@@ -296,7 +296,10 @@ public abstract class GraphAlgorithms {
                     } else if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
                         weights[start][target] = weights[start][intermediate] + weights[intermediate][target];
                     }
-                    changed[start][target] = (oldValue != weights[start][target]);
+                    if(!warshall)
+                        changed[start][target] = (oldValue != weights[start][target]);
+                    else
+                        changed[start][target] = (oldValue == null && weights[start][target] != null);
                 }
             }
             // write solution
