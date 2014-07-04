@@ -13,6 +13,16 @@ public class DSALExercises {
     public static final boolean STUDENT_MODE;
 
     /**
+     * The set of (in student mode only enabled) graph algorithms.
+     */
+    private static final Set<String> GRAPH_ALGORITHMS;
+
+    /**
+     * The set of (in student mode only enabled) grid graph algorithms.
+     */
+    private static final Set<String> GRID_GRAPH_ALGORITHMS;
+
+    /**
      * The set of (in student mode only enabled) hashing algorithms.
      */
     private static final Set<String> HASHING_ALGORITHMS;
@@ -26,32 +36,22 @@ public class DSALExercises {
      * Limit for random numbers in student mode.
      */
     private static final int NUMBER_LIMIT;
-
+    
     /**
      * Array containing all prime numbers between 5 and 101.
      */
     private static final int[] PRIMES_5_101 =
         new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
-
+    
     /**
      * The set of (in student mode only enabled) sorting algorithms.
      */
     private static final Set<String> SORTING_ALGORITHMS;
-    
+
     /**
      * The set of (in student mode only enabled) tree algorithms.
      */
     private static final Set<String> TREE_ALGORITHMS;
-    
-    /**
-     * The set of (in student mode only enabled) grid graph algorithms.
-     */
-    private static final Set<String> GRID_GRAPH_ALGORITHMS;
-
-    /**
-     * The set of (in student mode only enabled) graph algorithms.
-     */
-    private static final Set<String> GRAPH_ALGORITHMS;
 
     /**
      * The version of this program.
@@ -550,64 +550,6 @@ public class DSALExercises {
     }
 
     /**
-     * Prints empty rows for solving the exercise on the sheet directly.
-     * @param array The sorted array.
-     * @param rows The number of empty rows to be printed in the exercise.
-     * @param anchorParam The name of the node used to orient the empty rows.
-     * @param options The parsed flags.
-     * @param exerciseWriter The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    private static void sortPostProcessing(
-        Integer[] array,
-        int rows,
-        String anchorParam,
-        Map<Flag, String> options,
-        BufferedWriter exerciseWriter
-    ) throws IOException {
-        String anchor = anchorParam;
-        if (options.containsKey(Flag.EXERCISE)) {
-            for (int i = 0; i < rows; i++) {
-                anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
-            }
-            TikZUtils.printTikzEnd(exerciseWriter);
-        }
-    }
-
-    /**
-     * Prints the exercise text to the specified writer.
-     * @param array The array to sort.
-     * @param alg The name of the sorting algorithm.
-     * @param op The operation after which the state of the array is to be given as intermediate result.
-     * @param additional Additional instruction on how to write up the solution.
-     * @param options The parsed flags.
-     * @param exerciseWriter The writer to send the output to.
-     * @return The name of the node used to orient empty rows in the exercise text.
-     * @throws IOException If some error occurs during output.
-     */
-    private static String sortPreProcessing(
-        Integer[] array,
-        String alg,
-        String op,
-        String additional,
-        Map<Flag, String> options,
-        BufferedWriter exerciseWriter
-    ) throws IOException {
-        String anchor = null;
-        if (options.containsKey(Flag.EXERCISE)) {
-            if (DSALExercises.STUDENT_MODE) {
-                exerciseWriter.write("Sortieren Sie das folgende Array mithilfe von " + alg + ".");
-                exerciseWriter.newLine();
-                exerciseWriter.write("Geben Sie dazu das Array nach jeder " + op + " an" + additional + ".\\\\[2ex]");
-                exerciseWriter.newLine();
-            }
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
-            anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
-        }
-        return anchor;
-    }
-
-    /**
      * @return The names of the supported algorithms, separated by commas.
      */
     private static String algorithmNames() {
@@ -636,7 +578,7 @@ public class DSALExercises {
     private static boolean areCoprime(int a, int b, int c) {
         return DSALExercises.gcd(a,b) == 1 && DSALExercises.gcd(b,c) == 1 && DSALExercises.gcd(a,c) == 1;
     }
-    
+
     /**
      * Computes the gcd of two numbers by using the Eucilidian algorithm.
      * @param number1 The first of the two numbers.
@@ -650,7 +592,7 @@ public class DSALExercises {
         }
         return DSALExercises.gcd(number2, number1%number2);
     }
-    
+
     /**
      * @param value Some value.
      * @return The prime numbers from 5 to the smallest prime number being greater than or equal to the specified value 
@@ -667,7 +609,7 @@ public class DSALExercises {
         result.add(DSALExercises.PRIMES_5_101[current]);
         return result.toArray(new Integer[result.size()]);
     }
-
+    
     /**
      * @param start Value which defines the lower bound for the resulting prime.
      * @return The next largest prime greater than or equal to the input.
@@ -678,6 +620,40 @@ public class DSALExercises {
             current++;
         }
         return current; 
+    }
+    
+    /**
+     * @return The set of (in student mode only enabled) graph algorithms.
+     */
+    private static Set<String> initGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+            res.add(Algorithm.DIJKSTRA.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
+            res.add(Algorithm.FLOYD.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
+            res.add(Algorithm.WARSHALL.name);
+        }
+        return res;
+    }
+
+    /**
+     * @return The set of (in student mode only enabled) grid graph algorithms.
+     */
+    private static Set<String> initGridGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
+            res.add(Algorithm.SCC.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SHARIR.enabled) {
+            res.add(Algorithm.SHARIR.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
+            res.add(Algorithm.TOPOLOGICSORT.name);
+        }
+        return res;
     }
 
     /**
@@ -777,40 +753,6 @@ public class DSALExercises {
         }
         if (!DSALExercises.STUDENT_MODE || Algorithm.AVLTREE.enabled) {
             res.add(Algorithm.AVLTREE.name);
-        }
-        return res;
-    }
-
-    /**
-     * @return The set of (in student mode only enabled) grid graph algorithms.
-     */
-    private static Set<String> initGridGraphAlgorithms() {
-        Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
-            res.add(Algorithm.SCC.name);
-        }
-        if (!DSALExercises.STUDENT_MODE || Algorithm.SHARIR.enabled) {
-            res.add(Algorithm.SHARIR.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
-            res.add(Algorithm.TOPOLOGICSORT.name);
-        }
-        return res;
-    }
-
-    /**
-     * @return The set of (in student mode only enabled) graph algorithms.
-     */
-    private static Set<String> initGraphAlgorithms() {
-        Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
-            res.add(Algorithm.DIJKSTRA.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
-            res.add(Algorithm.FLOYD.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
-            res.add(Algorithm.WARSHALL.name);
         }
         return res;
     }
@@ -1295,6 +1237,64 @@ public class DSALExercises {
     }
 
     /**
+     * Prints empty rows for solving the exercise on the sheet directly.
+     * @param array The sorted array.
+     * @param rows The number of empty rows to be printed in the exercise.
+     * @param anchorParam The name of the node used to orient the empty rows.
+     * @param options The parsed flags.
+     * @param exerciseWriter The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    private static void sortPostProcessing(
+        Integer[] array,
+        int rows,
+        String anchorParam,
+        Map<Flag, String> options,
+        BufferedWriter exerciseWriter
+    ) throws IOException {
+        String anchor = anchorParam;
+        if (options.containsKey(Flag.EXERCISE)) {
+            for (int i = 0; i < rows; i++) {
+                anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
+            }
+            TikZUtils.printTikzEnd(exerciseWriter);
+        }
+    }
+
+    /**
+     * Prints the exercise text to the specified writer.
+     * @param array The array to sort.
+     * @param alg The name of the sorting algorithm.
+     * @param op The operation after which the state of the array is to be given as intermediate result.
+     * @param additional Additional instruction on how to write up the solution.
+     * @param options The parsed flags.
+     * @param exerciseWriter The writer to send the output to.
+     * @return The name of the node used to orient empty rows in the exercise text.
+     * @throws IOException If some error occurs during output.
+     */
+    private static String sortPreProcessing(
+        Integer[] array,
+        String alg,
+        String op,
+        String additional,
+        Map<Flag, String> options,
+        BufferedWriter exerciseWriter
+    ) throws IOException {
+        String anchor = null;
+        if (options.containsKey(Flag.EXERCISE)) {
+            if (DSALExercises.STUDENT_MODE) {
+                exerciseWriter.write("Sortieren Sie das folgende Array mithilfe von " + alg + ".");
+                exerciseWriter.newLine();
+                exerciseWriter.write("Geben Sie dazu das Array nach jeder " + op + " an" + additional + ".\\\\[2ex]");
+                exerciseWriter.newLine();
+            }
+            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+            anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
+        }
+        return anchor;
+    }
+
+    /**
      * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
      * @author cryingshadow
      * @version $Id$
@@ -1388,21 +1388,21 @@ public class DSALExercises {
 		),
 		
 		/**
-         * Warshall's algorithm to find shortest paths from a single source.
+         * Ford-Fulkerson for flow networks.
          */
-        WARSHALL(
-			"warshall",
-			"Warshall Algorithmus",
-			new String[]{
-				"Warshall's algorithm to find the transitive hull.",
-				(
-				DSALExercises.STUDENT_MODE ?
-				   "TODO" :
-						"TODO"
-				)
-			},
-			false
-		),
+        FORD_FULKERSON(
+            "fordfulkerson",
+            "Ford-Fulkerson",
+            new String[]{
+                "Perform Ford-Fulkerson (Edmonds-Karp, Diniz) on a flow network.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "TODO" :
+                            "TODO"
+                )
+            },
+            false
+        ),
 
         /**
          * Linked hashing on Integer arrays with the division method.
@@ -1648,6 +1648,23 @@ public class DSALExercises {
         ),
         
         /**
+         * Selectionsort on Integer arrays.
+         */
+        SELECTIONSORT(
+            "selectionsort",
+            "Selectionsort",
+            new String[]{
+                "Perform Selectionsort on an array of integers.",
+                (
+                    DSALExercises.STUDENT_MODE ?
+                        "The flag -l specifies the length of the array to sort." :
+                            "TODO"
+                )
+            },
+            true
+        ),
+		
+		/**
          * Detection of strongly connected components using Sharir's algorithm.
          */
         SHARIR(
@@ -1663,8 +1680,8 @@ public class DSALExercises {
             },
             true
         ),
-		
-		/**
+
+        /**
 		 * Topological sorting of a graph.
 		 */
 		TOPOLOGICSORT(
@@ -1682,38 +1699,21 @@ public class DSALExercises {
 		),
 
         /**
-         * Selectionsort on Integer arrays.
+         * Warshall's algorithm to find shortest paths from a single source.
          */
-        SELECTIONSORT(
-            "selectionsort",
-            "Selectionsort",
-            new String[]{
-                "Perform Selectionsort on an array of integers.",
-                (
-                    DSALExercises.STUDENT_MODE ?
-                        "The flag -l specifies the length of the array to sort." :
-                            "TODO"
-                )
-            },
-            true
-        ),
-
-        /**
-         * Ford-Fulkerson for flow networks.
-         */
-        FORD_FULKERSON(
-            "fordfulkerson",
-            "Ford-Fulkerson",
-            new String[]{
-                "Perform Ford-Fulkerson (Diniz) on a flow network.",
-                (
-                    DSALExercises.STUDENT_MODE ?
-                        "TODO" :
-                            "TODO"
-                )
-            },
-            false
-        );
+        WARSHALL(
+			"warshall",
+			"Warshall Algorithmus",
+			new String[]{
+				"Warshall's algorithm to find the transitive hull.",
+				(
+				DSALExercises.STUDENT_MODE ?
+				   "TODO" :
+						"TODO"
+				)
+			},
+			false
+		);
 
         /**
          * The documentation for this algorithm.
@@ -1726,14 +1726,14 @@ public class DSALExercises {
         private final boolean enabled;
 
         /**
-         * The name of the algorithm.
-         */
-        private final String name;
-
-        /**
          * The name of the algorithm for text processing.
          */
         private final String longname;
+
+        /**
+         * The name of the algorithm.
+         */
+        private final String name;
 
         /**
          * @param n The name of the algorithm.

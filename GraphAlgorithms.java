@@ -179,6 +179,13 @@ public abstract class GraphAlgorithms {
         TikZUtils.printTable(solTable, solColor, "2cm", solWriter);
         TikZUtils.printArrayStretch(1.0, exWriter);
         TikZUtils.printArrayStretch(1.0, solWriter);
+        solWriter.newLine();
+        solWriter.write("\\vspace*{1ex}");
+        solWriter.newLine();
+        solWriter.newLine();
+        solWriter.write("Die grau unterlegten Zellen markieren, an welcher Stelle für welchen Knoten die minimale ");
+        solWriter.write("Distanz sicher berechnet worden ist.");
+        solWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
     }
     
@@ -386,7 +393,8 @@ public abstract class GraphAlgorithms {
     }
 
     /**
-     * Prints exercise and solution for the Ford-Fulkerson method.
+     * Prints exercise and solution for the Ford-Fulkerson method. Uses Diniz's algorithm for selecting augmenting 
+     * paths.
      * @param graph The flow network.
      * @param source The source node.
      * @param sink The sink node.
@@ -401,7 +409,32 @@ public abstract class GraphAlgorithms {
         BufferedWriter exWriter,
         BufferedWriter solWriter
     ) throws IOException {
+        //TODO exercise text
+        while (true) {
+            List<Node<N>> path =
+                GraphAlgorithms.selectAugmentingPath(
+                    GraphAlgorithms.computeResidualGraph(graph, solWriter),
+                    source,
+                    sink
+                );
+            if (path == null) {
+                break;
+            }
+            GraphAlgorithms.addFlow(graph, path, solWriter);
+        }
+    }
+
+    private static <N> void addFlow(Graph<N, Pair<Integer, Integer>> graph, List<Node<N>> path, BufferedWriter writer)
+    throws IOException {
         //TODO
+    }
+
+    private static <N> Graph<N, Integer> computeResidualGraph(
+        Graph<N, Pair<Integer, Integer>> graph,
+        BufferedWriter writer
+    ) throws IOException {
+        //TODO
+        return null;
     }
 
     /**
@@ -437,6 +470,11 @@ public abstract class GraphAlgorithms {
         writer.write("\\hspace{2em}");
         writer.newLine();
         return 1;
+    }
+
+    private static <N> List<Node<N>> selectAugmentingPath(Graph<N, Integer> graph, Node<N> source, Node<N> sink) {
+        //TODO
+        return null;
     }
 
 }
