@@ -29,6 +29,17 @@ public abstract class TikZUtils {
     public static final String ITEM = "\\item";
 
     /**
+     * Prints a new stretch factor for the array height.
+     * @param stretch The stretch factor.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printArrayStretch(double stretch, BufferedWriter writer) throws IOException {
+        writer.write("\\renewcommand{\\arraystretch}{" + stretch + "}");
+        writer.newLine();
+    }
+
+    /**
      * Prints the beginning of the specified environment.
      * @param environment The environment.
      * @param writer The writer to send the output to.
@@ -100,6 +111,8 @@ public abstract class TikZUtils {
         );
         writer.newLine();
         writer.write("\\usepackage{tikz-qtree}");
+        writer.newLine();
+        writer.write("\\usepackage[table]{xcolor}");
         writer.newLine();
         writer.write("\\usepackage{array}");
         writer.newLine();
@@ -216,13 +229,16 @@ public abstract class TikZUtils {
     /**
      * Prints a table by centering each column.
      * @param table A two-dimensional table of Strings.
+     * @param color Color settings for each cell. Null means no color. The array must not be null.
+     * @param width The column width.
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static void printTable(String[][] table, double width, BufferedWriter writer) throws IOException {
+    public static void printTable(String[][] table, String[][] color, String width, BufferedWriter writer)
+    throws IOException {
         int cols = table.length;
         int rows = table[0].length;
-        writer.write("\\begin{tabular}{|*{" + cols + "}{C{"+width+"cm}|}}");
+        writer.write("\\begin{tabular}{|*{" + cols + "}{C{" + width + "}|}}");
         writer.newLine();
         writer.write("\\hline");
         writer.newLine();
@@ -234,7 +250,10 @@ public abstract class TikZUtils {
                 } else {
                     writer.write(" & ");
                 }
-                writer.write(table[col][row]);
+                if (color[col][row] != null) {
+                    writer.write("\\cellcolor{" + color[col][row] + "}");
+                }
+                writer.write(table[col][row] == null ? "" : table[col][row]);
             }
             writer.write("\\\\\\hline");
             writer.newLine();

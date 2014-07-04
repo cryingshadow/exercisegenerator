@@ -36,9 +36,13 @@ public abstract class GraphAlgorithms {
         final int size = nodes.size();
         final String[][] exTable;
         final String[][] solTable;
+        final String[][] exColor;
+        final String[][] solColor;
         if (GraphAlgorithms.ERIKA_MODE) {
             exTable = new String[size][size + 1];
             solTable = new String[size][size + 1];
+            exColor = new String[size][size + 1];
+            solColor = new String[size][size + 1];
             solTable[0][0] = "\\texttt{v}";
             exTable[0][0] = solTable[0][0];
             Integer[] distances = new Integer[size];
@@ -88,10 +92,13 @@ public abstract class GraphAlgorithms {
                     break;
                 }
                 current = minIndex;
+                solColor[i][current + 1] = "black!20";
             }
         } else {
             exTable = new String[size][size];
             solTable = new String[size][size];
+            exColor = new String[size][size];
+            solColor = new String[size][size];
             solTable[0][0] = "\\textbf{Knoten}";
             exTable[0][0] = solTable[0][0];
             Integer[] distances = new Integer[size];
@@ -143,6 +150,7 @@ public abstract class GraphAlgorithms {
                     break;
                 }
                 current = minIndex;
+                solColor[i][current + 1] = "black!20";
             }
         }
         exTable[1][0] = start.getLabel().toString();
@@ -165,22 +173,19 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-        exWriter.write("\\renewcommand{\\arraystretch}{1.5}");
-        exWriter.newLine();
-        solWriter.write("\\renewcommand{\\arraystretch}{1.5}");
-        solWriter.newLine();
-        TikZUtils.printTable(exTable, 2.0, exWriter);
-        TikZUtils.printTable(solTable, 2.0, solWriter);
-        exWriter.write("\\renewcommand{\\arraystretch}{1}");
-        exWriter.newLine();
-        solWriter.write("\\renewcommand{\\arraystretch}{1}");
-        solWriter.newLine();
+        TikZUtils.printArrayStretch(1.5, exWriter);
+        TikZUtils.printArrayStretch(1.5, solWriter);
+        TikZUtils.printTable(exTable, exColor, "2cm", exWriter);
+        TikZUtils.printTable(solTable, solColor, "2cm", solWriter);
+        TikZUtils.printArrayStretch(1.0, exWriter);
+        TikZUtils.printArrayStretch(1.0, solWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
     }
-	
-	/**
+    
+    /**
      * Prints exercise and solution for the Floyd Algorithm.
      * @param graph The graph.
+     * @param warshall Flag indicating whether the Floyd-Warshall or just the Floyd algorithm should be performed.
      * @param start The start node.
      * @param comp A comparator for sorting the nodes in the table (may be null - then no sorting is applied).
      * @param exWriter The writer to send the exercise output to.
@@ -188,157 +193,227 @@ public abstract class GraphAlgorithms {
      * @throws IOException If some error occurs during output.
      */
     public static <N> void floyd(
-		Graph<N, Integer> graph,
-		boolean warshall,
-		Comparator<Node<N>> comp,
-		BufferedWriter exWriter,
-		BufferedWriter solWriter
-	) throws IOException {
-		final int tableCount = 2;
-		final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
-		final int size = nodes.size();
-		final ArrayList<String[][]> solutions = new ArrayList<String[][]>();
-		String[][] currentSolution = new String[size+1][size+1];
-		Integer[][] weights = new Integer[size][size];
-		boolean[][] changed = new boolean[size][size];
-		// initialize ids
-		Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
-		for (int current = 0 ; current < size; ++current) {
-			Node<N> currentNode = nodes.get(current);
-			ids.put(currentNode, current);
-		}
-		currentSolution[0][0] = "";
-		// initialize weights
-		for (int current = 0 ; current < size; ++current) {
-			Node<N> currentNode = nodes.get(current);
-			// set labels
-			currentSolution[0][current+1] = currentNode.getLabel().toString();
-			currentSolution[current+1][0] = currentNode.getLabel().toString();
-			
-			// prepare weights and solution array
-			for (int i = 0; i < size; ++i) {
-				if(!warshall)
-					currentSolution[current+1][i+1] = "$\\infty$";
-				else
-					currentSolution[current+1][i+1] = "false";
-				weights[current][i] = null;
-			}
-			for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
-				weights[current][ids.get(edge.y)] = edge.x;
-				if(!warshall)
-					currentSolution[current+1][ids.get(edge.y)+1] = edge.x.toString();
-				else
-					currentSolution[current+1][ids.get(edge.y)+1] = "true";
-				//System.out.println("Add: " + currentNode.getLabel() + " -" + currentSolution[current][ids.get(edge.y)] + "-> " + edge.y.getLabel());
-			}
-			weights[current][current] = 0;
-			if(!warshall)
-				currentSolution[current+1][current+1] = "0";
-			else
-				currentSolution[current+1][current+1] = "true";
-		}
-		
-		solutions.add(currentSolution);
-		// clear solution and reset
-		currentSolution = new String[size+1][size+1];
-		currentSolution[0][0] = "";
-		for (int current = 0 ; current < size; ++current) {
-			Node<N> currentNode = nodes.get(current);
-			// set labels
-			currentSolution[0][current+1] = currentNode.getLabel().toString();
-			currentSolution[current+1][0] = currentNode.getLabel().toString();
-		}
-	
-		// actual algorithm
-		for (int intermediate = 0; intermediate < size; ++intermediate) {
-			for (int start = 0; start < size; ++start) {
-				for (int target = 0; target < size; ++target) {
-					Integer oldValue = weights[start][target];
-					if(weights[start][target] != null) {
-						if(weights[start][intermediate] != null && weights[intermediate][target] != null) {
-							weights[start][target] = Integer.compare(weights[start][target], weights[start][intermediate] + weights[intermediate][target]) < 0 ?
-							weights[start][target] :
-							weights[start][intermediate] + weights[intermediate][target];
-						}
-						// no else here as we can keep the old value as the path is currently infinite (null)
-					}
-					else if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
-						weights[start][target] = weights[start][intermediate] + weights[intermediate][target];
-					}
-					changed[start][target] = (oldValue != weights[start][target]);
-				}
-			}
-			
-			// write solution
-			for (int i = 0; i < size; ++i) {
-				for (int j = 0; j < size; ++j)
-				{
-					if(changed[i][j])
-						currentSolution[i+1][j+1] = "\\textbf{";
-					else
-						currentSolution[i+1][j+1] = "";
-					if(weights[i][j] == null) {
-						if(!warshall)
-							currentSolution[i+1][j+1] += "$\\infty$";
-						else
-							currentSolution[i+1][j+1] += "false";
-					}
-					else {
-						if(!warshall)
-							currentSolution[i+1][j+1] += "" + weights[i][j];
-						else
-							currentSolution[i+1][j+1] += "true";
-					}
-					if(changed[i][j])
-						currentSolution[i+1][j+1] += "}";
-				}
-			}
-			solutions.add(currentSolution);
-			// clear solution and reset.
-			currentSolution = new String[size+1][size+1];
-			currentSolution[0][0] = "";
-			for (int current = 0 ; current < size; ++current) {
-				Node<N> currentNode = nodes.get(current);
-				// set labels
-				currentSolution[0][current+1] = currentNode.getLabel().toString();
-				currentSolution[current+1][0] = currentNode.getLabel().toString();
-			}
-			changed = new boolean[size][size];
-		}
-		
-		// create output
-		exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
+        Graph<N, Integer> graph,
+        boolean warshall,
+        Comparator<Node<N>> comp,
+        BufferedWriter exWriter,
+        BufferedWriter solWriter
+    ) throws IOException {
+        final int tableCount = 2;
+        final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
+        final int size = nodes.size();
+        final ArrayList<String[][]> exercises = new ArrayList<String[][]>();
+        final ArrayList<String[][]> solutions = new ArrayList<String[][]>();
+        final ArrayList<String[][]> exColors = new ArrayList<String[][]>();
+        final ArrayList<String[][]> solColors = new ArrayList<String[][]>();
+        String[][] firstExercise = new String[size+1][size+1];
+        String[][] otherExercise = new String[size+1][size+1];
+        String[][] currentSolution = new String[size+1][size+1];
+        String[][] curExColor = new String[size+1][size+1];
+        String[][] curSolColor = new String[size+1][size+1];
+        Integer[][] weights = new Integer[size][size];
+        boolean[][] changed = new boolean[size][size];
+        // initialize ids
+        Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
+        for (int current = 0 ; current < size; ++current) {
+            Node<N> currentNode = nodes.get(current);
+            ids.put(currentNode, current);
+        }
+        firstExercise[0][0] = "";
+        otherExercise[0][0] = "";
+        currentSolution[0][0] = "";
+        // initialize weights
+        for (int current = 0 ; current < size; ++current) {
+            Node<N> currentNode = nodes.get(current);
+            // set labels
+            firstExercise[0][current+1] = currentNode.getLabel().toString();
+            firstExercise[current+1][0] = currentNode.getLabel().toString();
+            otherExercise[0][current+1] = currentNode.getLabel().toString();
+            otherExercise[current+1][0] = currentNode.getLabel().toString();
+            currentSolution[0][current+1] = currentNode.getLabel().toString();
+            currentSolution[current+1][0] = currentNode.getLabel().toString();
+            // prepare weights and solution array
+            for (int i = 0; i < size; ++i) {
+                if (!warshall) {
+                    firstExercise[current+1][i+1] = "$\\infty$";
+                    currentSolution[current+1][i+1] = "$\\infty$";
+                } else {
+                    firstExercise[current+1][i+1] = "false";
+                    currentSolution[current+1][i+1] = "false";
+                }
+                weights[current][i] = null;
+            }
+            for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
+                weights[current][ids.get(edge.y)] = edge.x;
+                if (!warshall) {
+                    firstExercise[current+1][ids.get(edge.y)+1] = edge.x.toString();
+                    currentSolution[current+1][ids.get(edge.y)+1] = edge.x.toString();
+                } else {
+                    firstExercise[current+1][ids.get(edge.y)+1] = "true";
+                    currentSolution[current+1][ids.get(edge.y)+1] = "true";
+                //System.out.println("Add: " + currentNode.getLabel() + " -" + currentSolution[current][ids.get(edge.y)] + "-> " + edge.y.getLabel());
+                }
+            }
+            weights[current][current] = 0;
+            if (!warshall) {
+                firstExercise[current+1][current+1] = "0";
+                currentSolution[current+1][current+1] = "0";
+            } else {
+                firstExercise[current+1][current+1] = "true";
+                currentSolution[current+1][current+1] = "true";
+            }
+        }
+        exercises.add(firstExercise);
+        solutions.add(currentSolution);
+        exColors.add(curExColor);
+        solColors.add(curSolColor);
+        // clear solution and reset
+        currentSolution = new String[size+1][size+1];
+        curSolColor = new String[size+1][size+1];
+        currentSolution[0][0] = "";
+        for (int current = 0 ; current < size; ++current) {
+            Node<N> currentNode = nodes.get(current);
+            // set labels
+            currentSolution[0][current+1] = currentNode.getLabel().toString();
+            currentSolution[current+1][0] = currentNode.getLabel().toString();
+        }
+        // actual algorithm
+        for (int intermediate = 0; intermediate < size; ++intermediate) {
+            for (int start = 0; start < size; ++start) {
+                for (int target = 0; target < size; ++target) {
+                    Integer oldValue = weights[start][target];
+                    if (weights[start][target] != null) {
+                        if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
+                            weights[start][target] =
+                                Integer.compare(
+                                    weights[start][target],
+                                    weights[start][intermediate] + weights[intermediate][target]
+                                ) < 0 ?
+                                    weights[start][target] :
+                                        weights[start][intermediate] + weights[intermediate][target];
+                        }
+                        // no else here as we can keep the old value as the path is currently infinite (null)
+                    } else if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
+                        weights[start][target] = weights[start][intermediate] + weights[intermediate][target];
+                    }
+                    changed[start][target] = (oldValue != weights[start][target]);
+                }
+            }
+            // write solution
+            for (int i = 0; i < size; ++i) {
+                for (int j = 0; j < size; ++j) {
+                    if (changed[i][j]) {
+                        curSolColor[i+1][j+1] = "black!20";
+                    }
+                    if (weights[i][j] == null) {
+                        if (!warshall) {
+                            currentSolution[i+1][j+1] = "$\\infty$";
+                        } else {
+                            currentSolution[i+1][j+1] = "false";
+                        }
+                    } else {
+                        if (!warshall) {
+                            currentSolution[i+1][j+1] = "" + weights[i][j];
+                        } else {
+                            currentSolution[i+1][j+1] = "true";
+                        }
+                    }
+                }
+            }
+            exercises.add(otherExercise);
+            solutions.add(currentSolution);
+            exColors.add(curExColor);
+            solColors.add(curSolColor);
+            // clear solution and reset.
+            currentSolution = new String[size+1][size+1];
+            curSolColor = new String[size+1][size+1];
+            currentSolution[0][0] = "";
+            for (int current = 0 ; current < size; ++current) {
+                Node<N> currentNode = nodes.get(current);
+                // set labels
+                currentSolution[0][current+1] = currentNode.getLabel().toString();
+                currentSolution[current+1][0] = currentNode.getLabel().toString();
+            }
+            changed = new boolean[size][size];
+        }
+        // create output
+        exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         graph.printTikZ(exWriter);
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-		if(!warshall)
-			exWriter.write("F\\\"uhren Sie den Algorithmus von Floyd auf diesem Graphen aus. ");
-		else
-			exWriter.write("F\\\"uhren Sie den Algorithmus von Warshall auf diesem Graphen aus. ");
-		exWriter.write("Geben Sie dazu nach jedem Durchlauf der \\\"au{\\ss}eren Schleife die aktuellen Entfernungen in einer Tabelle an.");
-		int count = 0;
-		for (int iteration = 0; iteration < solutions.size(); ++iteration) {
-			if(count < tableCount) {
-				TikZUtils.printTable(solutions.get(iteration), 0.8, solWriter);
-				solWriter.newLine();
-				solWriter.write("\\hspace{2em}");
-				solWriter.newLine();
-				++count;
-			}
-			else
-			{
-				solWriter.write("\\\\[2ex]");
-				solWriter.newLine();
-				TikZUtils.printTable(solutions.get(iteration), 0.8, solWriter);
-				solWriter.newLine();
-				solWriter.write("\\hspace{2em}");
-				solWriter.newLine();
-				count = 1;
-			}
-		}
-	}
+        if (!warshall) {
+            exWriter.write("F\\\"uhren Sie den Algorithmus von Floyd auf diesem Graphen aus. ");
+        } else {
+            exWriter.write("F\\\"uhren Sie den Algorithmus von Warshall auf diesem Graphen aus. ");
+        }
+        exWriter.write("Geben Sie dazu nach jedem Durchlauf der \\\"au{\\ss}eren Schleife die aktuellen Entfernungen ");
+        exWriter.write("in einer Tabelle an.\\\\[2ex]");
+        exWriter.newLine();
+        exWriter.newLine();
+        TikZUtils.printArrayStretch(1.5, exWriter);
+        TikZUtils.printArrayStretch(1.5, solWriter);
+        int solCount = 0;
+        int exCount = 0;
+        for (int iteration = 0; iteration < solutions.size(); ++iteration) {
+            solCount =
+                GraphAlgorithms.printTables(
+                    solCount,
+                    tableCount,
+                    iteration,
+                    solutions.get(iteration),
+                    solColors.get(iteration),
+                    solWriter
+                );
+            exCount =
+                GraphAlgorithms.printTables(
+                    exCount,
+                    tableCount,
+                    iteration,
+                    exercises.get(iteration),
+                    exColors.get(iteration),
+                    exWriter
+                );
+        }
+        TikZUtils.printArrayStretch(1.0, exWriter);
+        TikZUtils.printArrayStretch(1.0, solWriter);
+    }
+
+    /**
+     * Prints the specified table with the specified cell colors and possibly insert line breaks.
+     * @param count The current number of tables printed in one row.
+     * @param tableCount The max number of tables printed in one row.
+     * @param iteration The current iteration.
+     * @param table The table to print.
+     * @param color The cell colors.
+     * @param writer The writer to send the output to.
+     * @return The next number of tables printed in the current row.
+     * @throws IOException If some error occurs during output.
+     */
+    private static int printTables(
+        int count,
+        int tableCount,
+        int iteration,
+        String[][] table,
+        String[][] color,
+        BufferedWriter writer
+    ) throws IOException {
+        if (count < tableCount) {
+            TikZUtils.printTable(table, color, "1cm", writer);
+            writer.newLine();
+            writer.write("\\hspace{2em}");
+            writer.newLine();
+            return count + 1;
+        }
+        writer.write("\\\\[2ex]");
+        writer.newLine();
+        TikZUtils.printTable(table, color, "1cm", writer);
+        writer.newLine();
+        writer.write("\\hspace{2em}");
+        writer.newLine();
+        return 1;
+    }
 
 }
