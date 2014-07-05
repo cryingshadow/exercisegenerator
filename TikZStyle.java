@@ -40,6 +40,14 @@ enum TikZStyle {
     GRAPH(
         "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, "
         + "p/.style={->, thin, shorten <=2pt, shorten >=2pt}]"
+    ),
+    
+    /**
+     * Symmetric graph style.
+     */
+    SYM_GRAPH(
+        "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, "
+        + "p/.style={thin}]"
     );
 
     /**

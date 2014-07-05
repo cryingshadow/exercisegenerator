@@ -331,4 +331,59 @@ public class Graph<N, E> {
         TikZUtils.printTikzEnd(writer);
     }
 
+    /**
+     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
+     * is used for the output. Otherwise, there is no guarantee for the layout.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void printTikZ(BufferedWriter writer, Map<Node<N>,List<Pair<E,Node<N>>>> adLists, boolean directed) throws IOException {
+        
+        if (directed) {
+            TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
+        } else {
+            TikZUtils.printTikzBeginning(TikZStyle.SYM_GRAPH, writer);
+        }
+        if (this.grid == null) {
+            int limit = (int)Math.sqrt(this.adjacencyLists.size());
+            Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
+            for (int row = 0; it.hasNext(); row++) {
+                for (int col = 0; col < limit && it.hasNext(); col++) {
+                    TikZUtils.printNode(it.next(), "[node]", "at (" + col + "," + row + ") ", writer);
+                }
+            }
+        } else {
+            for (Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
+                Pair<Integer, Integer> pos = entry.getKey();
+                TikZUtils.printNode(entry.getValue(), "[node]", "at (" + pos.x + "," + pos.y + ") ", writer);
+            }
+        }
+        if (adLists == null)
+        {
+            adLists = this.adjacencyLists;
+        }
+        if (directed) {
+            for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
+                BigInteger from = entry.getKey().getID();
+                for (Pair<E, Node<N>> edge : entry.getValue()) {
+                    TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                }
+            }
+        } else {
+            List<Pair<BigInteger,BigInteger>> finishedNodePairs = new ArrayList<Pair<BigInteger,BigInteger>>();
+            for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
+                BigInteger from = entry.getKey().getID();
+                for (Pair<E, Node<N>> edge : entry.getValue()) {
+                    Pair<BigInteger,BigInteger> reverseNodePair = new Pair<BigInteger,BigInteger>(edge.y.getID(), entry.getKey().getID());
+                    if (!finishedNodePairs.contains(reverseNodePair))
+                    {
+                        TikZUtils.printEdge(TikZUtils.SYM_EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                        finishedNodePairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().getID(), edge.y.getID()));
+                    }
+                }
+            }
+        }
+        TikZUtils.printTikzEnd(writer);
+    }
+
 }

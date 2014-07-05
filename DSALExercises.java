@@ -536,6 +536,9 @@ public class DSALExercises {
 			} else if (Algorithm.WARSHALL.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
                 GraphAlgorithms.floyd(pair.x, true, new StringNodeComparator(), exerciseWriter, solutionWriter);
+            } else if (Algorithm.PRIM.name.equals(alg)) {
+                Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
+                GraphAlgorithms.prim(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
             } else {
                 System.out.println("Unknown algorithm!");
                 return;
@@ -753,6 +756,43 @@ public class DSALExercises {
         }
         if (!DSALExercises.STUDENT_MODE || Algorithm.AVLTREE.enabled) {
             res.add(Algorithm.AVLTREE.name);
+        }
+        return res;
+    }
+
+    /**
+     * @return The set of (in student mode only enabled) grid graph algorithms.
+     */
+    private static Set<String> initGridGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
+            res.add(Algorithm.SCC.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SHARIR.enabled) {
+            res.add(Algorithm.SHARIR.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
+            res.add(Algorithm.TOPOLOGICSORT.name);
+        }
+        return res;
+    }
+
+    /**
+     * @return The set of (in student mode only enabled) graph algorithms.
+     */
+    private static Set<String> initGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+            res.add(Algorithm.DIJKSTRA.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
+            res.add(Algorithm.FLOYD.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
+            res.add(Algorithm.WARSHALL.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
+            res.add(Algorithm.PRIM.name);
         }
         return res;
     }
@@ -1403,6 +1443,23 @@ public class DSALExercises {
             },
             false
         ),
+		
+		/**
+         * Prim's algorithm to find minimum spanning trees from a single source.
+         */
+        PRIM(
+			"prim",
+			"Prim Algorithmus",
+			new String[]{
+				"Prim's algorithm to find the minimum spanning tree.",
+				(
+					DSALExercises.STUDENT_MODE ?
+						"TODO" :
+							"TODO"
+				)
+			},
+			false
+		),
 
         /**
          * Linked hashing on Integer arrays with the division method.

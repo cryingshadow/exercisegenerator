@@ -391,6 +391,117 @@ public abstract class GraphAlgorithms {
         TikZUtils.printArrayStretch(1.0, exWriter);
         TikZUtils.printArrayStretch(1.0, solWriter);
     }
+	
+	/**
+     * Prints exercise and solution for Prim's algorithm.
+     * @param graph The graph.
+     * @param start The start node.
+     * @param comp A comparator for sorting the nodes in the table (may be null - then no sorting is applied).
+     * @param exWriter The writer to send the exercise output to.
+     * @param solWriter The writer to send the solution output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static <N> void prim(
+        Graph<N, Integer> graph,
+        Node<N> start,
+        Comparator<Node<N>> comp,
+        BufferedWriter exWriter,
+        BufferedWriter solWriter
+    ) throws IOException {
+		List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
+		String[][] solutions = new String[nodes.size()+1][nodes.size()+1];
+		solutions[0][0] = "\\#Iteration";
+		solutions[0][1] = "0";
+		Map<Node<N>, Integer> key = new LinkedHashMap<Node<N>, Integer>();
+		
+		Map<Node<N>, List<Pair<Integer, Node<N>>>> parent = new LinkedHashMap<Node<N>, List<Pair<Integer, Node<N>>>>();
+		int i = 1;
+		for (Node<N> node : nodes) {
+		    key.put(node, null);
+		    solutions[i][0] = node.getLabel().toString();
+		    i++;
+		}
+		List<Node<N>> q = new ArrayList<Node<N>>(graph.getNodes());
+		key.put(start, new Integer(0));
+		int iteration = 1;
+		
+		// actual algorithm
+		while (!q.isEmpty()) {
+		    // extract the minimum from q
+		    Node<N> minNode = null;
+		    for (Node<N> node : q)
+		    {
+		        if (minNode == null || key.get(minNode) == null || (key.get(node) != null && key.get(minNode).intValue() > key.get(node).intValue())) {
+		            minNode = node;
+		        }
+		    }
+			
+			// write solution
+			solutions[0][iteration] = "" + iteration;
+			i = 1;
+		    for (Node<N> node : nodes) {
+		        if (q.contains(node)) {
+		            if (key.get(node) == null) {
+		                solutions[i][iteration] = "$\\infty$";
+		            } else {
+		                if (minNode == node) {
+		                    solutions[i][iteration] = "\\underline{" + key.get(node) + "}";
+		                } else {
+		                    solutions[i][iteration] = "" + key.get(node);
+		                }
+		            }
+                } else {
+                    solutions[i][iteration] = "";
+                }
+                i++;
+		    }
+		    // update the minimums successors remaining in q
+			for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(minNode)) {
+                if (q.contains(edge.y) && (key.get(edge.y) == null || edge.x < key.get(edge.y))) {
+		            List<Pair<Integer, Node<N>>> adList = new ArrayList<Pair<Integer, Node<N>>>();
+		            adList.add(new Pair<Integer, Node<N>>(edge.x, minNode));
+                    parent.put(edge.y, adList);
+                    key.put(edge.y, edge.x);
+                }
+            }
+            q.remove(minNode);
+		    iteration++;
+		}
+		
+		// create output
+		exWriter.write("F\\\"uhren Sie Prim's Algorithmus auf dem folgenden Graphen aus.");
+		exWriter.write(" Geben Sie dazu \\underline{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an");
+        exWriter.newLine();
+		exWriter.write("\\begin{enumerate}");
+        exWriter.newLine();
+		exWriter.write("    \\item welchen Knoten \\texttt{extractMin(Q)} w\\\"ahlt");
+        exWriter.newLine();
+		exWriter.write("    \\item und welche Kosten die Randknoten haben, d.h. f\\\"ur jeden Knoten \\texttt{v} in \\texttt{Q} den Wert \\texttt{key[v]}.");
+        exWriter.newLine();
+		exWriter.write("\\end{enumerate}");
+        exWriter.newLine();
+		exWriter.write(" Geben Sie zudem den vom Algorithmus bestimmten minimalen Spannbaum an.\\\\[2ex]");
+        exWriter.newLine();
+        TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+        graph.printTikZ(exWriter, null, false   );
+        exWriter.newLine();
+        TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+		
+		TikZUtils.printTable(solutions, 2.0, solWriter);
+		solWriter.newLine();
+		solWriter.newLine();
+		solWriter.write("\\medskip");
+		solWriter.newLine();
+		// print the spanning tree
+		solWriter.write("Hierbei gibt eine unterstrichene Zahl an in welcher Iteration (zugeh\\\"origer Zeilenkopf)");
+		solWriter.write(" welcher Knoten (zugeh\\\"origer Spaltenkopf) durch \\texttt{extractMin(Q)} gew\\\"ahlt");
+		solWriter.write(" wurde. Wir erhalten den folgenden minimalen Spannbaum:\\\\[2ex]");
+        solWriter.newLine();
+        TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
+        graph.printTikZ(solWriter, parent, false);
+        solWriter.newLine();
+        TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
+    }
 
     /**
      * Prints exercise and solution for the Ford-Fulkerson method. Uses Diniz's algorithm for selecting augmenting 

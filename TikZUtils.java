@@ -19,6 +19,11 @@ public abstract class TikZUtils {
     public static final String EDGE_STYLE = "[p, bend right = 10]";
 
     /**
+     * Style for drawing symmetric edges.
+     */
+    public static final String SYM_EDGE_STYLE = "[p]";
+    
+    /**
      * The name of the enumerate environment.
      */
     public static final String ENUMERATE = "enumerate";
