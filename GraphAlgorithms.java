@@ -488,7 +488,7 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
 		
-		TikZUtils.printTable(solutions, null, "2.0", solWriter);
+		TikZUtils.printTable(solutions, null, "2.0cm", solWriter);
 		solWriter.newLine();
 		solWriter.newLine();
 		solWriter.write("\\medskip");
