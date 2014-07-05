@@ -624,40 +624,6 @@ public class DSALExercises {
         }
         return current; 
     }
-    
-    /**
-     * @return The set of (in student mode only enabled) graph algorithms.
-     */
-    private static Set<String> initGraphAlgorithms() {
-        Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
-            res.add(Algorithm.DIJKSTRA.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
-            res.add(Algorithm.FLOYD.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
-            res.add(Algorithm.WARSHALL.name);
-        }
-        return res;
-    }
-
-    /**
-     * @return The set of (in student mode only enabled) grid graph algorithms.
-     */
-    private static Set<String> initGridGraphAlgorithms() {
-        Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
-            res.add(Algorithm.SCC.name);
-        }
-        if (!DSALExercises.STUDENT_MODE || Algorithm.SHARIR.enabled) {
-            res.add(Algorithm.SHARIR.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
-            res.add(Algorithm.TOPOLOGICSORT.name);
-        }
-        return res;
-    }
 
     /**
      * @return The set of (in student mode only enabled) hashing algorithms.

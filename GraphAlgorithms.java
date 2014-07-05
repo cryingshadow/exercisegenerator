@@ -470,6 +470,7 @@ public abstract class GraphAlgorithms {
 		
 		// create output
 		exWriter.write("F\\\"uhren Sie Prim's Algorithmus auf dem folgenden Graphen aus.");
+		exWriter.write(" Der Startknoten hat hierbei den Schl\\\"ussel " + start.getLabel().toString() + ".");
 		exWriter.write(" Geben Sie dazu \\underline{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an");
         exWriter.newLine();
 		exWriter.write("\\begin{enumerate}");
@@ -487,7 +488,7 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
 		
-		TikZUtils.printTable(solutions, 2.0, solWriter);
+		TikZUtils.printTable(solutions, null, "2.0", solWriter);
 		solWriter.newLine();
 		solWriter.newLine();
 		solWriter.write("\\medskip");

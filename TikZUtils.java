@@ -255,7 +255,7 @@ public abstract class TikZUtils {
                 } else {
                     writer.write(" & ");
                 }
-                if (color[col][row] != null) {
+                if (color != null && color[col][row] != null) {
                     writer.write("\\cellcolor{" + color[col][row] + "}");
                 }
                 writer.write(table[col][row] == null ? "" : table[col][row]);
