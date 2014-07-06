@@ -527,9 +527,15 @@ public class DSALExercises {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
                 GraphAlgorithms.dijkstra(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
             } else if (Algorithm.FORD_FULKERSON.name.equals(alg)) {
-                Pair<Graph<String, Pair<Integer, Integer>>, Pair<Node<String>, Node<String>>> pair =
-                    (Pair<Graph<String, Pair<Integer, Integer>>, Pair<Node<String>, Node<String>>>)input;
-                GraphAlgorithms.fordFulkerson(pair.x, pair.y.x, pair.y.y, exerciseWriter, solutionWriter);
+                FlowNetworkInput<String, FlowPair> flow = (FlowNetworkInput<String, FlowPair>)input;
+                GraphAlgorithms.fordFulkerson(
+                    flow.graph,
+                    flow.source,
+                    flow.sink,
+                    flow.multiplier,
+                    exerciseWriter,
+                    solutionWriter
+                );
 			} else if (Algorithm.FLOYD.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
                 GraphAlgorithms.floyd(pair.x, false, new StringNodeComparator(), exerciseWriter, solutionWriter);
@@ -626,6 +632,43 @@ public class DSALExercises {
     }
 
     /**
+     * @return The set of (in student mode only enabled) graph algorithms.
+     */
+    private static Set<String> initGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+            res.add(Algorithm.DIJKSTRA.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
+            res.add(Algorithm.FLOYD.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
+            res.add(Algorithm.WARSHALL.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
+            res.add(Algorithm.PRIM.name);
+        }
+        return res;
+    }
+    
+    /**
+     * @return The set of (in student mode only enabled) grid graph algorithms.
+     */
+    private static Set<String> initGridGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
+            res.add(Algorithm.SCC.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.SHARIR.enabled) {
+            res.add(Algorithm.SHARIR.name);
+        }
+		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
+            res.add(Algorithm.TOPOLOGICSORT.name);
+        }
+        return res;
+    }
+
+    /**
      * @return The set of (in student mode only enabled) hashing algorithms.
      */
     private static Set<String> initHashingAlgorithms() {
@@ -708,7 +751,7 @@ public class DSALExercises {
         }
         return res;
     }
-    
+
     /**
      * @return The set of (in student mode only enabled) tree algorithms.
      */
@@ -722,43 +765,6 @@ public class DSALExercises {
         }
         if (!DSALExercises.STUDENT_MODE || Algorithm.AVLTREE.enabled) {
             res.add(Algorithm.AVLTREE.name);
-        }
-        return res;
-    }
-
-    /**
-     * @return The set of (in student mode only enabled) grid graph algorithms.
-     */
-    private static Set<String> initGridGraphAlgorithms() {
-        Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.SCC.enabled) {
-            res.add(Algorithm.SCC.name);
-        }
-        if (!DSALExercises.STUDENT_MODE || Algorithm.SHARIR.enabled) {
-            res.add(Algorithm.SHARIR.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.TOPOLOGICSORT.enabled) {
-            res.add(Algorithm.TOPOLOGICSORT.name);
-        }
-        return res;
-    }
-
-    /**
-     * @return The set of (in student mode only enabled) graph algorithms.
-     */
-    private static Set<String> initGraphAlgorithms() {
-        Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
-            res.add(Algorithm.DIJKSTRA.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
-            res.add(Algorithm.FLOYD.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
-            res.add(Algorithm.WARSHALL.name);
-        }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
-            res.add(Algorithm.PRIM.name);
         }
         return res;
     }
@@ -1153,10 +1159,10 @@ public class DSALExercises {
             }
             return new Pair<Graph<String, Integer>, Node<String>>(graph, node);
         } else if (Algorithm.FORD_FULKERSON.name.equals(alg)) {
-            Graph<String, Pair<Integer, Integer>> graph = new Graph<String, Pair<Integer, Integer>>();
+            Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
             if (options.containsKey(Flag.SOURCE)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                    graph.setGraphFromInput(reader, new StringLabelParser(), new IntPairLabelParser());
+                    graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.exit(1);
@@ -1165,7 +1171,7 @@ public class DSALExercises {
                 throw new UnsupportedOperationException("Not yet implemented!");
             } else {
                 try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
-                    graph.setGraphFromInput(reader, new StringLabelParser(), new IntPairLabelParser());
+                    graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.exit(1);
@@ -1173,6 +1179,7 @@ public class DSALExercises {
             }
             Node<String> source = null;
             Node<String> sink = null;
+            double multiplier = 1.0;
             if (options.containsKey(Flag.OPERATIONS)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
                     Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
@@ -1183,16 +1190,21 @@ public class DSALExercises {
                     if (!nodes.isEmpty()) {
                         sink = nodes.iterator().next();
                     }
-                } catch (IOException e) {
+                    String mult = reader.readLine();
+                    if (mult != null && !"".equals(mult.trim())) {
+                        multiplier = Double.parseDouble(mult);
+                    }
+                } catch (IOException | NumberFormatException e) {
                     e.printStackTrace();
                     System.exit(1);
                 }
             }
-            return
-                new Pair<Graph<String, Pair<Integer, Integer>>, Pair<Node<String>, Node<String>>>(
-                    graph,
-                    new Pair<Node<String>, Node<String>>(source, sink)
-                );
+            FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
+            res.graph = graph;
+            res.source = source;
+            res.sink = sink;
+            res.multiplier = multiplier;
+            return res;
         } else {
             return null;
         }
@@ -1400,7 +1412,7 @@ public class DSALExercises {
             "fordfulkerson",
             "Ford-Fulkerson",
             new String[]{
-                "Perform Ford-Fulkerson (Edmonds-Karp, Diniz) on a flow network.",
+                "Perform Ford-Fulkerson (Edmonds-Karp) on a flow network.",
                 (
                     DSALExercises.STUDENT_MODE ?
                         "TODO" :
@@ -1411,23 +1423,6 @@ public class DSALExercises {
         ),
 		
 		/**
-         * Prim's algorithm to find minimum spanning trees from a single source.
-         */
-        PRIM(
-			"prim",
-			"Prim Algorithmus",
-			new String[]{
-				"Prim's algorithm to find the minimum spanning tree.",
-				(
-					DSALExercises.STUDENT_MODE ?
-						"TODO" :
-							"TODO"
-				)
-			},
-			false
-		),
-
-        /**
          * Linked hashing on Integer arrays with the division method.
          */
         HASH_DIV(
@@ -1618,6 +1613,23 @@ public class DSALExercises {
             },
             true
         ),
+
+        /**
+         * Prim's algorithm to find minimum spanning trees from a single source.
+         */
+        PRIM(
+			"prim",
+			"Prim Algorithmus",
+			new String[]{
+				"Prim's algorithm to find the minimum spanning tree.",
+				(
+					DSALExercises.STUDENT_MODE ?
+						"TODO" :
+							"TODO"
+				)
+			},
+			false
+		),
 
         /**
          * Quicksort on Integer arrays.

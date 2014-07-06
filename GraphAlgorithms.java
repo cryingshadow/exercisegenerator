@@ -9,9 +9,19 @@ import java.util.*;
 public abstract class GraphAlgorithms {
 
     /**
+     * The phrase "each residual graph".
+     */
+    private static final String EACH_RESIDUAL_GRAPH = "jedes Restnetzwerk";
+
+    /**
      * Flag to enable special wishes of Erika for Dijkstra's algorithm.
      */
     private static final boolean ERIKA_MODE = true;
+
+    /**
+     * The name of a residual graph.
+     */
+    private static final String RESIDUAL_GRAPH = "Restnetzwerk";
     
     /**
      * Prints exercise and solution for the Dijkstra Algorithm.
@@ -157,7 +167,7 @@ public abstract class GraphAlgorithms {
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(exWriter);
+        graph.printTikZ(1, null, exWriter);
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
@@ -351,7 +361,7 @@ public abstract class GraphAlgorithms {
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(exWriter);
+        graph.printTikZ(1, null, exWriter);
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
@@ -393,6 +403,71 @@ public abstract class GraphAlgorithms {
     }
 	
 	/**
+     * Prints exercise and solution for the Ford-Fulkerson method. Uses the Edmonds-Karp Algorithm for selecting 
+     * augmenting paths.
+     * @param graph The flow network.
+     * @param source The source node.
+     * @param sink The sink node.
+	 * @param multiplier Multiplier for node distances.
+     * @param exWriter The writer to send the exercise output to.
+     * @param solWriter The writer to send the solution output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static <N> void fordFulkerson(
+        Graph<N, FlowPair> graph,
+        Node<N> source,
+        Node<N> sink,
+        double multiplier,
+        BufferedWriter exWriter,
+        BufferedWriter solWriter
+    ) throws IOException {
+        exWriter.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
+        exWriter.write(source.getLabel().toString());
+        exWriter.write(" und Senke ");
+        exWriter.write(sink.getLabel().toString());
+        exWriter.write(":\\\\[2ex]");
+        exWriter.newLine();
+        TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+        graph.printTikZ(multiplier, null, exWriter);
+        TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+        exWriter.newLine();
+        exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der Ford-Fulkerson Methode. ");
+        exWriter.write("Geben Sie dazu ");
+        exWriter.write(GraphAlgorithms.EACH_RESIDUAL_GRAPH);
+        exWriter.write(" sowie nach jeder Augmentierung den aktuellen Zustand des Flussnetzwerks an. Geben Sie ");
+        exWriter.write("au\\ss{}erdem den Wert des maximalen Flusses an.");
+        exWriter.newLine();
+        int step = 0;
+        TikZUtils.printSamePageBeginning(step++, solWriter);
+        solWriter.write("Initiales Flussnetzwerk:\\\\[2ex]");
+        graph.printTikZ(multiplier, null, solWriter);
+        TikZUtils.printSamePageEnd(solWriter);
+        solWriter.newLine();
+        while (true) {
+            List<Node<N>> path =
+                GraphAlgorithms.selectAugmentingPath(
+                    GraphAlgorithms.computeResidualGraph(step++, multiplier, graph, solWriter),
+                    source,
+                    sink
+                );
+            if (path == null) {
+                break;
+            }
+            GraphAlgorithms.addFlow(step++, multiplier, graph, path, solWriter);
+        }
+        int flow = 0;
+        List<Pair<FlowPair, Node<N>>> list = graph.getAdjacencyList(source);
+        if (list != null) {
+            for (Pair<FlowPair, Node<N>> edge : list) {
+                flow += edge.x.x;
+            }
+        }
+        solWriter.write("Der maximale Fluss hat den Wert " + flow + ".");
+        solWriter.newLine();
+        solWriter.newLine();
+    }
+
+    /**
      * Prints exercise and solution for Prim's algorithm.
      * @param graph The graph.
      * @param start The start node.
@@ -505,48 +580,129 @@ public abstract class GraphAlgorithms {
     }
 
     /**
-     * Prints exercise and solution for the Ford-Fulkerson method. Uses Diniz's algorithm for selecting augmenting 
-     * paths.
-     * @param graph The flow network.
-     * @param source The source node.
-     * @param sink The sink node.
-     * @param exWriter The writer to send the exercise output to.
-     * @param solWriter The writer to send the solution output to.
+     * Adds the maximal flow along the specified path in the specified flow network and outputs the resulting network 
+     * to the specified writer such that the augmenting path is marked by a special color.
+     * @param step The current step in the algorithm.
+     * @param multiplier Multiplier for node distances.
+     * @param graph The flow network to add a flow to.
+     * @param path The path along which the flow is to be be added.
+     * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static <N> void fordFulkerson(
-        Graph<N, Pair<Integer, Integer>> graph,
-        Node<N> source,
-        Node<N> sink,
-        BufferedWriter exWriter,
-        BufferedWriter solWriter
-    ) throws IOException {
-        //TODO exercise text
-        while (true) {
-            List<Node<N>> path =
-                GraphAlgorithms.selectAugmentingPath(
-                    GraphAlgorithms.computeResidualGraph(graph, solWriter),
-                    source,
-                    sink
-                );
-            if (path == null) {
-                break;
-            }
-            GraphAlgorithms.addFlow(graph, path, solWriter);
-        }
-    }
-
-    private static <N> void addFlow(Graph<N, Pair<Integer, Integer>> graph, List<Node<N>> path, BufferedWriter writer)
-    throws IOException {
-        //TODO
-    }
-
-    private static <N> Graph<N, Integer> computeResidualGraph(
-        Graph<N, Pair<Integer, Integer>> graph,
+    private static <N> void addFlow(
+        int step,
+        double multiplier,
+        Graph<N, FlowPair> graph,
+        List<Node<N>> path,
         BufferedWriter writer
     ) throws IOException {
-        //TODO
-        return null;
+        Integer min = GraphAlgorithms.computeMinEdge(graph, path);
+        Iterator<Node<N>> it = path.iterator();
+        Node<N> from;
+        Node<N> to = it.next();
+        Set<Pair<FlowPair, Node<N>>> toHighlight =
+            new LinkedHashSet<Pair<FlowPair, Node<N>>>();
+        while (it.hasNext()) {
+            from = to;
+            to = it.next();
+            int flow = min;
+            for (Pair<FlowPair, Node<N>> edge : graph.getEdges(from, to)) {
+                int added = Math.min(flow, edge.x.y - edge.x.x);
+                if (added > 0) {
+                    flow -= added;
+                    edge.x.x += added;
+                    toHighlight.add(edge);
+                }
+            }
+            if (flow > 0) {
+                throw new IllegalStateException("Could not add flow!");
+            }
+        }
+        TikZUtils.printSamePageBeginning(step, writer);
+        writer.write("N\\\"achstes Flussnetzwerk:\\\\[2ex]");
+        writer.newLine();
+        graph.printTikZ(multiplier, toHighlight, writer);
+        TikZUtils.printSamePageEnd(writer);
+        writer.newLine();
+    }
+
+    /**
+     * @param graph A flow network.
+     * @param path A path in the specified flow network from source to sink.
+     * @return The minimal remaining edge value along the path (i.e., the maximal flow along the path).
+     */
+    private static <N> Integer computeMinEdge(Graph<N, FlowPair> graph, List<Node<N>> path) {
+        Integer min = null;
+        Iterator<Node<N>> it = path.iterator();
+        Node<N> from;
+        Node<N> to = it.next();
+        while (it.hasNext()) {
+            from = to;
+            to = it.next();
+            int flow = 0;
+            for (Pair<FlowPair, Node<N>> edge : graph.getEdges(from, to)) {
+                flow += edge.x.y - edge.x.x;
+            }
+            if (min == null || min > flow) {
+                min = flow;
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Builds the residual graph from the specified flow network and outputs it to the specified writer.
+     * @param step The current step in the algorithm.
+     * @param multiplier Multiplier for node distances.
+     * @param graph The flow network.
+     * @param writer The writer to send the output to.
+     * @return The residual graph built for the specified flow network.
+     * @throws IOException If some error occurs during output.
+     */
+    private static <N> Graph<N, Integer> computeResidualGraph(
+        int step,
+        double multiplier,
+        Graph<N, FlowPair> graph,
+        BufferedWriter writer
+    ) throws IOException {
+        Graph<N, Integer> res = new Graph<N, Integer>();
+        for (Node<N> node : graph.getNodes()) {
+            res.addNode(node);
+            List<Pair<FlowPair, Node<N>>> list = graph.getAdjacencyList(node);
+            if (list == null) {
+                continue;
+            }
+            for (Pair<FlowPair, Node<N>> edge : list) {
+                Node<N> target = edge.y;
+                Integer back = edge.x.x;
+                if (back > 0) {
+                    Set<Pair<Integer, Node<N>>> backEdges = res.getEdges(target, node);
+                    if (backEdges.isEmpty()) {
+                        res.addEdge(target, back, node);
+                    } else {
+                        backEdges.iterator().next().x += back;
+                    }
+                }
+                Integer forth = edge.x.y - back;
+                if (forth > 0) {
+                    Set<Pair<Integer, Node<N>>> forthEdges = res.getEdges(node, target);
+                    if (forthEdges.isEmpty()) {
+                        res.addEdge(node, forth, target);
+                    } else {
+                        forthEdges.iterator().next().x += forth;
+                    }
+                }
+            }
+        }
+        res.setGrid(graph.getGrid());
+        TikZUtils.printSamePageBeginning(step, writer);
+        writer.write(GraphAlgorithms.RESIDUAL_GRAPH);
+        writer.write(":\\\\[2ex]");
+        writer.newLine();
+        res.printTikZ(multiplier, null, writer);
+        TikZUtils.printSamePageEnd(writer);
+        writer.newLine();
+        return res;
     }
 
     /**
@@ -584,8 +740,39 @@ public abstract class GraphAlgorithms {
         return 1;
     }
 
+    /**
+     * @param graph A residual graph for a flow network.
+     * @param source The source of the flow network.
+     * @param sink The sink of the flow network.
+     * @return A path from source to sink with a remaining capacity greater than 0. If no such path exists, null is 
+     *         returned.
+     */
     private static <N> List<Node<N>> selectAugmentingPath(Graph<N, Integer> graph, Node<N> source, Node<N> sink) {
-        //TODO
+        List<Node<N>> path = new ArrayList<Node<N>>();
+        Deque<List<Node<N>>> queue = new ArrayDeque<List<Node<N>>>();
+        path.add(source);
+        queue.add(path);
+        Set<Node<N>> visited = new LinkedHashSet<Node<N>>();
+        visited.add(source);
+        while (!queue.isEmpty()) {
+            path = queue.poll();
+            List<Pair<Integer, Node<N>>> list = graph.getAdjacencyList(path.get(path.size() - 1));
+            if (list == null) {
+                continue;
+            }
+            for (Pair<Integer, Node<N>> edge : list) {
+                if (visited.contains(edge.y)) {
+                    continue;
+                }
+                List<Node<N>> newPath = new ArrayList<Node<N>>(path);
+                newPath.add(edge.y);
+                if (sink.equals(edge.y)) {
+                    return newPath;
+                }
+                visited.add(edge.y);
+                queue.add(newPath);
+            }
+        }
         return null;
     }
 

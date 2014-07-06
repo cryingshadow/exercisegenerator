@@ -48,41 +48,182 @@ public class Graph<N, E> {
     }
 
     /**
-     * @return This graph in adjacency matrix representation. This is given by three arrays, the first being the 
-     *         adjacency matrix, the second being the map from node indices in the matrix to the general IDs of the 
-     *         corresponding nodes, and the third being such a map for the node labels. If this graph contains multiple 
-     *         edges between the same nodes in the same direction, an IllegalStateException is thrown.
+     * Adds the specified node to this graph.
+     * @param node The node to add.
+     * @return True if the node has been added, false if it was already contained in this graph.
      */
-    public Pair<Object[][], Pair<BigInteger[], Object[]>> toAdjacencyMatrix() {
-        final int size = this.adjacencyLists.size();
-        Object[][] matrix = new Object[size][size];
-        BigInteger[] ids = new BigInteger[size];
-        Object[] labels = new Object[size];
-        Map<BigInteger, Integer> toArray = new LinkedHashMap<BigInteger, Integer>();
-        int id = 0;
-        for (Node<N> node : this.adjacencyLists.keySet()) {
-            final BigInteger nodeID = node.getID();
-            toArray.put(nodeID, id);
-            ids[id] = nodeID;
-            labels[id++] = node.getLabel();
+    public boolean addNode(Node<N> node) {
+        if (!this.adjacencyLists.containsKey(node)) {
+            this.adjacencyLists.put(node, new ArrayList<Pair<E, Node<N>>>());
+            return true;
         }
-        for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
-            int from = toArray.get(entry.getKey());
-            Set<Integer> tos = new LinkedHashSet<Integer>();
-            for (Pair<E, Node<N>> edge : entry.getValue()) {
-                int to = toArray.get(edge.y);
-                if (tos.contains(to)) {
-                    throw new IllegalStateException(
-                        "Graph with multiple edges between the same nodes in the same direction cannot be converted "
-                        + "to matrix representation."
-                    );
+        return false;
+    }
+
+    /**
+     * @param node Some node.
+     * @return The adjacency list of the specified node or null if the node does not exist in the graph. Changes to the 
+     *         list are not reflected in the graph, but changes to the edges (and nodes) are.
+     */
+    public List<Pair<E, Node<N>>> getAdjacencyList(Node<N> node) {
+        List<Pair<E, Node<N>>> list = this.adjacencyLists.get(node);
+        if (list == null) {
+            return null;
+        }
+        return new ArrayList<Pair<E, Node<N>>>(list);
+    }
+
+    /**
+     * @param from Some node.
+     * @param to Some other node.
+     * @return A set of all edges from the first to the second node in this graph.
+     */
+    public Set<Pair<E, Node<N>>> getEdges(Node<N> from, Node<N> to) {
+        Set<Pair<E, Node<N>>> res = new LinkedHashSet<Pair<E, Node<N>>>();
+        List<Pair<E, Node<N>>> list = this.adjacencyLists.get(from);
+        if (list != null) {
+            for (Pair<E, Node<N>> edge : list) {
+                if (to.equals(edge.y)) {
+                    res.add(edge);
                 }
-                tos.add(to);
-                matrix[from][to] = edge.x;
             }
         }
-        return
-            new Pair<Object[][], Pair<BigInteger[], Object[]>>(matrix, new Pair<BigInteger[], Object[]>(ids, labels));
+        return res;
+    }
+
+    /**
+     * @return The grid structure for this graph (null if this graph has no grid layout).
+     */
+    public Map<Pair<Integer, Integer>, Node<N>> getGrid() {
+        return this.grid;
+    }
+
+    /**
+     * @return The set of nodes contained in this graph. Changes to the set are not reflected within the graph, but 
+     *         changes to the nodes are.
+     */
+    public Set<Node<N>> getNodes() {
+        return new LinkedHashSet<Node<N>>(this.adjacencyLists.keySet());
+    }
+
+    /**
+     * @param label Some label.
+     * @return The set of nodes contained in this graph having the specified label.
+     */
+    public Set<Node<N>> getNodesWithLabel(N label) {
+        Set<Node<N>> res = new LinkedHashSet<Node<N>>();
+        for (Node<N> node : this.adjacencyLists.keySet()) {
+            if ((label == null && node.getLabel() == null) || (label != null && label.equals(node.getLabel()))) {
+                res.add(node);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
+     * is used for the output. Otherwise, there is no guarantee for the layout.
+     * @param writer The writer to send the output to.
+     * @param adListsParam TODO
+     * @param directed TODO
+     * @throws IOException If some error occurs during output.
+     */
+    public void printTikZ(BufferedWriter writer, Map<Node<N>,List<Pair<E,Node<N>>>> adListsParam, boolean directed)
+    throws IOException {
+        Map<Node<N>,List<Pair<E,Node<N>>>> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
+        if (directed) {
+            TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
+        } else {
+            TikZUtils.printTikzBeginning(TikZStyle.SYM_GRAPH, writer);
+        }
+        if (this.grid == null) {
+            int limit = (int)Math.sqrt(this.adjacencyLists.size());
+            Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
+            for (int row = 0; it.hasNext(); row++) {
+                for (int col = 0; col < limit && it.hasNext(); col++) {
+                    TikZUtils.printNode(it.next(), "[node]", "at (" + col + "," + row + ") ", writer);
+                }
+            }
+        } else {
+            for (Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
+                Pair<Integer, Integer> pos = entry.getKey();
+                TikZUtils.printNode(entry.getValue(), "[node]", "at (" + pos.x + "," + pos.y + ") ", writer);
+            }
+        }
+        if (directed) {
+            for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
+                BigInteger from = entry.getKey().getID();
+                for (Pair<E, Node<N>> edge : entry.getValue()) {
+                    TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                }
+            }
+        } else {
+            List<Pair<BigInteger,BigInteger>> finishedNodePairs = new ArrayList<Pair<BigInteger,BigInteger>>();
+            for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
+                BigInteger from = entry.getKey().getID();
+                for (Pair<E, Node<N>> edge : entry.getValue()) {
+                    Pair<BigInteger,BigInteger> reverseNodePair =
+                        new Pair<BigInteger,BigInteger>(edge.y.getID(), entry.getKey().getID());
+                    if (!finishedNodePairs.contains(reverseNodePair)) {
+                        TikZUtils.printEdge(TikZUtils.SYM_EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                        finishedNodePairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().getID(), edge.y.getID()));
+                    }
+                }
+            }
+        }
+        TikZUtils.printTikzEnd(writer);
+    }
+
+    /**
+     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
+     * is used for the output. Otherwise, there is no guarantee for the layout.
+     * @param multiplier Multiplier for node distances.
+     * @param toHighlight A set of edges to highlight in the graph.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void printTikZ(double multiplier, Set<Pair<E, Node<N>>> toHighlight, BufferedWriter writer) throws IOException {
+        TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
+        if (this.grid == null) {
+            int limit = (int)Math.sqrt(this.adjacencyLists.size());
+            Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
+            for (int row = 0; it.hasNext(); row++) {
+                double multipliedRow = Math.round(multiplier * row * 10.0) / 10.0;
+                for (int col = 0; col < limit && it.hasNext(); col++) {
+                    double multipliedCol = Math.round(multiplier * col * 10.0) / 10.0;
+                    TikZUtils.printNode(
+                        it.next(),
+                        "[node]",
+                        "at (" + multipliedCol + "," + multipliedRow + ") ",
+                        writer
+                    );
+                }
+            }
+        } else {
+            for (Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
+                Pair<Integer, Integer> pos = entry.getKey();
+                double multipliedCol = Math.round(multiplier * pos.x * 10.0) / 10.0;
+                double multipliedRow = Math.round(multiplier * pos.y * 10.0) / 10.0;
+                TikZUtils.printNode(
+                    entry.getValue(),
+                    "[node]",
+                    "at (" + multipliedCol + "," + multipliedRow + ") ",
+                    writer
+                );
+            }
+        }
+        for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
+            BigInteger from = entry.getKey().getID();
+            for (Pair<E, Node<N>> edge : entry.getValue()) {
+                if (toHighlight != null && toHighlight.contains(edge)) {
+                    TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.getID(), writer);
+                } else {
+                    TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                }
+            }
+        }
+        TikZUtils.printTikzEnd(writer);
+        writer.newLine();
     }
 
     /**
@@ -217,51 +358,48 @@ public class Graph<N, E> {
     }
 
     /**
-     * Adds the specified node to this graph.
-     * @param node The node to add.
-     * @return True if the node has been added, false if it was already contained in this graph.
+     * @param newGrid The grid layout to set.
      */
-    public boolean addNode(Node<N> node) {
-        if (!this.adjacencyLists.containsKey(node)) {
-            this.adjacencyLists.put(node, new ArrayList<Pair<E, Node<N>>>());
-            return true;
-        }
-        return false;
+    public void setGrid(Map<Pair<Integer, Integer>, Node<N>> newGrid) {
+        this.grid = newGrid;
     }
 
     /**
-     * @return The set of nodes contained in this graph. Changes to the set are not reflected within the graph, but 
-     *         changes to the nodes are.
+     * @return This graph in adjacency matrix representation. This is given by three arrays, the first being the 
+     *         adjacency matrix, the second being the map from node indices in the matrix to the general IDs of the 
+     *         corresponding nodes, and the third being such a map for the node labels. If this graph contains multiple 
+     *         edges between the same nodes in the same direction, an IllegalStateException is thrown.
      */
-    public Set<Node<N>> getNodes() {
-        return new LinkedHashSet<Node<N>>(this.adjacencyLists.keySet());
-    }
-
-    /**
-     * @param label Some label.
-     * @return The set of nodes contained in this graph having the specified label.
-     */
-    public Set<Node<N>> getNodesWithLabel(N label) {
-        Set<Node<N>> res = new LinkedHashSet<Node<N>>();
+    public Pair<Object[][], Pair<BigInteger[], Object[]>> toAdjacencyMatrix() {
+        final int size = this.adjacencyLists.size();
+        Object[][] matrix = new Object[size][size];
+        BigInteger[] ids = new BigInteger[size];
+        Object[] labels = new Object[size];
+        Map<BigInteger, Integer> toArray = new LinkedHashMap<BigInteger, Integer>();
+        int id = 0;
         for (Node<N> node : this.adjacencyLists.keySet()) {
-            if ((label == null && node.getLabel() == null) || (label != null && label.equals(node.getLabel()))) {
-                res.add(node);
+            final BigInteger nodeID = node.getID();
+            toArray.put(nodeID, id);
+            ids[id] = nodeID;
+            labels[id++] = node.getLabel();
+        }
+        for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
+            int from = toArray.get(entry.getKey());
+            Set<Integer> tos = new LinkedHashSet<Integer>();
+            for (Pair<E, Node<N>> edge : entry.getValue()) {
+                int to = toArray.get(edge.y);
+                if (tos.contains(to)) {
+                    throw new IllegalStateException(
+                        "Graph with multiple edges between the same nodes in the same direction cannot be converted "
+                        + "to matrix representation."
+                    );
+                }
+                tos.add(to);
+                matrix[from][to] = edge.x;
             }
         }
-        return res;
-    }
-
-    /**
-     * @param node Some node.
-     * @return The adjacency list of the specified node or null if the node does not exist in the graph. Changes to the 
-     *         list are not reflected in the graph, but changes to the edges (and nodes) are.
-     */
-    public List<Pair<E, Node<N>>> getAdjacencyList(Node<N> node) {
-        List<Pair<E, Node<N>>> list = this.adjacencyLists.get(node);
-        if (list == null) {
-            return null;
-        }
-        return new ArrayList<Pair<E, Node<N>>>(list);
+        return
+            new Pair<Object[][], Pair<BigInteger[], Object[]>>(matrix, new Pair<BigInteger[], Object[]>(ids, labels));
     }
 
     /**
@@ -298,92 +436,6 @@ public class Graph<N, E> {
                 toPos
             ).add(new Pair<E, Pair<Integer, Integer>>(edgeParser.parse(toEdge), fromPos));
         }
-    }
-
-    /**
-     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
-     * is used for the output. Otherwise, there is no guarantee for the layout.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public void printTikZ(BufferedWriter writer) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
-        if (this.grid == null) {
-            int limit = (int)Math.sqrt(this.adjacencyLists.size());
-            Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
-            for (int row = 0; it.hasNext(); row++) {
-                for (int col = 0; col < limit && it.hasNext(); col++) {
-                    TikZUtils.printNode(it.next(), "[node]", "at (" + col + "," + row + ") ", writer);
-                }
-            }
-        } else {
-            for (Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
-                Pair<Integer, Integer> pos = entry.getKey();
-                TikZUtils.printNode(entry.getValue(), "[node]", "at (" + pos.x + "," + pos.y + ") ", writer);
-            }
-        }
-        for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
-            BigInteger from = entry.getKey().getID();
-            for (Pair<E, Node<N>> edge : entry.getValue()) {
-                TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
-            }
-        }
-        TikZUtils.printTikzEnd(writer);
-    }
-
-    /**
-     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
-     * is used for the output. Otherwise, there is no guarantee for the layout.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public void printTikZ(BufferedWriter writer, Map<Node<N>,List<Pair<E,Node<N>>>> adLists, boolean directed) throws IOException {
-        
-        if (directed) {
-            TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
-        } else {
-            TikZUtils.printTikzBeginning(TikZStyle.SYM_GRAPH, writer);
-        }
-        if (this.grid == null) {
-            int limit = (int)Math.sqrt(this.adjacencyLists.size());
-            Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
-            for (int row = 0; it.hasNext(); row++) {
-                for (int col = 0; col < limit && it.hasNext(); col++) {
-                    TikZUtils.printNode(it.next(), "[node]", "at (" + col + "," + row + ") ", writer);
-                }
-            }
-        } else {
-            for (Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
-                Pair<Integer, Integer> pos = entry.getKey();
-                TikZUtils.printNode(entry.getValue(), "[node]", "at (" + pos.x + "," + pos.y + ") ", writer);
-            }
-        }
-        if (adLists == null)
-        {
-            adLists = this.adjacencyLists;
-        }
-        if (directed) {
-            for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
-                BigInteger from = entry.getKey().getID();
-                for (Pair<E, Node<N>> edge : entry.getValue()) {
-                    TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
-                }
-            }
-        } else {
-            List<Pair<BigInteger,BigInteger>> finishedNodePairs = new ArrayList<Pair<BigInteger,BigInteger>>();
-            for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
-                BigInteger from = entry.getKey().getID();
-                for (Pair<E, Node<N>> edge : entry.getValue()) {
-                    Pair<BigInteger,BigInteger> reverseNodePair = new Pair<BigInteger,BigInteger>(edge.y.getID(), entry.getKey().getID());
-                    if (!finishedNodePairs.contains(reverseNodePair))
-                    {
-                        TikZUtils.printEdge(TikZUtils.SYM_EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
-                        finishedNodePairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().getID(), edge.y.getID()));
-                    }
-                }
-            }
-        }
-        TikZUtils.printTikzEnd(writer);
     }
 
 }

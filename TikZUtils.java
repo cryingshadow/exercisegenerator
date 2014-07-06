@@ -14,14 +14,14 @@ public abstract class TikZUtils {
     public static final String CENTER = "center";
 
     /**
+     * Style for drawing highlighted edges.
+     */
+    public static final String EDGE_HIGHLIGHT_STYLE = "[p, bend right = 10, red]";
+
+    /**
      * Style for drawing edges.
      */
     public static final String EDGE_STYLE = "[p, bend right = 10]";
-
-    /**
-     * Style for drawing symmetric edges.
-     */
-    public static final String SYM_EDGE_STYLE = "[p]";
     
     /**
      * The name of the enumerate environment.
@@ -32,6 +32,11 @@ public abstract class TikZUtils {
      * The item command.
      */
     public static final String ITEM = "\\item";
+
+    /**
+     * Style for drawing symmetric edges.
+     */
+    public static final String SYM_EDGE_STYLE = "[p]";
 
     /**
      * Prints a new stretch factor for the array height.
