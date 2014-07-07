@@ -1,6 +1,6 @@
 /**
  * Input object for flow network problems.
- * @author Thomas Ströder
+ * @author Thomas Stroeder
  * @version 1.0
  * @param <N> Node label type.
  * @param <E> Edge label type.

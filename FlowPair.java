@@ -1,6 +1,6 @@
 /**
  * Pair used for flow networks. Just overrides the toString method.
- * @author Thomas Ströder
+ * @author Thomas Stroeder
  * @version 1.0
  */
 public class FlowPair extends Pair<Integer, Integer> {
