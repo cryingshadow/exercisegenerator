@@ -16,7 +16,7 @@ public abstract class TikZUtils {
     /**
      * Style for drawing highlighted edges.
      */
-    public static final String EDGE_HIGHLIGHT_STYLE = "[p, bend right = 10, red]";
+    public static final String EDGE_HIGHLIGHT_STYLE = "[p, bend right = 10, very thick, red]";
 
     /**
      * Style for drawing edges.
@@ -242,12 +242,18 @@ public abstract class TikZUtils {
      * @param color Color settings for each cell. Null means no color. The array must not be null.
      * @param width The column width.
      * @param writer The writer to send the output to.
+     * @param transpose Transpose the table?
      * @throws IOException If some error occurs during output.
      */
-    public static void printTable(String[][] table, String[][] color, String width, BufferedWriter writer, boolean reverse)
-    throws IOException {
-        int cols = (reverse ? table.length : table[0].length);
-        int rows = (reverse ? table[0].length : table.length);
+    public static void printTable(
+        String[][] table,
+        String[][] color,
+        String width,
+        BufferedWriter writer,
+        boolean transpose
+    ) throws IOException {
+        int cols = (transpose ? table[0].length : table.length);
+        int rows = (transpose ? table.length : table[0].length);
         writer.write("\\begin{tabular}{|*{" + cols + "}{C{" + width + "}|}}");
         writer.newLine();
         writer.write("\\hline");
@@ -260,7 +266,7 @@ public abstract class TikZUtils {
                 } else {
                     writer.write(" & ");
                 }
-                if (reverse) {
+                if (transpose) {
                     if (color != null && color[row][col] != null) {
                         writer.write("\\cellcolor{" + color[row][col] + "}");
                     }

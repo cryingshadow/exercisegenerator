@@ -123,6 +123,73 @@ public class Graph<N, E> {
     /**
      * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
      * is used for the output. Otherwise, there is no guarantee for the layout.
+     * @param printEdgeLabels Print the edge labels?
+     * @param multiplier Multiplier for node distances.
+     * @param toHighlight A set of edges to highlight in the graph.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void printTikZ(
+        boolean printEdgeLabels,
+        double multiplier,
+        Set<Pair<Node<N>, Pair<E, Node<N>>>> toHighlight,
+        BufferedWriter writer
+    ) throws IOException {
+        TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
+        if (this.grid == null) {
+            int limit = (int)Math.sqrt(this.adjacencyLists.size());
+            Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
+            for (int row = 0; it.hasNext(); row++) {
+                double multipliedRow = Math.round(multiplier * row * 10.0) / 10.0;
+                for (int col = 0; col < limit && it.hasNext(); col++) {
+                    double multipliedCol = Math.round(multiplier * col * 10.0) / 10.0;
+                    TikZUtils.printNode(
+                        it.next(),
+                        "[node]",
+                        "at (" + multipliedCol + "," + multipliedRow + ") ",
+                        writer
+                    );
+                }
+            }
+        } else {
+            for (Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
+                Pair<Integer, Integer> pos = entry.getKey();
+                double multipliedCol = Math.round(multiplier * pos.x * 10.0) / 10.0;
+                double multipliedRow = Math.round(multiplier * pos.y * 10.0) / 10.0;
+                TikZUtils.printNode(
+                    entry.getValue(),
+                    "[node]",
+                    "at (" + multipliedCol + "," + multipliedRow + ") ",
+                    writer
+                );
+            }
+        }
+        for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
+            Node<N> fromNode = entry.getKey();
+            BigInteger from = fromNode.getID();
+            for (Pair<E, Node<N>> edge : entry.getValue()) {
+                if (toHighlight != null && toHighlight.contains(new Pair<Node<N>, Pair<E, Node<N>>>(fromNode, edge))) {
+                    if (printEdgeLabels) {
+                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.getID(), writer);
+                    } else {
+                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.getID(), writer);
+                    }
+                } else {
+                    if (printEdgeLabels) {
+                        TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                    } else {
+                        TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, null, edge.y.getID(), writer);
+                    }
+                }
+            }
+        }
+        TikZUtils.printTikzEnd(writer);
+        writer.newLine();
+    }
+
+    /**
+     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
+     * is used for the output. Otherwise, there is no guarantee for the layout.
      * @param writer The writer to send the output to.
      * @param adListsParam TODO
      * @param directed TODO
@@ -172,66 +239,6 @@ public class Graph<N, E> {
             }
         }
         TikZUtils.printTikzEnd(writer);
-    }
-
-    /**
-     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
-     * is used for the output. Otherwise, there is no guarantee for the layout.
-     * @param multiplier Multiplier for node distances.
-     * @param toHighlight A set of edges to highlight in the graph.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public void printTikZ(double multiplier, Set<Pair<E, Node<N>>> toHighlight, BufferedWriter writer, boolean withWeight) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
-        if (this.grid == null) {
-            int limit = (int)Math.sqrt(this.adjacencyLists.size());
-            Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
-            for (int row = 0; it.hasNext(); row++) {
-                double multipliedRow = Math.round(multiplier * row * 10.0) / 10.0;
-                for (int col = 0; col < limit && it.hasNext(); col++) {
-                    double multipliedCol = Math.round(multiplier * col * 10.0) / 10.0;
-                    TikZUtils.printNode(
-                        it.next(),
-                        "[node]",
-                        "at (" + multipliedCol + "," + multipliedRow + ") ",
-                        writer
-                    );
-                }
-            }
-        } else {
-            for (Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
-                Pair<Integer, Integer> pos = entry.getKey();
-                double multipliedCol = Math.round(multiplier * pos.x * 10.0) / 10.0;
-                double multipliedRow = Math.round(multiplier * pos.y * 10.0) / 10.0;
-                TikZUtils.printNode(
-                    entry.getValue(),
-                    "[node]",
-                    "at (" + multipliedCol + "," + multipliedRow + ") ",
-                    writer
-                );
-            }
-        }
-        for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
-            BigInteger from = entry.getKey().getID();
-            for (Pair<E, Node<N>> edge : entry.getValue()) {
-                if (toHighlight != null && toHighlight.contains(edge)) {
-                    if (withWeight) {
-                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.getID(), writer);
-                    } else {
-                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.getID(), writer);
-                    }
-                } else {
-                    if (withWeight) {
-                        TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
-                    } else {
-                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.getID(), writer);
-                    }
-                }
-            }
-        }
-        TikZUtils.printTikzEnd(writer);
-        writer.newLine();
     }
 
     /**

@@ -9,14 +9,14 @@ import java.util.*;
 public abstract class GraphAlgorithms {
 
     /**
+     * Flag to enable special wishes of Erika for Dijkstra's algorithm and flow networks.
+     */
+    public static final boolean ERIKA_MODE = true;
+
+    /**
      * The phrase "each residual graph".
      */
     private static final String EACH_RESIDUAL_GRAPH = "jedes Restnetzwerk";
-
-    /**
-     * Flag to enable special wishes of Erika for Dijkstra's algorithm.
-     */
-    private static final boolean ERIKA_MODE = true;
 
     /**
      * The name of a residual graph.
@@ -167,7 +167,7 @@ public abstract class GraphAlgorithms {
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(1, null, exWriter, true);
+        graph.printTikZ(true, 1, null, exWriter);
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
@@ -268,7 +268,14 @@ public abstract class GraphAlgorithms {
                 } else {
                     firstExercise[current+1][ids.get(edge.y)+1] = "true";
                     currentSolution[current+1][ids.get(edge.y)+1] = "true";
-                //System.out.println("Add: " + currentNode.getLabel() + " -" + currentSolution[current][ids.get(edge.y)] + "-> " + edge.y.getLabel());
+//                    System.out.println(
+//                        "Add: "
+//                        + currentNode.getLabel()
+//                        + " -"
+//                        + currentSolution[current][ids.get(edge.y)]
+//                        + "-> "
+//                        + edge.y.getLabel()
+//                    );
                 }
             }
             weights[current][current] = 0;
@@ -362,9 +369,9 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         if (warshall) {
-            graph.printTikZ(1, null, exWriter, false);
+            graph.printTikZ(false, 1, null, exWriter);
         } else {
-            graph.printTikZ(1, null, exWriter, true);
+            graph.printTikZ(true, 1, null, exWriter);
         }
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
@@ -375,15 +382,15 @@ public abstract class GraphAlgorithms {
             exWriter.write("F\\\"uhren Sie den Algorithmus von Warshall auf diesem Graphen aus. ");
         }
         exWriter.write("Geben Sie dazu nach jedem Durchlauf der \\\"au{\\ss}eren Schleife die aktuellen Entfernungen ");
-        exWriter.write("in einer Tabelle an. Die erste Tabelle enth\\\"alt bereits die Adjazenzmatrix nach Bildung der");
-        exWriter.write(" reflexiven H\\\"ulle.");
+        exWriter.write("in einer Tabelle an. Die erste Tabelle enth\\\"alt bereits die Adjazenzmatrix nach Bildung ");
+        exWriter.write("der reflexiven H\\\"ulle.");
         if (warshall) {
             exWriter.write(" Der Eintrag in der Zeile $i$ und Spalte $j$ gibt also an, ob es eine Kante");
             exWriter.write(" vom Knoten der Zeile $i$ zu dem Knoten der Spalte $j$ gibt.\\\\[2ex]");
         } else {
             exWriter.write(" Der Eintrag in der Zeile $i$ und Spalte $j$ ist also $\\infty$, falls es keine Kante");
-            exWriter.write(" vom Knoten der Zeile $i$ zu dem Knoten der Spalte $j$ gibt, und");
-            exWriter.write(" sonst das Gewicht dieser Kante. Beachten Sie, dass in der reflexiven H\\\"ulle jeder Knoten");
+            exWriter.write(" vom Knoten der Zeile $i$ zu dem Knoten der Spalte $j$ gibt, und sonst");
+            exWriter.write(" das Gewicht dieser Kante. Beachten Sie, dass in der reflexiven H\\\"ulle jeder Knoten");
             exWriter.write(" eine Kante mit Gewicht $0$ zu sich selbst hat.\\\\[2ex]");
         }
         exWriter.newLine();
@@ -417,14 +424,14 @@ public abstract class GraphAlgorithms {
         TikZUtils.printArrayStretch(1.0, exWriter);
         TikZUtils.printArrayStretch(1.0, solWriter);
     }
-	
-	/**
+    
+    /**
      * Prints exercise and solution for the Ford-Fulkerson method. Uses the Edmonds-Karp Algorithm for selecting 
      * augmenting paths.
      * @param graph The flow network.
      * @param source The source node.
      * @param sink The sink node.
-	 * @param multiplier Multiplier for node distances.
+     * @param multiplier Multiplier for node distances.
      * @param exWriter The writer to send the exercise output to.
      * @param solWriter The writer to send the solution output to.
      * @throws IOException If some error occurs during output.
@@ -444,7 +451,7 @@ public abstract class GraphAlgorithms {
         exWriter.write(":\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(multiplier, null, exWriter, true);
+        graph.printTikZ(true, multiplier, null, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
         exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der Ford-Fulkerson Methode. ");
@@ -456,20 +463,34 @@ public abstract class GraphAlgorithms {
         int step = 0;
         TikZUtils.printSamePageBeginning(step++, solWriter);
         solWriter.write("Initiales Flussnetzwerk:\\\\[2ex]");
-        graph.printTikZ(multiplier, null, solWriter, true);
+        graph.printTikZ(true, multiplier, null, solWriter);
         TikZUtils.printSamePageEnd(solWriter);
         solWriter.newLine();
         while (true) {
-            List<Node<N>> path =
-                GraphAlgorithms.selectAugmentingPath(
-                    GraphAlgorithms.computeResidualGraph(step++, multiplier, graph, solWriter),
-                    source,
-                    sink
-                );
+            Graph<N, Integer> residualGraph = GraphAlgorithms.computeResidualGraph(graph);
+            List<Node<N>> path = GraphAlgorithms.selectAugmentingPath(residualGraph, source, sink);
+            TikZUtils.printSamePageBeginning(step++, solWriter);
+            solWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
+            solWriter.write(":\\\\[2ex]");
+            solWriter.newLine();
+            residualGraph.printTikZ(
+                true,
+                multiplier,
+                GraphAlgorithms.ERIKA_MODE ? GraphAlgorithms.toEdges(residualGraph, path) : null,
+                solWriter
+            );
+            TikZUtils.printSamePageEnd(solWriter);
+            solWriter.newLine();
             if (path == null) {
                 break;
             }
-            GraphAlgorithms.addFlow(step++, multiplier, graph, path, solWriter);
+            Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> toHighlight = GraphAlgorithms.addFlow(graph, path);
+            TikZUtils.printSamePageBeginning(step++, solWriter);
+            solWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
+            solWriter.newLine();
+            graph.printTikZ(true, multiplier, toHighlight, solWriter);
+            TikZUtils.printSamePageEnd(solWriter);
+            solWriter.newLine();
         }
         int flow = 0;
         List<Pair<FlowPair, Node<N>>> list = graph.getAdjacencyList(source);
@@ -499,95 +520,99 @@ public abstract class GraphAlgorithms {
         BufferedWriter exWriter,
         BufferedWriter solWriter
     ) throws IOException {
-		List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
-		String[][] solutions = new String[nodes.size()+1][nodes.size()+1];
-		solutions[0][0] = "\\#Iteration";
-		solutions[0][1] = "0";
-		Map<Node<N>, Integer> key = new LinkedHashMap<Node<N>, Integer>();
-		
-		Map<Node<N>, List<Pair<Integer, Node<N>>>> parent = new LinkedHashMap<Node<N>, List<Pair<Integer, Node<N>>>>();
-		int i = 1;
-		for (Node<N> node : nodes) {
-		    key.put(node, null);
-		    solutions[i][0] = node.getLabel().toString();
-		    i++;
-		}
-		List<Node<N>> q = new ArrayList<Node<N>>(graph.getNodes());
-		key.put(start, new Integer(0));
-		int iteration = 1;
-		
-		// actual algorithm
-		while (!q.isEmpty()) {
-		    // extract the minimum from q
-		    Node<N> minNode = null;
-		    for (Node<N> node : q)
-		    {
-		        if (minNode == null || key.get(minNode) == null || (key.get(node) != null && key.get(minNode).intValue() > key.get(node).intValue())) {
-		            minNode = node;
-		        }
-		    }
-			
-			// write solution
-			solutions[0][iteration] = "" + iteration;
-			i = 1;
-		    for (Node<N> node : nodes) {
-		        if (q.contains(node)) {
-		            if (key.get(node) == null) {
-		                solutions[i][iteration] = "$\\infty$";
-		            } else {
-		                if (minNode == node) {
-		                    solutions[i][iteration] = "\\underline{" + key.get(node) + "}";
-		                } else {
-		                    solutions[i][iteration] = "" + key.get(node);
-		                }
-		            }
+        List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
+        String[][] solutions = new String[nodes.size()+1][nodes.size()+1];
+        solutions[0][0] = "\\#Iteration";
+        solutions[0][1] = "0";
+        Map<Node<N>, Integer> key = new LinkedHashMap<Node<N>, Integer>();
+        
+        Map<Node<N>, List<Pair<Integer, Node<N>>>> parent = new LinkedHashMap<Node<N>, List<Pair<Integer, Node<N>>>>();
+        int i = 1;
+        for (Node<N> node : nodes) {
+            key.put(node, null);
+            solutions[i][0] = node.getLabel().toString();
+            i++;
+        }
+        List<Node<N>> q = new ArrayList<Node<N>>(graph.getNodes());
+        key.put(start, new Integer(0));
+        int iteration = 1;
+        
+        // actual algorithm
+        while (!q.isEmpty()) {
+            // extract the minimum from q
+            Node<N> minNode = null;
+            for (Node<N> node : q) {
+                if (
+                    minNode == null
+                    || key.get(minNode) == null
+                    || (key.get(node) != null && key.get(minNode).intValue() > key.get(node).intValue())
+                ) {
+                    minNode = node;
+                }
+            }
+            
+            // write solution
+            solutions[0][iteration] = "" + iteration;
+            i = 1;
+            for (Node<N> node : nodes) {
+                if (q.contains(node)) {
+                    if (key.get(node) == null) {
+                        solutions[i][iteration] = "$\\infty$";
+                    } else {
+                        if (minNode == node) {
+                            solutions[i][iteration] = "\\underline{" + key.get(node) + "}";
+                        } else {
+                            solutions[i][iteration] = "" + key.get(node);
+                        }
+                    }
                 } else {
                     solutions[i][iteration] = "";
                 }
                 i++;
-		    }
-		    // update the minimums successors remaining in q
-			for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(minNode)) {
+            }
+            // update the minimums successors remaining in q
+            for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(minNode)) {
                 if (q.contains(edge.y) && (key.get(edge.y) == null || edge.x < key.get(edge.y))) {
-		            List<Pair<Integer, Node<N>>> adList = new ArrayList<Pair<Integer, Node<N>>>();
-		            adList.add(new Pair<Integer, Node<N>>(edge.x, minNode));
+                    List<Pair<Integer, Node<N>>> adList = new ArrayList<Pair<Integer, Node<N>>>();
+                    adList.add(new Pair<Integer, Node<N>>(edge.x, minNode));
                     parent.put(edge.y, adList);
                     key.put(edge.y, edge.x);
                 }
             }
             q.remove(minNode);
-		    iteration++;
-		}
-		
-		// create output
-		exWriter.write("F\\\"uhren Sie Prim's Algorithmus auf dem folgenden Graphen aus.");
-		exWriter.write(" Der Startknoten hat hierbei den Schl\\\"ussel " + start.getLabel().toString() + ".");
-		exWriter.write(" Geben Sie dazu \\underline{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an");
+            iteration++;
+        }
+        
+        // create output
+        exWriter.write("F\\\"uhren Sie Prim's Algorithmus auf dem folgenden Graphen aus.");
+        exWriter.write(" Der Startknoten hat hierbei den Schl\\\"ussel " + start.getLabel().toString() + ".");
+        exWriter.write(" Geben Sie dazu \\underline{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an");
         exWriter.newLine();
-		exWriter.write("\\begin{enumerate}");
+        exWriter.write("\\begin{enumerate}");
         exWriter.newLine();
-		exWriter.write("    \\item welchen Knoten \\texttt{extractMin(Q)} w\\\"ahlt");
+        exWriter.write("    \\item welchen Knoten \\texttt{extractMin(Q)} w\\\"ahlt");
         exWriter.newLine();
-		exWriter.write("    \\item und welche Kosten die Randknoten haben, d.h. f\\\"ur jeden Knoten \\texttt{v} in \\texttt{Q} den Wert \\texttt{key[v]}.");
+        exWriter.write("    \\item und welche Kosten die Randknoten haben, d.h. f\\\"ur jeden Knoten \\texttt{v} in ");
+        exWriter.write("\\texttt{Q} den Wert \\texttt{key[v]}.");
         exWriter.newLine();
-		exWriter.write("\\end{enumerate}");
+        exWriter.write("\\end{enumerate}");
         exWriter.newLine();
-		exWriter.write(" Geben Sie zudem den vom Algorithmus bestimmten minimalen Spannbaum an.\\\\[2ex]");
+        exWriter.write(" Geben Sie zudem den vom Algorithmus bestimmten minimalen Spannbaum an.\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         graph.printTikZ(exWriter, null, false);
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-		
-		TikZUtils.printTable(solutions, null, "2.0cm", solWriter, false);
-		solWriter.newLine();
-		solWriter.newLine();
-		solWriter.write("\\medskip");
-		solWriter.newLine();
-		// print the spanning tree
-		solWriter.write("Hierbei gibt eine unterstrichene Zahl an in welcher Iteration (zugeh\\\"origer Zeilenkopf)");
-		solWriter.write(" welcher Knoten (zugeh\\\"origer Spaltenkopf) durch \\texttt{extractMin(Q)} gew\\\"ahlt");
-		solWriter.write(" wurde. Wir erhalten den folgenden minimalen Spannbaum:\\\\[2ex]");
+        
+        TikZUtils.printTable(solutions, null, "2.0cm", solWriter, false);
+        solWriter.newLine();
+        solWriter.newLine();
+        solWriter.write("\\medskip");
+        solWriter.newLine();
+        // print the spanning tree
+        solWriter.write("Hierbei gibt eine unterstrichene Zahl an in welcher Iteration (zugeh\\\"origer Zeilenkopf)");
+        solWriter.write(" welcher Knoten (zugeh\\\"origer Spaltenkopf) durch \\texttt{extractMin(Q)} gew\\\"ahlt");
+        solWriter.write(" wurde. Wir erhalten den folgenden minimalen Spannbaum:\\\\[2ex]");
         solWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
         graph.printTikZ(solWriter, parent, false);
@@ -596,28 +621,21 @@ public abstract class GraphAlgorithms {
     }
 
     /**
-     * Adds the maximal flow along the specified path in the specified flow network and outputs the resulting network 
-     * to the specified writer such that the augmenting path is marked by a special color.
-     * @param step The current step in the algorithm.
-     * @param multiplier Multiplier for node distances.
+     * Adds the maximal flow along the specified path in the specified flow network and returns the set of edges used 
+     * to add the flow.
      * @param graph The flow network to add a flow to.
      * @param path The path along which the flow is to be be added.
-     * @param writer The writer to send the output to.
+     * @return The set of edges whose flow has been modified.
      * @throws IOException If some error occurs during output.
      */
-    private static <N> void addFlow(
-        int step,
-        double multiplier,
-        Graph<N, FlowPair> graph,
-        List<Node<N>> path,
-        BufferedWriter writer
-    ) throws IOException {
+    private static <N> Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> addFlow(Graph<N, FlowPair> graph, List<Node<N>> path)
+    throws IOException {
         Integer min = GraphAlgorithms.computeMinEdge(graph, path);
         Iterator<Node<N>> it = path.iterator();
         Node<N> from;
         Node<N> to = it.next();
-        Set<Pair<FlowPair, Node<N>>> toHighlight =
-            new LinkedHashSet<Pair<FlowPair, Node<N>>>();
+        Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> toHighlight =
+            new LinkedHashSet<Pair<Node<N>, Pair<FlowPair, Node<N>>>>();
         while (it.hasNext()) {
             from = to;
             to = it.next();
@@ -627,19 +645,14 @@ public abstract class GraphAlgorithms {
                 if (added > 0) {
                     flow -= added;
                     edge.x.x += added;
-                    toHighlight.add(edge);
+                    toHighlight.add(new Pair<Node<N>, Pair<FlowPair, Node<N>>>(from, edge));
                 }
             }
             if (flow > 0) {
                 throw new IllegalStateException("Could not add flow!");
             }
         }
-        TikZUtils.printSamePageBeginning(step, writer);
-        writer.write("N\\\"achstes Flussnetzwerk:\\\\[2ex]");
-        writer.newLine();
-        graph.printTikZ(multiplier, toHighlight, writer, true);
-        TikZUtils.printSamePageEnd(writer);
-        writer.newLine();
+        return toHighlight;
     }
 
     /**
@@ -667,20 +680,12 @@ public abstract class GraphAlgorithms {
     }
 
     /**
-     * Builds the residual graph from the specified flow network and outputs it to the specified writer.
-     * @param step The current step in the algorithm.
-     * @param multiplier Multiplier for node distances.
+     * Builds the residual graph from the specified flow network.
      * @param graph The flow network.
-     * @param writer The writer to send the output to.
      * @return The residual graph built for the specified flow network.
      * @throws IOException If some error occurs during output.
      */
-    private static <N> Graph<N, Integer> computeResidualGraph(
-        int step,
-        double multiplier,
-        Graph<N, FlowPair> graph,
-        BufferedWriter writer
-    ) throws IOException {
+    private static <N> Graph<N, Integer> computeResidualGraph(Graph<N, FlowPair> graph) throws IOException {
         Graph<N, Integer> res = new Graph<N, Integer>();
         for (Node<N> node : graph.getNodes()) {
             res.addNode(node);
@@ -711,13 +716,6 @@ public abstract class GraphAlgorithms {
             }
         }
         res.setGrid(graph.getGrid());
-        TikZUtils.printSamePageBeginning(step, writer);
-        writer.write(GraphAlgorithms.RESIDUAL_GRAPH);
-        writer.write(":\\\\[2ex]");
-        writer.newLine();
-        res.printTikZ(multiplier, null, writer, true);
-        TikZUtils.printSamePageEnd(writer);
-        writer.newLine();
         return res;
     }
 
@@ -729,6 +727,7 @@ public abstract class GraphAlgorithms {
      * @param table The table to print.
      * @param color The cell colors.
      * @param writer The writer to send the output to.
+     * @param transpose Transpose the tables?
      * @return The next number of tables printed in the current row.
      * @throws IOException If some error occurs during output.
      */
@@ -739,10 +738,10 @@ public abstract class GraphAlgorithms {
         String[][] table,
         String[][] color,
         BufferedWriter writer,
-        boolean reverse
+        boolean transpose
     ) throws IOException {
         if (count < tableCount) {
-            TikZUtils.printTable(table, color, "1cm", writer, reverse);
+            TikZUtils.printTable(table, color, "1cm", writer, transpose);
             writer.newLine();
             writer.write("\\hspace{2em}");
             writer.newLine();
@@ -750,7 +749,7 @@ public abstract class GraphAlgorithms {
         }
         writer.write("\\\\[2ex]");
         writer.newLine();
-        TikZUtils.printTable(table, color, "1cm", writer, reverse);
+        TikZUtils.printTable(table, color, "1cm", writer, transpose);
         writer.newLine();
         writer.write("\\hspace{2em}");
         writer.newLine();
@@ -791,6 +790,31 @@ public abstract class GraphAlgorithms {
             }
         }
         return null;
+    }
+
+    /**
+     * @param graph Some residual graph.
+     * @param path A path through this residual graph.
+     * @return The set of all edges used by the specified path in the specified graph.
+     */
+    private static <N> Set<Pair<Node<N>, Pair<Integer, Node<N>>>> toEdges(Graph<N, Integer> graph, List<Node<N>> path) {
+        if (path == null) {
+            return null;
+        }
+        Set<Pair<Node<N>, Pair<Integer, Node<N>>>> res = new LinkedHashSet<Pair<Node<N>, Pair<Integer, Node<N>>>>();
+        Iterator<Node<N>> it = path.iterator();
+        Node<N> cur = it.next();
+        while (it.hasNext()) {
+            Node<N> next = it.next();
+            for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(cur)) {
+                if (edge.y.equals(next)) {
+                    res.add(new Pair<Node<N>, Pair<Integer, Node<N>>>(cur, edge));
+                    break;
+                }
+            }
+            cur = next;
+        }
+        return res;
     }
 
 }

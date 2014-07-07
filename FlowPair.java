@@ -23,7 +23,10 @@ public class FlowPair extends Pair<Integer, Integer> {
      */
     @Override
     public String toString() {
-        return "" + this.x + "/" + this.y;
+        if (GraphAlgorithms.ERIKA_MODE) {
+            return (this.x > 0 ? this.x + "/" : "") + this.y;
+        }
+        return this.x + "/" + this.y;
     }
 
 }
