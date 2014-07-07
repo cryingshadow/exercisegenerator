@@ -78,11 +78,11 @@ public abstract class TikZUtils {
         res.append(" (n");
         res.append(from.toString());
         res.append(") to ");
+        res.append("node[auto, swap] {");
         if (label != null) {
-            res.append("node[auto, swap] {");
             res.append(label.toString());
-            res.append("} ");
         }
+        res.append("} ");
         res.append("(n");
         res.append(to.toString());
         res.append(")");
@@ -244,10 +244,10 @@ public abstract class TikZUtils {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static void printTable(String[][] table, String[][] color, String width, BufferedWriter writer)
+    public static void printTable(String[][] table, String[][] color, String width, BufferedWriter writer, boolean reverse)
     throws IOException {
-        int cols = table.length;
-        int rows = table[0].length;
+        int cols = (reverse ? table.length : table[0].length);
+        int rows = (reverse ? table[0].length : table.length);
         writer.write("\\begin{tabular}{|*{" + cols + "}{C{" + width + "}|}}");
         writer.newLine();
         writer.write("\\hline");
@@ -260,10 +260,17 @@ public abstract class TikZUtils {
                 } else {
                     writer.write(" & ");
                 }
-                if (color != null && color[col][row] != null) {
-                    writer.write("\\cellcolor{" + color[col][row] + "}");
+                if (reverse) {
+                    if (color != null && color[row][col] != null) {
+                        writer.write("\\cellcolor{" + color[row][col] + "}");
+                    }
+                    writer.write(table[row][col] == null ? "" : table[row][col]);
+                } else {
+                    if (color != null && color[col][row] != null) {
+                        writer.write("\\cellcolor{" + color[col][row] + "}");
+                    }
+                    writer.write(table[col][row] == null ? "" : table[col][row]);
                 }
-                writer.write(table[col][row] == null ? "" : table[col][row]);
             }
             writer.write("\\\\\\hline");
             writer.newLine();

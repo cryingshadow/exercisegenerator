@@ -167,7 +167,7 @@ public abstract class GraphAlgorithms {
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(1, null, exWriter);
+        graph.printTikZ(1, null, exWriter, true);
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
@@ -185,8 +185,8 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printArrayStretch(1.5, exWriter);
         TikZUtils.printArrayStretch(1.5, solWriter);
-        TikZUtils.printTable(exTable, exColor, "2cm", exWriter);
-        TikZUtils.printTable(solTable, solColor, "2cm", solWriter);
+        TikZUtils.printTable(exTable, exColor, "2cm", exWriter, false);
+        TikZUtils.printTable(solTable, solColor, "2cm", solWriter, false);
         TikZUtils.printArrayStretch(1.0, exWriter);
         TikZUtils.printArrayStretch(1.0, solWriter);
         solWriter.newLine();
@@ -361,7 +361,11 @@ public abstract class GraphAlgorithms {
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(1, null, exWriter);
+        if (warshall) {
+            graph.printTikZ(1, null, exWriter, false);
+        } else {
+            graph.printTikZ(1, null, exWriter, true);
+        }
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
@@ -371,7 +375,17 @@ public abstract class GraphAlgorithms {
             exWriter.write("F\\\"uhren Sie den Algorithmus von Warshall auf diesem Graphen aus. ");
         }
         exWriter.write("Geben Sie dazu nach jedem Durchlauf der \\\"au{\\ss}eren Schleife die aktuellen Entfernungen ");
-        exWriter.write("in einer Tabelle an.\\\\[2ex]");
+        exWriter.write("in einer Tabelle an. Die erste Tabelle enth\\\"alt bereits die Adjazenzmatrix nach Bildung der");
+        exWriter.write(" reflexiven H\\\"ulle.");
+        if (warshall) {
+            exWriter.write(" Der Eintrag in der Zeile $i$ und Spalte $j$ gibt also an, ob es eine Kante");
+            exWriter.write(" vom Knoten der Zeile $i$ zu dem Knoten der Spalte $j$ gibt.\\\\[2ex]");
+        } else {
+            exWriter.write(" Der Eintrag in der Zeile $i$ und Spalte $j$ ist also $\\infty$, falls es keine Kante");
+            exWriter.write(" vom Knoten der Zeile $i$ zu dem Knoten der Spalte $j$ gibt, und");
+            exWriter.write(" sonst das Gewicht dieser Kante. Beachten Sie, dass in der reflexiven H\\\"ulle jeder Knoten");
+            exWriter.write(" eine Kante mit Gewicht $0$ zu sich selbst hat.\\\\[2ex]");
+        }
         exWriter.newLine();
         exWriter.newLine();
         TikZUtils.printArrayStretch(1.5, exWriter);
@@ -386,7 +400,8 @@ public abstract class GraphAlgorithms {
                     iteration,
                     solutions.get(iteration),
                     solColors.get(iteration),
-                    solWriter
+                    solWriter,
+                    true
                 );
             exCount =
                 GraphAlgorithms.printTables(
@@ -395,7 +410,8 @@ public abstract class GraphAlgorithms {
                     iteration,
                     exercises.get(iteration),
                     exColors.get(iteration),
-                    exWriter
+                    exWriter,
+                    true
                 );
         }
         TikZUtils.printArrayStretch(1.0, exWriter);
@@ -428,7 +444,7 @@ public abstract class GraphAlgorithms {
         exWriter.write(":\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(multiplier, null, exWriter);
+        graph.printTikZ(multiplier, null, exWriter, true);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
         exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der Ford-Fulkerson Methode. ");
@@ -440,7 +456,7 @@ public abstract class GraphAlgorithms {
         int step = 0;
         TikZUtils.printSamePageBeginning(step++, solWriter);
         solWriter.write("Initiales Flussnetzwerk:\\\\[2ex]");
-        graph.printTikZ(multiplier, null, solWriter);
+        graph.printTikZ(multiplier, null, solWriter, true);
         TikZUtils.printSamePageEnd(solWriter);
         solWriter.newLine();
         while (true) {
@@ -559,11 +575,11 @@ public abstract class GraphAlgorithms {
 		exWriter.write(" Geben Sie zudem den vom Algorithmus bestimmten minimalen Spannbaum an.\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(exWriter, null, false   );
+        graph.printTikZ(exWriter, null, false);
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
 		
-		TikZUtils.printTable(solutions, null, "2.0cm", solWriter);
+		TikZUtils.printTable(solutions, null, "2.0cm", solWriter, false);
 		solWriter.newLine();
 		solWriter.newLine();
 		solWriter.write("\\medskip");
@@ -621,7 +637,7 @@ public abstract class GraphAlgorithms {
         TikZUtils.printSamePageBeginning(step, writer);
         writer.write("N\\\"achstes Flussnetzwerk:\\\\[2ex]");
         writer.newLine();
-        graph.printTikZ(multiplier, toHighlight, writer);
+        graph.printTikZ(multiplier, toHighlight, writer, true);
         TikZUtils.printSamePageEnd(writer);
         writer.newLine();
     }
@@ -699,7 +715,7 @@ public abstract class GraphAlgorithms {
         writer.write(GraphAlgorithms.RESIDUAL_GRAPH);
         writer.write(":\\\\[2ex]");
         writer.newLine();
-        res.printTikZ(multiplier, null, writer);
+        res.printTikZ(multiplier, null, writer, true);
         TikZUtils.printSamePageEnd(writer);
         writer.newLine();
         return res;
@@ -722,10 +738,11 @@ public abstract class GraphAlgorithms {
         int iteration,
         String[][] table,
         String[][] color,
-        BufferedWriter writer
+        BufferedWriter writer,
+        boolean reverse
     ) throws IOException {
         if (count < tableCount) {
-            TikZUtils.printTable(table, color, "1cm", writer);
+            TikZUtils.printTable(table, color, "1cm", writer, reverse);
             writer.newLine();
             writer.write("\\hspace{2em}");
             writer.newLine();
@@ -733,7 +750,7 @@ public abstract class GraphAlgorithms {
         }
         writer.write("\\\\[2ex]");
         writer.newLine();
-        TikZUtils.printTable(table, color, "1cm", writer);
+        TikZUtils.printTable(table, color, "1cm", writer, reverse);
         writer.newLine();
         writer.write("\\hspace{2em}");
         writer.newLine();

@@ -182,7 +182,7 @@ public class Graph<N, E> {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public void printTikZ(double multiplier, Set<Pair<E, Node<N>>> toHighlight, BufferedWriter writer) throws IOException {
+    public void printTikZ(double multiplier, Set<Pair<E, Node<N>>> toHighlight, BufferedWriter writer, boolean withWeight) throws IOException {
         TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         if (this.grid == null) {
             int limit = (int)Math.sqrt(this.adjacencyLists.size());
@@ -216,9 +216,17 @@ public class Graph<N, E> {
             BigInteger from = entry.getKey().getID();
             for (Pair<E, Node<N>> edge : entry.getValue()) {
                 if (toHighlight != null && toHighlight.contains(edge)) {
-                    TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.getID(), writer);
+                    if (withWeight) {
+                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.getID(), writer);
+                    } else {
+                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.getID(), writer);
+                    }
                 } else {
-                    TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                    if (withWeight) {
+                        TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                    } else {
+                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.getID(), writer);
+                    }
                 }
             }
         }
