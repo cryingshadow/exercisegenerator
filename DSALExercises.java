@@ -15,6 +15,11 @@ public class DSALExercises {
     /**
      * The set of (in student mode only enabled) graph algorithms.
      */
+    private static final Set<String> GEOMETRIC_ALGORITHMS;
+    
+    /**
+     * The set of (in student mode only enabled) graph algorithms.
+     */
     private static final Set<String> GRAPH_ALGORITHMS;
 
     /**
@@ -73,6 +78,7 @@ public class DSALExercises {
         TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
         GRID_GRAPH_ALGORITHMS = DSALExercises.initGridGraphAlgorithms();
         GRAPH_ALGORITHMS = DSALExercises.initGraphAlgorithms();
+        GEOMETRIC_ALGORITHMS = DSALExercises.initGeometricAlgorithms();
         HELP = DSALExercises.initHelpText();
     }
 
@@ -551,6 +557,9 @@ public class DSALExercises {
             } else if (Algorithm.PRIM.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
                 GraphAlgorithms.prim(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
+            } else if (Algorithm.HULL.name.equals(alg)) {
+                ArrayList<Pair<Double,Double>> pointSet = (ArrayList<Pair<Double,Double>>)input;
+                GeometricAlgorithms.printConvexHull(pointSet, exerciseWriter, solutionWriter);
             } else if (Algorithm.LCS.name.equals(alg)) {
                 Pair<String,String> tmpInput = (Pair<String,String>) input;
                 DynamicProgramming.lcs(
@@ -568,7 +577,7 @@ public class DSALExercises {
                     solutionWriter,
                     options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                 );
-			} else {
+            } else {
                 System.out.println("Unknown algorithm!");
                 return;
             }
@@ -654,6 +663,17 @@ public class DSALExercises {
         return current; 
     }
 
+    /**
+     * @return The set of (in student mode only enabled) geometric algorithms.
+     */
+    private static Set<String> initGeometricAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+            res.add(Algorithm.HULL.name);
+        }
+        return res;
+    }
+    
     /**
      * @return The set of (in student mode only enabled) graph algorithms.
      */
@@ -1195,6 +1215,30 @@ public class DSALExercises {
                 }
             }
             return new Pair<Graph<String, Integer>, Node<String>>(graph, node);
+        } else if (DSALExercises.GEOMETRIC_ALGORITHMS.contains(alg)) {
+            String line = null;
+            ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
+            if (options.containsKey(Flag.SOURCE)) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    while ((line = reader.readLine()) != null) {
+                        line = line.trim();
+                        Double[] coordinates = new Double[2];
+                        coordinates[0] = Double.parseDouble(line.split(",")[0].trim());
+                        coordinates[1] = Double.parseDouble(line.split(",")[1].trim());
+                        Pair<Double,Double> point = new Pair<Double,Double>(coordinates[0], coordinates[1]);
+                        input.add(point);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            } else if (DSALExercises.STUDENT_MODE) {
+                throw new UnsupportedOperationException("Not yet implemented!");
+            } else {
+                throw new UnsupportedOperationException("Not yet implemented!");
+            }
+            
+            return input;
         } else if (Algorithm.FORD_FULKERSON.name.equals(alg)) {
             Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
             if (options.containsKey(Flag.SOURCE)) {
@@ -1748,6 +1792,23 @@ public class DSALExercises {
             },
             true
         ),
+        
+        /**
+         * Convex hull according to Grahams' Scan.
+         */
+        HULL(
+              "hull",
+              "Convex Hull",
+              new String[]{
+                  "Calculate the convex hull of a given pointset according to Grahams' Scan.",
+                  (
+                        DSALExercises.STUDENT_MODE ?
+                   "The flag -l specifies the number of points in the pointset." :
+                   "TODO"
+                   )
+              },
+              false
+              ),
 
         /**
          * Insertionsort on Integer arrays.
