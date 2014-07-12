@@ -47,6 +47,11 @@ public class DSALExercises {
      * The set of (in student mode only enabled) sorting algorithms.
      */
     private static final Set<String> SORTING_ALGORITHMS;
+    
+    /**
+     * The set of (in student mode only enabled) dynamic programming algorithms.
+     */
+    private static final Set<String> DYNAMIC_PROGRAMMING_ALGORITHMS;
 
     /**
      * The set of (in student mode only enabled) tree algorithms.
@@ -64,6 +69,7 @@ public class DSALExercises {
         STUDENT_MODE = false;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
+        DYNAMIC_PROGRAMMING_ALGORITHMS = DSALExercises.initDynamicProgrammingAlgorithms();
         TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
         GRID_GRAPH_ALGORITHMS = DSALExercises.initGridGraphAlgorithms();
         GRAPH_ALGORITHMS = DSALExercises.initGraphAlgorithms();
@@ -545,7 +551,24 @@ public class DSALExercises {
             } else if (Algorithm.PRIM.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
                 GraphAlgorithms.prim(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
-            } else {
+            } else if (Algorithm.LCS.name.equals(alg)) {
+                Pair<String,String> tmpInput = (Pair<String,String>) input;
+                DynamicProgramming.lcs(
+                    tmpInput.x,
+                    tmpInput.y,
+                    solutionWriter,
+                    options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
+                );
+			} else if (Algorithm.KNAPSACK.name.equals(alg)) {
+			    Pair<Pair<Integer[],Integer[]>,Integer> tmpInput = (Pair<Pair<Integer[],Integer[]>,Integer>) input;
+			    DynamicProgramming.knapsack(
+                    tmpInput.x.x,
+                    tmpInput.x.y,
+                    tmpInput.y,
+                    solutionWriter,
+                    options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
+                );
+			} else {
                 System.out.println("Unknown algorithm!");
                 return;
             }
@@ -765,6 +788,20 @@ public class DSALExercises {
         }
         if (!DSALExercises.STUDENT_MODE || Algorithm.AVLTREE.enabled) {
             res.add(Algorithm.AVLTREE.name);
+        }
+        return res;
+    }
+
+    /**
+     * @return The set of (in student mode only enabled) dynamic programming algorithms.
+     */
+    private static Set<String> initDynamicProgrammingAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.KNAPSACK.enabled) {
+            res.add(Algorithm.KNAPSACK.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.LCS.enabled) {
+            res.add(Algorithm.LCS.name);
         }
         return res;
     }
@@ -1205,6 +1242,156 @@ public class DSALExercises {
             res.sink = sink;
             res.multiplier = multiplier;
             return res;
+        } else if (Algorithm.KNAPSACK.name.equals(alg)) {
+            Integer[] weights = null;
+            Integer[] values = null;
+            Integer capacity = 0;
+            if (options.containsKey(Flag.SOURCE)) {
+                String errorMessage = new String( "You need to provide two lines of numbers, each number separated only by a ','!"
+                                              + " The first lines represents the weights of the items and the second line represents"
+                                              + " the values of the items. Note, that there must be supplied the same number of"
+                                              + " weights and values and at least one.");
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    String line = null;
+                    int rowNum = 0;
+                    int numOfElements = -1;
+                    Integer sumOfWeights = new Integer(0);
+                    while ((line = reader.readLine()) != null) {
+                        String[] numbers = line.split(",");
+                        if (numOfElements == 0 || (numOfElements > 0 && numOfElements != numbers.length)) {
+                            System.out.println(errorMessage);
+                            return null;
+                        }
+                        if (rowNum == 0) {
+                            weights = new Integer[numbers.length];
+                        } else if (rowNum == 1) {
+                            values = new Integer[numbers.length];
+                        } else {
+                            System.out.println(errorMessage);
+                            return null;
+                        }
+                        for (int i = 0; i < numbers.length; i++) {
+                            int number = Integer.parseInt(numbers[i].trim());
+                            if (rowNum == 0) {
+                                weights[i] = number;
+                                sumOfWeights += number;
+                            } else {
+                                values[i] = number;
+                            }
+                        }
+                        rowNum++;
+                    }
+                    if (options.containsKey(Flag.CAPACITY)) {
+                        capacity = Integer.parseInt(options.get(Flag.CAPACITY));
+                        if (capacity <= 0) {
+                            capacity = sumOfWeights/2;
+                        }
+                    } else {
+                        capacity = sumOfWeights/2;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else if (DSALExercises.STUDENT_MODE) {
+                int length;
+                Random gen = new Random();
+                if (options.containsKey(Flag.LENGTH)) {
+                    length = Integer.parseInt(options.get(Flag.LENGTH));
+                    if (length <= 0) {
+                        length = gen.nextInt(4) + 3;
+                    }
+                } else {
+                    length = gen.nextInt(4) + 3;
+                }
+                Integer sumOfWeights = new Integer(0);
+                weights = new Integer[length];
+                for (int i = 0; i < weights.length; i++) {
+                    weights[i] = 1 + gen.nextInt(11);
+                    sumOfWeights += weights[i];
+                }
+                values = new Integer[length];
+                for (int i = 0; i < values.length; i++) {
+                    values[i] = 1 + gen.nextInt(11);
+                }
+                Integer p = 35 + gen.nextInt(30);
+                capacity = (sumOfWeights*p)/100;
+            } else {
+                String errorMessage = new String( "You need to provide two set of numbers, each number separated only by a ',' and!"
+                                              + " each set divide by a '|'. The first set represents the weights of the items and the second set represents"
+                                              + " the values of the items. Note, that there must be supplied the same number of"
+                                              + " weights and values and at least one.");
+                String[] sets = options.get(Flag.INPUT).split("|");
+                Integer sumOfWeights = new Integer(0);
+                if (sets.length != 2 || sets[0].length() == 0 || sets[1].length() == 0 || sets[0].length() != sets[1].length()) {
+                    System.out.println(errorMessage);
+                    return null;
+                }
+                String[] numbersA = sets[0].split(",");
+                for (int i = 0; i < numbersA.length; i++) {
+                    int number = Integer.parseInt(numbersA[i].trim());
+                    weights[i] = number;
+                    sumOfWeights += number;
+                }
+                String[] numbersB = sets[0].split(",");
+                for (int i = 0; i < numbersB.length; i++) {
+                    int number = Integer.parseInt(numbersB[i].trim());
+                    values[i] = number;
+                }
+                if (options.containsKey(Flag.CAPACITY)) {
+                    capacity = Integer.parseInt(options.get(Flag.CAPACITY));
+                    if (capacity <= 0) {
+                        capacity = sumOfWeights/2;
+                    }
+                } else {
+                    capacity = sumOfWeights/2;
+                }
+            }
+            return new Pair<Pair<Integer[],Integer[]>,Integer>(new Pair<Integer[],Integer[]>(weights, values), capacity);
+        }  else if (Algorithm.LCS.name.equals(alg)) {
+            String wordA = null;
+            String wordB = null;
+            if (options.containsKey(Flag.SOURCE)) {
+                String errorMessage = new String( "You need to provide two lines each carrying exactly one non-empty word.");
+                try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                    String line = null;
+                    int rowNum = 0;
+                    while ((line = reader.readLine()) != null) {
+                        if (rowNum == 0) {
+                            wordA = new String(line);
+                            if (wordA.length() == 0) {
+                                System.out.println(errorMessage);
+                                return null;
+                            }
+                        } else if (rowNum == 1) {
+                            wordB = new String(line);
+                            if (wordB.length() == 0) {
+                                System.out.println(errorMessage);
+                                return null;
+                            }
+                        } else {
+                            System.out.println(errorMessage);
+                            return null;
+                        }
+                        rowNum++;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else if (DSALExercises.STUDENT_MODE) {
+                throw new UnsupportedOperationException("Not yet implemented!");
+            } else {
+                String errorMessage = new String( "You need to provide two non-empty words separated by a '|'.");
+                String[] words = options.get(Flag.INPUT).split("|");
+                if (words.length != 2 || words[0].length() == 0 || words[1].length() == 0) {
+                    System.out.println(errorMessage);
+                    return null;
+                }
+                wordA = new String(words[0]);
+                wordB = new String(words[1]);
+            }
+            return new Pair<String,String>(wordA, wordB);
         } else {
             return null;
         }
@@ -1748,6 +1935,40 @@ public class DSALExercises {
 				)
 			},
 			false
+		),
+
+        /**
+         * Dynamic programming based algorithm to find the maximum value of the item fitting into a knapsack with certain capacity.
+         */
+        KNAPSACK(
+			"knapsack",
+			"Knapsack Problem Solved With Dynamic programming",
+			new String[]{
+				"Knapsack problem solved with dynamic programming.",
+				(
+				DSALExercises.STUDENT_MODE ?
+				   "TODO" :
+						"TODO"
+				)
+			},
+			false
+		),
+
+        /**
+         * Dynamic programming based algorithm to find the longest common subsequence of two strings.
+         */
+        LCS(
+			"lcs",
+			"LCS Problem Solved With Dynamic programming",
+			new String[]{
+				"LCS problem solved with dynamic programming.",
+				(
+				DSALExercises.STUDENT_MODE ?
+				   "TODO" :
+						"TODO"
+				)
+			},
+			false
 		);
 
         /**
@@ -1829,6 +2050,16 @@ public class DSALExercises {
             "-l",
             "Length",
             "Used to specify a length, e.g., of an array. Its use depends on the chosen algorithm.",
+            true
+        ),
+
+        /**
+         * The capacity used for several purposes. Its use depends on the algorithm.
+         */
+        CAPACITY(
+            "-c",
+            "Capacity",
+            "Used to specify the capacity (a certain limit which should not be exceeded), e.g., the capacity of a knapsack. Its use depends on the chosen algorithm.",
             true
         ),
 
