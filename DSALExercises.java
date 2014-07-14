@@ -8,19 +8,34 @@ import java.util.*;
 public class DSALExercises {
 
     /**
+     * Limit for random numbers in student mode.
+     */
+    public static final int NUMBER_LIMIT;
+
+    /**
      * Flag used to turn off some options for the student version.
      */
     public static final boolean STUDENT_MODE;
+    
+    /**
+     * The set of (in student mode only enabled) dynamic programming algorithms.
+     */
+    private static final Set<String> DYNAMIC_PROGRAMMING_ALGORITHMS;
 
     /**
      * The set of (in student mode only enabled) graph algorithms.
      */
     private static final Set<String> GEOMETRIC_ALGORITHMS;
-    
+
     /**
      * The set of (in student mode only enabled) graph algorithms.
      */
     private static final Set<String> GRAPH_ALGORITHMS;
+
+    /**
+     * The set of those graph algorithms needing a start node.
+     */
+    private static final Set<String> GRAPH_ALGORITHMS_WITH_START_NODE;
 
     /**
      * The set of (in student mode only enabled) grid graph algorithms.
@@ -31,32 +46,22 @@ public class DSALExercises {
      * The set of (in student mode only enabled) hashing algorithms.
      */
     private static final Set<String> HASHING_ALGORITHMS;
-
+    
     /**
      * The help text displayed when just called with -h. Each entry is separated by a newline.
      */
     private static final String[] HELP;
-
-    /**
-     * Limit for random numbers in student mode.
-     */
-    public static final int NUMBER_LIMIT;
-
+    
     /**
      * Array containing all prime numbers between 5 and 101.
      */
     private static final int[] PRIMES_5_101 =
         new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
-    
+
     /**
      * The set of (in student mode only enabled) sorting algorithms.
      */
     private static final Set<String> SORTING_ALGORITHMS;
-    
-    /**
-     * The set of (in student mode only enabled) dynamic programming algorithms.
-     */
-    private static final Set<String> DYNAMIC_PROGRAMMING_ALGORITHMS;
 
     /**
      * The set of (in student mode only enabled) tree algorithms.
@@ -64,19 +69,14 @@ public class DSALExercises {
     private static final Set<String> TREE_ALGORITHMS;
 
     /**
-     * The version of this program.
-     */
-    private static final String VERSION;
-
-    /**
      * The set of those graph algorithms working on undirected graphs.
      */
     private static final Set<String> UNDIRECTED_GRAPH_ALGORITHMS;
 
     /**
-     * The set of those graph algorithms needing a start node.
+     * The version of this program.
      */
-    private static final Set<String> GRAPH_ALGORITHMS_WITH_START_NODE;
+    private static final String VERSION;
     
     static {
         VERSION = "1.0.1";
@@ -676,6 +676,20 @@ public class DSALExercises {
     }
 
     /**
+     * @return The set of (in student mode only enabled) dynamic programming algorithms.
+     */
+    private static Set<String> initDynamicProgrammingAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.KNAPSACK.enabled) {
+            res.add(Algorithm.KNAPSACK.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.LCS.enabled) {
+            res.add(Algorithm.LCS.name);
+        }
+        return res;
+    }
+    
+    /**
      * @return The set of (in student mode only enabled) geometric algorithms.
      */
     private static Set<String> initGeometricAlgorithms() {
@@ -685,7 +699,7 @@ public class DSALExercises {
         }
         return res;
     }
-    
+
     /**
      * @return The set of (in student mode only enabled) graph algorithms.
      */
@@ -714,17 +728,6 @@ public class DSALExercises {
         if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
             res.add(Algorithm.DIJKSTRA.name);
         }
-        if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
-            res.add(Algorithm.PRIM.name);
-        }
-        return res;
-    }
-
-    /**
-     * @return The set of (in student mode only enabled) graph algorithms working on undirected graphs.
-     */
-    private static Set<String> initUndirectedGraphAlgorithms() {
-        Set<String> res = new LinkedHashSet<String>();
         if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
             res.add(Algorithm.PRIM.name);
         }
@@ -850,15 +853,12 @@ public class DSALExercises {
     }
 
     /**
-     * @return The set of (in student mode only enabled) dynamic programming algorithms.
+     * @return The set of (in student mode only enabled) graph algorithms working on undirected graphs.
      */
-    private static Set<String> initDynamicProgrammingAlgorithms() {
+    private static Set<String> initUndirectedGraphAlgorithms() {
         Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.KNAPSACK.enabled) {
-            res.add(Algorithm.KNAPSACK.name);
-        }
-        if (!DSALExercises.STUDENT_MODE || Algorithm.LCS.enabled) {
-            res.add(Algorithm.LCS.name);
+        if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
+            res.add(Algorithm.PRIM.name);
         }
         return res;
     }
@@ -1884,6 +1884,40 @@ public class DSALExercises {
         ),
 
         /**
+         * Dynamic programming based algorithm to find the maximum value of the item fitting into a knapsack with certain capacity.
+         */
+        KNAPSACK(
+			"knapsack",
+			"Knapsack Problem Solved With Dynamic programming",
+			new String[]{
+				"Knapsack problem solved with dynamic programming.",
+				(
+				DSALExercises.STUDENT_MODE ?
+				   "TODO" :
+						"TODO"
+				)
+			},
+			false
+		),
+
+        /**
+         * Dynamic programming based algorithm to find the longest common subsequence of two strings.
+         */
+        LCS(
+			"lcs",
+			"LCS Problem Solved With Dynamic programming",
+			new String[]{
+				"LCS problem solved with dynamic programming.",
+				(
+				DSALExercises.STUDENT_MODE ?
+				   "TODO" :
+						"TODO"
+				)
+			},
+			false
+		),
+
+        /**
          * Mergesort on Integer arrays.
          */
         MERGESORT(
@@ -1951,7 +1985,7 @@ public class DSALExercises {
             },
             true
         ),
-
+        
         /**
          * Insertion and deletion in Red-Black-trees with int values.
          */
@@ -1968,8 +2002,8 @@ public class DSALExercises {
             },
             true
         ),
-
-        /**
+		
+		/**
          * Detection of strongly connected components.
          */
         SCC(
@@ -1985,7 +2019,7 @@ public class DSALExercises {
             },
             true
         ),
-        
+
         /**
          * Selectionsort on Integer arrays.
          */
@@ -2002,8 +2036,8 @@ public class DSALExercises {
             },
             true
         ),
-		
-		/**
+
+        /**
          * Detection of strongly connected components using Sharir's algorithm.
          */
         SHARIR(
@@ -2052,40 +2086,6 @@ public class DSALExercises {
 				)
 			},
 			true
-		),
-
-        /**
-         * Dynamic programming based algorithm to find the maximum value of the item fitting into a knapsack with certain capacity.
-         */
-        KNAPSACK(
-			"knapsack",
-			"Knapsack Problem Solved With Dynamic programming",
-			new String[]{
-				"Knapsack problem solved with dynamic programming.",
-				(
-				DSALExercises.STUDENT_MODE ?
-				   "TODO" :
-						"TODO"
-				)
-			},
-			false
-		),
-
-        /**
-         * Dynamic programming based algorithm to find the longest common subsequence of two strings.
-         */
-        LCS(
-			"lcs",
-			"LCS Problem Solved With Dynamic programming",
-			new String[]{
-				"LCS problem solved with dynamic programming.",
-				(
-				DSALExercises.STUDENT_MODE ?
-				   "TODO" :
-						"TODO"
-				)
-			},
-			false
 		);
 
         /**
@@ -2144,6 +2144,16 @@ public class DSALExercises {
         ),
 
         /**
+         * The capacity used for several purposes. Its use depends on the algorithm.
+         */
+        CAPACITY(
+            "-c",
+            "Capacity",
+            "Used to specify the capacity (a certain limit which should not be exceeded), e.g., the capacity of a knapsack. Its use depends on the chosen algorithm.",
+            true
+        ),
+
+        /**
          * Degree (e.g., of a B-tree).
          */
         DEGREE("-d", "Degree", "Used to specify the degree, e.g., of a B-tree. Not relevant for all algorithms.", true),
@@ -2167,16 +2177,6 @@ public class DSALExercises {
             "-l",
             "Length",
             "Used to specify a length, e.g., of an array. Its use depends on the chosen algorithm.",
-            true
-        ),
-
-        /**
-         * The capacity used for several purposes. Its use depends on the algorithm.
-         */
-        CAPACITY(
-            "-c",
-            "Capacity",
-            "Used to specify the capacity (a certain limit which should not be exceeded), e.g., the capacity of a knapsack. Its use depends on the chosen algorithm.",
             true
         ),
 

@@ -122,138 +122,6 @@ public abstract class GraphAlgorithms {
     }
 
     /**
-     * @param gen A random number generator.
-     * @param max The maximum number of additional edges.
-     * @return A random number between 0 and max, most likely to be max / 2.
-     */
-    private static int randomNumOfEdges(Random gen, int max) {
-        int res = max / 2;
-        if (gen.nextBoolean()) {
-            while (res < max && gen.nextInt(3) == 0) {
-                res++;
-            }
-        } else {
-            while (res > 0 && gen.nextInt(3) == 0) {
-                res--;
-            }
-        }
-        return res;
-    }
-
-    /**
-     * @param gen Random number generator.
-     * @return A random non-negative edge value.
-     */
-    private static int randomEdgeValue(Random gen) {
-        int value = 1;
-        while (gen.nextInt(3) > 0) {
-            value++;
-        }
-        return value;
-    }
-
-    /**
-     * @param num A non-negative number.
-     * @return A String representation of this number. 0 is A, 1 is B, 26 is AA, 27 is AB, and so on.
-     */
-    private static String toStringLabel(int num) {
-        int val = num;
-        int rem = val % 26;
-        String res = "" + (char)(65 + rem);
-        val -= rem;
-        while (val > 0) {
-            val = val / 26;
-            rem = val % 26;
-            res = ((char)(65 + rem)) + res;
-            val -= rem;
-        }
-        return res;
-    }
-
-    /**
-     * Adds a node to the graph and updates the grid layout accordingly.
-     * @param node The node to add.
-     * @param graph The graph to add the node to.
-     * @param pos The node's position in the grid layout.
-     * @param grid The grid.
-     * @param positions zThe grid layout positions.
-     * @return The grid layout position of the added node.
-     */
-    private static NodeGridPosition addNode(
-        Node<String> node,
-        Graph<String, Integer> graph,
-        Pair<Pair<Integer, Integer>, Boolean> pos,
-        Map<Pair<Integer, Integer>, Node<String>> grid,
-        Map<Node<String>, NodeGridPosition> positions
-    ) {
-        graph.addNode(node);
-        grid.put(pos.x, node);
-        int x = pos.x.x;
-        int y = pos.x.y;
-        NodeGridPosition gridPos = new NodeGridPosition(pos.x.x, pos.x.y, pos.y);
-        positions.put(node, gridPos);
-        Pair<Integer, Integer> nextPos = new Pair<Integer, Integer>(x, y - 1);
-        Node<String> nextNode = grid.get(nextPos);
-        if (nextNode != null) {
-            NodeGridPosition nextGridPos = positions.get(nextNode);
-            gridPos.north = nextGridPos;
-            nextGridPos.south = gridPos;
-        }
-        nextPos = new Pair<Integer, Integer>(x + 1, y);
-        nextNode = grid.get(nextPos);
-        if (nextNode != null) {
-            NodeGridPosition nextGridPos = positions.get(nextNode);
-            gridPos.east = nextGridPos;
-            nextGridPos.west = gridPos;
-        }
-        nextPos = new Pair<Integer, Integer>(x, y + 1);
-        nextNode = grid.get(nextPos);
-        if (nextNode != null) {
-            NodeGridPosition nextGridPos = positions.get(nextNode);
-            gridPos.south = nextGridPos;
-            nextGridPos.north = gridPos;
-        }
-        nextPos = new Pair<Integer, Integer>(x - 1, y);
-        nextNode = grid.get(nextPos);
-        if (nextNode != null) {
-            NodeGridPosition nextGridPos = positions.get(nextNode);
-            gridPos.west = nextGridPos;
-            nextGridPos.east = gridPos;
-        }
-        if (pos.y) {
-            nextPos = new Pair<Integer, Integer>(x + 1, y - 1);
-            nextNode = grid.get(nextPos);
-            if (nextNode != null) {
-                NodeGridPosition nextGridPos = positions.get(nextNode);
-                gridPos.northeast = nextGridPos;
-                nextGridPos.southwest = gridPos;
-            }
-            nextPos = new Pair<Integer, Integer>(x + 1, y + 1);
-            nextNode = grid.get(nextPos);
-            if (nextNode != null) {
-                NodeGridPosition nextGridPos = positions.get(nextNode);
-                gridPos.southeast = nextGridPos;
-                nextGridPos.northwest = gridPos;
-            }
-            nextPos = new Pair<Integer, Integer>(x - 1, y + 1);
-            nextNode = grid.get(nextPos);
-            if (nextNode != null) {
-                NodeGridPosition nextGridPos = positions.get(nextNode);
-                gridPos.southwest = nextGridPos;
-                nextGridPos.northeast = gridPos;
-            }
-            nextPos = new Pair<Integer, Integer>(x - 1, y - 1);
-            nextNode = grid.get(nextPos);
-            if (nextNode != null) {
-                NodeGridPosition nextGridPos = positions.get(nextNode);
-                gridPos.northwest = nextGridPos;
-                nextGridPos.southeast = gridPos;
-            }
-        }
-        return gridPos;
-    }
-
-    /**
      * Prints exercise and solution for the Dijkstra Algorithm.
      * @param graph The graph.
      * @param start The start node.
@@ -428,7 +296,7 @@ public abstract class GraphAlgorithms {
         solWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
     }
-    
+
     /**
      * Prints exercise and solution for the Floyd Algorithm.
      * @param graph The graph.
@@ -654,7 +522,7 @@ public abstract class GraphAlgorithms {
         TikZUtils.printArrayStretch(1.0, exWriter);
         TikZUtils.printArrayStretch(1.0, solWriter);
     }
-    
+
     /**
      * Prints exercise and solution for the Ford-Fulkerson method. Uses the Edmonds-Karp Algorithm for selecting 
      * augmenting paths.
@@ -884,7 +752,90 @@ public abstract class GraphAlgorithms {
         }
         return toHighlight;
     }
-
+    
+    /**
+     * Adds a node to the graph and updates the grid layout accordingly.
+     * @param node The node to add.
+     * @param graph The graph to add the node to.
+     * @param pos The node's position in the grid layout.
+     * @param grid The grid.
+     * @param positions zThe grid layout positions.
+     * @return The grid layout position of the added node.
+     */
+    private static NodeGridPosition addNode(
+        Node<String> node,
+        Graph<String, Integer> graph,
+        Pair<Pair<Integer, Integer>, Boolean> pos,
+        Map<Pair<Integer, Integer>, Node<String>> grid,
+        Map<Node<String>, NodeGridPosition> positions
+    ) {
+        graph.addNode(node);
+        grid.put(pos.x, node);
+        int x = pos.x.x;
+        int y = pos.x.y;
+        NodeGridPosition gridPos = new NodeGridPosition(pos.x.x, pos.x.y, pos.y);
+        positions.put(node, gridPos);
+        Pair<Integer, Integer> nextPos = new Pair<Integer, Integer>(x, y - 1);
+        Node<String> nextNode = grid.get(nextPos);
+        if (nextNode != null) {
+            NodeGridPosition nextGridPos = positions.get(nextNode);
+            gridPos.north = nextGridPos;
+            nextGridPos.south = gridPos;
+        }
+        nextPos = new Pair<Integer, Integer>(x + 1, y);
+        nextNode = grid.get(nextPos);
+        if (nextNode != null) {
+            NodeGridPosition nextGridPos = positions.get(nextNode);
+            gridPos.east = nextGridPos;
+            nextGridPos.west = gridPos;
+        }
+        nextPos = new Pair<Integer, Integer>(x, y + 1);
+        nextNode = grid.get(nextPos);
+        if (nextNode != null) {
+            NodeGridPosition nextGridPos = positions.get(nextNode);
+            gridPos.south = nextGridPos;
+            nextGridPos.north = gridPos;
+        }
+        nextPos = new Pair<Integer, Integer>(x - 1, y);
+        nextNode = grid.get(nextPos);
+        if (nextNode != null) {
+            NodeGridPosition nextGridPos = positions.get(nextNode);
+            gridPos.west = nextGridPos;
+            nextGridPos.east = gridPos;
+        }
+        if (pos.y) {
+            nextPos = new Pair<Integer, Integer>(x + 1, y - 1);
+            nextNode = grid.get(nextPos);
+            if (nextNode != null) {
+                NodeGridPosition nextGridPos = positions.get(nextNode);
+                gridPos.northeast = nextGridPos;
+                nextGridPos.southwest = gridPos;
+            }
+            nextPos = new Pair<Integer, Integer>(x + 1, y + 1);
+            nextNode = grid.get(nextPos);
+            if (nextNode != null) {
+                NodeGridPosition nextGridPos = positions.get(nextNode);
+                gridPos.southeast = nextGridPos;
+                nextGridPos.northwest = gridPos;
+            }
+            nextPos = new Pair<Integer, Integer>(x - 1, y + 1);
+            nextNode = grid.get(nextPos);
+            if (nextNode != null) {
+                NodeGridPosition nextGridPos = positions.get(nextNode);
+                gridPos.southwest = nextGridPos;
+                nextGridPos.northeast = gridPos;
+            }
+            nextPos = new Pair<Integer, Integer>(x - 1, y - 1);
+            nextNode = grid.get(nextPos);
+            if (nextNode != null) {
+                NodeGridPosition nextGridPos = positions.get(nextNode);
+                gridPos.northwest = nextGridPos;
+                nextGridPos.southeast = gridPos;
+            }
+        }
+        return gridPos;
+    }
+    
     /**
      * @param graph A flow network.
      * @param path A path in the specified flow network from source to sink.
@@ -987,6 +938,37 @@ public abstract class GraphAlgorithms {
     }
 
     /**
+     * @param gen Random number generator.
+     * @return A random non-negative edge value.
+     */
+    private static int randomEdgeValue(Random gen) {
+        int value = 1;
+        while (gen.nextInt(3) > 0) {
+            value++;
+        }
+        return value;
+    }
+
+    /**
+     * @param gen A random number generator.
+     * @param max The maximum number of additional edges.
+     * @return A random number between 0 and max, most likely to be max / 2.
+     */
+    private static int randomNumOfEdges(Random gen, int max) {
+        int res = max / 2;
+        if (gen.nextBoolean()) {
+            while (res < max && gen.nextInt(3) == 0) {
+                res++;
+            }
+        } else {
+            while (res > 0 && gen.nextInt(3) == 0) {
+                res--;
+            }
+        }
+        return res;
+    }
+
+    /**
      * @param graph A residual graph for a flow network.
      * @param source The source of the flow network.
      * @param sink The sink of the flow network.
@@ -1043,6 +1025,24 @@ public abstract class GraphAlgorithms {
                 }
             }
             cur = next;
+        }
+        return res;
+    }
+
+    /**
+     * @param num A non-negative number.
+     * @return A String representation of this number. 0 is A, 1 is B, 26 is AA, 27 is AB, and so on.
+     */
+    private static String toStringLabel(int num) {
+        int val = num;
+        int rem = val % 26;
+        String res = "" + (char)(65 + rem);
+        val -= rem;
+        while (val > 0) {
+            val = val / 26;
+            rem = val % 26;
+            res = ((char)(65 + rem)) + res;
+            val -= rem;
         }
         return res;
     }
