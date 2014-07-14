@@ -40,8 +40,8 @@ public class DSALExercises {
     /**
      * Limit for random numbers in student mode.
      */
-    private static final int NUMBER_LIMIT;
-    
+    public static final int NUMBER_LIMIT;
+
     /**
      * Array containing all prime numbers between 5 and 101.
      */
@@ -67,6 +67,16 @@ public class DSALExercises {
      * The version of this program.
      */
     private static final String VERSION;
+
+    /**
+     * The set of those graph algorithms working on undirected graphs.
+     */
+    private static final Set<String> UNDIRECTED_GRAPH_ALGORITHMS;
+
+    /**
+     * The set of those graph algorithms needing a start node.
+     */
+    private static final Set<String> GRAPH_ALGORITHMS_WITH_START_NODE;
     
     static {
         VERSION = "1.0.1";
@@ -78,6 +88,8 @@ public class DSALExercises {
         TREE_ALGORITHMS = DSALExercises.initTreeAlgorithms();
         GRID_GRAPH_ALGORITHMS = DSALExercises.initGridGraphAlgorithms();
         GRAPH_ALGORITHMS = DSALExercises.initGraphAlgorithms();
+        UNDIRECTED_GRAPH_ALGORITHMS = DSALExercises.initUndirectedGraphAlgorithms();
+        GRAPH_ALGORITHMS_WITH_START_NODE = DSALExercises.initGraphAlgorithmsWithStartNode();
         GEOMETRIC_ALGORITHMS = DSALExercises.initGeometricAlgorithms();
         HELP = DSALExercises.initHelpText();
     }
@@ -682,18 +694,43 @@ public class DSALExercises {
         if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
             res.add(Algorithm.DIJKSTRA.name);
         }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
+        if (!DSALExercises.STUDENT_MODE || Algorithm.FLOYD.enabled) {
             res.add(Algorithm.FLOYD.name);
         }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
+        if (!DSALExercises.STUDENT_MODE || Algorithm.WARSHALL.enabled) {
             res.add(Algorithm.WARSHALL.name);
         }
-		if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
+        if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
             res.add(Algorithm.PRIM.name);
         }
         return res;
     }
-    
+
+    /**
+     * @return The set of (in student mode only enabled) graph algorithms needing a start node.
+     */
+    private static Set<String> initGraphAlgorithmsWithStartNode() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+            res.add(Algorithm.DIJKSTRA.name);
+        }
+        if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
+            res.add(Algorithm.PRIM.name);
+        }
+        return res;
+    }
+
+    /**
+     * @return The set of (in student mode only enabled) graph algorithms working on undirected graphs.
+     */
+    private static Set<String> initUndirectedGraphAlgorithms() {
+        Set<String> res = new LinkedHashSet<String>();
+        if (!DSALExercises.STUDENT_MODE || Algorithm.PRIM.enabled) {
+            res.add(Algorithm.PRIM.name);
+        }
+        return res;
+    }
+
     /**
      * @return The set of (in student mode only enabled) grid graph algorithms.
      */
@@ -1184,8 +1221,9 @@ public class DSALExercises {
             }
             return sparseAdjacencyMatrix;
         } else if (DSALExercises.GRAPH_ALGORITHMS.contains(alg)) {
-            Graph<String, Integer> graph = new Graph<String, Integer>();
+            final Graph<String, Integer> graph;
             if (options.containsKey(Flag.SOURCE)) {
+                graph = new Graph<String, Integer>();
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                     graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
                 } catch (IOException e) {
@@ -1193,8 +1231,21 @@ public class DSALExercises {
                     System.exit(1);
                 }
             } else if (DSALExercises.STUDENT_MODE) {
-                throw new UnsupportedOperationException("Not yet implemented!");
+                Random gen = new Random();
+                final int numOfNodes;
+                if (options.containsKey(Flag.LENGTH)) {
+                    numOfNodes = Integer.parseInt(options.get(Flag.LENGTH));
+                } else {
+                    numOfNodes = gen.nextInt(16) + 5;
+                }
+                graph =
+                    GraphAlgorithms.createRandomGraph(
+                        gen,
+                        numOfNodes,
+                        DSALExercises.UNDIRECTED_GRAPH_ALGORITHMS.contains(alg)
+                    );
             } else {
+                graph = new Graph<String, Integer>();
                 try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
                     graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
                 } catch (IOException e) {
@@ -1212,6 +1263,11 @@ public class DSALExercises {
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.exit(1);
+                }
+            } else if (DSALExercises.STUDENT_MODE && DSALExercises.GRAPH_ALGORITHMS_WITH_START_NODE.contains(alg)) {
+                Set<Node<String>> nodes = graph.getNodesWithLabel("A");
+                if (!nodes.isEmpty()) {
+                    node = nodes.iterator().next();
                 }
             }
             return new Pair<Graph<String, Integer>, Node<String>>(graph, node);
@@ -1616,7 +1672,7 @@ public class DSALExercises {
                             "Parameters are: m (size of the hashmap)"
                 )
             },
-            false
+            true
         ),
 		
 		/**
@@ -1633,7 +1689,7 @@ public class DSALExercises {
 							"TODO"
 				)
 			},
-			false
+			true
 		),
 		
 		/**
@@ -1876,7 +1932,7 @@ public class DSALExercises {
 							"TODO"
 				)
 			},
-			false
+			true
 		),
 
         /**
@@ -1995,7 +2051,7 @@ public class DSALExercises {
 						"TODO"
 				)
 			},
-			false
+			true
 		),
 
         /**

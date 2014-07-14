@@ -111,6 +111,8 @@ public abstract class TikZUtils {
         writer.write("\\documentclass{article}");
         writer.newLine();
         writer.newLine();
+        writer.write("\\usepackage[table]{xcolor}");
+        writer.newLine();
         writer.write("\\usepackage[a4paper,margin=2cm]{geometry}");
         writer.newLine();
         writer.write("\\usepackage{tikz}");
@@ -121,8 +123,6 @@ public abstract class TikZUtils {
         );
         writer.newLine();
         writer.write("\\usepackage{tikz-qtree}");
-        writer.newLine();
-        writer.write("\\usepackage[table]{xcolor}");
         writer.newLine();
         writer.write("\\usepackage{array}");
         writer.newLine();

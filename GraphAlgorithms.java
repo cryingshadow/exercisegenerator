@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Class offering methods for graph algorithms.
@@ -22,7 +23,236 @@ public abstract class GraphAlgorithms {
      * The name of a residual graph.
      */
     private static final String RESIDUAL_GRAPH = "Restnetzwerk";
-    
+
+    /**
+     * @param gen A random number generator.
+     * @param numOfNodes The number of nodes in the returned graph.
+     * @param undirected Should the graph be undirected?
+     * @return A random graph with <code>numOfNodes</code> nodes labeled with Strings (each node has a unique label 
+     *         and there is a node with label A) and edges labeled with Integers.
+     */
+    public static Graph<String, Integer> createRandomGraph(Random gen, int numOfNodes, boolean undirected) {
+        if (numOfNodes < 0) {
+            throw new IllegalArgumentException("Number of nodes must not be negative!");
+        }
+        Graph<String, Integer> graph = new Graph<String, Integer>();
+        Map<Pair<Integer, Integer>, Node<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
+        if (numOfNodes == 0) {
+            graph.setGrid(grid);
+            return graph;
+        }
+        Map<Node<String>, NodeGridPosition> positions = new LinkedHashMap<Node<String>, NodeGridPosition>();
+        Node<String> start = new Node<String>("A");
+        Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
+        boolean startDiagonal = gen.nextBoolean();
+        GraphAlgorithms.addNode(
+            start,
+            graph,
+            new Pair<Pair<Integer, Integer>, Boolean>(startPos, startDiagonal),
+            grid,
+            positions
+        );
+        List<Node<String>> nodesWithFreeNeighbors = new ArrayList<Node<String>>();
+        nodesWithFreeNeighbors.add(start);
+        for (int letter = 1; letter < numOfNodes; letter++) {
+            Node<String> nextNode = nodesWithFreeNeighbors.get(gen.nextInt(nodesWithFreeNeighbors.size()));
+            NodeGridPosition nextPos = positions.get(nextNode);
+            Pair<Pair<Integer, Integer>, Boolean> toAddPos = nextPos.randomFreePosition(gen);
+            Node<String> toAddNode = new Node<String>(GraphAlgorithms.toStringLabel(letter));
+            NodeGridPosition gridPos = GraphAlgorithms.addNode(toAddNode, graph, toAddPos, grid, positions);
+            int value = GraphAlgorithms.randomEdgeValue(gen);
+            graph.addEdge(nextNode, value, toAddNode);
+            if (undirected) {
+                graph.addEdge(toAddNode, value, nextNode);
+            }
+            List<Pair<Pair<Integer, Integer>, Boolean>> existing = gridPos.getExistingPositions();
+            List<Pair<Node<String>, Node<String>>> freeNodePairs = new ArrayList<Pair<Node<String>, Node<String>>>();
+            for (Pair<Pair<Integer, Integer>, Boolean> other : existing) {
+                Node<String> otherNode = grid.get(other.x);
+                if (otherNode.equals(nextNode)) {
+                    if (!undirected) {
+                        freeNodePairs.add(new Pair<Node<String>, Node<String>>(toAddNode, otherNode));
+                    }
+                } else {
+                    freeNodePairs.add(new Pair<Node<String>, Node<String>>(toAddNode, otherNode));
+                    if (!undirected) {
+                        freeNodePairs.add(new Pair<Node<String>, Node<String>>(otherNode, toAddNode));
+                    }
+                }
+            }
+            for (int numEdges = GraphAlgorithms.randomNumOfEdges(gen, freeNodePairs.size()); numEdges > 0; numEdges--) {
+                int pairIndex = gen.nextInt(freeNodePairs.size());
+                Pair<Node<String>, Node<String>> pair = freeNodePairs.remove(pairIndex);
+                int nextValue = GraphAlgorithms.randomEdgeValue(gen);
+                graph.addEdge(pair.x, nextValue, pair.y);
+                if (undirected) {
+                    graph.addEdge(pair.y, nextValue, pair.x);
+                }
+            }
+            for (Pair<Pair<Integer, Integer>, Boolean> neighborPos : gridPos.getExistingPositions()) {
+                Node<String> neighborNode = grid.get(neighborPos.x);
+                if (!positions.get(neighborNode).hasFreePosition()) {
+                    nodesWithFreeNeighbors.remove(neighborNode);
+                }
+            }
+            if (gridPos.hasFreePosition()) {
+                nodesWithFreeNeighbors.add(toAddNode);
+            }
+        }
+        // adjust grid (non-negative coordinates, sum of coordinates even -> has diagonals
+        int minX = 0;
+        int minY = 0;
+        for (Pair<Integer, Integer> pair : grid.keySet()) {
+            minX = Math.min(minX, pair.x);
+            minY = Math.min(minY, pair.y);
+        }
+        if (
+            (startDiagonal && (startPos.x - minX + startPos.y - minY) % 2 == 1)
+            || (!startDiagonal && (startPos.x - minX + startPos.y - minY) % 2 == 0)
+        ) {
+            minX--;
+        }
+        Map<Pair<Integer, Integer>, Node<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
+        for (Entry<Pair<Integer, Integer>, Node<String>> entry : grid.entrySet()) {
+            Pair<Integer, Integer> key = entry.getKey();
+            newGrid.put(new Pair<Integer, Integer>(key.x - minX, key.y - minY), entry.getValue());
+        }
+        graph.setGrid(newGrid);
+        return graph;
+    }
+
+    /**
+     * @param gen A random number generator.
+     * @param max The maximum number of additional edges.
+     * @return A random number between 0 and max, most likely to be max / 2.
+     */
+    private static int randomNumOfEdges(Random gen, int max) {
+        int res = max / 2;
+        if (gen.nextBoolean()) {
+            while (res < max && gen.nextInt(3) == 0) {
+                res++;
+            }
+        } else {
+            while (res > 0 && gen.nextInt(3) == 0) {
+                res--;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * @param gen Random number generator.
+     * @return A random non-negative edge value.
+     */
+    private static int randomEdgeValue(Random gen) {
+        int value = 1;
+        while (gen.nextInt(3) > 0) {
+            value++;
+        }
+        return value;
+    }
+
+    /**
+     * @param num A non-negative number.
+     * @return A String representation of this number. 0 is A, 1 is B, 26 is AA, 27 is AB, and so on.
+     */
+    private static String toStringLabel(int num) {
+        int val = num;
+        int rem = val % 26;
+        String res = "" + (char)(65 + rem);
+        val -= rem;
+        while (val > 0) {
+            val = val / 26;
+            rem = val % 26;
+            res = ((char)(65 + rem)) + res;
+            val -= rem;
+        }
+        return res;
+    }
+
+    /**
+     * Adds a node to the graph and updates the grid layout accordingly.
+     * @param node The node to add.
+     * @param graph The graph to add the node to.
+     * @param pos The node's position in the grid layout.
+     * @param grid The grid.
+     * @param positions zThe grid layout positions.
+     * @return The grid layout position of the added node.
+     */
+    private static NodeGridPosition addNode(
+        Node<String> node,
+        Graph<String, Integer> graph,
+        Pair<Pair<Integer, Integer>, Boolean> pos,
+        Map<Pair<Integer, Integer>, Node<String>> grid,
+        Map<Node<String>, NodeGridPosition> positions
+    ) {
+        graph.addNode(node);
+        grid.put(pos.x, node);
+        int x = pos.x.x;
+        int y = pos.x.y;
+        NodeGridPosition gridPos = new NodeGridPosition(pos.x.x, pos.x.y, pos.y);
+        positions.put(node, gridPos);
+        Pair<Integer, Integer> nextPos = new Pair<Integer, Integer>(x, y - 1);
+        Node<String> nextNode = grid.get(nextPos);
+        if (nextNode != null) {
+            NodeGridPosition nextGridPos = positions.get(nextNode);
+            gridPos.north = nextGridPos;
+            nextGridPos.south = gridPos;
+        }
+        nextPos = new Pair<Integer, Integer>(x + 1, y);
+        nextNode = grid.get(nextPos);
+        if (nextNode != null) {
+            NodeGridPosition nextGridPos = positions.get(nextNode);
+            gridPos.east = nextGridPos;
+            nextGridPos.west = gridPos;
+        }
+        nextPos = new Pair<Integer, Integer>(x, y + 1);
+        nextNode = grid.get(nextPos);
+        if (nextNode != null) {
+            NodeGridPosition nextGridPos = positions.get(nextNode);
+            gridPos.south = nextGridPos;
+            nextGridPos.north = gridPos;
+        }
+        nextPos = new Pair<Integer, Integer>(x - 1, y);
+        nextNode = grid.get(nextPos);
+        if (nextNode != null) {
+            NodeGridPosition nextGridPos = positions.get(nextNode);
+            gridPos.west = nextGridPos;
+            nextGridPos.east = gridPos;
+        }
+        if (pos.y) {
+            nextPos = new Pair<Integer, Integer>(x + 1, y - 1);
+            nextNode = grid.get(nextPos);
+            if (nextNode != null) {
+                NodeGridPosition nextGridPos = positions.get(nextNode);
+                gridPos.northeast = nextGridPos;
+                nextGridPos.southwest = gridPos;
+            }
+            nextPos = new Pair<Integer, Integer>(x + 1, y + 1);
+            nextNode = grid.get(nextPos);
+            if (nextNode != null) {
+                NodeGridPosition nextGridPos = positions.get(nextNode);
+                gridPos.southeast = nextGridPos;
+                nextGridPos.northwest = gridPos;
+            }
+            nextPos = new Pair<Integer, Integer>(x - 1, y + 1);
+            nextNode = grid.get(nextPos);
+            if (nextNode != null) {
+                NodeGridPosition nextGridPos = positions.get(nextNode);
+                gridPos.southwest = nextGridPos;
+                nextGridPos.northeast = gridPos;
+            }
+            nextPos = new Pair<Integer, Integer>(x - 1, y - 1);
+            nextNode = grid.get(nextPos);
+            if (nextNode != null) {
+                NodeGridPosition nextGridPos = positions.get(nextNode);
+                gridPos.northwest = nextGridPos;
+                nextGridPos.southeast = gridPos;
+            }
+        }
+        return gridPos;
+    }
+
     /**
      * Prints exercise and solution for the Dijkstra Algorithm.
      * @param graph The graph.
@@ -216,7 +446,7 @@ public abstract class GraphAlgorithms {
         BufferedWriter exWriter,
         BufferedWriter solWriter
     ) throws IOException {
-        final int tableCount = 2;
+        final int tableCount = DSALExercises.STUDENT_MODE ? 1 : 2;
         final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
         final int size = nodes.size();
         final ArrayList<String[][]> exercises = new ArrayList<String[][]>();
