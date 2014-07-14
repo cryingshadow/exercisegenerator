@@ -81,14 +81,13 @@ public abstract class DynamicProgramming {
         while (column > 0 && row > 0) {
             if (C[row][column] != C[row-1][column]) {
                 itemsToChoose.add(new Integer(row));
-                solutions[row+1][column+1] = "$\\nwarrow$ " + solutions[row+1][column+1];
                 Integer chosenWeight = weights[row-1];
-                row--;
-                for (int i = 0; i < chosenWeight-1; i++) {
-                    column--;
+                for (int i = 0; i < chosenWeight; i++) {
                     solutions[row+1][column+1] = "$\\leftarrow$ " + solutions[row+1][column+1];
+                    column--;
                 }
-                column--;
+                solutions[row+1][column+1] = "$\\uparrow$ " + solutions[row+1][column+1];
+                row--;
             } else {
                 solutions[row+1][column+1] = "$\\uparrow$ " + solutions[row+1][column+1];
                 row--;
@@ -133,7 +132,7 @@ public abstract class DynamicProgramming {
         solWriter.write(" Gegenstand mitgenommen werden.");
         solWriter.newLine();
         solWriter.newLine();
-        solWriter.write(" Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Alle Zeilen die einen Pfeil nach links oben enthalten");
+        solWriter.write(" Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Alle Zeilen die einen Pfeil nach links enthalten");
         solWriter.write(" geh\\\"oren zu einem Gegenstand der mitgenommen wird. Die Pfeile zeigen dabei an wie der folgende Algorithmus durch");
         solWriter.write(" die Tabelle läuft:");
         solWriter.newLine();
@@ -144,11 +143,11 @@ public abstract class DynamicProgramming {
         solWriter.newLine();
         solWriter.write("while (i > 0 && j > 0) {");
         solWriter.newLine();
+        solWriter.write("    if (C[i][j] != C[i-1][j])");
+        solWriter.newLine();
+        solWriter.write("        for (int k = 0; k < w[i]; k++) j--;");
+        solWriter.newLine();
         solWriter.write("    i--;");
-        solWriter.newLine();
-        solWriter.write("    if (C[i+1][j] != C[i][j])");
-        solWriter.newLine();
-        solWriter.write("        while (j > c[i+1]) j--;");
         solWriter.newLine();
         solWriter.write("}");
         solWriter.newLine();
