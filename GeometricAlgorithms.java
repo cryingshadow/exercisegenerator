@@ -12,7 +12,7 @@ public abstract class GeometricAlgorithms {
     throws IOException {
         // find reference point as starting point
         int refIndex = 0;
-        int count = 0;
+        int count = 1;
         Pair<Double,Double> refPoint = pointSet.get(0);
         for(int i = 1; i<pointSet.size(); ++i) {
             if(pointSet.get(i).y < refPoint.y || (pointSet.get(i).y == refPoint.y && pointSet.get(i).x < refPoint.x) ) {
@@ -25,6 +25,23 @@ public abstract class GeometricAlgorithms {
         
         // sort Array of Points according to determinant with reference to refPoint
         ArrayList<Pair<Double,Double>> tmp = pointAscendingSort(pointSet, refIndex);
+        
+        // find missing points
+        ArrayList<Pair<Double,Double>> duplicates = new ArrayList<Pair<Double,Double>>();
+        for(int i = 0; i < pointSet.size(); ++i) {
+            if(!tmp.contains(pointSet.get(i))) {
+                duplicates.add(pointSet.get(i));
+            }
+        }
+        
+        printPointset(tmp,0,duplicates,solWriter);
+        
+        System.out.println("Sorted Array:");
+        int q = 0;
+        while( q < tmp.size()) {
+            System.out.println(tmp.get(q).x + "," + tmp.get(q).y);
+            ++q;
+        }
         
         boolean oneOnly = false;
         Stack<Pair<Double,Double>> hull = new Stack<Pair<Double,Double>>();
@@ -54,7 +71,7 @@ public abstract class GeometricAlgorithms {
             }
             oneOnly = false;
             hull.push(tmp.get(i));
-            printPartialHull(pointSet,hull,solWriter);
+            printPartialHull(tmp,hull,duplicates,solWriter);
             if(count%2 == 1) {
                 solWriter.newLine();
                 solWriter.write("\\\\");
@@ -65,7 +82,7 @@ public abstract class GeometricAlgorithms {
         
         // add last edge
         hull.push(refPoint);
-        printPartialHull(pointSet,hull,solWriter);
+        printPartialHull(tmp,hull,duplicates,solWriter);
         
         return count;
     }
@@ -112,14 +129,19 @@ public abstract class GeometricAlgorithms {
                         ++index;
                         tmp2 = new Pair<Double,Double>(result.get(index).x-result.get(0).x, result.get(index).y-result.get(0).y);
                     }
+                    tmp2 = new Pair<Double,Double>(result.get(index).x-result.get(0).x, result.get(index).y-result.get(0).y);
                     // remove duplicates - take the outer one (larger absolute sum of x and y component)
-                    if (realPolarAngle(test, tmp2) == currAngle) {
+                    System.out.println("Check for duplicates of current Angle: " + currAngle + " and " + realPolarAngle(test, tmp2) + " : " + (Double.compare(realPolarAngle(test, tmp2),currAngle) == 0) );
+                    if (Double.compare(realPolarAngle(test, tmp2),currAngle) == 0) {
+                        System.out.println("Duplicate angle.");
                         // compare coordinates
                         Double aAbsCoord = Math.abs(pointSet.get(i).x) + Math.abs(pointSet.get(i).y);
                         Double bAbsCoord = Math.abs(result.get(index).x) + Math.abs(result.get(index).y);
                         if (aAbsCoord > bAbsCoord) {
+                            System.out.println("Remove " + index);
                             result.remove(index);
                         } else {
+                            System.out.println("Do just not insert.");
                             noAdd = true;
                         }
                     }
@@ -161,24 +183,20 @@ public abstract class GeometricAlgorithms {
     public static void printConvexHull(ArrayList<Pair<Double,Double>> pointSet, BufferedWriter exWriter, BufferedWriter solWriter)
     throws IOException {
         exWriter.write("Berechnen Sie die konvexe H\\\"ulle der folgenden Punktmenge. ");
-        exWriter.write("Benutzen Sie daf\\\"ur Grahams' Scan und geben Sie die Teilschritte");
-        exWriter.write(" der \\\"au{\\ss}eren Schleife an.\\\\");
+        exWriter.write("Benutzen Sie daf\\\"ur Grahams' Scan wie in der Vorlesung vorgestellt ");
+        exWriter.write("und geben Sie die Teilschritte nach jedem Schritt der Iteration");
+        exWriter.write(" (nach Zeile 17 im Code) an. Markieren Sie Punkte, die nicht betrachtet werden.\\\\");
         exWriter.newLine();
         exWriter.write("\\\\");
         exWriter.newLine();
         exWriter.newLine();
-        //TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        //printPointset(pointSet, exWriter);
-        //exWriter.newLine();
-        //TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-        
         
         // solution
         int count = computeConvexHull(pointSet, solWriter);
         boolean one = false;
         
         while(count > 0) {
-            printPointset(pointSet, exWriter);
+            printPointset(pointSet, -1 , null, exWriter);
             if(one) {
                 exWriter.newLine();
                 exWriter.write("\\\\");
@@ -190,27 +208,51 @@ public abstract class GeometricAlgorithms {
     }
     
     
-    public static void printPointset(ArrayList<Pair<Double,Double>> pointSet, BufferedWriter writer) throws IOException {
+    public static void printPointset(ArrayList<Pair<Double,Double>> pointSet, int reference, ArrayList<Pair<Double,Double>> duplicates, BufferedWriter writer) throws IOException {
         writer.write("\\resizebox{.45\\textwidth}{!}{");
         writer.newLine();
         TikZUtils.printTikzBeginning(TikZStyle.POINTSET, writer);
         writer.newLine();
         for(int i = 0; i < pointSet.size(); ++i) {
-            writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet};");
-            writer.newLine();
+            if(reference >= 0) {
+                writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet "+ i +"};");
+                writer.newLine();
+            } else {
+                writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet};");
+                writer.newLine();
+            }
+        }
+        if(reference >= 0) {
+            for(int i = 0; i < pointSet.size(); ++i) {
+                writer.write("\\draw ("+pointSet.get(reference).x+","+pointSet.get(reference).y+")--("+pointSet.get(i).x+","+pointSet.get(i).y+");");
+                writer.newLine();
+            }
+        }
+        if(duplicates != null) {
+            for(int i = 0; i < duplicates.size(); ++i) {
+                writer.write("\\node at (" + duplicates.get(i).x + ", " + duplicates.get(i).y + ") {$\\circ$};");
+                writer.newLine();
+            }
         }
         TikZUtils.printTikzEnd(writer);
         writer.newLine();
         writer.write("}");
     }
     
-    public static void printPartialHull(ArrayList<Pair<Double,Double>> pointSet, Stack<Pair<Double,Double>> hull, BufferedWriter writer) throws IOException {
+    public static void printPartialHull(ArrayList<Pair<Double,Double>> pointSet, Stack<Pair<Double,Double>> hull, ArrayList<Pair<Double,Double>> duplicates, BufferedWriter writer) throws IOException {
         writer.write("\\resizebox{.45\\textwidth}{!}{");
         writer.newLine();
         TikZUtils.printTikzBeginning(TikZStyle.POINTSET, writer);
         for(int i = 0; i < pointSet.size(); ++i) {
             writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet};");
             writer.newLine();
+        }
+        
+        if(duplicates != null) {
+            for(int i = 0; i < duplicates.size(); ++i) {
+                writer.write("\\node at (" + duplicates.get(i).x + ", " + duplicates.get(i).y + ") {$\\circ$};");
+                writer.newLine();
+            }
         }
         
         ArrayList<String> edges = new ArrayList<String>();
