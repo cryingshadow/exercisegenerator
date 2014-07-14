@@ -43,6 +43,13 @@ enum TikZStyle {
     ),
 
     /**
+     * Graph style.
+     */
+    POINTSET(
+    "[framed,draw=black]"
+    ),
+
+    /**
      * Symmetric graph style.
      */
     SYM_GRAPH(
