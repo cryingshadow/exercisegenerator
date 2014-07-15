@@ -102,15 +102,15 @@ public abstract class DynamicProgramming {
         exWriter.write(" des Rucksackproblems mit dynamischer Programmierung den maximalen");
         exWriter.write(" Gesamtwert der Gegenst\\\"ande die der Rucksack tragen kann (das Gesamtgewicht der mitgef\\\"uhrten");
         exWriter.write(" Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des Rucksacks).");
-        exWriter.write(" Die Gewichte seien dabei $w_1=" + weights[0] + "$");
+        exWriter.write(" Die Gewichte seien dabei $w_0=" + weights[0] + "$");
         for (int i = 1; i < n-1; i++) {
-            exWriter.write(", $w_" + (i+1) + "=" + weights[i] + "$");
+            exWriter.write(", $w_" + i + "=" + weights[i] + "$");
         }
-        exWriter.write(" und $w_" + n + "=" + weights[n-1] + "$ und die Werte $c_1=" + values[0] + "$");
+        exWriter.write(" und $w_" + (n-1) + "=" + weights[n-1] + "$ und die Werte $c_0=" + values[0] + "$");
         for (int i = 1; i < n-1; i++) {
-            exWriter.write(", $c_" + (i+1) + "=" + values[i] + "$");
+            exWriter.write(", $c_" + i + "=" + values[i] + "$");
         }
-        exWriter.write(" und $c_" + n + "=" + values[n-1] + "$.");
+        exWriter.write(" und $c_" + (n-1) + "=" + values[n-1] + "$.");
         exWriter.write(" Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} an und welche Gegenst\\\"ande");
         exWriter.write(" mitgenommen werden.");
         exWriter.newLine();
@@ -127,13 +127,13 @@ public abstract class DynamicProgramming {
             } else if (i == 0) {
                 solWriter.write(" und");
             }
-            solWriter.write(" " + itemsToChoose.get(i) + ".");
+            solWriter.write(" " + (itemsToChoose.get(i)-1) + ".");
         }
         solWriter.write(" Gegenstand mitgenommen werden.");
         solWriter.newLine();
         solWriter.newLine();
-        solWriter.write(" Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Alle Zeilen die einen Pfeil nach links enthalten");
-        solWriter.write(" geh\\\"oren zu einem Gegenstand der mitgenommen wird. Die Pfeile zeigen dabei an wie der folgende Algorithmus durch");
+        solWriter.write(" Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die $i$-te Zeile einen Pfeil nach links enth\\\"alt");
+        solWriter.write(" dann wird der $(i-1)$-te Gegenstand mitgenommen. Die Pfeile zeigen dabei an wie der folgende Algorithmus durch");
         solWriter.write(" die Tabelle läuft:");
         solWriter.newLine();
         solWriter.newLine();
