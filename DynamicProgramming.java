@@ -95,18 +95,18 @@ public abstract class DynamicProgramming {
         }
         
         // create output
-        exWriter.write("Gegeben sei ein Rucksack mit maximaler Tragkraft " + capacity);
-        exWriter.write(" sowie " + n + " Gegenst\\\"ande. Der $i$-te Gegenstand soll hierbei");
+        exWriter.write("Gegeben sei ein Rucksack mit \\textbf{maximaler Tragkraft} " + capacity);
+        exWriter.write(" sowie " + n + " \\textbf{Gegenst\\\"ande}. Der $i$-te Gegenstand soll hierbei");
         exWriter.write(" ein Gewicht von $w_i$ und einen Wert von $c_i$ haben.");
         exWriter.write(" Bestimmen Sie mit Hilfe des in der Vorlesung vorgestellten Algorithmus zum L\\\"osen");
         exWriter.write(" des Rucksackproblems mit dynamischer Programmierung den maximalen");
         exWriter.write(" Gesamtwert der Gegenst\\\"ande die der Rucksack tragen kann (das Gesamtgewicht der mitgef\\\"uhrten");
         exWriter.write(" Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des Rucksacks).");
-        exWriter.write(" Die Gewichte seien dabei $w_0=" + weights[0] + "$");
+        exWriter.write(" Die \\textbf{Gewichte} seien dabei $w_0=" + weights[0] + "$");
         for (int i = 1; i < n-1; i++) {
             exWriter.write(", $w_" + i + "=" + weights[i] + "$");
         }
-        exWriter.write(" und $w_" + (n-1) + "=" + weights[n-1] + "$ und die Werte $c_0=" + values[0] + "$");
+        exWriter.write(" und $w_" + (n-1) + "=" + weights[n-1] + "$ und die \\textbf{Werte} $c_0=" + values[0] + "$");
         for (int i = 1; i < n-1; i++) {
             exWriter.write(", $c_" + i + "=" + values[i] + "$");
         }
@@ -115,6 +115,9 @@ public abstract class DynamicProgramming {
         exWriter.write(" mitgenommen werden.");
         exWriter.newLine();
         
+        solWriter.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
+        solWriter.newLine();
+        solWriter.newLine();
         TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true);
         solWriter.newLine();
         solWriter.newLine();
@@ -134,7 +137,7 @@ public abstract class DynamicProgramming {
         solWriter.newLine();
         solWriter.write(" Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die $i$-te Zeile einen Pfeil nach links enth\\\"alt");
         solWriter.write(" dann wird der $(i-1)$-te Gegenstand mitgenommen. Die Pfeile zeigen dabei an wie der folgende Algorithmus durch");
-        solWriter.write(" die Tabelle läuft:");
+        solWriter.write(" die Tabelle l\\\"auft:");
         solWriter.newLine();
         solWriter.newLine();
         solWriter.write("\\begin{verbatim}");
