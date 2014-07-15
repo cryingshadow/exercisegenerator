@@ -655,8 +655,9 @@ public class IntRBTree {
                 if (tree.isEmpty()) {
                     writerSpace.write(
                         "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren"
-                        + " Rot-Schwarz-Baum aus und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge- "
-                        + "und L\\\"oschoperation sowie jeder Rotation an:\\\\\\\\"
+                        + " Rot-Schwarz-Baum aus und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge-"
+                        + " und L\\\"oschoperation sowie jeder Rotation an. Beachten Sie, dass rote Knoten rund"
+                        + " und schwarze Knoten eckig dargestellt werden.\\\\\\\\"
                     );
                     writerSpace.newLine();
                 } else {
@@ -673,7 +674,8 @@ public class IntRBTree {
                     writerSpace.write(
                         "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
                         + "und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge- "
-                        + "und L\\\"oschoperation sowie jeder Rotation an:\\\\\\\\"
+                        + "und L\\\"oschoperation sowie jeder Rotation an. Beachten Sie, dass rote Knoten rund"
+                        + " und schwarze Knoten eckig dargestellt werden.\\\\\\\\"
                     );
                     writerSpace.newLine();
                 }
@@ -695,7 +697,8 @@ public class IntRBTree {
                             "F\\\"ugen Sie den Wert "
                             + op.x
                             + " in einen leeren Rot-Schwarz-Baum ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an."
+                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an. Beachten Sie, dass rote Knoten rund"
+                        + " und schwarze Knoten eckig dargestellt werden."
                         );
                     } else {
                         // this case is nonsense 
@@ -707,14 +710,16 @@ public class IntRBTree {
                             "F\\\"ugen Sie den Wert "
                             + op.x
                             + " in den folgenden Rot-Schwarz-Baum ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"
+                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an. Beachten Sie, dass rote Knoten rund"
+                        + " und schwarze Knoten eckig dargestellt werden.\\\\[2ex]"
                         );
                     } else {
                         writerSpace.write(
                             "L\\\"oschen Sie den Wert "
                             + op.x
                             + " aus dem folgenden Rot-Schwarz-Baum ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"
+                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an. Beachten Sie, dass rote Knoten rund"
+                        + " und schwarze Knoten eckig dargestellt werden.\\\\[2ex]"
                         );
                     }
                     writerSpace.newLine();
