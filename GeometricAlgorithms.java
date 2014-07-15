@@ -21,7 +21,7 @@ public abstract class GeometricAlgorithms {
             }
         }
         
-        System.out.println("Referencepoint: " + refPoint.x + ", " + refPoint.y);
+        //System.out.println("Referencepoint: " + refPoint.x + ", " + refPoint.y);
         
         // sort Array of Points according to determinant with reference to refPoint
         ArrayList<Pair<Double,Double>> tmp = pointAscendingSort(pointSet, refIndex);
@@ -36,12 +36,12 @@ public abstract class GeometricAlgorithms {
         
         printPointset(tmp,0,duplicates,solWriter);
         
-        System.out.println("Sorted Array:");
-        int q = 0;
-        while( q < tmp.size()) {
-            System.out.println(tmp.get(q).x + "," + tmp.get(q).y);
-            ++q;
-        }
+        //System.out.println("Sorted Array:");
+        //int q = 0;
+        //while( q < tmp.size()) {
+        //    System.out.println(tmp.get(q).x + "," + tmp.get(q).y);
+        //    ++q;
+        //}
         
         boolean oneOnly = false;
         Stack<Pair<Double,Double>> hull = new Stack<Pair<Double,Double>>();
@@ -50,23 +50,23 @@ public abstract class GeometricAlgorithms {
                 Pair<Double,Double> first = hull.pop();
                 Pair<Double,Double> second = hull.peek();
                 hull.push(first);
-                System.out.println("First: " + first.x +", " + first.y);
-                System.out.println("Second: " + second.x +", " + second.y);
-                System.out.println("Acutal: " + tmp.get(i).x +", " + tmp.get(i).y);
+                //System.out.println("First: " + first.x +", " + first.y);
+                //System.out.println("Second: " + second.x +", " + second.y);
+                //System.out.println("Acutal: " + tmp.get(i).x +", " + tmp.get(i).y);
                 while( !oneOnly && direction(second, first, tmp.get(i)) <= 0) {
-                    System.out.println("Pop.");
+                    //System.out.println("Pop.");
                     hull.pop();
                     first = hull.pop();
-                    System.out.println("First: " + first.x +", " + first.y);
+                    //System.out.println("First: " + first.x +", " + first.y);
                     if(!hull.empty()) {
                         second = hull.peek();
-                        System.out.println("Second: " + second.x +", " + second.y);
+                        //System.out.println("Second: " + second.x +", " + second.y);
                     }
                     else {
                         oneOnly = true;
                     }
                     hull.push(first);
-                    System.out.println("Acutal: " + tmp.get(i).x +", " + tmp.get(i).y);
+                    //System.out.println("Acutal: " + tmp.get(i).x +", " + tmp.get(i).y);
                 }
             }
             oneOnly = false;
@@ -112,7 +112,7 @@ public abstract class GeometricAlgorithms {
     private static ArrayList<Pair<Double,Double>> pointAscendingSort(ArrayList<Pair<Double,Double>> pointSet, int referenceIndex) {
         ArrayList<Pair<Double,Double>> result = new ArrayList<Pair<Double,Double>>();
         result.add(pointSet.get(referenceIndex));
-        System.out.println("RefIndex: " + referenceIndex + " Point: " + pointSet.get(referenceIndex).x + "," + pointSet.get(referenceIndex).y);
+        //System.out.println("RefIndex: " + referenceIndex + " Point: " + pointSet.get(referenceIndex).x + "," + pointSet.get(referenceIndex).y);
         boolean noAdd = false;
         
         // Insertion-Sort the array
@@ -125,30 +125,38 @@ public abstract class GeometricAlgorithms {
                     Pair<Double,Double> test = new Pair<Double,Double>(1.0,0.0);
                     //Double currAngle = realPolarAngle(result.get(0), tmp);
                     Double currAngle = realPolarAngle(test, tmp);
-                    while( index < result.size() && realPolarAngle(test, tmp2) < currAngle ) {
+                    //System.out.println("Index: " + index);
+                    while( Double.compare(realPolarAngle(test, tmp2),currAngle) < 0 ) {
                         ++index;
+                        if(index == result.size()) {
+                            break;
+                        }
                         tmp2 = new Pair<Double,Double>(result.get(index).x-result.get(0).x, result.get(index).y-result.get(0).y);
+                        //System.out.println("Index: " + index);
                     }
-                    tmp2 = new Pair<Double,Double>(result.get(index).x-result.get(0).x, result.get(index).y-result.get(0).y);
-                    // remove duplicates - take the outer one (larger absolute sum of x and y component)
-                    System.out.println("Check for duplicates of current Angle: " + currAngle + " and " + realPolarAngle(test, tmp2) + " : " + (Double.compare(realPolarAngle(test, tmp2),currAngle) == 0) );
-                    if (Double.compare(realPolarAngle(test, tmp2),currAngle) == 0) {
-                        System.out.println("Duplicate angle.");
-                        // compare coordinates
-                        Double aAbsCoord = Math.abs(pointSet.get(i).x) + Math.abs(pointSet.get(i).y);
-                        Double bAbsCoord = Math.abs(result.get(index).x) + Math.abs(result.get(index).y);
-                        if (aAbsCoord > bAbsCoord) {
-                            System.out.println("Remove " + index);
-                            result.remove(index);
-                        } else {
-                            System.out.println("Do just not insert.");
-                            noAdd = true;
+                    if( !(Double.compare(realPolarAngle(test, tmp2),currAngle) < 0) ) {
+                        tmp2 = new Pair<Double,Double>(result.get(index).x-result.get(0).x, result.get(index).y-result.get(0).y);
+                        // remove duplicates - take the outer one (larger absolute sum of x and y component)
+                        //System.out.println("Check for duplicates of current Angle: " + currAngle + " and " + realPolarAngle(test, tmp2) + " : " + (Double.compare(realPolarAngle(test, tmp2),currAngle) == 0) );
+                        if (Double.compare(realPolarAngle(test, tmp2),currAngle) == 0) {
+                            //System.out.println("Duplicate angle.");
+                            // compare coordinates
+                            Double aAbsCoord = Math.abs(pointSet.get(i).x) + Math.abs(pointSet.get(i).y);
+                            Double bAbsCoord = Math.abs(result.get(index).x) + Math.abs(result.get(index).y);
+                            if (aAbsCoord > bAbsCoord) {
+                                //System.out.println("Remove " + index);
+                                result.remove(index);
+                            } else {
+                                //System.out.println("Do just not insert.");
+                                noAdd = true;
+                            }
                         }
                     }
                 }
                 if(!noAdd) {
-                    System.out.println("Insert (" + pointSet.get(i).x + "," + pointSet.get(i).y + ") at " + index);
+                    //System.out.println("Insert (" + pointSet.get(i).x + "," + pointSet.get(i).y + ") at " + index);
                     result.add(index,pointSet.get(i));
+                    //System.out.println("Size of list: " + result.size());
                 } else {
                     noAdd = false;
                 }
@@ -164,13 +172,13 @@ public abstract class GeometricAlgorithms {
      * @return polar angle
      */
     private static Double polarAngle(Pair<Double,Double> pointA, Pair<Double,Double> pointB) {
-        System.out.println("Angle [(" + pointA.x + "," + pointA.y + "); (" + pointB.x + "," + pointB.y + ")] = " + (-pointA.y*pointB.x + pointA.x*pointB.y));
+        //System.out.println("Angle [(" + pointA.x + "," + pointA.y + "); (" + pointB.x + "," + pointB.y + ")] = " + (-pointA.y*pointB.x + pointA.x*pointB.y));
         return (-pointA.y*pointB.x + pointA.x*pointB.y);
     }
     
     
     private static Double realPolarAngle(Pair<Double,Double> A, Pair<Double,Double> B) {
-        System.out.println("Angle [(" + A.x + "," + A.y + "); (" + B.x + "," + B.y + ")] = " + Math.acos( (A.x*B.x + A.y*B.y) / (Math.sqrt(A.x*A.x+A.y*A.y) * Math.sqrt(B.x*B.x+B.y*B.y)) ) * (180/Math.PI));
+        //System.out.println("Angle [(" + A.x + "," + A.y + "); (" + B.x + "," + B.y + ")] = " + Math.acos( (A.x*B.x + A.y*B.y) / (Math.sqrt(A.x*A.x+A.y*A.y) * Math.sqrt(B.x*B.x+B.y*B.y)) ) * (180/Math.PI));
         return Math.acos( (A.x*B.x + A.y*B.y) / (Math.sqrt(A.x*A.x+A.y*A.y) * Math.sqrt(B.x*B.x+B.y*B.y)) ) * (180/Math.PI);
     }
     
@@ -184,8 +192,8 @@ public abstract class GeometricAlgorithms {
     throws IOException {
         exWriter.write("Berechnen Sie die konvexe H\\\"ulle der folgenden Punktmenge. ");
         exWriter.write("Benutzen Sie daf\\\"ur Grahams' Scan wie in der Vorlesung vorgestellt ");
-        exWriter.write("und geben Sie die Teilschritte nach jedem Schritt der Iteration");
-        exWriter.write(" (nach Zeile 17 im Code) an. Markieren Sie Punkte, die nicht betrachtet werden.\\\\");
+        exWriter.write("und geben Sie die Teilschritte nach jeder Iteration");
+        exWriter.write(" (nach Zeile 17 im Code) an. Markieren Sie Punkte, die vom Algorithmus nicht betrachtet werden.\\\\");
         exWriter.newLine();
         exWriter.write("\\\\");
         exWriter.newLine();
