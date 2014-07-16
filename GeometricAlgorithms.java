@@ -193,7 +193,8 @@ public abstract class GeometricAlgorithms {
         exWriter.write("Berechnen Sie die konvexe H\\\"ulle der folgenden Punktmenge. ");
         exWriter.write("Benutzen Sie daf\\\"ur Grahams' Scan wie in der Vorlesung vorgestellt ");
         exWriter.write("und geben Sie die Teilschritte nach jeder Iteration");
-        exWriter.write(" (nach Zeile 17 im Code) an. Markieren Sie Punkte, die vom Algorithmus nicht betrachtet werden.\\\\");
+        exWriter.write(" (also nach jedem neu hinzugef\"ugten Punkt) an. ");
+        exWriter.write("Markieren Sie Punkte, die vom Algorithmus nicht betrachtet werden.\\\\");
         exWriter.newLine();
         exWriter.write("\\\\");
         exWriter.newLine();
