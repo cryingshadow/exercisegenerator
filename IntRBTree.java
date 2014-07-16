@@ -655,14 +655,14 @@ public class IntRBTree {
                 if (tree.isEmpty()) {
                     writerSpace.write(
                         "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren"
-                        + " \\\textbf{Rot-Schwarz-Baum} aus und geben Sie die entstehenden B\\\"aume nach jeder \\\textbf{Einf\\\"uge-"
-                        + " und L\\\"oschoperation}, jeder \\\textbf{Rotation} und jeder \\\textbf{Umf\\\"arbung} an. Beachten Sie, dass rote Knoten rund"
+                        + " \\textbf{Rot-Schwarz-Baum} aus und geben Sie die entstehenden B\\\"aume nach jeder \\textbf{Einf\\\"uge-"
+                        + " und L\\\"oschoperation}, jeder \\textbf{Rotation} und jeder \\textbf{Umf\\\"arbung} an. Beachten Sie, dass rote Knoten rund"
                         + " und schwarze Knoten eckig dargestellt werden.\\\\\\\\"
                     );
                     writerSpace.newLine();
                 } else {
                     writerSpace.write(
-                        "Betrachten Sie den folgenden Rot-Schwarz-Baum:\\\\[2ex]"
+                        "Betrachten Sie den folgenden \\textbf{Rot-Schwarz-Baum}:\\\\[2ex]"
                     );
                     writerSpace.newLine();
                     writerSpace.newLine();
@@ -672,9 +672,9 @@ public class IntRBTree {
                     writerSpace.write("\\vspace*{1ex}");
                     writerSpace.newLine();
                     writerSpace.write(
-                        "F\\\"uhren Sie beginnend mit diesem \\\textbf{Rot-Schwarz-Baum} die folgenden Operationen aus "
-                        + "und geben Sie die entstehenden B\\\"aume nach jeder \\\textbf{Einf\\\"uge- "
-                        + "und L\\\"oschoperation}, jeder \\\textbf{Rotation} und jeder \\\textbf{Umf\\\"arbung} an. Beachten Sie, dass rote Knoten rund"
+                        "F\\\"uhren Sie beginnend mit diesem \\textbf{Rot-Schwarz-Baum} die folgenden Operationen aus "
+                        + "und geben Sie die entstehenden B\\\"aume nach jeder \\textbf{Einf\\\"uge- "
+                        + "und L\\\"oschoperation}, jeder \\textbf{Rotation} und jeder \\textbf{Umf\\\"arbung} an. Beachten Sie, dass rote Knoten rund"
                         + " und schwarze Knoten eckig dargestellt werden.\\\\\\\\"
                     );
                     writerSpace.newLine();
@@ -696,8 +696,8 @@ public class IntRBTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in einen leeren \\\textbf{Rot-Schwarz-Baum} ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder \\\textbf{Einf\\\"uge- und L\\\"oschoperation}, jeder \\\textbf{Rotation} und jeder \\\textbf{Umf\\\"arbung} an."
+                            + " in einen leeren \\textbf{Rot-Schwarz-Baum} ein und geben Sie die entstehenden B\\\"aume "
+                            + "nach jeder \\textbf{Einf\\\"uge- und L\\\"oschoperation}, jeder \\textbf{Rotation} und jeder \\textbf{Umf\\\"arbung} an."
                             + " Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden."
                         );
                     } else {
@@ -709,16 +709,16 @@ public class IntRBTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in den folgenden \\\textbf{Rot-Schwarz-Baum} ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder \\\textbf{Einf\\\"uge- und L\\\"oschoperation}, jeder \\\textbf{Rotation} und jeder \\\textbf{Umf\\\"arbung} an."
+                            + " in den folgenden \\textbf{Rot-Schwarz-Baum} ein und geben Sie die entstehenden B\\\"aume "
+                            + "nach jeder \\textbf{Einf\\\"uge- und L\\\"oschoperation}, jeder \\textbf{Rotation} und jeder \\textbf{Umf\\\"arbung} an."
                             + " Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.\\\\[2ex]"
                         );
                     } else {
                         writerSpace.write(
                             "L\\\"oschen Sie den Wert "
                             + op.x
-                            + " aus dem folgenden \\\textbf{Rot-Schwarz-Baum} und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder \\\textbf{Einf\\\"uge- und L\\\"oschoperation}, jeder \\\textbf{Rotation} und jeder \\\textbf{Umf\\\"arbung} an."
+                            + " aus dem folgenden \\textbf{Rot-Schwarz-Baum} und geben Sie die entstehenden B\\\"aume "
+                            + "nach jeder \\textbf{Einf\\\"uge- und L\\\"oschoperation}, jeder \\textbf{Rotation} und jeder \\textbf{Umf\\\"arbung} an."
                             + " Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.\\\\[2ex]"
                         );
                     }
