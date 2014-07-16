@@ -111,8 +111,9 @@ public abstract class DynamicProgramming {
             exWriter.write(", $c_" + i + "=" + values[i] + "$");
         }
         exWriter.write(" und $c_" + (n-1) + "=" + values[n-1] + "$.");
-        exWriter.write(" Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} an und welche Gegenst\\\"ande");
-        exWriter.write(" mitgenommen werden.");
+        exWriter.write(" Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C}");
+        exWriter.write(" und zeigen Sie anhand der Tabelle, welche Gegenst\\\"ande");
+        exWriter.write(" mitgenommen werden um diesen maximalen Wert zu erreichen.");
         exWriter.newLine();
         
         solWriter.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
