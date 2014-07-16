@@ -53,12 +53,6 @@ public class DSALExercises {
     private static final String[] HELP;
     
     /**
-     * Array containing all prime numbers between 5 and 101.
-     */
-    private static final int[] PRIMES_5_101 =
-        new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
-
-    /**
      * The set of (in student mode only enabled) sorting algorithms.
      */
     private static final Set<String> SORTING_ALGORITHMS;
@@ -437,22 +431,9 @@ public class DSALExercises {
                         Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
                     } catch (HashException e) {
                         Random gen = new Random();
-                        int c1int = gen.nextInt(m);
-                        int c2int = gen.nextInt(m);
-                        while (!DSALExercises.areCoprime(m, c1int, c2int)) {
-                            c1int = gen.nextInt(m);
-                            if (DSALExercises.areCoprime(m, c1int, c2int)) {
-                                break;
-                            }
-                            c2int = gen.nextInt(m);
-                            if (DSALExercises.areCoprime(m, c1int, c2int)) {
-                                break;
-                            }
-                        }
-                        c1 = c1int;
-                        c2 = c2int;
-                        params[3] = c1;
-                        params[4] = c2;
+                        Pair<Double, Double> cs = Hashing.newDivQuadInstance(gen, m, params);
+                        c1 = cs.x;
+                        c2 = cs.y;
                         fail = true;
                     }
                 } while (fail);
@@ -511,24 +492,10 @@ public class DSALExercises {
                         Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
                     } catch (HashException e) {
                         Random gen = new Random();
-                        int c1int = gen.nextInt(m);
-                        int c2int = gen.nextInt(m);
-                        while (!DSALExercises.areCoprime(m, c1int, c2int)) {
-                            c1int = gen.nextInt(m);
-                            if (DSALExercises.areCoprime(m, c1int, c2int)) {
-                                break;
-                            }
-                            c2int = gen.nextInt(m);
-                            if (DSALExercises.areCoprime(m, c1int, c2int)) {
-                                break;
-                            }
-                        }
-                        c = Math.round(100.0 * gen.nextDouble()) / 100.0;
-                        c1 = c1int;
-                        c2 = c2int;
-                        params[2] = c;
-                        params[3] = c1;
-                        params[4] = c2;
+                        Pair<Double, Pair<Double, Double>> cs = Hashing.newMultQuadInstance(gen, m, params);
+                        c = cs.x;
+                        c1 = cs.y.x;
+                        c2 = cs.y.y;
                         fail = true;
                     }
                 } while (fail);
@@ -620,59 +587,6 @@ public class DSALExercises {
             res.append(alg.name);
         }
         return res.toString();
-    }
-
-    /**
-     * @param a Some number.
-     * @param b Another number.
-     * @param c Yet another number.
-     * @return True if the three numbers are coprime to each other. False otherwise.
-     */
-    private static boolean areCoprime(int a, int b, int c) {
-        return DSALExercises.gcd(a,b) == 1 && DSALExercises.gcd(b,c) == 1 && DSALExercises.gcd(a,c) == 1;
-    }
-
-    /**
-     * Computes the gcd of two numbers by using the Eucilidian algorithm.
-     * @param number1 The first of the two numbers.
-     * @param number2 The second of the two numbers.
-     * @return The greates common divisor of number1 and number2.
-     */
-    private static int gcd(int number1, int number2) {
-        //base case
-        if(number2 == 0){
-            return number1;
-        }
-        return DSALExercises.gcd(number2, number1%number2);
-    }
-
-    /**
-     * @param value Some value.
-     * @return The prime numbers from 5 to the smallest prime number being greater than or equal to the specified value 
-     *         (if that value is at most 101). If the specified value is bigger than 101, all prime numbers between 5 
-     *         and 101 are returned.
-     */
-    private static Integer[] getAllUpToNextPrimes(int value) {
-        List<Integer> result = new ArrayList<Integer>();
-        int current = 0;
-        while (DSALExercises.PRIMES_5_101[current] < value && current < DSALExercises.PRIMES_5_101.length - 1) {
-            result.add(DSALExercises.PRIMES_5_101[current]);
-            current++;
-        }
-        result.add(DSALExercises.PRIMES_5_101[current]);
-        return result.toArray(new Integer[result.size()]);
-    }
-    
-    /**
-     * @param start Value which defines the lower bound for the resulting prime.
-     * @return The next largest prime greater than or equal to the input.
-     */
-    private static int getNextPrime(int start) {
-        int current = start;
-        while (!DSALExercises.isPrime(current)) {
-            current++;
-        }
-        return current; 
     }
 
     /**
@@ -864,28 +778,6 @@ public class DSALExercises {
     }
 
     /**
-     * @param value Some value.
-     * @return True iff the specified value is prime.
-     */
-    private static boolean isPrime(int value) {
-        if (value < 2) {
-            return false;
-        }
-        if (value == 2) {
-            return true;
-        }
-        if (value % 2 == 0) {
-            return false;
-        }
-        for (int i = 3; i <= Math.sqrt(value) + 1; i = i + 2) {
-            if (value % i == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * @param args The program arguments.
      * @return A map from Flags to their values parsed from the program arguments.
      * @throws Exception If the program arguments are not of the desired form.
@@ -992,49 +884,10 @@ public class DSALExercises {
                 Random gen = new Random();
                 if (options.containsKey(Flag.LENGTH)) {
                     length = Integer.parseInt(options.get(Flag.LENGTH));
-//                    System.out.println("Length set to: " + length);
                 } else {
                     length = gen.nextInt(16) + 5;
-//                    System.out.println("Length chosen to: " + length);
                 }
-                array = new Integer[length];
-                for (int i = 0; i < array.length; i++) {
-                    array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
-                }
-                double[] params = new double[4];
-                // create all possible constants per default.
-                int m = 0;
-                if (alg == "hashDivision" || alg == "hashMultiplication") {
-                    Integer[] primes = DSALExercises.getAllUpToNextPrimes(length);
-                    int index = gen.nextInt(primes.length);
-                    m = primes[index];
-                } else {
-                    m = DSALExercises.getNextPrime(length);
-                    while (gen.nextBoolean()) {
-                        m = DSALExercises.getNextPrime(m+1);
-                    }
-                }
-                int c1 = gen.nextInt(m);
-                int c2 = gen.nextInt(m);
-                if (alg == "hashDivisionQuadratic" || alg == "hashMultiplicationQuadratic") {
-                    while (!DSALExercises.areCoprime(m, c1, c2)) {
-                        c1 = gen.nextInt(m);
-                        if (DSALExercises.areCoprime(m, c1, c2)) {
-                            break;
-                        }
-                        c2 = gen.nextInt(m);
-                        if (DSALExercises.areCoprime(m, c1, c2)) {
-                            break;
-                        }
-                    }
-                }
-                double c = Math.round(100.0 * gen.nextDouble()) / 100.0;
-                params[0] = m;
-                params[1] = c;
-                params[2] = c1;
-                params[3] = c2;
-                input = new Pair<double[], Integer[]>(params,array);
-                return input;
+                return Hashing.createRandomInput(gen, length, alg);
             } else {
                 nums = options.get(Flag.INPUT).split(",");
                 paramString = options.get(Flag.DEGREE).split(",");
@@ -1368,10 +1221,11 @@ public class DSALExercises {
             Integer[] values = null;
             Integer capacity = 0;
             if (options.containsKey(Flag.SOURCE)) {
-                String errorMessage = new String( "You need to provide two lines of numbers, each number separated only by a ','!"
-                                              + " The first lines represents the weights of the items and the second line represents"
-                                              + " the values of the items. Note, that there must be supplied the same number of"
-                                              + " weights and values and at least one.");
+                String errorMessage =
+                    "You need to provide two lines of numbers, each number separated only by a ','!"
+                    + " The first lines represents the weights of the items and the second line represents"
+                    + " the values of the items. Note, that there must be supplied the same number of"
+                    + " weights and values and at least one.";
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                     String line = null;
                     int rowNum = 0;
@@ -1438,25 +1292,33 @@ public class DSALExercises {
                 Integer p = 35 + gen.nextInt(30);
                 capacity = (sumOfWeights*p)/100;
             } else {
-                String errorMessage = new String( "You need to provide two set of numbers, each number separated only by a ',' and!"
-                                              + " each set divide by a '|'. The first set represents the weights of the items and the second set represents"
-                                              + " the values of the items. Note, that there must be supplied the same number of"
-                                              + " weights and values and at least one.");
+                String errorMessage =
+                    "You need to provide two set of numbers, each number separated only by a ',' and each set divided "
+                    + "by a '|'. The first set represents the weights of the items and the second set represents the "
+                    + "values of the items. Note, that there must be supplied the same number of weights and values "
+                    + "and at least one.";
                 String[] sets = options.get(Flag.INPUT).split("|");
                 Integer sumOfWeights = new Integer(0);
-                if (sets.length != 2 || sets[0].length() == 0 || sets[1].length() == 0 || sets[0].length() != sets[1].length()) {
+                if (
+                    sets.length != 2
+                    || sets[0].length() == 0
+                    || sets[1].length() == 0
+                    || sets[0].length() != sets[1].length()
+                ) {
                     System.out.println(errorMessage);
                     return null;
                 }
                 String[] numbersA = sets[0].split(",");
                 for (int i = 0; i < numbersA.length; i++) {
                     int number = Integer.parseInt(numbersA[i].trim());
+                    //FIXME weights might be null here
                     weights[i] = number;
                     sumOfWeights += number;
                 }
                 String[] numbersB = sets[0].split(",");
                 for (int i = 0; i < numbersB.length; i++) {
                     int number = Integer.parseInt(numbersB[i].trim());
+                    //FIXME values might be null here
                     values[i] = number;
                 }
                 if (options.containsKey(Flag.CAPACITY)) {
@@ -1468,12 +1330,16 @@ public class DSALExercises {
                     capacity = sumOfWeights/2;
                 }
             }
-            return new Pair<Pair<Integer[],Integer[]>,Integer>(new Pair<Integer[],Integer[]>(weights, values), capacity);
+            return
+                new Pair<Pair<Integer[],Integer[]>,Integer>(
+                    new Pair<Integer[],Integer[]>(weights, values),
+                    capacity
+                );
         }  else if (Algorithm.LCS.name.equals(alg)) {
             String wordA = null;
             String wordB = null;
             if (options.containsKey(Flag.SOURCE)) {
-                String errorMessage = new String( "You need to provide two lines each carrying exactly one non-empty word.");
+                String errorMessage = "You need to provide two lines each carrying exactly one non-empty word.";
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                     String line = null;
                     int rowNum = 0;
@@ -1503,7 +1369,7 @@ public class DSALExercises {
             } else if (DSALExercises.STUDENT_MODE) {
                 throw new UnsupportedOperationException("Not yet implemented!");
             } else {
-                String errorMessage = new String( "You need to provide two non-empty words separated by a '|'.");
+                String errorMessage = "You need to provide two non-empty words separated by a '|'.";
                 String[] words = options.get(Flag.INPUT).split("|");
                 if (words.length != 2 || words[0].length() == 0 || words[1].length() == 0) {
                     System.out.println(errorMessage);
