@@ -1274,11 +1274,11 @@ public class DSALExercises {
         } else if (DSALExercises.GEOMETRIC_ALGORITHMS.contains(alg)) {
             String line = null;
             ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
+            Double[] coordinates = new Double[2];
             if (options.containsKey(Flag.SOURCE)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                     while ((line = reader.readLine()) != null) {
                         line = line.trim();
-                        Double[] coordinates = new Double[2];
                         coordinates[0] = Double.parseDouble(line.split(",")[0].trim());
                         coordinates[1] = Double.parseDouble(line.split(",")[1].trim());
                         Pair<Double,Double> point = new Pair<Double,Double>(coordinates[0], coordinates[1]);
@@ -1289,9 +1289,30 @@ public class DSALExercises {
                     System.exit(1);
                 }
             } else if (DSALExercises.STUDENT_MODE) {
-                throw new UnsupportedOperationException("Not yet implemented!");
+                Random gen = new Random();
+                Double rangeMin = 0.0;
+                Double rangeMax = 10.0;
+                final int numOfPoints;
+                if (options.containsKey(Flag.LENGTH)) {
+                    numOfPoints = Integer.parseInt(options.get(Flag.LENGTH));
+                } else {
+                    numOfPoints = gen.nextInt(16) + 5;
+                }
+                for(int i = 0; i < numOfPoints; ++i) {
+                    coordinates[0] = rangeMin + (rangeMax - rangeMin) * gen.nextDouble();
+                    coordinates[1] = rangeMin + (rangeMax - rangeMin) * gen.nextDouble();
+                    Pair<Double,Double> point = new Pair<Double,Double>(coordinates[0], coordinates[1]);
+                    input.add(point);
+                }
+                
             } else {
-                throw new UnsupportedOperationException("Not yet implemented!");
+                nums = options.get(Flag.INPUT).split(";");
+                for(int i = 0; i < nums.length; ++i) {
+                    coordinates[0] = Double.parseDouble(nums[i].split(",")[0].trim());
+                    coordinates[1] = Double.parseDouble(nums[i].split(",")[1].trim());
+                    Pair<Double,Double> point = new Pair<Double,Double>(coordinates[0], coordinates[1]);
+                    input.add(point);
+                }
             }
             
             return input;
@@ -1863,8 +1884,8 @@ public class DSALExercises {
                    "TODO"
                    )
               },
-              false
-              ),
+              true
+        ),
 
         /**
          * Insertionsort on Integer arrays.
