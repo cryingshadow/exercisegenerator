@@ -104,13 +104,13 @@ public abstract class DynamicProgramming {
         exWriter.write(" Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des Rucksacks).");
         exWriter.write(" Die \\textbf{Gewichte} seien dabei $w_0=" + weights[0] + "$");
         for (int i = 1; i < n-1; i++) {
-            exWriter.write(", $w_" + i + "=" + weights[i] + "$");
+            exWriter.write(", $w_{" + i + "} =" + weights[i] + "$");
         }
-        exWriter.write(" und $w_" + (n-1) + "=" + weights[n-1] + "$ und die \\textbf{Werte} $c_0=" + values[0] + "$");
+        exWriter.write(" und $w_{" + (n-1) + "} =" + weights[n-1] + "$ und die \\textbf{Werte} $c_0=" + values[0] + "$");
         for (int i = 1; i < n-1; i++) {
-            exWriter.write(", $c_" + i + "=" + values[i] + "$");
+            exWriter.write(", $c_{" + i + "} =" + values[i] + "$");
         }
-        exWriter.write(" und $c_" + (n-1) + "=" + values[n-1] + "$.");
+        exWriter.write(" und $c_{" + (n-1) + "} =" + values[n-1] + "$.");
         exWriter.write(" Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C}");
         exWriter.write(" und zeigen Sie anhand der Tabelle, welche Gegenst\\\"ande");
         exWriter.write(" mitgenommen werden um diesen maximalen Wert zu erreichen.");
@@ -119,9 +119,28 @@ public abstract class DynamicProgramming {
         solWriter.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
         solWriter.newLine();
         solWriter.newLine();
-        TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true);
-        solWriter.newLine();
-        solWriter.newLine();
+        String[][] solutionsTmp = null;
+        boolean remainderStarted = true;
+        for (int columnNr = 0; columnNr < capacity+2; columnNr++) {
+            System.out.println("columnNr = " + columnNr);
+            if (columnNr % 10 == 0 || (remainderStarted && capacity + 2 - columnNr <= 10)) {
+                if (columnNr > 0) {
+                    TikZUtils.printTable(solutionsTmp, null, "0.9cm", solWriter, true);
+                    solWriter.newLine();
+                    solWriter.newLine();
+                }
+                int columnNrTmp = capacity + 2 - columnNr > 10 ? 10 : capacity + 2 - columnNr;
+                if (capacity + 2 - columnNr > 10) {
+                    remainderStarted = false;
+                }
+                System.out.println("columnNrTmp = " + columnNrTmp);
+                solutionsTmp = new String[n+2][columnNrTmp];
+            }
+            for (int rowNr = 0; rowNr < n+2; rowNr++) {
+                System.out.println("add column " + (columnNr % 10));
+                solutionsTmp[rowNr][columnNr%10] = solutions[rowNr][columnNr];
+            }
+        }
         solWriter.write("\\medskip");
         solWriter.newLine();
         solWriter.write("Damit ergibt sich der maximale Wert " + C[n][capacity] + " f\\\"ur den Fall, dass der");

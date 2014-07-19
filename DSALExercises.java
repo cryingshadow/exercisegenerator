@@ -1795,7 +1795,7 @@ public class DSALExercises {
 				"Knapsack problem solved with dynamic programming.",
 				(
 				DSALExercises.STUDENT_MODE ?
-				   "TODO" :
+				   "The flag -l specifies how many items can be chosen to put into the bag." :
 						"TODO"
 				)
 			},
@@ -1915,7 +1915,7 @@ public class DSALExercises {
                 "Detection of strongly connected components.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "TODO" :
+                        "" :
                             "TODO"
                 )
             },
@@ -1949,7 +1949,7 @@ public class DSALExercises {
                 "Detection of strongly connected components using Sharir's algorithm.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "TODO" :
+                        "" :
                             "TODO"
                 )
             },

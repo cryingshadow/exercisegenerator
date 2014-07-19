@@ -17,7 +17,7 @@ public abstract class GraphAlgorithms {
     /**
      * The phrase "each residual graph".
      */
-    private static final String EACH_RESIDUAL_GRAPH = "jedes Restnetzwerk";
+    private static final String EACH_RESIDUAL_GRAPH = "\\textbf{jedes Restnetzwerk (auch das initiale)}";
 
     /**
      * The name of a residual graph.
@@ -971,7 +971,7 @@ public abstract class GraphAlgorithms {
         BufferedWriter exWriter,
         BufferedWriter solWriter
     ) throws IOException {
-        exWriter.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
+        exWriter.write("Betrachten Sie das folgende \\textbf{Flussnetzwerk} mit Quelle ");
         exWriter.write(source.getLabel().toString());
         exWriter.write(" und Senke ");
         exWriter.write(sink.getLabel().toString());
@@ -981,10 +981,10 @@ public abstract class GraphAlgorithms {
         graph.printTikZ(true, multiplier, null, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-        exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der Ford-Fulkerson Methode. ");
+        exWriter.write("Berechnen Sie den \\textbf{maximalen Fluss} in diesem Netzwerk mithilfe der \\textbf{Ford-Fulkerson Methode}. ");
         exWriter.write("Geben Sie dazu ");
         exWriter.write(GraphAlgorithms.EACH_RESIDUAL_GRAPH);
-        exWriter.write(" sowie nach jeder Augmentierung den aktuellen Zustand des Flussnetzwerks an. Geben Sie ");
+        exWriter.write(" sowie \\textbf{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. Geben Sie ");
         exWriter.write("au\\ss{}erdem den Wert des maximalen Flusses an.");
         exWriter.newLine();
         int step = 0;
