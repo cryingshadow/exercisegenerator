@@ -119,6 +119,7 @@ public abstract class DynamicProgramming {
         solWriter.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
         solWriter.newLine();
         solWriter.newLine();
+        if (capacity+2 > 10) {
         String[][] solutionsTmp = null;
         boolean remainderStarted = true;
         for (int columnNr = 0; columnNr < capacity+2; columnNr++) {
@@ -140,6 +141,11 @@ public abstract class DynamicProgramming {
                 System.out.println("add column " + (columnNr % 10));
                 solutionsTmp[rowNr][columnNr%10] = solutions[rowNr][columnNr];
             }
+        }
+        } else {
+            TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true);
+            solWriter.newLine();
+            solWriter.newLine();
         }
         solWriter.write("\\medskip");
         solWriter.newLine();
