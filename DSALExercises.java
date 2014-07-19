@@ -139,6 +139,7 @@ public class DSALExercises {
             System.out.println("The number of arguments must be even (flag/value pairs)!");
             return;
         }
+//        for (int rep = 0; rep < 10000; rep++) {
         Map<Flag, String> options;
         try {
             options = DSALExercises.parseFlags(args);
@@ -567,6 +568,7 @@ public class DSALExercises {
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        }
     }
 
     /**
@@ -1179,7 +1181,19 @@ public class DSALExercises {
                     System.exit(1);
                 }
             } else if (DSALExercises.STUDENT_MODE) {
-                throw new UnsupportedOperationException("Not yet implemented!");
+                Random gen = new Random();
+                final int numOfNodes;
+                if (options.containsKey(Flag.LENGTH)) {
+                    numOfNodes = Integer.parseInt(options.get(Flag.LENGTH));
+                } else {
+                    numOfNodes = gen.nextInt(16) + 3;
+                }
+                FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
+                res.graph = GraphAlgorithms.createRandomFlowNetwork(gen, numOfNodes);
+                res.source = res.graph.getNodesWithLabel("s").iterator().next();
+                res.sink = res.graph.getNodesWithLabel("t").iterator().next();
+                res.multiplier = 1.0;
+                return res;
             } else {
                 try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
                     graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
@@ -1572,7 +1586,7 @@ public class DSALExercises {
 				"Floyd's algorithm to find all shortest paths to all other nodes.",
 				(
 					DSALExercises.STUDENT_MODE ?
-						"TODO" :
+					    "The flag -l specifies how many nodes will be added to the graph." :
 							"TODO"
 				)
 			},
@@ -1589,11 +1603,12 @@ public class DSALExercises {
                 "Perform Ford-Fulkerson (Edmonds-Karp) on a flow network.",
                 (
                     DSALExercises.STUDENT_MODE ?
-                        "TODO" :
+                        "The flag -l specifies how many nodes will be added to the flow network in addition to source "
+                        + "and sink. Thus, the number of nodes in the network is l + 2." :
                             "TODO"
                 )
             },
-            false
+            true
         ),
 		
 		/**
@@ -1849,7 +1864,7 @@ public class DSALExercises {
 				"Prim's algorithm to find the minimum spanning tree.",
 				(
 					DSALExercises.STUDENT_MODE ?
-						"TODO" :
+					    "The flag -l specifies how many nodes will be added to the graph." :
 							"TODO"
 				)
 			},
@@ -1968,7 +1983,7 @@ public class DSALExercises {
 				"Warshall's algorithm to find the transitive hull.",
 				(
 				DSALExercises.STUDENT_MODE ?
-				   "TODO" :
+				    "The flag -l specifies how many nodes will be added to the graph." :
 						"TODO"
 				)
 			},

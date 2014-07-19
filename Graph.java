@@ -41,6 +41,9 @@ public class Graph<N, E> {
      * @param to The to node.
      */
     public void addEdge(Node<N> from, E label, Node<N> to) {
+        if (from == null || to == null) {
+            throw new NullPointerException();
+        }
         this.grid = null;
         this.addNode(from);
         this.addNode(to);

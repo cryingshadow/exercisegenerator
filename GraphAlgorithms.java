@@ -25,6 +25,16 @@ public abstract class GraphAlgorithms {
     private static final String RESIDUAL_GRAPH = "Restnetzwerk";
 
     /**
+     * The default value being probably close to the edge values.
+     */
+    private static final int DEFAULT_EDGE_ROOT = 3;
+
+    /**
+     * The default value being probably close to the edge values adjacent to source/sink nodes.
+     */
+    private static final int DEFAULT_SOURCE_SINK_ROOT = 7;
+
+    /**
      * @param gen A random number generator.
      * @param numOfNodes The number of nodes in the returned graph.
      * @param undirected Should the graph be undirected?
@@ -60,7 +70,7 @@ public abstract class GraphAlgorithms {
             Pair<Pair<Integer, Integer>, Boolean> toAddPos = nextPos.randomFreePosition(gen);
             Node<String> toAddNode = new Node<String>(GraphAlgorithms.toStringLabel(letter));
             NodeGridPosition gridPos = GraphAlgorithms.addNode(toAddNode, graph, toAddPos, grid, positions);
-            int value = GraphAlgorithms.randomEdgeValue(gen);
+            int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
             graph.addEdge(nextNode, value, toAddNode);
             if (undirected) {
                 graph.addEdge(toAddNode, value, nextNode);
@@ -83,13 +93,13 @@ public abstract class GraphAlgorithms {
             for (int numEdges = GraphAlgorithms.randomNumOfEdges(gen, freeNodePairs.size()); numEdges > 0; numEdges--) {
                 int pairIndex = gen.nextInt(freeNodePairs.size());
                 Pair<Node<String>, Node<String>> pair = freeNodePairs.remove(pairIndex);
-                int nextValue = GraphAlgorithms.randomEdgeValue(gen);
+                int nextValue = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
                 graph.addEdge(pair.x, nextValue, pair.y);
                 if (undirected) {
                     graph.addEdge(pair.y, nextValue, pair.x);
                 }
             }
-            for (Pair<Pair<Integer, Integer>, Boolean> neighborPos : gridPos.getExistingPositions()) {
+            for (Pair<Pair<Integer, Integer>, Boolean> neighborPos : existing) {
                 Node<String> neighborNode = grid.get(neighborPos.x);
                 if (!positions.get(neighborNode).hasFreePosition()) {
                     nodesWithFreeNeighbors.remove(neighborNode);
@@ -119,6 +129,425 @@ public abstract class GraphAlgorithms {
         }
         graph.setGrid(newGrid);
         return graph;
+    }
+
+    /**
+     * @param gen A random number generator.
+     * @param numOfNodes The number of nodes (excluding source and sink) in the returned flow network.
+     * @return A random flow network with <code>numOfNodes</code> nodes labeled with Strings (each node has a unique 
+     *         label and the source is labeled with s and the sink is labeled with t) and edges labeled with pairs of 
+     *         Integers (the current flow and the capacity - the current flow will be set to 0).
+     */
+    public static Graph<String, FlowPair> createRandomFlowNetwork(Random gen, int numOfNodes) {
+        if (numOfNodes < 0) {
+            throw new IllegalArgumentException("Number of nodes must not be negative!");
+        }
+        Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
+        Map<Pair<Integer, Integer>, Node<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
+        Node<String> source = new Node<String>("s");
+        Map<Node<String>, NodeGridPosition> positions = new LinkedHashMap<Node<String>, NodeGridPosition>();
+        Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
+        GraphAlgorithms.addNode(
+            source,
+            graph,
+            new Pair<Pair<Integer, Integer>, Boolean>(startPos, true),
+            grid,
+            positions
+        );
+        if (numOfNodes == 0) {
+            Node<String> sink = new Node<String>("t");
+            GraphAlgorithms.addNode(
+                sink,
+                graph,
+                new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(1, 0), false),
+                grid,
+                positions
+            );
+            int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
+            graph.addEdge(source, new FlowPair(0, value), sink);
+            graph.setGrid(grid);
+            return graph;
+        }
+        int xPos = 1;
+        int minYPos = 0;
+        int curMinYPos = 0;
+        int curMaxYPos = 0;
+        int prevMinYPos;
+        int prevMaxYPos;
+        int remainingNodes = numOfNodes;
+        int letter = 0;
+        // not all nodes can have diagonals: reduce only possible at every second step 
+        while (remainingNodes > 0) {
+            prevMaxYPos = curMaxYPos;
+            prevMinYPos = curMinYPos;
+            final int prevXPos = xPos - 1;
+            final boolean minDiagonal = (prevMinYPos + prevXPos) % 2 == 0;
+            final boolean maxDiagonal = (prevMaxYPos + prevXPos) % 2 == 0;
+            if (prevMaxYPos == prevMinYPos) {
+                if (minDiagonal) {
+                    if (remainingNodes > 2) {
+                        switch (gen.nextInt(3)) {
+                            case 0:
+                                // expand min
+                                curMinYPos--;
+                                break;
+                            case 1:
+                                // expand max
+                                curMaxYPos++;
+                                break;
+                            default:
+                                // exand both
+                                curMinYPos--;
+                                curMaxYPos++;
+                        }
+                    } else if (remainingNodes == 2) {
+                        if (gen.nextBoolean()) {
+                            // expand min
+                            curMinYPos--;
+                        } else {
+                            // expand max
+                            curMaxYPos++;
+                        }
+                    }
+                    // else keep
+                }
+                // else keep
+            } else {
+                final int reduceMin = 1;
+                final int keepMin = 2;
+                final int expandMin = 4;
+                final int reduceMax = 8;
+                final int keepMax = 16;
+                final int expandMax = 32;
+                List<Integer> options = new ArrayList<Integer>();
+                if (minDiagonal) {
+                    if (maxDiagonal) {
+                        options.add(reduceMin + reduceMax);
+                        if (GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos - 1, prevMaxYPos + 1, xPos)) {
+                            options.add(keepMin + reduceMax);
+                            options.add(reduceMin + keepMax);
+                            options.add(keepMin + keepMax);
+                            options.add(keepMin + keepMax);
+                            options.add(expandMin + keepMax);
+                            options.add(expandMin + keepMax);
+                            options.add(expandMin + keepMax);
+                            options.add(keepMin + expandMax);
+                            options.add(keepMin + expandMax);
+                            options.add(keepMin + expandMax);
+                            options.add(expandMin + expandMax);
+                            options.add(expandMin + expandMax);
+                            options.add(expandMin + expandMax);
+                            options.add(expandMin + expandMax);
+                            options.add(expandMin + expandMax);
+                            options.add(expandMin + expandMax);
+                        } else {
+                            final boolean justExpandMax =
+                                GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos, prevMaxYPos + 1, xPos);
+                            final boolean justExpandMin =
+                                GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos - 1, prevMaxYPos, xPos);
+                            if (justExpandMax && justExpandMin) {
+                                options.add(keepMin + reduceMax);
+                                options.add(reduceMin + keepMax);
+                                options.add(keepMin + keepMax);
+                                options.add(keepMin + keepMax);
+                                options.add(expandMin + keepMax);
+                                options.add(expandMin + keepMax);
+                                options.add(expandMin + keepMax);
+                                options.add(keepMin + expandMax);
+                                options.add(keepMin + expandMax);
+                                options.add(keepMin + expandMax);
+                            } else if (justExpandMax) {
+                                options.add(keepMin + reduceMax);
+                                options.add(reduceMin + keepMax);
+                                options.add(keepMin + keepMax);
+                                options.add(keepMin + keepMax);
+                                options.add(keepMin + expandMax);
+                                options.add(keepMin + expandMax);
+                                options.add(keepMin + expandMax);
+                            } else if (justExpandMin) {
+                                options.add(keepMin + reduceMax);
+                                options.add(reduceMin + keepMax);
+                                options.add(keepMin + keepMax);
+                                options.add(keepMin + keepMax);
+                                options.add(expandMin + keepMax);
+                                options.add(expandMin + keepMax);
+                                options.add(expandMin + keepMax);
+                            } else if (GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos, prevMaxYPos, xPos)) {
+                                options.add(keepMin + reduceMax);
+                                options.add(reduceMin + keepMax);
+                                options.add(keepMin + keepMax);
+                                options.add(keepMin + keepMax);
+                            } else {
+                                if (GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos + 1, prevMaxYPos, xPos)) {
+                                    options.add(reduceMin + keepMax);
+                                }
+                                if (GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos, prevMaxYPos - 1, xPos)) {
+                                    options.add(keepMin + reduceMax);
+                                }
+                            }
+                        }
+                    } else {
+                        options.add(reduceMin + keepMax);
+                        if (GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos - 1, prevMaxYPos, xPos)) {
+                            options.add(keepMin + keepMax);
+                            options.add(keepMin + keepMax);
+                            options.add(expandMin + keepMax);
+                            options.add(expandMin + keepMax);
+                            options.add(expandMin + keepMax);
+                        } else if (GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos, prevMaxYPos, xPos)) {
+                            options.add(keepMin + keepMax);
+                            options.add(keepMin + keepMax);
+                        }
+                    }
+                } else if (maxDiagonal) {
+                    options.add(keepMin + reduceMax);
+                    if (GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos, prevMaxYPos + 1, xPos)) {
+                        options.add(keepMin + keepMax);
+                        options.add(keepMin + keepMax);
+                        options.add(keepMin + expandMax);
+                        options.add(keepMin + expandMax);
+                        options.add(keepMin + expandMax);
+                    } else if (GraphAlgorithms.enoughNodes(remainingNodes, prevMinYPos, prevMaxYPos, xPos)) {
+                        options.add(keepMin + keepMax);
+                        options.add(keepMin + keepMax);
+                    }
+                } else {
+                    options.add(keepMin + keepMax);
+                }
+                switch (options.get(gen.nextInt(options.size()))) {
+                    case reduceMin | reduceMax:
+                        curMinYPos++;
+                        curMaxYPos--;
+                        break;
+                    case reduceMin | keepMax:
+                        curMinYPos++;
+                        break;
+                    case keepMin | reduceMax:
+                        curMaxYPos--;
+                        break;
+                    case keepMin | keepMax:
+                        // do nothing
+                        break;
+                    case keepMin | expandMax:
+                        curMaxYPos++;
+                        break;
+                    case expandMin | keepMax:
+                        curMinYPos--;
+                        break;
+                    case expandMin | expandMax:
+                        curMinYPos--;
+                        curMaxYPos++;
+                        break;
+                    default:
+                        throw new IllegalStateException("Impossible combination of reduce/keep/expand!");
+                }
+            }
+            final int nodesAtXPos = curMaxYPos - curMinYPos + 1;
+            minYPos = Math.min(minYPos, curMinYPos);
+            for (int yPos = curMinYPos; yPos <= curMaxYPos; yPos++) {
+                // at least one edge from previous level
+                Node<String> node = new Node<String>(GraphAlgorithms.toStringLabel(letter++));
+                boolean hasDiagonals = (xPos + yPos) % 2 == 0;
+                Pair<Integer, Integer> pos = new Pair<Integer, Integer>(xPos, yPos);
+                GraphAlgorithms.addNode(
+                    node,
+                    graph,
+                    new Pair<Pair<Integer, Integer>, Boolean>(pos, hasDiagonals),
+                    grid,
+                    positions
+                );
+                if (hasDiagonals) {
+                    List<Node<String>> existing = new ArrayList<Node<String>>();
+                    Node<String> prevNode = grid.get(new Pair<Integer, Integer>(prevXPos, yPos - 1));
+                    if (prevNode != null) {
+                        existing.add(prevNode);
+                    }
+                    prevNode =  grid.get(new Pair<Integer, Integer>(prevXPos, yPos));
+                    if (prevNode != null) {
+                        existing.add(prevNode);
+                    }
+                    prevNode =  grid.get(new Pair<Integer, Integer>(prevXPos, yPos + 1));
+                    if (prevNode != null) {
+                        existing.add(prevNode);
+                    }
+                    int index = gen.nextInt(existing.size());
+                    prevNode = existing.remove(index);
+                    graph.addEdge(
+                        prevNode,
+                        new FlowPair(
+                            0,
+                            GraphAlgorithms.randomEdgeValue(
+                                gen,
+                                prevXPos == 0 ?
+                                    GraphAlgorithms.DEFAULT_SOURCE_SINK_ROOT :
+                                        GraphAlgorithms.DEFAULT_EDGE_ROOT
+                            )
+                        ),
+                        node
+                    );
+                    for (Node<String> otherNode : existing) {
+                        if (gen.nextBoolean()) {
+                            graph.addEdge(
+                                otherNode,
+                                new FlowPair(
+                                    0,
+                                    GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)
+                                ),
+                                node
+                            );
+                        }
+                    }
+                } else {
+                    graph.addEdge(
+                        grid.get(new Pair<Integer, Integer>(prevXPos, yPos)),
+                        new FlowPair(
+                            0,
+                            GraphAlgorithms.randomEdgeValue(
+                                gen,
+                                prevXPos == 0 ?
+                                    GraphAlgorithms.DEFAULT_SOURCE_SINK_ROOT :
+                                        GraphAlgorithms.DEFAULT_EDGE_ROOT
+                            )
+                        ),
+                        node
+                    );
+                }
+                if (yPos > curMinYPos) {
+                    // north-south edges
+                    Node<String> north = grid.get(new Pair<Integer, Integer>(xPos, yPos - 1));
+                    if (gen.nextBoolean()) {
+                        graph.addEdge(
+                            north,
+                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)),
+                            node
+                        );
+                    }
+                    if (gen.nextBoolean()) {
+                        graph.addEdge(
+                            node,
+                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)),
+                            north
+                        );
+                    }
+                }
+            }
+            // at least one edge for each node on previous level to current level
+            outer: for (int prevYPos = prevMinYPos; prevYPos <= prevMaxYPos; prevYPos++) {
+                Node<String> prevNode = grid.get(new Pair<Integer, Integer>(prevXPos, prevYPos));
+                boolean prevDiagonals = (prevXPos + prevYPos) % 2 == 0;
+                if (prevDiagonals) {
+                    List<Node<String>> existing = new ArrayList<Node<String>>();
+                    Node<String> nextNode = grid.get(new Pair<Integer, Integer>(xPos, prevYPos - 1));
+                    if (nextNode != null) {
+                        existing.add(nextNode);
+                    }
+                    nextNode =  grid.get(new Pair<Integer, Integer>(xPos, prevYPos));
+                    if (nextNode != null) {
+                        existing.add(nextNode);
+                    }
+                    nextNode =  grid.get(new Pair<Integer, Integer>(xPos, prevYPos + 1));
+                    if (nextNode != null) {
+                        existing.add(nextNode);
+                    }
+                    for (Node<String> otherNode : existing) {
+                        if (!graph.getEdges(prevNode, otherNode).isEmpty()) {
+                            continue outer;
+                        }
+                    }
+                    int index = gen.nextInt(existing.size());
+                    nextNode = existing.remove(index);
+                    graph.addEdge(
+                        prevNode,
+                        new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)),
+                        nextNode
+                    );
+                } else {
+                    Node<String> nextNode = grid.get(new Pair<Integer, Integer>(xPos, prevYPos));
+                    if (graph.getEdges(prevNode, nextNode).isEmpty()) {
+                        graph.addEdge(
+                            prevNode,
+                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)),
+                            nextNode
+                        );
+                    }
+                }
+            }
+            remainingNodes -= nodesAtXPos;
+            xPos++;
+        }
+        Node<String> sink = new Node<String>("t");
+        int yPos = curMinYPos + ((curMaxYPos - curMinYPos) / 2);
+        if ((xPos + yPos) % 2 != 0) {
+            yPos++;
+        }
+        GraphAlgorithms.addNode(
+            sink,
+            graph,
+            new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(xPos, yPos), true),
+            grid,
+            positions
+        );
+        List<Node<String>> existing = new ArrayList<Node<String>>();
+        Node<String> prevNode = grid.get(new Pair<Integer, Integer>(xPos - 1, yPos - 1));
+        if (prevNode != null) {
+            existing.add(prevNode);
+        }
+        prevNode =  grid.get(new Pair<Integer, Integer>(xPos - 1, yPos));
+        if (prevNode != null) {
+            existing.add(prevNode);
+        }
+        prevNode =  grid.get(new Pair<Integer, Integer>(xPos - 1, yPos + 1));
+        if (prevNode != null) {
+            existing.add(prevNode);
+        }
+        for (Node<String> otherNode : existing) {
+            graph.addEdge(
+                otherNode,
+                new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_SOURCE_SINK_ROOT)),
+                sink
+            );
+        }
+        // adjust grid (non-negative coordinates, sum of coordinates even -> has diagonals
+        int xAdd = 0;
+        if (minYPos % 2 != 0) {
+            xAdd++;
+        }
+        Map<Pair<Integer, Integer>, Node<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
+        for (Entry<Pair<Integer, Integer>, Node<String>> entry : grid.entrySet()) {
+            Pair<Integer, Integer> key = entry.getKey();
+            newGrid.put(new Pair<Integer, Integer>(key.x + xAdd, key.y - minYPos), entry.getValue());
+        }
+        graph.setGrid(newGrid);
+        return graph;
+    }
+
+    /**
+     * @param remainingNodes The number of nodes yet to be added.
+     * @param minYPos The minimal y position in the current level.
+     * @param maxYPos The maximal y position in the current level.
+     * @param xPos The x position of the current level.
+     * @return True if there are at least as many nodes to be added as minimally needed when starting the current level 
+     *         with the specified parameters (by reducing whenever possible). False otherwise. 
+     */
+    private static boolean enoughNodes(int remainingNodes, int minYPos, int maxYPos, int xPos) {
+        int neededNodes = maxYPos - minYPos + 1;
+        int itMinY = minYPos;
+        int itMaxY = maxYPos;
+        int itX = xPos;
+        while (true) {
+            if ((itMinY + itX) % 2 == 0) {
+                itMinY++;
+            }
+            if ((itMaxY + itX) % 2 == 0) {
+                itMaxY--;
+            }
+            if (itMinY >= itMaxY) {
+                break;
+            }
+            itX++;
+            neededNodes += itMaxY - itMinY + 1;
+        }
+        return neededNodes <= remainingNodes;
     }
 
     /**
@@ -746,6 +1175,14 @@ public abstract class GraphAlgorithms {
                     toHighlight.add(new Pair<Node<N>, Pair<FlowPair, Node<N>>>(from, edge));
                 }
             }
+            for (Pair<FlowPair, Node<N>> edge : graph.getEdges(to, from)) {
+                int added = Math.min(flow, edge.x.x);
+                if (added > 0) {
+                    flow -= added;
+                    edge.x.x -= added;
+                    toHighlight.add(new Pair<Node<N>, Pair<FlowPair, Node<N>>>(to, edge));
+                }
+            }
             if (flow > 0) {
                 throw new IllegalStateException("Could not add flow!");
             }
@@ -764,7 +1201,7 @@ public abstract class GraphAlgorithms {
      */
     private static NodeGridPosition addNode(
         Node<String> node,
-        Graph<String, Integer> graph,
+        Graph<String, ?> graph,
         Pair<Pair<Integer, Integer>, Boolean> pos,
         Map<Pair<Integer, Integer>, Node<String>> grid,
         Map<Node<String>, NodeGridPosition> positions
@@ -853,6 +1290,9 @@ public abstract class GraphAlgorithms {
             for (Pair<FlowPair, Node<N>> edge : graph.getEdges(from, to)) {
                 flow += edge.x.y - edge.x.x;
             }
+            for (Pair<FlowPair, Node<N>> edge : graph.getEdges(to, from)) {
+                flow += edge.x.x;
+            }
             if (min == null || min > flow) {
                 min = flow;
             }
@@ -939,12 +1379,19 @@ public abstract class GraphAlgorithms {
 
     /**
      * @param gen Random number generator.
+     * @param root A value which is probably close to the result.
      * @return A random non-negative edge value.
      */
-    private static int randomEdgeValue(Random gen) {
-        int value = 1;
-        while (gen.nextInt(3) > 0) {
-            value++;
+    private static int randomEdgeValue(Random gen, int root) {
+        int value = root;
+        if (gen.nextInt(3) > 0) {
+            while (gen.nextInt(3) > 0) {
+                value++;
+            }
+        } else {
+            while (value > 1 && gen.nextInt(4) == 0) {
+                value--;
+            }
         }
         return value;
     }
