@@ -158,7 +158,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"
             )
         },
-        false
+        true
     ),
 
     /**
@@ -176,7 +176,7 @@ public enum Algorithm {
                         + "multiplication method)"
             )
         },
-        false
+        true
     ),
 
     /**
@@ -194,7 +194,7 @@ public enum Algorithm {
                         + "multiplication method)"
             )
         },
-        false
+        true
     ),
 
     /**
@@ -212,7 +212,7 @@ public enum Algorithm {
                         + "multiplication method), c1 and c2 (constants for quadratic probing)"
             )
         },
-        false
+        true
     ),
 
     /**
@@ -401,7 +401,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        false
+        true
     ),
 	
 	/**
