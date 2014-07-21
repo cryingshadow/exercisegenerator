@@ -61,6 +61,23 @@ public abstract class TikZUtils {
     }
 
     /**
+     * Prints a B-tree to the specified writer.
+     * @param tree The B-tree.
+     * @param writer The writer.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printBTree(IntBTree tree, BufferedWriter writer) throws IOException {
+        if (tree.hasJustRoot()) {
+            writer.write("\\node[draw=black,rounded corners,thick,inner sep=5pt] " + tree.toString() + ";");
+        } else if (tree.isEmpty()) {
+            writer.write("\\node {" + tree.toString() + "};");
+        } else {
+            writer.write("\\Tree " + tree.toString() + ";");
+        }
+        writer.newLine();
+    }
+
+    /**
      * Prints a String representation of the edge from the specified from node to the specified to node with the 
      * specified label suitable for TikZ output to the specified writer.
      * @param from The ID of the from node.

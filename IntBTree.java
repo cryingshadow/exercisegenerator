@@ -37,82 +37,6 @@ public class IntBTree {
     public static final String NAME_OF_BTREE_WITH_DEGREE_2 = "2--3--4--Baum";
 
     /**
-     * Filling degree of this B-tree. Must be greater than 1.
-     */
-    private final int fillingDegree;
-    
-    /**
-     * Root node of this B-tree.
-     */
-    private IntBTreeNode root;
-    
-    /**
-     * Creates an empty B-tree with the specified filling degree.
-     * @param t The filling degree. Must be greater than 1.
-     */
-    public IntBTree(int t) {
-        assert(t > 1) : "Filling degree must be greater than 1!";
-        this.fillingDegree = t;
-        this.root = null;
-    }
-    
-    /**
-     * Adds the specified key to this B-tree.
-     * @param key The key to add.
-     */
-    public void add(int key) {
-        if (this.root == null) {
-            this.root = new IntBTreeNode();
-            this.root.leaf = true;
-        }
-        this.root.add(key, null, 0);
-    }
-    
-    /**
-     * @return The filling degree of this B-tree.
-     */
-    public int getDegree() {
-        return this.fillingDegree;
-    }
-    
-    /**
-     * @return True if this B-tree just consists of the root node.
-     */
-    public boolean hasJustRoot() {
-        return !this.isEmpty() && this.root.leaf;
-    }
-    
-    /**
-     * @return True if this B-tree is empty. False otherwise.
-     */
-    public boolean isEmpty() {
-        return this.root == null;
-    }
-
-    /**
-     * Removes one occurrence of the specified key from this B-tree if at least one occurrence exists.
-     * @param key The key to remove.
-     * @return True if at least one occurrence of the specified key did exist. False otherwise.
-     */
-    public boolean remove(int key) {
-        if (this.root == null) {
-            return false;
-        }
-        return this.root.remove(key, this);
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        if (this.root == null) {
-            return "leer";
-        }
-        return this.root.toString();
-    }
-
-    /**
      * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified B-tree and
      * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
      * @param tree The B-tree.
@@ -167,7 +91,7 @@ public class IntBTree {
                     writerSpace.newLine();
                     TikZUtils.printBeginning(TikZUtils.CENTER, writerSpace);
                     TikZUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
-                    IntBTree.printBTree(tree, writerSpace);
+                    TikZUtils.printBTree(tree, writerSpace);
                     TikZUtils.printTikzEnd(writerSpace);
                     TikZUtils.printEnd(TikZUtils.CENTER, writerSpace);
                     writerSpace.newLine();
@@ -236,7 +160,7 @@ public class IntBTree {
                     writerSpace.newLine();
                     TikZUtils.printBeginning(TikZUtils.CENTER, writerSpace);
                     TikZUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
-                    IntBTree.printBTree(tree, writerSpace);
+                    TikZUtils.printBTree(tree, writerSpace);
                     TikZUtils.printTikzEnd(writerSpace);
                     TikZUtils.printEnd(TikZUtils.CENTER, writerSpace);
                     writerSpace.newLine();
@@ -253,25 +177,86 @@ public class IntBTree {
             }
             TikZUtils.printSamePageBeginning(step++, operation, writer);
             TikZUtils.printTikzBeginning(TikZStyle.BTREE, writer);
-            IntBTree.printBTree(tree, writer);
+            TikZUtils.printBTree(tree, writer);
             TikZUtils.printTikzEnd(writer);
             TikZUtils.printSamePageEnd(writer);
         }
     }
+    
+    /**
+     * Filling degree of this B-tree. Must be greater than 1.
+     */
+    private final int fillingDegree;
+    
+    /**
+     * Root node of this B-tree.
+     */
+    private IntBTreeNode root;
+    
+    /**
+     * Creates an empty B-tree with the specified filling degree.
+     * @param t The filling degree. Must be greater than 1.
+     */
+    public IntBTree(int t) {
+        assert(t > 1) : "Filling degree must be greater than 1!";
+        this.fillingDegree = t;
+        this.root = null;
+    }
+    
+    /**
+     * Adds the specified key to this B-tree.
+     * @param key The key to add.
+     */
+    public void add(int key) {
+        if (this.root == null) {
+            this.root = new IntBTreeNode();
+            this.root.leaf = true;
+        }
+        this.root.add(key, null, 0);
+    }
+    
+    /**
+     * @return The filling degree of this B-tree.
+     */
+    public int getDegree() {
+        return this.fillingDegree;
+    }
+    
+    /**
+     * @return True if this B-tree just consists of the root node.
+     */
+    public boolean hasJustRoot() {
+        return !this.isEmpty() && this.root.leaf;
+    }
 
     /**
-     * Prints a B-tree to the specified writer.
-     * @param tree The B-tree.
-     * @param writer The writer.
-     * @throws IOException If some error occurs during output.
+     * @return True if this B-tree is empty. False otherwise.
      */
-    public static void printBTree(IntBTree tree, BufferedWriter writer) throws IOException {
-        if (tree.hasJustRoot()) {
-            writer.write("\\node[draw=black,rounded corners,thick,inner sep=5pt] " + tree.toString() + ";");
-        } else {
-            writer.write("\\Tree " + tree.toString() + ";");
+    public boolean isEmpty() {
+        return this.root == null;
+    }
+
+    /**
+     * Removes one occurrence of the specified key from this B-tree if at least one occurrence exists.
+     * @param key The key to remove.
+     * @return True if at least one occurrence of the specified key did exist. False otherwise.
+     */
+    public boolean remove(int key) {
+        if (this.root == null) {
+            return false;
         }
-        writer.newLine();
+        return this.root.remove(key, this);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        if (this.root == null) {
+            return "leer";
+        }
+        return this.root.toString();
     }
 
     /**
