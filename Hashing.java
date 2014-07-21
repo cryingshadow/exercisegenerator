@@ -85,7 +85,6 @@ public abstract class Hashing {
                         pos = (int)Math.floor(m * (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0));
                         break;
                 }
-                
                 if (solution[pos] == null) {
                     solution[pos] = in[i];
                 } else {
