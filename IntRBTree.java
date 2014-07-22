@@ -413,7 +413,11 @@ public class IntRBTree {
                 int value = node.getValue();
                 this.replace(node, node.getRight());
                 if (write) {
-                    this.print("ersetze " + value + " durch rechtes Kind", writer);
+                    if(this.isEmpty()) {
+                        this.print("der Baum ist nun leer.", writer);
+                    } else {
+                        this.print("ersetze " + value + " durch rechtes Kind", writer);
+                    }
                 }
             }
         }
@@ -534,7 +538,11 @@ public class IntRBTree {
      * @throws IOException If some error occurs during output.
      */
     private void printSamePageBeginning(String _headline, BufferedWriter writer) throws IOException {
-        if (this.mRoot == null || this.mRoot.getHeight() < 9 ) {
+        if (this.mRoot == null) {
+            int minipagewidth = 1;
+            writer.write("\\begin{minipage}[t]{0." + minipagewidth + " \\columnwidth}");
+            writer.newLine();
+        } else if (this.mRoot.getHeight() < 9) {
             int minipagewidth = this.mRoot.getHeight()+1;
             if (this.mRoot == null || this.mRoot.getHeight() == 0) {
                 minipagewidth++;
@@ -574,7 +582,7 @@ public class IntRBTree {
     private void printTikzBeginning(BufferedWriter writer) throws IOException {
         writer.write("\\begin{tikzpicture}");
         writer.newLine();
-        if (this.mRoot.isBlack()) {
+        if (this.mRoot == null || this.mRoot.isBlack()) {
             writer.write("[every tree node/.style={rectangle,draw=black,thick,inner sep=5pt}");
         } else {
             writer.write("[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}");
@@ -602,18 +610,22 @@ public class IntRBTree {
      * @throws IOException If some error occurs during output.
      */
     private void printVerticalSpace(BufferedWriter writer) throws IOException {
-        this.mStepCounter += this.mRoot.getHeight()+1;
-        if (this.mRoot.getHeight() == 0) {
-            this.mStepCounter++;
-        }
-        if (this.mStepCounter >= 10) {
-            writer.newLine();
-            writer.write("~\\\\");
-            writer.newLine();
-            writer.newLine();
-            this.mStepCounter = this.mRoot.getHeight()+1;
+        if (this.mRoot == null) {
+            this.mStepCounter = 0;
+        } else {
+            this.mStepCounter += this.mRoot.getHeight()+1;
             if (this.mRoot.getHeight() == 0) {
                 this.mStepCounter++;
+            }
+            if (this.mStepCounter >= 10) {
+                writer.newLine();
+                writer.write("~\\\\");
+                writer.newLine();
+                writer.newLine();
+                this.mStepCounter = this.mRoot.getHeight()+1;
+                if (this.mRoot.getHeight() == 0) {
+                    this.mStepCounter++;
+                }
             }
         }
     }

@@ -31,6 +31,12 @@ public class DSALExercisesTest {
             if (!alg.enabled) {
                 continue;
             }
+            System.out.print("Testing " + alg.name);
+            for(int i = 0; i < 30; ++i) {
+                if (i>alg.name.length()) {
+                    System.out.print(" ");
+                }
+            }
             final String name = alg.name;
             nextArgs[5] = name;
             for (int i = 0; i < 100; i++) {
@@ -42,6 +48,7 @@ public class DSALExercisesTest {
                 tasks.add(solFile);
                 DSALExercises.main(nextArgs);
             }
+            System.out.println("done.");
         }
         File make = new File(path + File.separator + "Makefile");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(make))) {

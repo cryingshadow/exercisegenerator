@@ -464,7 +464,7 @@ public enum Algorithm {
             "Perform topological sort.",
             (
                 DSALExercises.STUDENT_MODE ?
-                    "TODO" :
+                    "" :
                         "TODO"
             )
         },

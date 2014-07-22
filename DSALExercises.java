@@ -75,7 +75,7 @@ public class DSALExercises {
     static {
         VERSION = "1.0.1";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = false;
+        STUDENT_MODE = true;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         DYNAMIC_PROGRAMMING_ALGORITHMS = DSALExercises.initDynamicProgrammingAlgorithms();
@@ -430,7 +430,6 @@ public class DSALExercises {
                         fail = false;
                         Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
                     } catch (HashException e) {
-                        System.out.println("fail: m=" + m + ", c1=" + c1 + ", c2=" + c2);
                         Random gen = new Random();
                         Pair<Double, Double> cs = Hashing.newDivQuadInstance(gen, m, params);
                         c1 = cs.x;

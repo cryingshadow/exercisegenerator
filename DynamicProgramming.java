@@ -123,7 +123,7 @@ public abstract class DynamicProgramming {
         String[][] solutionsTmp = null;
         boolean remainderStarted = true;
         for (int columnNr = 0; columnNr < capacity+2; columnNr++) {
-            System.out.println("columnNr = " + columnNr);
+            //System.out.println("columnNr = " + columnNr);
             if (columnNr % 10 == 0 || (remainderStarted && capacity + 2 - columnNr <= 10)) {
                 if (columnNr > 0) {
                     TikZUtils.printTable(solutionsTmp, null, "0.9cm", solWriter, true);
@@ -134,11 +134,11 @@ public abstract class DynamicProgramming {
                 if (capacity + 2 - columnNr > 10) {
                     remainderStarted = false;
                 }
-                System.out.println("columnNrTmp = " + columnNrTmp);
+                //System.out.println("columnNrTmp = " + columnNrTmp);
                 solutionsTmp = new String[n+2][columnNrTmp];
             }
             for (int rowNr = 0; rowNr < n+2; rowNr++) {
-                System.out.println("add column " + (columnNr % 10));
+                //System.out.println("add column " + (columnNr % 10));
                 solutionsTmp[rowNr][columnNr%10] = solutions[rowNr][columnNr];
             }
         }
