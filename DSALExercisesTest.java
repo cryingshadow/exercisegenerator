@@ -31,7 +31,7 @@ public class DSALExercisesTest {
             if (!alg.enabled) {
                 continue;
             }
-            System.out.print("Testing " + alg.name);
+            System.out.print("Testing: " + alg.name);
             for(int i = 0; i < 30; ++i) {
                 if (i>alg.name.length()) {
                     System.out.print(" ");
