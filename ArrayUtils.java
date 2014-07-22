@@ -200,6 +200,51 @@ public abstract class ArrayUtils {
     }
 
     /**
+     * Prints the specified array interpreted as binary tree up to the specified index.
+     * @param array The array.
+     * @param to The index to which the tree should be printed.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printTree(Integer[] array, int to, BufferedWriter writer) throws IOException {
+        if (to < 0) {
+            return;
+        }
+        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        if (to > 0) {
+            writer.write("\\Tree");
+            printTree(array, 0, to, writer);
+        } else {
+            writer.write("\\node[circle,draw=black,thick,inner sep=5pt] {" + array[0] + "};");
+        }
+        writer.newLine();
+        TikZUtils.printTikzEnd(writer);
+    }
+
+    /**
+     * Prints the specified array interpreted as binary tree from the specified start index (i.e., it prints the 
+     * subtree starting with the element at the specified start index) to the specified end index.
+     * @param array The array.
+     * @param start The start index.
+     * @param end The end index.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printTree(Integer[] array, int start, int end, BufferedWriter writer) throws IOException {
+        final int next = 2 * start + 1;
+        if (next <= end) {
+            writer.write(" [." + array[start]);
+            ArrayUtils.printTree(array, next, end, writer);
+            if (next + 1 <= end) {
+                ArrayUtils.printTree(array, next + 1, end, writer);
+            }
+            writer.write(" ]");
+        } else {
+            writer.write(" " + array[start]);
+        }
+    }
+
+    /**
      * Prints a colum of nodes with the contents of the array.
      * @param array The array of values.
      * @param separate An array indicating which nodes should be separated vertically. Must have a size exactly one
@@ -347,51 +392,6 @@ public abstract class ArrayUtils {
             array[a] = array[b];
             array[b] = store;
         }
-    }
-
-    /**
-     * Prints the specified array interpreted as binary tree from the specified start index (i.e., it prints the 
-     * subtree starting with the element at the specified start index) to the specified end index.
-     * @param array The array.
-     * @param start The start index.
-     * @param end The end index.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printTree(Integer[] array, int start, int end, BufferedWriter writer) throws IOException {
-        final int next = 2 * start + 1;
-        if (next <= end) {
-            writer.write(" [." + array[start]);
-            ArrayUtils.printTree(array, next, end, writer);
-            if (next + 1 <= end) {
-                ArrayUtils.printTree(array, next + 1, end, writer);
-            }
-            writer.write(" ]");
-        } else {
-            writer.write(" " + array[start]);
-        }
-    }
-
-    /**
-     * Prints the specified array interpreted as binary tree up to the specified index.
-     * @param array The array.
-     * @param to The index to which the tree should be printed.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printTree(Integer[] array, int to, BufferedWriter writer) throws IOException {
-        if (to < 0) {
-            return;
-        }
-        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
-        if (to > 0) {
-            writer.write("\\Tree");
-            printTree(array, 0, to, writer);
-        } else {
-            writer.write("\\node[circle,draw=black,thick,inner sep=5pt] {" + array[0] + "};");
-        }
-        writer.newLine();
-        TikZUtils.printTikzEnd(writer);
     }
 
 }

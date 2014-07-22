@@ -1,4 +1,3 @@
-
 /**
  * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
  * @author Thomas Stroeder
@@ -74,25 +73,25 @@ public enum Algorithm {
         },
         true
     ),
-	
-	/**
+
+    /**
      * Floyd's algorithm to find shortest paths from a single source.
      */
     FLOYD(
-		"floyd",
-		"Floyd Algorithmus",
-		new String[]{
-			"Floyd's algorithm to find all shortest paths to all other nodes.",
-			(
-				DSALExercises.STUDENT_MODE ?
-				    "The flag -l specifies how many nodes will be added to the graph." :
-						"TODO"
-			)
-		},
-		true
-	),
-	
-	/**
+        "floyd",
+        "Floyd Algorithmus",
+        new String[]{
+            "Floyd's algorithm to find all shortest paths to all other nodes.",
+            (
+                DSALExercises.STUDENT_MODE ?
+                    "The flag -l specifies how many nodes will be added to the graph." :
+                        "TODO"
+            )
+        },
+        true
+    ),
+
+    /**
      * Ford-Fulkerson for flow networks.
      */
     FORD_FULKERSON(
@@ -109,8 +108,8 @@ public enum Algorithm {
         },
         true
     ),
-	
-	/**
+
+    /**
      * Linked hashing on Integer arrays with the division method.
      */
     HASH_DIV(
@@ -249,7 +248,7 @@ public enum Algorithm {
         },
         true
     ),
-    
+
     /**
      * Convex hull according to Grahams' Scan.
      */
@@ -288,35 +287,35 @@ public enum Algorithm {
      * Dynamic programming based algorithm to find the maximum value of the item fitting into a knapsack with certain capacity.
      */
     KNAPSACK(
-		"knapsack",
-		"Knapsack Problem Solved With Dynamic programming",
-		new String[]{
-			"Knapsack problem solved with dynamic programming.",
-			(
-			DSALExercises.STUDENT_MODE ?
-			   "The flag -l specifies how many items can be chosen to put into the bag." :
-					"TODO"
-			)
-		},
-		false
-	),
+        "knapsack",
+        "Knapsack Problem Solved With Dynamic programming",
+        new String[]{
+            "Knapsack problem solved with dynamic programming.",
+            (
+            DSALExercises.STUDENT_MODE ?
+               "The flag -l specifies how many items can be chosen to put into the bag." :
+                    "TODO"
+            )
+        },
+        true
+    ),
 
     /**
      * Dynamic programming based algorithm to find the longest common subsequence of two strings.
      */
     LCS(
-		"lcs",
-		"LCS Problem Solved With Dynamic programming",
-		new String[]{
-			"LCS problem solved with dynamic programming.",
-			(
-			DSALExercises.STUDENT_MODE ?
-			   "TODO" :
-					"TODO"
-			)
-		},
-		false
-	),
+        "lcs",
+        "LCS Problem Solved With Dynamic programming",
+        new String[]{
+            "LCS problem solved with dynamic programming.",
+            (
+            DSALExercises.STUDENT_MODE ?
+               "TODO" :
+                    "TODO"
+            )
+        },
+        false
+    ),
 
     /**
      * Mergesort on Integer arrays.
@@ -357,18 +356,18 @@ public enum Algorithm {
      * Prim's algorithm to find minimum spanning trees from a single source.
      */
     PRIM(
-		"prim",
-		"Prim Algorithmus",
-		new String[]{
-			"Prim's algorithm to find the minimum spanning tree.",
-			(
-				DSALExercises.STUDENT_MODE ?
-				    "The flag -l specifies how many nodes will be added to the graph." :
-						"TODO"
-			)
-		},
-		true
-	),
+        "prim",
+        "Prim Algorithmus",
+        new String[]{
+            "Prim's algorithm to find the minimum spanning tree.",
+            (
+                DSALExercises.STUDENT_MODE ?
+                    "The flag -l specifies how many nodes will be added to the graph." :
+                        "TODO"
+            )
+        },
+        true
+    ),
 
     /**
      * Quicksort on Integer arrays.
@@ -386,7 +385,7 @@ public enum Algorithm {
         },
         true
     ),
-    
+
     /**
      * Insertion and deletion in Red-Black-trees with int values.
      */
@@ -403,8 +402,8 @@ public enum Algorithm {
         },
         true
     ),
-	
-	/**
+
+    /**
      * Detection of strongly connected components.
      */
     SCC(
@@ -456,38 +455,38 @@ public enum Algorithm {
     ),
 
     /**
-	 * Topological sorting of a graph.
-	 */
-	TOPOLOGICSORT(
-		"topologicSort",
-		"Topologisches Sortieren",
-		new String[]{
-			"Perform topological sort.",
-			(
-				DSALExercises.STUDENT_MODE ?
-					"TODO" :
-					    "TODO"
-			)
-		},
-		true
-	),
+     * Topological sorting of a graph.
+     */
+    TOPOLOGICSORT(
+        "topologicSort",
+        "Topologisches Sortieren",
+        new String[]{
+            "Perform topological sort.",
+            (
+                DSALExercises.STUDENT_MODE ?
+                    "TODO" :
+                        "TODO"
+            )
+        },
+        true
+    ),
 
     /**
      * Warshall's algorithm to find shortest paths from a single source.
      */
     WARSHALL(
-		"warshall",
-		"Warshall Algorithmus",
-		new String[]{
-			"Warshall's algorithm to find the transitive hull.",
-			(
-			DSALExercises.STUDENT_MODE ?
-			    "The flag -l specifies how many nodes will be added to the graph." :
-					"TODO"
-			)
-		},
-		true
-	);
+        "warshall",
+        "Warshall Algorithmus",
+        new String[]{
+            "Warshall's algorithm to find the transitive hull.",
+            (
+            DSALExercises.STUDENT_MODE ?
+                "The flag -l specifies how many nodes will be added to the graph." :
+                    "TODO"
+            )
+        },
+        true
+    );
 
     /**
      * The documentation for this algorithm.
