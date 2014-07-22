@@ -608,7 +608,7 @@ public class DSALExercises {
      */
     private static Set<String> initGeometricAlgorithms() {
         Set<String> res = new LinkedHashSet<String>();
-        if (!DSALExercises.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+        if (!DSALExercises.STUDENT_MODE || Algorithm.HULL.enabled) {
             res.add(Algorithm.HULL.name);
         }
         return res;
@@ -1151,13 +1151,12 @@ public class DSALExercises {
                 } else {
                     numOfPoints = gen.nextInt(16) + 5;
                 }
-                for(int i = 0; i < numOfPoints; ++i) {
+                for (int i = 0; i < numOfPoints; ++i) {
                     coordinates[0] = rangeMin + (rangeMax - rangeMin) * gen.nextDouble();
                     coordinates[1] = rangeMin + (rangeMax - rangeMin) * gen.nextDouble();
                     Pair<Double,Double> point = new Pair<Double,Double>(coordinates[0], coordinates[1]);
                     input.add(point);
                 }
-                
             } else {
                 nums = options.get(Flag.INPUT).split(";");
                 for(int i = 0; i < nums.length; ++i) {

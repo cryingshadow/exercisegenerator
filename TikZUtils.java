@@ -134,10 +134,9 @@ public abstract class TikZUtils {
         writer.newLine();
         writer.write("\\usepackage{tikz}");
         writer.newLine();
-        writer.write(
-            "\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,"
-            + "matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,trees}"
-        );
+        writer.write("\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,");
+        writer.write("matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,");
+        writer.write("trees,backgrounds}");
         writer.newLine();
         writer.write("\\usepackage{tikz-qtree}");
         writer.newLine();
