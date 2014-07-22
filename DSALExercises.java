@@ -73,7 +73,7 @@ public class DSALExercises {
     private static final String VERSION;
     
     static {
-        VERSION = "1.0.1";
+        VERSION = "1.1.0";
         NUMBER_LIMIT = 100;
         STUDENT_MODE = true;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
@@ -702,6 +702,9 @@ public class DSALExercises {
             "This is ExerciseCreator version "
             + DSALExercises.VERSION
             + (DSALExercises.STUDENT_MODE ? " (student)." : ".")
+        );
+        text.add(
+            "Please read the license contained in this JAR file. By using this software, you agree to this license."
         );
         text.add(
             "You can create exercises and solutions automatically using the following flags, where each flag needs to "
