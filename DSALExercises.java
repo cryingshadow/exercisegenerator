@@ -361,7 +361,7 @@ public class DSALExercises {
 							writeText
 						);
 					} catch (IOException e) {
-						System.out.println("Caught cycle-exception.");
+						//System.out.println("Caught cycle-exception.");
 						fail = true;
 						Random gen = new Random();
 						for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
@@ -430,10 +430,13 @@ public class DSALExercises {
                         fail = false;
                         Hashing.hashing(in.y, m, params, !DSALExercises.STUDENT_MODE, solutionWriter);
                     } catch (HashException e) {
+                        System.out.println("fail: m=" + m + ", c1=" + c1 + ", c2=" + c2);
                         Random gen = new Random();
                         Pair<Double, Double> cs = Hashing.newDivQuadInstance(gen, m, params);
                         c1 = cs.x;
                         c2 = cs.y;
+                        params[3] = c1;
+                        params[4] = c2;
                         fail = true;
                     }
                 } while (fail);

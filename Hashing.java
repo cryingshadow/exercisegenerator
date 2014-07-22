@@ -21,7 +21,7 @@ public abstract class Hashing {
      * @return A pair of parameters and the values to hash in.
      */
     public static Pair<double[], Integer[]> createRandomInput(Random gen, int length, String alg) {
-        Integer[] array = new Integer[length];
+        Integer[] array = new Integer[(int)(length*0.75)];
         for (int i = 0; i < array.length; i++) {
             array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
         }
@@ -82,7 +82,6 @@ public abstract class Hashing {
         int collisionCount = 0;
         int algorithm = (int)params[0];
         int probe = (int)params[1];
-//        String anchor = "";
         double c = 0.0;
         double c1 = 0.0;
         double c2 = 0.0;
@@ -134,7 +133,8 @@ public abstract class Hashing {
                         break;
                     case 2:
                         // Multiplication Hashing
-                        pos = (int)Math.floor(m * (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0));
+                        pos = (int)Math.floor(m * (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0)) % m;
+                        //System.out.println("Parameters: c=" + c + ", m=" + m + ", in[i]=" + in[i] + ", pos=" + pos + " k*c=" + (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0));
                         break;
                 }
                 if (solution[pos] == null) {
@@ -199,13 +199,7 @@ public abstract class Hashing {
                         break;
                     case 2:
                         // Multiplication Hashing
-//                        System.out.println(
-//                            "Test: "
-//                            + (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0)
-//                            + ", m is: "
-//                            + m
-//                        );
-                        pos = (int)Math.floor( m * Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0 );
+                        pos = (int)Math.floor( m * Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0 ) % m;
                         break;
                 }
                 if (solution[pos].substring(solution[pos].length()-1).equals(":")) {
