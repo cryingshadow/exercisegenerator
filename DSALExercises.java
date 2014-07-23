@@ -73,7 +73,7 @@ public class DSALExercises {
     private static final String VERSION;
     
     static {
-        VERSION = "1.0.2";
+        VERSION = "1.1.0";
         NUMBER_LIMIT = 100;
         STUDENT_MODE = false;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();

@@ -981,11 +981,11 @@ public abstract class GraphAlgorithms {
         graph.printTikZ(true, multiplier, null, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-        exWriter.write("Berechnen Sie den \\textbf{maximalen Fluss} in diesem Netzwerk mithilfe der \\textbf{Ford-Fulkerson Methode}. ");
-        exWriter.write("Geben Sie dazu ");
+        exWriter.write("Berechnen Sie den \\textbf{maximalen Fluss} in diesem Netzwerk mithilfe der ");
+        exWriter.write("\\textbf{Ford-Fulkerson Methode}. Geben Sie dazu ");
         exWriter.write(GraphAlgorithms.EACH_RESIDUAL_GRAPH);
-        exWriter.write(" sowie \\textbf{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. Geben Sie ");
-        exWriter.write("au\\ss{}erdem den Wert des maximalen Flusses an.");
+        exWriter.write(" sowie \\textbf{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. Geben ");
+        exWriter.write("Sie au\\ss{}erdem den Wert des maximalen Flusses an.");
         exWriter.newLine();
         int step = 0;
         TikZUtils.printSamePageBeginning(step++, solWriter);
