@@ -227,7 +227,7 @@ public abstract class GeometricAlgorithms {
                 writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet "+ i +"};");
                 writer.newLine();
             } else {
-                writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet};");
+                writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet (" + pointSet.get(i).x.intValue() +"," + pointSet.get(i).y.intValue() +")};");
                 writer.newLine();
             }
         }
