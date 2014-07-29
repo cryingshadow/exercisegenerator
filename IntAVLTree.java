@@ -210,6 +210,7 @@ public class IntAVLTree {
     
     public void del(AVLNode _node, BufferedWriter writer, boolean write) throws IOException {
         int value = _node.getValue();
+        AVLNode father = _node.getFather();
         if (this.mRoot.getLeft() == null && this.mRoot.getRight() == null ) {
             if (_node == this.mRoot) {
                 this.mRoot = null;
@@ -225,6 +226,8 @@ public class IntAVLTree {
             // Balance the tree
             if (tmp != null) {
                 this.balance(tmp, false, writer, write);
+            } else if (father != null) {
+                this.balance(father, false, writer, write);
             }
         }
     }

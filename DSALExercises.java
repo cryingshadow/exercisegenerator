@@ -75,7 +75,7 @@ public class DSALExercises {
     static {
         VERSION = "1.1.0";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = true;
+        STUDENT_MODE = false;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         DYNAMIC_PROGRAMMING_ALGORITHMS = DSALExercises.initDynamicProgrammingAlgorithms();
