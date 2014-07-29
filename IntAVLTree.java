@@ -646,7 +646,7 @@ public class IntAVLTree {
                         writerSpace.write(
                             "L\\\"oschen Sie den Wert "
                             + op.x
-                            + " aus dem folgenden AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
+                            + " aus dem folgenden AVL-Baum und geben Sie die entstehenden B\\\"aume "
                             + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"
                         );
                     }

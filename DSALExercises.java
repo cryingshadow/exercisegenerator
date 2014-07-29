@@ -75,7 +75,7 @@ public class DSALExercises {
     static {
         VERSION = "1.1.0";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = false;
+        STUDENT_MODE = true;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         DYNAMIC_PROGRAMMING_ALGORITHMS = DSALExercises.initDynamicProgrammingAlgorithms();
@@ -1015,28 +1015,66 @@ public class DSALExercises {
                 }
             } else if (DSALExercises.STUDENT_MODE) {
                 Random gen = new Random();
-                for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
-                    for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
-                        if (graph.isNecessarySparseMatrixEntry(i,j) ) {
-                            int rndNumber = gen.nextInt(18); 
-                            int entry = 0;
-                            if (rndNumber >= 10 && rndNumber < 13) {
-                                entry = -1;
-                            } else if (rndNumber >= 13 && rndNumber < 16) {
-                                entry = 1;
-                            } else if (rndNumber >= 16) {
-                                entry = 2;
-                            } 
-                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
-                                sparseAdjacencyMatrix[i][j] = entry;
-                            } else {
-                                System.out.println(errorMessage);
-                                return null;
-                            }
+                if (Algorithm.SHARIR.name.equals(alg)) {
+                    int[] numbers = new int[18];
+                    for (int i = 0; i < numbers.length; i++) {
+                        int rndNumber = gen.nextInt(9);
+                        if (rndNumber < 3) {
+                            numbers[i] = -1;
+                        } else if (rndNumber < 4) {
+                            numbers[i] = 0;
+                        } else if (rndNumber < 7) {
+                            numbers[i] = 1;
                         } else {
-                            sparseAdjacencyMatrix[i][j] = 0;
+                            numbers[i] = 2;
                         }
                     }
+                    sparseAdjacencyMatrix[4][1] = numbers[0];
+                    sparseAdjacencyMatrix[4][2] = numbers[1];
+                    
+                    sparseAdjacencyMatrix[5][2] = numbers[2];
+                    sparseAdjacencyMatrix[5][3] = numbers[3];
+                    sparseAdjacencyMatrix[5][4] = numbers[4];
+                    
+                    sparseAdjacencyMatrix[8][0] = numbers[5];
+                    sparseAdjacencyMatrix[8][1] = numbers[6];
+                    sparseAdjacencyMatrix[8][2] = numbers[7];
+                    sparseAdjacencyMatrix[8][4] = numbers[8];
+                    sparseAdjacencyMatrix[8][5] = numbers[9];
+                    
+                    sparseAdjacencyMatrix[9][0] = numbers[10];
+                    sparseAdjacencyMatrix[9][2] = numbers[11];
+                    sparseAdjacencyMatrix[9][3] = numbers[12];
+                    sparseAdjacencyMatrix[9][4] = numbers[13];
+                    
+                    sparseAdjacencyMatrix[12][0] = numbers[14];
+                    sparseAdjacencyMatrix[12][1] = numbers[15];
+                    sparseAdjacencyMatrix[12][4] = numbers[16];
+                    sparseAdjacencyMatrix[12][5] = numbers[17];
+                } else {
+                    for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
+                        for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
+                            if (graph.isNecessarySparseMatrixEntry(i,j) ) {
+                                int rndNumber = gen.nextInt(18); 
+                                int entry = 0;
+                                if (rndNumber >= 10 && rndNumber < 13) {
+                                    entry = -1;
+                                } else if (rndNumber >= 13 && rndNumber < 16) {
+                                    entry = 1;
+                                } else if (rndNumber >= 16) {
+                                    entry = 2;
+                                } 
+                                if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                                    sparseAdjacencyMatrix[i][j] = entry;
+                                } else {
+                                    System.out.println(errorMessage);
+                                    return null;
+                                }
+                            } else {
+                                sparseAdjacencyMatrix[i][j] = 0;
+                            }
+                        }
+                    }   
                 }
             } else {
                 errorMessage =
