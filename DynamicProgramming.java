@@ -136,10 +136,18 @@ public abstract class DynamicProgramming {
                 }
                 solutionsTmpEx[0][columnNr%tableWidth] = solutions[0][columnNr];
                 if (columnNr > 0 && (columnNr % (tableWidth-1) == 0 || columnNr == capacity+1)) {
+                    solWriter.write("\\begin{center}");
+                    solWriter.newLine();
                     TikZUtils.printTable(solutionsTmp, null, "0.9cm", solWriter, true);
                     solWriter.newLine();
+                    solWriter.write("\\end{center}");
                     solWriter.newLine();
+                    solWriter.newLine();
+                    exWriter.write("\\begin{center}");
+                    exWriter.newLine();
                     TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true);
+                    exWriter.newLine();
+                    exWriter.write("\\end{center}");
                     exWriter.newLine();
                     exWriter.newLine();
                     int columnNrTmp = capacity + 2 - columnNr > tableWidth ? tableWidth : capacity + 1 - columnNr;
@@ -156,10 +164,18 @@ public abstract class DynamicProgramming {
             for (int columnNr = 1; columnNr < capacity+2; columnNr++) {
                 solutionsTmpEx[0][columnNr] = solutions[0][columnNr];
             }
+            exWriter.write("\\begin{center}");
+            exWriter.newLine();
             TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true);
             exWriter.newLine();
+            exWriter.write("\\end{center}");
             exWriter.newLine();
+            exWriter.newLine();
+            solWriter.write("\\begin{center}");
+            solWriter.newLine();
             TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true);
+            solWriter.newLine();
+            solWriter.write("\\end{center}");
             solWriter.newLine();
             solWriter.newLine();
         }
