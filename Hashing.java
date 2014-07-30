@@ -180,11 +180,17 @@ public abstract class Hashing {
                 System.out.println("#collisions by probing: " + collisionCount);
             }
             writer.write(init);
+            writer.newLine();
+            writer.write("{\\Large");
+            writer.newLine();
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
             ArrayUtils.printArray(solution, null, null, null, writer);
         } else {
             // probe == 0 -> no probing
             writer.write(init);
+            writer.newLine();
+            writer.write("{\\Large");
+            writer.newLine();
             TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
             String[] solution = new String[m];
             for (int i = 0; i < m; ++i) {
@@ -211,6 +217,8 @@ public abstract class Hashing {
             ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
         }
         TikZUtils.printTikzEnd(writer);
+        writer.write("}");
+        writer.newLine();
     }
 
     /**
@@ -285,16 +293,13 @@ public abstract class Hashing {
         for (int i = 0; i < input.length - 1; ++i) {
             writer.write(input[i] + ", ");
         }
-        writer.write(input[input.length-1] + ".");
-        writer.write("\\\\[2ex]");
+        writer.write(input[input.length-1] + ".\\\\[4ex]");
+        writer.newLine();
+        writer.write("{\\Large");
         writer.newLine();
         if (probing) {
-            Integer[] indizes = new Integer[size];
-            for (int i = 0; i < size; ++i) {
-                indizes[i] = i;
-            }
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            ArrayUtils.printEmptyArray(size, ArrayUtils.printArray(indizes, null, null, null, writer), writer);
+            ArrayUtils.printEmptyArrayWithIndex(size, writer);
         } else {
             String[] solution = new String[size];
             for (int i = 0; i < size; ++i) {
@@ -304,6 +309,8 @@ public abstract class Hashing {
             ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
         }
         TikZUtils.printTikzEnd(writer);
+        writer.write("}");
+        writer.newLine();
     }
 
     /**

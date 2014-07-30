@@ -149,6 +149,9 @@ public abstract class TikZUtils {
         writer.write("\\setlength{\\parindent}{0pt}");
         writer.newLine();
         writer.newLine();
+        writer.write("\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
+        writer.newLine();
+        writer.newLine();
         writer.write("\\begin{document}");
         writer.newLine();
         writer.newLine();

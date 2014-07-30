@@ -95,18 +95,18 @@ public abstract class DynamicProgramming {
         }
         
         // create output
-        exWriter.write("Gegeben sei ein Rucksack mit \\textbf{maximaler Tragkraft} " + capacity);
-        exWriter.write(" sowie " + n + " \\textbf{Gegenst\\\"ande}. Der $i$-te Gegenstand soll hierbei");
+        exWriter.write("Gegeben sei ein Rucksack mit \\emphasize{maximaler Tragkraft} " + capacity);
+        exWriter.write(" sowie " + n + " \\emphasize{Gegenst\\\"ande}. Der $i$-te Gegenstand soll hierbei");
         exWriter.write(" ein Gewicht von $w_i$ und einen Wert von $c_i$ haben.");
         exWriter.write(" Bestimmen Sie mit Hilfe des in der Vorlesung vorgestellten Algorithmus zum L\\\"osen");
         exWriter.write(" des Rucksackproblems mit dynamischer Programmierung den maximalen");
         exWriter.write(" Gesamtwert der Gegenst\\\"ande, die der Rucksack tragen kann (das Gesamtgewicht der");
         exWriter.write(" mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des Rucksacks).");
-        exWriter.write(" Die \\textbf{Gewichte} seien dabei $w_0=" + weights[0] + "$");
+        exWriter.write(" Die \\emphasize{Gewichte} seien dabei $w_0=" + weights[0] + "$");
         for (int i = 1; i < n-1; i++) {
             exWriter.write(", $w_{" + i + "} =" + weights[i] + "$");
         }
-        exWriter.write(" und $w_{" + (n-1) + "} =" + weights[n-1] + "$ und die \\textbf{Werte} $c_0=" + values[0] + "$");
+        exWriter.write(" und $w_{" + (n-1) + "} =" + weights[n-1] + "$ und die \\emphasize{Werte} $c_0=" + values[0] + "$");
         for (int i = 1; i < n-1; i++) {
             exWriter.write(", $c_{" + i + "} =" + values[i] + "$");
         }

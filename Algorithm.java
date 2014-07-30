@@ -38,7 +38,7 @@ public enum Algorithm {
             )
         },
         true
-    ),
+    ), //TODO extra flag for deletion
 
     /**
      * Bubblesort on Integer arrays.
@@ -401,7 +401,7 @@ public enum Algorithm {
             )
         },
         true
-    ),
+    ), //TODO extra flag for deletion
 
     /**
      * Detection of strongly connected components.

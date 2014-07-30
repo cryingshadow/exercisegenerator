@@ -164,6 +164,41 @@ public abstract class ArrayUtils {
     }
 
     /**
+     * Prints a row of empty nodes as solution space for the contents of the array with array indices above.
+     * @param length The length of the array.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some I/O error occurs.
+     */
+    public static void printEmptyArrayWithIndex(int length, BufferedWriter writer) throws IOException {
+        int i = 0;
+        writer.write("\\node[node] (");
+        writer.write("n" + ArrayUtils.number++);
+        writer.write(") {\\phantom{00}};");
+        writer.newLine();
+        int ref = ArrayUtils.number - 1;
+        writer.write("\\node (");
+        writer.write("l" + ref);
+        writer.write(") [above=0 of n" + ref);
+        writer.write("] {\\scriptsize\\texttt{a[" + i);
+        writer.write("]}};");
+        writer.newLine();
+        while (i < length - 1) {
+            i++;
+            writer.write("\\node[node] (n" + ArrayUtils.number++);
+            writer.write(") [right=of n" + (ArrayUtils.number - 2));
+            writer.write("] {\\phantom{00}};");
+            writer.newLine();
+            ref = ArrayUtils.number - 1;
+            writer.write("\\node (");
+            writer.write("l" + ref);
+            writer.write(") [above=0 of n" + ref);
+            writer.write("] {\\scriptsize\\texttt{a[" + i);
+            writer.write("]}};");
+            writer.newLine();
+        }
+    }
+
+    /**
      * Prints a colum of empty nodes as solution space for the contents of the array.
      * @param length The length of the array.
      * @param left The name of the top-most node in the colum left of the current colum.
@@ -213,7 +248,7 @@ public abstract class ArrayUtils {
         TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
         if (to > 0) {
             writer.write("\\Tree");
-            printTree(array, 0, to, writer);
+            ArrayUtils.printTree(array, 0, to, writer);
         } else {
             writer.write("\\node[circle,draw=black,thick,inner sep=5pt] {" + array[0] + "};");
         }

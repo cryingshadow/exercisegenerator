@@ -5,19 +5,14 @@ import java.util.Map.Entry;
 /**
  * Class offering methods for graph algorithms.
  * @author Thomas Stroeder
- * @version $Id$
+ * @version 1.0.1
  */
 public abstract class GraphAlgorithms {
 
     /**
-     * Flag to enable special wishes of Erika for Dijkstra's algorithm and flow networks.
-     */
-    public static final boolean ERIKA_MODE = true;
-
-    /**
      * The phrase "each residual graph".
      */
-    private static final String EACH_RESIDUAL_GRAPH = "\\textbf{jedes Restnetzwerk (auch das initiale)}";
+    private static final String EACH_RESIDUAL_GRAPH = "\\emphasize{jedes Restnetzwerk (auch das initiale)}";
 
     /**
      * The name of a residual graph.
@@ -575,120 +570,120 @@ public abstract class GraphAlgorithms {
         final String[][] solTable;
         final String[][] exColor;
         final String[][] solColor;
-        if (GraphAlgorithms.ERIKA_MODE) {
-            exTable = new String[size][size + 1];
-            solTable = new String[size][size + 1];
-            exColor = new String[size][size + 1];
-            solColor = new String[size][size + 1];
-            solTable[0][0] = "\\texttt{v}";
-            exTable[0][0] = solTable[0][0];
-            Integer[] distances = new Integer[size];
-            Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
-            int i = 1;
-            for (Node<N> node : nodes) {
-                if (!node.equals(start)) {
-                    solTable[0][i + 1] = "\\texttt{key[}" + node.getLabel().toString() + "\\texttt{]}";
-                    exTable[0][i + 1] = solTable[0][i + 1];
-                    ids.put(node, i);
-                    i++;
-                }
-            }
-            solTable[0][1] = "\\texttt{key[}" + start.getLabel().toString() + "\\texttt{]}";
-            exTable[0][1] = solTable[0][1];
-            int current = 0;
-            distances[current] = 0;
-            Set<Integer> used = new LinkedHashSet<Integer>();
-            for (i = 1; i < size; i++) {
-                used.add(current);
-                Node<N> currentNode = nodes.get(current);
-                solTable[i][0] = currentNode.getLabel().toString();
-                exTable[i][0] = "";
-                for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
-                    Integer to = ids.get(edge.y);
-                    if (to != null && (distances[to] == null || distances[to] > distances[current] + edge.x)) {
-                        distances[to] = distances[current] + edge.x;
+        Integer[] distances = new Integer[size];
+        Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
+        int i = 1;
+        int current = 0;
+        Set<Integer> used = new LinkedHashSet<Integer>();
+        switch (DSALExercises.TEXT_VERSION) {
+            case ABRAHAM:
+                exTable = new String[size][size + 1];
+                solTable = new String[size][size + 1];
+                exColor = new String[size][size + 1];
+                solColor = new String[size][size + 1];
+                solTable[0][0] = "\\texttt{v}";
+                exTable[0][0] = solTable[0][0];
+                for (Node<N> node : nodes) {
+                    if (!node.equals(start)) {
+                        solTable[0][i + 1] = "\\texttt{key[}" + node.getLabel().toString() + "\\texttt{]}";
+                        exTable[0][i + 1] = solTable[0][i + 1];
+                        ids.put(node, i);
+                        i++;
                     }
                 }
-                Integer curMin = null;
-                int minIndex = -1;
-                for (int j = 1; j <= size; j++) {
-                    final Integer dist = distances[j - 1];
-                    if (dist == null) {
-                        solTable[i][j] = "$\\infty$";
-                    } else {
-                        if (!used.contains(j - 1) && (curMin == null || curMin > dist)) {
-                            curMin = dist;
-                            minIndex = j - 1;
+                solTable[0][1] = "\\texttt{key[}" + start.getLabel().toString() + "\\texttt{]}";
+                exTable[0][1] = solTable[0][1];
+                distances[current] = 0;
+                for (i = 1; i < size; i++) {
+                    used.add(current);
+                    Node<N> currentNode = nodes.get(current);
+                    solTable[i][0] = currentNode.getLabel().toString();
+                    exTable[i][0] = "";
+                    for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
+                        Integer to = ids.get(edge.y);
+                        if (to != null && (distances[to] == null || distances[to] > distances[current] + edge.x)) {
+                            distances[to] = distances[current] + edge.x;
                         }
-                        solTable[i][j] = "" + dist;
                     }
-                    exTable[i][j] = "";
-                }
-                if (minIndex < 0) {
-                    // no shortening possible
-                    break;
-                }
-                current = minIndex;
-                solColor[i][current + 1] = "black!20";
-            }
-        } else {
-            exTable = new String[size][size];
-            solTable = new String[size][size];
-            exColor = new String[size][size];
-            solColor = new String[size][size];
-            solTable[0][0] = "\\textbf{Knoten}";
-            exTable[0][0] = solTable[0][0];
-            Integer[] distances = new Integer[size];
-            Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
-            int i = 1;
-            for (Node<N> node : nodes) {
-                if (!node.equals(start)) {
-                    solTable[0][i] = "\\textbf{" + node.getLabel().toString() + "}";
-                    exTable[0][i] = solTable[0][i];
-                    ids.put(node, i);
-                    i++;
-                }
-            }
-            int current = 0;
-            distances[current] = 0;
-            Set<Integer> used = new LinkedHashSet<Integer>();
-            for (i = 1; i < size; i++) {
-                used.add(current);
-                Node<N> currentNode = nodes.get(current);
-                solTable[i][0] = currentNode.getLabel().toString();
-                exTable[i][0] = "";
-                for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
-                    Integer to = ids.get(edge.y);
-                    if (to != null && (distances[to] == null || distances[to] > distances[current] + edge.x)) {
-                        distances[to] = distances[current] + edge.x;
-                    }
-                }
-                Integer curMin = null;
-                int minIndex = -1;
-                for (int j = 1; j < size; j++) {
-                    final Integer dist = distances[j];
-                    if (dist == null) {
-                        solTable[i][j] = "$\\infty$";
-                    } else {
-                        if (used.contains(j)) {
-                            solTable[i][j] = "\\textbf{--}";
+                    Integer curMin = null;
+                    int minIndex = -1;
+                    for (int j = 1; j <= size; j++) {
+                        final Integer dist = distances[j - 1];
+                        if (dist == null) {
+                            solTable[i][j] = "$\\infty$";
                         } else {
-                            if (curMin == null || curMin > dist) {
+                            if (!used.contains(j - 1) && (curMin == null || curMin > dist)) {
                                 curMin = dist;
-                                minIndex = j;
+                                minIndex = j - 1;
                             }
                             solTable[i][j] = "" + dist;
                         }
+                        exTable[i][j] = "";
                     }
-                    exTable[i][j] = "";
+                    if (minIndex < 0) {
+                        // no shortening possible
+                        break;
+                    }
+                    current = minIndex;
+                    solColor[i][current + 1] = "black!20";
                 }
-                if (minIndex < 0) {
-                    // no shortening possible
-                    break;
+                break;
+            case GENERAL:
+                exTable = new String[size][size];
+                solTable = new String[size][size];
+                exColor = new String[size][size];
+                solColor = new String[size][size];
+                solTable[0][0] = "\\textbf{Knoten}";
+                exTable[0][0] = solTable[0][0];
+                for (Node<N> node : nodes) {
+                    if (!node.equals(start)) {
+                        solTable[0][i] = "\\textbf{" + node.getLabel().toString() + "}";
+                        exTable[0][i] = solTable[0][i];
+                        ids.put(node, i);
+                        i++;
+                    }
                 }
-                current = minIndex;
-                solColor[i][current + 1] = "black!20";
-            }
+                distances[current] = 0;
+                for (i = 1; i < size; i++) {
+                    used.add(current);
+                    Node<N> currentNode = nodes.get(current);
+                    solTable[i][0] = currentNode.getLabel().toString();
+                    exTable[i][0] = "";
+                    for (Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
+                        Integer to = ids.get(edge.y);
+                        if (to != null && (distances[to] == null || distances[to] > distances[current] + edge.x)) {
+                            distances[to] = distances[current] + edge.x;
+                        }
+                    }
+                    Integer curMin = null;
+                    int minIndex = -1;
+                    for (int j = 1; j < size; j++) {
+                        final Integer dist = distances[j];
+                        if (dist == null) {
+                            solTable[i][j] = "$\\infty$";
+                        } else {
+                            if (used.contains(j)) {
+                                solTable[i][j] = "\\textbf{--}";
+                            } else {
+                                if (curMin == null || curMin > dist) {
+                                    curMin = dist;
+                                    minIndex = j;
+                                }
+                                solTable[i][j] = "" + dist;
+                            }
+                        }
+                        exTable[i][j] = "";
+                    }
+                    if (minIndex < 0) {
+                        // no shortening possible
+                        break;
+                    }
+                    current = minIndex;
+                    solColor[i][current + 1] = "black!20";
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unkown text version!");
         }
         exTable[1][0] = start.getLabel().toString();
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
@@ -700,12 +695,17 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         exWriter.write("F\\\"uhren Sie den Dijkstra Algorithmus auf diesem Graphen mit dem Startknoten ");
         exWriter.write(start.getLabel().toString());
-        if (GraphAlgorithms.ERIKA_MODE) {
-            exWriter.write(" aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
-            exWriter.write("\\texttt{v} und \\texttt{key} nach jeder Iteration der \\texttt{while}-Schleife ");
-            exWriter.write("eintragen:\\\\[2ex]");
-        } else {
-            exWriter.write(" aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+        switch (DSALExercises.TEXT_VERSION) {
+            case ABRAHAM:
+                exWriter.write(" aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
+                exWriter.write("\\texttt{v} und \\texttt{key} nach jeder Iteration der \\texttt{while}-Schleife ");
+                exWriter.write("eintragen:\\\\[2ex]");
+                break;
+            case GENERAL:
+                exWriter.write(" aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+                break;
+            default:
+                throw new IllegalStateException("Unkown text version!");
         }
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
@@ -971,7 +971,7 @@ public abstract class GraphAlgorithms {
         BufferedWriter exWriter,
         BufferedWriter solWriter
     ) throws IOException {
-        exWriter.write("Betrachten Sie das folgende \\textbf{Flussnetzwerk} mit Quelle ");
+        exWriter.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
         exWriter.write(source.getLabel().toString());
         exWriter.write(" und Senke ");
         exWriter.write(sink.getLabel().toString());
@@ -981,11 +981,11 @@ public abstract class GraphAlgorithms {
         graph.printTikZ(true, multiplier, null, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-        exWriter.write("Berechnen Sie den \\textbf{maximalen Fluss} in diesem Netzwerk mithilfe der ");
-        exWriter.write("\\textbf{Ford-Fulkerson Methode}. Geben Sie dazu ");
+        exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der ");
+        exWriter.write("Ford-Fulkerson Methode. Geben Sie dazu ");
         exWriter.write(GraphAlgorithms.EACH_RESIDUAL_GRAPH);
-        exWriter.write(" sowie \\textbf{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. Geben ");
-        exWriter.write("Sie au\\ss{}erdem den Wert des maximalen Flusses an.");
+        exWriter.write(" sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. ");
+        exWriter.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an.");
         exWriter.newLine();
         int step = 0;
         TikZUtils.printSamePageBeginning(step++, solWriter);
@@ -1000,22 +1000,28 @@ public abstract class GraphAlgorithms {
             solWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
             solWriter.write(":\\\\[2ex]");
             solWriter.newLine();
-            residualGraph.printTikZ(
-                true,
-                multiplier,
-                GraphAlgorithms.ERIKA_MODE ? GraphAlgorithms.toEdges(residualGraph, path) : null,
-                solWriter
-            );
+            final Set<Pair<Node<N>, Pair<Integer, Node<N>>>> toHighlightResidual;
+            switch (DSALExercises.TEXT_VERSION) {
+                case ABRAHAM:
+                    toHighlightResidual = GraphAlgorithms.toEdges(residualGraph, path);
+                    break;
+                case GENERAL:
+                    toHighlightResidual = null;
+                    break;
+                default:
+                    throw new IllegalStateException("Unkown text version!");
+            }
+            residualGraph.printTikZ(true, multiplier, toHighlightResidual, solWriter);
             TikZUtils.printSamePageEnd(solWriter);
             solWriter.newLine();
             if (path == null) {
                 break;
             }
-            Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> toHighlight = GraphAlgorithms.addFlow(graph, path);
+            Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> toHighlightFlow = GraphAlgorithms.addFlow(graph, path);
             TikZUtils.printSamePageBeginning(step++, solWriter);
             solWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
             solWriter.newLine();
-            graph.printTikZ(true, multiplier, toHighlight, solWriter);
+            graph.printTikZ(true, multiplier, toHighlightFlow, solWriter);
             TikZUtils.printSamePageEnd(solWriter);
             solWriter.newLine();
         }

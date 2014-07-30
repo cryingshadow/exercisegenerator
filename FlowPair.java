@@ -1,7 +1,7 @@
 /**
  * Pair used for flow networks. Just overrides the toString method.
  * @author Thomas Stroeder
- * @version 1.0
+ * @version 1.0.1
  */
 public class FlowPair extends Pair<Integer, Integer> {
 
@@ -23,10 +23,14 @@ public class FlowPair extends Pair<Integer, Integer> {
      */
     @Override
     public String toString() {
-        if (GraphAlgorithms.ERIKA_MODE) {
-            return (this.x > 0 ? this.x + "/" : "") + this.y;
+        switch (DSALExercises.TEXT_VERSION) {
+            case ABRAHAM:
+                return (this.x > 0 ? this.x + "/" : "") + this.y;
+            case GENERAL:
+                return this.x + "/" + this.y;
+            default:
+                throw new IllegalStateException("Unkown text version!");
         }
-        return this.x + "/" + this.y;
     }
 
 }

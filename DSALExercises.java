@@ -16,7 +16,12 @@ public class DSALExercises {
      * Flag used to turn off some options for the student version.
      */
     public static final boolean STUDENT_MODE;
-    
+
+    /**
+     * Text version.
+     */
+    public static final TextVersion TEXT_VERSION;
+
     /**
      * The set of (in student mode only enabled) dynamic programming algorithms.
      */
@@ -46,12 +51,12 @@ public class DSALExercises {
      * The set of (in student mode only enabled) hashing algorithms.
      */
     private static final Set<String> HASHING_ALGORITHMS;
-    
+
     /**
      * The help text displayed when just called with -h. Each entry is separated by a newline.
      */
     private static final String[] HELP;
-    
+
     /**
      * The set of (in student mode only enabled) sorting algorithms.
      */
@@ -71,11 +76,12 @@ public class DSALExercises {
      * The version of this program.
      */
     private static final String VERSION;
-    
+
     static {
-        VERSION = "1.1.0";
+        VERSION = "1.1.2";
         NUMBER_LIMIT = 100;
         STUDENT_MODE = false;
+        TEXT_VERSION = TextVersion.ABRAHAM;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
         DYNAMIC_PROGRAMMING_ALGORITHMS = DSALExercises.initDynamicProgrammingAlgorithms();
@@ -181,9 +187,11 @@ public class DSALExercises {
             Pair<double[], Integer[]> in = new Pair<double[], Integer[]>(null, null);
             String anchor = null;
             final String alg = options.get(Flag.ALGORITHM);
-            final String hash1 = "F\\\"ugen Sie die folgenden Werte in das unten stehende Array der L\\\"ange ";
+            final String hash1 =
+                "F\\\"ugen Sie die folgenden Werte in das unten stehende Array \\texttt{a} der L\\\"ange ";
             final String hash2 = " unter Verwendung der ";
-            final String hash3 = " ein:\\\\[2ex]";
+            final String hash3 = " ein";
+            final String hash4 = ":\\\\[2ex]";
             final String linProb = " mit linearer Sondierung";
             final String quadProb1 = " mit quadratischer Sondierung ($c_1 = ";
             final String quadProb2 = "$, $c_2 = ";
@@ -343,7 +351,8 @@ public class DSALExercises {
 			} else if (Algorithm.TOPOLOGICSORT.name.equals(alg)) {
 				boolean fail;
 				GridGraph graph = new GridGraph();
-				int[][] sparseAdjacencyMatrix = new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
+				int[][] sparseAdjacencyMatrix =
+				    new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
 				sparseAdjacencyMatrix = (int[][])input;
                 do {
 					try{
@@ -395,7 +404,22 @@ public class DSALExercises {
                 } catch (HashException e) {
                     throw new IllegalStateException("Could not hash without probing - this should be impossible...");
                 }
-                exerciseWriter.write(hash1 + m + hash2 + div + noProb + hash3);
+                exerciseWriter.write(hash1 + m);
+                exerciseWriter.write(hash2);
+                exerciseWriter.write(div);
+                exerciseWriter.write(noProb);
+                exerciseWriter.write(hash3);
+                switch (DSALExercises.TEXT_VERSION) {
+                    case ABRAHAM:
+                        exerciseWriter.write(" ($f(n) = n \\mod " + m);
+                        exerciseWriter.write("$)");
+                        break;
+                    case GENERAL:
+                        break;
+                    default:
+                        throw new IllegalStateException("Unkown text version!");
+                }
+                exerciseWriter.write(hash4);
                 Hashing.printExercise(in.y, m, false, exerciseWriter);
             } else if (Algorithm.HASH_DIV_LIN.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
@@ -411,7 +435,23 @@ public class DSALExercises {
                 } catch (HashException e) {
                     throw new IllegalStateException("Could not hash with linear probing - this should not happen...");
                 }
-                exerciseWriter.write(hash1 + m + hash2 + div + linProb + hash3);
+                exerciseWriter.write(hash1 + m);
+                exerciseWriter.write(hash2);
+                exerciseWriter.write(div);
+                exerciseWriter.write(linProb);
+                exerciseWriter.write(hash3);
+                switch (DSALExercises.TEXT_VERSION) {
+                    case ABRAHAM:
+                        exerciseWriter.write(" ($f(n,i) = ((n \\mod " + m);
+                        exerciseWriter.write(") + i) \\mod " + m);
+                        exerciseWriter.write("$)");
+                        break;
+                    case GENERAL:
+                        break;
+                    default:
+                        throw new IllegalStateException("Unkown text version!");
+                }
+                exerciseWriter.write(hash4);
                 Hashing.printExercise(in.y, m, true, exerciseWriter);
             } else if (Algorithm.HASH_DIV_QUAD.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
@@ -439,7 +479,27 @@ public class DSALExercises {
                         fail = true;
                     }
                 } while (fail);
-                exerciseWriter.write(hash1 + m + hash2 + div + quadProb1 + c1 + quadProb2 + c2 + quadProb3 + hash3);
+                exerciseWriter.write(hash1 + m);
+                exerciseWriter.write(hash2);
+                exerciseWriter.write(div);
+                exerciseWriter.write(quadProb1 + c1);
+                exerciseWriter.write(quadProb2 + c2);
+                exerciseWriter.write(quadProb3);
+                exerciseWriter.write(hash3);
+                switch (DSALExercises.TEXT_VERSION) {
+                    case ABRAHAM:
+                        exerciseWriter.write(" ($f(n,i) = ((n \\mod " + m);
+                        exerciseWriter.write(") + " + c1);
+                        exerciseWriter.write(" \\cdot i + " + c2);
+                        exerciseWriter.write(" \\cdot i^2) \\mod " + m);
+                        exerciseWriter.write("$)");
+                        break;
+                    case GENERAL:
+                        break;
+                    default:
+                        throw new IllegalStateException("Unkown text version!");
+                }
+                exerciseWriter.write(hash4);
                 Hashing.printExercise(in.y, m, true, exerciseWriter);
             } else if (Algorithm.HASH_MULT.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
@@ -456,7 +516,22 @@ public class DSALExercises {
                 } catch (HashException e) {
                     throw new IllegalStateException("Could not hash without probing - this should be impossible...");
                 }
-                exerciseWriter.write(hash1 + m + hash2 + mult1 + c + mult2 + noProb + hash3);
+                exerciseWriter.write(hash1 + m);
+                exerciseWriter.write(hash2);
+                exerciseWriter.write(mult1 + c);
+                exerciseWriter.write(mult2);
+                exerciseWriter.write(noProb);
+                exerciseWriter.write(hash3);
+                switch (DSALExercises.TEXT_VERSION) {
+                    case ABRAHAM:
+                        // TODO 
+                        break;
+                    case GENERAL:
+                        break;
+                    default:
+                        throw new IllegalStateException("Unkown text version!");
+                }
+                exerciseWriter.write(hash4);
                 Hashing.printExercise(in.y, m, false, exerciseWriter);
             } else if (Algorithm.HASH_MULT_LIN.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
@@ -473,7 +548,22 @@ public class DSALExercises {
                 } catch (HashException e) {
                     throw new IllegalStateException("Could not hash with linear probing - this should not happen...");
                 }
-                exerciseWriter.write(hash1 + m + hash2 + mult1 + c + mult2 + linProb + hash3);
+                exerciseWriter.write(hash1 + m);
+                exerciseWriter.write(hash2);
+                exerciseWriter.write(mult1 + c);
+                exerciseWriter.write(mult2);
+                exerciseWriter.write(linProb);
+                exerciseWriter.write(hash3);
+                switch (DSALExercises.TEXT_VERSION) {
+                    case ABRAHAM:
+                        // TODO
+                        break;
+                    case GENERAL:
+                        break;
+                    default:
+                        throw new IllegalStateException("Unkown text version!");
+                }
+                exerciseWriter.write(hash4);
                 Hashing.printExercise(in.y, m, true, exerciseWriter);
             } else if (Algorithm.HASH_MULT_QUAD.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
@@ -501,20 +591,24 @@ public class DSALExercises {
                         fail = true;
                     }
                 } while (fail);
-                exerciseWriter.write(
-                    hash1
-                    + m
-                    + hash2
-                    + mult1
-                    + c
-                    + mult2
-                    + quadProb1
-                    + c1
-                    + quadProb2
-                    + c2
-                    + quadProb3
-                    + hash3
-                );
+                exerciseWriter.write(hash1 + m);
+                exerciseWriter.write(hash2);
+                exerciseWriter.write(mult1 + c);
+                exerciseWriter.write(mult2);
+                exerciseWriter.write(quadProb1 + c1);
+                exerciseWriter.write(quadProb2 + c2);
+                exerciseWriter.write(quadProb3);
+                exerciseWriter.write(hash3);
+                switch (DSALExercises.TEXT_VERSION) {
+                    case ABRAHAM:
+                        // TODO
+                        break;
+                    case GENERAL:
+                        break;
+                    default:
+                        throw new IllegalStateException("Unkown text version!");
+                }
+                exerciseWriter.write(hash4);
                 Hashing.printExercise(in.y, m, true, exerciseWriter);
             } else if (Algorithm.DIJKSTRA.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
