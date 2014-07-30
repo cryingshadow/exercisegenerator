@@ -591,13 +591,13 @@ public class IntAVLTree {
                 if (tree.isEmpty()) {
                     writerSpace.write(
                         "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren"
-                        + " AVL-Baum aus und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge- "
-                        + "und L\\\"oschoperation sowie jeder Rotation an:\\\\\\\\"
+                        + " \\emphasize{AVL-Baum} aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-} "
+                        + "und \\emphasize{L\\\"oschoperation} sowie jeder \\emphasize{Rotation} an:\\\\\\\\"
                     );
                     writerSpace.newLine();
                 } else {
                     writerSpace.write(
-                        "Betrachten Sie den folgenden AVL-Baum:\\\\[2ex]"
+                        "Betrachten Sie den folgenden \\emphasize{AVL-Baum}:\\\\[2ex]"
                     );
                     writerSpace.newLine();
                     writerSpace.newLine();
@@ -608,8 +608,8 @@ public class IntAVLTree {
                     writerSpace.newLine();
                     writerSpace.write(
                         "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
-                        + "und geben Sie die entstehenden B\\\"aume nach jeder Einf\\\"uge- "
-                        + "und L\\\"oschoperation sowie jeder Rotation an:\\\\\\\\"
+                        + "und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-} "
+                        + "und \\emphasize{L\\\"oschoperation} sowie jeder \\emphasize{Rotation} an:\\\\\\\\"
                     );
                     writerSpace.newLine();
                 }
@@ -630,8 +630,8 @@ public class IntAVLTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in einen leeren AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an."
+                            + " in einen leeren \\emphasize{AVL-Baum} ein und geben Sie die entstehenden B\\\"aume "
+                            + "nach jeder \\emphasize{Einf\\\"ugeoperation} sowie jeder \\emphasize{Rotation} an."
                         );
                     } else {
                         // this case is nonsense 
@@ -642,15 +642,15 @@ public class IntAVLTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in den folgenden AVL-Baum ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"
+                            + " in den folgenden \\emphasize{AVL-Baum} ein und geben Sie die entstehenden B\\\"aume "
+                            + "nach jeder \\emphasize{Einf\\\"ugeoperation} sowie jeder \\emphasize{Rotation} an:\\\\[2ex]"
                         );
                     } else {
                         writerSpace.write(
                             "L\\\"oschen Sie den Wert "
                             + op.x
-                            + " aus dem folgenden AVL-Baum und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder Einf\\\"uge- und L\\\"oschoperation sowie jeder Rotation an:\\\\[2ex]"
+                            + " aus dem folgenden \\emphasize{AVL-Baum} und geben Sie die entstehenden B\\\"aume "
+                            + "nach jeder \\emphasize{L\\\"oschoperation} sowie jeder \\emphasize{Rotation} an:\\\\[2ex]"
                         );
                     }
                     writerSpace.newLine();
