@@ -307,7 +307,7 @@ public class GridGraph {
         colors[start] = 1;
         int[] neighbors = this.getNeighbors(start);
         for(int index = 0; index < neighbors.length; ++index){
-            //System.out.println("Start: " + start + ", Neighbor: " + neighbors[index]);
+            //System.out.println("Start: " + (start+1) + ", Neighbor: " + (neighbors[index]+1));
             if(colors[neighbors[index]]==1){
                 throw new IOException("The given graph is cyclic!");
             }
@@ -317,7 +317,7 @@ public class GridGraph {
         }
         topoNum +=1;
         topo[start] = topoNum;
-        //System.out.println("Set topo of " + start + " to " + topoNum);
+        //System.out.println("Set topo of " + (start+1) + " to " + topoNum);
         colors[start] = 2;
         return topoNum;
     }
@@ -608,13 +608,10 @@ public class GridGraph {
         if (exerciseWriter != null) {
             if (withText) {
                 exerciseWriter.write(
-                              "Wenden Sie den Algorithmus \\texttt{topoSort} (wie in der Vorlesung vorgestellt) an um eine topologische Sortierung"
-                              + "auf folgendem Graphen zu finden. Daf\\\"ur reicht es, "
-                              + "eine geordnete Liste der Knoten mit dem dazugeh\\\"origen Topologiewert in Klammern anzugeben. "
-                              + "Die Tiefensuche ber\\\"ucksichtigt bei mehreren Kindern diese in aufsteigender Reihenfolge (ihrer Schl\\\"ussel). "
-                              + "Des Weiteren ist jedes Array, welches Knoten beinhaltet aufsteigend nach deren Schl\\\"usseln sortiert."
-                              + "Beachten Sie, dass der Knoten mit Schl\\\"ussel $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat, also"
-                              + " der Knoten mit Schl\\\"ussel $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
+                              "Bestimmen Sie eine \\emphasize{topologische Sortierung} unter Verwendung des in " +
+                            "der Vorlesung vorgestellten Algorithmus f\"ur den folgenden Graphen. Im gesamten " +
+                            "Algorithmus werden Knoten in aufsteigender Reihenfolge ihrer Schl\\\"ussel ber\\\"ucksichtigt." +
+                            " Als Ergebnis geben Sie die Liste der Knotenschl\\\"ussel in aufsteigender Reihenfolge der Topologiewerte an."
                               );
                 exerciseWriter.newLine();
             }
@@ -632,7 +629,7 @@ public class GridGraph {
                 break;
             }
         }
-        while(min < nodeValues.length){
+        while(min <= nodeValues.length){
             for(int index = 0; index < nodeValues.length; ++index){
                 if(nodeValues[index] != null && nodeValues[index] == min && first != index){
                     solutionWriter.write(", " + nodeName(index) + "("+ nodeValues[index] + ")");
