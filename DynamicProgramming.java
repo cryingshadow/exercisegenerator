@@ -115,34 +115,50 @@ public abstract class DynamicProgramming {
         exWriter.write(" und zeigen Sie anhand der Tabelle, welche Gegenst\\\"ande");
         exWriter.write(" mitgenommen werden, um diesen maximalen Wert zu erreichen.");
         exWriter.newLine();
+        exWriter.newLine();
         
         solWriter.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
         solWriter.newLine();
         solWriter.newLine();
-        if (capacity+2 > 10) {
-        String[][] solutionsTmp = null;
-        boolean remainderStarted = true;
-        for (int columnNr = 0; columnNr < capacity+2; columnNr++) {
-//            System.out.println("columnNr = " + columnNr);
-            if (columnNr % 10 == 0 || (remainderStarted && capacity + 2 - columnNr <= 10)) {
-                if (columnNr > 0) {
+        int tableWidth = 12;
+        if (capacity+2 > tableWidth) {
+            String[][] solutionsTmp = new String[n+2][tableWidth];
+            String[][] solutionsTmpEx = new String[n+2][tableWidth];
+            for (int rowNr = 0; rowNr < n+2; rowNr++) {
+                solutionsTmpEx[rowNr][0] = solutions[rowNr][0];
+            }
+            boolean remainderStarted = true;
+            for (int columnNr = 0; columnNr < capacity+2; columnNr++) {
+                // System.out.println("columnNr = " + columnNr);
+                for (int rowNr = 0; rowNr < n+2; rowNr++) {
+                    // System.out.println("add column " + (columnNr % tableWidth));
+                    solutionsTmp[rowNr][columnNr%tableWidth] = solutions[rowNr][columnNr];
+                }
+                solutionsTmpEx[0][columnNr%tableWidth] = solutions[0][columnNr];
+                if (columnNr > 0 && (columnNr % (tableWidth-1) == 0 || columnNr == capacity+1)) {
                     TikZUtils.printTable(solutionsTmp, null, "0.9cm", solWriter, true);
                     solWriter.newLine();
                     solWriter.newLine();
+                    TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true);
+                    exWriter.newLine();
+                    exWriter.newLine();
+                    int columnNrTmp = capacity + 2 - columnNr > tableWidth ? tableWidth : capacity + 1 - columnNr;
+                    // System.out.println("columnNrTmp = " + columnNrTmp);
+                    solutionsTmp = new String[n+2][columnNrTmp];
+                    solutionsTmpEx = new String[n+2][columnNrTmp];
                 }
-                int columnNrTmp = capacity + 2 - columnNr > 10 ? 10 : capacity + 2 - columnNr;
-                if (capacity + 2 - columnNr > 10) {
-                    remainderStarted = false;
-                }
-//                System.out.println("columnNrTmp = " + columnNrTmp);
-                solutionsTmp = new String[n+2][columnNrTmp];
             }
-            for (int rowNr = 0; rowNr < n+2; rowNr++) {
-//                System.out.println("add column " + (columnNr % 10));
-                solutionsTmp[rowNr][columnNr%10] = solutions[rowNr][columnNr];
-            }
-        }
         } else {
+            String[][] solutionsTmpEx = new String[n+2][capacity+2];
+            for (int rowNr = 0; rowNr < n+2; rowNr++) {
+                solutionsTmpEx[rowNr][0] = solutions[rowNr][0];
+            }
+            for (int columnNr = 1; columnNr < capacity+2; columnNr++) {
+                solutionsTmpEx[0][columnNr] = solutions[0][columnNr];
+            }
+            TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true);
+            exWriter.newLine();
+            exWriter.newLine();
             TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true);
             solWriter.newLine();
             solWriter.newLine();

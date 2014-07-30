@@ -708,10 +708,20 @@ public class IntRBTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in einen leeren Rot-Schwarz-Baum ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder \\emphasize{Einf\\\"uge- und L\\\"oschoperation}, jeder \\emphasize{Rotation} und jeder \\emphasize{Umf\\\"arbung} an."
-                            + " Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden."
-                        );
+                            + " in einen leeren \\textbf{Rot-Schwarz-Baum} ein und geben Sie die entstehenden B\\\"aume "
+                            + "nach");
+                        writerSpace.newLine(); 
+                        writerSpace.write("\\begin{itemize}");
+                        writerSpace.newLine(); 
+                        writerSpace.write("    \\item jeder \\textbf{Einf\\\"ugeoperation},");
+                        writerSpace.newLine(); 
+                        writerSpace.write("    \\item jeder \\textbf{Rotation} sowie");
+                        writerSpace.newLine(); 
+                        writerSpace.write("    \\item jeder \\textbf{Umf\\\"arbung} an.");
+                        writerSpace.newLine(); 
+                        writerSpace.write("\\end{itemize}");
+                        writerSpace.newLine(); 
+                        writerSpace.write(" Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.");
                     } else {
                         // this case is nonsense 
                         return;
@@ -721,17 +731,39 @@ public class IntRBTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in den folgenden Rot-Schwarz-Baum ein und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder \\emphasize{Einf\\\"uge- und L\\\"oschoperation}, jeder \\emphasize{Rotation} und jeder \\emphasize{Umf\\\"arbung} an."
-                            + " Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.\\\\[2ex]"
+                            + " in den folgenden \\textbf{Rot-Schwarz-Baum} ein und geben Sie die entstehenden B\\\"aume "
+                            + "nach");
+                            writerSpace.newLine(); 
+                            writerSpace.write("\\begin{itemize}");
+                            writerSpace.newLine(); 
+                            writerSpace.write("    \\item jeder \\textbf{Einf\\\"ugeoperation},");
+                            writerSpace.newLine(); 
+                            writerSpace.write("    \\item jeder \\textbf{Rotation} sowie");
+                            writerSpace.newLine(); 
+                            writerSpace.write("    \\item jeder \\textbf{Umf\\\"arbung} an.");
+                            writerSpace.newLine(); 
+                            writerSpace.write("\\end{itemize}");
+                            writerSpace.newLine(); 
+                            writerSpace.write(" Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.\\\\[2ex]"
                         );
                     } else {
                         writerSpace.write(
                             "L\\\"oschen Sie den Wert "
                             + op.x
-                            + " aus dem folgenden Rot-Schwarz-Baum und geben Sie die entstehenden B\\\"aume "
-                            + "nach jeder \\emphasize{Einf\\\"uge- und L\\\"oschoperation}, jeder \\emphasize{Rotation} und jeder \\emphasize{Umf\\\"arbung} an."
-                            + " Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.\\\\[2ex]"
+                            + " aus dem folgenden \\textbf{Rot-Schwarz-Baum} und geben Sie die entstehenden B\\\"aume "
+                            + "nach");
+                            writerSpace.newLine(); 
+                            writerSpace.write("\\begin{itemize}");
+                            writerSpace.newLine(); 
+                            writerSpace.write("    \\item jeder \\textbf{L\\\"oschoperation},");
+                            writerSpace.newLine(); 
+                            writerSpace.write("    \\item jeder \\textbf{Rotation} sowie");
+                            writerSpace.newLine(); 
+                            writerSpace.write("    \\item jeder \\textbf{Umf\\\"arbung} an.");
+                            writerSpace.newLine(); 
+                            writerSpace.write("\\end{itemize}");
+                            writerSpace.newLine(); 
+                            writerSpace.write(" Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.\\\\[2ex]"
                         );
                     }
                     writerSpace.newLine();
