@@ -192,14 +192,14 @@ public class DSALExercises {
             final String hash2 = " unter Verwendung der ";
             final String hash3 = " ein";
             final String hash4 = ":\\\\[2ex]";
-            final String linProb = " mit linearer Sondierung";
-            final String quadProb1 = " mit quadratischer Sondierung ($c_1 = ";
+            final String linProb = " mit \\emphasize{linearer Sondierung}";
+            final String quadProb1 = " mit \\emphasize{quadratischer Sondierung} ($c_1 = ";
             final String quadProb2 = "$, $c_2 = ";
             final String quadProb3 = "$)";
-            final String mult1 = "Multiplikationsmethode ($c = ";
+            final String mult1 = "\\emphasize{Multiplikationsmethode} ($c = ";
             final String mult2 = "$)";
-            final String div = "Divisionsmethode";
-            final String noProb = " ohne Sondierung (also durch Verkettung)";
+            final String div = "\\emphasize{Divisionsmethode}";
+            final String noProb = " \\emphasize{ohne Sondierung} (also durch Verkettung)";
             if (Algorithm.SELECTIONSORT.name.equals(alg)) {
                 array = (Integer[])input;
                 anchor =
