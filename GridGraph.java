@@ -82,7 +82,7 @@ public class GridGraph {
         case "find_sccs":
             if (writerSpace != null) {
                 writerSpace.write(
-                    "Geben Sie alle starken Zusammenhangskomponenten im folgenden Graph an. F\\\"ur jede dieser "
+                    "Geben Sie alle \\emphasize{starken Zusammenhangskomponenten} im folgenden Graph an. F\\\"ur jede dieser "
                     + "starken Zusammenhangskomponenten reicht es die Menge der Knoten anzugeben, die darin auftreten."
                 );
                 writerSpace.newLine();
@@ -94,7 +94,7 @@ public class GridGraph {
         case "sharir":
             if (writerSpace != null) {
                 writerSpace.write(
-                    "Wenden Sie Sharir's Algorithmus an (siehe Folien zur Vorlesung) um die starken" 
+                    "Wenden Sie \\emphasize{Sharir's Algorithmus} an (siehe Folien zur Vorlesung) um die starken" 
                     + " Zusammenhangskomponenten des folgenden Graphen zu finden. Geben Sie das Array \\texttt{color}"
                     + " und den Stack \\texttt{S} nach jeder Schleifeniteration der ersten und zweiten Phase (also nach"
                     + " Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
