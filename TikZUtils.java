@@ -39,6 +39,16 @@ public abstract class TikZUtils {
     public static final String SYM_EDGE_STYLE = "[p]";
 
     /**
+     * The column width.
+     */
+    public static final String COL_WIDTH = "\\columnwidth";
+
+    /**
+     * A bit less than half the column width.
+     */
+    public static final String TWO_COL_WIDTH = "8cm";
+
+    /**
      * Prints a new stretch factor for the array height.
      * @param stretch The stretch factor.
      * @param writer The writer to send the output to.
@@ -208,11 +218,12 @@ public abstract class TikZUtils {
     /**
      * Prints the beginning of a samepage environment.
      * @param step The current evaluation step.
+     * @param width A LaTeX String indicating the width of the minipage.
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static void printSamePageBeginning(int step, BufferedWriter writer) throws IOException {
-        writer.write("\\begin{minipage}{\\columnwidth}");
+    public static void printSamePageBeginning(int step, String width, BufferedWriter writer) throws IOException {
+        writer.write("\\begin{minipage}{" + width + "}");
         writer.newLine();
         writer.write("\\vspace*{1ex}");
         writer.newLine();

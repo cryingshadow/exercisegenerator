@@ -138,14 +138,22 @@ public abstract class DynamicProgramming {
                 if (columnNr > 0 && (columnNr % (tableWidth-1) == 0 || columnNr == capacity+1)) {
                     solWriter.write("\\begin{center}");
                     solWriter.newLine();
+                    solWriter.write("{\\Large");
+                    solWriter.newLine();
                     TikZUtils.printTable(solutionsTmp, null, "0.9cm", solWriter, true);
+                    solWriter.newLine();
+                    solWriter.write("}");
                     solWriter.newLine();
                     solWriter.write("\\end{center}");
                     solWriter.newLine();
                     solWriter.newLine();
                     exWriter.write("\\begin{center}");
                     exWriter.newLine();
+                    exWriter.write("{\\Large");
+                    exWriter.newLine();
                     TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true);
+                    exWriter.newLine();
+                    exWriter.write("}");
                     exWriter.newLine();
                     exWriter.write("\\end{center}");
                     exWriter.newLine();
@@ -166,14 +174,22 @@ public abstract class DynamicProgramming {
             }
             exWriter.write("\\begin{center}");
             exWriter.newLine();
+            exWriter.write("{\\Large");
+            exWriter.newLine();
             TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true);
+            exWriter.newLine();
+            exWriter.write("}");
             exWriter.newLine();
             exWriter.write("\\end{center}");
             exWriter.newLine();
             exWriter.newLine();
             solWriter.write("\\begin{center}");
             solWriter.newLine();
+            solWriter.write("{\\Large");
+            solWriter.newLine();
             TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true);
+            solWriter.newLine();
+            solWriter.write("}");
             solWriter.newLine();
             solWriter.write("\\end{center}");
             solWriter.newLine();

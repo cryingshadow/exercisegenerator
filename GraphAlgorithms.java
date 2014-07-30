@@ -689,7 +689,7 @@ public abstract class GraphAlgorithms {
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(true, 1, null, exWriter);
+        graph.printTikZ(GraphPrintMode.ALL, 1, null, exWriter);
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
@@ -896,9 +896,9 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         if (warshall) {
-            graph.printTikZ(false, 1, null, exWriter);
+            graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, 1, null, exWriter);
         } else {
-            graph.printTikZ(true, 1, null, exWriter);
+            graph.printTikZ(GraphPrintMode.ALL, 1, null, exWriter);
         }
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
@@ -959,6 +959,8 @@ public abstract class GraphAlgorithms {
      * @param source The source node.
      * @param sink The sink node.
      * @param multiplier Multiplier for node distances.
+     * @param twocolumns True if residual graphs and flow networks should be displayed in two columns. 
+     * @param examMode True if the solution preprint is to be set in solutionSpace.
      * @param exWriter The writer to send the exercise output to.
      * @param solWriter The writer to send the solution output to.
      * @throws IOException If some error occurs during output.
@@ -968,6 +970,8 @@ public abstract class GraphAlgorithms {
         Node<N> source,
         Node<N> sink,
         double multiplier,
+        boolean twocolumns,
+        boolean examMode,
         BufferedWriter exWriter,
         BufferedWriter solWriter
     ) throws IOException {
@@ -975,28 +979,52 @@ public abstract class GraphAlgorithms {
         exWriter.write(source.getLabel().toString());
         exWriter.write(" und Senke ");
         exWriter.write(sink.getLabel().toString());
-        exWriter.write(":\\\\[2ex]");
+        exWriter.write(":\\\\");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(true, multiplier, null, exWriter);
+        graph.printTikZ(GraphPrintMode.ALL, multiplier, null, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
         exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der ");
         exWriter.write("Ford-Fulkerson Methode. Geben Sie dazu ");
         exWriter.write(GraphAlgorithms.EACH_RESIDUAL_GRAPH);
         exWriter.write(" sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. ");
-        exWriter.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an.");
+        exWriter.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an. Die vorgegebene ");
+        exWriter.write("Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl solcher Schritte ");
+        exWriter.write("\\\"ubereinstimmen.");
         exWriter.newLine();
         int step = 0;
-        TikZUtils.printSamePageBeginning(step++, solWriter);
+        TikZUtils.printSamePageBeginning(step++, twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH, solWriter);
         solWriter.write("Initiales Flussnetzwerk:\\\\[2ex]");
-        graph.printTikZ(true, multiplier, null, solWriter);
+        graph.printTikZ(GraphPrintMode.ALL, multiplier, null, solWriter);
         TikZUtils.printSamePageEnd(solWriter);
         solWriter.newLine();
+        if (examMode) {
+            exWriter.write("\\solutionSpace{");
+            exWriter.newLine();
+        }
+        if (twocolumns) {
+            exWriter.write("\\begin{longtable}{cc}");
+            exWriter.newLine();
+            solWriter.write("\\begin{longtable}{cc}");
+            solWriter.newLine();
+        }
         while (true) {
             Graph<N, Integer> residualGraph = GraphAlgorithms.computeResidualGraph(graph);
             List<Node<N>> path = GraphAlgorithms.selectAugmentingPath(residualGraph, source, sink);
-            TikZUtils.printSamePageBeginning(step++, solWriter);
+            TikZUtils.printSamePageBeginning(
+                step,
+                twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
+                exWriter
+            );
+            TikZUtils.printSamePageBeginning(
+                step++,
+                twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
+                solWriter
+            );
+            exWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
+            exWriter.write(":\\\\[2ex]");
+            exWriter.newLine();
             solWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
             solWriter.write(":\\\\[2ex]");
             solWriter.newLine();
@@ -1011,18 +1039,44 @@ public abstract class GraphAlgorithms {
                 default:
                     throw new IllegalStateException("Unkown text version!");
             }
-            residualGraph.printTikZ(true, multiplier, toHighlightResidual, solWriter);
+            residualGraph.printTikZ(GraphPrintMode.NO_EDGES, multiplier, toHighlightResidual, exWriter);
+            residualGraph.printTikZ(GraphPrintMode.ALL, multiplier, toHighlightResidual, solWriter);
+            TikZUtils.printSamePageEnd(exWriter);
             TikZUtils.printSamePageEnd(solWriter);
-            solWriter.newLine();
+            if (twocolumns) {
+                exWriter.write(" & ");
+                solWriter.write(" & ");
+            } else {
+                exWriter.newLine();
+                solWriter.newLine();
+            }
             if (path == null) {
                 break;
             }
             Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> toHighlightFlow = GraphAlgorithms.addFlow(graph, path);
-            TikZUtils.printSamePageBeginning(step++, solWriter);
+            TikZUtils.printSamePageBeginning(
+                step,
+                twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
+                exWriter
+            );
+            TikZUtils.printSamePageBeginning(
+                step++,
+                twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
+                solWriter
+            );
+            exWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
+            exWriter.newLine();
             solWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
             solWriter.newLine();
-            graph.printTikZ(true, multiplier, toHighlightFlow, solWriter);
+            graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, multiplier, null, exWriter);
+            graph.printTikZ(GraphPrintMode.ALL, multiplier, toHighlightFlow, solWriter);
+            TikZUtils.printSamePageEnd(exWriter);
             TikZUtils.printSamePageEnd(solWriter);
+            if (twocolumns) {
+                exWriter.write("\\\\");
+                solWriter.write("\\\\");
+            }
+            exWriter.newLine();
             solWriter.newLine();
         }
         int flow = 0;
@@ -1032,7 +1086,30 @@ public abstract class GraphAlgorithms {
                 flow += edge.x.x;
             }
         }
-        solWriter.write("Der maximale Fluss hat den Wert " + flow + ".");
+        if (twocolumns) {
+            exWriter.write("\\end{longtable}");
+            exWriter.newLine();
+            solWriter.write("\\end{longtable}");
+            solWriter.newLine();
+        }
+        exWriter.newLine();
+        exWriter.newLine();
+        exWriter.write("\\vspace*{1ex}");
+        exWriter.newLine();
+        exWriter.newLine();
+        exWriter.write("Der maximale Fluss hat den Wert: ");
+        exWriter.newLine();
+        if (examMode) {
+            exWriter.write("}");
+            exWriter.newLine();
+        }
+        exWriter.newLine();
+        solWriter.newLine();
+        solWriter.newLine();
+        solWriter.write("\\vspace*{1ex}");
+        solWriter.newLine();
+        solWriter.newLine();
+        solWriter.write("Der maximale Fluss hat den Wert: " + flow);
         solWriter.newLine();
         solWriter.newLine();
     }

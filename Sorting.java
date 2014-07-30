@@ -64,7 +64,7 @@ public abstract class Sorting {
         BufferedWriter writer
     ) throws IOException {
         if (start < end) {
-            int middle = partition(array, start, end);
+            int middle = Sorting.partition(array, start, end);
             if (middle > 0) {
                 separate[middle - 1] = true;
             }
@@ -113,7 +113,7 @@ public abstract class Sorting {
         Arrays.fill(separate, false);
         Arrays.fill(mark, false);
         int res =
-            (Integer)quicksort(
+            (Integer)Sorting.quicksort(
                 array,
                 0,
                 array.length - 1,
@@ -228,7 +228,7 @@ public abstract class Sorting {
                 break;
             }
             ArrayUtils.swap(array, j - 1, i - 1);
-            TikZUtils.printSamePageBeginning(res++, writer);
+            TikZUtils.printSamePageBeginning(res++, TikZUtils.COL_WIDTH, writer);
             ArrayUtils.printTree(array, to - 1, writer);
             TikZUtils.printProtectedNewline(writer);
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
@@ -255,7 +255,7 @@ public abstract class Sorting {
         boolean[] separate = new boolean[array.length - 1];
         Arrays.fill(separate, false);
         for (int i = array.length / 2; i > 0; i--) {
-            Object[] heapified = heapify(array, i, array.length, anchor, separate, writer);
+            Object[] heapified = Sorting.heapify(array, i, array.length, anchor, separate, writer);
             res += (Integer)heapified[0];
             anchor = (String)heapified[1];
         }
@@ -269,7 +269,7 @@ public abstract class Sorting {
                 separate[i - 1] = true;
             }
             Object[] heapified =
-                heapify(
+                Sorting.heapify(
                     array,
                     1,
                     i,
@@ -331,7 +331,7 @@ public abstract class Sorting {
      */
     public static int heapsortWithTrees(Integer[] array, BufferedWriter writer) throws IOException {
         int step = 0;
-        TikZUtils.printSamePageBeginning(step++, writer);
+        TikZUtils.printSamePageBeginning(step++, TikZUtils.COL_WIDTH, writer);
         ArrayUtils.printTree(array, array.length - 1, writer);
         TikZUtils.printProtectedNewline(writer);
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
@@ -342,14 +342,14 @@ public abstract class Sorting {
         boolean[] separate = new boolean[array.length - 1];
         Arrays.fill(separate, false);
         for (int i = array.length / 2; i > 0; i--) {
-            step = heapifyWithTrees(array, i, array.length, separate, step, writer);
+            step = Sorting.heapifyWithTrees(array, i, array.length, separate, step, writer);
         }
         for (int i = array.length - 1; i > 0; i--) {
             ArrayUtils.swap(array, 0, i);
             if (i < separate.length) {
                 separate[i] = false;
             }
-            TikZUtils.printSamePageBeginning(step++, writer);
+            TikZUtils.printSamePageBeginning(step++, TikZUtils.COL_WIDTH, writer);
             if (i > 1) {
                 separate[i - 1] = true;
                 ArrayUtils.printTree(array, i - 1, writer);
@@ -360,7 +360,7 @@ public abstract class Sorting {
             TikZUtils.printTikzEnd(writer);
             TikZUtils.printSamePageEnd(writer);
             TikZUtils.printVerticalSpace(step, writer);
-            step = heapifyWithTrees(array, 1, i, separate, step, writer);
+            step = Sorting.heapifyWithTrees(array, 1, i, separate, step, writer);
         }
         return step - 1;
     }
@@ -466,7 +466,7 @@ public abstract class Sorting {
                     printSplitting,
                     writer
                 );
-            merge(array, start, middle, end);
+            Sorting.merge(array, start, middle, end);
             separate[middle] = false;
             return new Object[]{
                 ((Integer)firstStep[0]) + ((Integer)secondStep[0]) + 1,
@@ -492,7 +492,7 @@ public abstract class Sorting {
         boolean[] mark = new boolean[array.length];
         Arrays.fill(mark, true);
         int res =
-            (Integer)mergesort(
+            (Integer)Sorting.mergesort(
                 array,
                 0,
                 array.length - 1,

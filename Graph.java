@@ -126,14 +126,14 @@ public class Graph<N, E> {
     /**
      * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout 
      * is used for the output. Otherwise, there is no guarantee for the layout.
-     * @param printEdgeLabels Print the edge labels?
+     * @param printMode Print the edges or edge labels?
      * @param multiplier Multiplier for node distances.
      * @param toHighlight A set of edges to highlight in the graph.
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
     public void printTikZ(
-        boolean printEdgeLabels,
+        GraphPrintMode printMode,
         double multiplier,
         Set<Pair<Node<N>, Pair<E, Node<N>>>> toHighlight,
         BufferedWriter writer
@@ -167,21 +167,24 @@ public class Graph<N, E> {
                 );
             }
         }
-        for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
-            Node<N> fromNode = entry.getKey();
-            BigInteger from = fromNode.getID();
-            for (Pair<E, Node<N>> edge : entry.getValue()) {
-                if (toHighlight != null && toHighlight.contains(new Pair<Node<N>, Pair<E, Node<N>>>(fromNode, edge))) {
-                    if (printEdgeLabels) {
-                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.getID(), writer);
+        if (printMode != GraphPrintMode.NO_EDGES) {
+            final boolean printEdgeLabels = printMode == GraphPrintMode.ALL;
+            for (Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
+                Node<N> fromNode = entry.getKey();
+                BigInteger from = fromNode.getID();
+                for (Pair<E, Node<N>> edge : entry.getValue()) {
+                    if (toHighlight != null && toHighlight.contains(new Pair<Node<N>, Pair<E, Node<N>>>(fromNode, edge))) {
+                        if (printEdgeLabels) {
+                            TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.getID(), writer);
+                        } else {
+                            TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.getID(), writer);
+                        }
                     } else {
-                        TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.getID(), writer);
-                    }
-                } else {
-                    if (printEdgeLabels) {
-                        TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
-                    } else {
-                        TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, null, edge.y.getID(), writer);
+                        if (printEdgeLabels) {
+                            TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                        } else {
+                            TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, null, edge.y.getID(), writer);
+                        }
                     }
                 }
             }

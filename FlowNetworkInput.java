@@ -27,4 +27,14 @@ public class FlowNetworkInput<N, E> {
      */
     public double multiplier;
 
+    /**
+     * Should residual graphs and flow networks be displayed in two columns?
+     */
+    public boolean twocolumns;
+
+    /**
+     * Should solution preprints be set in solutionSpace?
+     */
+    public boolean examMode;
+
 }

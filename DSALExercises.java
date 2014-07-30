@@ -620,6 +620,8 @@ public class DSALExercises {
                     flow.source,
                     flow.sink,
                     flow.multiplier,
+                    flow.twocolumns,
+                    flow.examMode,
                     exerciseWriter,
                     solutionWriter
                 );
@@ -1327,6 +1329,8 @@ public class DSALExercises {
                 res.source = res.graph.getNodesWithLabel("s").iterator().next();
                 res.sink = res.graph.getNodesWithLabel("t").iterator().next();
                 res.multiplier = 1.0;
+                res.twocolumns = false;
+                res.examMode = false;
                 return res;
             } else {
                 try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
@@ -1339,6 +1343,8 @@ public class DSALExercises {
             Node<String> source = null;
             Node<String> sink = null;
             double multiplier = 1.0;
+            boolean twocolumns = false;
+            boolean examMode = false;
             if (options.containsKey(Flag.OPERATIONS)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
                     Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
@@ -1352,6 +1358,14 @@ public class DSALExercises {
                     String mult = reader.readLine();
                     if (mult != null && !"".equals(mult.trim())) {
                         multiplier = Double.parseDouble(mult);
+                        String twocols = reader.readLine();
+                        if (twocols != null && !"".equals(twocols.trim())) {
+                            twocolumns = Boolean.parseBoolean(twocols);
+                            String exam = reader.readLine();
+                            if (exam != null && !"".equals(exam.trim())) {
+                                examMode = Boolean.parseBoolean(exam);
+                            }
+                        }
                     }
                 } catch (IOException | NumberFormatException e) {
                     e.printStackTrace();
@@ -1363,6 +1377,8 @@ public class DSALExercises {
             res.source = source;
             res.sink = sink;
             res.multiplier = multiplier;
+            res.twocolumns = twocolumns;
+            res.examMode = examMode;
             return res;
         } else if (Algorithm.KNAPSACK.name.equals(alg)) {
             Integer[] weights = null;
