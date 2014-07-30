@@ -712,8 +712,8 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printArrayStretch(1.5, exWriter);
         TikZUtils.printArrayStretch(1.5, solWriter);
-        TikZUtils.printTable(exTable, exColor, "2cm", exWriter, false);
-        TikZUtils.printTable(solTable, solColor, "2cm", solWriter, false);
+        TikZUtils.printTable(exTable, exColor, "2cm", exWriter, false, 10);
+        TikZUtils.printTable(solTable, solColor, "2cm", solWriter, false, 10);
         TikZUtils.printArrayStretch(1.0, exWriter);
         TikZUtils.printArrayStretch(1.0, solWriter);
         solWriter.newLine();
@@ -744,6 +744,7 @@ public abstract class GraphAlgorithms {
         BufferedWriter solWriter
     ) throws IOException {
         final int tableCount = DSALExercises.STUDENT_MODE ? 1 : 2;
+        final int tableMaxWidth = DSALExercises.STUDENT_MODE ? 10 : 0;
         final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
         final int size = nodes.size();
         final ArrayList<String[][]> exercises = new ArrayList<String[][]>();
@@ -935,7 +936,8 @@ public abstract class GraphAlgorithms {
                     solutions.get(iteration),
                     solColors.get(iteration),
                     solWriter,
-                    true
+                    true,
+                    tableMaxWidth
                 );
             exCount =
                 GraphAlgorithms.printTables(
@@ -945,7 +947,8 @@ public abstract class GraphAlgorithms {
                     exercises.get(iteration),
                     exColors.get(iteration),
                     exWriter,
-                    true
+                    true,
+                    tableMaxWidth
                 );
         }
         TikZUtils.printArrayStretch(1.0, exWriter);
@@ -1214,7 +1217,7 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         
-        TikZUtils.printTable(solutions, null, "2.0cm", solWriter, false);
+        TikZUtils.printTable(solutions, null, "2.0cm", solWriter, false, 10);
         solWriter.newLine();
         solWriter.newLine();
         solWriter.write("\\medskip");
@@ -1442,10 +1445,11 @@ public abstract class GraphAlgorithms {
         String[][] table,
         String[][] color,
         BufferedWriter writer,
-        boolean transpose
+        boolean transpose,
+        int breakAtColumn
     ) throws IOException {
         if (count < tableCount) {
-            TikZUtils.printTable(table, color, "1cm", writer, transpose);
+            TikZUtils.printTable(table, color, "1cm", writer, transpose, breakAtColumn);
             writer.newLine();
             writer.write("\\hspace{2em}");
             writer.newLine();
@@ -1453,7 +1457,7 @@ public abstract class GraphAlgorithms {
         }
         writer.write("\\\\[2ex]");
         writer.newLine();
-        TikZUtils.printTable(table, color, "1cm", writer, transpose);
+        TikZUtils.printTable(table, color, "1cm", writer, transpose, breakAtColumn);
         writer.newLine();
         writer.write("\\hspace{2em}");
         writer.newLine();

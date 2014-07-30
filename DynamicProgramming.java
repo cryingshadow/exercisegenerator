@@ -140,7 +140,7 @@ public abstract class DynamicProgramming {
                     solWriter.newLine();
                     solWriter.write("{\\Large");
                     solWriter.newLine();
-                    TikZUtils.printTable(solutionsTmp, null, "0.9cm", solWriter, true);
+                    TikZUtils.printTable(solutionsTmp, null, "0.9cm", solWriter, true, 0);
                     solWriter.newLine();
                     solWriter.write("}");
                     solWriter.newLine();
@@ -151,7 +151,7 @@ public abstract class DynamicProgramming {
                     exWriter.newLine();
                     exWriter.write("{\\Large");
                     exWriter.newLine();
-                    TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true);
+                    TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true, 0);
                     exWriter.newLine();
                     exWriter.write("}");
                     exWriter.newLine();
@@ -176,7 +176,7 @@ public abstract class DynamicProgramming {
             exWriter.newLine();
             exWriter.write("{\\Large");
             exWriter.newLine();
-            TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true);
+            TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true, 0);
             exWriter.newLine();
             exWriter.write("}");
             exWriter.newLine();
@@ -187,7 +187,7 @@ public abstract class DynamicProgramming {
             solWriter.newLine();
             solWriter.write("{\\Large");
             solWriter.newLine();
-            TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true);
+            TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true, 0);
             solWriter.newLine();
             solWriter.write("}");
             solWriter.newLine();

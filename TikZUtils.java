@@ -280,38 +280,47 @@ public abstract class TikZUtils {
         String[][] color,
         String width,
         BufferedWriter writer,
-        boolean transpose
+        boolean transpose,
+        int breakAtColumn
     ) throws IOException {
-        int cols = (transpose ? table[0].length : table.length);
-        int rows = (transpose ? table.length : table[0].length);
-        writer.write("\\begin{tabular}{|*{" + cols + "}{C{" + width + "}|}}");
-        writer.newLine();
-        writer.write("\\hline");
-        writer.newLine();
-        for (int row = 0; row < rows; row++) {
-            boolean first = true;
-            for (int col = 0; col < cols; col++) {
-                if (first) {
-                    first = false;
-                } else {
-                    writer.write(" & ");
-                }
-                if (transpose) {
-                    if (color != null && color[row][col] != null) {
-                        writer.write("\\cellcolor{" + color[row][col] + "}");
-                    }
-                    writer.write(table[row][col] == null ? "" : table[row][col]);
-                } else {
-                    if (color != null && color[col][row] != null) {
-                        writer.write("\\cellcolor{" + color[col][row] + "}");
-                    }
-                    writer.write(table[col][row] == null ? "" : table[col][row]);
-                }
-            }
-            writer.write("\\\\\\hline");
+        int allCols = (transpose ? table[0].length : table.length);
+        int remainingCols = allCols;
+        do {
+            int cols = remainingCols > breakAtColumn && breakAtColumn > 0 ? breakAtColumn : remainingCols;
+            int rows = (transpose ? table.length : table[0].length);
+            writer.write("\\begin{tabular}{|*{" + cols + "}{C{" + width + "}|}}");
             writer.newLine();
-        }
-        writer.write("\\end{tabular}");
+            writer.write("\\hline");
+            writer.newLine();
+            for (int row = 0; row < rows; row++) {
+                boolean first = true;
+                int startCol = allCols - remainingCols;
+                for (int col = startCol; col < startCol + cols; col++) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        writer.write(" & ");
+                    }
+                    if (transpose) {
+                        if (color != null && color[row][col] != null) {
+                            writer.write("\\cellcolor{" + color[row][col] + "}");
+                        }
+                        writer.write(table[row][col] == null ? "" : table[row][col]);
+                    } else {
+                        if (color != null && color[col][row] != null) {
+                            writer.write("\\cellcolor{" + color[col][row] + "}");
+                        }
+                        writer.write(table[col][row] == null ? "" : table[col][row]);
+                    }
+                }
+                writer.write("\\\\\\hline");
+                writer.newLine();
+            }
+            writer.write("\\end{tabular}");
+            writer.newLine();
+            writer.newLine();
+            remainingCols -= cols;
+        } while (remainingCols > 0);
     }
 
     /**
