@@ -667,14 +667,14 @@ public class IntRBTree {
                 if (tree.isEmpty()) {
                     writerSpace.write(
                         "F\\\"uhren Sie die folgenden Operationen beginnend mit einem anfangs leeren"
-                        + " Rot-Schwarz-Baum aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}"
+                        + " \\emphasize{Rot-Schwarz-Baum} aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}"
                         + " und \\emphasize{L\\\"oschoperation}, jeder \\emphasize{Rotation} und jeder \\emphasize{Umf\\\"arbung} an. Beachten Sie, dass rote Knoten rund"
                         + " und schwarze Knoten eckig dargestellt werden.\\\\\\\\"
                     );
                     writerSpace.newLine();
                 } else {
                     writerSpace.write(
-                        "Betrachten Sie den folgenden Rot-Schwarz-Baum:\\\\[2ex]"
+                        "Betrachten Sie den folgenden \\emphasize{Rot-Schwarz-Baum}:\\\\[2ex]"
                     );
                     writerSpace.newLine();
                     writerSpace.newLine();
@@ -708,7 +708,7 @@ public class IntRBTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in einen leeren Rot-Schwarz-Baum ein und geben Sie die entstehenden B\\\"aume "
+                            + " in einen leeren \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die entstehenden B\\\"aume "
                             + "nach");
                         writerSpace.newLine(); 
                         writerSpace.write("\\begin{itemize}");
@@ -731,7 +731,7 @@ public class IntRBTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in den folgenden Rot-Schwarz-Baum ein und geben Sie die entstehenden B\\\"aume "
+                            + " in den folgenden \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die entstehenden B\\\"aume "
                             + "nach");
                             writerSpace.newLine(); 
                             writerSpace.write("\\begin{itemize}");
@@ -750,7 +750,7 @@ public class IntRBTree {
                         writerSpace.write(
                             "L\\\"oschen Sie den Wert "
                             + op.x
-                            + " aus dem folgenden Rot-Schwarz-Baum und geben Sie die entstehenden B\\\"aume "
+                            + " aus dem folgenden \\emphasize{Rot-Schwarz-Baum} und geben Sie die entstehenden B\\\"aume "
                             + "nach");
                             writerSpace.newLine(); 
                             writerSpace.write("\\begin{itemize}");

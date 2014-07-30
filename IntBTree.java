@@ -70,21 +70,21 @@ public class IntBTree {
             if (ops.size() > 1) {
                 if (tree.isEmpty()) {
                     writerSpace.write(
-                        "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren "
+                        "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren \\emphasize{"
                         + (
                             degree == 2 ?
-                                IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
-                                    "B-Baum mit Grad $t = " + degree + "$"
+                                IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}" :
+                                    "B-Baum} mit Grad $t = " + degree + "$"
                         ) + " aus und geben Sie die dabei jeweils entstehenden B\\\"aume an:\\\\\\\\"
                     );
                     writerSpace.newLine();
                 } else {
                     writerSpace.write(
-                        "Betrachten Sie den folgenden "
+                        "Betrachten Sie den folgenden \\emphasize{"
                         + (
                             degree == 2 ?
-                                IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
-                                    "B-Baum mit Grad $t = " + degree + "$"
+                                IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}" :
+                                    "B-Baum} mit Grad $t = " + degree + "$"
                         ) + ":\\\\[2ex]"
                     );
                     writerSpace.newLine();
@@ -121,11 +121,11 @@ public class IntBTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in einen leeren "
+                            + " in einen leeren \\emphasize{"
                             + (
                                 degree == 2 ?
-                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
-                                        "B-Baum mit Grad $t = " + degree + "$"
+                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}" :
+                                        "B-Baum} mit Grad $t = " + degree + "$"
                             ) + " ein und geben Sie den dabei entstehenden Baum an."
                         );
                     } else {
@@ -137,22 +137,22 @@ public class IntBTree {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
                             + op.x
-                            + " in den folgenden "
+                            + " in den folgenden \\emphasize{"
                             + (
                                 degree == 2 ?
-                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
-                                        "B-Baum mit Grad $t = " + degree + "$"
+                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}":
+                                        "B-Baum} mit Grad $t = " + degree + "$"
                             ) + " ein und geben Sie den dabei entstehenden Baum an:\\\\[2ex]"
                         );
                     } else {
                         writerSpace.write(
                             "L\\\"oschen Sie den Wert "
                             + op.x
-                            + " aus dem folgenden "
+                            + " aus dem folgenden \\emphasize{"
                             + (
                                 degree == 2 ?
-                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 :
-                                        "B-Baum mit Grad $t = " + degree + "$"
+                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}" :
+                                        "B-Baum} mit Grad $t = " + degree + "$"
                             ) + " und geben Sie den dabei entstehenden Baum an:\\\\[2ex]"
                         );
                     }

@@ -693,19 +693,19 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-        exWriter.write("F\\\"uhren Sie den Dijkstra Algorithmus auf diesem Graphen mit dem Startknoten ");
+        exWriter.write("F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten ");
         exWriter.write(start.getLabel().toString());
         switch (DSALExercises.TEXT_VERSION) {
             case ABRAHAM:
-                exWriter.write(" aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
-                exWriter.write("\\texttt{v} und \\texttt{key} nach jeder Iteration der \\texttt{while}-Schleife ");
+                exWriter.write("} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
+                exWriter.write("\\texttt{v} und \\texttt{key} \\emphasize{nach jeder Iteration} der \\texttt{while}-Schleife ");
                 exWriter.write("eintragen:\\\\[2ex]");
                 break;
             case GENERAL:
-                exWriter.write(" aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+                exWriter.write("} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
                 break;
             default:
-                throw new IllegalStateException("Unkown text version!");
+                throw new IllegalStateException("}Unkown text version!");
         }
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
