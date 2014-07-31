@@ -78,7 +78,7 @@ public class DSALExercises {
     private static final String VERSION;
 
     static {
-        VERSION = "1.1.2";
+        VERSION = "1.1.3";
         NUMBER_LIMIT = 100;
         STUDENT_MODE = false;
         TEXT_VERSION = TextVersion.ABRAHAM;
@@ -1677,7 +1677,7 @@ public class DSALExercises {
             "-c",
             "Capacity",
             "Used to specify the capacity (a certain limit which should not be exceeded), e.g., the capacity of a knapsack. Its use depends on the chosen algorithm.",
-            true
+            false
         ),
 
         /**
