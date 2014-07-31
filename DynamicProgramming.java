@@ -222,7 +222,7 @@ public abstract class DynamicProgramming {
         solWriter.newLine();
         solWriter.write("    if (C[i][j] != C[i-1][j])");
         solWriter.newLine();
-        solWriter.write("        for (int k = 0; k < w[i]; k++) j--;");
+        solWriter.write("        for (int k = 0; k < w[i-1]; k++) j--;");
         solWriter.newLine();
         solWriter.write("    i--;");
         solWriter.newLine();
