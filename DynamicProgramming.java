@@ -112,8 +112,8 @@ public abstract class DynamicProgramming {
         }
         exWriter.write(" und $c_{" + (n-1) + "} =" + values[n-1] + "$.");
         exWriter.write(" Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} an");
-        exWriter.write(" und zeigen Sie anhand der Tabelle, welche Gegenst\\\"ande");
-        exWriter.write(" mitgenommen werden, um diesen maximalen Wert zu erreichen.");
+        exWriter.write(" und beschreiben Sie anhand der Tabelle wie man die mitzunehmenden Gegenst\\\"ande");
+        exWriter.write(" bestimmen kann, um den maximalen Wert zu erreichen.");
         exWriter.newLine();
         exWriter.newLine();
         
@@ -140,7 +140,7 @@ public abstract class DynamicProgramming {
                     solWriter.newLine();
                     solWriter.write("{\\Large");
                     solWriter.newLine();
-                    TikZUtils.printTable(solutionsTmp, null, "0.9cm", solWriter, true, 0);
+                    TikZUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
                     solWriter.newLine();
                     solWriter.write("}");
                     solWriter.newLine();
@@ -151,7 +151,7 @@ public abstract class DynamicProgramming {
                     exWriter.newLine();
                     exWriter.write("{\\Large");
                     exWriter.newLine();
-                    TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true, 0);
+                    TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
                     exWriter.newLine();
                     exWriter.write("}");
                     exWriter.newLine();
@@ -176,7 +176,7 @@ public abstract class DynamicProgramming {
             exWriter.newLine();
             exWriter.write("{\\Large");
             exWriter.newLine();
-            TikZUtils.printTable(solutionsTmpEx, null, "0.9cm", exWriter, true, 0);
+            TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
             exWriter.newLine();
             exWriter.write("}");
             exWriter.newLine();
@@ -187,7 +187,7 @@ public abstract class DynamicProgramming {
             solWriter.newLine();
             solWriter.write("{\\Large");
             solWriter.newLine();
-            TikZUtils.printTable(solutions, null, "0.9cm", solWriter, true, 0);
+            TikZUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
             solWriter.newLine();
             solWriter.write("}");
             solWriter.newLine();
