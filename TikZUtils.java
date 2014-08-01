@@ -152,6 +152,8 @@ public abstract class TikZUtils {
         writer.newLine();
         writer.write("\\usepackage{array}");
         writer.newLine();
+        writer.write("\\usepackage{amsmath}");
+        writer.newLine();
         writer.newLine();
         writer.write("\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}");
         writer.newLine();

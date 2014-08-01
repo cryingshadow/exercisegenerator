@@ -78,9 +78,9 @@ public class DSALExercises {
     private static final String VERSION;
 
     static {
-        VERSION = "1.1.3";
+        VERSION = "1.1.5";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = false;
+        STUDENT_MODE = true;
         TEXT_VERSION = TextVersion.ABRAHAM;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
