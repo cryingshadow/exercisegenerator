@@ -34,7 +34,7 @@ public class IntBTree {
      * Since there are three different names for B-trees of degree 2, this String can be used to customize the output 
      * for a lecture.
      */
-    public static final String NAME_OF_BTREE_WITH_DEGREE_2 = "2--3--4--Baum";
+    public static final String NAME_OF_BTREE_WITH_DEGREE_2 = "2-3-4-Baum";
 
     /**
      * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified B-tree and

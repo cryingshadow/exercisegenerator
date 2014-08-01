@@ -905,9 +905,9 @@ public abstract class GraphAlgorithms {
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
         if (!warshall) {
-            exWriter.write("F\\\"uhren Sie den Algorithmus von Floyd auf diesem Graphen aus. ");
+            exWriter.write("F\\\"uhren Sie den \\emphasize{Algorithmus von Floyd} auf diesem Graphen aus. ");
         } else {
-            exWriter.write("F\\\"uhren Sie den Algorithmus von Warshall auf diesem Graphen aus. ");
+            exWriter.write("F\\\"uhren Sie den \\emphasize{Algorithmus von Warshall} auf diesem Graphen aus. ");
         }
         exWriter.write("Geben Sie dazu nach jedem Durchlauf der \\\"au{\\ss}eren Schleife die aktuellen Entfernungen ");
         exWriter.write("in einer Tabelle an. Die erste Tabelle enth\\\"alt bereits die Adjazenzmatrix nach Bildung ");
@@ -988,8 +988,8 @@ public abstract class GraphAlgorithms {
         graph.printTikZ(GraphPrintMode.ALL, multiplier, null, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-        exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der ");
-        exWriter.write("Ford-Fulkerson Methode. Geben Sie dazu ");
+        exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der");
+        exWriter.write(" \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
         exWriter.write(GraphAlgorithms.EACH_RESIDUAL_GRAPH);
         exWriter.write(" sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. ");
         exWriter.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an. Die vorgegebene ");

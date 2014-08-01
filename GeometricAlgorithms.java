@@ -198,7 +198,7 @@ public abstract class GeometricAlgorithms {
     public static void printConvexHull(ArrayList<Pair<Double,Double>> pointSet, BufferedWriter exWriter, BufferedWriter solWriter)
     throws IOException {
         exWriter.write("Berechnen Sie die konvexe H\\\"ulle der folgenden Punktmenge. ");
-        exWriter.write("Benutzen Sie daf\\\"ur \\emphasize{Grahams Scan} wie in der Vorlesung vorgestellt ");
+        exWriter.write("Benutzen Sie daf\\\"ur \\emphasize{Grahams Scan} wie \\emphasize{in der Vorlesung} vorgestellt ");
         exWriter.write("und geben Sie die Teilschritte \\emphasize{nach jeder Iteration}");
         exWriter.write(" (also nach jedem neu hinzugef\"ugten Punkt) an. ");
         exWriter.write("Umkreisen Sie die Punkte, die vom Algorithmus in der Iterationsschleife nicht betrachtet werden.\\\\");
