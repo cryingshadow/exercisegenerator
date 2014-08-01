@@ -550,6 +550,7 @@ public abstract class GraphAlgorithms {
      * @param graph The graph.
      * @param start The start node.
      * @param comp A comparator for sorting the nodes in the table (may be null - then no sorting is applied).
+     * @param mode The preprint mode.
      * @param exWriter The writer to send the exercise output to.
      * @param solWriter The writer to send the solution output to.
      * @throws IOException If some error occurs during output.
@@ -558,6 +559,7 @@ public abstract class GraphAlgorithms {
         Graph<N, Integer> graph,
         Node<N> start,
         Comparator<Node<N>> comp,
+        PreprintMode mode,
         BufferedWriter exWriter,
         BufferedWriter solWriter
     ) throws IOException {
@@ -693,28 +695,47 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.newLine();
-        exWriter.write("F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten ");
+        exWriter.write("F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem ");
+        exWriter.write("\\emphasize{Startknoten ");
         exWriter.write(start.getLabel().toString());
-        switch (DSALExercises.TEXT_VERSION) {
-            case ABRAHAM:
-                exWriter.write("} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
-                exWriter.write("\\texttt{v} und \\texttt{key} \\emphasize{nach jeder Iteration} der \\texttt{while}-Schleife ");
-                exWriter.write("eintragen:\\\\[2ex]");
+        exWriter.write("} aus.");
+        switch (mode) {
+            case ALWAYS:
+            case SOLUTION_SPACE:
+                switch (DSALExercises.TEXT_VERSION) {
+                    case ABRAHAM:
+                        exWriter.write(" F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
+                        exWriter.write("\\texttt{v} und \\texttt{key} \\emphasize{nach jeder Iteration} der ");
+                        exWriter.write("\\texttt{while}-Schleife eintragen:\\\\[2ex]");
+                        break;
+                    default:
+                        exWriter.write(" F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+                }
                 break;
-            case GENERAL:
-                exWriter.write("} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
-                break;
-            default:
-                throw new IllegalStateException("}Unkown text version!");
+            case NEVER:
+                // do nothing
         }
         exWriter.newLine();
-        TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        exWriter.newLine();
-        TikZUtils.printArrayStretch(1.5, exWriter);
+        switch (mode) {
+            case SOLUTION_SPACE:
+                TikZUtils.printSolutionSpaceBeginning(exWriter);
+                // fall-through
+            case ALWAYS:
+                TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+                exWriter.newLine();
+                TikZUtils.printArrayStretch(1.5, exWriter);
+                TikZUtils.printTable(exTable, exColor, "2cm", exWriter, false, 10);
+                TikZUtils.printArrayStretch(1.0, exWriter);
+                TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+                if (mode == PreprintMode.SOLUTION_SPACE) {
+                    TikZUtils.printSolutionSpaceEnd(exWriter);
+                }
+                break;
+            case NEVER:
+                // do nothing
+        }
         TikZUtils.printArrayStretch(1.5, solWriter);
-        TikZUtils.printTable(exTable, exColor, "2cm", exWriter, false, 10);
         TikZUtils.printTable(solTable, solColor, "2cm", solWriter, false, 10);
-        TikZUtils.printArrayStretch(1.0, exWriter);
         TikZUtils.printArrayStretch(1.0, solWriter);
         solWriter.newLine();
         solWriter.write("\\vspace*{1ex}");
@@ -723,7 +744,6 @@ public abstract class GraphAlgorithms {
         solWriter.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
         solWriter.write(" Distanz sicher berechnet worden ist.");
         solWriter.newLine();
-        TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
     }
 
     /**
@@ -963,7 +983,7 @@ public abstract class GraphAlgorithms {
      * @param sink The sink node.
      * @param multiplier Multiplier for node distances.
      * @param twocolumns True if residual graphs and flow networks should be displayed in two columns. 
-     * @param examMode True if the solution preprint is to be set in solutionSpace.
+     * @param mode Preprint mode.
      * @param exWriter The writer to send the exercise output to.
      * @param solWriter The writer to send the solution output to.
      * @throws IOException If some error occurs during output.
@@ -974,7 +994,7 @@ public abstract class GraphAlgorithms {
         Node<N> sink,
         double multiplier,
         boolean twocolumns,
-        boolean examMode,
+        PreprintMode mode,
         BufferedWriter exWriter,
         BufferedWriter solWriter
     ) throws IOException {
@@ -992,9 +1012,16 @@ public abstract class GraphAlgorithms {
         exWriter.write(" \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
         exWriter.write(GraphAlgorithms.EACH_RESIDUAL_GRAPH);
         exWriter.write(" sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. ");
-        exWriter.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an. Die vorgegebene ");
-        exWriter.write("Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl solcher Schritte ");
-        exWriter.write("\\\"ubereinstimmen.");
+        exWriter.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an.");
+        switch (mode) {
+            case ALWAYS:
+            case SOLUTION_SPACE:
+                exWriter.write(" Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl ");
+                exWriter.write("solcher Schritte \\\"ubereinstimmen.");
+                break;
+            case NEVER:
+                // do nothing
+        }
         exWriter.newLine();
         int step = 0;
         TikZUtils.printSamePageBeginning(step++, twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH, solWriter);
@@ -1002,32 +1029,47 @@ public abstract class GraphAlgorithms {
         graph.printTikZ(GraphPrintMode.ALL, multiplier, null, solWriter);
         TikZUtils.printSamePageEnd(solWriter);
         solWriter.newLine();
-        if (examMode) {
-            exWriter.write("\\solutionSpace{");
-            exWriter.newLine();
+        switch (mode) {
+            case SOLUTION_SPACE:
+                exWriter.write("\\solutionSpace{");
+                exWriter.newLine();
+                // fall-through
+            case ALWAYS:
+                if (twocolumns) {
+                    exWriter.write("\\begin{longtable}{cc}");
+                    exWriter.newLine();
+                }
+                break;
+            case NEVER:
+                // do nothing
         }
         if (twocolumns) {
-            exWriter.write("\\begin{longtable}{cc}");
-            exWriter.newLine();
             solWriter.write("\\begin{longtable}{cc}");
             solWriter.newLine();
         }
         while (true) {
             Graph<N, Integer> residualGraph = GraphAlgorithms.computeResidualGraph(graph);
             List<Node<N>> path = GraphAlgorithms.selectAugmentingPath(residualGraph, source, sink);
-            TikZUtils.printSamePageBeginning(
-                step,
-                twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
-                exWriter
-            );
+            switch (mode) {
+                case ALWAYS:
+                case SOLUTION_SPACE:
+                    TikZUtils.printSamePageBeginning(
+                        step,
+                        twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
+                        exWriter
+                    );
+                    exWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
+                    exWriter.write(":\\\\[2ex]");
+                    exWriter.newLine();
+                    break;
+                case NEVER:
+                    // do nothing
+            }
             TikZUtils.printSamePageBeginning(
                 step++,
                 twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
                 solWriter
             );
-            exWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
-            exWriter.write(":\\\\[2ex]");
-            exWriter.newLine();
             solWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
             solWriter.write(":\\\\[2ex]");
             solWriter.newLine();
@@ -1042,44 +1084,63 @@ public abstract class GraphAlgorithms {
                 default:
                     throw new IllegalStateException("Unkown text version!");
             }
-            residualGraph.printTikZ(GraphPrintMode.NO_EDGES, multiplier, toHighlightResidual, exWriter);
+            switch (mode) {
+                case ALWAYS:
+                case SOLUTION_SPACE:
+                    residualGraph.printTikZ(GraphPrintMode.NO_EDGES, multiplier, toHighlightResidual, exWriter);
+                    TikZUtils.printSamePageEnd(exWriter);
+                    if (twocolumns) {
+                        exWriter.write(" & ");
+                    } else {
+                        exWriter.newLine();
+                    }
+                    break;
+                case NEVER:
+                    // do nothing
+            }
             residualGraph.printTikZ(GraphPrintMode.ALL, multiplier, toHighlightResidual, solWriter);
-            TikZUtils.printSamePageEnd(exWriter);
             TikZUtils.printSamePageEnd(solWriter);
             if (twocolumns) {
-                exWriter.write(" & ");
                 solWriter.write(" & ");
             } else {
-                exWriter.newLine();
                 solWriter.newLine();
             }
             if (path == null) {
                 break;
             }
             Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> toHighlightFlow = GraphAlgorithms.addFlow(graph, path);
-            TikZUtils.printSamePageBeginning(
-                step,
-                twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
-                exWriter
-            );
+            switch (mode) {
+                case ALWAYS:
+                case SOLUTION_SPACE:
+                    TikZUtils.printSamePageBeginning(
+                        step,
+                        twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
+                        exWriter
+                    );
+                    exWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
+                    exWriter.newLine();
+                    graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, multiplier, null, exWriter);
+                    TikZUtils.printSamePageEnd(exWriter);
+                    if (twocolumns) {
+                        exWriter.write("\\\\");
+                    }
+                    exWriter.newLine();
+                    break;
+                case NEVER:
+                    // do nothing
+            }
             TikZUtils.printSamePageBeginning(
                 step++,
                 twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH,
                 solWriter
             );
-            exWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
-            exWriter.newLine();
             solWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
             solWriter.newLine();
-            graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, multiplier, null, exWriter);
             graph.printTikZ(GraphPrintMode.ALL, multiplier, toHighlightFlow, solWriter);
-            TikZUtils.printSamePageEnd(exWriter);
             TikZUtils.printSamePageEnd(solWriter);
             if (twocolumns) {
-                exWriter.write("\\\\");
                 solWriter.write("\\\\");
             }
-            exWriter.newLine();
             solWriter.newLine();
         }
         int flow = 0;
@@ -1089,24 +1150,33 @@ public abstract class GraphAlgorithms {
                 flow += edge.x.x;
             }
         }
+        switch (mode) {
+            case ALWAYS:
+            case SOLUTION_SPACE:
+                if (twocolumns) {
+                    exWriter.write("\\end{longtable}");
+                    exWriter.newLine();
+                }
+                exWriter.newLine();
+                exWriter.newLine();
+                exWriter.write("\\vspace*{1ex}");
+                exWriter.newLine();
+                exWriter.newLine();
+                exWriter.write("Der maximale Fluss hat den Wert: ");
+                exWriter.newLine();
+                if (mode == PreprintMode.SOLUTION_SPACE) {
+                    exWriter.write("}");
+                    exWriter.newLine();
+                }
+                exWriter.newLine();
+                break;
+            case NEVER:
+                // do nothing
+        }
         if (twocolumns) {
-            exWriter.write("\\end{longtable}");
-            exWriter.newLine();
             solWriter.write("\\end{longtable}");
             solWriter.newLine();
         }
-        exWriter.newLine();
-        exWriter.newLine();
-        exWriter.write("\\vspace*{1ex}");
-        exWriter.newLine();
-        exWriter.newLine();
-        exWriter.write("Der maximale Fluss hat den Wert: ");
-        exWriter.newLine();
-        if (examMode) {
-            exWriter.write("}");
-            exWriter.newLine();
-        }
-        exWriter.newLine();
         solWriter.newLine();
         solWriter.newLine();
         solWriter.write("\\vspace*{1ex}");
@@ -1435,6 +1505,7 @@ public abstract class GraphAlgorithms {
      * @param color The cell colors.
      * @param writer The writer to send the output to.
      * @param transpose Transpose the tables?
+     * @param breakAtColumn Insert line breaks after this number of columns. Ignored if 0.
      * @return The next number of tables printed in the current row.
      * @throws IOException If some error occurs during output.
      */

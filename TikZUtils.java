@@ -14,15 +14,20 @@ public abstract class TikZUtils {
     public static final String CENTER = "center";
 
     /**
+     * The column width.
+     */
+    public static final String COL_WIDTH = "\\columnwidth";
+
+    /**
      * Style for drawing highlighted edges.
      */
     public static final String EDGE_HIGHLIGHT_STYLE = "[p, bend right = 10, very thick, red]";
-
+    
     /**
      * Style for drawing edges.
      */
     public static final String EDGE_STYLE = "[p, bend right = 10]";
-    
+
     /**
      * The name of the enumerate environment.
      */
@@ -37,11 +42,6 @@ public abstract class TikZUtils {
      * Style for drawing symmetric edges.
      */
     public static final String SYM_EDGE_STYLE = "[p]";
-
-    /**
-     * The column width.
-     */
-    public static final String COL_WIDTH = "\\columnwidth";
 
     /**
      * A bit less than half the column width.
@@ -220,23 +220,6 @@ public abstract class TikZUtils {
     /**
      * Prints the beginning of a samepage environment.
      * @param step The current evaluation step.
-     * @param width A LaTeX String indicating the width of the minipage.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printSamePageBeginning(int step, String width, BufferedWriter writer) throws IOException {
-        writer.write("\\begin{minipage}{" + width + "}");
-        writer.newLine();
-        writer.write("\\vspace*{1ex}");
-        writer.newLine();
-        writer.write("Schritt " + step + ":\\\\[-2ex]");
-        writer.newLine();
-        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
-    }
-
-    /**
-     * Prints the beginning of a samepage environment.
-     * @param step The current evaluation step.
      * @param op The current operation.
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
@@ -258,6 +241,23 @@ public abstract class TikZUtils {
     }
 
     /**
+     * Prints the beginning of a samepage environment.
+     * @param step The current evaluation step.
+     * @param width A LaTeX String indicating the width of the minipage.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printSamePageBeginning(int step, String width, BufferedWriter writer) throws IOException {
+        writer.write("\\begin{minipage}{" + width + "}");
+        writer.newLine();
+        writer.write("\\vspace*{1ex}");
+        writer.newLine();
+        writer.write("Schritt " + step + ":\\\\[-2ex]");
+        writer.newLine();
+        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
+    }
+
+    /**
      * Prints the end of a samepage environment.
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
@@ -269,12 +269,33 @@ public abstract class TikZUtils {
     }
 
     /**
+     * Prints the beginning of solution space to the specified writer.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printSolutionSpaceBeginning(BufferedWriter writer) throws IOException {
+        writer.write("\\solutionSpace{");
+        writer.newLine();
+    }
+
+    /**
+     * Prints the end of solution space to the specified writer.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printSolutionSpaceEnd(BufferedWriter writer) throws IOException {
+        writer.write("}");
+        writer.newLine();
+    }
+
+    /**
      * Prints a table by centering each column.
      * @param table A two-dimensional table of Strings.
      * @param color Color settings for each cell. Null means no color. The array must not be null.
      * @param width The column width.
      * @param writer The writer to send the output to.
      * @param transpose Transpose the table?
+     * @param breakAtColumn Insert line breaks after this number of columns. Ignored if 0.
      * @throws IOException If some error occurs during output.
      */
     public static void printTable(

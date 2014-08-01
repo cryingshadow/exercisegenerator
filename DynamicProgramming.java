@@ -35,6 +35,7 @@ public abstract class DynamicProgramming {
      * @param weights The weights of the items to put into the knapsack.
      * @param values The values of the items to put into the knapsack.
      * @param capacity The capacity of the knapsack.
+     * @param mode The preprint mode.
      * @param solWriter The writer to send the solution output to.
      * @param exWriter The writer to send the exercise output to.
      * @throws IOException If some error occurs during output.
@@ -43,6 +44,7 @@ public abstract class DynamicProgramming {
         Integer[] weights,
         Integer[] values,
         Integer capacity,
+        PreprintMode mode,
         BufferedWriter solWriter,
         BufferedWriter exWriter
     ) throws IOException {
@@ -127,7 +129,7 @@ public abstract class DynamicProgramming {
             for (int rowNr = 0; rowNr < n+2; rowNr++) {
                 solutionsTmpEx[rowNr][0] = solutions[rowNr][0];
             }
-            boolean remainderStarted = true;
+//            boolean remainderStarted = true;
             for (int columnNr = 0; columnNr < capacity+2; columnNr++) {
                 // System.out.println("columnNr = " + columnNr);
                 for (int rowNr = 0; rowNr < n+2; rowNr++) {
@@ -147,17 +149,29 @@ public abstract class DynamicProgramming {
                     solWriter.write("\\end{center}");
                     solWriter.newLine();
                     solWriter.newLine();
-                    exWriter.write("\\begin{center}");
-                    exWriter.newLine();
-                    exWriter.write("{\\Large");
-                    exWriter.newLine();
-                    TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
-                    exWriter.newLine();
-                    exWriter.write("}");
-                    exWriter.newLine();
-                    exWriter.write("\\end{center}");
-                    exWriter.newLine();
-                    exWriter.newLine();
+                    switch (mode) {
+                        case SOLUTION_SPACE:
+                            TikZUtils.printSolutionSpaceBeginning(exWriter);
+                            // fall-through
+                        case ALWAYS:
+                            exWriter.write("\\begin{center}");
+                            exWriter.newLine();
+                            exWriter.write("{\\Large");
+                            exWriter.newLine();
+                            TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                            exWriter.newLine();
+                            exWriter.write("}");
+                            exWriter.newLine();
+                            exWriter.write("\\end{center}");
+                            exWriter.newLine();
+                            if (mode == PreprintMode.SOLUTION_SPACE) {
+                                TikZUtils.printSolutionSpaceEnd(exWriter);
+                            }
+                            exWriter.newLine();
+                            break;
+                        case NEVER:
+                            // do nothing
+                    }
                     int columnNrTmp = capacity + 2 - columnNr > tableWidth ? tableWidth : capacity + 1 - columnNr;
                     // System.out.println("columnNrTmp = " + columnNrTmp);
                     solutionsTmp = new String[n+2][columnNrTmp];
@@ -172,17 +186,29 @@ public abstract class DynamicProgramming {
             for (int columnNr = 1; columnNr < capacity+2; columnNr++) {
                 solutionsTmpEx[0][columnNr] = solutions[0][columnNr];
             }
-            exWriter.write("\\begin{center}");
-            exWriter.newLine();
-            exWriter.write("{\\Large");
-            exWriter.newLine();
-            TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
-            exWriter.newLine();
-            exWriter.write("}");
-            exWriter.newLine();
-            exWriter.write("\\end{center}");
-            exWriter.newLine();
-            exWriter.newLine();
+            switch (mode) {
+                case SOLUTION_SPACE:
+                    TikZUtils.printSolutionSpaceBeginning(exWriter);
+                    // fall-through
+                case ALWAYS:
+                    exWriter.write("\\begin{center}");
+                    exWriter.newLine();
+                    exWriter.write("{\\Large");
+                    exWriter.newLine();
+                    TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                    exWriter.newLine();
+                    exWriter.write("}");
+                    exWriter.newLine();
+                    exWriter.write("\\end{center}");
+                    exWriter.newLine();
+                    if (mode == PreprintMode.SOLUTION_SPACE) {
+                        TikZUtils.printSolutionSpaceEnd(exWriter);
+                    }
+                    exWriter.newLine();
+                    break;
+                case NEVER:
+                    // do nothing
+            }
             solWriter.write("\\begin{center}");
             solWriter.newLine();
             solWriter.write("{\\Large");

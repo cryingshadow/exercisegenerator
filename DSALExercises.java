@@ -152,6 +152,25 @@ public class DSALExercises {
             System.out.println(e.getMessage());
             return;
         }
+        final PreprintMode mode;
+        if (options.containsKey(Flag.PREPRINT_MODE)) {
+            switch (options.get(Flag.PREPRINT_MODE)) {
+                case "always":
+                    mode = PreprintMode.ALWAYS;
+                    break;
+                case "solutionSpace":
+                    mode = PreprintMode.SOLUTION_SPACE;
+                    break;
+                case "never":
+                    mode = PreprintMode.NEVER;
+                    break;
+                default:
+                    System.out.println("Unknown preprint mode!");
+                    return;
+            }
+        } else {
+            mode = PreprintMode.ALWAYS;
+        }
         int rows =
             !DSALExercises.STUDENT_MODE && options.containsKey(Flag.LENGTH) ?
                 Integer.parseInt(options.get(Flag.LENGTH)) :
@@ -420,7 +439,7 @@ public class DSALExercises {
                         throw new IllegalStateException("Unkown text version!");
                 }
                 exerciseWriter.write(hash4);
-                Hashing.printExercise(in.y, m, false, exerciseWriter);
+                Hashing.printExercise(in.y, m, false, mode, exerciseWriter);
             } else if (Algorithm.HASH_DIV_LIN.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
                 m = (int)in.x[0];
@@ -452,7 +471,7 @@ public class DSALExercises {
                         throw new IllegalStateException("Unkown text version!");
                 }
                 exerciseWriter.write(hash4);
-                Hashing.printExercise(in.y, m, true, exerciseWriter);
+                Hashing.printExercise(in.y, m, true, mode, exerciseWriter);
             } else if (Algorithm.HASH_DIV_QUAD.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
                 m = (int)in.x[0];
@@ -500,7 +519,7 @@ public class DSALExercises {
                         throw new IllegalStateException("Unkown text version!");
                 }
                 exerciseWriter.write(hash4);
-                Hashing.printExercise(in.y, m, true, exerciseWriter);
+                Hashing.printExercise(in.y, m, true, mode, exerciseWriter);
             } else if (Algorithm.HASH_MULT.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
                 m = (int)in.x[0];
@@ -532,7 +551,7 @@ public class DSALExercises {
                         throw new IllegalStateException("Unkown text version!");
                 }
                 exerciseWriter.write(hash4);
-                Hashing.printExercise(in.y, m, false, exerciseWriter);
+                Hashing.printExercise(in.y, m, false, mode, exerciseWriter);
             } else if (Algorithm.HASH_MULT_LIN.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
                 m = (int)in.x[0];
@@ -564,7 +583,7 @@ public class DSALExercises {
                         throw new IllegalStateException("Unkown text version!");
                 }
                 exerciseWriter.write(hash4);
-                Hashing.printExercise(in.y, m, true, exerciseWriter);
+                Hashing.printExercise(in.y, m, true, mode, exerciseWriter);
             } else if (Algorithm.HASH_MULT_QUAD.name.equals(alg)) {
                 in = (Pair<double[], Integer[]>)input;
                 m = (int)in.x[0];
@@ -609,10 +628,17 @@ public class DSALExercises {
                         throw new IllegalStateException("Unkown text version!");
                 }
                 exerciseWriter.write(hash4);
-                Hashing.printExercise(in.y, m, true, exerciseWriter);
+                Hashing.printExercise(in.y, m, true, mode, exerciseWriter);
             } else if (Algorithm.DIJKSTRA.name.equals(alg)) {
                 Pair<Graph<String, Integer>, Node<String>> pair = (Pair<Graph<String, Integer>, Node<String>>)input;
-                GraphAlgorithms.dijkstra(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
+                GraphAlgorithms.dijkstra(
+                    pair.x,
+                    pair.y,
+                    new StringNodeComparator(),
+                    mode,
+                    exerciseWriter,
+                    solutionWriter
+                );
             } else if (Algorithm.FORD_FULKERSON.name.equals(alg)) {
                 FlowNetworkInput<String, FlowPair> flow = (FlowNetworkInput<String, FlowPair>)input;
                 GraphAlgorithms.fordFulkerson(
@@ -621,7 +647,7 @@ public class DSALExercises {
                     flow.sink,
                     flow.multiplier,
                     flow.twocolumns,
-                    flow.examMode,
+                    mode,
                     exerciseWriter,
                     solutionWriter
                 );
@@ -636,7 +662,7 @@ public class DSALExercises {
                 GraphAlgorithms.prim(pair.x, pair.y, new StringNodeComparator(), exerciseWriter, solutionWriter);
             } else if (Algorithm.HULL.name.equals(alg)) {
                 ArrayList<Pair<Double,Double>> pointSet = (ArrayList<Pair<Double,Double>>)input;
-                GeometricAlgorithms.printConvexHull(pointSet, exerciseWriter, solutionWriter);
+                GeometricAlgorithms.printConvexHull(pointSet, mode, exerciseWriter, solutionWriter);
             } else if (Algorithm.LCS.name.equals(alg)) {
                 Pair<String,String> tmpInput = (Pair<String,String>) input;
                 DynamicProgramming.lcs(
@@ -651,6 +677,7 @@ public class DSALExercises {
                     tmpInput.x.x,
                     tmpInput.x.y,
                     tmpInput.y,
+                    mode,
                     solutionWriter,
                     options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                 );
@@ -1305,7 +1332,6 @@ public class DSALExercises {
                     input.add(point);
                 }
             }
-            
             return input;
         } else if (Algorithm.FORD_FULKERSON.name.equals(alg)) {
             Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
@@ -1330,7 +1356,6 @@ public class DSALExercises {
                 res.sink = res.graph.getNodesWithLabel("t").iterator().next();
                 res.multiplier = 1.0;
                 res.twocolumns = false;
-                res.examMode = false;
                 return res;
             } else {
                 try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
@@ -1344,7 +1369,6 @@ public class DSALExercises {
             Node<String> sink = null;
             double multiplier = 1.0;
             boolean twocolumns = false;
-            boolean examMode = false;
             if (options.containsKey(Flag.OPERATIONS)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
                     Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
@@ -1361,10 +1385,6 @@ public class DSALExercises {
                         String twocols = reader.readLine();
                         if (twocols != null && !"".equals(twocols.trim())) {
                             twocolumns = Boolean.parseBoolean(twocols);
-                            String exam = reader.readLine();
-                            if (exam != null && !"".equals(exam.trim())) {
-                                examMode = Boolean.parseBoolean(exam);
-                            }
                         }
                     }
                 } catch (IOException | NumberFormatException e) {
@@ -1378,7 +1398,6 @@ public class DSALExercises {
             res.sink = sink;
             res.multiplier = multiplier;
             res.twocolumns = twocolumns;
-            res.examMode = examMode;
             return res;
         } else if (Algorithm.KNAPSACK.name.equals(alg)) {
             Integer[] weights = null;
@@ -1711,6 +1730,11 @@ public class DSALExercises {
          * File containing operations used to construct a start structure.
          */
         OPERATIONS("-o", "Operations for start structure", "TODO", false),
+
+        /**
+         * Preprint mode (should preprints be given always, never, or just not in solution sheets?).
+         */
+        PREPRINT_MODE("-p", "PReprint mode", "TODO", false),
 
         /**
          * Source file containing the input. Must not be specified together with -i, but one of them must be specified.

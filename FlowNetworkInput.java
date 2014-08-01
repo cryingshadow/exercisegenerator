@@ -32,9 +32,4 @@ public class FlowNetworkInput<N, E> {
      */
     public boolean twocolumns;
 
-    /**
-     * Should solution preprints be set in solutionSpace?
-     */
-    public boolean examMode;
-
 }

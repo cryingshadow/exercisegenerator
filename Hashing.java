@@ -134,7 +134,18 @@ public abstract class Hashing {
                     case 2:
                         // Multiplication Hashing
                         pos = (int)Math.floor(m * (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0)) % m;
-                        //System.out.println("Parameters: c=" + c + ", m=" + m + ", in[i]=" + in[i] + ", pos=" + pos + " k*c=" + (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0));
+//                        System.out.println(
+//                            "Parameters: c="
+//                            + c
+//                            + ", m="
+//                            + m
+//                            + ", in[i]="
+//                            + in[i]
+//                            + ", pos="
+//                            + pos
+//                            + " k*c="
+//                            + (Math.round(((in[i] * c) - (int)(in[i] * c)) * 100.0) / 100.0)
+//                        );
                         break;
                 }
                 if (solution[pos] == null) {
@@ -275,11 +286,10 @@ public abstract class Hashing {
 
     /**
      * Prints the exercise text for this hashing exercise.
-     * @param input 
+     * @param input The values to hash.
      * @param size The size of the hash table.
      * @param probing Flag indicating whether probing is used.
-     * @param longname 
-     * @param constants 
+     * @param mode The preprint mode.
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
@@ -287,30 +297,45 @@ public abstract class Hashing {
         Integer[] input,
         int size,
         boolean probing,
+        PreprintMode mode,
         BufferedWriter writer
     ) throws IOException {
         writer.newLine();
         for (int i = 0; i < input.length - 1; ++i) {
             writer.write(input[i] + ", ");
         }
-        writer.write(input[input.length-1] + ".\\\\[4ex]");
-        writer.newLine();
-        writer.write("{\\Large");
-        writer.newLine();
-        if (probing) {
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            ArrayUtils.printEmptyArrayWithIndex(size, writer);
-        } else {
-            String[] solution = new String[size];
-            for (int i = 0; i < size; ++i) {
-                solution[i] = i + ":";
-            }
-            TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
-            ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
+        writer.write(input[input.length-1] + ".");
+        switch (mode) {
+            case ALWAYS:
+            case SOLUTION_SPACE:
+                writer.write("\\\\[4ex]");
+                writer.newLine();
+                if (mode == PreprintMode.SOLUTION_SPACE) {
+                    TikZUtils.printSolutionSpaceBeginning(writer);
+                }
+                writer.write("{\\Large");
+                writer.newLine();
+                if (probing) {
+                    TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+                    ArrayUtils.printEmptyArrayWithIndex(size, writer);
+                } else {
+                    String[] solution = new String[size];
+                    for (int i = 0; i < size; ++i) {
+                        solution[i] = i + ":";
+                    }
+                    TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
+                    ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
+                }
+                TikZUtils.printTikzEnd(writer);
+                writer.write("}");
+                writer.newLine();
+                if (mode == PreprintMode.SOLUTION_SPACE) {
+                    TikZUtils.printSolutionSpaceEnd(writer);
+                }
+                break;
+            case NEVER:
+                writer.newLine();
         }
-        TikZUtils.printTikzEnd(writer);
-        writer.write("}");
-        writer.newLine();
     }
 
     /**
