@@ -14,9 +14,14 @@ public abstract class GeometricAlgorithms {
         int refIndex = 0;
         int count = 1;
         Pair<Double,Double> refPoint = pointSet.get(0);
+        //System.out.println("Refpoint is: (" + refPoint.x + "," + refPoint.y + ")");
         for(int i = 1; i<pointSet.size(); ++i) {
-            if(pointSet.get(i).y < refPoint.y || (pointSet.get(i).y == refPoint.y && pointSet.get(i).x < refPoint.x) ) {
+            //System.out.println("Consider: (" + pointSet.get(i).x + "," + pointSet.get(i).y + ")");
+            //System.out.println("First constraint: " + (pointSet.get(i).y < refPoint.y) );
+            //System.out.println("Second constraint: a) " + (Double.compare(pointSet.get(i).y,refPoint.y) == 0) + ", b) " + (pointSet.get(i).x < refPoint.x) );
+            if(pointSet.get(i).y < refPoint.y || (Double.compare(pointSet.get(i).y,refPoint.y) == 0 && pointSet.get(i).x < refPoint.x) ) {
                 refPoint = pointSet.get(i);
+                //System.out.println("Refpoint is: (" + refPoint.x + "," + refPoint.y + ")");
                 refIndex = i;
             }
         }
@@ -71,7 +76,9 @@ public abstract class GeometricAlgorithms {
             }
             oneOnly = false;
             hull.push(tmp.get(i));
-            printPartialHull(tmp,hull,duplicates,solWriter);
+            if(i>=1) {
+                printPartialHull(tmp,hull,duplicates,solWriter);
+            }
             if(count%2 == 1) {
                 solWriter.newLine();
                 solWriter.write("\\\\");
@@ -203,6 +210,7 @@ public abstract class GeometricAlgorithms {
         // solution
         int count = computeConvexHull(pointSet, solWriter);
         boolean one = false;
+
         
         while(count > 0) {
             printPointset(pointSet, -1 , null, exWriter);
