@@ -1,8 +1,7 @@
-
 /**
  * Styles for TikZ environments.
- * @author cryingshadow
- * @version $Id$
+ * @author Thomas Stroeder
+ * @version 1.0.1
  */
 enum TikZStyle {
 
@@ -33,7 +32,7 @@ enum TikZStyle {
         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]"
     ),
-    
+
     /**
      * Graph style.
      */

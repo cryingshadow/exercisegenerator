@@ -78,7 +78,7 @@ public class DSALExercises {
     private static final String VERSION;
 
     static {
-        VERSION = "1.1.5";
+        VERSION = "1.1.6";
         NUMBER_LIMIT = 100;
         STUDENT_MODE = false;
         TEXT_VERSION = TextVersion.ABRAHAM;

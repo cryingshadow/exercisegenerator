@@ -5,155 +5,51 @@ import java.util.*;
  * This abstract class provides methods for sorting arrays and producing TikZ output showing intermediate steps of the 
  * sorting routines.
  * @author cryingshadow
- * @version $Id$
+ * @version 1.1.0
  */
 public abstract class Sorting {
 
     /**
-     * Partitions the array part between <code>start</code> and <code>end</code> using the element at <code>end</code> 
-     * as Pivot element. It returns the resulting index of the Pivot element. So after this method call, all elements 
-     * from <code>start</code> to the returned index minus one are less than or equal to the element at the returned 
-     * index and all elements from the returned index plus one to <code>end</code> are greater than or equal to the 
-     * element at the returned index.
-     * @param array The array.
-     * @param start The start index.
-     * @param end The end index.
-     * @return The index of the Pivot element after partitioning.
+     * Flag indicating whether elements equal to the pivot element should end up in the left partition.
      */
-    public static int partition(Integer[] array, int start, int end) {
-        int i = start - 1;
-        int j = end;
-        while (i < j) {
-            i++;
-            while (array[i] < array[end]) {
-                i++;
-            }
-            j--;
-            while (j > start - 1 && array[j] > array[end]) {
-                j--;
-            }
-            ArrayUtils.swap(array, i, j);
-        }
-        ArrayUtils.swap(array, i, j);
-        ArrayUtils.swap(array, i, end);
-        return i;
-    }
+    private static final PartitionMode PARTITION_MODE = PartitionMode.EQUAL_RIGHT;
 
     /**
-     * The actual quicksort algorithm. It sorts the array part from start to end using quicksort while outputting the 
-     * solution as a TikZ picture to the specified writer.
-     * @param array The array.
-     * @param start The start index.
-     * @param end The end index.
-     * @param anchor The name of the left-most node of the recent row in the TikZ array output.
-     * @param separate Indicates which nodes should be separated horizontally in the array output.
-     * @param mark Indicates which nodes should be marked by a grey background in the TikZ array output (these are the 
-     *             Pivot elements used).
-     * @param writer The writer to send the output to.
-     * @return The number of rows needed for the solution and the name of the left-most node of the most recent row in 
-     *         the TikZ array output.
-     * @throws IOException If some error occurs during solution output.
-     */
-    public static Object[] quicksort(
-        Integer[] array,
-        int start,
-        int end,
-        String anchor,
-        boolean[] separate,
-        boolean[] mark,
-        BufferedWriter writer
-    ) throws IOException {
-        if (start < end) {
-            int middle = Sorting.partition(array, start, end);
-            if (middle > 0) {
-                separate[middle - 1] = true;
-            }
-            if (middle < array.length - 1) {
-                separate[middle] = true;
-            }
-            Arrays.fill(mark, false);
-            mark[middle] = true;
-            Object[] firstStep =
-                Sorting.quicksort(
-                    array,
-                    start,
-                    middle - 1,
-                    ArrayUtils.printArray(array, separate, mark, anchor, writer),
-                    separate,
-                    mark,
-                    writer
-                );
-            Object[] secondStep =
-                Sorting.quicksort(
-                    array,
-                    middle + 1,
-                    end,
-                    (String)firstStep[1],
-                    separate,
-                    mark,
-                    writer
-                );
-            return new Object[]{((Integer)secondStep[0]) + ((Integer)firstStep[0]) + 1, secondStep[1]};
-        } else {
-            return new Object[]{0, anchor};
-        }
-    }
-
-    /**
-     * Sorts the specified array using quicksort and outputs the solution as a TikZ picture to the specified writer.
-     * @param array The array to sort.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
-     */
-    public static int quicksort(Integer[] array, BufferedWriter writer) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        boolean[] separate = new boolean[array.length - 1];
-        boolean[] mark = new boolean[array.length];
-        Arrays.fill(separate, false);
-        Arrays.fill(mark, false);
-        int res =
-            (Integer)Sorting.quicksort(
-                array,
-                0,
-                array.length - 1,
-                ArrayUtils.printArray(array, separate, mark, null, writer),
-                separate,
-                mark,
-                writer
-            )[0];
-        TikZUtils.printTikzEnd(writer);
-        return res;
-    }
-
-    /**
-     * Sorts the specified array using selectionsort and outputs the solution as a TikZ picture to the specified writer.
-     * @param array The array to sort.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
-     */
-    public static int selectionsort(Integer[] array, BufferedWriter writer)
-    throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor = ArrayUtils.printArray(array, null, null, null, writer);
-        int res = 0;
-        for (int i = 0; i < array.length - 1; i++) {
-            int min = i;
-            for (int j = i + 1; j < array.length; j++) {
-                if (array[j] < array[min]) {
-                    min = j;
+         * Sorts the specified array using bubblesort and outputs the solution as a TikZ picture to the specified writer.
+         * @param array The array to sort.
+         * @param writer The writer for outputting the solution.
+         * @return The number of rows needed for the solution (excluding the original array).
+         * @throws IOException If some error occurs while outputting the solution.
+         */
+        public static int bubblesort(Integer[] array, BufferedWriter writer) throws IOException {
+            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+            String anchor = ArrayUtils.printArray(array, null, null, null, writer);
+            int res = 0;
+            int length = array.length;
+            while (length > 1) {
+                int n = 1;
+                for (int i = 0; i < length - 1; i++) {
+                    if (array[i] > array[i + 1]) {
+                        ArrayUtils.swap(array, i, i + 1);
+                        anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
+                        res++;
+                        n = i + 1;
+                    }
                 }
+                length = n;
             }
-            if (i != min) {
-                ArrayUtils.swap(array, i, min);
-                anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
-                res++;
-            }
+    //        for (int i = 0; i < array.length - 1; i++) {
+    //            for (int j = array.length - 1; j > i; j--) {
+    //                if (array[j] < array[j - 1]) {
+    //                    SortingExercise.swap(array, j, j - 1);
+    //                    anchor = SortingExercise.printArray(array, null, null, anchor, writer);
+    //                    res++;
+    //                }
+    //            }
+    //        }
+            TikZUtils.printTikzEnd(writer);
+            return res;
         }
-        TikZUtils.printTikzEnd(writer);
-        return res;
-    }
 
     /**
      * Establishes the heap property on the branch starting at index <code>from</code> when interpreting the array up 
@@ -285,43 +181,6 @@ public abstract class Sorting {
     }
 
     /**
-         * Sorts the specified array using bubblesort and outputs the solution as a TikZ picture to the specified writer.
-         * @param array The array to sort.
-         * @param writer The writer for outputting the solution.
-         * @return The number of rows needed for the solution (excluding the original array).
-         * @throws IOException If some error occurs while outputting the solution.
-         */
-        public static int bubblesort(Integer[] array, BufferedWriter writer) throws IOException {
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            String anchor = ArrayUtils.printArray(array, null, null, null, writer);
-            int res = 0;
-            int length = array.length;
-            while (length > 1) {
-                int n = 1;
-                for (int i = 0; i < length - 1; i++) {
-                    if (array[i] > array[i + 1]) {
-                        ArrayUtils.swap(array, i, i + 1);
-                        anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
-                        res++;
-                        n = i + 1;
-                    }
-                }
-                length = n;
-            }
-    //        for (int i = 0; i < array.length - 1; i++) {
-    //            for (int j = array.length - 1; j > i; j--) {
-    //                if (array[j] < array[j - 1]) {
-    //                    SortingExercise.swap(array, j, j - 1);
-    //                    anchor = SortingExercise.printArray(array, null, null, anchor, writer);
-    //                    res++;
-    //                }
-    //            }
-    //        }
-            TikZUtils.printTikzEnd(writer);
-            return res;
-        }
-
-    /**
      * Sorts the specified array using heapsort and outputs the solution as a TikZ picture to the specified writer. 
      * Here, in addition to the arrays, a tree interpretation of the arrays is output.
      * @param array The array to sort.
@@ -421,6 +280,35 @@ public abstract class Sorting {
     }
 
     /**
+     * Sorts the specified array using mergesort and outputs the solution as a TikZ picture to the specified writer.
+     * @param array The array to sort.
+     * @param printSplitting Flag indicating whether to print the splitting in the beginning.
+     * @param writer The writer for outputting the solution.
+     * @return The number of rows needed for the solution (excluding the original array).
+     * @throws IOException If some error occurs while outputting the solution.
+     */
+    public static int mergesort(Integer[] array, boolean printSplitting, BufferedWriter writer) throws IOException {
+        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        boolean[] separate = new boolean[array.length - 1];
+        Arrays.fill(separate, !printSplitting);
+        boolean[] mark = new boolean[array.length];
+        Arrays.fill(mark, true);
+        int res =
+            (Integer)Sorting.mergesort(
+                array,
+                0,
+                array.length - 1,
+                ArrayUtils.printArray(array, separate, null, null, writer),
+                separate,
+                mark,
+                printSplitting,
+                writer
+            )[0];
+        TikZUtils.printTikzEnd(writer);
+        return res;
+    }
+
+    /**
      * The actual recursive mergesort algorithm. It sorts the array part from start to end using mergesort while 
      * outputting the solution as a TikZ picture to the specified writer.
      * @param array The array.
@@ -478,32 +366,223 @@ public abstract class Sorting {
     }
 
     /**
-     * Sorts the specified array using mergesort and outputs the solution as a TikZ picture to the specified writer.
+     * Partitions the array part between <code>start</code> and <code>end</code> using the element at <code>end</code> 
+     * as Pivot element. It returns the resulting index of the Pivot element. So after this method call, all elements 
+     * from <code>start</code> to the returned index minus one are less than or equal to the element at the returned 
+     * index and all elements from the returned index plus one to <code>end</code> are greater than or equal to the 
+     * element at the returned index.
+     * @param array The array.
+     * @param start The start index.
+     * @param end The end index.
+     * @return The index of the Pivot element after partitioning.
+     */
+    public static int partition(Integer[] array, int start, int end) {
+        int i = start - 1;
+        int j = end;
+        switch (Sorting.PARTITION_MODE) {
+            case EQUAL_ALWAYS_SWAP:
+                while (i < j) {
+                    i++;
+                    while (array[i] < array[end]) {
+                        i++;
+                    }
+                    j--;
+                    while (j > start - 1 && array[j] > array[end]) {
+                        j--;
+                    }
+                    ArrayUtils.swap(array, i, j);
+                }
+                break;
+            case EQUAL_LEFT:
+                while (i < j) {
+                    i++;
+                    while (array[i] <= array[end]) {
+                        i++;
+                    }
+                    j--;
+                    while (j > start - 1 && array[j] > array[end]) {
+                        j--;
+                    }
+                    ArrayUtils.swap(array, i, j);
+                }
+                break;
+            case EQUAL_NEVER_SWAP:
+                while (i < j) {
+                    i++;
+                    while (array[i] <= array[end]) {
+                        i++;
+                    }
+                    j--;
+                    while (j > start - 1 && array[j] >= array[end]) {
+                        j--;
+                    }
+                    ArrayUtils.swap(array, i, j);
+                }
+                break;
+            case EQUAL_RIGHT:
+                while (i < j) {
+                    i++;
+                    while (array[i] < array[end]) {
+                        i++;
+                    }
+                    j--;
+                    while (j > start - 1 && array[j] >= array[end]) {
+                        j--;
+                    }
+                    ArrayUtils.swap(array, i, j);
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unknown partition mode!");
+        }
+        ArrayUtils.swap(array, i, j);
+        ArrayUtils.swap(array, i, end);
+        return i;
+    }
+
+    /**
+     * Sorts the specified array using quicksort and outputs the solution as a TikZ picture to the specified writer.
      * @param array The array to sort.
-     * @param printSplitting Flag indicating whether to print the splitting in the beginning.
      * @param writer The writer for outputting the solution.
      * @return The number of rows needed for the solution (excluding the original array).
      * @throws IOException If some error occurs while outputting the solution.
      */
-    public static int mergesort(Integer[] array, boolean printSplitting, BufferedWriter writer) throws IOException {
+    public static int quicksort(Integer[] array, BufferedWriter writer) throws IOException {
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         boolean[] separate = new boolean[array.length - 1];
-        Arrays.fill(separate, !printSplitting);
         boolean[] mark = new boolean[array.length];
-        Arrays.fill(mark, true);
+        Arrays.fill(separate, false);
+        Arrays.fill(mark, false);
         int res =
-            (Integer)Sorting.mergesort(
+            (Integer)Sorting.quicksort(
                 array,
                 0,
                 array.length - 1,
-                ArrayUtils.printArray(array, separate, null, null, writer),
+                ArrayUtils.printArray(array, separate, mark, null, writer),
                 separate,
                 mark,
-                printSplitting,
                 writer
             )[0];
         TikZUtils.printTikzEnd(writer);
         return res;
+    }
+
+    /**
+     * The actual quicksort algorithm. It sorts the array part from start to end using quicksort while outputting the 
+     * solution as a TikZ picture to the specified writer.
+     * @param array The array.
+     * @param start The start index.
+     * @param end The end index.
+     * @param anchor The name of the left-most node of the recent row in the TikZ array output.
+     * @param separate Indicates which nodes should be separated horizontally in the array output.
+     * @param mark Indicates which nodes should be marked by a grey background in the TikZ array output (these are the 
+     *             Pivot elements used).
+     * @param writer The writer to send the output to.
+     * @return The number of rows needed for the solution and the name of the left-most node of the most recent row in 
+     *         the TikZ array output.
+     * @throws IOException If some error occurs during solution output.
+     */
+    public static Object[] quicksort(
+        Integer[] array,
+        int start,
+        int end,
+        String anchor,
+        boolean[] separate,
+        boolean[] mark,
+        BufferedWriter writer
+    ) throws IOException {
+        if (start < end) {
+            int middle = Sorting.partition(array, start, end);
+            if (middle > 0) {
+                separate[middle - 1] = true;
+            }
+            if (middle < array.length - 1) {
+                separate[middle] = true;
+            }
+            Arrays.fill(mark, false);
+            mark[middle] = true;
+            Object[] firstStep =
+                Sorting.quicksort(
+                    array,
+                    start,
+                    middle - 1,
+                    ArrayUtils.printArray(array, separate, mark, anchor, writer),
+                    separate,
+                    mark,
+                    writer
+                );
+            Object[] secondStep =
+                Sorting.quicksort(
+                    array,
+                    middle + 1,
+                    end,
+                    (String)firstStep[1],
+                    separate,
+                    mark,
+                    writer
+                );
+            return new Object[]{((Integer)secondStep[0]) + ((Integer)firstStep[0]) + 1, secondStep[1]};
+        } else {
+            return new Object[]{0, anchor};
+        }
+    }
+
+    /**
+     * Sorts the specified array using selectionsort and outputs the solution as a TikZ picture to the specified writer.
+     * @param array The array to sort.
+     * @param writer The writer for outputting the solution.
+     * @return The number of rows needed for the solution (excluding the original array).
+     * @throws IOException If some error occurs while outputting the solution.
+     */
+    public static int selectionsort(Integer[] array, BufferedWriter writer)
+    throws IOException {
+        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        String anchor = ArrayUtils.printArray(array, null, null, null, writer);
+        int res = 0;
+        for (int i = 0; i < array.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < array.length; j++) {
+                if (array[j] < array[min]) {
+                    min = j;
+                }
+            }
+            if (i != min) {
+                ArrayUtils.swap(array, i, min);
+                anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
+                res++;
+            }
+        }
+        TikZUtils.printTikzEnd(writer);
+        return res;
+    }
+
+    /**
+     * Mode indicating how to treat elements equal to the pivot element during partitioning.
+     * @author Thomas Stroeder
+     * @version 1.0
+     */
+    private static enum PartitionMode {
+
+        /**
+         * Elements equal to the pivot element are always swapped.
+         */
+        EQUAL_ALWAYS_SWAP,
+
+        /**
+         * Elements equal to the pivot element end up in the left partition.
+         */
+        EQUAL_LEFT,
+
+        /**
+         * Elements equal to the pivot element are never swapped.
+         */
+        EQUAL_NEVER_SWAP,
+
+        /**
+         * Elements equal to the pivot element end up in the right partition.
+         */
+        EQUAL_RIGHT
+
     }
 
 }
