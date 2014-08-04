@@ -21,7 +21,8 @@ public abstract class Hashing {
      * @return A pair of parameters and the values to hash in.
      */
     public static Pair<double[], Integer[]> createRandomInput(Random gen, int length, String alg) {
-        Integer[] array = new Integer[(int)(length*0.75)];
+        Integer[] array = new Integer[length];
+        final int extendedLength = (int)(length * 1.25);
         for (int i = 0; i < array.length; i++) {
             array[i] = gen.nextInt(DSALExercises.NUMBER_LIMIT);
         }
@@ -29,24 +30,25 @@ public abstract class Hashing {
         // create all possible constants per default.
         int m = 0;
         if (alg == "hashDivision" || alg == "hashMultiplication") {
-            Integer[] primes = Hashing.getAllUpToNextPrimes(length);
+            Integer[] primes = Hashing.getAllUpToNextPrimes(extendedLength);
             int index = gen.nextInt(primes.length);
             m = primes[index];
         } else {
-            m = Hashing.getNextPrime(length);
+            m = Hashing.getNextPrime(extendedLength);
             while (gen.nextBoolean()) {
                 m = Hashing.getNextPrime(m+1);
             }
         }
         int c1 = gen.nextInt(m);
-        int c2 = gen.nextInt(m);
+        // c2 must not be 0
+        int c2 = gen.nextInt(m - 1) + 1;
         if (alg == "hashDivisionQuadratic" || alg == "hashMultiplicationQuadratic") {
             while (!Hashing.areCoprime(m, c1, c2)) {
                 c1 = gen.nextInt(m);
                 if (Hashing.areCoprime(m, c1, c2)) {
                     break;
                 }
-                c2 = gen.nextInt(m);
+                c2 = gen.nextInt(m - 1) + 1;
                 if (Hashing.areCoprime(m, c1, c2)) {
                     break;
                 }

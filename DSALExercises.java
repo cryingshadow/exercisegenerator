@@ -78,7 +78,7 @@ public class DSALExercises {
     private static final String VERSION;
 
     static {
-        VERSION = "1.1.6";
+        VERSION = "1.1.7";
         NUMBER_LIMIT = 100;
         STUDENT_MODE = false;
         TEXT_VERSION = TextVersion.ABRAHAM;
@@ -1293,15 +1293,17 @@ public class DSALExercises {
         } else if (DSALExercises.GEOMETRIC_ALGORITHMS.contains(alg)) {
             String line = null;
             ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
-            Double[] coordinates = new Double[2];
             if (options.containsKey(Flag.SOURCE)) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                     while ((line = reader.readLine()) != null) {
                         line = line.trim();
-                        coordinates[0] = Double.parseDouble(line.split(",")[0].trim());
-                        coordinates[1] = Double.parseDouble(line.split(",")[1].trim());
-                        Pair<Double,Double> point = new Pair<Double,Double>(coordinates[0], coordinates[1]);
-                        input.add(point);
+                        String[] splitted = line.split(",");
+                        input.add(
+                            new Pair<Double,Double>(
+                                Double.parseDouble(splitted[0].trim()),
+                                Double.parseDouble(splitted[1].trim())
+                            )
+                        );
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -1309,8 +1311,6 @@ public class DSALExercises {
                 }
             } else if (DSALExercises.STUDENT_MODE) {
                 Random gen = new Random();
-                Double rangeMin = 0.0;
-                Double rangeMax = 10.0;
                 final int numOfPoints;
                 if (options.containsKey(Flag.LENGTH)) {
                     numOfPoints = Integer.parseInt(options.get(Flag.LENGTH));
@@ -1318,18 +1318,18 @@ public class DSALExercises {
                     numOfPoints = gen.nextInt(16) + 5;
                 }
                 for (int i = 0; i < numOfPoints; ++i) {
-                    coordinates[0] = rangeMin + (rangeMax - rangeMin) * gen.nextDouble();
-                    coordinates[1] = rangeMin + (rangeMax - rangeMin) * gen.nextDouble();
-                    Pair<Double,Double> point = new Pair<Double,Double>(coordinates[0], coordinates[1]);
-                    input.add(point);
+                    input.add(new Pair<Double,Double>((double)gen.nextInt(11), (double)gen.nextInt(11)));
                 }
             } else {
                 nums = options.get(Flag.INPUT).split(";");
-                for(int i = 0; i < nums.length; ++i) {
-                    coordinates[0] = Double.parseDouble(nums[i].split(",")[0].trim());
-                    coordinates[1] = Double.parseDouble(nums[i].split(",")[1].trim());
-                    Pair<Double,Double> point = new Pair<Double,Double>(coordinates[0], coordinates[1]);
-                    input.add(point);
+                for (int i = 0; i < nums.length; ++i) {
+                    String[] splitted = nums[i].split(",");
+                    input.add(
+                        new Pair<Double,Double>(
+                            Double.parseDouble(splitted[0].trim()),
+                            Double.parseDouble(splitted[1].trim())
+                        )
+                    );
                 }
             }
             return input;

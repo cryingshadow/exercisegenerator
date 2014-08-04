@@ -25,7 +25,7 @@ public abstract class GeometricAlgorithms {
         exWriter.write("Berechnen Sie die konvexe H\\\"ulle der folgenden Punktmenge. Benutzen ");
         exWriter.write("Sie daf\\\"ur \\emphasize{Grahams Scan} wie \\emphasize{in der Vorlesung} vorgestellt ");
         exWriter.write("und geben Sie die Teilschritte \\emphasize{nach jeder Iteration}");
-        exWriter.write(" (also nach jedem neu hinzugef\"ugten Punkt) an. Umkreisen ");
+        exWriter.write(" (also nach jedem neu hinzugef\\\"ugten Punkt) an. Umkreisen ");
         exWriter.write("Sie die Punkte, die vom Algorithmus in der Iterationsschleife nicht betrachtet werden.\\\\");
         exWriter.newLine();
         exWriter.write("\\\\");
@@ -157,7 +157,7 @@ public abstract class GeometricAlgorithms {
         int count = 1;
         Pair<Double,Double> refPoint = pointSet.get(0);
         //System.out.println("Refpoint is: (" + refPoint.x + "," + refPoint.y + ")");
-        for (int i = 1; i<pointSet.size(); ++i) {
+        for (int i = 1; i < pointSet.size(); ++i) {
             //System.out.println("Consider: (" + pointSet.get(i).x + "," + pointSet.get(i).y + ")");
             //System.out.println("First constraint: " + (pointSet.get(i).y < refPoint.y) );
 //            System.out.println(
@@ -167,8 +167,11 @@ public abstract class GeometricAlgorithms {
 //                + (pointSet.get(i).x < refPoint.x)
 //            );
             if (
-                pointSet.get(i).y < refPoint.y
-                || (Double.compare(pointSet.get(i).y,refPoint.y) == 0 && pointSet.get(i).x < refPoint.x)
+                    Double.compare(pointSet.get(i).y, refPoint.y) < 0
+                || (
+                    Double.compare(pointSet.get(i).y,refPoint.y) == 0
+                    && Double.compare(pointSet.get(i).x, refPoint.x) < 0
+                )
             ) {
                 refPoint = pointSet.get(i);
                 //System.out.println("Refpoint is: (" + refPoint.x + "," + refPoint.y + ")");
@@ -185,7 +188,7 @@ public abstract class GeometricAlgorithms {
                 duplicates.add(pointSet.get(i));
             }
         }
-        GeometricAlgorithms.printPointset(tmp,0,duplicates,solWriter);
+        GeometricAlgorithms.printPointset(tmp, 0, duplicates, solWriter);
         //System.out.println("Sorted Array:");
         //int q = 0;
         //while( q < tmp.size()) {

@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * Class offering methods for dynamic programming.
- * @author Florian Corzilius
- * @version $Id$
+ * @author Florian Corzilius, Thomas Stroeder
+ * @version 1.0.1
  */
 public abstract class DynamicProgramming {
 
@@ -23,10 +23,7 @@ public abstract class DynamicProgramming {
         BufferedWriter exWriter
     ) throws IOException {
         // some preprocessing
-        
         // actual algorithm
-        
-        
         // create output
     }
 
@@ -50,52 +47,50 @@ public abstract class DynamicProgramming {
     ) throws IOException {
         // actual algorithm
         int n = weights.length;
-        Integer[][] C = new Integer[n+1][capacity+1];
-        String[][] solutions = new String[n+2][capacity+2];
+        Integer[][] C = new Integer[n + 1][capacity + 1];
+        String[][] solutions = new String[n + 2][capacity + 2];
         for (int j = 0; j <= capacity; j++) {
             C[0][j] = 0;
-            solutions[0][j+1] = "" + j;
-            solutions[1][j+1] = "0";
+            solutions[0][j + 1] = "" + j;
+            solutions[1][j + 1] = "0";
         }
         solutions[0][0] = "";
         solutions[1][0] = "0";
         for (int i = 1; i <= n; i++) {
-            solutions[i+1][0] = "" + i;
+            solutions[i + 1][0] = "" + i;
             for (int j = 0; j <= capacity; j++) {
-                if (weights[i-1] <= j) {
-                    Integer valueA = values[i-1] + C[i-1][j-weights[i-1]];
-                    if (C[i-1][j] < valueA) {
+                if (weights[i - 1] <= j) {
+                    Integer valueA = values[i - 1] + C[i - 1][j - weights[i - 1]];
+                    if (C[i - 1][j] < valueA) {
                         C[i][j] = valueA;
                     } else {
-                        C[i][j] = C[i-1][j];
+                        C[i][j] = C[i - 1][j];
                     }
                 } else {
-                    C[i][j] = C[i-1][j];
+                    C[i][j] = C[i - 1][j];
                 }
-                solutions[i+1][j+1] = "" + C[i][j];
+                solutions[i + 1][j + 1] = "" + C[i][j];
             }
         }
-        
         // find the items to choose to get the maximum value
         int row = n;
         int column = capacity;
         List<Integer> itemsToChoose = new ArrayList<Integer>();
         while (column > 0 && row > 0) {
-            if (C[row][column] != C[row-1][column]) {
+            if (C[row][column] != C[row - 1][column]) {
                 itemsToChoose.add(new Integer(row));
-                Integer chosenWeight = weights[row-1];
+                Integer chosenWeight = weights[row - 1];
                 for (int i = 0; i < chosenWeight; i++) {
-                    solutions[row+1][column+1] = "$\\leftarrow$ " + solutions[row+1][column+1];
+                    solutions[row + 1][column + 1] = "$\\leftarrow$ " + solutions[row + 1][column + 1];
                     column--;
                 }
-                solutions[row+1][column+1] = "$\\uparrow$ " + solutions[row+1][column+1];
+                solutions[row + 1][column + 1] = "$\\uparrow$ " + solutions[row + 1][column + 1];
                 row--;
             } else {
-                solutions[row+1][column+1] = "$\\uparrow$ " + solutions[row+1][column+1];
+                solutions[row + 1][column + 1] = "$\\uparrow$ " + solutions[row + 1][column + 1];
                 row--;
             }
         }
-        
         // create output
         exWriter.write("Gegeben sei ein Rucksack mit \\emphasize{maximaler Tragkraft} " + capacity);
         exWriter.write(" sowie " + n + " \\emphasize{Gegenst\\\"ande}. Der $i$-te Gegenstand soll hierbei");
@@ -105,65 +100,65 @@ public abstract class DynamicProgramming {
         exWriter.write(" Gesamtwert der Gegenst\\\"ande, die der Rucksack tragen kann (das Gesamtgewicht der");
         exWriter.write(" mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des Rucksacks).");
         exWriter.write(" Die \\emphasize{Gewichte} seien dabei $w_0=" + weights[0] + "$");
-        for (int i = 1; i < n-1; i++) {
+        for (int i = 1; i < n - 1; i++) {
             exWriter.write(", $w_{" + i + "} =" + weights[i] + "$");
         }
-        exWriter.write(" und $w_{" + (n-1) + "} =" + weights[n-1] + "$ und die \\emphasize{Werte} $c_0=" + values[0] + "$");
-        for (int i = 1; i < n-1; i++) {
+        exWriter.write(" und $w_{" + (n - 1) + "} =" + weights[n - 1]);
+        exWriter.write("$ und die \\emphasize{Werte} $c_0=" + values[0] + "$");
+        for (int i = 1; i < n - 1; i++) {
             exWriter.write(", $c_{" + i + "} =" + values[i] + "$");
         }
-        exWriter.write(" und $c_{" + (n-1) + "} =" + values[n-1] + "$.");
+        exWriter.write(" und $c_{" + (n - 1) + "} =" + values[n - 1] + "$.");
         exWriter.write(" Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} an");
         exWriter.write(" und beschreiben Sie anhand der Tabelle wie man die mitzunehmenden Gegenst\\\"ande");
         exWriter.write(" bestimmen kann, um den maximalen Wert zu erreichen.");
         exWriter.newLine();
         exWriter.newLine();
-        
         solWriter.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
         solWriter.newLine();
         solWriter.newLine();
-        int tableWidth = 12;
-        if (capacity+2 > tableWidth) {
-            String[][] solutionsTmp = new String[n+2][tableWidth];
-            String[][] solutionsTmpEx = new String[n+2][tableWidth];
-            for (int rowNr = 0; rowNr < n+2; rowNr++) {
+        final int tableWidth = 10;
+        System.out.println(capacity);
+        if (capacity + 2 > tableWidth) {
+            String[][] solutionsTmp = new String[n + 2][tableWidth];
+            String[][] solutionsTmpEx = new String[n + 2][tableWidth];
+            // copy first column (legend) for exercise
+            for (int rowNr = 1; rowNr < n + 2; rowNr++) {
                 solutionsTmpEx[rowNr][0] = solutions[rowNr][0];
             }
 //            boolean remainderStarted = true;
-            for (int columnNr = 0; columnNr < capacity+2; columnNr++) {
+            for (int columnNr = 0; columnNr < capacity + 2; columnNr++) {
                 // System.out.println("columnNr = " + columnNr);
-                for (int rowNr = 0; rowNr < n+2; rowNr++) {
+                for (int rowNr = 0; rowNr < n + 2; rowNr++) {
                     // System.out.println("add column " + (columnNr % tableWidth));
-                    solutionsTmp[rowNr][columnNr%tableWidth] = solutions[rowNr][columnNr];
+                    solutionsTmp[rowNr][columnNr % tableWidth] = solutions[rowNr][columnNr];
                 }
-                solutionsTmpEx[0][columnNr%tableWidth] = solutions[0][columnNr];
-                if (columnNr > 0 && (columnNr % (tableWidth-1) == 0 || columnNr == capacity+1)) {
-                    solWriter.write("\\begin{center}");
-                    solWriter.newLine();
+                // copy first row (legend) for exercise
+                solutionsTmpEx[0][columnNr % tableWidth] = solutions[0][columnNr];
+                if (columnNr > 0 && (columnNr % tableWidth == tableWidth - 1 || columnNr == capacity + 1)) {
+                    // we are at the last column of a table (table is filled completely)
+                    TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
                     solWriter.write("{\\Large");
                     solWriter.newLine();
                     TikZUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
                     solWriter.newLine();
                     solWriter.write("}");
                     solWriter.newLine();
-                    solWriter.write("\\end{center}");
-                    solWriter.newLine();
+                    TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
                     solWriter.newLine();
                     switch (mode) {
                         case SOLUTION_SPACE:
                             TikZUtils.printSolutionSpaceBeginning(exWriter);
                             // fall-through
                         case ALWAYS:
-                            exWriter.write("\\begin{center}");
-                            exWriter.newLine();
+                            TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
                             exWriter.write("{\\Large");
                             exWriter.newLine();
                             TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
                             exWriter.newLine();
                             exWriter.write("}");
                             exWriter.newLine();
-                            exWriter.write("\\end{center}");
-                            exWriter.newLine();
+                            TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
                                 TikZUtils.printSolutionSpaceEnd(exWriter);
                             }
@@ -172,18 +167,19 @@ public abstract class DynamicProgramming {
                         case NEVER:
                             // do nothing
                     }
-                    int columnNrTmp = capacity + 2 - columnNr > tableWidth ? tableWidth : capacity + 1 - columnNr;
+                    // there are capacity + 2 - (columnNr + 1) columns left to go
+                    final int columnNrTmp = Math.min(tableWidth, capacity + 1 - columnNr);
                     // System.out.println("columnNrTmp = " + columnNrTmp);
-                    solutionsTmp = new String[n+2][columnNrTmp];
-                    solutionsTmpEx = new String[n+2][columnNrTmp];
+                    solutionsTmp = new String[n + 2][columnNrTmp];
+                    solutionsTmpEx = new String[n + 2][columnNrTmp];
                 }
             }
         } else {
-            String[][] solutionsTmpEx = new String[n+2][capacity+2];
-            for (int rowNr = 0; rowNr < n+2; rowNr++) {
+            String[][] solutionsTmpEx = new String[n + 2][capacity + 2];
+            for (int rowNr = 0; rowNr < n + 2; rowNr++) {
                 solutionsTmpEx[rowNr][0] = solutions[rowNr][0];
             }
-            for (int columnNr = 1; columnNr < capacity+2; columnNr++) {
+            for (int columnNr = 1; columnNr < capacity + 2; columnNr++) {
                 solutionsTmpEx[0][columnNr] = solutions[0][columnNr];
             }
             switch (mode) {
@@ -191,16 +187,14 @@ public abstract class DynamicProgramming {
                     TikZUtils.printSolutionSpaceBeginning(exWriter);
                     // fall-through
                 case ALWAYS:
-                    exWriter.write("\\begin{center}");
-                    exWriter.newLine();
+                    TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
                     exWriter.write("{\\Large");
                     exWriter.newLine();
                     TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
                     exWriter.newLine();
                     exWriter.write("}");
                     exWriter.newLine();
-                    exWriter.write("\\end{center}");
-                    exWriter.newLine();
+                    TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
                         TikZUtils.printSolutionSpaceEnd(exWriter);
                     }
@@ -209,16 +203,14 @@ public abstract class DynamicProgramming {
                 case NEVER:
                     // do nothing
             }
-            solWriter.write("\\begin{center}");
-            solWriter.newLine();
+            TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
             solWriter.write("{\\Large");
             solWriter.newLine();
             TikZUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
             solWriter.newLine();
             solWriter.write("}");
             solWriter.newLine();
-            solWriter.write("\\end{center}");
-            solWriter.newLine();
+            TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
             solWriter.newLine();
         }
         solWriter.write("\\medskip");
@@ -230,14 +222,14 @@ public abstract class DynamicProgramming {
             } else if (i == 0) {
                 solWriter.write(" und");
             }
-            solWriter.write(" " + (itemsToChoose.get(i)-1) + ".");
+            solWriter.write(" " + (itemsToChoose.get(i) - 1) + ".");
         }
         solWriter.write(" Gegenstand mitgenommen werden.");
         solWriter.newLine();
         solWriter.newLine();
-        solWriter.write(" Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die $i$-te Zeile einen Pfeil nach links enth\\\"alt");
-        solWriter.write(" dann wird der $(i-1)$-te Gegenstand mitgenommen. Die Pfeile zeigen dabei an wie der folgende Algorithmus durch");
-        solWriter.write(" die Tabelle l\\\"auft:");
+        solWriter.write("Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die $i$-te Zeile einen Pfeil ");
+        solWriter.write("nach links enth\\\"alt dann wird der $(i-1)$-te Gegenstand mitgenommen. Die Pfeile zeigen ");
+        solWriter.write("dabei an wie der folgende Algorithmus durch die Tabelle l\\\"auft:");
         solWriter.newLine();
         solWriter.newLine();
         solWriter.write("\\begin{verbatim}");
