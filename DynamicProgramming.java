@@ -117,7 +117,7 @@ public abstract class DynamicProgramming {
         solWriter.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
         solWriter.newLine();
         solWriter.newLine();
-        final int tableWidth = 10;
+        final int tableWidth = DSALExercises.STUDENT_MODE ? 10 : 12;
         System.out.println(capacity);
         if (capacity + 2 > tableWidth) {
             String[][] solutionsTmp = new String[n + 2][tableWidth];
