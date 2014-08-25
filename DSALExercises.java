@@ -80,7 +80,7 @@ public class DSALExercises {
     static {
         VERSION = "1.1.7";
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = true;
+        STUDENT_MODE = false;
         TEXT_VERSION = TextVersion.ABRAHAM;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
