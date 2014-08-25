@@ -154,6 +154,8 @@ public abstract class TikZUtils {
         writer.newLine();
         writer.write("\\usepackage{amsmath}");
         writer.newLine();
+        writer.write("\\usepackage{enumerate}");
+        writer.newLine();
         writer.newLine();
         writer.write("\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}");
         writer.newLine();
@@ -162,6 +164,10 @@ public abstract class TikZUtils {
         writer.newLine();
         writer.newLine();
         writer.write("\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
+        writer.newLine();
+        writer.write("\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{");
+        writer.newLine();
+        writer.write("            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}");
         writer.newLine();
         writer.newLine();
         writer.write("\\begin{document}");
@@ -340,7 +346,6 @@ public abstract class TikZUtils {
                 writer.newLine();
             }
             writer.write("\\end{tabular}");
-            writer.newLine();
             writer.newLine();
             remainingCols -= cols;
         } while (remainingCols > 0);

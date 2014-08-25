@@ -913,7 +913,7 @@ public abstract class GraphAlgorithms {
             changed = new boolean[size][size];
         }
         // create output
-        exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
+        exWriter.write("Betrachten Sie den folgenden Graphen:");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         if (warshall) {
@@ -948,12 +948,16 @@ public abstract class GraphAlgorithms {
         int solCount = 0;
         int exCount = 0;
         for (int iteration = 0; iteration < solutions.size(); ++iteration) {
+            String[][] exTable = exercises.get(iteration);
+            String[][] solTable = solutions.get(iteration);
+            exTable[0][0] = "\\circled{" + (iteration + 1) + "}";
+            solTable[0][0] = "\\circled{" + (iteration + 1) + "}";
             solCount =
                 GraphAlgorithms.printTables(
                     solCount,
                     tableCount,
                     iteration,
-                    solutions.get(iteration),
+                    solTable,
                     solColors.get(iteration),
                     solWriter,
                     true,
@@ -964,7 +968,7 @@ public abstract class GraphAlgorithms {
                     exCount,
                     tableCount,
                     iteration,
-                    exercises.get(iteration),
+                    exTable,
                     exColors.get(iteration),
                     exWriter,
                     true,
@@ -1204,22 +1208,22 @@ public abstract class GraphAlgorithms {
         BufferedWriter solWriter
     ) throws IOException {
         List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
-        String[][] solutions = new String[nodes.size()+1][nodes.size()+1];
-        solutions[0][0] = "\\#Iteration";
-        solutions[0][1] = "0";
+        String[][] exTable = new String[nodes.size()+1][nodes.size()+1];
+        String[][] solTable = new String[nodes.size()+1][nodes.size()+1];
+        exTable[0][0] = "\\#Iteration";
+        solTable[0][0] = "\\#Iteration";
         Map<Node<N>, Integer> key = new LinkedHashMap<Node<N>, Integer>();
-        
         Map<Node<N>, List<Pair<Integer, Node<N>>>> parent = new LinkedHashMap<Node<N>, List<Pair<Integer, Node<N>>>>();
         int i = 1;
         for (Node<N> node : nodes) {
             key.put(node, null);
-            solutions[i][0] = node.getLabel().toString();
+            exTable[i][0] = node.getLabel().toString();
+            solTable[i][0] = node.getLabel().toString();
             i++;
         }
         List<Node<N>> q = new ArrayList<Node<N>>(graph.getNodes());
         key.put(start, new Integer(0));
         int iteration = 1;
-        
         // actual algorithm
         while (!q.isEmpty()) {
             // extract the minimum from q
@@ -1233,23 +1237,23 @@ public abstract class GraphAlgorithms {
                     minNode = node;
                 }
             }
-            
             // write solution
-            solutions[0][iteration] = "" + iteration;
+            exTable[0][iteration] = "" + iteration;
+            solTable[0][iteration] = "" + iteration;
             i = 1;
             for (Node<N> node : nodes) {
                 if (q.contains(node)) {
                     if (key.get(node) == null) {
-                        solutions[i][iteration] = "$\\infty$";
+                        solTable[i][iteration] = "$\\infty$";
                     } else {
                         if (minNode == node) {
-                            solutions[i][iteration] = "\\underline{" + key.get(node) + "}";
+                            solTable[i][iteration] = "\\underline{" + key.get(node) + "}";
                         } else {
-                            solutions[i][iteration] = "" + key.get(node);
+                            solTable[i][iteration] = "" + key.get(node);
                         }
                     }
                 } else {
-                    solutions[i][iteration] = "";
+                    solTable[i][iteration] = "";
                 }
                 i++;
             }
@@ -1265,37 +1269,46 @@ public abstract class GraphAlgorithms {
             q.remove(minNode);
             iteration++;
         }
-        
         // create output
+        for (int j = 1; j < exTable.length; j++) {
+            exTable[j][1] = solTable[j][1];
+        }
         exWriter.write("F\\\"uhren Sie Prim's Algorithmus auf dem folgenden Graphen aus.");
-        exWriter.write(" Der Startknoten hat hierbei den Schl\\\"ussel " + start.getLabel().toString() + ".");
-        exWriter.write(" Geben Sie dazu \\underline{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an");
+        TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+        graph.printTikZ(exWriter, null, false);
+        TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+        exWriter.write("Der Startknoten hat hierbei den Schl\\\"ussel " + start.getLabel().toString() + ".");
+        exWriter.write(" Geben Sie dazu \\emphasize{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an,");
         exWriter.newLine();
-        exWriter.write("\\begin{enumerate}");
+        exWriter.write("\\begin{enumerate}[1)]");
         exWriter.newLine();
-        exWriter.write("    \\item welchen Knoten \\texttt{extractMin(Q)} w\\\"ahlt");
+        exWriter.write("    \\item welche Kosten die Randknoten haben (d.\\,h.~f\\\"ur jeden Knoten \\texttt{v} in ");
+        exWriter.write("\\texttt{Q} den Wert \\texttt{key[v]})");
         exWriter.newLine();
-        exWriter.write("    \\item und welche Kosten die Randknoten haben, d.h. f\\\"ur jeden Knoten \\texttt{v} in ");
-        exWriter.write("\\texttt{Q} den Wert \\texttt{key[v]}.");
+        exWriter.write("    \\item und welchen Knoten \\texttt{extractMin(Q)} w\\\"ahlt, indem Sie den Kosten-Wert ");
+        exWriter.write("des gew\\\"ahlten Randknoten in der Tabelle unterstreichen (wie es in der ersten Zeile ");
+        exWriter.write("bereits vorgegeben ist).");
         exWriter.newLine();
         exWriter.write("\\end{enumerate}");
         exWriter.newLine();
-        exWriter.write(" Geben Sie zudem den vom Algorithmus bestimmten minimalen Spannbaum an.\\\\[2ex]");
+        exWriter.write(" Geben Sie zudem den vom Algorithmus bestimmten minimalen Spannbaum an.");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(exWriter, null, false);
-        exWriter.newLine();
+        TikZUtils.printArrayStretch(1.5, exWriter);
+        TikZUtils.printTable(exTable, null, "2.0cm", exWriter, false, 10);
+        TikZUtils.printArrayStretch(1, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-        
-        TikZUtils.printTable(solutions, null, "2.0cm", solWriter, false, 10);
-        solWriter.newLine();
-        solWriter.newLine();
-        solWriter.write("\\medskip");
-        solWriter.newLine();
+        exWriter.write("Minimaler Spannbaum:");
+        exWriter.newLine();
+        TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
+        TikZUtils.printArrayStretch(1.5, solWriter);
+        TikZUtils.printTable(solTable, null, "2.0cm", solWriter, false, 10);
+        TikZUtils.printArrayStretch(1, solWriter);
+        TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
         // print the spanning tree
         solWriter.write("Hierbei gibt eine unterstrichene Zahl an in welcher Iteration (zugeh\\\"origer Zeilenkopf)");
         solWriter.write(" welcher Knoten (zugeh\\\"origer Spaltenkopf) durch \\texttt{extractMin(Q)} gew\\\"ahlt");
-        solWriter.write(" wurde. Wir erhalten den folgenden minimalen Spannbaum:\\\\[2ex]");
+        solWriter.write(" wurde. Wir erhalten den folgenden minimalen Spannbaum:");
         solWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
         graph.printTikZ(solWriter, parent, false);
@@ -1521,7 +1534,6 @@ public abstract class GraphAlgorithms {
     ) throws IOException {
         if (count < tableCount) {
             TikZUtils.printTable(table, color, "1cm", writer, transpose, breakAtColumn);
-            writer.newLine();
             writer.write("\\hspace{2em}");
             writer.newLine();
             return count + 1;
@@ -1529,7 +1541,6 @@ public abstract class GraphAlgorithms {
         writer.write("\\\\[2ex]");
         writer.newLine();
         TikZUtils.printTable(table, color, "1cm", writer, transpose, breakAtColumn);
-        writer.newLine();
         writer.write("\\hspace{2em}");
         writer.newLine();
         return 1;
