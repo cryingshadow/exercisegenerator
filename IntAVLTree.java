@@ -32,19 +32,15 @@ public class IntAVLTree {
         while (!construction.isEmpty()) {
             Pair<Integer, Boolean> operation = construction.poll();
             if (operation.y) {
-                //System.out.println("insert " + operation.x + " in:");
-                //System.out.println(tree.toString(tree.root()));
                 tree.add(operation.x, null);
             } else {
-                //System.out.println("remove " + operation.x + " in:");
                 AVLNode toRemove = tree.find(operation.x);
                 if (toRemove != null) {
                     tree.remove(toRemove, null);
                 }
             }
-            //System.out.println("results in:");
-            //System.out.println(tree.toString(tree.mRoot));
         }
+        //System.out.println(tree.root.printHeights());
         if (writerSpace != null) {
             if (ops.size() > 1) {
                 if (tree.isEmpty()) {
@@ -202,7 +198,7 @@ public class IntAVLTree {
         if (this.root == null) {
             return -1;
         } else {
-            return this.root.height;
+            return this.root.height();
         }
     }
 
@@ -228,27 +224,24 @@ public class IntAVLTree {
      */
     private void balance(AVLNode node, boolean afterInsertion, BufferedWriter writer) throws IOException {
         AVLNode currentNode = node;
+        //assert(height()==0):"test";
         while (currentNode != null) {
             if (currentNode.left == null && currentNode.right != null) {
-                if (currentNode.right.height > 0) {
+                if (currentNode.right.height() > 0) {
                     currentNode = this.balanceRightToLeft(currentNode, writer);
                     if (afterInsertion) {
                         return;
                     }
-                } else {
-                    currentNode.height = 1;
                 }
             } else if (currentNode.right == null && currentNode.left != null) {
-                if (currentNode.left.height > 0) {
+                if (currentNode.left.height() > 0) {
                     currentNode = this.balanceLeftToRight(currentNode, writer);
                     if (afterInsertion) {
                         return;
                     }
-                } else {
-                    currentNode.height = 1;
                 }
             } else if (currentNode.right != null && currentNode.left != null) {
-                int diff = currentNode.left.height - currentNode.right.height;
+                int diff = currentNode.left.height() - currentNode.right.height();
                 if (diff > 1) {
                     // left subtree is too high
                     currentNode = this.balanceLeftToRight(currentNode, writer);
@@ -261,10 +254,6 @@ public class IntAVLTree {
                     if (afterInsertion) {
                         return;
                     }
-                } else if (diff == -1) {
-                    currentNode.height = currentNode.right.height + 1;
-                } else {
-                    currentNode.height = currentNode.left.height + 1;
                 }
             }
             currentNode = currentNode.father;
@@ -282,7 +271,7 @@ public class IntAVLTree {
     private AVLNode balanceLeftToRight(AVLNode node, BufferedWriter writer) throws IOException {
         // left subtree of node has at least height 1 (right might have a height of -1)
         AVLNode l = node.left;
-        if (l.right == null || (l.left != null && l.right.height <= l.left.height)) {
+        if (l.right == null || (l.left != null && l.right.height() <= l.left.height())) {
             // left subtree of l is at least as high as the right subtree of l
             return this.rightRotate(node, writer);
         } else {
@@ -303,7 +292,7 @@ public class IntAVLTree {
     private AVLNode balanceRightToLeft(AVLNode node, BufferedWriter writer) throws IOException {
         // right subtree of node has at least height 1 (left might have a height of -1)
         AVLNode r = node.right; 
-        if (r.left == null || (r.right != null && r.left.height <= r.right.height)) {
+        if (r.left == null || (r.right != null && r.left.height() <= r.right.height())) {
             // right subtree of r is at least as high as the left subtree of r
             return this.leftRotate(node, writer);
         } else {
@@ -372,7 +361,6 @@ public class IntAVLTree {
         if (node.right != null) {
             node.right.father = node;
         }
-        node.updateHeight();
         // bring back r to the tree
         r.father = node.father;
         if (node.father == null) {
@@ -388,7 +376,6 @@ public class IntAVLTree {
         // link node
         r.left = node;
         node.father = r;
-        r.updateHeight();
         if (writer != null) {
             this.print("rotiere " + node.value + " nach links", writer);
         }
@@ -550,7 +537,6 @@ public class IntAVLTree {
         if (node.left != null) {
             node.left.father = node;
         }
-        node.updateHeight();
         // bring back l to the tree
         l.father = node.father;
         if (node.father == null) {
@@ -566,7 +552,6 @@ public class IntAVLTree {
         // link node
         l.right = node;
         node.father = l;
-        l.updateHeight();
         if (writer != null) {
             this.print("rotiere " + node.value + " nach rechts", writer);
         }
@@ -604,11 +589,6 @@ public class IntAVLTree {
         private AVLNode father;
 
         /**
-         * Cache for the height of this node.
-         */
-        private int height;
-
-        /**
          * The left child.
          */
         private AVLNode left;
@@ -632,7 +612,16 @@ public class IntAVLTree {
             this.left = null;
             this.right = null;
             this.value = val;
-            this.height = 0;
+        }
+        
+        public int height() {
+            int leftHeight = left == null ? -1 : left.height();
+            int rightHeight = right == null ? -1 : right.height();
+            if (leftHeight > rightHeight) {
+                return leftHeight + 1;
+            } else {
+                return rightHeight + 1;
+            }
         }
 
         /**
@@ -661,24 +650,27 @@ public class IntAVLTree {
             }
             return result;
         }
-
-        /**
-         * Updates the height of the current node based on its children, but does not adapt the height of further 
-         * ancestors.
-         */
-        public void updateHeight() {
+        
+        public String printHeights() {
+            String result = new String("");
             if (this.left == null && this.right == null) {
-                this.height = 0;
-            } else if (this.left != null && this.right == null) {
-                this.height = this.left.height + 1;
-            } else if (this.left == null && this.right != null) {
-                this.height = this.right.height + 1;
-            } else if (this.left.height > this.right.height) {
-                this.height = this.left.height + 1;
+                result += " " + this.height();
             } else {
-                this.height = this.right.height + 1;
+                result += " [." + this.height();
+                if (this.left != null) {
+                    result += this.left.printHeights();
+                } else {
+                    result += " .";
+                }
+                if (this.right != null) {
+                    result += this.right.printHeights();
+                } else {
+                    result += " .";
+                }
+                result += " ]";
             }
-        }   
+            return result;
+        }
 
         /**
          * @return A node with the smallest key in the tree rooted in the current node. The returned node is the 
