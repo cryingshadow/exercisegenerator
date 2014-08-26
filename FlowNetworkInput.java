@@ -1,7 +1,7 @@
 /**
  * Input object for flow network problems.
  * @author Thomas Stroeder
- * @version 1.0
+ * @version 1.0.1
  * @param <N> Node label type.
  * @param <E> Edge label type.
  */
@@ -13,9 +13,9 @@ public class FlowNetworkInput<N, E> {
     public Graph<N, E> graph;
 
     /**
-     * The source of the flow network.
+     * Multiplier for node distances.
      */
-    public Node<N> source;
+    public double multiplier;
 
     /**
      * The sink of the flow network.
@@ -23,9 +23,9 @@ public class FlowNetworkInput<N, E> {
     public Node<N> sink;
 
     /**
-     * Multiplier for node distances.
+     * The source of the flow network.
      */
-    public double multiplier;
+    public Node<N> source;
 
     /**
      * Should residual graphs and flow networks be displayed in two columns?

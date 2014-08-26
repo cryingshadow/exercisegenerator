@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * Class offering methods for geometric algorithms.
  * @author Stefan Schupp, Thomas Stroeder
- * @version 1.1
+ * @version 1.1.0
  */
 public abstract class GeometricAlgorithms {
 

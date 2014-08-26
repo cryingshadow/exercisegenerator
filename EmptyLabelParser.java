@@ -2,8 +2,8 @@ import java.io.*;
 
 /**
  * Parser to parse null labels.
- * @author cryingshadow
- * @version $Id$
+ * @author Thomas Stroeder
+ * @version 1.0
  */
 public class EmptyLabelParser implements LabelParser<Object> {
 

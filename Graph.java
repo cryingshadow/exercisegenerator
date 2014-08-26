@@ -7,7 +7,7 @@ import java.util.Map.Entry;
  * Directed graph implemented by adjacency lists. It supports arbitrary edge and node labels and multiple edges between 
  * the same nodes.
  * @author Thomas Stroeder
- * @version $Id$
+ * @version 1.1.0
  * @param <N> The type of the node labels.
  * @param <E> The type of the edge labels.
  */

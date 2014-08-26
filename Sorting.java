@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * This abstract class provides methods for sorting arrays and producing TikZ output showing intermediate steps of the 
  * sorting routines.
- * @author cryingshadow
+ * @author Thomas Stroeder
  * @version 1.1.0
  */
 public abstract class Sorting {
@@ -15,41 +15,41 @@ public abstract class Sorting {
     private static final PartitionMode PARTITION_MODE = PartitionMode.EQUAL_RIGHT;
 
     /**
-         * Sorts the specified array using bubblesort and outputs the solution as a TikZ picture to the specified writer.
-         * @param array The array to sort.
-         * @param writer The writer for outputting the solution.
-         * @return The number of rows needed for the solution (excluding the original array).
-         * @throws IOException If some error occurs while outputting the solution.
-         */
-        public static int bubblesort(Integer[] array, BufferedWriter writer) throws IOException {
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            String anchor = ArrayUtils.printArray(array, null, null, null, writer);
-            int res = 0;
-            int length = array.length;
-            while (length > 1) {
-                int n = 1;
-                for (int i = 0; i < length - 1; i++) {
-                    if (array[i] > array[i + 1]) {
-                        ArrayUtils.swap(array, i, i + 1);
-                        anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
-                        res++;
-                        n = i + 1;
-                    }
+     * Sorts the specified array using bubblesort and outputs the solution as a TikZ picture to the specified writer.
+     * @param array The array to sort.
+     * @param writer The writer for outputting the solution.
+     * @return The number of rows needed for the solution (excluding the original array).
+     * @throws IOException If some error occurs while outputting the solution.
+     */
+    public static int bubblesort(Integer[] array, BufferedWriter writer) throws IOException {
+        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        String anchor = ArrayUtils.printArray(array, null, null, null, writer);
+        int res = 0;
+        int length = array.length;
+        while (length > 1) {
+            int n = 1;
+            for (int i = 0; i < length - 1; i++) {
+                if (array[i] > array[i + 1]) {
+                    ArrayUtils.swap(array, i, i + 1);
+                    anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
+                    res++;
+                    n = i + 1;
                 }
-                length = n;
             }
-    //        for (int i = 0; i < array.length - 1; i++) {
-    //            for (int j = array.length - 1; j > i; j--) {
-    //                if (array[j] < array[j - 1]) {
-    //                    SortingExercise.swap(array, j, j - 1);
-    //                    anchor = SortingExercise.printArray(array, null, null, anchor, writer);
-    //                    res++;
-    //                }
-    //            }
-    //        }
-            TikZUtils.printTikzEnd(writer);
-            return res;
+            length = n;
         }
+        //        for (int i = 0; i < array.length - 1; i++) {
+        //            for (int j = array.length - 1; j > i; j--) {
+        //                if (array[j] < array[j - 1]) {
+        //                    SortingExercise.swap(array, j, j - 1);
+        //                    anchor = SortingExercise.printArray(array, null, null, anchor, writer);
+        //                    res++;
+        //                }
+        //            }
+        //        }
+        TikZUtils.printTikzEnd(writer);
+        return res;
+    }
 
     /**
      * Establishes the heap property on the branch starting at index <code>from</code> when interpreting the array up 

@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * This class provides methods for hashing.
- * @author Stefan Schupp
- * @version $Id$
+ * @author Stefan Schupp, Thomas Stroeder
+ * @version 1.1.0
  */
 public abstract class Hashing {
 

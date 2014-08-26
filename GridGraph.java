@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * Programm for creating planar graphs with node positions according to a grid.
  * @author Florian Corzilius
- * @version $Id$
+ * @version 1.0
  */
 public class GridGraph {
 
@@ -259,13 +259,15 @@ public class GridGraph {
     }
     
     public String nodeName(int n) {
-        if (n < 0) return "0";
+        if (n < 0) {
+            return "0";
+        }
         int c = 1;
-        for (int i = 0; i < numOfAllNodes(); i++) {
+        for (int i = 0; i < this.numOfAllNodes(); i++) {
             if (i == n) {
                 break;
             }
-            if (nodeHasAdjacentNodes(i)) {
+            if (this.nodeHasAdjacentNodes(i)) {
                 c++;
             }
             
@@ -372,9 +374,9 @@ public class GridGraph {
             if (colorA[w] == 0) {
                 this.dfsWalk(w, colorA, null, 0, null, 1, S, lastOfS);
                 
-                if(write && nodeHasAdjacentNodes(w)) {
-                    printS(writer, S, lastOfS);
-                    printColor(writer, colorA);
+                if(write && this.nodeHasAdjacentNodes(w)) {
+                    this.printS(writer, S, lastOfS);
+                    this.printColor(writer, colorA);
                     writer.write("\\medskip");
                     writer.newLine(); 
                 }
@@ -401,10 +403,10 @@ public class GridGraph {
                 for (Integer node : walk) {
                     result[node] = v;
                 }
-                if(write && nodeHasAdjacentNodes(v)) {
-                    printS(writer, S, lastOfS);
-                    printColor(writer, colorB);
-                    printScc(writer, result);
+                if(write && this.nodeHasAdjacentNodes(v)) {
+                    this.printS(writer, S, lastOfS);
+                    this.printColor(writer, colorB);
+                    this.printScc(writer, result);
                     writer.write("\\medskip");
                     writer.newLine(); 
                 }
@@ -416,14 +418,14 @@ public class GridGraph {
     void printColor(BufferedWriter writer, int[] color) throws IOException {
         boolean firstWritten = false;
         writer.write("color: ");
-        for (int i = 0; i < numOfAllNodes(); i++) {
-            if (nodeHasAdjacentNodes(i)) {
+        for (int i = 0; i < this.numOfAllNodes(); i++) {
+            if (this.nodeHasAdjacentNodes(i)) {
                 if (firstWritten) {
                     writer.write(", ");
                 } else {
                     firstWritten = true;
                 }
-                writer.write("(" + nodeName(i) + ", ");
+                writer.write("(" + this.nodeName(i) + ", ");
                 if (color[i] == 0) {
                     writer.write("w)");
                 } else if (color[i] == 1) {
@@ -441,13 +443,13 @@ public class GridGraph {
         boolean firstWritten = false;
         writer.write("S: ");
         for (int i = 0; i <= lastOfS[0]; i++) {
-            if (nodeHasAdjacentNodes(S[i])) {
+            if (this.nodeHasAdjacentNodes(S[i])) {
                 if (firstWritten) {
                     writer.write(", ");
                 } else {
                     firstWritten = true;
                 }
-                writer.write("" + nodeName(S[i]));
+                writer.write("" + this.nodeName(S[i]));
             }
         }
         writer.newLine();
@@ -457,14 +459,14 @@ public class GridGraph {
     void printScc(BufferedWriter writer, int[] scc) throws IOException {
         boolean firstWritten = false;
         writer.write("scc: ");
-        for (int i = 0; i < numOfAllNodes(); i++) {
-            if (nodeHasAdjacentNodes(i)) {
+        for (int i = 0; i < this.numOfAllNodes(); i++) {
+            if (this.nodeHasAdjacentNodes(i)) {
                 if (firstWritten) {
                     writer.write(", ");
                 } else {
                     firstWritten = true;
                 }
-                writer.write("(" + nodeName(i) + ", " + nodeName(scc[i]) + ")");
+                writer.write("(" + this.nodeName(i) + ", " + this.nodeName(scc[i]) + ")");
             }
         }
         writer.newLine();
@@ -521,7 +523,7 @@ public class GridGraph {
                 if (withSingletons) {
                     writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + i + "};");
                 } else {
-                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + nodeName(i) + "};");
+                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + this.nodeName(i) + "};");
                 }
                 writer.newLine();
             }
@@ -571,9 +573,9 @@ public class GridGraph {
             if (sccs[i] == sccNum) {
                 if (withSingletons || this.nodeHasAdjacentNodes(i)) {
                     if (newScc) {
-                        writer.write("        \\{ " + nodeName(i));
+                        writer.write("        \\{ " + this.nodeName(i));
                     } else {
-                        writer.write(",\\ " + nodeName(i));
+                        writer.write(",\\ " + this.nodeName(i));
                     }
                     newScc = false;
                 }
@@ -624,7 +626,7 @@ public class GridGraph {
         int first = 0;
         for(int index = 0; index < nodeValues.length; ++index){
             if(nodeValues[index] != null && nodeValues[index] == min){
-                solutionWriter.write(nodeName(index) + "("+ nodeValues[index] + ")");
+                solutionWriter.write(this.nodeName(index) + "("+ nodeValues[index] + ")");
                 first = index;
                 break;
             }
@@ -632,7 +634,7 @@ public class GridGraph {
         while(min <= nodeValues.length){
             for(int index = 0; index < nodeValues.length; ++index){
                 if(nodeValues[index] != null && nodeValues[index] == min && first != index){
-                    solutionWriter.write(", " + nodeName(index) + "("+ nodeValues[index] + ")");
+                    solutionWriter.write(", " + this.nodeName(index) + "("+ nodeValues[index] + ")");
                 }
             }
             ++min;

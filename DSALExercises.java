@@ -3,7 +3,8 @@ import java.util.*;
 
 /**
  * Programm for creating solutions for DSAL exercises.
- * @author cryingshadow
+ * @author Thomas Stroeder, Florian Corzilius, Stefan Schupp
+ * @version {@value #VERSION}
  */
 public class DSALExercises {
 
@@ -75,10 +76,9 @@ public class DSALExercises {
     /**
      * The version of this program.
      */
-    private static final String VERSION;
+    private static final String VERSION = "1.1.8";
 
     static {
-        VERSION = "1.1.7";
         NUMBER_LIMIT = 100;
         STUDENT_MODE = false;
         TEXT_VERSION = TextVersion.ABRAHAM;
@@ -727,7 +727,7 @@ public class DSALExercises {
         }
         return res;
     }
-    
+
     /**
      * @return The set of (in student mode only enabled) geometric algorithms.
      */
@@ -815,7 +815,7 @@ public class DSALExercises {
         }
         return res;
     }
-    
+
     /**
      * @return The general help text as String array.
      */
@@ -1476,9 +1476,9 @@ public class DSALExercises {
                 capacity = (sumOfWeights*p)/100;
             } else {
                 String errorMessage =
-                    "You need to provide two set of numbers, each number separated only by a ',' and each set divided "
+                    "You need to provide two sets of numbers, each number separated only by a ',' and each set divided "
                     + "by a '|'. The first set represents the weights of the items and the second set represents the "
-                    + "values of the items. Note, that there must be supplied the same number of weights and values "
+                    + "values of the items. Note that there must be supplied the same number of weights and values "
                     + "and at least one.";
                 String[] sets = options.get(Flag.INPUT).split("|");
                 Integer sumOfWeights = new Integer(0);

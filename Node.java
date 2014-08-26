@@ -2,8 +2,8 @@ import java.math.*;
 
 /**
  * A labeled node.
- * @author cryingshadow
- * @version $Id$
+ * @author Thomas Stroeder
+ * @version 1.0
  * @param <L> The type of the label.
  */
 public class Node<L> {
@@ -34,25 +34,10 @@ public class Node<L> {
     private L label;
 
     /**
-     * @return The label of this node.
+     * Creates a node without a label.
      */
-    public L getLabel() {
-        return this.label;
-    }
-
-    /**
-     * Sets the label of this node.
-     * @param l The label of this node.
-     */
-    public void setLabel(L l) {
-        this.label = l;
-    }
-
-    /**
-     * @return The unique ID of this node.
-     */
-    public BigInteger getID() {
-        return this.id;
+    public Node() {
+        this(null);
     }
 
     /**
@@ -62,13 +47,6 @@ public class Node<L> {
     public Node(L l) {
         this.label = l;
         this.id = Node.getNewID();
-    }
-
-    /**
-     * Creates a node without a label.
-     */
-    public Node() {
-        this(null);
     }
 
     /* (non-Javadoc)
@@ -82,12 +60,34 @@ public class Node<L> {
         return false;
     }
 
+    /**
+     * @return The unique ID of this node.
+     */
+    public BigInteger getID() {
+        return this.id;
+    }
+
+    /**
+     * @return The label of this node.
+     */
+    public L getLabel() {
+        return this.label;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
         return this.id.hashCode();
+    }
+
+    /**
+     * Sets the label of this node.
+     * @param l The label of this node.
+     */
+    public void setLabel(L l) {
+        this.label = l;
     }
 
     /* (non-Javadoc)

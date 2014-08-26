@@ -1,7 +1,7 @@
 /**
  * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
  * @author Thomas Stroeder
- * @version 1.1.0
+ * @version 1.1.1
  */
 public enum Algorithm {
 
@@ -19,7 +19,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "avltree")
     ),
 
     /**
@@ -37,7 +37,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "btree")
     ), //TODO extra flag for deletion
 
     /**
@@ -54,7 +54,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "bubblesort")
     ),
 
     /**
@@ -71,7 +71,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap)"
             )
         },
-        true
+        DSALExercisesTest.set(true, "dijkstra")
     ),
 
     /**
@@ -88,7 +88,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "floyd")
     ),
 
     /**
@@ -106,7 +106,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "fordfulkerson")
     ),
 
     /**
@@ -123,7 +123,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap)"
             )
         },
-        true
+        DSALExercisesTest.set(true, "hashDivision")
     ),
 
     /**
@@ -140,7 +140,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap)"
             )
         },
-        true
+        DSALExercisesTest.set(true, "hashDivisionLinear")
     ),
 
     /**
@@ -157,7 +157,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"
             )
         },
-        true
+        DSALExercisesTest.set(true, "hashDivisionQuadratic")
     ),
 
     /**
@@ -175,7 +175,7 @@ public enum Algorithm {
                         + "multiplication method)"
             )
         },
-        true
+        DSALExercisesTest.set(true, "hashMultiplication")
     ),
 
     /**
@@ -193,7 +193,7 @@ public enum Algorithm {
                         + "multiplication method)"
             )
         },
-        true
+        DSALExercisesTest.set(true, "hashMultiplicationLinear")
     ),
 
     /**
@@ -211,7 +211,7 @@ public enum Algorithm {
                         + "multiplication method), c1 and c2 (constants for quadratic probing)"
             )
         },
-        true
+        DSALExercisesTest.set(true, "hashMultiplicationQuadratic")
     ),
 
     /**
@@ -228,7 +228,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "heapsort")
     ),
 
     /**
@@ -246,7 +246,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "heapsortWithTrees")
     ),
 
     /**
@@ -263,7 +263,7 @@ public enum Algorithm {
                "TODO"
                )
           },
-          true
+          DSALExercisesTest.set(true, "hull")
     ),
 
     /**
@@ -280,7 +280,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "insertionsort")
     ),
 
     /**
@@ -297,7 +297,7 @@ public enum Algorithm {
                     "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "knapsack")
     ),
 
     /**
@@ -314,7 +314,7 @@ public enum Algorithm {
                     "TODO"
             )
         },
-        false
+        DSALExercisesTest.set(false, "lcs")
     ),
 
     /**
@@ -331,7 +331,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "mergesort")
     ),
 
     /**
@@ -349,7 +349,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "mergesortWithSplitting")
     ),
 
     /**
@@ -366,7 +366,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "prim")
     ),
 
     /**
@@ -383,7 +383,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "quicksort")
     ),
 
     /**
@@ -400,7 +400,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "rbtree")
     ), //TODO extra flag for deletion
 
     /**
@@ -417,7 +417,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "scc")
     ),
 
     /**
@@ -434,7 +434,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "selectionsort")
     ),
 
     /**
@@ -451,7 +451,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "sharir")
     ),
 
     /**
@@ -468,7 +468,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "topologicSort")
     ),
 
     /**
@@ -485,7 +485,7 @@ public enum Algorithm {
                     "TODO"
             )
         },
-        true
+        DSALExercisesTest.set(true, "warshall")
     );
 
     /**
@@ -507,7 +507,7 @@ public enum Algorithm {
      * The name of the algorithm.
      */
     public final String name;
-
+    
     /**
      * @param n The name of the algorithm.
      * @param l The name of the algorithm for text processing.

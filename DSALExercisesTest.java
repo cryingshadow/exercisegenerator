@@ -9,6 +9,11 @@ import java.util.*;
 public class DSALExercisesTest {
 
     /**
+     * Name of an algorithm to debug alone. Null to debug all enabled algorithms.
+     */
+    public static final String toDebug = null;
+
+    /**
      * Runs all enabled algorithms 100 times and provides a make file.
      * @param args Contains the path where the generated .tex files should be stored as its only argument.
      */
@@ -61,6 +66,18 @@ public class DSALExercisesTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @param val The default value to set.
+     * @param check The name of an algorithm to set the enabled value for.
+     * @return If toDebug is null, val is returned. Otherwise true is returned iff check equals toDebug.
+     */
+    public static boolean set(boolean val, String check) {
+        if (DSALExercisesTest.toDebug == null) {
+            return val;
+        }
+        return DSALExercisesTest.toDebug.equals(check);
     }
 
 }

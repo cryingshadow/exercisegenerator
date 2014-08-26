@@ -3,8 +3,8 @@ import java.math.*;
 
 /**
  * This abstract class provides methods for creating TikZ output.
- * @author cryingshadow
- * @version $Id$
+ * @author Thomas Stroeder
+ * @version 1.1.0
  */
 public abstract class TikZUtils {
 
@@ -22,7 +22,7 @@ public abstract class TikZUtils {
      * Style for drawing highlighted edges.
      */
     public static final String EDGE_HIGHLIGHT_STYLE = "[p, bend right = 10, very thick, red]";
-    
+
     /**
      * Style for drawing edges.
      */

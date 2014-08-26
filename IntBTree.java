@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * B-tree with ints as keys.
- * @author cryingshadow
- * @version $Id$
+ * @author Thomas Stroeder
+ * @version 1.0.1
  */
 public class IntBTree {
 
@@ -29,7 +29,7 @@ public class IntBTree {
 //            System.out.println(tree);
 //        }
 //    }
-    
+
     /**
      * Since there are three different names for B-trees of degree 2, this String can be used to customize the output 
      * for a lecture.
@@ -182,17 +182,17 @@ public class IntBTree {
             TikZUtils.printSamePageEnd(writer);
         }
     }
-    
+
     /**
      * Filling degree of this B-tree. Must be greater than 1.
      */
     private final int fillingDegree;
-    
+
     /**
      * Root node of this B-tree.
      */
     private IntBTreeNode root;
-    
+
     /**
      * Creates an empty B-tree with the specified filling degree.
      * @param t The filling degree. Must be greater than 1.
@@ -202,7 +202,7 @@ public class IntBTree {
         this.fillingDegree = t;
         this.root = null;
     }
-    
+
     /**
      * Adds the specified key to this B-tree.
      * @param key The key to add.
@@ -214,14 +214,14 @@ public class IntBTree {
         }
         this.root.add(key, null, 0);
     }
-    
+
     /**
      * @return The filling degree of this B-tree.
      */
     public int getDegree() {
         return this.fillingDegree;
     }
-    
+
     /**
      * @return True if this B-tree just consists of the root node.
      */
@@ -265,28 +265,28 @@ public class IntBTree {
      * @version $Id$
      */
     private class IntBTreeNode {
-        
+
         /**
          * The number of keys stored in this node.
          */
         private int filled;
-        
+
         /**
          * The keys stored in this node. Entries from <code>filled</code> to the end of the array are garbage.
          */
         private final Integer[] keys;
-        
+
         /**
          * Flag indicating whether this node is a leaf.
          */
         private boolean leaf;
-        
+
         /**
          * The successor nodes of this node. The index of a key corresponds to the left successor index of that key. 
          * The right-most successor has index <code>filled</code>.
          */
         private final IntBTreeNode[] nodes;
-        
+
         /**
          * Creates an empty non-leaf node where the arrays are large enough to store 2 * <code>fillingDegree</code> 
          * successor nodes.
@@ -297,7 +297,7 @@ public class IntBTree {
             this.filled = 0;
             this.leaf = false;
         }
-        
+
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
@@ -328,7 +328,7 @@ public class IntBTree {
             res.append(" ]");
             return res.toString();
         }
-        
+
         /**
          * Adds the specified key to the B-tree rooted in this node.
          * @param key The key to add.
@@ -387,7 +387,7 @@ public class IntBTree {
                 this.nodes[index].add(key, this, index);
             }
         }
-        
+
         /**
          * @return The maximum key in the B-tree rooted at this node.
          */
@@ -551,7 +551,7 @@ public class IntBTree {
             next.nodes[0] = left.nodes[left.filled];
             this.keys[index] = left.keys[--left.filled];
         }
-        
+
     }
-    
+
 }

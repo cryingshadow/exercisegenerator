@@ -5,19 +5,9 @@ import java.util.Map.Entry;
 /**
  * Class offering methods for graph algorithms.
  * @author Thomas Stroeder
- * @version 1.0.1
+ * @version 1.1.1
  */
 public abstract class GraphAlgorithms {
-
-    /**
-     * The phrase "each residual graph".
-     */
-    private static final String EACH_RESIDUAL_GRAPH = "\\emphasize{jedes Restnetzwerk (auch das initiale)}";
-
-    /**
-     * The name of a residual graph.
-     */
-    private static final String RESIDUAL_GRAPH = "Restnetzwerk";
 
     /**
      * The default value being probably close to the edge values.
@@ -30,101 +20,14 @@ public abstract class GraphAlgorithms {
     private static final int DEFAULT_SOURCE_SINK_ROOT = 7;
 
     /**
-     * @param gen A random number generator.
-     * @param numOfNodes The number of nodes in the returned graph.
-     * @param undirected Should the graph be undirected?
-     * @return A random graph with <code>numOfNodes</code> nodes labeled with Strings (each node has a unique label 
-     *         and there is a node with label A) and edges labeled with Integers.
+     * The phrase "each residual graph".
      */
-    public static Graph<String, Integer> createRandomGraph(Random gen, int numOfNodes, boolean undirected) {
-        if (numOfNodes < 0) {
-            throw new IllegalArgumentException("Number of nodes must not be negative!");
-        }
-        Graph<String, Integer> graph = new Graph<String, Integer>();
-        Map<Pair<Integer, Integer>, Node<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
-        if (numOfNodes == 0) {
-            graph.setGrid(grid);
-            return graph;
-        }
-        Map<Node<String>, NodeGridPosition> positions = new LinkedHashMap<Node<String>, NodeGridPosition>();
-        Node<String> start = new Node<String>("A");
-        Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
-        boolean startDiagonal = gen.nextBoolean();
-        GraphAlgorithms.addNode(
-            start,
-            graph,
-            new Pair<Pair<Integer, Integer>, Boolean>(startPos, startDiagonal),
-            grid,
-            positions
-        );
-        List<Node<String>> nodesWithFreeNeighbors = new ArrayList<Node<String>>();
-        nodesWithFreeNeighbors.add(start);
-        for (int letter = 1; letter < numOfNodes; letter++) {
-            Node<String> nextNode = nodesWithFreeNeighbors.get(gen.nextInt(nodesWithFreeNeighbors.size()));
-            NodeGridPosition nextPos = positions.get(nextNode);
-            Pair<Pair<Integer, Integer>, Boolean> toAddPos = nextPos.randomFreePosition(gen);
-            Node<String> toAddNode = new Node<String>(GraphAlgorithms.toStringLabel(letter));
-            NodeGridPosition gridPos = GraphAlgorithms.addNode(toAddNode, graph, toAddPos, grid, positions);
-            int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
-            graph.addEdge(nextNode, value, toAddNode);
-            if (undirected) {
-                graph.addEdge(toAddNode, value, nextNode);
-            }
-            List<Pair<Pair<Integer, Integer>, Boolean>> existing = gridPos.getExistingPositions();
-            List<Pair<Node<String>, Node<String>>> freeNodePairs = new ArrayList<Pair<Node<String>, Node<String>>>();
-            for (Pair<Pair<Integer, Integer>, Boolean> other : existing) {
-                Node<String> otherNode = grid.get(other.x);
-                if (otherNode.equals(nextNode)) {
-                    if (!undirected) {
-                        freeNodePairs.add(new Pair<Node<String>, Node<String>>(toAddNode, otherNode));
-                    }
-                } else {
-                    freeNodePairs.add(new Pair<Node<String>, Node<String>>(toAddNode, otherNode));
-                    if (!undirected) {
-                        freeNodePairs.add(new Pair<Node<String>, Node<String>>(otherNode, toAddNode));
-                    }
-                }
-            }
-            for (int numEdges = GraphAlgorithms.randomNumOfEdges(gen, freeNodePairs.size()); numEdges > 0; numEdges--) {
-                int pairIndex = gen.nextInt(freeNodePairs.size());
-                Pair<Node<String>, Node<String>> pair = freeNodePairs.remove(pairIndex);
-                int nextValue = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
-                graph.addEdge(pair.x, nextValue, pair.y);
-                if (undirected) {
-                    graph.addEdge(pair.y, nextValue, pair.x);
-                }
-            }
-            for (Pair<Pair<Integer, Integer>, Boolean> neighborPos : existing) {
-                Node<String> neighborNode = grid.get(neighborPos.x);
-                if (!positions.get(neighborNode).hasFreePosition()) {
-                    nodesWithFreeNeighbors.remove(neighborNode);
-                }
-            }
-            if (gridPos.hasFreePosition()) {
-                nodesWithFreeNeighbors.add(toAddNode);
-            }
-        }
-        // adjust grid (non-negative coordinates, sum of coordinates even -> has diagonals
-        int minX = 0;
-        int minY = 0;
-        for (Pair<Integer, Integer> pair : grid.keySet()) {
-            minX = Math.min(minX, pair.x);
-            minY = Math.min(minY, pair.y);
-        }
-        if (
-            (startDiagonal && (startPos.x - minX + startPos.y - minY) % 2 == 1)
-            || (!startDiagonal && (startPos.x - minX + startPos.y - minY) % 2 == 0)
-        ) {
-            minX--;
-        }
-        Map<Pair<Integer, Integer>, Node<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
-        for (Entry<Pair<Integer, Integer>, Node<String>> entry : grid.entrySet()) {
-            Pair<Integer, Integer> key = entry.getKey();
-            newGrid.put(new Pair<Integer, Integer>(key.x - minX, key.y - minY), entry.getValue());
-        }
-        graph.setGrid(newGrid);
-        return graph;
-    }
+    private static final String EACH_RESIDUAL_GRAPH = "\\emphasize{jedes Restnetzwerk (auch das initiale)}";
+
+    /**
+     * The name of a residual graph.
+     */
+    private static final String RESIDUAL_GRAPH = "Restnetzwerk";
 
     /**
      * @param gen A random number generator.
@@ -517,32 +420,100 @@ public abstract class GraphAlgorithms {
     }
 
     /**
-     * @param remainingNodes The number of nodes yet to be added.
-     * @param minYPos The minimal y position in the current level.
-     * @param maxYPos The maximal y position in the current level.
-     * @param xPos The x position of the current level.
-     * @return True if there are at least as many nodes to be added as minimally needed when starting the current level 
-     *         with the specified parameters (by reducing whenever possible). False otherwise. 
+     * @param gen A random number generator.
+     * @param numOfNodes The number of nodes in the returned graph.
+     * @param undirected Should the graph be undirected?
+     * @return A random graph with <code>numOfNodes</code> nodes labeled with Strings (each node has a unique label 
+     *         and there is a node with label A) and edges labeled with Integers.
      */
-    private static boolean enoughNodes(int remainingNodes, int minYPos, int maxYPos, int xPos) {
-        int neededNodes = maxYPos - minYPos + 1;
-        int itMinY = minYPos;
-        int itMaxY = maxYPos;
-        int itX = xPos;
-        while (true) {
-            if ((itMinY + itX) % 2 == 0) {
-                itMinY++;
-            }
-            if ((itMaxY + itX) % 2 == 0) {
-                itMaxY--;
-            }
-            if (itMinY >= itMaxY) {
-                break;
-            }
-            itX++;
-            neededNodes += itMaxY - itMinY + 1;
+    public static Graph<String, Integer> createRandomGraph(Random gen, int numOfNodes, boolean undirected) {
+        if (numOfNodes < 0) {
+            throw new IllegalArgumentException("Number of nodes must not be negative!");
         }
-        return neededNodes <= remainingNodes;
+        Graph<String, Integer> graph = new Graph<String, Integer>();
+        Map<Pair<Integer, Integer>, Node<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
+        if (numOfNodes == 0) {
+            graph.setGrid(grid);
+            return graph;
+        }
+        Map<Node<String>, NodeGridPosition> positions = new LinkedHashMap<Node<String>, NodeGridPosition>();
+        Node<String> start = new Node<String>("A");
+        Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
+        boolean startDiagonal = gen.nextBoolean();
+        GraphAlgorithms.addNode(
+            start,
+            graph,
+            new Pair<Pair<Integer, Integer>, Boolean>(startPos, startDiagonal),
+            grid,
+            positions
+        );
+        List<Node<String>> nodesWithFreeNeighbors = new ArrayList<Node<String>>();
+        nodesWithFreeNeighbors.add(start);
+        for (int letter = 1; letter < numOfNodes; letter++) {
+            Node<String> nextNode = nodesWithFreeNeighbors.get(gen.nextInt(nodesWithFreeNeighbors.size()));
+            NodeGridPosition nextPos = positions.get(nextNode);
+            Pair<Pair<Integer, Integer>, Boolean> toAddPos = nextPos.randomFreePosition(gen);
+            Node<String> toAddNode = new Node<String>(GraphAlgorithms.toStringLabel(letter));
+            NodeGridPosition gridPos = GraphAlgorithms.addNode(toAddNode, graph, toAddPos, grid, positions);
+            int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
+            graph.addEdge(nextNode, value, toAddNode);
+            if (undirected) {
+                graph.addEdge(toAddNode, value, nextNode);
+            }
+            List<Pair<Pair<Integer, Integer>, Boolean>> existing = gridPos.getExistingPositions();
+            List<Pair<Node<String>, Node<String>>> freeNodePairs = new ArrayList<Pair<Node<String>, Node<String>>>();
+            for (Pair<Pair<Integer, Integer>, Boolean> other : existing) {
+                Node<String> otherNode = grid.get(other.x);
+                if (otherNode.equals(nextNode)) {
+                    if (!undirected) {
+                        freeNodePairs.add(new Pair<Node<String>, Node<String>>(toAddNode, otherNode));
+                    }
+                } else {
+                    freeNodePairs.add(new Pair<Node<String>, Node<String>>(toAddNode, otherNode));
+                    if (!undirected) {
+                        freeNodePairs.add(new Pair<Node<String>, Node<String>>(otherNode, toAddNode));
+                    }
+                }
+            }
+            for (int numEdges = GraphAlgorithms.randomNumOfEdges(gen, freeNodePairs.size()); numEdges > 0; numEdges--) {
+                int pairIndex = gen.nextInt(freeNodePairs.size());
+                Pair<Node<String>, Node<String>> pair = freeNodePairs.remove(pairIndex);
+                int nextValue = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
+                graph.addEdge(pair.x, nextValue, pair.y);
+                if (undirected) {
+                    graph.addEdge(pair.y, nextValue, pair.x);
+                }
+            }
+            for (Pair<Pair<Integer, Integer>, Boolean> neighborPos : existing) {
+                Node<String> neighborNode = grid.get(neighborPos.x);
+                if (!positions.get(neighborNode).hasFreePosition()) {
+                    nodesWithFreeNeighbors.remove(neighborNode);
+                }
+            }
+            if (gridPos.hasFreePosition()) {
+                nodesWithFreeNeighbors.add(toAddNode);
+            }
+        }
+        // adjust grid (non-negative coordinates, sum of coordinates even -> has diagonals
+        int minX = 0;
+        int minY = 0;
+        for (Pair<Integer, Integer> pair : grid.keySet()) {
+            minX = Math.min(minX, pair.x);
+            minY = Math.min(minY, pair.y);
+        }
+        if (
+            (startDiagonal && (startPos.x - minX + startPos.y - minY) % 2 == 1)
+            || (!startDiagonal && (startPos.x - minX + startPos.y - minY) % 2 == 0)
+        ) {
+            minX--;
+        }
+        Map<Pair<Integer, Integer>, Node<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
+        for (Entry<Pair<Integer, Integer>, Node<String>> entry : grid.entrySet()) {
+            Pair<Integer, Integer> key = entry.getKey();
+            newGrid.put(new Pair<Integer, Integer>(key.x - minX, key.y - minY), entry.getValue());
+        }
+        graph.setGrid(newGrid);
+        return graph;
     }
 
     /**
@@ -1358,7 +1329,7 @@ public abstract class GraphAlgorithms {
         }
         return toHighlight;
     }
-    
+
     /**
      * Adds a node to the graph and updates the grid layout accordingly.
      * @param node The node to add.
@@ -1468,7 +1439,7 @@ public abstract class GraphAlgorithms {
         }
         return min;
     }
-
+    
     /**
      * Builds the residual graph from the specified flow network.
      * @param graph The flow network.
@@ -1507,6 +1478,35 @@ public abstract class GraphAlgorithms {
         }
         res.setGrid(graph.getGrid());
         return res;
+    }
+
+    /**
+     * @param remainingNodes The number of nodes yet to be added.
+     * @param minYPos The minimal y position in the current level.
+     * @param maxYPos The maximal y position in the current level.
+     * @param xPos The x position of the current level.
+     * @return True if there are at least as many nodes to be added as minimally needed when starting the current level 
+     *         with the specified parameters (by reducing whenever possible). False otherwise. 
+     */
+    private static boolean enoughNodes(int remainingNodes, int minYPos, int maxYPos, int xPos) {
+        int neededNodes = maxYPos - minYPos + 1;
+        int itMinY = minYPos;
+        int itMaxY = maxYPos;
+        int itX = xPos;
+        while (true) {
+            if ((itMinY + itX) % 2 == 0) {
+                itMinY++;
+            }
+            if ((itMaxY + itX) % 2 == 0) {
+                itMaxY--;
+            }
+            if (itMinY >= itMaxY) {
+                break;
+            }
+            itX++;
+            neededNodes += itMaxY - itMinY + 1;
+        }
+        return neededNodes <= remainingNodes;
     }
 
     /**

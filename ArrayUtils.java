@@ -2,8 +2,8 @@ import java.io.*;
 
 /**
  * This abstract class offers static methods for manipulating and outputting arrays as TikZ pictures.
- * @author cryingshadow
- * @version $Id$
+ * @author Thomas Stroeder
+ * @version 1.0.1
  */
 public abstract class ArrayUtils {
 

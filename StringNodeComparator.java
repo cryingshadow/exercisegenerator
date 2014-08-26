@@ -2,8 +2,8 @@ import java.util.*;
 
 /**
  * String node comparator based on String.compareTo.
- * @author cryingshadow
- * @version $Id$
+ * @author Thomas Stroeder
+ * @version 1.0
  */
 public class StringNodeComparator implements Comparator<Node<String>> {
 

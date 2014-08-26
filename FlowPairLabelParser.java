@@ -2,8 +2,8 @@ import java.io.*;
 
 /**
  * Parser to parse integer pair labels.
- * @author cryingshadow
- * @version $Id$
+ * @author Thomas Stroeder
+ * @version 1.0
  */
 public class FlowPairLabelParser implements LabelParser<FlowPair> {
 

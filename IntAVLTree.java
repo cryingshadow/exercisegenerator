@@ -4,9 +4,19 @@ import java.util.*;
 /**
  * Programm for creating solutions of exercises where elements have to be inserted into or deleted from an AVL-tree.
  * @author Florian Corzilius, Thomas Stroeder
- * @version 1.1.0
+ * @version 1.1.1
  */
 public class IntAVLTree {
+
+    /**
+     * Flag to enable debug output.
+     */
+    private static final boolean DEBUG_OUTPUT = false;
+
+    /**
+     * Flag to enable assertions.
+     */
+    private static final boolean USE_ASSERTIONS = true;
 
     /**
      * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified AVL-tree and
@@ -26,6 +36,9 @@ public class IntAVLTree {
         BufferedWriter writer,
         BufferedWriter writerSpace
     ) throws IOException {
+        if (IntAVLTree.USE_ASSERTIONS) {
+            IntAVLTree.check(tree);
+        }
         if (ops.isEmpty()) {
             return;
         }
@@ -39,8 +52,13 @@ public class IntAVLTree {
                     tree.remove(toRemove, null);
                 }
             }
+            if (IntAVLTree.USE_ASSERTIONS) {
+                IntAVLTree.check(tree);
+            }
         }
-        //System.out.println(tree.root.printHeights());
+        if (IntAVLTree.DEBUG_OUTPUT) {
+            System.out.println(tree.root == null ? "-1" : tree.root.printHeights());
+        }
         if (writerSpace != null) {
             if (ops.size() > 1) {
                 if (tree.isEmpty()) {
@@ -108,14 +126,15 @@ public class IntAVLTree {
         while (!ops.isEmpty()) {
             Pair<Integer, Boolean> operation = ops.poll();
             if (operation.y) {
-                //System.out.println("insert " + operation.x + " in:");
-                //System.out.println(tree.toString(tree.root()));
+                if (IntAVLTree.DEBUG_OUTPUT) {
+                    System.out.println("insert " + operation.x + " in:");
+                    System.out.println(tree.toString());
+                }
                 tree.add(operation.x, writer);
             } else {
-                //System.out.println("remove " + operation.x + " in:");
-                //System.out.println(tree.toString(tree.root()));
-                if (operation.x == 49) {
-                    System.out.println("foo!");
+                if (IntAVLTree.DEBUG_OUTPUT) {
+                    System.out.println("remove " + operation.x + " in:");
+                    System.out.println(tree.toString());
                 }
                 AVLNode toRemove = tree.find(operation.x);
                 if (toRemove != null) {
@@ -124,9 +143,23 @@ public class IntAVLTree {
                     tree.print(operation.x + " kommt nicht vor", writer);
                 }
             }
-            //System.out.println("results in:");
-            //System.out.println(tree.toString(tree.mRoot));
+            if (IntAVLTree.USE_ASSERTIONS) {
+                IntAVLTree.check(tree);
+            }
+            if (IntAVLTree.DEBUG_OUTPUT) {
+                System.out.println("results in:");
+                System.out.println(tree.toString());
+            }
         }
+    }
+
+    /**
+     * Asserts desired properties of the specified AVL tree.
+     * @param tree The tree to check.
+     */
+    private static void check(IntAVLTree tree) {
+        assert (tree.isWellFormed()) : "AVL tree is not well-formed!";
+        assert (tree.isBalanced()) : "AVL tree is not balanced!";
     }
 
     /**
@@ -191,6 +224,21 @@ public class IntAVLTree {
         }
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof IntAVLTree)) {
+            return false;
+        }
+        IntAVLTree tree = (IntAVLTree)o;
+        if (tree.root == null) {
+            return this.root == null;
+        }
+        return tree.root.equals(this.root);
+    }
+
     /**
      * @return The height of the AVL-tree (-1 if the tree is empty, 0 if the tree just consists of the root).
      */
@@ -202,11 +250,48 @@ public class IntAVLTree {
         }
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return this.root == null ? 73 : this.root.hashCode() + 57;
+    }
+
+    /**
+     * @return True if this tree is balanced (i.e., for each node in this tree, the heights of its two subtrees differ 
+     *         at most by one).
+     */
+    public boolean isBalanced() {
+        if (this.root == null) {
+            return true;
+        }
+        return this.root.isBalanced();
+    }
+
     /**
      * @return True if the tree is empty. False otherwise.
      */
     public boolean isEmpty() {
         return this.root == null;
+    }
+
+    /**
+     * @return True if each father link is correctly set in this tree. False otherwise.
+     */
+    public boolean isWellFormed() {
+        if (this.root == null) {
+            return true;
+        }
+        return this.root.isWellFormed(null);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return this.root == null ? "empty" : this.root.toString();
     }
 
     /**
@@ -224,7 +309,6 @@ public class IntAVLTree {
      */
     private void balance(AVLNode node, boolean afterInsertion, BufferedWriter writer) throws IOException {
         AVLNode currentNode = node;
-        //assert(height()==0):"test";
         while (currentNode != null) {
             if (currentNode.left == null && currentNode.right != null) {
                 if (currentNode.right.height() > 0) {
@@ -613,15 +697,135 @@ public class IntAVLTree {
             this.right = null;
             this.value = val;
         }
-        
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof AVLNode)) {
+                return false;
+            }
+            AVLNode node = (AVLNode)o;
+            if (this.value != node.value) {
+                return false;
+            }
+            if (node.left == null) {
+                if (this.left != null) {
+                    return false;
+                }
+            } else if (!node.left.equals(this.left)) {
+                return false;
+            }
+            if (node.right == null) {
+                if (this.right != null) {
+                    return false;
+                }
+            } else if (!node.right.equals(this.right)) {
+                return false;
+            }
+            return true;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            return
+                3 * this.value
+                + 7 * (this.left == null ? 0 : this.left.hashCode())
+                + 5 * (this.right == null ? 0 : this.right.hashCode());
+        }
+
+        /**
+         * @return The height of this node in the corresponding tree.
+         */
         public int height() {
-            int leftHeight = left == null ? -1 : left.height();
-            int rightHeight = right == null ? -1 : right.height();
+            int leftHeight = this.left == null ? -1 : this.left.height();
+            int rightHeight = this.right == null ? -1 : this.right.height();
             if (leftHeight > rightHeight) {
                 return leftHeight + 1;
             } else {
                 return rightHeight + 1;
             }
+        }
+
+        /**
+         * @return True if the tree rooted in this node is balanced. False otherwise.
+         */
+        public boolean isBalanced() {
+            if (this.left != null) {
+                if (!this.left.isBalanced()) {
+                    return false;
+                }
+            }
+            if (this.right != null) {
+                if (!this.right.isBalanced()) {
+                    return false;
+                }
+            }
+            return
+                Math.abs(
+                    (this.left == null ? -1 : this.left.height()) - (this.right == null ? -1 : this.right.height())
+                ) < 2;
+        }
+
+        /**
+         * @param fatherLink The node (same reference) that should be the father of this node.
+         * @return True if each father link in the tree rooted in this node is correctly set.
+         */
+        public boolean isWellFormed(AVLNode fatherLink) {
+            if (this.father != fatherLink) {
+                return false;
+            }
+            if (this.left != null) {
+                if (!this.left.isWellFormed(this)) {
+                    return false;
+                }
+            }
+            if (this.right != null) {
+                if (!this.right.isWellFormed(this)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * @return A node with the smallest key in the tree rooted in the current node. The returned node is the 
+         *         left-most node in the tree rooted in the current node.
+         */
+        public AVLNode minimum() {
+            AVLNode tmp = this;
+            while (tmp.left != null) {
+                tmp = tmp.left;
+            }
+            return tmp;
+        }
+
+        /**
+         * @return A String representing the heights of all nodes in the tree rooted in the current node.
+         */
+        public String printHeights() {
+            String result = new String("");
+            if (this.left == null && this.right == null) {
+                result += " " + this.height();
+            } else {
+                result += " [." + this.height();
+                if (this.left != null) {
+                    result += this.left.printHeights();
+                } else {
+                    result += " .";
+                }
+                if (this.right != null) {
+                    result += this.right.printHeights();
+                } else {
+                    result += " .";
+                }
+                result += " ]";
+            }
+            return result;
         }
 
         /**
@@ -649,39 +853,6 @@ public class IntAVLTree {
                 result += " ]";
             }
             return result;
-        }
-        
-        public String printHeights() {
-            String result = new String("");
-            if (this.left == null && this.right == null) {
-                result += " " + this.height();
-            } else {
-                result += " [." + this.height();
-                if (this.left != null) {
-                    result += this.left.printHeights();
-                } else {
-                    result += " .";
-                }
-                if (this.right != null) {
-                    result += this.right.printHeights();
-                } else {
-                    result += " .";
-                }
-                result += " ]";
-            }
-            return result;
-        }
-
-        /**
-         * @return A node with the smallest key in the tree rooted in the current node. The returned node is the 
-         *         left-most node in the tree rooted in the current node.
-         */
-        private AVLNode minimum() {
-            AVLNode tmp = this;
-            while (tmp.left != null) {
-                tmp = tmp.left;
-            }
-            return tmp;
         }
 
     }
