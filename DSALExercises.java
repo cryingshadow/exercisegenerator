@@ -668,6 +668,7 @@ public class DSALExercises {
                 DynamicProgramming.lcs(
                     tmpInput.x,
                     tmpInput.y,
+                    mode,
                     solutionWriter,
                     options.containsKey(Flag.EXERCISE) ? exerciseWriter : null
                 );
