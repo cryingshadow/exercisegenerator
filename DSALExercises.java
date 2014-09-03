@@ -543,7 +543,9 @@ public class DSALExercises {
                 exerciseWriter.write(hash3);
                 switch (DSALExercises.TEXT_VERSION) {
                     case ABRAHAM:
-                        // TODO 
+                        exerciseWriter.write(" ($f(n,i) = \\floor*{" + m);
+                        exerciseWriter.write(" \\cdot ( k \\cdot" + c);
+                        exerciseWriter.write(" \\mod 1 )} $)");
                         break;
                     case GENERAL:
                         break;
@@ -575,7 +577,10 @@ public class DSALExercises {
                 exerciseWriter.write(hash3);
                 switch (DSALExercises.TEXT_VERSION) {
                     case ABRAHAM:
-                        // TODO
+                        exerciseWriter.write(" ($f(n,i) = \\floor*{" + m);
+                        exerciseWriter.write(" \\cdot ( k \\cdot " + c);
+                        exerciseWriter.write(" \\mod 1 )}~ + i \\mod " + m);
+                        exerciseWriter.write(" $)");
                         break;
                     case GENERAL:
                         break;
@@ -620,7 +625,11 @@ public class DSALExercises {
                 exerciseWriter.write(hash3);
                 switch (DSALExercises.TEXT_VERSION) {
                     case ABRAHAM:
-                        // TODO
+                        exerciseWriter.write(" ($f(n,i) = \\floor*{" + m);
+                        exerciseWriter.write(" \\cdot ( k \\cdot" + c);
+                        exerciseWriter.write(" \\mod 1 )} + " + c1);
+                        exerciseWriter.write(" \\cdot i + " + c2);
+                        exerciseWriter.write(" \\cdot i^2 $)");
                         break;
                     case GENERAL:
                         break;
