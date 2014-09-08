@@ -274,42 +274,43 @@ public abstract class GeometricAlgorithms {
 //            + ","
 //            + pointSet.get(referenceIndex).y
 //        );
-        boolean noAdd = false;
+        boolean add = true;
+        // X-Axis as a reference (note: no angle can be smaller than this as we select the refPoint to be with smallest y-coordinate
+        Pair<Double,Double> xAxis = new Pair<Double,Double>(1.0,0.0);
         // Insertion-Sort the array
         for (int i = 0; i < pointSet.size(); ++i) {
             if (i != referenceIndex) {
                 int index = 1;
                 if (result.size() > 1) {
-                    Pair<Double,Double> tmp =
+                    Pair<Double,Double> newVector =
                         new Pair<Double,Double>(pointSet.get(i).x-result.get(0).x, pointSet.get(i).y-result.get(0).y);
-                    Pair<Double,Double> tmp2 =
+                    Pair<Double,Double> currVector =
                         new Pair<Double,Double>(
                             result.get(index).x-result.get(0).x,
                             result.get(index).y-result.get(0).y
                         );
-                    Pair<Double,Double> test = new Pair<Double,Double>(1.0,0.0);
-                    //Double currAngle = realPolarAngle(result.get(0), tmp);
-                    Double currAngle = GeometricAlgorithms.realPolarAngle(test, tmp);
+                    Double currAngle = GeometricAlgorithms.realPolarAngle(xAxis, newVector);
                     //System.out.println("Index: " + index);
-                    while (Double.compare(GeometricAlgorithms.realPolarAngle(test, tmp2),currAngle) < 0) {
+                    // find insertion pos
+                    while (Double.compare(GeometricAlgorithms.realPolarAngle(xAxis, currVector),currAngle) < 0) {
                         ++index;
                         if (index == result.size()) {
                             break;
                         }
-                        tmp2 =
+                        currVector =
                             new Pair<Double,Double>(
                                 result.get(index).x-result.get(0).x,
                                 result.get(index).y-result.get(0).y
                             );
                         //System.out.println("Index: " + index);
                     }
-                    if (!(Double.compare(GeometricAlgorithms.realPolarAngle(test, tmp2),currAngle) < 0)) {
-                        tmp2 =
+                    if (!(Double.compare(GeometricAlgorithms.realPolarAngle(xAxis, currVector),currAngle) < 0)) {
+                        currVector =
                             new Pair<Double,Double>(
                                 result.get(index).x-result.get(0).x,
                                 result.get(index).y-result.get(0).y
                             );
-                        // remove duplicates - take the outer one (larger absolute sum of x and y component)
+                        // remove duplicates - take the outer one (distance to refpoint)
 //                        System.out.println(
 //                            "Check for duplicates of current Angle: "
 //                            + currAngle
@@ -318,27 +319,28 @@ public abstract class GeometricAlgorithms {
 //                            + " : "
 //                            + (Double.compare(realPolarAngle(test, tmp2),currAngle) == 0)
 //                        );
-                        if (Double.compare(GeometricAlgorithms.realPolarAngle(test, tmp2),currAngle) == 0) {
+                        if (Double.compare(GeometricAlgorithms.realPolarAngle(xAxis, currVector),currAngle) == 0) {
                             //System.out.println("Duplicate angle.");
                             // compare coordinates
-                            Double aAbsCoord = Math.abs(pointSet.get(i).x) + Math.abs(pointSet.get(i).y);
-                            Double bAbsCoord = Math.abs(result.get(index).x) + Math.abs(result.get(index).y);
-                            if (aAbsCoord > bAbsCoord) {
+                            Double currDistance = Math.sqrt( Math.pow(result.get(index).x, 2) + Math.pow(result.get(index).y, 2) );
+                            Double newDistance = Math.sqrt( Math.pow(pointSet.get(i).x, 2) + Math.pow(pointSet.get(i).y, 2) );
+                            
+                            if (Double.compare(currDistance, newDistance) < 0) {
                                 //System.out.println("Remove " + index);
                                 result.remove(index);
                             } else {
                                 //System.out.println("Do just not insert.");
-                                noAdd = true;
+                                add = false;
                             }
                         }
                     }
                 }
-                if (!noAdd) {
+                if (add) {
                     //System.out.println("Insert (" + pointSet.get(i).x + "," + pointSet.get(i).y + ") at " + index);
                     result.add(index,pointSet.get(i));
                     //System.out.println("Size of list: " + result.size());
                 } else {
-                    noAdd = false;
+                    add = true;
                 }
             }
         }
