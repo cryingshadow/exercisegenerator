@@ -108,6 +108,7 @@ public class DSALExercises {
      *                  might be the input array followed by a number of empty arrays. If not set, no pre-print will be 
      *                  generated.<br>
      *             -a : The algorithm to apply to the input. Must be specified.<br>
+     *             -v : The variant of the algorithm.<br>
      *             -l : Additional lines for pre-prints. Defaults to 0 if not set. Ignored if -p is not set.<br>
      *             -d : Degree (e.g., of a B-tree).<br>
      *             -o : File containing operations used to construct a start structure.
@@ -1079,7 +1080,7 @@ public class DSALExercises {
                 Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
                 List<Integer> in = new ArrayList<Integer>();
                 for (int i = 0; i < length; i++) {
-                    if (in.isEmpty() || gen.nextInt(3) > 0) {
+                    if ((options.containsKey(Flag.VARIANT) && options.get(Flag.VARIANT).equals("1")) || in.isEmpty() || gen.nextInt(3) > 0) {
                         int next = gen.nextInt(DSALExercises.NUMBER_LIMIT);
                         deque.offer(new Pair<Integer, Boolean>(next, true));
                         in.add(next);
@@ -1754,7 +1755,17 @@ public class DSALExercises {
         /**
          * Target file to store the LaTeX code in. If not specified, the solution is sent to the standard output.
          */
-        TARGET("-t", "Target file", "Path to the file where to store the solution text in LaTeX code.", true);
+        TARGET("-t", "Target file", "Path to the file where to store the solution text in LaTeX code.", true),
+
+        /**
+         * Target file to store the LaTeX code in. If not specified, the solution is sent to the standard output.
+         */
+        VARIANT("-v", 
+            "Variant of the algorithm", 
+            "Triggers the variant of the given algorithm. The following variants of algorithms are available: \n"
+           + "    -a [avltree|btree|rbtree] -v 0: Generates examples where nodes get inserted and deleted.\n"
+           + "    -a [avltree|btree|rbtree] -v 1: Generates examples where nodes get only inserted.\n", 
+            true);
 
         /**
          * The docu for this flag.
