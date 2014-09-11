@@ -546,7 +546,7 @@ public class DSALExercises {
                     case ABRAHAM:
                         exerciseWriter.write(" ($f(n,i) = \\floor*{" + m);
                         exerciseWriter.write(" \\cdot ( n \\cdot" + c);
-                        exerciseWriter.write(" \\mod 1 )} $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichne");
+                        exerciseWriter.write(" \\mod 1 )} $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
                         break;
                     case GENERAL:
                         break;
@@ -581,7 +581,7 @@ public class DSALExercises {
                         exerciseWriter.write(" ($f(n,i) = \\floor*{" + m);
                         exerciseWriter.write(" \\cdot ( n \\cdot " + c);
                         exerciseWriter.write(" \\mod 1 )}~ + i \\mod " + m);
-                        exerciseWriter.write(" $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichne");
+                        exerciseWriter.write(" $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
                         break;
                     case GENERAL:
                         break;
@@ -630,7 +630,7 @@ public class DSALExercises {
                         exerciseWriter.write(" \\cdot ( n \\cdot" + c);
                         exerciseWriter.write(" \\mod 1 )} + " + c1);
                         exerciseWriter.write(" \\cdot i + " + c2);
-                        exerciseWriter.write(" \\cdot i^2 $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichne");
+                        exerciseWriter.write(" \\cdot i^2 $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
                         break;
                     case GENERAL:
                         break;
