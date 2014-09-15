@@ -76,11 +76,11 @@ public class DSALExercises {
     /**
      * The version of this program.
      */
-    private static final String VERSION = "1.1.9";
+    private static final String VERSION = "1.1.10";
 
     static {
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = true;
+        STUDENT_MODE = false;
         TEXT_VERSION = TextVersion.ABRAHAM;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
@@ -544,9 +544,9 @@ public class DSALExercises {
                 exerciseWriter.write(hash3);
                 switch (DSALExercises.TEXT_VERSION) {
                     case ABRAHAM:
-                        exerciseWriter.write(" ($f(n,i) = \\floor*{" + m);
+                        exerciseWriter.write(" ($f(n,i) = \\left \\lfloor{" + m);
                         exerciseWriter.write(" \\cdot ( n \\cdot" + c);
-                        exerciseWriter.write(" \\mod 1 )} $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
+                        exerciseWriter.write(" \\mod 1 )\\right \\rfloor $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
                         break;
                     case GENERAL:
                         break;
@@ -578,9 +578,9 @@ public class DSALExercises {
                 exerciseWriter.write(hash3);
                 switch (DSALExercises.TEXT_VERSION) {
                     case ABRAHAM:
-                        exerciseWriter.write(" ($f(n,i) = \\floor*{" + m);
+                        exerciseWriter.write(" ($f(n,i) = \\left \\lfloor{" + m);
                         exerciseWriter.write(" \\cdot ( n \\cdot " + c);
-                        exerciseWriter.write(" \\mod 1 )}~ + i \\mod " + m);
+                        exerciseWriter.write(" \\mod 1 )}\\right \\rfloor~ + i \\mod " + m);
                         exerciseWriter.write(" $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
                         break;
                     case GENERAL:
@@ -626,9 +626,9 @@ public class DSALExercises {
                 exerciseWriter.write(hash3);
                 switch (DSALExercises.TEXT_VERSION) {
                     case ABRAHAM:
-                        exerciseWriter.write(" ($f(n,i) = \\floor*{" + m);
+                        exerciseWriter.write(" ($f(n,i) = \\left \\lfloor{" + m);
                         exerciseWriter.write(" \\cdot ( n \\cdot" + c);
-                        exerciseWriter.write(" \\mod 1 )} + " + c1);
+                        exerciseWriter.write(" \\mod 1 )}\\right \\rfloor + " + c1);
                         exerciseWriter.write(" \\cdot i + " + c2);
                         exerciseWriter.write(" \\cdot i^2 $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
                         break;
