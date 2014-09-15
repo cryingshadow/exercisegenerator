@@ -76,11 +76,11 @@ public class DSALExercises {
     /**
      * The version of this program.
      */
-    private static final String VERSION = "1.1.8";
+    private static final String VERSION = "1.1.9";
 
     static {
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = false;
+        STUDENT_MODE = true;
         TEXT_VERSION = TextVersion.ABRAHAM;
         HASHING_ALGORITHMS = DSALExercises.initHashingAlgorithms();
         SORTING_ALGORITHMS = DSALExercises.initSortingAlgorithms();
