@@ -3,6 +3,8 @@ package exercisegenerator;
 import java.io.*;
 import java.util.*;
 
+import exercisegenerator.algorithms.*;
+
 /**
  * Class for testing the student mode of DSALExercises.
  * @author Thomas Stroeder
@@ -24,7 +26,7 @@ public class DSALExercisesTest {
             System.out.println("Path must be specified!");
             return;
         }
-        if (!DSALExercises.STUDENT_MODE) {
+        if (!Main.STUDENT_MODE) {
             System.out.println("Student mode must be enabled!");
             return;
         }
@@ -53,7 +55,7 @@ public class DSALExercisesTest {
                 nextArgs[3] = path + File.separator + solFile;
                 tasks.add(exFile);
                 tasks.add(solFile);
-                DSALExercises.main(nextArgs);
+                Main.main(nextArgs);
             }
             System.out.println("done.");
         }
