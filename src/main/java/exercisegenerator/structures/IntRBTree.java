@@ -1,10 +1,6 @@
 package exercisegenerator.structures;
 
 import java.io.*;
-import java.util.*;
-
-import exercisegenerator.*;
-import exercisegenerator.io.*;
 
 /**
  * Programm for creating solutions of exercises where elements have to be inserted into an Red-Black-Tree.
@@ -12,263 +8,6 @@ import exercisegenerator.io.*;
  * @version 1.1.0
  */
 public class IntRBTree {
-
-    /**
-     * A node in a red-black-tree with an int value.
-     * @author Florian Corzilius, Thomas Stroeder
-     * @version 1.1.0
-     */
-    private static class RBNode {
-
-        private RBNode father;
-        private int height;
-        private boolean isBlack;
-        private RBNode left;
-        private RBNode right;
-        private int value;
-
-        private RBNode(final int val) {
-            this.father = null;
-            this.left = null;
-            this.right = null;
-            this.value = val;
-            this.height = 0;
-            this.isBlack = true;
-        }
-
-        public RBNode getFather() {
-            return this.father;
-        }
-
-        public int getHeight() {
-            return this.height;
-        }
-
-        public RBNode getLeft() {
-            return this.left;
-        }
-
-        public RBNode getRight() {
-            return this.right;
-        }
-
-        public RBNode getSucc(final boolean isLeft) {
-            if (isLeft) {
-                return this.left;
-            } else {
-                return this.right;
-            }
-        }
-
-        public int getValue() {
-            return this.value;
-        }
-
-        public boolean isBlack() {
-            return this.isBlack;
-        }
-
-        public void setBlack(final boolean black) {
-            this.isBlack = black;
-        }
-
-        public void setFather(final RBNode newFather) {
-            this.father = newFather;
-        }
-
-        public void setLeft(final RBNode newLeft) {
-            this.left = newLeft;
-            this.updateHeight();
-        }
-
-        public void setRight(final RBNode newRight) {
-            this.right = newRight;
-            this.updateHeight();
-        }
-
-        public void setSucc(final boolean isLeft, final RBNode node) {
-            if (isLeft) {
-                this.left = node;
-            } else {
-                this.right = node;
-            }
-            this.updateHeight();
-        }
-
-        public void setValue(final int val) {
-            this.value = val;
-        }
-
-        public void updateHeight() {
-            if (this.left == null && this.right == null) {
-                this.height = 0;
-            } else if (this.left != null && this.right == null) {
-                this.height = this.left.getHeight() + 1;
-            } else if (this.left == null && this.right != null) {
-                this.height = this.right.getHeight() + 1;
-            } else if (this.left.getHeight() > this.right.getHeight()) {
-                this.height = this.left.getHeight() + 1;
-            } else {
-                this.height = this.right.getHeight() + 1;
-            }
-            if (this.father != null) {
-                this.father.updateHeight();
-            }
-        }
-
-    }
-
-    /**
-     * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified RB-tree and
-     * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
-     * @param tree The RB-tree.
-     * @param ops The operations.
-     * @param construction The operations used to construct the start structure.
-     * @param writer The writer for the solution.
-     * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code>
-     *                    operations). May be null if this tree should not be displayed separately.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void rbtree(
-        final IntRBTree tree,
-        final Deque<Pair<Integer, Boolean>> ops,
-        final Deque<Pair<Integer, Boolean>> construction,
-        final BufferedWriter writer,
-        final BufferedWriter writerSpace
-    ) throws IOException {
-        if (ops.isEmpty()) {
-            return;
-        }
-        while (!construction.isEmpty()) {
-            final Pair<Integer, Boolean> operation = construction.poll();
-            if (operation.y) {
-                tree.rbInsert(operation.x, writer, false);
-            } else {
-                final RBNode toRemove = tree.find(operation.x);
-                if (toRemove != null) {
-                    tree.remove(toRemove, writer, false);
-                }
-            }
-        }
-        final String note = "Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.";
-        if (writerSpace != null) {
-            if (ops.size() > 1) {
-                if (tree.isEmpty()) {
-                    writerSpace.write("F\\\"uhren Sie die folgenden Operationen beginnend mit einem anfangs leeren ");
-                    writerSpace.write("\\emphasize{Rot-Schwarz-Baum} aus und geben Sie die entstehenden B\\\"aume ");
-                    writerSpace.write("nach jeder \\emphasize{Einf\\\"uge-} und \\emphasize{L\\\"oschoperation}, ");
-                    writerSpace.write("jeder \\emphasize{Rotation} und jeder \\emphasize{Umf\\\"arbung} an. ");
-                    writerSpace.write(note);
-                    writerSpace.write("\\\\\\\\");
-                    writerSpace.newLine();
-                } else {
-                    writerSpace.write("Betrachten Sie den folgenden \\emphasize{Rot-Schwarz-Baum}:\\\\[2ex]");
-                    writerSpace.newLine();
-                    writerSpace.newLine();
-                    tree.print("", writerSpace);
-                    writerSpace.newLine();
-                    writerSpace.newLine();
-                    writerSpace.write("\\vspace*{1ex}");
-                    writerSpace.newLine();
-                    writerSpace.write("F\\\"uhren Sie beginnend mit diesem Rot-Schwarz-Baum die folgenden ");
-                    writerSpace.write("Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder ");
-                    writerSpace.write("\\emphasize{Einf\\\"uge-} und \\emphasize{L\\\"oschoperation}, jeder ");
-                    writerSpace.write("\\emphasize{Rotation} und jeder \\emphasize{Umf\\\"arbung} an. ");
-                    writerSpace.write(note);
-                    writerSpace.write("\\\\\\\\");
-                    writerSpace.newLine();
-                }
-                TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
-                for (final Pair<Integer, Boolean> op : ops) {
-                    if (op.y) {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
-                    } else {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
-                    }
-                    writerSpace.newLine();
-                }
-                TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
-            } else {
-                final Pair<Integer, Boolean> op = ops.peek();
-                if (tree.isEmpty()) {
-                    if (op.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
-                        writerSpace.write(" in einen leeren \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die ");
-                        writerSpace.write("entstehenden B\\\"aume nach");
-                        writerSpace.newLine();
-                        writerSpace.write("\\begin{itemize}");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{Einf\\\"ugeoperation},");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{Rotation} sowie");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{Umf\\\"arbung} an.");
-                        writerSpace.newLine();
-                        writerSpace.write("\\end{itemize}");
-                        writerSpace.newLine();
-                        writerSpace.write(note);
-                        writerSpace.newLine();
-                    } else {
-                        throw new IllegalArgumentException("Deletion from an empty tree makes no sense!");
-                    }
-                } else {
-                    if (op.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
-                        writerSpace.write(" in den folgenden \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die ");
-                        writerSpace.write("entstehenden B\\\"aume nach");
-                        writerSpace.newLine();
-                        writerSpace.write("\\begin{itemize}");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{Einf\\\"ugeoperation},");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{Rotation} sowie");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{Umf\\\"arbung} an.");
-                        writerSpace.newLine();
-                        writerSpace.write("\\end{itemize}");
-                        writerSpace.newLine();
-                        writerSpace.write(note);
-                        writerSpace.write("\\\\[2ex]");
-                    } else {
-                        writerSpace.write("L\\\"oschen Sie den Wert " + op.x);
-                        writerSpace.write(" aus dem folgenden \\emphasize{Rot-Schwarz-Baum} und geben Sie die ");
-                        writerSpace.write("entstehenden B\\\"aume nach");
-                        writerSpace.newLine();
-                        writerSpace.write("\\begin{itemize}");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{L\\\"oschoperation},");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{Rotation} sowie");
-                        writerSpace.newLine();
-                        writerSpace.write("    \\item jeder \\emphasize{Umf\\\"arbung} an.");
-                        writerSpace.newLine();
-                        writerSpace.write("\\end{itemize}");
-                        writerSpace.newLine();
-                        writerSpace.write(note);
-                        writerSpace.write("\\\\[2ex]");
-                    }
-                    writerSpace.newLine();
-                    writerSpace.newLine();
-                    tree.print("", writerSpace);
-                    writerSpace.newLine();
-                }
-            }
-        }
-        tree.resetStepCounter();
-        while (!ops.isEmpty()) {
-            final Pair<Integer, Boolean> operation = ops.poll();
-            if (operation.y) {
-                tree.rbInsert(operation.x, writer, true);
-            } else {
-                final RBNode toRemove = tree.find(operation.x);
-                if (toRemove != null) {
-                    tree.remove(toRemove, writer, true);
-                } else {
-                    tree.print(operation.x + " kommt nicht vor", writer);
-                }
-            }
-        }
-    }
 
     /**
      * Prints a protected whitespace and a line terminator to the specified writer.
@@ -373,6 +112,54 @@ public class IntRBTree {
             tmp = tmp.getLeft();
         }
         return tmp;
+    }
+
+    /**
+     * Prints this Red-Black-Tree right under the given headline.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void print(final String headline, final BufferedWriter writer) throws IOException  {
+        this.printVerticalSpace(writer);
+        this.printSamePageBeginning(headline, writer);
+        this.printTikzBeginning(writer);
+        if (this.root == null) {
+            writer.write("\\Tree [.\\phantom{0} ];");
+        } else if (this.root.getLeft() == null && this.root.getRight() == null ) {
+            writer.write("\\Tree [." + this.root.getValue() + " ];");
+        } else {
+            writer.write("\\Tree");
+            writer.write(this.toString(this.root));
+        }
+        writer.newLine();
+        IntRBTree.printTikzEnd(writer);
+        IntRBTree.printProtectedNewline(writer);
+        this.printSamePageEnd(writer);
+    }
+
+    /**
+     * Adds a node to the Red-Black-Tree.
+     * @param value The value of the new node to add.
+     * @param writer The writer to send the output to.
+     * @param write A Boolean, which is true if the Red-Black-Tree has to be printed after each rotation.
+     */
+    public void rbInsert(final int value, final BufferedWriter writer, final boolean write) throws IOException {
+        final RBNode node = this.insert(value);
+        if (node == this.root) {
+            // If it is the first added node, make it black.
+            node.setBlack(true);
+            if (write) {
+                this.print("f\\\"uge " + value + " ein", writer);
+            }
+        } else {
+            // first, the added node is red
+            node.setBlack(false);
+            if (write) {
+                this.print("f\\\"uge " + value + " ein", writer);
+            }
+            // restore the red-black-property
+            this.balanceAfterInsert(node, writer, write);
+        }
     }
 
     public void remove(final RBNode node, final BufferedWriter writer, final boolean write) throws IOException {
@@ -526,29 +313,6 @@ public class IntRBTree {
     }
 
     /**
-     * Prints this Red-Black-Tree right under the given headline.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    private void print(final String headline, final BufferedWriter writer) throws IOException  {
-        this.printVerticalSpace(writer);
-        this.printSamePageBeginning(headline, writer);
-        this.printTikzBeginning(writer);
-        if (this.root == null) {
-            writer.write("\\Tree [.\\phantom{0} ];");
-        } else if (this.root.getLeft() == null && this.root.getRight() == null ) {
-            writer.write("\\Tree [." + this.root.getValue() + " ];");
-        } else {
-            writer.write("\\Tree");
-            writer.write(this.toString(this.root));
-        }
-        writer.newLine();
-        IntRBTree.printTikzEnd(writer);
-        IntRBTree.printProtectedNewline(writer);
-        this.printSamePageEnd(writer);
-    }
-
-    /**
      * Prints the beginning of a samepage environment.
      * @param step The current evaluation step.
      * @param writer The writer to send the output to.
@@ -634,31 +398,6 @@ public class IntRBTree {
                     this.stepCounter++;
                 }
             }
-        }
-    }
-
-    /**
-     * Adds a node to the Red-Black-Tree.
-     * @param value The value of the new node to add.
-     * @param writer The writer to send the output to.
-     * @param write A Boolean, which is true if the Red-Black-Tree has to be printed after each rotation.
-     */
-    private void rbInsert(final int value, final BufferedWriter writer, final boolean write) throws IOException {
-        final RBNode node = this.insert(value);
-        if (node == this.root) {
-            // If it is the first added node, make it black.
-            node.setBlack(true);
-            if (write) {
-                this.print("f\\\"uge " + value + " ein", writer);
-            }
-        } else {
-            // first, the added node is red
-            node.setBlack(false);
-            if (write) {
-                this.print("f\\\"uge " + value + " ein", writer);
-            }
-            // restore the red-black-property
-            this.balanceAfterInsert(node, writer, write);
         }
     }
 

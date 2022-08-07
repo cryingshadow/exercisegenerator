@@ -1,7 +1,12 @@
 package exercisegenerator.algorithms;
 
+import java.io.*;
+import java.util.*;
+
 import exercisegenerator.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.util.*;
 
 /**
  * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
@@ -24,7 +29,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "avltree")
+        TreeAlgorithms::avltree
     ),
 
     /**
@@ -42,7 +47,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "btree")
+        TreeAlgorithms::btree
     ), //TODO extra flag for deletion
 
     /**
@@ -59,7 +64,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "bubblesort")
+        Sorting::bubblesort
     ),
 
     /**
@@ -76,7 +81,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap)"
             )
         },
-        DSALExercisesTest.set(true, "dijkstra")
+        GraphAlgorithms::dijkstra
     ),
 
     /**
@@ -93,7 +98,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "floyd")
+        GraphAlgorithms::floyd
     ),
 
     /**
@@ -111,7 +116,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "fordfulkerson")
+        GraphAlgorithms::fordFulkerson
     ),
 
     /**
@@ -128,7 +133,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap)"
             )
         },
-        DSALExercisesTest.set(true, "hashDivision")
+        Hashing::hashDiv
     ),
 
     /**
@@ -145,7 +150,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap)"
             )
         },
-        DSALExercisesTest.set(true, "hashDivisionLinear")
+        Hashing::hashDivLin
     ),
 
     /**
@@ -162,7 +167,7 @@ public enum Algorithm {
                         "Parameters are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"
             )
         },
-        DSALExercisesTest.set(true, "hashDivisionQuadratic")
+        Hashing::hashDivQuad
     ),
 
     /**
@@ -180,7 +185,7 @@ public enum Algorithm {
                         + "multiplication method)"
             )
         },
-        DSALExercisesTest.set(true, "hashMultiplication")
+        Hashing::hashMult
     ),
 
     /**
@@ -198,7 +203,7 @@ public enum Algorithm {
                         + "multiplication method)"
             )
         },
-        DSALExercisesTest.set(true, "hashMultiplicationLinear")
+        Hashing::hashMultLin
     ),
 
     /**
@@ -216,7 +221,7 @@ public enum Algorithm {
                         + "multiplication method), c1 and c2 (constants for quadratic probing)"
             )
         },
-        DSALExercisesTest.set(true, "hashMultiplicationQuadratic")
+        Hashing::hashMultQuad
     ),
 
     /**
@@ -233,7 +238,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "heapsort")
+        Sorting::heapsort
     ),
 
     /**
@@ -251,7 +256,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "heapsortWithTrees")
+        Sorting::heapsortWithTrees
     ),
 
     /**
@@ -268,7 +273,7 @@ public enum Algorithm {
                "TODO"
                )
           },
-          DSALExercisesTest.set(true, "hull")
+          GeometricAlgorithms::hull
     ),
 
     /**
@@ -285,7 +290,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "insertionsort")
+        Sorting::insertionsort
     ),
 
     /**
@@ -302,7 +307,7 @@ public enum Algorithm {
                     "TODO"
             )
         },
-        DSALExercisesTest.set(true, "knapsack")
+        DynamicProgramming::knapsack
     ),
 
     /**
@@ -319,7 +324,8 @@ public enum Algorithm {
                     "TODO"
             )
         },
-        DSALExercisesTest.set(false, "lcs")
+        DynamicProgramming::lcs,
+        false
     ),
 
     /**
@@ -336,7 +342,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "mergesort")
+        Sorting::mergesort
     ),
 
     /**
@@ -354,7 +360,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "mergesortWithSplitting")
+        Sorting::mergesortSplit
     ),
 
     /**
@@ -371,7 +377,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "prim")
+        GraphAlgorithms::prim
     ),
 
     /**
@@ -388,7 +394,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "quicksort")
+        Sorting::quicksort
     ),
 
     /**
@@ -405,7 +411,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "rbtree")
+        TreeAlgorithms::rbtree
     ), //TODO extra flag for deletion
 
     /**
@@ -422,7 +428,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "scc")
+        GraphAlgorithms::scc
     ),
 
     /**
@@ -439,7 +445,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "selectionsort")
+        Sorting::selectionsort
     ),
 
     /**
@@ -456,7 +462,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "sharir")
+        GraphAlgorithms::sharir
     ),
 
     /**
@@ -473,7 +479,7 @@ public enum Algorithm {
                         "TODO"
             )
         },
-        DSALExercisesTest.set(true, "topologicSort")
+        GraphAlgorithms::topologicsort
     ),
 
     /**
@@ -490,13 +496,47 @@ public enum Algorithm {
                     "TODO"
             )
         },
-        DSALExercisesTest.set(true, "warshall")
+        GraphAlgorithms::warshall
     );
+
+    public static Optional<Algorithm> forName(final String name) {
+        for (final Algorithm alg : Algorithm.values()) {
+            if (Main.STUDENT_MODE && !alg.enabled) {
+                continue;
+            }
+            if (alg.name.equals(name)) {
+                return Optional.of(alg);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<BufferedWriter> getOptionalSpaceWriter(final AlgorithmInput input) {
+        return input.options.containsKey(Flag.EXERCISE) ? Optional.of(input.exerciseWriter) : Optional.empty();
+    }
+
+    public static PreprintMode parsePreprintMode(final Map<Flag, String> options) throws Exception {
+        if (options.containsKey(Flag.PREPRINT_MODE)) {
+            switch (options.get(Flag.PREPRINT_MODE)) {
+                case "always":
+                    return PreprintMode.ALWAYS;
+                case "solutionSpace":
+                    return PreprintMode.SOLUTION_SPACE;
+                case "never":
+                    return PreprintMode.NEVER;
+                default:
+                    throw new Exception("Unknown preprint mode!");
+            }
+        }
+        return PreprintMode.ALWAYS;
+    }
+
+    public final CheckedConsumer<AlgorithmInput, ? extends Exception> algorithm;
 
     /**
      * The documentation for this algorithm.
      */
-    public final String[] docu;
+    public final String[] documentation;
 
     /**
      * Flag indicating whether the algorithm is enabled in student mode.
@@ -506,7 +546,7 @@ public enum Algorithm {
     /**
      * The name of the algorithm for text processing.
      */
-    public final String longname;
+    public final String longName;
 
     /**
      * The name of the algorithm.
@@ -514,16 +554,29 @@ public enum Algorithm {
     public final String name;
 
     /**
-     * @param n The name of the algorithm.
-     * @param l The name of the algorithm for text processing.
-     * @param d The documentation for this algorithm.
-     * @param e Flag indicating whether the algorithm is enabled in student mode.
+     * Creates an enabled Algorithm.
      */
-    private Algorithm(final String n, final String l, final String[] d, final boolean e) {
-        this.name = n;
-        this.longname = l;
-        this.docu = d;
-        this.enabled = e;
+    private Algorithm(
+        final String name,
+        final String longName,
+        final String[] documentation,
+        final CheckedConsumer<AlgorithmInput, ? extends Exception> algorithm
+    ) {
+        this(name, longName, documentation, algorithm, true);
+    }
+
+    private Algorithm(
+        final String name,
+        final String longName,
+        final String[] documentation,
+        final CheckedConsumer<AlgorithmInput, ? extends Exception> algorithm,
+        final boolean enabled
+    ) {
+        this.name = name;
+        this.longName = longName;
+        this.documentation = documentation;
+        this.algorithm = algorithm;
+        this.enabled = enabled;
     }
 
 }

@@ -1,9 +1,7 @@
 package exercisegenerator.structures;
 
 import java.io.*;
-import java.util.*;
 
-import exercisegenerator.*;
 import exercisegenerator.io.*;
 
 /**
@@ -14,360 +12,9 @@ import exercisegenerator.io.*;
 public class IntAVLTree {
 
     /**
-     * A node in an AVL-tree with an int value.
-     * @author Florian Corzilius, Thomas Stroeder
-     * @version 1.1.0
-     */
-    private static class AVLNode {
-
-        /**
-         * The father node.
-         */
-        private AVLNode father;
-
-        /**
-         * The left child.
-         */
-        private AVLNode left;
-
-        /**
-         * The right child.
-         */
-        private AVLNode right;
-
-        /**
-         * The value.
-         */
-        private final int value;
-
-        /**
-         * Creates a node with the specified value and neither children nor a father.
-         * @param val The node's value.
-         */
-        private AVLNode(final int val) {
-            this.father = null;
-            this.left = null;
-            this.right = null;
-            this.value = val;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(final Object o) {
-            if (!(o instanceof AVLNode)) {
-                return false;
-            }
-            final AVLNode node = (AVLNode)o;
-            if (this.value != node.value) {
-                return false;
-            }
-            if (node.left == null) {
-                if (this.left != null) {
-                    return false;
-                }
-            } else if (!node.left.equals(this.left)) {
-                return false;
-            }
-            if (node.right == null) {
-                if (this.right != null) {
-                    return false;
-                }
-            } else if (!node.right.equals(this.right)) {
-                return false;
-            }
-            return true;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            return
-                3 * this.value
-                + 7 * (this.left == null ? 0 : this.left.hashCode())
-                + 5 * (this.right == null ? 0 : this.right.hashCode());
-        }
-
-        /**
-         * @return The height of this node in the corresponding tree.
-         */
-        public int height() {
-            final int leftHeight = this.left == null ? -1 : this.left.height();
-            final int rightHeight = this.right == null ? -1 : this.right.height();
-            if (leftHeight > rightHeight) {
-                return leftHeight + 1;
-            } else {
-                return rightHeight + 1;
-            }
-        }
-
-        /**
-         * @return True if the tree rooted in this node is balanced. False otherwise.
-         */
-        public boolean isBalanced() {
-            if (this.left != null) {
-                if (!this.left.isBalanced()) {
-                    return false;
-                }
-            }
-            if (this.right != null) {
-                if (!this.right.isBalanced()) {
-                    return false;
-                }
-            }
-            return
-                Math.abs(
-                    (this.left == null ? -1 : this.left.height()) - (this.right == null ? -1 : this.right.height())
-                ) < 2;
-        }
-
-        /**
-         * @param fatherLink The node (same reference) that should be the father of this node.
-         * @return True if each father link in the tree rooted in this node is correctly set.
-         */
-        public boolean isWellFormed(final AVLNode fatherLink) {
-            if (this.father != fatherLink) {
-                return false;
-            }
-            if (this.left != null) {
-                if (!this.left.isWellFormed(this)) {
-                    return false;
-                }
-            }
-            if (this.right != null) {
-                if (!this.right.isWellFormed(this)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /**
-         * @return A node with the smallest key in the tree rooted in the current node. The returned node is the
-         *         left-most node in the tree rooted in the current node.
-         */
-        public AVLNode minimum() {
-            AVLNode tmp = this;
-            while (tmp.left != null) {
-                tmp = tmp.left;
-            }
-            return tmp;
-        }
-
-        /**
-         * @return A String representing the heights of all nodes in the tree rooted in the current node.
-         */
-        public String printHeights() {
-            String result = new String("");
-            if (this.left == null && this.right == null) {
-                result += " " + this.height();
-            } else {
-                result += " [." + this.height();
-                if (this.left != null) {
-                    result += this.left.printHeights();
-                } else {
-                    result += " .";
-                }
-                if (this.right != null) {
-                    result += this.right.printHeights();
-                } else {
-                    result += " .";
-                }
-                result += " ]";
-            }
-            return result;
-        }
-
-        /**
-         * Gives the string representation of this AVL-tree starting at
-         * the given node. The representation is a valid latex-qtree.
-         * @return The string representation of this AVL-tree
-         */
-        @Override
-        public String toString() {
-            String result = new String("");
-            if (this.left == null && this.right == null) {
-                result += " " + this.value;
-            } else {
-                result += " [." + this.value;
-                if (this.left != null) {
-                    result += this.left.toString();
-                } else {
-                    result += " \\edge[draw=none];\\node[draw=none]{};";
-                }
-                if (this.right != null) {
-                    result += this.right.toString();
-                } else {
-                    result += " \\edge[draw=none];\\node[draw=none]{};";
-                }
-                result += " ]";
-            }
-            return result;
-        }
-
-    }
-
-    /**
-     * Flag to enable debug output.
-     */
-    private static final boolean DEBUG_OUTPUT = false;
-
-    /**
-     * Flag to enable assertions.
-     */
-    private static final boolean USE_ASSERTIONS = true;
-
-    /**
-     * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified AVL-tree and
-     * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
-     * @param tree The AVL-tree.
-     * @param ops The operations.
-     * @param construction The operations used to construct the start structure.
-     * @param writer The writer for the solution.
-     * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code>
-     *                    operations). May be null if this tree should not be displayed separately.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void avltree(
-        final IntAVLTree tree,
-        final Deque<Pair<Integer, Boolean>> ops,
-        final Deque<Pair<Integer, Boolean>> construction,
-        final BufferedWriter writer,
-        final BufferedWriter writerSpace
-    ) throws IOException {
-        if (IntAVLTree.USE_ASSERTIONS) {
-            IntAVLTree.check(tree);
-        }
-        if (ops.isEmpty()) {
-            return;
-        }
-        while (!construction.isEmpty()) {
-            final Pair<Integer, Boolean> operation = construction.poll();
-            if (operation.y) {
-                tree.add(operation.x, null);
-            } else {
-                final AVLNode toRemove = tree.find(operation.x);
-                if (toRemove != null) {
-                    tree.remove(toRemove, null);
-                }
-            }
-            if (IntAVLTree.USE_ASSERTIONS) {
-                IntAVLTree.check(tree);
-            }
-        }
-        if (IntAVLTree.DEBUG_OUTPUT) {
-            System.out.println(tree.root == null ? "-1" : tree.root.printHeights());
-        }
-        if (writerSpace != null) {
-            if (ops.size() > 1) {
-                if (tree.isEmpty()) {
-                    writerSpace.write("F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren ");
-                    writerSpace.write("\\emphasize{AVL-Baum} aus und geben Sie die entstehenden B\\\"aume nach jeder ");
-                    writerSpace.write("\\emphasize{Einf\\\"uge-} und \\emphasize{L\\\"oschoperation} sowie jeder ");
-                    writerSpace.write("\\emphasize{Rotation} an:\\\\\\\\");
-                    writerSpace.newLine();
-                } else {
-                    writerSpace.write("Betrachten Sie den folgenden \\emphasize{AVL-Baum}:\\\\[2ex]");
-                    writerSpace.newLine();
-                    writerSpace.newLine();
-                    tree.print("", writerSpace);
-                    writerSpace.newLine();
-                    writerSpace.newLine();
-                    writerSpace.write("\\vspace*{1ex}");
-                    writerSpace.newLine();
-                    writerSpace.write("F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und ");
-                    writerSpace.write("geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-} und ");
-                    writerSpace.write("\\emphasize{L\\\"oschoperation} sowie jeder \\emphasize{Rotation} an:\\\\\\\\");
-                    writerSpace.newLine();
-                }
-                TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
-                for (final Pair<Integer, Boolean> op : ops) {
-                    if (op.y) {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
-                    } else {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
-                    }
-                    writerSpace.newLine();
-                }
-                TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
-            } else {
-                final Pair<Integer, Boolean> op = ops.peek();
-                if (tree.isEmpty()) {
-                    if (op.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
-                        writerSpace.write(" in einen leeren \\emphasize{AVL-Baum} ein und geben Sie die entstehenden ");
-                        writerSpace.write("B\\\"aume nach jeder \\emphasize{Einf\\\"ugeoperation} sowie jeder ");
-                        writerSpace.write("\\emphasize{Rotation} an.");
-                    } else {
-                        // this case is nonsense
-                        return;
-                    }
-                } else {
-                    if (op.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
-                        writerSpace.write(" in den folgenden \\emphasize{AVL-Baum} ein und geben Sie die entstehenden");
-                        writerSpace.write(" B\\\"aume nach jeder \\emphasize{Einf\\\"ugeoperation} sowie jeder ");
-                        writerSpace.write("\\emphasize{Rotation} an:\\\\[2ex]");
-                    } else {
-                        writerSpace.write("L\\\"oschen Sie den Wert " + op.x);
-                        writerSpace.write(" aus dem folgenden \\emphasize{AVL-Baum} und geben Sie die entstehenden ");
-                        writerSpace.write("B\\\"aume nach jeder \\emphasize{L\\\"oschoperation} sowie jeder ");
-                        writerSpace.write("\\emphasize{Rotation} an:\\\\[2ex]");
-                    }
-                    writerSpace.newLine();
-                    writerSpace.newLine();
-                    tree.print("", writerSpace);
-                    writerSpace.newLine();
-                }
-            }
-        }
-        tree.resetStepCounter();
-        while (!ops.isEmpty()) {
-            final Pair<Integer, Boolean> operation = ops.poll();
-            if (operation.y) {
-                if (IntAVLTree.DEBUG_OUTPUT) {
-                    System.out.println("insert " + operation.x + " in:");
-                    System.out.println(tree.toString());
-                }
-                tree.add(operation.x, writer);
-            } else {
-                if (IntAVLTree.DEBUG_OUTPUT) {
-                    System.out.println("remove " + operation.x + " in:");
-                    System.out.println(tree.toString());
-                }
-                final AVLNode toRemove = tree.find(operation.x);
-                if (toRemove != null) {
-                    tree.remove(toRemove, writer);
-                } else {
-                    tree.print(operation.x + " kommt nicht vor", writer);
-                }
-            }
-            if (IntAVLTree.USE_ASSERTIONS) {
-                IntAVLTree.check(tree);
-            }
-            if (IntAVLTree.DEBUG_OUTPUT) {
-                System.out.println("results in:");
-                System.out.println(tree.toString());
-            }
-        }
-    }
-
-    /**
-     * Asserts desired properties of the specified AVL tree.
-     * @param tree The tree to check.
-     */
-    private static void check(final IntAVLTree tree) {
-        assert (tree.isWellFormed()) : "AVL tree is not well-formed!";
-        assert (tree.isBalanced()) : "AVL tree is not balanced!";
-    }
-
-    /**
      * The root of the AVL-tree.
      */
-    private AVLNode root;
+    public AVLNode root;
 
     /**
      * The step counter which represents the number of printed trees in one exercise/solution.
@@ -442,6 +89,25 @@ public class IntAVLTree {
     }
 
     /**
+     * @param val The key to find.
+     * @return The highest node with the given key in this AVL-tree or null if the given key does not occur.
+     */
+    public AVLNode find(final int val) {
+        AVLNode currentNode = this.root;
+        while (currentNode != null) {
+            if (val < currentNode.value) {
+                currentNode = currentNode.left;
+            } else if (val > currentNode.value) {
+                currentNode = currentNode.right;
+            } else {
+                // val == currentNode.value
+                return currentNode;
+            }
+        }
+        return null;
+    }
+
+    /**
      * @return The height of the AVL-tree (-1 if the tree is empty, 0 if the tree just consists of the root).
      */
     public int getHeight() {
@@ -486,6 +152,64 @@ public class IntAVLTree {
             return true;
         }
         return this.root.isWellFormed(null);
+    }
+
+    /**
+     * Prints this AVL-tree right under the given headline.
+     * @param headline A headline.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void print(final String headline, final BufferedWriter writer) throws IOException  {
+        this.printVerticalSpace(writer);
+        this.printSamePageBeginning(headline, writer);
+        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        if (this.root == null) {
+            writer.write("\\Tree [.\\phantom{0} ];");
+        } else if (this.root.left == null && this.root.right == null ) {
+            writer.write("\\Tree [." + this.root.value + " ];");
+        } else {
+            writer.write("\\Tree");
+            writer.write(this.root.toString());
+        }
+        writer.newLine();
+        TikZUtils.printTikzEnd(writer);
+        TikZUtils.printProtectedNewline(writer);
+        this.printSamePageEnd(writer);
+    }
+
+    /**
+     * Removes the specified node from this AVL-tree. The node must exist in this tree. If a writer is specified, all
+     * necessary steps are printed to this writer.
+     * @param node The node to remove.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void remove(final AVLNode node, final BufferedWriter writer) throws IOException {
+        final int value = node.value;
+        if (this.root.left == null && this.root.right == null ) {
+            assert (node == this.root) : "Tried to remove a node which does not exist in this AVL-tree!";
+            this.root = null;
+            if (writer != null) {
+                this.print("entferne " + value, writer);
+            }
+        } else {
+            final AVLNode tmp = this.delete(node);
+            if (writer != null) {
+                this.print("entferne " + value, writer);
+            }
+            // Balance the tree
+            if (tmp != null) {
+                this.balance(tmp, false, writer);
+            }
+        }
+    }
+
+    /**
+     * Sets the step counter back to 0.
+     */
+    public void resetStepCounter() {
+        this.stepCounter = 0;
     }
 
     /* (non-Javadoc)
@@ -614,25 +338,6 @@ public class IntAVLTree {
     }
 
     /**
-     * @param val The key to find.
-     * @return The highest node with the given key in this AVL-tree or null if the given key does not occur.
-     */
-    private AVLNode find(final int val) {
-        AVLNode currentNode = this.root;
-        while (currentNode != null) {
-            if (val < currentNode.value) {
-                currentNode = currentNode.left;
-            } else if (val > currentNode.value) {
-                currentNode = currentNode.right;
-            } else {
-                // val == currentNode.value
-                return currentNode;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Performs a left-rotation on the given node of this AVL-tree. If a writer is specified, it also prints the
      * result to it.
      * @param node The node to rotate at.
@@ -666,30 +371,6 @@ public class IntAVLTree {
             this.print("rotiere " + node.value + " nach links", writer);
         }
         return r;
-    }
-
-    /**
-     * Prints this AVL-tree right under the given headline.
-     * @param headline A headline.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    private void print(final String headline, final BufferedWriter writer) throws IOException  {
-        this.printVerticalSpace(writer);
-        this.printSamePageBeginning(headline, writer);
-        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
-        if (this.root == null) {
-            writer.write("\\Tree [.\\phantom{0} ];");
-        } else if (this.root.left == null && this.root.right == null ) {
-            writer.write("\\Tree [." + this.root.value + " ];");
-        } else {
-            writer.write("\\Tree");
-            writer.write(this.root.toString());
-        }
-        writer.newLine();
-        TikZUtils.printTikzEnd(writer);
-        TikZUtils.printProtectedNewline(writer);
-        this.printSamePageEnd(writer);
     }
 
     /**
@@ -750,33 +431,6 @@ public class IntAVLTree {
     }
 
     /**
-     * Removes the specified node from this AVL-tree. The node must exist in this tree. If a writer is specified, all
-     * necessary steps are printed to this writer.
-     * @param node The node to remove.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    private void remove(final AVLNode node, final BufferedWriter writer) throws IOException {
-        final int value = node.value;
-        if (this.root.left == null && this.root.right == null ) {
-            assert (node == this.root) : "Tried to remove a node which does not exist in this AVL-tree!";
-            this.root = null;
-            if (writer != null) {
-                this.print("entferne " + value, writer);
-            }
-        } else {
-            final AVLNode tmp = this.delete(node);
-            if (writer != null) {
-                this.print("entferne " + value, writer);
-            }
-            // Balance the tree
-            if (tmp != null) {
-                this.balance(tmp, false, writer);
-            }
-        }
-    }
-
-    /**
      * Replaces the old node by the new node from the perspective of the old node's father, but does not update
      * the children of the new node.
      * @param oldNode The node to be replaced.
@@ -799,13 +453,6 @@ public class IntAVLTree {
             oldNode.father.right = newNode;
         }
         return newNode == null ? oldNode.father : newNode;
-    }
-
-    /**
-     * Sets the step counter back to 0.
-     */
-    private void resetStepCounter() {
-        this.stepCounter = 0;
     }
 
     /**

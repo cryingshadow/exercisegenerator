@@ -37,7 +37,7 @@ public class DSALExercisesTest {
         nextArgs[4] = "-a";
         final List<String> tasks = new ArrayList<String>();
         for (final Algorithm alg : Algorithm.values()) {
-            if (!alg.enabled) {
+            if (DSALExercisesTest.doNotConsider(alg)) {
                 continue;
             }
             System.out.print("Testing: " + alg.name);
@@ -82,6 +82,10 @@ public class DSALExercisesTest {
             return val;
         }
         return DSALExercisesTest.toDebug.equals(check);
+    }
+
+    private static boolean doNotConsider(final Algorithm alg) {
+        return !alg.enabled || (DSALExercisesTest.toDebug != null && !alg.name.equals(DSALExercisesTest.toDebug));
     }
 
 }

@@ -15,11 +15,36 @@ import exercisegenerator.util.*;
  */
 public abstract class Hashing {
 
+    private static final String div = "\\emphasize{Divisionsmethode}";
+
+    private static final String hash1 =
+        "F\\\"ugen Sie die folgenden Werte in das unten stehende Array \\texttt{a} der L\\\"ange ";
+
+    private static final String hash2 = " unter Verwendung der ";
+
+    private static final String hash3 = " ein";
+
+    private static final String hash4 = ":\\\\[2ex]";
+
+    private static final String linProb = " mit \\emphasize{linearer Sondierung}";
+
+    private static final String mult1 = "\\emphasize{Multiplikationsmethode} ($c = ";
+
+    private static final String mult2 = "$)";
+
+    private static final String noProb = " \\emphasize{ohne Sondierung} (also durch Verkettung)";
+
     /**
      * Array containing all prime numbers between 5 and 101.
      */
     private static final int[] PRIMES_5_101 =
         new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
+
+    private static final String quadProb1 = " mit \\emphasize{quadratischer Sondierung} ($c_1 = ";
+
+    private static final String quadProb2 = "$, $c_2 = ";
+
+    private static final String quadProb3 = "$)";
 
     /**
      * @param gen A random number generator.
@@ -67,6 +92,141 @@ public abstract class Hashing {
         params[2] = c1;
         params[3] = c2;
         return new Pair<double[], Integer[]>(params, array);
+    }
+
+    public static void hashDiv(final AlgorithmInput input) throws Exception {
+        final Pair<double[], Integer[]> paramsAndArray = Hashing.parseOrGenerateParamsAndArray(input.options);
+        final Integer m = (int)paramsAndArray.x[0];
+        final double[] params = new double[5];
+        params[0] = 1;
+        params[1] = 0;
+        params[2] = 0;
+        params[3] = 0;
+        params[4] = 0;
+        try {
+            Hashing.hashing(paramsAndArray.y, m, params, !Main.STUDENT_MODE, input.solutionWriter);
+        } catch (final HashException e) {
+            throw new IllegalStateException("Could not hash without probing - this should be impossible...");
+        }
+        input.exerciseWriter.write(Hashing.hash1 + m);
+        input.exerciseWriter.write(Hashing.hash2);
+        input.exerciseWriter.write(Hashing.div);
+        input.exerciseWriter.write(Hashing.noProb);
+        input.exerciseWriter.write(Hashing.hash3);
+        switch (Main.TEXT_VERSION) {
+            case ABRAHAM:
+                input.exerciseWriter.write(" ($f(n) = n \\mod " + m);
+                input.exerciseWriter.write("$)");
+                break;
+            case GENERAL:
+                break;
+            default:
+                throw new IllegalStateException("Unkown text version!");
+        }
+        input.exerciseWriter.write(Hashing.hash4);
+        Hashing.printExercise(
+            paramsAndArray.y,
+            m,
+            false,
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter
+        );
+    }
+
+    public static void hashDivLin(final AlgorithmInput input) throws Exception {
+        final Pair<double[], Integer[]> paramsAndArray = Hashing.parseOrGenerateParamsAndArray(input.options);
+        final Integer m = (int)paramsAndArray.x[0];
+        final double[] params = new double[5];
+        params[0] = 1;
+        params[1] = 1;
+        params[2] = 0;
+        params[3] = 0;
+        params[4] = 0;
+        try {
+            Hashing.hashing(paramsAndArray.y, m, params, !Main.STUDENT_MODE, input.solutionWriter);
+        } catch (final HashException e) {
+            throw new IllegalStateException("Could not hash with linear probing - this should not happen...");
+        }
+        input.exerciseWriter.write(Hashing.hash1 + m);
+        input.exerciseWriter.write(Hashing.hash2);
+        input.exerciseWriter.write(Hashing.div);
+        input.exerciseWriter.write(Hashing.linProb);
+        input.exerciseWriter.write(Hashing.hash3);
+        switch (Main.TEXT_VERSION) {
+            case ABRAHAM:
+                input.exerciseWriter.write(" ($f(n,i) = ((n \\mod " + m);
+                input.exerciseWriter.write(") + i) \\mod " + m);
+                input.exerciseWriter.write("$)");
+                break;
+            case GENERAL:
+                break;
+            default:
+                throw new IllegalStateException("Unkown text version!");
+        }
+        input.exerciseWriter.write(Hashing.hash4);
+        Hashing.printExercise(
+            paramsAndArray.y,
+            m,
+            true,
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter
+        );
+    }
+
+    public static void hashDivQuad(final AlgorithmInput input) throws Exception {
+        final Pair<double[], Integer[]> paramsAndArray = Hashing.parseOrGenerateParamsAndArray(input.options);
+        final Integer m = (int)paramsAndArray.x[0];
+        double c1 = paramsAndArray.x[2];
+        double c2 = paramsAndArray.x[3];
+        final double[] params = new double[5];
+        params[0] = 1;
+        params[1] = 2;
+        params[2] = 0;
+        params[3] = c1;
+        params[4] = c2;
+        boolean fail;
+        do {
+            try {
+                fail = false;
+                Hashing.hashing(paramsAndArray.y, m, params, !Main.STUDENT_MODE, input.solutionWriter);
+            } catch (final HashException e) {
+                final Random gen = new Random();
+                final Pair<Double, Double> cs = Hashing.newDivQuadInstance(gen, m, params);
+                c1 = cs.x;
+                c2 = cs.y;
+                params[3] = c1;
+                params[4] = c2;
+                fail = true;
+            }
+        } while (fail);
+        input.exerciseWriter.write(Hashing.hash1 + m);
+        input.exerciseWriter.write(Hashing.hash2);
+        input.exerciseWriter.write(Hashing.div);
+        input.exerciseWriter.write(Hashing.quadProb1 + c1);
+        input.exerciseWriter.write(Hashing.quadProb2 + c2);
+        input.exerciseWriter.write(Hashing.quadProb3);
+        input.exerciseWriter.write(Hashing.hash3);
+        switch (Main.TEXT_VERSION) {
+            case ABRAHAM:
+                input.exerciseWriter.write(" ($f(n,i) = ((n \\mod " + m);
+                input.exerciseWriter.write(") + " + c1);
+                input.exerciseWriter.write(" \\cdot i + " + c2);
+                input.exerciseWriter.write(" \\cdot i^2) \\mod " + m);
+                input.exerciseWriter.write("$)");
+                break;
+            case GENERAL:
+                break;
+            default:
+                throw new IllegalStateException("Unkown text version!");
+        }
+        input.exerciseWriter.write(Hashing.hash4);
+        Hashing.printExercise(
+            paramsAndArray.y,
+            m,
+            true,
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter
+        );
     }
 
     /**
@@ -239,6 +399,150 @@ public abstract class Hashing {
         TikZUtils.printTikzEnd(writer);
         writer.write("}");
         writer.newLine();
+    }
+
+    public static void hashMult(final AlgorithmInput input) throws Exception {
+        final Pair<double[], Integer[]> paramsAndArray = Hashing.parseOrGenerateParamsAndArray(input.options);
+        final Integer m = (int)paramsAndArray.x[0];
+        final double c = paramsAndArray.x[1];
+        final double[] params = new double[5];
+        params[0] = 2;
+        params[1] = 0;
+        params[2] = c;
+        params[3] = 0;
+        params[4] = 0;
+        try {
+            Hashing.hashing(paramsAndArray.y, m, params, !Main.STUDENT_MODE, input.solutionWriter);
+        } catch (final HashException e) {
+            throw new IllegalStateException("Could not hash without probing - this should be impossible...");
+        }
+        input.exerciseWriter.write(Hashing.hash1 + m);
+        input.exerciseWriter.write(Hashing.hash2);
+        input.exerciseWriter.write(Hashing.mult1 + c);
+        input.exerciseWriter.write(Hashing.mult2);
+        input.exerciseWriter.write(Hashing.noProb);
+        input.exerciseWriter.write(Hashing.hash3);
+        switch (Main.TEXT_VERSION) {
+            case ABRAHAM:
+                input.exerciseWriter.write(" ($f(n,i) = \\left \\lfloor{" + m);
+                input.exerciseWriter.write(" \\cdot ( n \\cdot" + c);
+                input.exerciseWriter.write(
+                    " \\mod 1 )\\right \\rfloor $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet"
+                );
+                break;
+            case GENERAL:
+                break;
+            default:
+                throw new IllegalStateException("Unkown text version!");
+        }
+        input.exerciseWriter.write(Hashing.hash4);
+        Hashing.printExercise(
+            paramsAndArray.y,
+            m,
+            false,
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter
+        );
+    }
+
+    public static void hashMultLin(final AlgorithmInput input) throws Exception {
+        final Pair<double[], Integer[]> paramsAndArray = Hashing.parseOrGenerateParamsAndArray(input.options);
+        final Integer m = (int)paramsAndArray.x[0];
+        final double c = paramsAndArray.x[1];
+        final double[] params = new double[5];
+        params[0] = 2;
+        params[1] = 1;
+        params[2] = c;
+        params[3] = 0;
+        params[4] = 0;
+        try {
+            Hashing.hashing(paramsAndArray.y, m, params, !Main.STUDENT_MODE, input.solutionWriter);
+        } catch (final HashException e) {
+            throw new IllegalStateException("Could not hash with linear probing - this should not happen...");
+        }
+        input.exerciseWriter.write(Hashing.hash1 + m);
+        input.exerciseWriter.write(Hashing.hash2);
+        input.exerciseWriter.write(Hashing.mult1 + c);
+        input.exerciseWriter.write(Hashing.mult2);
+        input.exerciseWriter.write(Hashing.linProb);
+        input.exerciseWriter.write(Hashing.hash3);
+        switch (Main.TEXT_VERSION) {
+            case ABRAHAM:
+                input.exerciseWriter.write(" ($f(n,i) = \\left \\lfloor{" + m);
+                input.exerciseWriter.write(" \\cdot ( n \\cdot " + c);
+                input.exerciseWriter.write(" \\mod 1 )}\\right \\rfloor~ + i \\mod " + m);
+                input.exerciseWriter.write(" $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
+                break;
+            case GENERAL:
+                break;
+            default:
+                throw new IllegalStateException("Unkown text version!");
+        }
+        input.exerciseWriter.write(Hashing.hash4);
+        Hashing.printExercise(
+            paramsAndArray.y,
+            m,
+            true,
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter
+        );
+    }
+
+    public static void hashMultQuad(final AlgorithmInput input) throws Exception {
+        final Pair<double[], Integer[]> paramsAndArray = Hashing.parseOrGenerateParamsAndArray(input.options);
+        final Integer m = (int)paramsAndArray.x[0];
+        double c = paramsAndArray.x[1];
+        double c1 = paramsAndArray.x[2];
+        double c2 = paramsAndArray.x[3];
+        final double[] params = new double[5];
+        params[0] = 2;
+        params[1] = 2;
+        params[2] = c;
+        params[3] = c1;
+        params[4] = c2;
+        boolean fail;
+        do {
+            try {
+                fail = false;
+                Hashing.hashing(paramsAndArray.y, m, params, !Main.STUDENT_MODE, input.solutionWriter);
+            } catch (final HashException e) {
+                final Random gen = new Random();
+                final Pair<Double, Pair<Double, Double>> cs = Hashing.newMultQuadInstance(gen, m, params);
+                c = cs.x;
+                c1 = cs.y.x;
+                c2 = cs.y.y;
+                fail = true;
+            }
+        } while (fail);
+        input.exerciseWriter.write(Hashing.hash1 + m);
+        input.exerciseWriter.write(Hashing.hash2);
+        input.exerciseWriter.write(Hashing.mult1 + c);
+        input.exerciseWriter.write(Hashing.mult2);
+        input.exerciseWriter.write(Hashing.quadProb1 + c1);
+        input.exerciseWriter.write(Hashing.quadProb2 + c2);
+        input.exerciseWriter.write(Hashing.quadProb3);
+        input.exerciseWriter.write(Hashing.hash3);
+        switch (Main.TEXT_VERSION) {
+            case ABRAHAM:
+                input.exerciseWriter.write(" ($f(n,i) = \\left \\lfloor{" + m);
+                input.exerciseWriter.write(" \\cdot ( n \\cdot" + c);
+                input.exerciseWriter.write(" \\mod 1 )}\\right \\rfloor + " + c1);
+                input.exerciseWriter.write(" \\cdot i + " + c2);
+                input.exerciseWriter.write(" \\cdot i^2 $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet");
+                break;
+            case GENERAL:
+                break;
+            default:
+                throw new IllegalStateException("Unkown text version!");
+        }
+        input.exerciseWriter.write(Hashing.hash4);
+        Hashing.printExercise(
+            paramsAndArray.y,
+            m,
+            true,
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter
+        );
     }
 
     /**
@@ -420,6 +724,65 @@ public abstract class Hashing {
             }
         }
         return true;
+    }
+
+    private static Pair<double[], Integer[]> parseOrGenerateParamsAndArray(final Map<Flag, String> options) {
+        Pair<double[], Integer[]> input = new Pair<double[], Integer[]>(null,null);
+        final String alg = options.get(Flag.ALGORITHM);
+        String[] paramString = null;
+        Integer[] array;
+        final String[] nums;
+        if (options.containsKey(Flag.SOURCE)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                paramString = reader.readLine().split(",");
+                nums = reader.readLine().split(",");
+            } catch (final IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else if (Main.STUDENT_MODE) {
+            final int length;
+            final Random gen = new Random();
+            if (options.containsKey(Flag.LENGTH)) {
+                length = Integer.parseInt(options.get(Flag.LENGTH));
+            } else {
+                length = gen.nextInt(16) + 5;
+            }
+            return Hashing.createRandomInput(gen, length, alg);
+        } else {
+            nums = options.get(Flag.INPUT).split(",");
+            paramString = options.get(Flag.DEGREE).split(",");
+        }
+        array = new Integer[nums.length];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = Integer.parseInt(nums[i].trim());
+        }
+        final double[] params = new double[4];
+        for (int i = 0; i < paramString.length; ++i) {
+            params[i] = Double.parseDouble(paramString[i].trim());
+        }
+        switch(alg)
+        {
+            case "hashDivision":
+            case "hashDivisionLinear":
+                params[1] = 0;
+                params[2] = 0;
+                params[3] = 0;
+                break;
+            case "hashMultiplication":
+            case "hashMultiplicationLinear":
+                params[2] = 0;
+                params[3] = 0;
+                break;
+            case "hashDivisionQuadratic":
+                params[3] = params[2];
+                params[2] = params[1];
+                params[1] = 0;
+                break;
+            default:
+        }
+        input = new Pair<double[], Integer[]>(params, array);
+        return input;
     }
 
 }

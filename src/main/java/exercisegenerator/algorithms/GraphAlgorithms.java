@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.util.*;
 
 /**
  * Class offering methods for graph algorithms.
@@ -31,9 +32,19 @@ public abstract class GraphAlgorithms {
     private static final String EACH_RESIDUAL_GRAPH = "\\emphasize{jedes Restnetzwerk (auch das initiale)}";
 
     /**
+     * The set of those graph algorithms needing a start node.
+     */
+    private static final Set<String> GRAPH_ALGORITHMS_WITH_START_NODE = GraphAlgorithms.initGraphAlgorithmsWithStartNode();
+
+    /**
      * The name of a residual graph.
      */
     private static final String RESIDUAL_GRAPH = "Restnetzwerk";
+
+    /**
+     * The set of those graph algorithms working on undirected graphs.
+     */
+    private static final Set<String> UNDIRECTED_GRAPH_ALGORITHMS = GraphAlgorithms.initUndirectedGraphAlgorithms();
 
     /**
      * @param gen A random number generator.
@@ -522,6 +533,18 @@ public abstract class GraphAlgorithms {
         return graph;
     }
 
+    public static void dijkstra(final AlgorithmInput input) throws Exception {
+        final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        GraphAlgorithms.dijkstra(
+            pair.x,
+            pair.y,
+            new StringNodeComparator(),
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter,
+            input.solutionWriter
+        );
+    }
+
     /**
      * Prints exercise and solution for the Dijkstra Algorithm.
      * @param graph The graph.
@@ -721,6 +744,11 @@ public abstract class GraphAlgorithms {
         solWriter.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
         solWriter.write(" Distanz sicher berechnet worden ist.");
         solWriter.newLine();
+    }
+
+    public static void floyd(final AlgorithmInput input) throws Exception {
+        final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        GraphAlgorithms.floyd(pair.x, false, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
     }
 
     /**
@@ -956,6 +984,20 @@ public abstract class GraphAlgorithms {
         TikZUtils.printArrayStretch(1.0, solWriter);
     }
 
+    public static void fordFulkerson(final AlgorithmInput input) throws Exception {
+        final FlowNetworkInput<String, FlowPair> flow = GraphAlgorithms.parseOrGenerateFlowNetwork(input.options);
+        GraphAlgorithms.fordFulkerson(
+            flow.graph,
+            flow.source,
+            flow.sink,
+            flow.multiplier,
+            flow.twocolumns,
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter,
+            input.solutionWriter
+        );
+    }
+
     /**
      * Prints exercise and solution for the Ford-Fulkerson method. Uses the Edmonds-Karp Algorithm for selecting
      * augmenting paths.
@@ -1168,6 +1210,11 @@ public abstract class GraphAlgorithms {
         solWriter.newLine();
     }
 
+    public static void prim(final AlgorithmInput input) throws Exception {
+        final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        GraphAlgorithms.prim(pair.x, pair.y, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
+    }
+
     /**
      * Prints exercise and solution for Prim's algorithm.
      * @param graph The graph.
@@ -1291,6 +1338,61 @@ public abstract class GraphAlgorithms {
         graph.printTikZ(solWriter, parent, false);
         solWriter.newLine();
         TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
+    }
+
+    public static void scc(final AlgorithmInput input) throws IOException {
+        GraphAlgorithms.gridGraph(input, "find_sccs");
+    }
+
+    public static void sharir(final AlgorithmInput input) throws IOException {
+        GraphAlgorithms.gridGraph(input, "sharir");
+    }
+
+    public static void topologicsort(final AlgorithmInput input) {
+        boolean fail;
+        final GridGraph graph = new GridGraph();
+        final int[][] sparseAdjacencyMatrix = GraphAlgorithms.parseOrGenerateGridGraph(input.options);
+        do {
+            try{
+                fail = false;
+                boolean writeText = true;
+                if (input.options.containsKey(Flag.SOURCE) || !Main.STUDENT_MODE) {
+                    writeText = false;
+                }
+                GraphAlgorithms.gridGraph(
+                    graph,
+                    sparseAdjacencyMatrix,
+                    "topologicSort",
+                    input.solutionWriter,
+                    Algorithm.getOptionalSpaceWriter(input),
+                    writeText
+                );
+            } catch (final IOException e) {
+                //System.out.println("Caught cycle-exception.");
+                fail = true;
+                final Random gen = new Random();
+                for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
+                    for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
+                        if (graph.isNecessarySparseMatrixEntry(i,j) ) {
+                            int entry = gen.nextInt(3);
+                            entry = entry == 2 ? -1 : entry;
+                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                                sparseAdjacencyMatrix[i][j] = entry;
+                            } else {
+                                System.out.println("SHOULD NOT HAPPEN!");
+                            }
+                        } else {
+                            sparseAdjacencyMatrix[i][j] = 0;
+                        }
+                    }
+                }
+            }
+        } while(fail);
+    }
+
+    public static void warshall(final AlgorithmInput input) throws Exception {
+        final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        GraphAlgorithms.floyd(pair.x, true, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
     }
 
     /**
@@ -1513,6 +1615,409 @@ public abstract class GraphAlgorithms {
             neededNodes += itMaxY - itMinY + 1;
         }
         return neededNodes <= remainingNodes;
+    }
+
+    private static void gridGraph(final AlgorithmInput input, final String name) throws IOException {
+        GraphAlgorithms.gridGraph(
+            new GridGraph(),
+            GraphAlgorithms.parseOrGenerateGridGraph(input.options),
+            name,
+            input.solutionWriter,
+            Algorithm.getOptionalSpaceWriter(input),
+            true
+        );
+    }
+
+    /**
+     * Takes a sparse version of the adjacency matrix and constructs the according graph, which has not more than 35 nodes
+     * and each node has a degree not greater than 8. The tex-code to present the resulting graph is then written to the file given
+     * by the fourth argument. The results from applying the given operation on this graph are written to the file given by the last
+     * argument.
+     *
+     * @param graph An empty graph object.
+     * @param sparseAdjacencyMatrix A sparse version of the adjacency matrix in order to construct the according graph
+     *                 (elements in a row are separated by "," and rows are separated by line breaks). Sparse means, that if we consider the nodes
+     *                 being ordered in a 5x7 grid, we only store every second node, starting from the first node in the first row and traversing
+     *                 row wise (i.e., than the 3. node in the first row, than the 5. node in the first row, than the 7. node in the first row, than
+     *                 the 2. node in the second row, ..). Furthermore, sparse means, that we only store adjacencies to not more than 6 neighbors
+     *                 (according to the grid) of a node, more precisely, those six which are positioned north, east, south, southwest, west and
+     *                 northwest of the node. If the entry in the sparse version of the adjacency matrix is
+     *                          * 1, then there is an outgoing edge
+     *                          * -1, then there is an ingoing edge
+     *                          * 2, then there is an outgoing and ingoing edge
+     *                          * 0, no edge
+     *                 to the corresponding node.
+     *
+     *                 Example: "x,2,2,x,x,x
+     *                           x,2,2,2,2,x
+     *                           x,2,2,2,2,x
+     *                           x,x,2,2,2,x
+     *                           2,2,2,2,2,2
+     *                           2,2,2,2,2,2
+     *                           2,2,2,2,2,2
+     *                           2,2,2,x,x,x
+     *                           2,2,2,2,2,2
+     *                           2,2,2,2,2,2
+     *                           2,x,2,2,2,2
+     *                           2,2,2,2,2,2
+     *                           2,2,2,2,2,2
+     *                           2,2,2,2,2,2
+     *                           2,2,x,x,x,x
+     *                           2,2,x,x,2,2
+     *                           2,2,x,x,2,2
+     *                           2,x,x,x,2,2"
+     *                  This is the graph where every of the 35 nodes in the grid is connected to all it's neighbors. At the positions with "x"
+     *                  the values do not influence the graph as they belong to potential neighbors not being in the grid.
+     * @param operation The name of the operation to apply to the graph.
+     * @param writer The writer for the solution.
+     * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code>
+     *                    operations). May be null if this tree should not be displayed separately.
+     */
+    private static void gridGraph (
+        final GridGraph graph,
+        final int[][] sparseAdjacencyMatrix,
+        final String operation,
+        final BufferedWriter writer,
+        final Optional<BufferedWriter> optionalWriterSpace,
+        final boolean withText
+    ) throws IOException {
+        graph.createGraph(sparseAdjacencyMatrix);
+        switch(operation) {
+        case "find_sccs":
+            if (optionalWriterSpace.isPresent()) {
+                final BufferedWriter writerSpace = optionalWriterSpace.get();
+                writerSpace.write(
+                    "Geben Sie alle \\emphasize{starken Zusammenhangskomponenten} im folgenden Graph an. F\\\"ur jede dieser "
+                    + "starken Zusammenhangskomponenten reicht es die Menge der Knoten anzugeben, die darin auftreten."
+                );
+                writerSpace.newLine();
+                graph.printGraph(writerSpace, false);
+            }
+            graph.printSCCs(writer, false, false);
+            writer.newLine();
+            break;
+        case "sharir":
+            if (optionalWriterSpace.isPresent()) {
+                final BufferedWriter writerSpace = optionalWriterSpace.get();
+                writerSpace.write(
+                    "Wenden Sie \\emphasize{Sharir's Algorithmus} an (siehe Folien zur Vorlesung) um die starken"
+                    + " Zusammenhangskomponenten des folgenden Graphen zu finden. Geben Sie das Array \\texttt{color}"
+                    + " und den Stack \\texttt{S} nach jeder Schleifeniteration der ersten und zweiten Phase (also nach"
+                    + " Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
+                    + " Geben Sie zudem das Array \\texttt{scc} nach jeder Schleifeniteration der zweiten Phase (also"
+                    + " nach Zeile 22) an, falls \\texttt{DFS2} ausgef\\\"uhrt wurde. Nehmen Sie hierbei an, dass \\texttt{scc}"
+                    + " initial mit Nullen gef\\\"ullt ist und der Knoten mit Schl\\\"ussel $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat,"
+                    + " also der Knoten mit Schl\\\"ussel $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
+                );
+                writerSpace.newLine();
+                graph.printGraph(writerSpace, false);
+            }
+            graph.printSCCs(writer, false, true) ;
+            writer.newLine();
+            break;
+        case "topologicSort":
+            graph.printTopologicalOrder(optionalWriterSpace, writer, false, withText);
+            break;
+        default:
+
+        }
+    }
+
+    /**
+     * @return The set of (in student mode only enabled) graph algorithms needing a start node.
+     */
+    private static Set<String> initGraphAlgorithmsWithStartNode() {
+        final Set<String> res = new LinkedHashSet<String>();
+        if (!Main.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+            res.add(Algorithm.DIJKSTRA.name);
+        }
+        if (!Main.STUDENT_MODE || Algorithm.PRIM.enabled) {
+            res.add(Algorithm.PRIM.name);
+        }
+        return res;
+    }
+
+    /**
+     * @return The set of (in student mode only enabled) graph algorithms working on undirected graphs.
+     */
+    private static Set<String> initUndirectedGraphAlgorithms() {
+        final Set<String> res = new LinkedHashSet<String>();
+        if (!Main.STUDENT_MODE || Algorithm.PRIM.enabled) {
+            res.add(Algorithm.PRIM.name);
+        }
+        return res;
+    }
+
+    private static FlowNetworkInput<String, FlowPair> parseOrGenerateFlowNetwork(final Map<Flag, String> options) {
+        final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
+        if (options.containsKey(Flag.SOURCE)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
+            } catch (final IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        } else if (Main.STUDENT_MODE) {
+            final Random gen = new Random();
+            final int numOfNodes;
+            if (options.containsKey(Flag.LENGTH)) {
+                numOfNodes = Integer.parseInt(options.get(Flag.LENGTH));
+            } else {
+                numOfNodes = gen.nextInt(16) + 3;
+            }
+            final FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
+            res.graph = GraphAlgorithms.createRandomFlowNetwork(gen, numOfNodes);
+            res.source = res.graph.getNodesWithLabel("s").iterator().next();
+            res.sink = res.graph.getNodesWithLabel("t").iterator().next();
+            res.multiplier = 1.0;
+            res.twocolumns = false;
+            return res;
+        } else {
+            try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
+                graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
+            } catch (final IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+        Node<String> source = null;
+        Node<String> sink = null;
+        double multiplier = 1.0;
+        boolean twocolumns = false;
+        if (options.containsKey(Flag.OPERATIONS)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
+                Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
+                if (!nodes.isEmpty()) {
+                    source = nodes.iterator().next();
+                }
+                nodes = graph.getNodesWithLabel(reader.readLine().trim());
+                if (!nodes.isEmpty()) {
+                    sink = nodes.iterator().next();
+                }
+                final String mult = reader.readLine();
+                if (mult != null && !"".equals(mult.trim())) {
+                    multiplier = Double.parseDouble(mult);
+                    final String twocols = reader.readLine();
+                    if (twocols != null && !"".equals(twocols.trim())) {
+                        twocolumns = Boolean.parseBoolean(twocols);
+                    }
+                }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+        final FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
+        res.graph = graph;
+        res.source = source;
+        res.sink = sink;
+        res.multiplier = multiplier;
+        res.twocolumns = twocolumns;
+        return res;
+    }
+
+    private static Pair<Graph<String, Integer>, Node<String>> parseOrGenerateGraph(final Map<Flag, String> options) {
+        final Graph<String, Integer> graph;
+        final String alg = options.get(Flag.ALGORITHM);
+        if (options.containsKey(Flag.SOURCE)) {
+            graph = new Graph<String, Integer>();
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
+            } catch (final IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        } else if (Main.STUDENT_MODE) {
+            final Random gen = new Random();
+            final int numOfNodes;
+            if (options.containsKey(Flag.LENGTH)) {
+                numOfNodes = Integer.parseInt(options.get(Flag.LENGTH));
+            } else {
+                numOfNodes = gen.nextInt(16) + 5;
+            }
+            graph =
+                GraphAlgorithms.createRandomGraph(
+                    gen,
+                    numOfNodes,
+                    GraphAlgorithms.UNDIRECTED_GRAPH_ALGORITHMS.contains(alg)
+                );
+        } else {
+            graph = new Graph<String, Integer>();
+            try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
+                graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
+            } catch (final IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+        Node<String> node = null;
+        if (options.containsKey(Flag.OPERATIONS)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
+                final Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
+                if (!nodes.isEmpty()) {
+                    node = nodes.iterator().next();
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        } else if (Main.STUDENT_MODE && GraphAlgorithms.GRAPH_ALGORITHMS_WITH_START_NODE.contains(alg)) {
+            final Set<Node<String>> nodes = graph.getNodesWithLabel("A");
+            if (!nodes.isEmpty()) {
+                node = nodes.iterator().next();
+            }
+        }
+        return new Pair<Graph<String, Integer>, Node<String>>(graph, node);
+    }
+
+    private static int[][] parseOrGenerateGridGraph(final Map<Flag, String> options) {
+        final GridGraph graph = new GridGraph();
+        final int[][] sparseAdjacencyMatrix =
+            new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
+        String errorMessage =
+            new String(
+                "You need to provide "
+                + graph.numOfNodesInSparseAdjacencyMatrix()
+                + " lines and each line has to carry "
+                + graph.numOfNeighborsInSparseAdjacencyMatrix()
+                + " numbers being either 0, -1, 1 or 2, which are separated by ','!\n"
+                + "Example:\n"
+                + "x,0,0,x,x,x\nx,0,0,0,0,x\nx,0,0,0,0,x\nx,x,0,0,0,x\n0,2,0,1,1,0\n0,0,2,1,1,0\n0,0,0,0,0,0\n2,-1,0,x,x,x\n0,1,2,1,-1,1\n"
+                + "0,0,0,0,0,0\n0,x,0,0,0,0\n1,2,0,0,0,1\n0,0,0,0,0,0\n0,0,0,0,0,0\n0,0,x,x,x,x\n0,0,x,x,0,0\n0,0,x,x,0,0\n0,x,x,x,0,0\n\n"
+                + "where x can be anything and will not affect the resulting graph."
+            );
+        if (options.containsKey(Flag.SOURCE)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                String line = null;
+                int rowNum = 0;
+                while ((line = reader.readLine()) != null) {
+                    final String[] nodes = line.split(",");
+                    if (nodes.length != graph.numOfNeighborsInSparseAdjacencyMatrix()) {
+                        System.out.println(errorMessage);
+                        return null;
+                    }
+                    for (int i = 0; i < graph.numOfNeighborsInSparseAdjacencyMatrix(); i++) {
+                        if (graph.isNecessarySparseMatrixEntry(rowNum,i) ) {
+                            final int entry = Integer.parseInt(nodes[i].trim());
+                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                                sparseAdjacencyMatrix[rowNum][i] = entry;
+                            } else {
+                                System.out.println(errorMessage);
+                                return null;
+                            }
+                        } else {
+                            sparseAdjacencyMatrix[rowNum][i] = 0;
+                        }
+                    }
+                    rowNum++;
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else if (Main.STUDENT_MODE) {
+            final Random gen = new Random();
+            if (Algorithm.SHARIR.name.equals(options.get(Flag.ALGORITHM))) {
+                final int[] numbers = new int[18];
+                for (int i = 0; i < numbers.length; i++) {
+                    final int rndNumber = gen.nextInt(9);
+                    if (rndNumber < 3) {
+                        numbers[i] = -1;
+                    } else if (rndNumber < 4) {
+                        numbers[i] = 0;
+                    } else if (rndNumber < 7) {
+                        numbers[i] = 1;
+                    } else {
+                        numbers[i] = 2;
+                    }
+                }
+                sparseAdjacencyMatrix[4][1] = numbers[0];
+                sparseAdjacencyMatrix[4][2] = numbers[1];
+
+                sparseAdjacencyMatrix[5][2] = numbers[2];
+                sparseAdjacencyMatrix[5][3] = numbers[3];
+                sparseAdjacencyMatrix[5][4] = numbers[4];
+
+                sparseAdjacencyMatrix[8][0] = numbers[5];
+                sparseAdjacencyMatrix[8][1] = numbers[6];
+                sparseAdjacencyMatrix[8][2] = numbers[7];
+                sparseAdjacencyMatrix[8][4] = numbers[8];
+                sparseAdjacencyMatrix[8][5] = numbers[9];
+
+                sparseAdjacencyMatrix[9][0] = numbers[10];
+                sparseAdjacencyMatrix[9][2] = numbers[11];
+                sparseAdjacencyMatrix[9][3] = numbers[12];
+                sparseAdjacencyMatrix[9][4] = numbers[13];
+
+                sparseAdjacencyMatrix[12][0] = numbers[14];
+                sparseAdjacencyMatrix[12][1] = numbers[15];
+                sparseAdjacencyMatrix[12][4] = numbers[16];
+                sparseAdjacencyMatrix[12][5] = numbers[17];
+            } else {
+                for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
+                    for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
+                        if (graph.isNecessarySparseMatrixEntry(i,j) ) {
+                            final int rndNumber = gen.nextInt(18);
+                            int entry = 0;
+                            if (rndNumber >= 10 && rndNumber < 13) {
+                                entry = -1;
+                            } else if (rndNumber >= 13 && rndNumber < 16) {
+                                entry = 1;
+                            } else if (rndNumber >= 16) {
+                                entry = 2;
+                            }
+                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                                sparseAdjacencyMatrix[i][j] = entry;
+                            } else {
+                                System.out.println(errorMessage);
+                                return null;
+                            }
+                        } else {
+                            sparseAdjacencyMatrix[i][j] = 0;
+                        }
+                    }
+                }
+            }
+        } else {
+            errorMessage =
+                new String(
+                    "You need to provide "
+                    + graph.numOfNodesInSparseAdjacencyMatrix()
+                    + " sections, which are separated by '|' and each section has to carry "
+                    + graph.numOfNeighborsInSparseAdjacencyMatrix()
+                    + " numbers being either 0, -1, 1 or 2, which are separated by ','!\n"
+                    + "Example:\n"
+                    + "x,0,0,x,x,x|x,0,0,0,0,x|x,0,0,0,0,x|x,x,0,0,0,x|0,2,0,1,1,0|0,0,2,1,1,0|0,0,0,0,0,0|2,-1,0,x,x,x|0,1,2,1,-1,1|"
+                    + "0,0,0,0,0,0|0,x,0,0,0,0|1,2,0,0,0,1|0,0,0,0,0,0|0,0,0,0,0,0|0,0,x,x,x,x|0,0,x,x,0,0|0,0,x,x,0,0|0,x,x,x,0,0\n\n"
+                    + "where x can be anything and will not affect the resulting graph."
+                );
+            final String[] nodes = options.get(Flag.INPUT).split("|");
+            if (nodes.length != graph.numOfNodesInSparseAdjacencyMatrix()) {
+                System.out.println(errorMessage);
+                return null;
+            }
+            for (int i = 0; i < nodes.length; i++) {
+                final String[] neighbors = nodes[i].split(",");
+                if (neighbors.length != graph.numOfNeighborsInSparseAdjacencyMatrix()) {
+                    System.out.println(errorMessage);
+                    return null;
+                }
+                for (int j = 0; j < neighbors.length; j++) {
+                    if (graph.isNecessarySparseMatrixEntry(i,j) ) {
+                        final int entry = Integer.parseInt(neighbors[j].trim());
+                        if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                            sparseAdjacencyMatrix[i][j] = entry;
+                        } else {
+                            System.out.println(errorMessage);
+                            return null;
+                        }
+                    } else {
+                        sparseAdjacencyMatrix[i][j] = 0;
+                    }
+                }
+            }
+        }
+        return sparseAdjacencyMatrix;
     }
 
     /**

@@ -5,6 +5,7 @@ import java.util.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
+import exercisegenerator.structures.*;
 import exercisegenerator.util.*;
 
 /**
@@ -48,6 +49,16 @@ public abstract class Sorting {
      * Flag indicating whether elements equal to the pivot element should end up in the left partition.
      */
     private static final PartitionMode PARTITION_MODE = PartitionMode.EQUAL_RIGHT;
+
+    public static void bubblesort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.BUBBLESORT.longName,
+            "Swap-Operation",
+            "",
+            Sorting::bubblesort
+        );
+    }
 
     /**
      * Sorts the specified array using bubblesort and outputs the solution as a TikZ picture to the specified writer.
@@ -172,6 +183,16 @@ public abstract class Sorting {
         return res;
     }
 
+    public static void heapsort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.HEAPSORT.longName,
+            "Swap-Operation",
+            "",
+            Sorting::heapsort
+        );
+    }
+
     /**
      * Sorts the specified array using heapsort and outputs the solution as a TikZ picture to the specified writer.
      * @param array The array to sort.
@@ -213,6 +234,16 @@ public abstract class Sorting {
         }
         TikZUtils.printTikzEnd(writer);
         return res;
+    }
+
+    public static void heapsortWithTrees(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.HEAPSORT_TREE.longName,
+            "Swap-Operation",
+            "",
+            Sorting::heapsortWithTrees
+        );
     }
 
     /**
@@ -257,6 +288,16 @@ public abstract class Sorting {
             step = Sorting.heapifyWithTrees(array, 1, i, separate, step, writer);
         }
         return step - 1;
+    }
+
+    public static void insertionsort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.INSERTIONSORT.longName,
+            "Iteration der \\\\\\\"au\\\\ss{}eren Schleife",
+            "",
+            Sorting::insertionsort
+        );
     }
 
     /**
@@ -312,6 +353,16 @@ public abstract class Sorting {
             copy[i++] = array[k++];
         }
         System.arraycopy(copy, 0, array, start, copy.length);
+    }
+
+    public static void mergesort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.MERGESORT.longName,
+            "Merge-Operation",
+            "",
+            (array, writer) -> Sorting.mergesort(array, false, writer)
+        );
     }
 
     /**
@@ -400,6 +451,16 @@ public abstract class Sorting {
         }
     }
 
+    public static void mergesortSplit(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.MERGESORT_SPLIT.longName,
+            "Merge-Operation",
+            "",
+            (array, writer) -> Sorting.mergesort(array, true, writer)
+        );
+    }
+
     /**
      * Partitions the array part between <code>start</code> and <code>end</code> using the element at <code>end</code>
      * as Pivot element. It returns the resulting index of the Pivot element. So after this method call, all elements
@@ -473,6 +534,16 @@ public abstract class Sorting {
         ArrayUtils.swap(array, i, j);
         ArrayUtils.swap(array, i, end);
         return i;
+    }
+
+    public static void quicksort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.QUICKSORT.longName,
+            "Partition-Operation",
+            " und markieren Sie das jeweils verwendete Pivot-Element",
+            Sorting::quicksort
+        );
     }
 
     /**
@@ -562,6 +633,16 @@ public abstract class Sorting {
         }
     }
 
+    public static void selectionsort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.SELECTIONSORT.longName,
+            "Swap-Operation",
+            "",
+            Sorting::selectionsort
+        );
+    }
+
     /**
      * Sorts the specified array using selectionsort and outputs the solution as a TikZ picture to the specified writer.
      * @param array The array to sort.
@@ -589,6 +670,120 @@ public abstract class Sorting {
         }
         TikZUtils.printTikzEnd(writer);
         return res;
+    }
+
+    private static int getRows(final Map<Flag, String> options) {
+        return !Main.STUDENT_MODE && options.containsKey(Flag.LENGTH) ?
+            Integer.parseInt(options.get(Flag.LENGTH)) :
+                0;
+    }
+
+    private static Integer[] parseOrGenerateArray(final Map<Flag, String> options) {
+        final String[] numbers;
+        if (options.containsKey(Flag.SOURCE)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                numbers = reader.readLine().split(",");
+            } catch (final IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else if (Main.STUDENT_MODE) {
+            final int length;
+            final Random gen = new Random();
+            if (options.containsKey(Flag.LENGTH)) {
+                length = Integer.parseInt(options.get(Flag.LENGTH));
+            } else {
+                length = gen.nextInt(16) + 5;
+            }
+            final Integer[] array = new Integer[length];
+            for (int i = 0; i < array.length; i++) {
+                array[i] = gen.nextInt(Main.NUMBER_LIMIT);
+            }
+            return array;
+        } else {
+            numbers = options.get(Flag.INPUT).split(",");
+        }
+        final Integer[] array = new Integer[numbers.length];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = Integer.parseInt(numbers[i].trim());
+        }
+        return array;
+    }
+
+    private static <E extends Exception> void sort(
+        final AlgorithmInput input,
+        final String name,
+        final String operation,
+        final String suffix,
+        final CheckedBiFunction<Integer[], BufferedWriter, Integer, E> sort
+    ) throws E {
+        try {
+            final Integer[] array = Sorting.parseOrGenerateArray(input.options);
+            final String anchor =
+                Sorting.sortPreProcessing(array, name, operation, suffix, input.options, input.exerciseWriter);
+            final int rows = Sorting.getRows(input.options) + sort.apply(array, input.solutionWriter);
+            Sorting.sortPostProcessing(array, rows, anchor, input.options, input.exerciseWriter);
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Prints empty rows for solving the exercise on the sheet directly.
+     * @param array The sorted array.
+     * @param rows The number of empty rows to be printed in the exercise.
+     * @param anchorParam The name of the node used to orient the empty rows.
+     * @param options The parsed flags.
+     * @param exerciseWriter The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    private static void sortPostProcessing(
+        final Integer[] array,
+        final int rows,
+        final String anchorParam,
+        final Map<Flag, String> options,
+        final BufferedWriter exerciseWriter
+    ) throws IOException {
+        String anchor = anchorParam;
+        if (options.containsKey(Flag.EXERCISE)) {
+            for (int i = 0; i < rows; i++) {
+                anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
+            }
+            TikZUtils.printTikzEnd(exerciseWriter);
+        }
+    }
+
+    /**
+     * Prints the exercise text to the specified writer.
+     * @param array The array to sort.
+     * @param alg The name of the sorting algorithm.
+     * @param op The operation after which the state of the array is to be given as intermediate result.
+     * @param additional Additional instruction on how to write up the solution.
+     * @param options The parsed flags.
+     * @param exerciseWriter The writer to send the output to.
+     * @return The name of the node used to orient empty rows in the exercise text.
+     * @throws IOException If some error occurs during output.
+     */
+    private static String sortPreProcessing(
+        final Integer[] array,
+        final String alg,
+        final String op,
+        final String additional,
+        final Map<Flag, String> options,
+        final BufferedWriter exerciseWriter
+    ) throws IOException {
+        String anchor = null;
+        if (options.containsKey(Flag.EXERCISE)) {
+            if (Main.STUDENT_MODE) {
+                exerciseWriter.write("Sortieren Sie das folgende Array mithilfe von " + alg + ".");
+                exerciseWriter.newLine();
+                exerciseWriter.write("Geben Sie dazu das Array nach jeder " + op + " an" + additional + ".\\\\[2ex]");
+                exerciseWriter.newLine();
+            }
+            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
+            anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
+        }
+        return anchor;
     }
 
 }

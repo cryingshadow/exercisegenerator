@@ -14,6 +14,17 @@ import exercisegenerator.structures.*;
  */
 public abstract class GeometricAlgorithms {
 
+    public static void hull(final AlgorithmInput input) throws Exception {
+        final ArrayList<Pair<Double,Double>> pointSet =
+            GeometricAlgorithms.parseOrGenerateConvexHullProblem(input.options);
+        GeometricAlgorithms.printConvexHull(
+            pointSet,
+            Algorithm.parsePreprintMode(input.options),
+            input.exerciseWriter,
+            input.solutionWriter
+        );
+    }
+
     /**
      * Prints the convex hull according to the graham scan algorithm.
      * @param pointSet The set of points as input.
@@ -255,10 +266,59 @@ public abstract class GeometricAlgorithms {
      * @return Turn direction
      *
      */
-    private static Double direction(final Pair<Double, Double> A, final Pair<Double,Double> B, final Pair<Double,Double> C) {
+    private static Double direction(
+        final Pair<Double, Double> A,
+        final Pair<Double,Double> B,
+        final Pair<Double,Double> C
+    ) {
         final Pair<Double,Double> firstSegment = new Pair<Double,Double>(B.x-A.x, B.y-A.y);
         final Pair<Double,Double> secondSegment = new Pair<Double,Double>(C.x-B.x, C.y-B.y);
         return (GeometricAlgorithms.polarAngle(firstSegment, secondSegment));
+    }
+
+    private static ArrayList<Pair<Double, Double>> parseOrGenerateConvexHullProblem(final Map<Flag, String> options) {
+        String line = null;
+        final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
+        if (options.containsKey(Flag.SOURCE)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    final String[] splitted = line.split(",");
+                    input.add(
+                        new Pair<Double,Double>(
+                            Double.parseDouble(splitted[0].trim()),
+                            Double.parseDouble(splitted[1].trim())
+                        )
+                    );
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        } else if (Main.STUDENT_MODE) {
+            final Random gen = new Random();
+            final int numOfPoints;
+            if (options.containsKey(Flag.LENGTH)) {
+                numOfPoints = Integer.parseInt(options.get(Flag.LENGTH));
+            } else {
+                numOfPoints = gen.nextInt(16) + 5;
+            }
+            for (int i = 0; i < numOfPoints; ++i) {
+                input.add(new Pair<Double,Double>((double)gen.nextInt(11), (double)gen.nextInt(11)));
+            }
+        } else {
+            final String[] nums = options.get(Flag.INPUT).split(";");
+            for (int i = 0; i < nums.length; ++i) {
+                final String[] splitted = nums[i].split(",");
+                input.add(
+                    new Pair<Double,Double>(
+                        Double.parseDouble(splitted[0].trim()),
+                        Double.parseDouble(splitted[1].trim())
+                    )
+                );
+            }
+        }
+        return input;
     }
 
     /**
@@ -282,7 +342,8 @@ public abstract class GeometricAlgorithms {
 //            + pointSet.get(referenceIndex).y
 //        );
         boolean add = true;
-        // X-Axis as a reference (note: no angle can be smaller than this as we select the refPoint to be with smallest y-coordinate
+        // X-Axis as a reference (note: no angle can be smaller than this as we select the refPoint to be with smallest
+        // y-coordinate
         final Pair<Double,Double> xAxis = new Pair<Double,Double>(1.0,0.0);
         // Insertion-Sort the array
         for (int i = 0; i < pointSet.size(); ++i) {
@@ -329,8 +390,10 @@ public abstract class GeometricAlgorithms {
                         if (Double.compare(GeometricAlgorithms.realPolarAngle(xAxis, currVector),currAngle) == 0) {
                             //System.out.println("Duplicate angle.");
                             // compare coordinates
-                            final Double currDistance = Math.sqrt( Math.pow(result.get(index).x, 2) + Math.pow(result.get(index).y, 2) );
-                            final Double newDistance = Math.sqrt( Math.pow(pointSet.get(i).x, 2) + Math.pow(pointSet.get(i).y, 2) );
+                            final Double currDistance =
+                                Math.sqrt( Math.pow(result.get(index).x, 2) + Math.pow(result.get(index).y, 2) );
+                            final Double newDistance =
+                                Math.sqrt( Math.pow(pointSet.get(i).x, 2) + Math.pow(pointSet.get(i).y, 2) );
 
                             if (Double.compare(currDistance, newDistance) < 0) {
                                 //System.out.println("Remove " + index);

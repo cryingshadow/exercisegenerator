@@ -5,6 +5,7 @@ import java.util.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
+import exercisegenerator.structures.*;
 
 /**
  * Class offering methods for dynamic programming.
@@ -12,6 +13,19 @@ import exercisegenerator.io.*;
  * @version 1.0.1
  */
 public abstract class DynamicProgramming {
+
+    public static void knapsack(final AlgorithmInput input) throws Exception {
+        final Pair<Pair<Integer[],Integer[]>,Integer> tmpInput =
+            DynamicProgramming.parseOrGenerateKnapsackProblem(input.options);
+        DynamicProgramming.knapsack(
+            tmpInput.x.x,
+            tmpInput.x.y,
+            tmpInput.y,
+            Algorithm.parsePreprintMode(input.options),
+            input.solutionWriter,
+            input.exerciseWriter
+        );
+    }
 
     /**
      * Prints exercise and solution for solving a knapsack problem with dynamic programming.
@@ -237,6 +251,17 @@ public abstract class DynamicProgramming {
         solWriter.newLine();
     }
 
+    public static void lcs(final AlgorithmInput input) throws Exception {
+        final Pair<String,String> tmpInput = DynamicProgramming.parseOrGenerateLCSProblem(input.options);
+        DynamicProgramming.lcs(
+            tmpInput.x,
+            tmpInput.y,
+            Algorithm.parsePreprintMode(input.options),
+            input.solutionWriter,
+            input.exerciseWriter
+        );
+    }
+
     /**
      * Prints exercise and solution for solving a longest common subsequence (lcs) problem with dynamic programming.
      * @param wordA The first word to find the longest subsequence in, which also is a subsequence of the second word.
@@ -448,6 +473,176 @@ public abstract class DynamicProgramming {
         solWriter.write("\\end{verbatim}");
         solWriter.newLine();
         solWriter.newLine();
+    }
+
+    private static Pair<Pair<Integer[], Integer[]>, Integer> parseOrGenerateKnapsackProblem(
+        final Map<Flag, String> options
+    ) {
+        Integer[] weights = null;
+        Integer[] values = null;
+        Integer capacity = 0;
+        if (options.containsKey(Flag.SOURCE)) {
+            final String errorMessage =
+                "You need to provide two lines of numbers, each number separated only by a ','!"
+                + " The first lines represents the weights of the items and the second line represents"
+                + " the values of the items. Note, that there must be supplied the same number of"
+                + " weights and values and at least one.";
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                String line = null;
+                int rowNum = 0;
+                final int numOfElements = -1;
+                Integer sumOfWeights = 0;
+                while ((line = reader.readLine()) != null) {
+                    final String[] numbers = line.split(",");
+                    // FIXME numOfElements is never changed!
+                    if (numOfElements == 0 || (numOfElements > 0 && numOfElements != numbers.length)) {
+                        System.out.println(errorMessage);
+                        return null;
+                    }
+                    if (rowNum == 0) {
+                        weights = new Integer[numbers.length];
+                    } else if (rowNum == 1) {
+                        values = new Integer[numbers.length];
+                    } else {
+                        System.out.println(errorMessage);
+                        return null;
+                    }
+                    for (int i = 0; i < numbers.length; i++) {
+                        final int number = Integer.parseInt(numbers[i].trim());
+                        if (rowNum == 0) {
+                            weights[i] = number;
+                            sumOfWeights += number;
+                        } else {
+                            values[i] = number;
+                        }
+                    }
+                    rowNum++;
+                }
+                if (options.containsKey(Flag.CAPACITY)) {
+                    capacity = Integer.parseInt(options.get(Flag.CAPACITY));
+                    if (capacity <= 0) {
+                        capacity = sumOfWeights/2;
+                    }
+                } else {
+                    capacity = sumOfWeights/2;
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else if (Main.STUDENT_MODE) {
+            int length;
+            final Random gen = new Random();
+            if (options.containsKey(Flag.LENGTH)) {
+                length = Integer.parseInt(options.get(Flag.LENGTH));
+                if (length <= 0) {
+                    length = gen.nextInt(4) + 3;
+                }
+            } else {
+                length = gen.nextInt(4) + 3;
+            }
+            Integer sumOfWeights = 0;
+            weights = new Integer[length];
+            for (int i = 0; i < weights.length; i++) {
+                weights[i] = 1 + gen.nextInt(11);
+                sumOfWeights += weights[i];
+            }
+            values = new Integer[length];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = 1 + gen.nextInt(11);
+            }
+            final Integer p = 35 + gen.nextInt(30);
+            capacity = (sumOfWeights*p)/100;
+        } else {
+            final String errorMessage =
+                "You need to provide two sets of numbers, each number separated only by a ',' and each set divided "
+                + "by a '|'. The first set represents the weights of the items and the second set represents the "
+                + "values of the items. Note that there must be supplied the same number of weights and values "
+                + "and at least one.";
+            final String[] sets = options.get(Flag.INPUT).split("|");
+            Integer sumOfWeights = 0;
+            if (
+                sets.length != 2
+                || sets[0].length() == 0
+                || sets[1].length() == 0
+                || sets[0].length() != sets[1].length()
+            ) {
+                System.out.println(errorMessage);
+                return null;
+            }
+            final String[] numbersA = sets[0].split(",");
+            for (int i = 0; i < numbersA.length; i++) {
+                final int number = Integer.parseInt(numbersA[i].trim());
+                //FIXME weights might be null here
+                weights[i] = number;
+                sumOfWeights += number;
+            }
+            final String[] numbersB = sets[0].split(",");
+            for (int i = 0; i < numbersB.length; i++) {
+                final int number = Integer.parseInt(numbersB[i].trim());
+                //FIXME values might be null here
+                values[i] = number;
+            }
+            if (options.containsKey(Flag.CAPACITY)) {
+                capacity = Integer.parseInt(options.get(Flag.CAPACITY));
+                if (capacity <= 0) {
+                    capacity = sumOfWeights/2;
+                }
+            } else {
+                capacity = sumOfWeights/2;
+            }
+        }
+        return
+            new Pair<Pair<Integer[],Integer[]>,Integer>(
+                new Pair<Integer[],Integer[]>(weights, values),
+                capacity
+            );
+    }
+
+    private static Pair<String, String> parseOrGenerateLCSProblem(final Map<Flag, String> options) {
+        String wordA = null;
+        String wordB = null;
+        if (options.containsKey(Flag.SOURCE)) {
+            final String errorMessage = "You need to provide two lines each carrying exactly one non-empty word.";
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
+                String line = null;
+                int rowNum = 0;
+                while ((line = reader.readLine()) != null) {
+                    if (rowNum == 0) {
+                        wordA = new String(line);
+                        if (wordA.length() == 0) {
+                            System.out.println(errorMessage);
+                            return null;
+                        }
+                    } else if (rowNum == 1) {
+                        wordB = new String(line);
+                        if (wordB.length() == 0) {
+                            System.out.println(errorMessage);
+                            return null;
+                        }
+                    } else {
+                        System.out.println(errorMessage);
+                        return null;
+                    }
+                    rowNum++;
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else if (Main.STUDENT_MODE) {
+            throw new UnsupportedOperationException("Not yet implemented!");
+        } else {
+            final String errorMessage = "You need to provide two non-empty words separated by a '|'.";
+            final String[] words = options.get(Flag.INPUT).split("|");
+            if (words.length != 2 || words[0].length() == 0 || words[1].length() == 0) {
+                System.out.println(errorMessage);
+                return null;
+            }
+            wordA = new String(words[0]);
+            wordB = new String(words[1]);
+        }
+        return new Pair<String,String>(wordA, wordB);
     }
 
 }

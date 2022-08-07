@@ -3,9 +3,8 @@ package exercisegenerator.structures;
 import java.io.*;
 import java.math.*;
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.Map.*;
 
-import exercisegenerator.*;
 import exercisegenerator.io.*;
 
 /**

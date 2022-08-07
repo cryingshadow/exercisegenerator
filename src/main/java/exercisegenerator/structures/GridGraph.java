@@ -3,7 +3,6 @@ package exercisegenerator.structures;
 import java.io.*;
 import java.util.*;
 
-import exercisegenerator.*;
 import exercisegenerator.io.*;
 
 /**
@@ -28,99 +27,6 @@ public class GridGraph {
      * The number of rows in the grid according which the graph this exercise considers is ordered (must be odd).
      */
     private static int mNumOfRowsInGrid = 5;
-
-    /**
-     * Takes a sparse version of the adjacency matrix and constructs the according graph, which has not more than 35 nodes
-     * and each node has a degree not greater than 8. The tex-code to present the resulting graph is then written to the file given
-     * by the fourth argument. The results from applying the given operation on this graph are written to the file given by the last
-     * argument.
-     *
-     * @param graph An empty graph object.
-     * @param sparseAdjacencyMatrix A sparse version of the adjacency matrix in order to construct the according graph
-     *                 (elements in a row are separated by "," and rows are separated by line breaks). Sparse means, that if we consider the nodes
-     *                 being ordered in a 5x7 grid, we only store every second node, starting from the first node in the first row and traversing
-     *                 row wise (i.e., than the 3. node in the first row, than the 5. node in the first row, than the 7. node in the first row, than
-     *                 the 2. node in the second row, ..). Furthermore, sparse means, that we only store adjacencies to not more than 6 neighbors
-     *                 (according to the grid) of a node, more precisely, those six which are positioned north, east, south, southwest, west and
-     *                 northwest of the node. If the entry in the sparse version of the adjacency matrix is
-     *                          * 1, then there is an outgoing edge
-     *                          * -1, then there is an ingoing edge
-     *                          * 2, then there is an outgoing and ingoing edge
-     *                          * 0, no edge
-     *                 to the corresponding node.
-     *
-     *                 Example: "x,2,2,x,x,x
-     *                           x,2,2,2,2,x
-     *                           x,2,2,2,2,x
-     *                           x,x,2,2,2,x
-     *                           2,2,2,2,2,2
-     *                           2,2,2,2,2,2
-     *                           2,2,2,2,2,2
-     *                           2,2,2,x,x,x
-     *                           2,2,2,2,2,2
-     *                           2,2,2,2,2,2
-     *                           2,x,2,2,2,2
-     *                           2,2,2,2,2,2
-     *                           2,2,2,2,2,2
-     *                           2,2,2,2,2,2
-     *                           2,2,x,x,x,x
-     *                           2,2,x,x,2,2
-     *                           2,2,x,x,2,2
-     *                           2,x,x,x,2,2"
-     *                  This is the graph where every of the 35 nodes in the grid is connected to all it's neighbors. At the positions with "x"
-     *                  the values do not influence the graph as they belong to potential neighbors not being in the grid.
-     * @param operation The name of the operation to apply to the graph.
-     * @param writer The writer for the solution.
-     * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code>
-     *                    operations). May be null if this tree should not be displayed separately.
-     */
-    public static void gridGraph (
-        final GridGraph graph,
-        final int[][] sparseAdjacencyMatrix,
-        final String operation,
-        final BufferedWriter writer,
-        final BufferedWriter writerSpace,
-        final boolean withText
-    ) throws IOException {
-        graph.createGraph(sparseAdjacencyMatrix);
-        switch(operation) {
-        case "find_sccs":
-            if (writerSpace != null) {
-                writerSpace.write(
-                    "Geben Sie alle \\emphasize{starken Zusammenhangskomponenten} im folgenden Graph an. F\\\"ur jede dieser "
-                    + "starken Zusammenhangskomponenten reicht es die Menge der Knoten anzugeben, die darin auftreten."
-                );
-                writerSpace.newLine();
-                graph.printGraph(writerSpace, false);
-            }
-            graph.printSCCs(writer, false, false);
-            writer.newLine();
-            break;
-        case "sharir":
-            if (writerSpace != null) {
-                writerSpace.write(
-                    "Wenden Sie \\emphasize{Sharir's Algorithmus} an (siehe Folien zur Vorlesung) um die starken"
-                    + " Zusammenhangskomponenten des folgenden Graphen zu finden. Geben Sie das Array \\texttt{color}"
-                    + " und den Stack \\texttt{S} nach jeder Schleifeniteration der ersten und zweiten Phase (also nach"
-                    + " Zeile 17 und nach Zeile 22) an, falls \\texttt{DFS1} bzw. \\texttt{DFS2} ausgef\\\"uhrt wurde."
-                    + " Geben Sie zudem das Array \\texttt{scc} nach jeder Schleifeniteration der zweiten Phase (also"
-                    + " nach Zeile 22) an, falls \\texttt{DFS2} ausgef\\\"uhrt wurde. Nehmen Sie hierbei an, dass \\texttt{scc}"
-                    + " initial mit Nullen gef\\\"ullt ist und der Knoten mit Schl\\\"ussel $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat,"
-                    + " also der Knoten mit Schl\\\"ussel $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
-                );
-                writerSpace.newLine();
-                graph.printGraph(writerSpace, false);
-            }
-            graph.printSCCs(writer, false, true) ;
-            writer.newLine();
-            break;
-        case "topologicSort":
-            graph.printTopologicalOrder(writerSpace, writer, false, withText);
-            break;
-        default:
-
-        }
-    }
 
     /// The adjacency matrix of the graph used in this exercise.
     private final boolean[][] mAdjacencyMatrix;
@@ -278,6 +184,148 @@ public class GridGraph {
 
     public int numOfRowsInGrid() {
         return GridGraph.mNumOfRowsInGrid;
+    }
+
+    /**
+     * Prints this AVL-tree right under the given headline.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void printGraph(final BufferedWriter writer, final boolean withSingletons) throws IOException {
+        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
+        TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
+        // print the nodes
+        writer.write("% The nodes:");
+        writer.newLine();
+        for (int i = 0; i < this.numOfAllNodes(); i++) {
+            if (withSingletons || this.nodeHasAdjacentNodes(i)) {
+                if (withSingletons) {
+                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + i + "};");
+                } else {
+                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + this.nodeName(i) + "};");
+                }
+                writer.newLine();
+            }
+        }
+        writer.write("% The edges:");
+        writer.newLine();
+        for (int i = 0; i < this.mAdjacencyMatrix.length; i++) {
+            for (int j = i+1 ; j < this.mAdjacencyMatrix[i].length; j++) {
+                if (this.mAdjacencyMatrix[i][j] && this.mAdjacencyMatrix[j][i]) {
+                    writer.write("\\path[p, bend right=15] (" + i + ") edge (" + j + ");");
+                    writer.newLine();
+                    writer.write("\\path[p, bend right=15] (" + j + ") edge (" + i + ");");
+                    writer.newLine();
+                } else if (this.mAdjacencyMatrix[i][j]) {
+                    writer.write("\\path[p] (" + i + ") edge (" + j + ");");
+                    writer.newLine();
+                } else if (this.mAdjacencyMatrix[j][i]) {
+                    writer.write("\\path[p] (" + j + ") edge (" + i + ");");
+                    writer.newLine();
+                }
+            }
+        }
+        // print the edges
+        TikZUtils.printTikzEnd(writer);
+        TikZUtils.printEnd(TikZUtils.CENTER, writer);
+    }
+
+    /**
+     * Prints all SCCs in the graph of this exercise.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void printSCCs(final BufferedWriter writer, final boolean withSingletons, final boolean write) throws IOException {
+        final int[] sccs = this.findSCCs(writer, write);
+        int sccNum = -1;
+        int checkedNodes = 0;
+        int i = 0;
+        boolean newScc = true;
+        writer.write("Der gegebene Graph hat folgende starken Zusammenhangskomponenten:");
+        writer.newLine();
+        writer.newLine();
+        writer.write("\\[");
+        writer.newLine();
+        writer.write("    \\begin{array}{l}");
+        writer.newLine();
+        while (checkedNodes < this.numOfAllNodes()) {
+            if (sccs[i] == sccNum) {
+                if (withSingletons || this.nodeHasAdjacentNodes(i)) {
+                    if (newScc) {
+                        writer.write("        \\{ " + this.nodeName(i));
+                    } else {
+                        writer.write(",\\ " + this.nodeName(i));
+                    }
+                    newScc = false;
+                }
+                checkedNodes++;
+            }
+            i++;
+            if (i == this.numOfAllNodes() || checkedNodes == this.numOfAllNodes()) {
+                if (!newScc) {
+                    writer.write("\\}");
+                    writer.write("\\\\");
+                    writer.newLine();
+                }
+                i = 0;
+                sccNum++;
+                newScc = true;
+            }
+        }
+        writer.write("    \\end{array}");
+        writer.newLine();
+        writer.write("\\]");
+        writer.newLine();
+        writer.newLine();
+    }
+
+    /**
+     * Prints the topological order of the graph of this exercise.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public void printTopologicalOrder(
+        final Optional<BufferedWriter> optionalExerciseWriter,
+        final BufferedWriter solutionWriter,
+        final boolean withSingletons,
+        final boolean withText
+    ) throws IOException {
+        final Integer[] nodeValues = this.topologicSort();
+        if (optionalExerciseWriter.isPresent()) {
+            final BufferedWriter exerciseWriter = optionalExerciseWriter.get();
+            if (withText) {
+                exerciseWriter.write(
+                              "Bestimmen Sie eine \\emphasize{topologische Sortierung} unter Verwendung des in " +
+                            "der Vorlesung vorgestellten Algorithmus f\"ur den folgenden Graphen. Im gesamten " +
+                            "Algorithmus werden Knoten in aufsteigender Reihenfolge ihrer Schl\\\"ussel ber\\\"ucksichtigt." +
+                            " Als Ergebnis geben Sie die Liste der Knotenschl\\\"ussel in aufsteigender Reihenfolge der Topologiewerte an."
+                              );
+                exerciseWriter.newLine();
+            }
+            this.printGraph(exerciseWriter, false);
+        }
+        solutionWriter.write("Der gegebene Graph hat die folgende topologische Sortierung:\\\\");
+        solutionWriter.newLine();
+        solutionWriter.newLine();
+        int min = 1;
+        int first = 0;
+        for(int index = 0; index < nodeValues.length; ++index){
+            if(nodeValues[index] != null && nodeValues[index] == min){
+                solutionWriter.write(this.nodeName(index) + "("+ nodeValues[index] + ")");
+                first = index;
+                break;
+            }
+        }
+        while(min <= nodeValues.length){
+            for(int index = 0; index < nodeValues.length; ++index){
+                if(nodeValues[index] != null && nodeValues[index] == min && first != index){
+                    solutionWriter.write(", " + this.nodeName(index) + "("+ nodeValues[index] + ")");
+                }
+            }
+            ++min;
+        }
+        solutionWriter.write("\\\\");
+        solutionWriter.newLine();
     }
 
     /**
@@ -510,142 +558,6 @@ public class GridGraph {
             }
         }
         return result;
-    }
-
-    /**
-     * Prints this AVL-tree right under the given headline.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    private void printGraph(final BufferedWriter writer, final boolean withSingletons) throws IOException {
-        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
-        TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
-        // print the nodes
-        writer.write("% The nodes:");
-        writer.newLine();
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (withSingletons || this.nodeHasAdjacentNodes(i)) {
-                if (withSingletons) {
-                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + i + "};");
-                } else {
-                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + this.nodeName(i) + "};");
-                }
-                writer.newLine();
-            }
-        }
-        writer.write("% The edges:");
-        writer.newLine();
-        for (int i = 0; i < this.mAdjacencyMatrix.length; i++) {
-            for (int j = i+1 ; j < this.mAdjacencyMatrix[i].length; j++) {
-                if (this.mAdjacencyMatrix[i][j] && this.mAdjacencyMatrix[j][i]) {
-                    writer.write("\\path[p, bend right=15] (" + i + ") edge (" + j + ");");
-                    writer.newLine();
-                    writer.write("\\path[p, bend right=15] (" + j + ") edge (" + i + ");");
-                    writer.newLine();
-                } else if (this.mAdjacencyMatrix[i][j]) {
-                    writer.write("\\path[p] (" + i + ") edge (" + j + ");");
-                    writer.newLine();
-                } else if (this.mAdjacencyMatrix[j][i]) {
-                    writer.write("\\path[p] (" + j + ") edge (" + i + ");");
-                    writer.newLine();
-                }
-            }
-        }
-        // print the edges
-        TikZUtils.printTikzEnd(writer);
-        TikZUtils.printEnd(TikZUtils.CENTER, writer);
-    }
-
-    /**
-     * Prints all SCCs in the graph of this exercise.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    private void printSCCs(final BufferedWriter writer, final boolean withSingletons, final boolean write) throws IOException {
-        final int[] sccs = this.findSCCs(writer, write);
-        int sccNum = -1;
-        int checkedNodes = 0;
-        int i = 0;
-        boolean newScc = true;
-        writer.write("Der gegebene Graph hat folgende starken Zusammenhangskomponenten:");
-        writer.newLine();
-        writer.newLine();
-        writer.write("\\[");
-        writer.newLine();
-        writer.write("    \\begin{array}{l}");
-        writer.newLine();
-        while (checkedNodes < this.numOfAllNodes()) {
-            if (sccs[i] == sccNum) {
-                if (withSingletons || this.nodeHasAdjacentNodes(i)) {
-                    if (newScc) {
-                        writer.write("        \\{ " + this.nodeName(i));
-                    } else {
-                        writer.write(",\\ " + this.nodeName(i));
-                    }
-                    newScc = false;
-                }
-                checkedNodes++;
-            }
-            i++;
-            if (i == this.numOfAllNodes() || checkedNodes == this.numOfAllNodes()) {
-                if (!newScc) {
-                    writer.write("\\}");
-                    writer.write("\\\\");
-                    writer.newLine();
-                }
-                i = 0;
-                sccNum++;
-                newScc = true;
-            }
-        }
-        writer.write("    \\end{array}");
-        writer.newLine();
-        writer.write("\\]");
-        writer.newLine();
-        writer.newLine();
-    }
-
-    /**
-     * Prints the topological order of the graph of this exercise.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    private void printTopologicalOrder(final BufferedWriter exerciseWriter, final BufferedWriter solutionWriter, final boolean withSingletons, final boolean withText) throws IOException {
-        final Integer[] nodeValues = this.topologicSort();
-        if (exerciseWriter != null) {
-            if (withText) {
-                exerciseWriter.write(
-                              "Bestimmen Sie eine \\emphasize{topologische Sortierung} unter Verwendung des in " +
-                            "der Vorlesung vorgestellten Algorithmus f\"ur den folgenden Graphen. Im gesamten " +
-                            "Algorithmus werden Knoten in aufsteigender Reihenfolge ihrer Schl\\\"ussel ber\\\"ucksichtigt." +
-                            " Als Ergebnis geben Sie die Liste der Knotenschl\\\"ussel in aufsteigender Reihenfolge der Topologiewerte an."
-                              );
-                exerciseWriter.newLine();
-            }
-            this.printGraph(exerciseWriter, false);
-        }
-        solutionWriter.write("Der gegebene Graph hat die folgende topologische Sortierung:\\\\");
-        solutionWriter.newLine();
-        solutionWriter.newLine();
-        int min = 1;
-        int first = 0;
-        for(int index = 0; index < nodeValues.length; ++index){
-            if(nodeValues[index] != null && nodeValues[index] == min){
-                solutionWriter.write(this.nodeName(index) + "("+ nodeValues[index] + ")");
-                first = index;
-                break;
-            }
-        }
-        while(min <= nodeValues.length){
-            for(int index = 0; index < nodeValues.length; ++index){
-                if(nodeValues[index] != null && nodeValues[index] == min && first != index){
-                    solutionWriter.write(", " + this.nodeName(index) + "("+ nodeValues[index] + ")");
-                }
-            }
-            ++min;
-        }
-        solutionWriter.write("\\\\");
-        solutionWriter.newLine();
     }
 
 }
