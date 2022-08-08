@@ -11,12 +11,9 @@ import exercisegenerator.structures.*;
  */
 public class StringNodeComparator implements Comparator<Node<String>> {
 
-    /* (non-Javadoc)
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(final Node<String> o1, final Node<String> o2) {
-        return o1.getLabel().compareTo(o2.getLabel());
+        return o1.label.orElse("").compareTo(o2.label.orElse(""));
     }
 
 }

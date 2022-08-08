@@ -53,6 +53,98 @@ public abstract class TikZUtils {
     public static final String TWO_COL_WIDTH = "8cm";
 
     /**
+     * A number to uniquely identify nodes.
+     */
+    private static int number = 0;
+
+    /**
+     * Prints a row of nodes with the contents of the array.
+     * @param array The array of values.
+     * @param separate An array indicating which nodes should be separated horizontally. Must have a size exactly one
+     *                 less than array or be null.
+     * @param mark An array indicating which node should be marked by a grey background. Must have the same size as
+     *             array or be null.
+     * @param below The name of the left-most node in the row above the current row.
+     * @param writer The writer to send the output to.
+     * @return The name of the left-most node of the current row.
+     * @throws IOException If some I/O error occurs.
+     */
+    public static String printArray(
+        final Integer[] array,
+        final boolean[] separate,
+        final boolean[] mark,
+        final String below,
+        final BufferedWriter writer
+    ) throws IOException {
+        final String firstName = "n" + TikZUtils.number++;
+        if (below == null) {
+            writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            if(array[0] != null)
+            {
+                final int val = array[0];
+                writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            }
+            else
+            {
+                writer.write(") {\\phantom{00}");
+            }
+            writer.write("};");
+            writer.newLine();
+        } else {
+            writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            writer.write(") [below=of ");
+            writer.write(below);
+            if(array[0] != null)
+            {
+                final int val = array[0];
+                writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            }
+            else
+            {
+                writer.write("] {\\phantom{00}");
+            }
+            writer.write("};");
+            writer.newLine();
+        }
+        for (int i = 1; i < array.length; i++) {
+            writer.write("\\node[node");
+            if (mark != null && mark[i]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write("n" + TikZUtils.number++);
+            writer.write(") [right=");
+            if (separate != null && separate[i - 1]) {
+                writer.write("0.1 ");
+            }
+            writer.write("of ");
+            writer.write("n" + (TikZUtils.number - 2));
+            if(array[i] != null)
+            {
+                final int val = array[i];
+                writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            }
+            else
+            {
+                writer.write("] {\\phantom{00}");
+            }
+            writer.write("};");
+            writer.newLine();
+        }
+        return firstName;
+    }
+
+    /**
      * Prints a new stretch factor for the array height.
      * @param stretch The stretch factor.
      * @param writer The writer to send the output to.
@@ -101,8 +193,13 @@ public abstract class TikZUtils {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static <E> void printEdge(final String style, final BigInteger from, final E label, final BigInteger to, final BufferedWriter writer)
-    throws IOException {
+    public static <E> void printEdge(
+        final String style,
+        final BigInteger from,
+        final E label,
+        final BigInteger to,
+        final BufferedWriter writer
+    ) throws IOException {
         final StringBuilder res = new StringBuilder();
         res.append("\\draw");
         res.append(style);
@@ -120,6 +217,113 @@ public abstract class TikZUtils {
         res.append(";");
         writer.write(res.toString());
         writer.newLine();
+    }
+
+    /**
+     * Prints a row of empty nodes as solution space for the contents of the array.
+     * @param length The length of the array.
+     * @param below The name of the left-most node in the row above the current row.
+     * @param writer The writer to send the output to.
+     * @return The name of the left-most node of the current row.
+     * @throws IOException If some I/O error occurs.
+     */
+    public static String printEmptyArray(
+        final int length,
+        final String below,
+        final BufferedWriter writer
+    ) throws IOException {
+        final String firstName = "n" + TikZUtils.number++;
+        if (below == null) {
+            writer.write("\\node[node] (");
+            writer.write(firstName);
+            writer.write(") {\\phantom{00}};");
+            writer.newLine();
+        } else {
+            writer.write("\\node[node] (");
+            writer.write(firstName);
+            writer.write(") [below=of ");
+            writer.write(below);
+            writer.write("] {\\phantom{00}};");
+            writer.newLine();
+        }
+        for (int i = 1; i < length; i++) {
+            writer.write("\\node[node] (n" + TikZUtils.number++);
+            writer.write(") [right=of n" + (TikZUtils.number - 2));
+            writer.write("] {\\phantom{00}};");
+            writer.newLine();
+        }
+        return firstName;
+    }
+
+    /**
+     * Prints a row of empty nodes as solution space for the contents of the array with array indices above.
+     * @param length The length of the array.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some I/O error occurs.
+     */
+    public static void printEmptyArrayWithIndex(final int length, final BufferedWriter writer) throws IOException {
+        int i = 0;
+        writer.write("\\node[node] (");
+        writer.write("n" + TikZUtils.number++);
+        writer.write(") {\\phantom{00}};");
+        writer.newLine();
+        int ref = TikZUtils.number - 1;
+        writer.write("\\node (");
+        writer.write("l" + ref);
+        writer.write(") [above=0 of n" + ref);
+        writer.write("] {\\scriptsize\\texttt{a[" + i);
+        writer.write("]}};");
+        writer.newLine();
+        while (i < length - 1) {
+            i++;
+            writer.write("\\node[node] (n" + TikZUtils.number++);
+            writer.write(") [right=of n" + (TikZUtils.number - 2));
+            writer.write("] {\\phantom{00}};");
+            writer.newLine();
+            ref = TikZUtils.number - 1;
+            writer.write("\\node (");
+            writer.write("l" + ref);
+            writer.write(") [above=0 of n" + ref);
+            writer.write("] {\\scriptsize\\texttt{a[" + i);
+            writer.write("]}};");
+            writer.newLine();
+        }
+    }
+
+    /**
+     * Prints a colum of empty nodes as solution space for the contents of the array.
+     * @param length The length of the array.
+     * @param left The name of the top-most node in the colum left of the current colum.
+     * @param writer The writer to send the output to.
+     * @return The name of the top-most node of the current colum.
+     * @throws IOException If some I/O error occurs.
+     */
+    public static String printEmptyVerticalArray(
+        final int length,
+        final String left,
+        final BufferedWriter writer
+        ) throws IOException {
+        final String firstName = "n" + TikZUtils.number++;
+        if (left == null) {
+            writer.write("\\node[node] (");
+            writer.write(firstName);
+            writer.write(") {\\phantom{00}};");
+            writer.newLine();
+        } else {
+            writer.write("\\node[node] (");
+            writer.write(firstName);
+            writer.write(") [right=of ");
+            writer.write(left);
+            writer.write("] {\\phantom{00}};");
+            writer.newLine();
+        }
+        for (int i = 1; i < length; i++) {
+            writer.write("\\node[node] (n" + TikZUtils.number++);
+            writer.write(") [below=of n" + (TikZUtils.number - 2));
+            writer.write("] {\\phantom{00}};");
+            writer.newLine();
+        }
+        return firstName;
     }
 
     /**
@@ -198,22 +402,21 @@ public abstract class TikZUtils {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static <N> void printNode (final Node<N> node, final String style, final String position, final BufferedWriter writer)
-    throws IOException {
-        final StringBuilder res = new StringBuilder();
-        res.append("\\node");
-        res.append(style);
-        res.append(" (n");
-        res.append(node.getID().toString());
-        res.append(") ");
-        res.append(position);
-        res.append("{");
-        final N label = node.getLabel();
-        if (label != null) {
-            res.append(label.toString());
-        }
-        res.append("};");
-        writer.write(res.toString());
+    public static <N> void printNode (
+        final Node<N> node,
+        final String style,
+        final String position,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write(
+            String.format(
+                "\\node%s (n%s) %s{%s};",
+                style,
+                node.id.toString(),
+                position,
+                node.label.isEmpty() ? "" : node.label.get().toString()
+            )
+        );
         writer.newLine();
     }
 
@@ -234,8 +437,11 @@ public abstract class TikZUtils {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static void printSamePageBeginning(final int step, final Pair<Integer, Boolean> op, final BufferedWriter writer)
-    throws IOException {
+    public static void printSamePageBeginning(
+        final int step,
+        final Pair<Integer, Boolean> op,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write("\\begin{minipage}{\\columnwidth}");
         writer.newLine();
         writer.write("\\vspace*{2ex}");
@@ -257,7 +463,11 @@ public abstract class TikZUtils {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static void printSamePageBeginning(final int step, final String width, final BufferedWriter writer) throws IOException {
+    public static void printSamePageBeginning(
+        final int step,
+        final String width,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write("\\begin{minipage}{" + width + "}");
         writer.newLine();
         writer.write("\\vspace*{1ex}");
@@ -380,6 +590,118 @@ public abstract class TikZUtils {
     }
 
     /**
+     * Prints the specified array interpreted as binary tree up to the specified index.
+     * @param array The array.
+     * @param to The index to which the tree should be printed.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printTree(final Integer[] array, final int to, final BufferedWriter writer) throws IOException {
+        if (to < 0) {
+            return;
+        }
+        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        if (to > 0) {
+            writer.write("\\Tree");
+            TikZUtils.printTree(array, 0, to, writer);
+        } else {
+            writer.write("\\node[circle,draw=black,thick,inner sep=5pt] {" + array[0] + "};");
+        }
+        writer.newLine();
+        TikZUtils.printTikzEnd(writer);
+    }
+
+    /**
+     * Prints the specified array interpreted as binary tree from the specified start index (i.e., it prints the
+     * subtree starting with the element at the specified start index) to the specified end index.
+     * @param array The array.
+     * @param start The start index.
+     * @param end The end index.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    public static void printTree(final Integer[] array, final int start, final int end, final BufferedWriter writer) throws IOException {
+        final int next = 2 * start + 1;
+        if (next <= end) {
+            writer.write(" [." + array[start]);
+            TikZUtils.printTree(array, next, end, writer);
+            if (next + 1 <= end) {
+                TikZUtils.printTree(array, next + 1, end, writer);
+            }
+            writer.write(" ]");
+        } else {
+            writer.write(" " + array[start]);
+        }
+    }
+
+    /**
+     * Prints a colum of nodes with the contents of the array.
+     * @param array The array of values.
+     * @param separate An array indicating which nodes should be separated vertically. Must have a size exactly one
+     *                 less than array or be null.
+     * @param mark An array indicating which node should be marked by a grey background. Must have the same size as
+     *             array or be null.
+     * @param left The name of the top-most node in the colum left of the current colum.
+     * @param writer The writer to send the output to.
+     * @return The name of the left-most node of the current row.
+     * @throws IOException If some I/O error occurs.
+     */
+    public static String printVerticalArray(
+        final Integer[] array,
+        final boolean[] separate,
+        final boolean[] mark,
+        final String left,
+        final BufferedWriter writer
+    ) throws IOException {
+        final String firstName = "n" + TikZUtils.number++;
+        if( left == null )
+        {
+            writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            final int val = array[0];
+            writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            writer.write("};");
+            writer.newLine();
+        } else {
+            writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            writer.write(") [right=of ");
+            writer.write(left);
+            final int val = array[0];
+            writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            writer.write("};");
+            writer.newLine();
+        }
+        for (int i = 1; i < array.length; i++) {
+            writer.write("\\node[node");
+            if (mark != null && mark[i]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write("n" + TikZUtils.number++);
+            writer.write(") [below=");
+            if (separate != null && separate[i - 1]) {
+                writer.write("0.1 ");
+            }
+            writer.write("of ");
+            writer.write("n" + (TikZUtils.number - 2));
+            final int val = array[i];
+            writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
+            writer.write("};");
+            writer.newLine();
+        }
+        return firstName;
+    }
+
+    /**
      * Prints vertical space
      * @param step The next evaluation step.
      * @param writer The writer to send the output to.
@@ -392,6 +714,73 @@ public abstract class TikZUtils {
             writer.newLine();
             writer.newLine();
         }
+    }
+
+    /**
+     * Prints a colum of nodes with the contents of the array.
+     * @param array The array of values.
+     * @param separate An array indicating which nodes should be separated vertically. Must have a size exactly one
+     *                 less than array or be null.
+     * @param mark An array indicating which node should be marked by a grey background. Must have the same size as
+     *             array or be null.
+     * @param left The name of the top-most node in the colum left of the current colum.
+     * @param writer The writer to send the output to.
+     * @return The name of the left-most node of the current row.
+     * @throws IOException If some I/O error occurs.
+     */
+    public static String printVerticalStringArray(
+        final String[] array,
+        final boolean[] separate,
+        final boolean[] mark,
+        final String left,
+        final BufferedWriter writer
+        ) throws IOException {
+        final String firstName = "n" + TikZUtils.number++;
+        if( left == null )
+        {
+            writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            final String val = array[0];
+            writer.write(") {" + val);
+            writer.write("};");
+            writer.newLine();
+        } else {
+            writer.write("\\node[node");
+            if (mark != null && mark[0]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write(firstName);
+            writer.write(") [right=of ");
+            writer.write(left);
+            final String val = array[0];
+            writer.write("] {" + val);
+            writer.write("};");
+            writer.newLine();
+        }
+        for (int i = 1; i < array.length; i++) {
+            writer.write("\\node[node");
+            if (mark != null && mark[i]) {
+                writer.write(",fill=black!20");
+            }
+            writer.write("] (");
+            writer.write("n" + TikZUtils.number++);
+            writer.write(") [below=");
+            if (separate != null && separate[i - 1]) {
+                writer.write("0.1 ");
+            }
+            writer.write("of ");
+            writer.write("n" + (TikZUtils.number - 2));
+            final String val = array[i];
+            writer.write("] {" + val);
+            writer.write("};");
+            writer.newLine();
+        }
+        return firstName;
     }
 
 }

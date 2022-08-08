@@ -1,6 +1,7 @@
 package exercisegenerator.structures;
 
 import java.math.*;
+import java.util.*;
 
 /**
  * A labeled node.
@@ -28,26 +29,26 @@ public class Node<L> {
     /**
      * The unique ID of this node.
      */
-    private final BigInteger id;
+    public final BigInteger id;
 
     /**
      * The label of this node.
      */
-    private L label;
+    public final Optional<L> label;
 
     /**
      * Creates a node without a label.
      */
     public Node() {
-        this(null);
+        this(Optional.empty());
     }
 
     /**
      * Creates a node with the specified label.
      * @param l The label of this node.
      */
-    public Node(final L l) {
-        this.label = l;
+    public Node(final Optional<L> label) {
+        this.label = label;
         this.id = Node.getNewID();
     }
 
@@ -62,42 +63,18 @@ public class Node<L> {
         return false;
     }
 
-    /**
-     * @return The unique ID of this node.
-     */
-    public BigInteger getID() {
-        return this.id;
-    }
-
-    /**
-     * @return The label of this node.
-     */
-    public L getLabel() {
-        return this.label;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return this.id.hashCode();
     }
 
-    /**
-     * Sets the label of this node.
-     * @param l The label of this node.
-     */
-    public void setLabel(final L l) {
-        this.label = l;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Node " + this.id.toString() + (this.label == null ? "" : ": " + this.label.toString());
+        return String.format(
+            "Node %s%s",
+            this.id.toString(),
+            this.label.isEmpty() ? "" : ": " + this.label.get().toString()
+        );
     }
 
 }

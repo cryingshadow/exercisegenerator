@@ -364,7 +364,7 @@ public abstract class Hashing {
             writer.write("{\\Large");
             writer.newLine();
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            ArrayUtils.printArray(solution, null, null, null, writer);
+            TikZUtils.printArray(solution, null, null, null, writer);
         } else {
             // probe == 0 -> no probing
             writer.write(init);
@@ -394,7 +394,7 @@ public abstract class Hashing {
                     solution[pos] += ", " + in[i];
                 }
             }
-            ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
+            TikZUtils.printVerticalStringArray(solution, null, null, null, writer);
         }
         TikZUtils.printTikzEnd(writer);
         writer.write("}");
@@ -630,14 +630,14 @@ public abstract class Hashing {
                 writer.newLine();
                 if (probing) {
                     TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-                    ArrayUtils.printEmptyArrayWithIndex(size, writer);
+                    TikZUtils.printEmptyArrayWithIndex(size, writer);
                 } else {
                     final String[] solution = new String[size];
                     for (int i = 0; i < size; ++i) {
                         solution[i] = i + ":";
                     }
                     TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
-                    ArrayUtils.printVerticalStringArray(solution, null, null, null, writer);
+                    TikZUtils.printVerticalStringArray(solution, null, null, null, writer);
                 }
                 TikZUtils.printTikzEnd(writer);
                 writer.write("}");

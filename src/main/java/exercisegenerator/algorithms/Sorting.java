@@ -69,7 +69,7 @@ public abstract class Sorting {
      */
     public static int bubblesort(final Integer[] array, final BufferedWriter writer) throws IOException {
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor = ArrayUtils.printArray(array, null, null, null, writer);
+        String anchor = TikZUtils.printArray(array, null, null, null, writer);
         int res = 0;
         int length = array.length;
         while (length > 1) {
@@ -77,7 +77,7 @@ public abstract class Sorting {
             for (int i = 0; i < length - 1; i++) {
                 if (array[i] > array[i + 1]) {
                     ArrayUtils.swap(array, i, i + 1);
-                    anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
+                    anchor = TikZUtils.printArray(array, null, null, anchor, writer);
                     res++;
                     n = i + 1;
                 }
@@ -131,7 +131,7 @@ public abstract class Sorting {
                 break;
             }
             ArrayUtils.swap(array, j - 1, i - 1);
-            newAnchor = ArrayUtils.printArray(array, separate, null, newAnchor, writer);
+            newAnchor = TikZUtils.printArray(array, separate, null, newAnchor, writer);
             res++;
             i = j;
         }
@@ -171,10 +171,10 @@ public abstract class Sorting {
             }
             ArrayUtils.swap(array, j - 1, i - 1);
             TikZUtils.printSamePageBeginning(res++, TikZUtils.COL_WIDTH, writer);
-            ArrayUtils.printTree(array, to - 1, writer);
+            TikZUtils.printTree(array, to - 1, writer);
             TikZUtils.printProtectedNewline(writer);
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            ArrayUtils.printArray(array, separate, null, null, writer);
+            TikZUtils.printArray(array, separate, null, null, writer);
             TikZUtils.printTikzEnd(writer);
             TikZUtils.printSamePageEnd(writer);
             TikZUtils.printVerticalSpace(res, writer);
@@ -202,7 +202,7 @@ public abstract class Sorting {
      */
     public static int heapsort(final Integer[] array, final BufferedWriter writer) throws IOException {
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor = ArrayUtils.printArray(array, null, null, null, writer);
+        String anchor = TikZUtils.printArray(array, null, null, null, writer);
         int res = 0;
         final boolean[] separate = new boolean[array.length - 1];
         Arrays.fill(separate, false);
@@ -225,7 +225,7 @@ public abstract class Sorting {
                     array,
                     1,
                     i,
-                    ArrayUtils.printArray(array, separate, null, anchor, writer),
+                    TikZUtils.printArray(array, separate, null, anchor, writer),
                     separate,
                     writer
                 );
@@ -257,10 +257,10 @@ public abstract class Sorting {
     public static int heapsortWithTrees(final Integer[] array, final BufferedWriter writer) throws IOException {
         int step = 0;
         TikZUtils.printSamePageBeginning(step++, TikZUtils.COL_WIDTH, writer);
-        ArrayUtils.printTree(array, array.length - 1, writer);
+        TikZUtils.printTree(array, array.length - 1, writer);
         TikZUtils.printProtectedNewline(writer);
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        ArrayUtils.printArray(array, null, null, null, writer);
+        TikZUtils.printArray(array, null, null, null, writer);
         TikZUtils.printTikzEnd(writer);
         TikZUtils.printSamePageEnd(writer);
         TikZUtils.printVerticalSpace(step, writer);
@@ -277,11 +277,11 @@ public abstract class Sorting {
             TikZUtils.printSamePageBeginning(step++, TikZUtils.COL_WIDTH, writer);
             if (i > 1) {
                 separate[i - 1] = true;
-                ArrayUtils.printTree(array, i - 1, writer);
+                TikZUtils.printTree(array, i - 1, writer);
                 TikZUtils.printProtectedNewline(writer);
             }
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            ArrayUtils.printArray(array, separate, null, null, writer);
+            TikZUtils.printArray(array, separate, null, null, writer);
             TikZUtils.printTikzEnd(writer);
             TikZUtils.printSamePageEnd(writer);
             TikZUtils.printVerticalSpace(step, writer);
@@ -309,7 +309,7 @@ public abstract class Sorting {
      */
     public static int insertionsort(final Integer[] array, final BufferedWriter writer) throws IOException {
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor = ArrayUtils.printArray(array, null, null, null, writer);
+        String anchor = TikZUtils.printArray(array, null, null, null, writer);
         int res = 0;
         for (int i = 1; i < array.length; i++) {
             final int insert = array[i];
@@ -319,7 +319,7 @@ public abstract class Sorting {
                 j--;
             }
             array[j] = insert;
-            anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
+            anchor = TikZUtils.printArray(array, null, null, anchor, writer);
             res++;
         }
         TikZUtils.printTikzEnd(writer);
@@ -384,7 +384,7 @@ public abstract class Sorting {
                 array,
                 0,
                 array.length - 1,
-                ArrayUtils.printArray(array, separate, null, null, writer),
+                TikZUtils.printArray(array, separate, null, null, writer),
                 separate,
                 mark,
                 printSplitting,
@@ -425,7 +425,7 @@ public abstract class Sorting {
             String newAnchor = anchor;
             if (printSplitting) {
                 separate[middle] = true;
-                newAnchor = ArrayUtils.printArray(array, separate, mark, newAnchor, writer);
+                newAnchor = TikZUtils.printArray(array, separate, mark, newAnchor, writer);
             }
             final Object[] firstStep =
                 Sorting.mergesort(array, start, middle, newAnchor, separate, mark, printSplitting, writer);
@@ -444,7 +444,7 @@ public abstract class Sorting {
             separate[middle] = false;
             return new Object[]{
                 ((Integer)firstStep[0]) + ((Integer)secondStep[0]) + 1,
-                ArrayUtils.printArray(array, separate, null, (String)secondStep[1], writer)
+                TikZUtils.printArray(array, separate, null, (String)secondStep[1], writer)
             };
         } else {
             return new Object[]{0, anchor};
@@ -564,7 +564,7 @@ public abstract class Sorting {
                 array,
                 0,
                 array.length - 1,
-                ArrayUtils.printArray(array, separate, mark, null, writer),
+                TikZUtils.printArray(array, separate, mark, null, writer),
                 separate,
                 mark,
                 writer
@@ -612,7 +612,7 @@ public abstract class Sorting {
                     array,
                     start,
                     middle - 1,
-                    ArrayUtils.printArray(array, separate, mark, anchor, writer),
+                    TikZUtils.printArray(array, separate, mark, anchor, writer),
                     separate,
                     mark,
                     writer
@@ -653,7 +653,7 @@ public abstract class Sorting {
     public static int selectionsort(final Integer[] array, final BufferedWriter writer)
     throws IOException {
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor = ArrayUtils.printArray(array, null, null, null, writer);
+        String anchor = TikZUtils.printArray(array, null, null, null, writer);
         int res = 0;
         for (int i = 0; i < array.length - 1; i++) {
             int min = i;
@@ -664,7 +664,7 @@ public abstract class Sorting {
             }
             if (i != min) {
                 ArrayUtils.swap(array, i, min);
-                anchor = ArrayUtils.printArray(array, null, null, anchor, writer);
+                anchor = TikZUtils.printArray(array, null, null, anchor, writer);
                 res++;
             }
         }
@@ -747,7 +747,7 @@ public abstract class Sorting {
         String anchor = anchorParam;
         if (options.containsKey(Flag.EXERCISE)) {
             for (int i = 0; i < rows; i++) {
-                anchor = ArrayUtils.printEmptyArray(array.length, anchor, exerciseWriter);
+                anchor = TikZUtils.printEmptyArray(array.length, anchor, exerciseWriter);
             }
             TikZUtils.printTikzEnd(exerciseWriter);
         }
@@ -781,7 +781,7 @@ public abstract class Sorting {
                 exerciseWriter.newLine();
             }
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
-            anchor = ArrayUtils.printArray(array, null, null, null, exerciseWriter);
+            anchor = TikZUtils.printArray(array, null, null, null, exerciseWriter);
         }
         return anchor;
     }

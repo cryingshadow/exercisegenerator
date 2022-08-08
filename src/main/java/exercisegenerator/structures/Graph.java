@@ -120,7 +120,7 @@ public class Graph<N, E> {
     public Set<Node<N>> getNodesWithLabel(final N label) {
         final Set<Node<N>> res = new LinkedHashSet<Node<N>>();
         for (final Node<N> node : this.adjacencyLists.keySet()) {
-            if ((label == null && node.getLabel() == null) || (label != null && label.equals(node.getLabel()))) {
+            if (node.label.isPresent() && label.equals(node.label.get())) {
                 res.add(node);
             }
         }
@@ -159,21 +159,21 @@ public class Graph<N, E> {
         }
         if (directed) {
             for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
-                final BigInteger from = entry.getKey().getID();
+                final BigInteger from = entry.getKey().id;
                 for (final Pair<E, Node<N>> edge : entry.getValue()) {
-                    TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                    TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.id, writer);
                 }
             }
         } else {
             final List<Pair<BigInteger,BigInteger>> finishedNodePairs = new ArrayList<Pair<BigInteger,BigInteger>>();
             for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
-                final BigInteger from = entry.getKey().getID();
+                final BigInteger from = entry.getKey().id;
                 for (final Pair<E, Node<N>> edge : entry.getValue()) {
                     final Pair<BigInteger,BigInteger> reverseNodePair =
-                        new Pair<BigInteger,BigInteger>(edge.y.getID(), entry.getKey().getID());
+                        new Pair<BigInteger,BigInteger>(edge.y.id, entry.getKey().id);
                     if (!finishedNodePairs.contains(reverseNodePair)) {
-                        TikZUtils.printEdge(TikZUtils.SYM_EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
-                        finishedNodePairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().getID(), edge.y.getID()));
+                        TikZUtils.printEdge(TikZUtils.SYM_EDGE_STYLE, from, edge.x, edge.y.id, writer);
+                        finishedNodePairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id, edge.y.id));
                     }
                 }
             }
@@ -229,19 +229,22 @@ public class Graph<N, E> {
             final boolean printEdgeLabels = printMode == GraphPrintMode.ALL;
             for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
                 final Node<N> fromNode = entry.getKey();
-                final BigInteger from = fromNode.getID();
+                final BigInteger from = fromNode.id;
                 for (final Pair<E, Node<N>> edge : entry.getValue()) {
-                    if (toHighlight != null && toHighlight.contains(new Pair<Node<N>, Pair<E, Node<N>>>(fromNode, edge))) {
+                    if (
+                        toHighlight != null
+                        && toHighlight.contains(new Pair<Node<N>, Pair<E, Node<N>>>(fromNode, edge))
+                    ) {
                         if (printEdgeLabels) {
-                            TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.getID(), writer);
+                            TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.id, writer);
                         } else {
-                            TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.getID(), writer);
+                            TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.id, writer);
                         }
                     } else {
                         if (printEdgeLabels) {
-                            TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.getID(), writer);
+                            TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.id, writer);
                         } else {
-                            TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, null, edge.y.getID(), writer);
+                            TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, null, edge.y.id, writer);
                         }
                     }
                 }
@@ -293,7 +296,10 @@ public class Graph<N, E> {
                         // node label
                         final String label = commaSeparated[i].trim();
                         if (!"".equals(label)) {
-                            newGrid.put(new Pair<Integer, Integer>(i / 2, row), new Node<N>(nodeParser.parse(label)));
+                            newGrid.put(
+                                new Pair<Integer, Integer>(i / 2, row),
+                                new Node<N>(Optional.of(nodeParser.parse(label)))
+                            );
                         }
                     } else {
                         // edge labels
@@ -403,16 +409,16 @@ public class Graph<N, E> {
         final Map<BigInteger, Integer> toArray = new LinkedHashMap<BigInteger, Integer>();
         int id = 0;
         for (final Node<N> node : this.adjacencyLists.keySet()) {
-            final BigInteger nodeID = node.getID();
+            final BigInteger nodeID = node.id;
             toArray.put(nodeID, id);
             ids[id] = nodeID;
-            labels[id++] = node.getLabel();
+            labels[id++] = node.label.orElse(null);
         }
         for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
-            final int from = toArray.get(entry.getKey());
+            final int from = toArray.get(entry.getKey()); //FIXME probably wrong type
             final Set<Integer> tos = new LinkedHashSet<Integer>();
             for (final Pair<E, Node<N>> edge : entry.getValue()) {
-                final int to = toArray.get(edge.y);
+                final int to = toArray.get(edge.y); //FIXME probably wrong type
                 if (tos.contains(to)) {
                     throw new IllegalStateException(
                         "Graph with multiple edges between the same nodes in the same direction cannot be converted "

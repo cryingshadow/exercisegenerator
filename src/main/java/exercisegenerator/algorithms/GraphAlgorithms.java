@@ -59,7 +59,7 @@ public abstract class GraphAlgorithms {
         }
         final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
         final Map<Pair<Integer, Integer>, Node<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
-        final Node<String> source = new Node<String>("s");
+        final Node<String> source = new Node<String>(Optional.of("s"));
         final Map<Node<String>, NodeGridPosition> positions = new LinkedHashMap<Node<String>, NodeGridPosition>();
         final Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
         GraphAlgorithms.addNode(
@@ -70,7 +70,7 @@ public abstract class GraphAlgorithms {
             positions
         );
         if (numOfNodes == 0) {
-            final Node<String> sink = new Node<String>("t");
+            final Node<String> sink = new Node<String>(Optional.of("t"));
             GraphAlgorithms.addNode(
                 sink,
                 graph,
@@ -261,7 +261,7 @@ public abstract class GraphAlgorithms {
             minYPos = Math.min(minYPos, curMinYPos);
             for (int yPos = curMinYPos; yPos <= curMaxYPos; yPos++) {
                 // at least one edge from previous level
-                final Node<String> node = new Node<String>(GraphAlgorithms.toStringLabel(letter++));
+                final Node<String> node = new Node<String>(Optional.of(GraphAlgorithms.toStringLabel(letter++)));
                 final boolean hasDiagonals = (xPos + yPos) % 2 == 0;
                 final Pair<Integer, Integer> pos = new Pair<Integer, Integer>(xPos, yPos);
                 GraphAlgorithms.addNode(
@@ -390,7 +390,7 @@ public abstract class GraphAlgorithms {
             remainingNodes -= nodesAtXPos;
             xPos++;
         }
-        final Node<String> sink = new Node<String>("t");
+        final Node<String> sink = new Node<String>(Optional.of("t"));
         int yPos = curMinYPos + ((curMaxYPos - curMinYPos) / 2);
         if ((xPos + yPos) % 2 != 0) {
             yPos++;
@@ -443,18 +443,23 @@ public abstract class GraphAlgorithms {
      * @return A random graph with <code>numOfNodes</code> nodes labeled with Strings (each node has a unique label
      *         and there is a node with label A) and edges labeled with Integers.
      */
-    public static Graph<String, Integer> createRandomGraph(final Random gen, final int numOfNodes, final boolean undirected) {
+    public static Graph<String, Integer> createRandomGraph(
+        final Random gen,
+        final int numOfNodes,
+        final boolean undirected
+    ) {
         if (numOfNodes < 0) {
             throw new IllegalArgumentException("Number of nodes must not be negative!");
         }
         final Graph<String, Integer> graph = new Graph<String, Integer>();
-        final Map<Pair<Integer, Integer>, Node<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
+        final Map<Pair<Integer, Integer>, Node<String>> grid =
+            new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
         if (numOfNodes == 0) {
             graph.setGrid(grid);
             return graph;
         }
         final Map<Node<String>, NodeGridPosition> positions = new LinkedHashMap<Node<String>, NodeGridPosition>();
-        final Node<String> start = new Node<String>("A");
+        final Node<String> start = new Node<String>(Optional.of("A"));
         final Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
         final boolean startDiagonal = gen.nextBoolean();
         GraphAlgorithms.addNode(
@@ -470,7 +475,7 @@ public abstract class GraphAlgorithms {
             final Node<String> nextNode = nodesWithFreeNeighbors.get(gen.nextInt(nodesWithFreeNeighbors.size()));
             final NodeGridPosition nextPos = positions.get(nextNode);
             final Pair<Pair<Integer, Integer>, Boolean> toAddPos = nextPos.randomFreePosition(gen);
-            final Node<String> toAddNode = new Node<String>(GraphAlgorithms.toStringLabel(letter));
+            final Node<String> toAddNode = new Node<String>(Optional.of(GraphAlgorithms.toStringLabel(letter)));
             final NodeGridPosition gridPos = GraphAlgorithms.addNode(toAddNode, graph, toAddPos, grid, positions);
             final int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
             graph.addEdge(nextNode, value, toAddNode);
@@ -587,19 +592,27 @@ public abstract class GraphAlgorithms {
                 exTable[0][0] = solTable[0][0];
                 for (final Node<N> node : nodes) {
                     if (!node.equals(start)) {
-                        solTable[0][i + 1] = "\\texttt{key[}" + node.getLabel().toString() + "\\texttt{]}";
+                        solTable[0][i + 1] =
+                            String.format(
+                                "\\texttt{key[}%s\\texttt{]}",
+                                node.label.isEmpty() ? "" : node.label.get().toString()
+                            );
                         exTable[0][i + 1] = solTable[0][i + 1];
                         ids.put(node, i);
                         i++;
                     }
                 }
-                solTable[0][1] = "\\texttt{key[}" + start.getLabel().toString() + "\\texttt{]}";
+                solTable[0][1] =
+                    String.format(
+                        "\\texttt{key[}%s\\texttt{]}",
+                        start.label.isEmpty() ? "" : start.label.get().toString()
+                    );
                 exTable[0][1] = solTable[0][1];
                 distances[current] = 0;
                 for (i = 1; i < size; i++) {
                     used.add(current);
                     final Node<N> currentNode = nodes.get(current);
-                    solTable[i][0] = currentNode.getLabel().toString();
+                    solTable[i][0] = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
                     exTable[i][0] = "";
                     for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
                         final Integer to = ids.get(edge.y);
@@ -639,7 +652,8 @@ public abstract class GraphAlgorithms {
                 exTable[0][0] = solTable[0][0];
                 for (final Node<N> node : nodes) {
                     if (!node.equals(start)) {
-                        solTable[0][i] = "\\textbf{" + node.getLabel().toString() + "}";
+                        solTable[0][i] =
+                            String.format("\\textbf{%s}", node.label.isEmpty() ? "" : node.label.get().toString());
                         exTable[0][i] = solTable[0][i];
                         ids.put(node, i);
                         i++;
@@ -649,7 +663,7 @@ public abstract class GraphAlgorithms {
                 for (i = 1; i < size; i++) {
                     used.add(current);
                     final Node<N> currentNode = nodes.get(current);
-                    solTable[i][0] = currentNode.getLabel().toString();
+                    solTable[i][0] = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
                     exTable[i][0] = "";
                     for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
                         final Integer to = ids.get(edge.y);
@@ -687,7 +701,7 @@ public abstract class GraphAlgorithms {
             default:
                 throw new IllegalStateException("Unkown text version!");
         }
-        exTable[1][0] = start.getLabel().toString();
+        exTable[1][0] = start.label.isEmpty() ? "" : start.label.get().toString();
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
@@ -697,7 +711,7 @@ public abstract class GraphAlgorithms {
         exWriter.newLine();
         exWriter.write("F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem ");
         exWriter.write("\\emphasize{Startknoten ");
-        exWriter.write(start.getLabel().toString());
+        exWriter.write(start.label.isEmpty() ? "" : start.label.get().toString());
         exWriter.write("} aus.");
         switch (mode) {
             case ALWAYS:
@@ -796,12 +810,13 @@ public abstract class GraphAlgorithms {
         for (int current = 0 ; current < size; ++current) {
             final Node<N> currentNode = nodes.get(current);
             // set labels
-            firstExercise[0][current+1] = currentNode.getLabel().toString();
-            firstExercise[current+1][0] = currentNode.getLabel().toString();
-            otherExercise[0][current+1] = currentNode.getLabel().toString();
-            otherExercise[current+1][0] = currentNode.getLabel().toString();
-            currentSolution[0][current+1] = currentNode.getLabel().toString();
-            currentSolution[current+1][0] = currentNode.getLabel().toString();
+            final String currentLabel = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
+            firstExercise[0][current+1] = currentLabel;
+            firstExercise[current+1][0] = currentLabel;
+            otherExercise[0][current+1] = currentLabel;
+            otherExercise[current+1][0] = currentLabel;
+            currentSolution[0][current+1] = currentLabel;
+            currentSolution[current+1][0] = currentLabel;
             // prepare weights and solution array
             for (int i = 0; i < size; ++i) {
                 if (!warshall) {
@@ -851,8 +866,9 @@ public abstract class GraphAlgorithms {
         for (int current = 0 ; current < size; ++current) {
             final Node<N> currentNode = nodes.get(current);
             // set labels
-            currentSolution[0][current+1] = currentNode.getLabel().toString();
-            currentSolution[current+1][0] = currentNode.getLabel().toString();
+            final String currentLabel = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
+            currentSolution[0][current+1] = currentLabel;
+            currentSolution[current+1][0] = currentLabel;
         }
         // actual algorithm
         for (int intermediate = 0; intermediate < size; ++intermediate) {
@@ -912,8 +928,9 @@ public abstract class GraphAlgorithms {
             for (int current = 0 ; current < size; ++current) {
                 final Node<N> currentNode = nodes.get(current);
                 // set labels
-                currentSolution[0][current+1] = currentNode.getLabel().toString();
-                currentSolution[current+1][0] = currentNode.getLabel().toString();
+                final String currentLabel = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
+                currentSolution[0][current+1] = currentLabel;
+                currentSolution[current+1][0] = currentLabel;
             }
             changed = new boolean[size][size];
         }
@@ -1022,9 +1039,9 @@ public abstract class GraphAlgorithms {
         final BufferedWriter solWriter
     ) throws IOException {
         exWriter.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
-        exWriter.write(source.getLabel().toString());
+        exWriter.write(source.label.isEmpty() ? "" : source.label.get().toString());
         exWriter.write(" und Senke ");
-        exWriter.write(sink.getLabel().toString());
+        exWriter.write(sink.label.isEmpty() ? "" : sink.label.get().toString());
         exWriter.write(":\\\\");
         exWriter.newLine();
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
@@ -1237,12 +1254,14 @@ public abstract class GraphAlgorithms {
         exTable[0][0] = "\\#Iteration";
         solTable[0][0] = "\\#Iteration";
         final Map<Node<N>, Integer> key = new LinkedHashMap<Node<N>, Integer>();
-        final Map<Node<N>, List<Pair<Integer, Node<N>>>> parent = new LinkedHashMap<Node<N>, List<Pair<Integer, Node<N>>>>();
+        final Map<Node<N>, List<Pair<Integer, Node<N>>>> parent =
+            new LinkedHashMap<Node<N>, List<Pair<Integer, Node<N>>>>();
         int i = 1;
         for (final Node<N> node : nodes) {
             key.put(node, null);
-            exTable[i][0] = node.getLabel().toString();
-            solTable[i][0] = node.getLabel().toString();
+            final String label = node.label.isEmpty() ? "" : node.label.get().toString();
+            exTable[i][0] = label;
+            solTable[i][0] = label;
             i++;
         }
         final List<Node<N>> q = new ArrayList<Node<N>>(graph.getNodes());
@@ -1301,7 +1320,10 @@ public abstract class GraphAlgorithms {
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         graph.printTikZ(exWriter, null, false);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-        exWriter.write("Der Startknoten hat hierbei den Schl\\\"ussel " + start.getLabel().toString() + ".");
+        if (start.label.isEmpty()) {
+            throw new IllegalArgumentException("Prim cannot be applied to unlabeled graphs!");
+        }
+        exWriter.write("Der Startknoten hat hierbei den Schl\\\"ussel " + start.label.get().toString() + ".");
         exWriter.write(" Geben Sie dazu \\emphasize{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an,");
         exWriter.newLine();
         exWriter.write("\\begin{enumerate}[1)]");
