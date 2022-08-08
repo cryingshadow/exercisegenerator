@@ -8,7 +8,7 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
 /**
- * Programm for creating solutions for DSAL exercises.
+ * Programm for creating exercises and solutions for algorithmic problems.
  * @author Thomas Stroeder, Florian Corzilius, Stefan Schupp
  * @version {@value #VERSION}
  */
@@ -42,7 +42,7 @@ public class Main {
     static {
         NUMBER_LIMIT = 100;
         STUDENT_MODE = false;
-        TEXT_VERSION = TextVersion.ABRAHAM;
+        TEXT_VERSION = TextVersion.GENERAL;
         HELP = Main.initHelpText();
     }
 
