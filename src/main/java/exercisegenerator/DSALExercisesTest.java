@@ -62,10 +62,10 @@ public class DSALExercisesTest {
         final File make = new File(path + File.separator + "Makefile");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(make))) {
             writer.write("default:");
-            writer.newLine();
+            Main.newLine(writer);
             for (final String task : tasks) {
                 writer.write("\t" + "pdflatex " + task);
-                writer.newLine();
+                Main.newLine(writer);
             }
         } catch (final IOException e) {
             e.printStackTrace();

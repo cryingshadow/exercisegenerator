@@ -5,6 +5,7 @@ import java.math.*;
 import java.util.*;
 import java.util.Map.*;
 
+import exercisegenerator.*;
 import exercisegenerator.io.*;
 
 /**
@@ -251,7 +252,7 @@ public class Graph<N, E> {
             }
         }
         TikZUtils.printTikzEnd(writer);
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**

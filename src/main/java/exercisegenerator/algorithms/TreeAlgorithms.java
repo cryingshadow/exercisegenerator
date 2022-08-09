@@ -78,20 +78,20 @@ public abstract class TreeAlgorithms {
                     writerSpace.write("\\emphasize{AVL-Baum} aus und geben Sie die entstehenden B\\\"aume nach jeder ");
                     writerSpace.write("\\emphasize{Einf\\\"uge-} und \\emphasize{L\\\"oschoperation} sowie jeder ");
                     writerSpace.write("\\emphasize{Rotation} an:\\\\\\\\");
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 } else {
                     writerSpace.write("Betrachten Sie den folgenden \\emphasize{AVL-Baum}:\\\\[2ex]");
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     tree.print("", writerSpace);
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     writerSpace.write("\\vspace*{1ex}");
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                     writerSpace.write("F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und ");
                     writerSpace.write("geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-} und ");
                     writerSpace.write("\\emphasize{L\\\"oschoperation} sowie jeder \\emphasize{Rotation} an:\\\\\\\\");
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
                 TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
                 for (final Pair<Integer, Boolean> op : ops) {
@@ -100,7 +100,7 @@ public abstract class TreeAlgorithms {
                     } else {
                         writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
                     }
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
                 TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
             } else {
@@ -127,10 +127,10 @@ public abstract class TreeAlgorithms {
                         writerSpace.write("B\\\"aume nach jeder \\emphasize{L\\\"oschoperation} sowie jeder ");
                         writerSpace.write("\\emphasize{Rotation} an:\\\\[2ex]");
                     }
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     tree.print("", writerSpace);
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
             }
         }
@@ -219,7 +219,7 @@ public abstract class TreeAlgorithms {
                                     "B-Baum} mit Grad $t = " + degree + "$"
                         ) + " aus und geben Sie die dabei jeweils entstehenden B\\\"aume an:\\\\\\\\"
                     );
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 } else {
                     writerSpace.write(
                         "Betrachten Sie den folgenden \\emphasize{"
@@ -229,22 +229,22 @@ public abstract class TreeAlgorithms {
                                     "B-Baum} mit Grad $t = " + degree + "$"
                         ) + ":\\\\[2ex]"
                     );
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     TikZUtils.printBeginning(TikZUtils.CENTER, writerSpace);
                     TikZUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
                     TikZUtils.printBTree(tree, writerSpace);
                     TikZUtils.printTikzEnd(writerSpace);
                     TikZUtils.printEnd(TikZUtils.CENTER, writerSpace);
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     writerSpace.write("\\vspace*{1ex}");
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                     writerSpace.write(
                         "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
                         + "und geben Sie die dabei jeweils entstehenden B\\\"aume an:\\\\\\\\"
                     );
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
                 TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
                 for (final Pair<Integer, Boolean> op : ops) {
@@ -253,7 +253,7 @@ public abstract class TreeAlgorithms {
                     } else {
                         writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
                     }
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
                 TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
             } else {
@@ -298,14 +298,14 @@ public abstract class TreeAlgorithms {
                             ) + " und geben Sie den dabei entstehenden Baum an:\\\\[2ex]"
                         );
                     }
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     TikZUtils.printBeginning(TikZUtils.CENTER, writerSpace);
                     TikZUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
                     TikZUtils.printBTree(tree, writerSpace);
                     TikZUtils.printTikzEnd(writerSpace);
                     TikZUtils.printEnd(TikZUtils.CENTER, writerSpace);
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
             }
         }
@@ -378,23 +378,23 @@ public abstract class TreeAlgorithms {
                     writerSpace.write("jeder \\emphasize{Rotation} und jeder \\emphasize{Umf\\\"arbung} an. ");
                     writerSpace.write(note);
                     writerSpace.write("\\\\\\\\");
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 } else {
                     writerSpace.write("Betrachten Sie den folgenden \\emphasize{Rot-Schwarz-Baum}:\\\\[2ex]");
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     tree.print("", writerSpace);
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     writerSpace.write("\\vspace*{1ex}");
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                     writerSpace.write("F\\\"uhren Sie beginnend mit diesem Rot-Schwarz-Baum die folgenden ");
                     writerSpace.write("Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder ");
                     writerSpace.write("\\emphasize{Einf\\\"uge-} und \\emphasize{L\\\"oschoperation}, jeder ");
                     writerSpace.write("\\emphasize{Rotation} und jeder \\emphasize{Umf\\\"arbung} an. ");
                     writerSpace.write(note);
                     writerSpace.write("\\\\\\\\");
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
                 TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
                 for (final Pair<Integer, Boolean> op : ops) {
@@ -403,7 +403,7 @@ public abstract class TreeAlgorithms {
                     } else {
                         writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
                     }
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
                 TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
             } else {
@@ -413,19 +413,19 @@ public abstract class TreeAlgorithms {
                         writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
                         writerSpace.write(" in einen leeren \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("\\begin{itemize}");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{Einf\\\"ugeoperation},");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{Rotation} sowie");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{Umf\\\"arbung} an.");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("\\end{itemize}");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write(note);
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                     } else {
                         throw new IllegalArgumentException("Deletion from an empty tree makes no sense!");
                     }
@@ -434,41 +434,41 @@ public abstract class TreeAlgorithms {
                         writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
                         writerSpace.write(" in den folgenden \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("\\begin{itemize}");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{Einf\\\"ugeoperation},");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{Rotation} sowie");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{Umf\\\"arbung} an.");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("\\end{itemize}");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write(note);
                         writerSpace.write("\\\\[2ex]");
                     } else {
                         writerSpace.write("L\\\"oschen Sie den Wert " + op.x);
                         writerSpace.write(" aus dem folgenden \\emphasize{Rot-Schwarz-Baum} und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("\\begin{itemize}");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{L\\\"oschoperation},");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{Rotation} sowie");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("    \\item jeder \\emphasize{Umf\\\"arbung} an.");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write("\\end{itemize}");
-                        writerSpace.newLine();
+                        Main.newLine(writerSpace);
                         writerSpace.write(note);
                         writerSpace.write("\\\\[2ex]");
                     }
-                    writerSpace.newLine();
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
+                    Main.newLine(writerSpace);
                     tree.print("", writerSpace);
-                    writerSpace.newLine();
+                    Main.newLine(writerSpace);
                 }
             }
         }

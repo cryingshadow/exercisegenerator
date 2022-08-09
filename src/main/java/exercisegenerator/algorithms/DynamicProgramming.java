@@ -112,11 +112,11 @@ public abstract class DynamicProgramming {
         exWriter.write(" Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} an");
         exWriter.write(" und beschreiben Sie anhand der Tabelle wie man die mitzunehmenden Gegenst\\\"ande");
         exWriter.write(" bestimmen kann, um den maximalen Wert zu erreichen.");
-        exWriter.newLine();
-        exWriter.newLine();
+        Main.newLine(exWriter);
+        Main.newLine(exWriter);
         solWriter.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         final int tableWidth = Main.STUDENT_MODE ? 10 : 12;
 //        System.out.println(capacity);
         if (capacity + 2 > tableWidth) {
@@ -139,13 +139,13 @@ public abstract class DynamicProgramming {
                     // we are at the last column of a table (table is filled completely)
                     TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
                     solWriter.write("{\\Large");
-                    solWriter.newLine();
+                    Main.newLine(solWriter);
                     TikZUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
-                    solWriter.newLine();
+                    Main.newLine(solWriter);
                     solWriter.write("}");
-                    solWriter.newLine();
+                    Main.newLine(solWriter);
                     TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
-                    solWriter.newLine();
+                    Main.newLine(solWriter);
                     switch (mode) {
                         case SOLUTION_SPACE:
                             TikZUtils.printSolutionSpaceBeginning(exWriter);
@@ -153,16 +153,16 @@ public abstract class DynamicProgramming {
                         case ALWAYS:
                             TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
                             exWriter.write("{\\Large");
-                            exWriter.newLine();
+                            Main.newLine(exWriter);
                             TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
-                            exWriter.newLine();
+                            Main.newLine(exWriter);
                             exWriter.write("}");
-                            exWriter.newLine();
+                            Main.newLine(exWriter);
                             TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
                                 TikZUtils.printSolutionSpaceEnd(exWriter);
                             }
-                            exWriter.newLine();
+                            Main.newLine(exWriter);
                             break;
                         case NEVER:
                             // do nothing
@@ -189,32 +189,32 @@ public abstract class DynamicProgramming {
                 case ALWAYS:
                     TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
                     exWriter.write("{\\Large");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     exWriter.write("}");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
                         TikZUtils.printSolutionSpaceEnd(exWriter);
                     }
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     break;
                 case NEVER:
                     // do nothing
             }
             TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
             solWriter.write("{\\Large");
-            solWriter.newLine();
+            Main.newLine(solWriter);
             TikZUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
-            solWriter.newLine();
+            Main.newLine(solWriter);
             solWriter.write("}");
-            solWriter.newLine();
+            Main.newLine(solWriter);
             TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
-            solWriter.newLine();
+            Main.newLine(solWriter);
         }
         solWriter.write("\\medskip");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("Damit ergibt sich der maximale Wert " + C[n][capacity] + " f\\\"ur den Fall, dass der");
         for (int i = itemsToChoose.size() - 1; i >= 0; i--) {
             if (i > 0 && i < itemsToChoose.size() - 1) {
@@ -225,30 +225,30 @@ public abstract class DynamicProgramming {
             solWriter.write(" " + (itemsToChoose.get(i) - 1) + ".");
         }
         solWriter.write(" Gegenstand mitgenommen werden.");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         solWriter.write("Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die $i$-te Zeile einen Pfeil ");
         solWriter.write("nach links enth\\\"alt dann wird der $(i-1)$-te Gegenstand mitgenommen. Die Pfeile zeigen ");
         solWriter.write("dabei an wie der folgende Algorithmus durch die Tabelle l\\\"auft:");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         solWriter.write("\\begin{verbatim}");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("int i = n; int j = M;");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("while (i > 0 && j > 0) {");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("    if (C[i][j] != C[i-1][j])");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("        for (int k = 0; k < w[i-1]; k++) j--;");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("    i--;");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("}");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("\\end{verbatim}");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
     }
 
     public static void lcs(final AlgorithmInput input) throws Exception {
@@ -340,11 +340,11 @@ public abstract class DynamicProgramming {
         exWriter.write(" und f\\\"ullen Sie die folgende Tabelle aus.");
         exWriter.write(" Beschreiben Sie wie man anhand der Tabelle die l\\\"angste gemeinsame Teilsequenz der gegebenen W\\\"orter");
         exWriter.write(" und die L\\\"ange dieser Teilsequenz bestimmen kann.");
-        exWriter.newLine();
-        exWriter.newLine();
+        Main.newLine(exWriter);
+        Main.newLine(exWriter);
         solWriter.write("Die Tabelle wird vom Algorithmus wie folgt gef\\\"ullt:");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         final int tableWidth = Main.STUDENT_MODE ? 10 : 12;
         if (m + 2 > tableWidth) {
             String[][] solutionsTmp = new String[n + 2][tableWidth];
@@ -366,13 +366,13 @@ public abstract class DynamicProgramming {
                     // we are at the last column of a table (table is filled completely)
                     TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
                     solWriter.write("{\\Large");
-                    solWriter.newLine();
+                    Main.newLine(solWriter);
                     TikZUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
-                    solWriter.newLine();
+                    Main.newLine(solWriter);
                     solWriter.write("}");
-                    solWriter.newLine();
+                    Main.newLine(solWriter);
                     TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
-                    solWriter.newLine();
+                    Main.newLine(solWriter);
                     switch (mode) {
                         case SOLUTION_SPACE:
                             TikZUtils.printSolutionSpaceBeginning(exWriter);
@@ -380,16 +380,16 @@ public abstract class DynamicProgramming {
                         case ALWAYS:
                             TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
                             exWriter.write("{\\Large");
-                            exWriter.newLine();
+                            Main.newLine(exWriter);
                             TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
-                            exWriter.newLine();
+                            Main.newLine(exWriter);
                             exWriter.write("}");
-                            exWriter.newLine();
+                            Main.newLine(exWriter);
                             TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
                                 TikZUtils.printSolutionSpaceEnd(exWriter);
                             }
-                            exWriter.newLine();
+                            Main.newLine(exWriter);
                             break;
                         case NEVER:
                             // do nothing
@@ -416,63 +416,63 @@ public abstract class DynamicProgramming {
                 case ALWAYS:
                     TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
                     exWriter.write("{\\Large");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     exWriter.write("}");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
                         TikZUtils.printSolutionSpaceEnd(exWriter);
                     }
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     break;
                 case NEVER:
                     // do nothing
             }
             TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
             solWriter.write("{\\Large");
-            solWriter.newLine();
+            Main.newLine(solWriter);
             TikZUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
-            solWriter.newLine();
+            Main.newLine(solWriter);
             solWriter.write("}");
-            solWriter.newLine();
+            Main.newLine(solWriter);
             TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
-            solWriter.newLine();
+            Main.newLine(solWriter);
         }
         solWriter.write("\\medskip");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("Also erhalten wir die Sequenz \\texttt{");
         for (int i = itemsToChoose.size() - 1; i >= 0; i--) {
             solWriter.write(itemsToChoose.get(i));
         }
         solWriter.write("} als l\\\"angste gemeinsame Teilsequenz der Sequenzen \\texttt{" + wordA + "} und \\texttt{" + wordB + "}.");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         solWriter.write("Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn eine Zeile einen Pfeil ");
         solWriter.write("nach links oben enth\\\"alt dann ist der Buchstabe, der den Zeilenkopf ");
         solWriter.write("bildet, teil der l\\\"angsten gemeinsamen Teilsequenz. Die Pfeile zeigen ");
         solWriter.write("dabei an wie der folgende Algorithmus f\\\"ur gegebene W\\\"orter \\texttt{wordA} und \\texttt{wordB} ");
         solWriter.write("durch die erstellte Tabelle \\texttt{C} l\\\"auft:");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         solWriter.write("\\begin{verbatim}");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("int i = wordA.length(); int j = wordB.length();");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("while (i > 0 && j > 0) {");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("    if (wordA.charAt(i-1) == wordB.charAt(j-1)) { i--; j--; }");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("    else if (C[i][j-1] >= C[i-1][j]) j--;");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("    else i--;");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("}");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("\\end{verbatim}");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
     }
 
     private static Pair<Pair<Integer[], Integer[]>, Integer> parseOrGenerateKnapsackProblem(

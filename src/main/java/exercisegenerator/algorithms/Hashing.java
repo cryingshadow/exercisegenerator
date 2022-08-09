@@ -360,17 +360,17 @@ public abstract class Hashing {
                 System.out.println("#collisions by probing: " + collisionCount);
             }
             writer.write(init);
-            writer.newLine();
+            Main.newLine(writer);
             writer.write("{\\Large");
-            writer.newLine();
+            Main.newLine(writer);
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
             TikZUtils.printArray(solution, null, null, null, writer);
         } else {
             // probe == 0 -> no probing
             writer.write(init);
-            writer.newLine();
+            Main.newLine(writer);
             writer.write("{\\Large");
-            writer.newLine();
+            Main.newLine(writer);
             TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
             final String[] solution = new String[m];
             for (int i = 0; i < m; ++i) {
@@ -398,7 +398,7 @@ public abstract class Hashing {
         }
         TikZUtils.printTikzEnd(writer);
         writer.write("}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     public static void hashMult(final AlgorithmInput input) throws Exception {
@@ -613,7 +613,7 @@ public abstract class Hashing {
         final PreprintMode mode,
         final BufferedWriter writer
     ) throws IOException {
-        writer.newLine();
+        Main.newLine(writer);
         for (int i = 0; i < input.length - 1; ++i) {
             writer.write(input[i] + ", ");
         }
@@ -622,12 +622,12 @@ public abstract class Hashing {
             case ALWAYS:
             case SOLUTION_SPACE:
                 writer.write("\\\\[4ex]");
-                writer.newLine();
+                Main.newLine(writer);
                 if (mode == PreprintMode.SOLUTION_SPACE) {
                     TikZUtils.printSolutionSpaceBeginning(writer);
                 }
                 writer.write("{\\Large");
-                writer.newLine();
+                Main.newLine(writer);
                 if (probing) {
                     TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
                     TikZUtils.printEmptyArrayWithIndex(size, writer);
@@ -641,13 +641,13 @@ public abstract class Hashing {
                 }
                 TikZUtils.printTikzEnd(writer);
                 writer.write("}");
-                writer.newLine();
+                Main.newLine(writer);
                 if (mode == PreprintMode.SOLUTION_SPACE) {
                     TikZUtils.printSolutionSpaceEnd(writer);
                 }
                 break;
             case NEVER:
-                writer.newLine();
+                Main.newLine(writer);
         }
     }
 

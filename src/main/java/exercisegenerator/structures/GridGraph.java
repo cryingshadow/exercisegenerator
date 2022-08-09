@@ -3,6 +3,7 @@ package exercisegenerator.structures;
 import java.io.*;
 import java.util.*;
 
+import exercisegenerator.*;
 import exercisegenerator.io.*;
 
 /**
@@ -196,7 +197,7 @@ public class GridGraph {
         TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         // print the nodes
         writer.write("% The nodes:");
-        writer.newLine();
+        Main.newLine(writer);
         for (int i = 0; i < this.numOfAllNodes(); i++) {
             if (withSingletons || this.nodeHasAdjacentNodes(i)) {
                 if (withSingletons) {
@@ -204,24 +205,24 @@ public class GridGraph {
                 } else {
                     writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + this.nodeName(i) + "};");
                 }
-                writer.newLine();
+                Main.newLine(writer);
             }
         }
         writer.write("% The edges:");
-        writer.newLine();
+        Main.newLine(writer);
         for (int i = 0; i < this.mAdjacencyMatrix.length; i++) {
             for (int j = i+1 ; j < this.mAdjacencyMatrix[i].length; j++) {
                 if (this.mAdjacencyMatrix[i][j] && this.mAdjacencyMatrix[j][i]) {
                     writer.write("\\path[p, bend right=15] (" + i + ") edge (" + j + ");");
-                    writer.newLine();
+                    Main.newLine(writer);
                     writer.write("\\path[p, bend right=15] (" + j + ") edge (" + i + ");");
-                    writer.newLine();
+                    Main.newLine(writer);
                 } else if (this.mAdjacencyMatrix[i][j]) {
                     writer.write("\\path[p] (" + i + ") edge (" + j + ");");
-                    writer.newLine();
+                    Main.newLine(writer);
                 } else if (this.mAdjacencyMatrix[j][i]) {
                     writer.write("\\path[p] (" + j + ") edge (" + i + ");");
-                    writer.newLine();
+                    Main.newLine(writer);
                 }
             }
         }
@@ -242,12 +243,12 @@ public class GridGraph {
         int i = 0;
         boolean newScc = true;
         writer.write("Der gegebene Graph hat folgende starken Zusammenhangskomponenten:");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
         writer.write("\\[");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("    \\begin{array}{l}");
-        writer.newLine();
+        Main.newLine(writer);
         while (checkedNodes < this.numOfAllNodes()) {
             if (sccs[i] == sccNum) {
                 if (withSingletons || this.nodeHasAdjacentNodes(i)) {
@@ -265,7 +266,7 @@ public class GridGraph {
                 if (!newScc) {
                     writer.write("\\}");
                     writer.write("\\\\");
-                    writer.newLine();
+                    Main.newLine(writer);
                 }
                 i = 0;
                 sccNum++;
@@ -273,10 +274,10 @@ public class GridGraph {
             }
         }
         writer.write("    \\end{array}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\]");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
     /**
@@ -300,13 +301,13 @@ public class GridGraph {
                             "Algorithmus werden Knoten in aufsteigender Reihenfolge ihrer Schl\\\"ussel ber\\\"ucksichtigt." +
                             " Als Ergebnis geben Sie die Liste der Knotenschl\\\"ussel in aufsteigender Reihenfolge der Topologiewerte an."
                               );
-                exerciseWriter.newLine();
+                Main.newLine(exerciseWriter);
             }
             this.printGraph(exerciseWriter, false);
         }
         solutionWriter.write("Der gegebene Graph hat die folgende topologische Sortierung:\\\\");
-        solutionWriter.newLine();
-        solutionWriter.newLine();
+        Main.newLine(solutionWriter);
+        Main.newLine(solutionWriter);
         int min = 1;
         int first = 0;
         for(int index = 0; index < nodeValues.length; ++index){
@@ -325,7 +326,7 @@ public class GridGraph {
             ++min;
         }
         solutionWriter.write("\\\\");
-        solutionWriter.newLine();
+        Main.newLine(solutionWriter);
     }
 
     /**
@@ -416,12 +417,12 @@ public class GridGraph {
         final int[] colorA = new int[this.numOfAllNodes()];
         // phase 1
         if(write) {
-            writer.newLine();
+            Main.newLine(writer);
             writer.write("Phase 1:");
-            writer.newLine();
-            writer.newLine();
+            Main.newLine(writer);
+            Main.newLine(writer);
             writer.write("\\medskip");
-            writer.newLine();
+            Main.newLine(writer);
         }
         for (int w = 0; w < this.numOfAllNodes(); w++) {
             if (colorA[w] == 0) {
@@ -431,19 +432,19 @@ public class GridGraph {
                     this.printS(writer, S, lastOfS);
                     this.printColor(writer, colorA);
                     writer.write("\\medskip");
-                    writer.newLine();
+                    Main.newLine(writer);
                 }
             }
         }
         // phase 2
         if(write) {
             writer.write("\\medskip");
-            writer.newLine();
+            Main.newLine(writer);
             writer.write("Phase 2:");
-            writer.newLine();
-            writer.newLine();
+            Main.newLine(writer);
+            Main.newLine(writer);
             writer.write("\\medskip");
-            writer.newLine();
+            Main.newLine(writer);
         }
         final int[] colorB = new int[this.numOfAllNodes()];
         while (lastOfS[0] > 0) {
@@ -461,7 +462,7 @@ public class GridGraph {
                     this.printColor(writer, colorB);
                     this.printScc(writer, result);
                     writer.write("\\medskip");
-                    writer.newLine();
+                    Main.newLine(writer);
                 }
             }
         }
@@ -503,8 +504,8 @@ public class GridGraph {
                 }
             }
         }
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
     void printS(final BufferedWriter writer, final int[] S, final int[] lastOfS) throws IOException {
@@ -520,8 +521,8 @@ public class GridGraph {
                 writer.write("" + this.nodeName(S[i]));
             }
         }
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
     void printScc(final BufferedWriter writer, final int[] scc) throws IOException {
@@ -537,8 +538,8 @@ public class GridGraph {
                 writer.write("(" + this.nodeName(i) + ", " + this.nodeName(scc[i]) + ")");
             }
         }
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
     Integer[] topologicSort() throws IOException {

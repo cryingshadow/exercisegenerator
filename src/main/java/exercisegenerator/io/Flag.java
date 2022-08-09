@@ -28,7 +28,8 @@ public enum Flag {
     CAPACITY(
         "-c",
         "Capacity",
-        "Used to specify the capacity (a certain limit which should not be exceeded), e.g., the capacity of a knapsack. Its use depends on the chosen algorithm.",
+        "Used to specify the capacity (a certain limit which should not be exceeded), e.g., the capacity of a "
+        + "knapsack. Its use depends on the chosen algorithm.",
         false
     ),
 
@@ -67,7 +68,7 @@ public enum Flag {
     /**
      * Preprint mode (should preprints be given always, never, or just not in solution sheets?).
      */
-    PREPRINT_MODE("-p", "PReprint mode", "TODO", false),
+    PREPRINT_MODE("-p", "Preprint mode", "TODO", false),
 
     /**
      * Source file containing the input. Must not be specified together with -i, but one of them must be specified.
@@ -82,12 +83,16 @@ public enum Flag {
     /**
      * Target file to store the LaTeX code in. If not specified, the solution is sent to the standard output.
      */
-    VARIANT("-v",
+    VARIANT(
+        "-v",
         "Variant of the algorithm",
         "Triggers the variant of the given algorithm. The following variants of algorithms are available: \n"
-       + "    -a [avltree|btree|rbtree] -v 0: Generates examples where nodes get inserted and deleted.\n"
-       + "    -a [avltree|btree|rbtree] -v 1: Generates examples where nodes get only inserted.\n",
-        true);
+        + "    -a [avltree|btree|rbtree] -v 0: Generates examples where nodes get inserted and deleted.\n"
+        + "    -a [avltree|btree|rbtree] -v 1: Generates examples where nodes get only inserted.\n",
+        true
+    ),
+
+    WINDOWS("-w", "Windows line separators", "Forced use of Windows (true) or Unix (false) line separators.", true);
 
     /**
      * The docu for this flag.
@@ -111,16 +116,16 @@ public enum Flag {
 
     /**
      * Creates an option flag with the specified short and long names.
-     * @param s The short name.
-     * @param l The long name.
-     * @param d The documentation.
-     * @param a Flag indicating whether this option is available for students.
+     * @param shortName The short name.
+     * @param longName The long name.
+     * @param documentation The documentation.
+     * @param forStudents Flag indicating whether this option is available for students.
      */
-    private Flag(final String s, final String l, final String d, final boolean a) {
-        this.shortName = s;
-        this.longName = l;
-        this.docu = d;
-        this.forStudents = a;
+    private Flag(final String shortName, final String longName, final String documentation, final boolean forStudents) {
+        this.shortName = shortName;
+        this.longName = longName;
+        this.docu = documentation;
+        this.forStudents = forStudents;
     }
 
 }

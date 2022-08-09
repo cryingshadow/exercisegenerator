@@ -2,6 +2,8 @@ package exercisegenerator.structures;
 
 import java.io.*;
 
+import exercisegenerator.*;
+
 /**
  * Programm for creating solutions of exercises where elements have to be inserted into an Red-Black-Tree.
  * @author Florian Corzilius, Thomas Stroeder
@@ -16,7 +18,7 @@ public class IntRBTree {
      */
     private static void printProtectedNewline(final BufferedWriter writer) throws IOException {
         writer.write("~\\\\*\\vspace*{1ex}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -26,7 +28,7 @@ public class IntRBTree {
      */
     private static void printTikzEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{tikzpicture}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -131,7 +133,7 @@ public class IntRBTree {
             writer.write("\\Tree");
             writer.write(this.toString(this.root));
         }
-        writer.newLine();
+        Main.newLine(writer);
         IntRBTree.printTikzEnd(writer);
         IntRBTree.printProtectedNewline(writer);
         this.printSamePageEnd(writer);
@@ -168,12 +170,12 @@ public class IntRBTree {
             final RBNode tmp = this.minimum(node.getRight());
             final int tmpValue = tmp.getValue();
             if (write) {
-                writer.newLine();
-                writer.newLine();
+                Main.newLine(writer);
+                Main.newLine(writer);
                 writer.write("Wir l\\\"oschen den Knoten mit dem n\\\"achst gr\\\"o\\ss eren Wert " + tmpValue);
                 writer.write(" und f\\\"ugen diesen Wert dann in den zu l\\\"oschenden Knoten ein.");
-                writer.newLine();
-                writer.newLine();
+                Main.newLine(writer);
+                Main.newLine(writer);
             }
             this.remove(tmp, writer, write);
             this.swap(node, tmp);
@@ -322,21 +324,21 @@ public class IntRBTree {
         if (this.root == null) {
             final int minipagewidth = 1;
             writer.write("\\begin{minipage}[t]{0." + minipagewidth + " \\columnwidth}");
-            writer.newLine();
+            Main.newLine(writer);
         } else if (this.root.getHeight() < 9) {
             int minipagewidth = this.root.getHeight()+1;
             if (this.root == null || this.root.getHeight() == 0) {
                 minipagewidth++;
             }
             writer.write("\\begin{minipage}[t]{0." + minipagewidth + " \\columnwidth}");
-            writer.newLine();
+            Main.newLine(writer);
         }
         if (!headline.equals("")) {
             writer.write(headline + "\\\\[-2ex]");
         }
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\begin{center}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -346,10 +348,10 @@ public class IntRBTree {
      */
     private void printSamePageEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{center}");
-        writer.newLine();
+        Main.newLine(writer);
         if (this.root == null || this.root.getHeight() < 9) {
             writer.write("\\end{minipage}");
-            writer.newLine();
+            Main.newLine(writer);
         }
     }
 
@@ -362,7 +364,7 @@ public class IntRBTree {
      */
     private void printTikzBeginning(final BufferedWriter writer) throws IOException {
         writer.write("\\begin{tikzpicture}");
-        writer.newLine();
+        Main.newLine(writer);
         if (this.root == null || this.root.isBlack()) {
             writer.write("[every tree node/.style={rectangle,draw=black,thick,inner sep=5pt}");
         } else {
@@ -371,7 +373,7 @@ public class IntRBTree {
         writer.write(", b/.style={rectangle,draw=black,thick,inner sep=5pt}, ");
         writer.write("r/.style={circle,draw=gray,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, ");
         writer.write("edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -389,10 +391,10 @@ public class IntRBTree {
                 this.stepCounter++;
             }
             if (this.stepCounter >= 10) {
-                writer.newLine();
+                Main.newLine(writer);
                 writer.write("~\\\\");
-                writer.newLine();
-                writer.newLine();
+                Main.newLine(writer);
+                Main.newLine(writer);
                 this.stepCounter = this.root.getHeight()+1;
                 if (this.root.getHeight() == 0) {
                     this.stepCounter++;

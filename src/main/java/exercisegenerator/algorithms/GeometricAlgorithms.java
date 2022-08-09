@@ -44,10 +44,10 @@ public abstract class GeometricAlgorithms {
         exWriter.write("und geben Sie die Teilschritte \\emphasize{nach jeder Iteration}");
         exWriter.write(" (also nach jedem neu hinzugef\\\"ugten Punkt) an. Umkreisen ");
         exWriter.write("Sie die Punkte, die vom Algorithmus in der Iterationsschleife nicht betrachtet werden.\\\\");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         exWriter.write("\\\\");
-        exWriter.newLine();
-        exWriter.newLine();
+        Main.newLine(exWriter);
+        Main.newLine(exWriter);
         // solution
         int count = GeometricAlgorithms.computeConvexHull(pointSet, solWriter);
         switch (mode) {
@@ -64,9 +64,9 @@ public abstract class GeometricAlgorithms {
         while (count > 0) {
             GeometricAlgorithms.printPointset(pointSet, -1 , null, exWriter);
             if (one) {
-                exWriter.newLine();
+                Main.newLine(exWriter);
                 exWriter.write("\\\\");
-                exWriter.newLine();
+                Main.newLine(exWriter);
             }
             one = !one;
             --count;
@@ -83,16 +83,16 @@ public abstract class GeometricAlgorithms {
         final BufferedWriter writer
     ) throws IOException {
         writer.write("\\resizebox{.45\\textwidth}{!}{");
-        writer.newLine();
+        Main.newLine(writer);
         TikZUtils.printTikzBeginning(TikZStyle.POINTSET, writer);
         for (int i = 0; i < pointSet.size(); ++i) {
             writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet};");
-            writer.newLine();
+            Main.newLine(writer);
         }
         if (duplicates != null) {
             for (int i = 0; i < duplicates.size(); ++i) {
                 writer.write("\\node at (" + duplicates.get(i).x + ", " + duplicates.get(i).y + ") {$\\circ$};");
-                writer.newLine();
+                Main.newLine(writer);
             }
         }
         final ArrayList<String> edges = new ArrayList<String>();
@@ -107,16 +107,16 @@ public abstract class GeometricAlgorithms {
                 final Pair<Double,Double> second = clone.peek();
                 edges.add("\\draw (" + second.x + "," + second.y + ")--(" + first.x + "," + first.y + ");");
                 writer.write("\\node at (" + first.x + ", " + first.y + ") {\\textbullet};");
-                writer.newLine();
+                Main.newLine(writer);
             }
 //            ++index;
         }
         for (int i = 0; i < edges.size(); ++i) {
             writer.write(edges.get(i));
-            writer.newLine();
+            Main.newLine(writer);
         }
         writer.write(";");
-        writer.newLine();
+        Main.newLine(writer);
         TikZUtils.printTikzEnd(writer);
         writer.write("}");
     }
@@ -128,23 +128,23 @@ public abstract class GeometricAlgorithms {
         final BufferedWriter writer
     ) throws IOException {
         writer.write("\\resizebox{.45\\textwidth}{!}{");
-        writer.newLine();
+        Main.newLine(writer);
         TikZUtils.printTikzBeginning(TikZStyle.POINTSET, writer);
-        writer.newLine();
+        Main.newLine(writer);
         for (int i = 0; i < pointSet.size(); ++i) {
             if (reference >= 0) {
                 writer.write("\\node at (" + pointSet.get(i).x);
                 writer.write(", " + pointSet.get(i).y);
                 writer.write(") {\\textbullet " + i);
                 writer.write("};");
-                writer.newLine();
+                Main.newLine(writer);
             } else {
                 writer.write("\\node at (" + pointSet.get(i).x);
                 writer.write(", " + pointSet.get(i).y);
                 writer.write(") {\\textbullet (" + pointSet.get(i).x.intValue());
                 writer.write("," + pointSet.get(i).y.intValue());
                 writer.write(")};");
-                writer.newLine();
+                Main.newLine(writer);
             }
         }
         if (reference >= 0) {
@@ -154,17 +154,17 @@ public abstract class GeometricAlgorithms {
                 writer.write(")--(" + pointSet.get(i).x);
                 writer.write("," + pointSet.get(i).y);
                 writer.write(");");
-                writer.newLine();
+                Main.newLine(writer);
             }
         }
         if (duplicates != null) {
             for (int i = 0; i < duplicates.size(); ++i) {
                 writer.write("\\node at (" + duplicates.get(i).x + ", " + duplicates.get(i).y + ") {$\\circ$};");
-                writer.newLine();
+                Main.newLine(writer);
             }
         }
         TikZUtils.printTikzEnd(writer);
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("}");
     }
 
@@ -244,9 +244,9 @@ public abstract class GeometricAlgorithms {
                 GeometricAlgorithms.printPartialHull(tmp,hull,duplicates,solWriter);
             }
             if (count%2 == 1) {
-                solWriter.newLine();
+                Main.newLine(solWriter);
                 solWriter.write("\\\\");
-                solWriter.newLine();
+                Main.newLine(solWriter);
             }
             ++count;
         }

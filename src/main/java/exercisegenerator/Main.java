@@ -14,6 +14,8 @@ import exercisegenerator.structures.*;
  */
 public class Main {
 
+    public static String lineSeparator;
+
     /**
      * Limit for random numbers in student mode.
      */
@@ -44,6 +46,7 @@ public class Main {
         STUDENT_MODE = false;
         TEXT_VERSION = TextVersion.GENERAL;
         HELP = Main.initHelpText();
+        Main.lineSeparator = System.lineSeparator();
     }
 
     /**
@@ -98,6 +101,10 @@ public class Main {
             System.out.println(e.getMessage());
             return;
         }
+        if (options.containsKey(Flag.WINDOWS)) {
+            final boolean useWindowsLineSeparators = Boolean.parseBoolean(options.get(Flag.WINDOWS));
+            Main.lineSeparator = useWindowsLineSeparators ? "\r\n" : "\n";
+        }
         try (
             BufferedWriter solutionWriter = Main.getSolutionWriter(options);
             BufferedWriter exerciseWriter = Main.getExerciseWriter(options);
@@ -118,6 +125,10 @@ public class Main {
         } catch (final Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void newLine(final BufferedWriter writer) throws IOException {
+        writer.write(Main.lineSeparator);
     }
 
     private static BufferedWriter getExerciseWriter(final Map<Flag, String> options) throws IOException {
@@ -228,12 +239,12 @@ public class Main {
     throws IOException {
         TikZUtils.printLaTeXBeginning(exerciseWriter);
         exerciseWriter.write("{\\large Aufgabe}\\\\[3ex]");
-        exerciseWriter.newLine();
-        exerciseWriter.newLine();
+        Main.newLine(exerciseWriter);
+        Main.newLine(exerciseWriter);
         TikZUtils.printLaTeXBeginning(solutionWriter);
         solutionWriter.write("{\\large L\\\"osung}\\\\[3ex]");
-        solutionWriter.newLine();
-        solutionWriter.newLine();
+        Main.newLine(solutionWriter);
+        Main.newLine(solutionWriter);
     }
 
     private static void showHelp(final String[] args) {

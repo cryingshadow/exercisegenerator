@@ -2,7 +2,9 @@ package exercisegenerator.io;
 
 import java.io.*;
 import java.math.*;
+import java.util.*;
 
+import exercisegenerator.*;
 import exercisegenerator.structures.*;
 
 /**
@@ -152,7 +154,7 @@ public abstract class TikZUtils {
      */
     public static void printArrayStretch(final double stretch, final BufferedWriter writer) throws IOException {
         writer.write("\\renewcommand{\\arraystretch}{" + stretch + "}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -163,7 +165,7 @@ public abstract class TikZUtils {
      */
     public static void printBeginning(final String environment, final BufferedWriter writer) throws IOException {
         writer.write("\\begin{" + environment + "}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -180,7 +182,7 @@ public abstract class TikZUtils {
         } else {
             writer.write("\\Tree " + tree.toString() + ";");
         }
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -216,7 +218,7 @@ public abstract class TikZUtils {
         res.append(")");
         res.append(";");
         writer.write(res.toString());
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -266,27 +268,27 @@ public abstract class TikZUtils {
         writer.write("\\node[node] (");
         writer.write("n" + TikZUtils.number++);
         writer.write(") {\\phantom{00}};");
-        writer.newLine();
+        Main.newLine(writer);
         int ref = TikZUtils.number - 1;
         writer.write("\\node (");
         writer.write("l" + ref);
         writer.write(") [above=0 of n" + ref);
         writer.write("] {\\scriptsize\\texttt{a[" + i);
         writer.write("]}};");
-        writer.newLine();
+        Main.newLine(writer);
         while (i < length - 1) {
             i++;
             writer.write("\\node[node] (n" + TikZUtils.number++);
             writer.write(") [right=of n" + (TikZUtils.number - 2));
             writer.write("] {\\phantom{00}};");
-            writer.newLine();
+            Main.newLine(writer);
             ref = TikZUtils.number - 1;
             writer.write("\\node (");
             writer.write("l" + ref);
             writer.write(") [above=0 of n" + ref);
             writer.write("] {\\scriptsize\\texttt{a[" + i);
             writer.write("]}};");
-            writer.newLine();
+            Main.newLine(writer);
         }
     }
 
@@ -308,20 +310,20 @@ public abstract class TikZUtils {
             writer.write("\\node[node] (");
             writer.write(firstName);
             writer.write(") {\\phantom{00}};");
-            writer.newLine();
+            Main.newLine(writer);
         } else {
             writer.write("\\node[node] (");
             writer.write(firstName);
             writer.write(") [right=of ");
             writer.write(left);
             writer.write("] {\\phantom{00}};");
-            writer.newLine();
+            Main.newLine(writer);
         }
         for (int i = 1; i < length; i++) {
             writer.write("\\node[node] (n" + TikZUtils.number++);
             writer.write(") [below=of n" + (TikZUtils.number - 2));
             writer.write("] {\\phantom{00}};");
-            writer.newLine();
+            Main.newLine(writer);
         }
         return firstName;
     }
@@ -334,7 +336,7 @@ public abstract class TikZUtils {
      */
     public static void printEnd(final String environment, final BufferedWriter writer) throws IOException {
         writer.write("\\end{" + environment + "}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -344,43 +346,43 @@ public abstract class TikZUtils {
      */
     public static void printLaTeXBeginning(final BufferedWriter writer) throws IOException {
         writer.write("\\documentclass{article}");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
         writer.write("\\usepackage[table]{xcolor}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\usepackage[a4paper,margin=2cm]{geometry}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\usepackage{tikz}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,");
         writer.write("matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,");
         writer.write("trees,backgrounds}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\usepackage{tikz-qtree}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\usepackage{array}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\usepackage{amsmath}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\usepackage{enumerate}");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
         writer.write("\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
         writer.write("\\setlength{\\parindent}{0pt}");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
         writer.write("\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
         writer.write("\\begin{document}");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
     /**
@@ -389,9 +391,9 @@ public abstract class TikZUtils {
      * @throws IOException If some error occurs during output.
      */
     public static void printLaTeXEnd(final BufferedWriter writer) throws IOException {
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\end{document}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -417,7 +419,7 @@ public abstract class TikZUtils {
                 node.label.isEmpty() ? "" : node.label.get().toString()
             )
         );
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -427,7 +429,7 @@ public abstract class TikZUtils {
      */
     public static void printProtectedNewline(final BufferedWriter writer) throws IOException {
         writer.write("~\\\\*\\vspace*{1ex}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -443,16 +445,16 @@ public abstract class TikZUtils {
         final BufferedWriter writer
     ) throws IOException {
         writer.write("\\begin{minipage}{\\columnwidth}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\vspace*{2ex}");
-        writer.newLine();
-        writer.newLine();
+        Main.newLine(writer);
+        Main.newLine(writer);
         if (op.y) {
             writer.write("Schritt " + step + ": F\\\"uge " + op.x + " ein\\\\[-2ex]");
         } else {
             writer.write("Schritt " + step + ": L\\\"osche " + op.x + "\\\\[-2ex]");
         }
-        writer.newLine();
+        Main.newLine(writer);
         TikZUtils.printBeginning(TikZUtils.CENTER, writer);
     }
 
@@ -469,11 +471,11 @@ public abstract class TikZUtils {
         final BufferedWriter writer
     ) throws IOException {
         writer.write("\\begin{minipage}{" + width + "}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\vspace*{1ex}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("Schritt " + step + ":\\\\[-2ex]");
-        writer.newLine();
+        Main.newLine(writer);
         TikZUtils.printBeginning(TikZUtils.CENTER, writer);
     }
 
@@ -485,7 +487,7 @@ public abstract class TikZUtils {
     public static void printSamePageEnd(final BufferedWriter writer) throws IOException {
         TikZUtils.printEnd(TikZUtils.CENTER, writer);
         writer.write("\\end{minipage}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -495,7 +497,7 @@ public abstract class TikZUtils {
      */
     public static void printSolutionSpaceBeginning(final BufferedWriter writer) throws IOException {
         writer.write("\\solutionSpace{");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -505,7 +507,7 @@ public abstract class TikZUtils {
      */
     public static void printSolutionSpaceEnd(final BufferedWriter writer) throws IOException {
         writer.write("}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -532,9 +534,9 @@ public abstract class TikZUtils {
             final int cols = remainingCols > breakAtColumn && breakAtColumn > 0 ? breakAtColumn : remainingCols;
             final int rows = (transpose ? table.length : table[0].length);
             writer.write("\\begin{tabular}{|*{" + cols + "}{C{" + width + "}|}}");
-            writer.newLine();
+            Main.newLine(writer);
             writer.write("\\hline");
-            writer.newLine();
+            Main.newLine(writer);
             for (int row = 0; row < rows; row++) {
                 boolean first = true;
                 final int startCol = allCols - remainingCols;
@@ -557,10 +559,10 @@ public abstract class TikZUtils {
                     }
                 }
                 writer.write("\\\\\\hline");
-                writer.newLine();
+                Main.newLine(writer);
             }
             writer.write("\\end{tabular}");
-            writer.newLine();
+            Main.newLine(writer);
             remainingCols -= cols;
         } while (remainingCols > 0);
     }
@@ -574,9 +576,9 @@ public abstract class TikZUtils {
      */
     public static void printTikzBeginning(final TikZStyle style, final BufferedWriter writer) throws IOException {
         writer.write("\\begin{tikzpicture}");
-        writer.newLine();
+        Main.newLine(writer);
         writer.write(style.style);
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -586,7 +588,7 @@ public abstract class TikZUtils {
      */
     public static void printTikzEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{tikzpicture}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -607,7 +609,7 @@ public abstract class TikZUtils {
         } else {
             writer.write("\\node[circle,draw=black,thick,inner sep=5pt] {" + array[0] + "};");
         }
-        writer.newLine();
+        Main.newLine(writer);
         TikZUtils.printTikzEnd(writer);
     }
 
@@ -665,7 +667,7 @@ public abstract class TikZUtils {
             final int val = array[0];
             writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
             writer.write("};");
-            writer.newLine();
+            Main.newLine(writer);
         } else {
             writer.write("\\node[node");
             if (mark != null && mark[0]) {
@@ -678,7 +680,7 @@ public abstract class TikZUtils {
             final int val = array[0];
             writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
             writer.write("};");
-            writer.newLine();
+            Main.newLine(writer);
         }
         for (int i = 1; i < array.length; i++) {
             writer.write("\\node[node");
@@ -696,7 +698,7 @@ public abstract class TikZUtils {
             final int val = array[i];
             writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
             writer.write("};");
-            writer.newLine();
+            Main.newLine(writer);
         }
         return firstName;
     }
@@ -709,10 +711,10 @@ public abstract class TikZUtils {
      */
     public static void printVerticalSpace(final int step, final BufferedWriter writer) throws IOException {
         if (step % 3 == 0) {
-            writer.newLine();
+            Main.newLine(writer);
             writer.write("~\\\\");
-            writer.newLine();
-            writer.newLine();
+            Main.newLine(writer);
+            Main.newLine(writer);
         }
     }
 
@@ -747,7 +749,7 @@ public abstract class TikZUtils {
             final String val = array[0];
             writer.write(") {" + val);
             writer.write("};");
-            writer.newLine();
+            Main.newLine(writer);
         } else {
             writer.write("\\node[node");
             if (mark != null && mark[0]) {
@@ -760,7 +762,7 @@ public abstract class TikZUtils {
             final String val = array[0];
             writer.write("] {" + val);
             writer.write("};");
-            writer.newLine();
+            Main.newLine(writer);
         }
         for (int i = 1; i < array.length; i++) {
             writer.write("\\node[node");
@@ -778,7 +780,7 @@ public abstract class TikZUtils {
             final String val = array[i];
             writer.write("] {" + val);
             writer.write("};");
-            writer.newLine();
+            Main.newLine(writer);
         }
         return firstName;
     }

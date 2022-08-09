@@ -703,12 +703,12 @@ public abstract class GraphAlgorithms {
         }
         exTable[1][0] = start.label.isEmpty() ? "" : start.label.get().toString();
         exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         graph.printTikZ(GraphPrintMode.ALL, 1, null, exWriter);
-        exWriter.newLine();
+        Main.newLine(exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-        exWriter.newLine();
+        Main.newLine(exWriter);
         exWriter.write("F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem ");
         exWriter.write("\\emphasize{Startknoten ");
         exWriter.write(start.label.isEmpty() ? "" : start.label.get().toString());
@@ -729,14 +729,14 @@ public abstract class GraphAlgorithms {
             case NEVER:
                 // do nothing
         }
-        exWriter.newLine();
+        Main.newLine(exWriter);
         switch (mode) {
             case SOLUTION_SPACE:
                 TikZUtils.printSolutionSpaceBeginning(exWriter);
                 // fall-through
             case ALWAYS:
                 TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-                exWriter.newLine();
+                Main.newLine(exWriter);
                 TikZUtils.printArrayStretch(1.5, exWriter);
                 TikZUtils.printTable(exTable, exColor, "2cm", exWriter, false, 10);
                 TikZUtils.printArrayStretch(1.0, exWriter);
@@ -751,13 +751,13 @@ public abstract class GraphAlgorithms {
         TikZUtils.printArrayStretch(1.5, solWriter);
         TikZUtils.printTable(solTable, solColor, "2cm", solWriter, false, 10);
         TikZUtils.printArrayStretch(1.0, solWriter);
-        solWriter.newLine();
+        Main.newLine(solWriter);
         solWriter.write("\\vspace*{1ex}");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         solWriter.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
         solWriter.write(" Distanz sicher berechnet worden ist.");
-        solWriter.newLine();
+        Main.newLine(solWriter);
     }
 
     public static void floyd(final AlgorithmInput input) throws Exception {
@@ -936,16 +936,16 @@ public abstract class GraphAlgorithms {
         }
         // create output
         exWriter.write("Betrachten Sie den folgenden Graphen:");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         if (warshall) {
             graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, 1, null, exWriter);
         } else {
             graph.printTikZ(GraphPrintMode.ALL, 1, null, exWriter);
         }
-        exWriter.newLine();
+        Main.newLine(exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-        exWriter.newLine();
+        Main.newLine(exWriter);
         if (!warshall) {
             exWriter.write("F\\\"uhren Sie den \\emphasize{Algorithmus von Floyd} auf diesem Graphen aus. ");
         } else {
@@ -963,8 +963,8 @@ public abstract class GraphAlgorithms {
             exWriter.write(" das Gewicht dieser Kante. Beachten Sie, dass in der reflexiven H\\\"ulle jeder Knoten");
             exWriter.write(" eine Kante mit Gewicht $0$ zu sich selbst hat.\\\\[2ex]");
         }
-        exWriter.newLine();
-        exWriter.newLine();
+        Main.newLine(exWriter);
+        Main.newLine(exWriter);
         TikZUtils.printArrayStretch(1.5, exWriter);
         TikZUtils.printArrayStretch(1.5, solWriter);
         int solCount = 0;
@@ -1043,11 +1043,11 @@ public abstract class GraphAlgorithms {
         exWriter.write(" und Senke ");
         exWriter.write(sink.label.isEmpty() ? "" : sink.label.get().toString());
         exWriter.write(":\\\\");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         graph.printTikZ(GraphPrintMode.ALL, multiplier, null, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-        exWriter.newLine();
+        Main.newLine(exWriter);
         exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der");
         exWriter.write(" \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
         exWriter.write(GraphAlgorithms.EACH_RESIDUAL_GRAPH);
@@ -1062,22 +1062,22 @@ public abstract class GraphAlgorithms {
             case NEVER:
                 // do nothing
         }
-        exWriter.newLine();
+        Main.newLine(exWriter);
         int step = 0;
         TikZUtils.printSamePageBeginning(step++, twocolumns ? TikZUtils.TWO_COL_WIDTH : TikZUtils.COL_WIDTH, solWriter);
         solWriter.write("Initiales Flussnetzwerk:\\\\[2ex]");
         graph.printTikZ(GraphPrintMode.ALL, multiplier, null, solWriter);
         TikZUtils.printSamePageEnd(solWriter);
-        solWriter.newLine();
+        Main.newLine(solWriter);
         switch (mode) {
             case SOLUTION_SPACE:
                 exWriter.write("\\solutionSpace{");
-                exWriter.newLine();
+                Main.newLine(exWriter);
                 // fall-through
             case ALWAYS:
                 if (twocolumns) {
                     exWriter.write("\\begin{longtable}{cc}");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                 }
                 break;
             case NEVER:
@@ -1085,7 +1085,7 @@ public abstract class GraphAlgorithms {
         }
         if (twocolumns) {
             solWriter.write("\\begin{longtable}{cc}");
-            solWriter.newLine();
+            Main.newLine(solWriter);
         }
         while (true) {
             final Graph<N, Integer> residualGraph = GraphAlgorithms.computeResidualGraph(graph);
@@ -1100,7 +1100,7 @@ public abstract class GraphAlgorithms {
                     );
                     exWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
                     exWriter.write(":\\\\[2ex]");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     break;
                 case NEVER:
                     // do nothing
@@ -1112,7 +1112,7 @@ public abstract class GraphAlgorithms {
             );
             solWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
             solWriter.write(":\\\\[2ex]");
-            solWriter.newLine();
+            Main.newLine(solWriter);
             final Set<Pair<Node<N>, Pair<Integer, Node<N>>>> toHighlightResidual;
             switch (Main.TEXT_VERSION) {
                 case ABRAHAM:
@@ -1132,7 +1132,7 @@ public abstract class GraphAlgorithms {
                     if (twocolumns) {
                         exWriter.write(" & ");
                     } else {
-                        exWriter.newLine();
+                        Main.newLine(exWriter);
                     }
                     break;
                 case NEVER:
@@ -1143,7 +1143,7 @@ public abstract class GraphAlgorithms {
             if (twocolumns) {
                 solWriter.write(" & ");
             } else {
-                solWriter.newLine();
+                Main.newLine(solWriter);
             }
             if (path == null) {
                 break;
@@ -1158,13 +1158,13 @@ public abstract class GraphAlgorithms {
                         exWriter
                     );
                     exWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, multiplier, null, exWriter);
                     TikZUtils.printSamePageEnd(exWriter);
                     if (twocolumns) {
                         exWriter.write("\\\\");
                     }
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                     break;
                 case NEVER:
                     // do nothing
@@ -1175,13 +1175,13 @@ public abstract class GraphAlgorithms {
                 solWriter
             );
             solWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
-            solWriter.newLine();
+            Main.newLine(solWriter);
             graph.printTikZ(GraphPrintMode.ALL, multiplier, toHighlightFlow, solWriter);
             TikZUtils.printSamePageEnd(solWriter);
             if (twocolumns) {
                 solWriter.write("\\\\");
             }
-            solWriter.newLine();
+            Main.newLine(solWriter);
         }
         int flow = 0;
         final List<Pair<FlowPair, Node<N>>> list = graph.getAdjacencyList(source);
@@ -1195,36 +1195,36 @@ public abstract class GraphAlgorithms {
             case SOLUTION_SPACE:
                 if (twocolumns) {
                     exWriter.write("\\end{longtable}");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                 }
-                exWriter.newLine();
-                exWriter.newLine();
+                Main.newLine(exWriter);
+                Main.newLine(exWriter);
                 exWriter.write("\\vspace*{1ex}");
-                exWriter.newLine();
-                exWriter.newLine();
+                Main.newLine(exWriter);
+                Main.newLine(exWriter);
                 exWriter.write("Der maximale Fluss hat den Wert: ");
-                exWriter.newLine();
+                Main.newLine(exWriter);
                 if (mode == PreprintMode.SOLUTION_SPACE) {
                     exWriter.write("}");
-                    exWriter.newLine();
+                    Main.newLine(exWriter);
                 }
-                exWriter.newLine();
+                Main.newLine(exWriter);
                 break;
             case NEVER:
                 // do nothing
         }
         if (twocolumns) {
             solWriter.write("\\end{longtable}");
-            solWriter.newLine();
+            Main.newLine(solWriter);
         }
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         solWriter.write("\\vspace*{1ex}");
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
         solWriter.write("Der maximale Fluss hat den Wert: " + flow);
-        solWriter.newLine();
-        solWriter.newLine();
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
     }
 
     public static void prim(final AlgorithmInput input) throws Exception {
@@ -1325,27 +1325,27 @@ public abstract class GraphAlgorithms {
         }
         exWriter.write("Der Startknoten hat hierbei den Schl\\\"ussel " + start.label.get().toString() + ".");
         exWriter.write(" Geben Sie dazu \\emphasize{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an,");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         exWriter.write("\\begin{enumerate}[1)]");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         exWriter.write("    \\item welche Kosten die Randknoten haben (d.\\,h.~f\\\"ur jeden Knoten \\texttt{v} in ");
         exWriter.write("\\texttt{Q} den Wert \\texttt{key[v]})");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         exWriter.write("    \\item und welchen Knoten \\texttt{extractMin(Q)} w\\\"ahlt, indem Sie den Kosten-Wert ");
         exWriter.write("des gew\\\"ahlten Randknoten in der Tabelle unterstreichen (wie es in der ersten Zeile ");
         exWriter.write("bereits vorgegeben ist).");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         exWriter.write("\\end{enumerate}");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         exWriter.write(" Geben Sie zudem den vom Algorithmus bestimmten minimalen Spannbaum an.");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
         TikZUtils.printArrayStretch(1.5, exWriter);
         TikZUtils.printTable(exTable, null, "2.0cm", exWriter, false, 10);
         TikZUtils.printArrayStretch(1, exWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
         exWriter.write("Minimaler Spannbaum:");
-        exWriter.newLine();
+        Main.newLine(exWriter);
         TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
         TikZUtils.printArrayStretch(1.5, solWriter);
         TikZUtils.printTable(solTable, null, "2.0cm", solWriter, false, 10);
@@ -1355,10 +1355,10 @@ public abstract class GraphAlgorithms {
         solWriter.write("Hierbei gibt eine unterstrichene Zahl an in welcher Iteration (zugeh\\\"origer Zeilenkopf)");
         solWriter.write(" welcher Knoten (zugeh\\\"origer Spaltenkopf) durch \\texttt{extractMin(Q)} gew\\\"ahlt");
         solWriter.write(" wurde. Wir erhalten den folgenden minimalen Spannbaum:");
-        solWriter.newLine();
+        Main.newLine(solWriter);
         TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
         graph.printTikZ(solWriter, parent, false);
-        solWriter.newLine();
+        Main.newLine(solWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
     }
 
@@ -1712,11 +1712,11 @@ public abstract class GraphAlgorithms {
                     "Geben Sie alle \\emphasize{starken Zusammenhangskomponenten} im folgenden Graph an. F\\\"ur jede dieser "
                     + "starken Zusammenhangskomponenten reicht es die Menge der Knoten anzugeben, die darin auftreten."
                 );
-                writerSpace.newLine();
+                Main.newLine(writerSpace);
                 graph.printGraph(writerSpace, false);
             }
             graph.printSCCs(writer, false, false);
-            writer.newLine();
+            Main.newLine(writer);
             break;
         case "sharir":
             if (optionalWriterSpace.isPresent()) {
@@ -1731,11 +1731,11 @@ public abstract class GraphAlgorithms {
                     + " initial mit Nullen gef\\\"ullt ist und der Knoten mit Schl\\\"ussel $i$ in der Adjazenzliste den $(i-1)$-ten Eintrag hat,"
                     + " also der Knoten mit Schl\\\"ussel $1$ vom Algorithmus als erstes ber\"ucksichtig wird usw."
                 );
-                writerSpace.newLine();
+                Main.newLine(writerSpace);
                 graph.printGraph(writerSpace, false);
             }
             graph.printSCCs(writer, false, true) ;
-            writer.newLine();
+            Main.newLine(writer);
             break;
         case "topologicSort":
             graph.printTopologicalOrder(optionalWriterSpace, writer, false, withText);
@@ -2068,14 +2068,14 @@ public abstract class GraphAlgorithms {
         if (count < tableCount) {
             TikZUtils.printTable(table, color, "1cm", writer, transpose, breakAtColumn);
             writer.write("\\hspace{2em}");
-            writer.newLine();
+            Main.newLine(writer);
             return count + 1;
         }
         writer.write("\\\\[2ex]");
-        writer.newLine();
+        Main.newLine(writer);
         TikZUtils.printTable(table, color, "1cm", writer, transpose, breakAtColumn);
         writer.write("\\hspace{2em}");
-        writer.newLine();
+        Main.newLine(writer);
         return 1;
     }
 

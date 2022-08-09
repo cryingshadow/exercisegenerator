@@ -2,6 +2,7 @@ package exercisegenerator.structures;
 
 import java.io.*;
 
+import exercisegenerator.*;
 import exercisegenerator.io.*;
 
 /**
@@ -172,7 +173,7 @@ public class IntAVLTree {
             writer.write("\\Tree");
             writer.write(this.root.toString());
         }
-        writer.newLine();
+        Main.newLine(writer);
         TikZUtils.printTikzEnd(writer);
         TikZUtils.printProtectedNewline(writer);
         this.printSamePageEnd(writer);
@@ -382,17 +383,17 @@ public class IntAVLTree {
     private void printSamePageBeginning(final String headline, final BufferedWriter writer) throws IOException {
         if (this.getHeight() <= 0) {
             writer.write("\\begin{minipage}[t]{0.2 \\columnwidth}");
-            writer.newLine();
+            Main.newLine(writer);
         } else if (this.getHeight() < 9) {
             writer.write("\\begin{minipage}[t]{0." + (this.getHeight() + 1) + " \\columnwidth}");
-            writer.newLine();
+            Main.newLine(writer);
         }
         if (headline != null && !"".equals(headline)) {
             writer.write(headline + "\\\\[-2ex]");
         }
-        writer.newLine();
+        Main.newLine(writer);
         writer.write("\\begin{center}");
-        writer.newLine();
+        Main.newLine(writer);
     }
 
     /**
@@ -402,10 +403,10 @@ public class IntAVLTree {
      */
     private void printSamePageEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{center}");
-        writer.newLine();
+        Main.newLine(writer);
         if (this.getHeight() < 9 ) {
             writer.write("\\end{minipage}");
-            writer.newLine();
+            Main.newLine(writer);
         }
     }
 
@@ -418,10 +419,10 @@ public class IntAVLTree {
     private void printVerticalSpace(final BufferedWriter writer) throws IOException {
         this.stepCounter += this.getHeight() + 1;
         if (this.stepCounter >= 10) {
-            writer.newLine();
+            Main.newLine(writer);
             writer.write("~\\\\");
-            writer.newLine();
-            writer.newLine();
+            Main.newLine(writer);
+            Main.newLine(writer);
             if (this.getHeight() <= 0) {
                 this.stepCounter = 2;
             } else {
