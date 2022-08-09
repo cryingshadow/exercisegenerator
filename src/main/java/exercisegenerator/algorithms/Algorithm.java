@@ -499,6 +499,8 @@ public enum Algorithm {
         GraphAlgorithms::warshall
     );
 
+    public static final int DEFAULT_CONTENT_LENGTH = 2;
+
     public static Optional<Algorithm> forName(final String name) {
         for (final Algorithm alg : Algorithm.values()) {
             if (Main.STUDENT_MODE && !alg.enabled) {

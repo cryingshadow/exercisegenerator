@@ -364,7 +364,12 @@ public abstract class Hashing {
             writer.write("{\\Large");
             Main.newLine(writer);
             TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            TikZUtils.printArray(solution, null, null, null, writer);
+            TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
+                solution,
+                Optional.empty(),
+                Algorithm.DEFAULT_CONTENT_LENGTH,
+                writer
+            );
         } else {
             // probe == 0 -> no probing
             writer.write(init);

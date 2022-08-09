@@ -3,8 +3,10 @@ package exercisegenerator.io;
 import java.io.*;
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 import exercisegenerator.*;
+import exercisegenerator.algorithms.*;
 import exercisegenerator.structures.*;
 
 /**
@@ -58,93 +60,6 @@ public abstract class TikZUtils {
      * A number to uniquely identify nodes.
      */
     private static int number = 0;
-
-    /**
-     * Prints a row of nodes with the contents of the array.
-     * @param array The array of values.
-     * @param separate An array indicating which nodes should be separated horizontally. Must have a size exactly one
-     *                 less than array or be null.
-     * @param mark An array indicating which node should be marked by a grey background. Must have the same size as
-     *             array or be null.
-     * @param below The name of the left-most node in the row above the current row.
-     * @param writer The writer to send the output to.
-     * @return The name of the left-most node of the current row.
-     * @throws IOException If some I/O error occurs.
-     */
-    public static String printArray(
-        final Integer[] array,
-        final boolean[] separate,
-        final boolean[] mark,
-        final String below,
-        final BufferedWriter writer
-    ) throws IOException {
-        final String firstName = "n" + TikZUtils.number++;
-        if (below == null) {
-            writer.write("\\node[node");
-            if (mark != null && mark[0]) {
-                writer.write(",fill=black!20");
-            }
-            writer.write("] (");
-            writer.write(firstName);
-            if(array[0] != null)
-            {
-                final int val = array[0];
-                writer.write(") {" + (val < 10 ? "\\phantom{0}" : "") + val);
-            }
-            else
-            {
-                writer.write(") {\\phantom{00}");
-            }
-            writer.write("};");
-            writer.newLine();
-        } else {
-            writer.write("\\node[node");
-            if (mark != null && mark[0]) {
-                writer.write(",fill=black!20");
-            }
-            writer.write("] (");
-            writer.write(firstName);
-            writer.write(") [below=of ");
-            writer.write(below);
-            if(array[0] != null)
-            {
-                final int val = array[0];
-                writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
-            }
-            else
-            {
-                writer.write("] {\\phantom{00}");
-            }
-            writer.write("};");
-            writer.newLine();
-        }
-        for (int i = 1; i < array.length; i++) {
-            writer.write("\\node[node");
-            if (mark != null && mark[i]) {
-                writer.write(",fill=black!20");
-            }
-            writer.write("] (");
-            writer.write("n" + TikZUtils.number++);
-            writer.write(") [right=");
-            if (separate != null && separate[i - 1]) {
-                writer.write("0.1 ");
-            }
-            writer.write("of ");
-            writer.write("n" + (TikZUtils.number - 2));
-            if(array[i] != null)
-            {
-                final int val = array[i];
-                writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
-            }
-            else
-            {
-                writer.write("] {\\phantom{00}");
-            }
-            writer.write("};");
-            writer.newLine();
-        }
-        return firstName;
-    }
 
     /**
      * Prints a new stretch factor for the array height.
@@ -221,40 +136,18 @@ public abstract class TikZUtils {
         Main.newLine(writer);
     }
 
-    /**
-     * Prints a row of empty nodes as solution space for the contents of the array.
-     * @param length The length of the array.
-     * @param below The name of the left-most node in the row above the current row.
-     * @param writer The writer to send the output to.
-     * @return The name of the left-most node of the current row.
-     * @throws IOException If some I/O error occurs.
-     */
-    public static String printEmptyArray(
+    public static String printEmptyArrayAndReturnLeftmostNodesName(
         final int length,
-        final String below,
+        final Optional<String> below,
+        final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        final String firstName = "n" + TikZUtils.number++;
-        if (below == null) {
-            writer.write("\\node[node] (");
-            writer.write(firstName);
-            writer.write(") {\\phantom{00}};");
-            writer.newLine();
-        } else {
-            writer.write("\\node[node] (");
-            writer.write(firstName);
-            writer.write(") [below=of ");
-            writer.write(below);
-            writer.write("] {\\phantom{00}};");
-            writer.newLine();
-        }
-        for (int i = 1; i < length; i++) {
-            writer.write("\\node[node] (n" + TikZUtils.number++);
-            writer.write(") [right=of n" + (TikZUtils.number - 2));
-            writer.write("] {\\phantom{00}};");
-            writer.newLine();
-        }
-        return firstName;
+        return TikZUtils.printListAndReturnLeftmostNodesName(
+            Stream.generate(() -> new ItemWithTikZInformation<>()).limit(length).toList(),
+            below,
+            contentLength,
+            writer
+        );
     }
 
     /**
@@ -264,32 +157,12 @@ public abstract class TikZUtils {
      * @throws IOException If some I/O error occurs.
      */
     public static void printEmptyArrayWithIndex(final int length, final BufferedWriter writer) throws IOException {
-        int i = 0;
-        writer.write("\\node[node] (");
-        writer.write("n" + TikZUtils.number++);
-        writer.write(") {\\phantom{00}};");
-        Main.newLine(writer);
-        int ref = TikZUtils.number - 1;
-        writer.write("\\node (");
-        writer.write("l" + ref);
-        writer.write(") [above=0 of n" + ref);
-        writer.write("] {\\scriptsize\\texttt{a[" + i);
-        writer.write("]}};");
-        Main.newLine(writer);
-        while (i < length - 1) {
-            i++;
-            writer.write("\\node[node] (n" + TikZUtils.number++);
-            writer.write(") [right=of n" + (TikZUtils.number - 2));
-            writer.write("] {\\phantom{00}};");
-            Main.newLine(writer);
-            ref = TikZUtils.number - 1;
-            writer.write("\\node (");
-            writer.write("l" + ref);
-            writer.write(") [above=0 of n" + ref);
-            writer.write("] {\\scriptsize\\texttt{a[" + i);
-            writer.write("]}};");
-            Main.newLine(writer);
-        }
+        TikZUtils.printListAndReturnLeftmostNodesName(
+            IntStream.range(0, length).mapToObj(i -> new ItemWithTikZInformation<>(i)).toList(),
+            Optional.empty(),
+            Algorithm.DEFAULT_CONTENT_LENGTH,
+            writer
+        );
     }
 
     /**
@@ -337,6 +210,53 @@ public abstract class TikZUtils {
     public static void printEnd(final String environment, final BufferedWriter writer) throws IOException {
         writer.write("\\end{" + environment + "}");
         Main.newLine(writer);
+    }
+
+    public static String printIntegerArrayAndReturnLeftMostNodesName(
+        final Integer[] array,
+        final boolean[] separate,
+        final boolean[] markers,
+        final Optional<String> below,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        final List<ItemWithTikZInformation<Integer>> list = new ArrayList<ItemWithTikZInformation<Integer>>();
+        list.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[0]), markers[0], false));
+        for (int i = 1; i < array.length; i++) {
+            list.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[i]), markers[i], separate[i - 1]));
+        }
+        return TikZUtils.printListAndReturnLeftmostNodesName(list, below, contentLength, writer);
+    }
+
+    public static String printIntegerArrayAndReturnLeftMostNodesName(
+        final Integer[] array,
+        final boolean[] separate,
+        final Optional<String> below,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        final List<ItemWithTikZInformation<Integer>> list = new ArrayList<ItemWithTikZInformation<Integer>>();
+        list.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[0]), false));
+        for (int i = 1; i < array.length; i++) {
+            list.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[i]), separate[i - 1]));
+        }
+        return TikZUtils.printListAndReturnLeftmostNodesName(list, below, contentLength, writer);
+    }
+
+    public static String printIntegerArrayAndReturnLeftMostNodesName(
+        final Integer[] array,
+        final Optional<String> below,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        return TikZUtils.printListAndReturnLeftmostNodesName(
+            Arrays.stream(array)
+                .map((final Integer i) -> new ItemWithTikZInformation<Integer>(Optional.ofNullable(i), false, false))
+                .toList(),
+            below,
+            contentLength,
+            writer
+        );
     }
 
     /**
@@ -394,6 +314,42 @@ public abstract class TikZUtils {
         Main.newLine(writer);
         writer.write("\\end{document}");
         Main.newLine(writer);
+    }
+
+    public static String printListAndReturnLeftmostNodesName(
+        final List<? extends ItemWithTikZInformation<?>> list,
+        final Optional<String> below,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        final ItemWithTikZInformation<?> firstItem = list.get(0);
+        final String firstName =
+            TikZUtils.printListItemAndReturnNodeName(
+                firstItem.optionalContent,
+                below.isEmpty() ?
+                    Optional.empty() :
+                        Optional.of(new TikZNodeOrientation(below.get(), TikZNodeDirection.BELOW)),
+                firstItem.marker,
+                firstItem.separateBefore,
+                Optional.empty(),
+                contentLength,
+                writer
+            );
+        String previousName = firstName;
+        for (int i = 1; i < list.size(); i++) {
+            final ItemWithTikZInformation<?> item = list.get(i);
+            previousName =
+                TikZUtils.printListItemAndReturnNodeName(
+                    item.optionalContent,
+                    Optional.of(new TikZNodeOrientation(previousName, TikZNodeDirection.RIGHT)),
+                    item.marker,
+                    item.separateBefore,
+                    Optional.empty(),
+                    contentLength,
+                    writer
+                );
+        }
+        return firstName;
     }
 
     /**
@@ -783,6 +739,74 @@ public abstract class TikZUtils {
             Main.newLine(writer);
         }
         return firstName;
+    }
+
+    private static String printListItemAndReturnNodeName(
+        final Optional<?> optionalContent,
+        final Optional<TikZNodeOrientation> optionalNodeOrientation,
+        final boolean marker,
+        final boolean separateBefore,
+        final Optional<Integer> optionalIndex,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int currentNumber = TikZUtils.number++;
+        final String name = "n" + currentNumber;
+        writer.write("\\node[node");
+        if (marker) {
+            writer.write(",fill=black!20");
+        }
+        writer.write("] (");
+        writer.write(name);
+        writer.write(") ");
+        if (optionalNodeOrientation.isPresent()) {
+            final TikZNodeOrientation nodeOrientation = optionalNodeOrientation.get();
+            writer.write("[");
+            writer.write(nodeOrientation.direction.tikz);
+            writer.write("=");
+            if (separateBefore) {
+                writer.write("0.1 ");
+            }
+            writer.write("of ");
+            writer.write(nodeOrientation.name);
+            writer.write("] ");
+        }
+        writer.write("{");
+        if (optionalContent.isPresent()) {
+            final String content = optionalContent.get().toString();
+            final int contentLengthDiff = contentLength - content.length();
+            if (contentLengthDiff > 0) {
+                TikZUtils.printPhantomSpace(contentLengthDiff, writer);
+            }
+            writer.write(content);
+        } else {
+            TikZUtils.printPhantomSpace(contentLength, writer);
+        }
+        writer.write("};");
+        Main.newLine(writer);
+        if (optionalIndex.isPresent()) {
+            writer.write("\\node (l");
+            writer.write(String.valueOf(currentNumber));
+            writer.write(") [above=0 of ");
+            writer.write(name);
+            writer.write("] {\\scriptsize\\texttt{a[");
+            writer.write(String.valueOf(optionalIndex.get()));
+            writer.write("]}};");
+            Main.newLine(writer);
+        }
+        return name;
+    }
+
+    private static void printPhantomSpace(final int numOfZerosForSpace, final BufferedWriter writer) throws IOException {
+        writer.write("\\phantom{");
+        TikZUtils.printZeros(numOfZerosForSpace, writer);
+        writer.write("}");
+    }
+
+    private static void printZeros(final int numOfZeros, final BufferedWriter writer) throws IOException {
+        for (int i = 0; i < numOfZeros; i++) {
+            writer.write("0");
+        }
     }
 
 }
