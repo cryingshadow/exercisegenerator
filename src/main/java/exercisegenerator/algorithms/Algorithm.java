@@ -263,17 +263,17 @@ public enum Algorithm {
      * Convex hull according to Grahams' Scan.
      */
     HULL(
-          "hull",
-          "Convex Hull",
-          new String[]{
-              "Calculate the convex hull of a given pointset according to Grahams' Scan.",
-              (
-                    Main.STUDENT_MODE ?
-               "The flag -l specifies the number of points in the pointset." :
-               "TODO"
-               )
-          },
-          GeometricAlgorithms::hull
+        "hull",
+        "Convex Hull",
+        new String[]{
+            "Calculate the convex hull of a given pointset according to Grahams' Scan.",
+            (
+                Main.STUDENT_MODE ?
+                    "The flag -l specifies the number of points in the pointset." :
+                        "TODO"
+            )
+        },
+        GeometricAlgorithms::hull
     ),
 
     /**
@@ -463,6 +463,16 @@ public enum Algorithm {
             )
         },
         GraphAlgorithms::sharir
+    ),
+
+    TO_ONES_COMPLEMENT(
+        "toonescompl",
+        "One's Complement (to)",
+        new String[] {
+            "Transform numbers from decimal to binary representation using the one's complement.",
+            "Needs the -l flag to specify the binary length."
+        },
+        BinaryNumbers::toOnesComplement
     ),
 
     /**

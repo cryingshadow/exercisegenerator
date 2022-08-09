@@ -741,6 +741,10 @@ public abstract class TikZUtils {
         return firstName;
     }
 
+    public static void reset() {
+        TikZUtils.number = 0;
+    }
+
     private static String printListItemAndReturnNodeName(
         final Optional<?> optionalContent,
         final Optional<TikZNodeOrientation> optionalNodeOrientation,

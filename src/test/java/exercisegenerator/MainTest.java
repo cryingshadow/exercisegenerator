@@ -5,6 +5,8 @@ import java.io.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.io.*;
+
 public class MainTest {
 
     private static final String EX_FILE = "C:\\Daten\\Test\\exgen\\ex.tex";
@@ -94,6 +96,11 @@ public class MainTest {
                 Assert.assertNull(solReader.readLine());
             }
         }
+    }
+
+    @BeforeMethod
+    public void prepare() {
+        TikZUtils.reset();
     }
 
 }
