@@ -32,4 +32,13 @@ public class BitString extends LinkedList<Bit> {
         return this.stream().map(b -> b.invert()).collect(Collectors.toCollection(BitString::new));
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder result = new StringBuilder();
+        for (final Bit b : this) {
+            result.append(b.toString());
+        }
+        return result.toString();
+    }
+
 }

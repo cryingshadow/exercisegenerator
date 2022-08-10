@@ -48,7 +48,6 @@ public class BinaryNumbersTest {
         );
     }
 
-
     @Test
     public void toOnesComplementPositive() throws IOException {
         final StringWriter exResult = new StringWriter();
@@ -88,6 +87,25 @@ public class BinaryNumbersTest {
             + "\\node[node] (n15) [right=of n14] {1};\n"
             + "\\end{tikzpicture}\n"
         );
+    }
+
+    @Test
+    public void toOnesComplementUnit() {
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(3, 4).toString(), "0011");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(4, 4).toString(), "0100");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(0, 2).toString(), "00");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(0, 9).toString(), "000000000");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(1, 11).toString(), "00000000001");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(7, 4).toString(), "0111");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(-5, 4).toString(), "1010");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(-7, 4).toString(), "1000");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(-4, 7).toString(), "1111011");
+        Assert.assertEquals(BinaryNumbers.toOnesComplement(-1, 3).toString(), "110");
+        Assert.assertThrows(() -> BinaryNumbers.toOnesComplement(13, 4));
+        Assert.assertThrows(() -> BinaryNumbers.toOnesComplement(8, 4));
+        Assert.assertThrows(() -> BinaryNumbers.toOnesComplement(-8, 4));
+        Assert.assertThrows(() -> BinaryNumbers.toOnesComplement(128, 8));
+        Assert.assertThrows(() -> BinaryNumbers.toOnesComplement(-128, 8));
     }
 
     @Test
@@ -160,6 +178,26 @@ public class BinaryNumbersTest {
             + "\\node[node] (n7) [right=of n6] {1};\n"
             + "\\end{tikzpicture}\n"
         );
+    }
+
+    @Test
+    public void toTwosComplementUnit() {
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(3, 4).toString(), "0011");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(4, 4).toString(), "0100");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(0, 2).toString(), "00");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(0, 9).toString(), "000000000");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(1, 11).toString(), "00000000001");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(7, 4).toString(), "0111");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(-5, 4).toString(), "1011");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(-7, 4).toString(), "1001");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(-4, 7).toString(), "1111100");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(-1, 3).toString(), "111");
+        Assert.assertEquals(BinaryNumbers.toTwosComplement(-8, 4).toString(), "1000");
+        Assert.assertThrows(() -> BinaryNumbers.toTwosComplement(7, 3));
+        Assert.assertThrows(() -> BinaryNumbers.toTwosComplement(8, 4));
+        Assert.assertThrows(() -> BinaryNumbers.toTwosComplement(-9, 4));
+        Assert.assertThrows(() -> BinaryNumbers.toTwosComplement(128, 8));
+        Assert.assertThrows(() -> BinaryNumbers.toTwosComplement(-129, 8));
     }
 
 }
