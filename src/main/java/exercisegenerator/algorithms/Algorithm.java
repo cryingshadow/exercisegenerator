@@ -475,6 +475,16 @@ public enum Algorithm {
         BinaryNumbers::toOnesComplement
     ),
 
+    TO_TWOS_COMPLEMENT(
+        "totwoscompl",
+        "Two's Complement (to)",
+        new String[] {
+            "Transform numbers from decimal to binary representation using the two's complement.",
+            "Needs the -l flag to specify the binary length."
+        },
+        BinaryNumbers::toTwosComplement
+    ),
+
     /**
      * Topological sorting of a graph.
      */
