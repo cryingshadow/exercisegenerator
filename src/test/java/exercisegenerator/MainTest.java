@@ -41,22 +41,31 @@ public class MainTest {
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
                 Assert.assertEquals(exReader.readLine(), "Die Binärzahl 11100 im 5-bit Einerkomplement hat den Wert:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {\\phantom{0000}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "Die Binärzahl 0001 im 4-bit Einerkomplement hat den Wert:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) {\\phantom{0000}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "Die Binärzahl 10010000 im 8-bit Einerkomplement hat den Wert:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) {\\phantom{0000}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertNull(exReader.readLine());
 
@@ -96,22 +105,31 @@ public class MainTest {
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
                 Assert.assertEquals(exReader.readLine(), "Die Binärzahl 11101 im 5-bit Zweierkomplement hat den Wert:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {\\phantom{0000}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "Die Binärzahl 0001 im 4-bit Zweierkomplement hat den Wert:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) {\\phantom{0000}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "Die Binärzahl 10010001 im 8-bit Zweierkomplement hat den Wert:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) {\\phantom{0000}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertNull(exReader.readLine());
 
@@ -229,6 +247,8 @@ public class MainTest {
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
                 Assert.assertEquals(exReader.readLine(), "Die Zahl 3 wird im 5-bit Einerkomplement dargestellt als:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {\\phantom{0}};");
@@ -237,8 +257,11 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) [right=of n2] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) [right=of n3] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "Die Zahl -1 wird im 4-bit Einerkomplement dargestellt als:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n10) {\\phantom{0}};");
@@ -246,8 +269,11 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n12) [right=of n11] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n13) [right=of n12] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "Die Zahl -2 wird im 8-bit Einerkomplement dargestellt als:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n18) {\\phantom{0}};");
@@ -259,6 +285,7 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n24) [right=of n23] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n25) [right=of n24] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertNull(exReader.readLine());
 
@@ -312,6 +339,8 @@ public class MainTest {
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
                 Assert.assertEquals(exReader.readLine(), "Die Zahl -3 wird im 5-bit Zweierkomplement dargestellt als:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {\\phantom{0}};");
@@ -320,8 +349,11 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) [right=of n2] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) [right=of n3] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "Die Zahl 1 wird im 4-bit Zweierkomplement dargestellt als:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n10) {\\phantom{0}};");
@@ -329,8 +361,11 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n12) [right=of n11] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n13) [right=of n12] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "Die Zahl -111 wird im 8-bit Zweierkomplement dargestellt als:\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n18) {\\phantom{0}};");
@@ -342,6 +377,7 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n24) [right=of n23] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n25) [right=of n24] {\\phantom{0}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertNull(exReader.readLine());
 

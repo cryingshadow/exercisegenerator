@@ -136,6 +136,11 @@ public abstract class TikZUtils {
         Main.newLine(writer);
     }
 
+    public static void printElse(final BufferedWriter writer) throws IOException {
+        writer.write("\\else");
+        Main.newLine(writer);
+    }
+
     public static String printEmptyArrayAndReturnLeftmostNodesName(
         final int length,
         final Optional<String> below,
@@ -209,6 +214,11 @@ public abstract class TikZUtils {
      */
     public static void printEnd(final String environment, final BufferedWriter writer) throws IOException {
         writer.write("\\end{" + environment + "}");
+        Main.newLine(writer);
+    }
+
+    public static void printEndIf(final BufferedWriter writer) throws IOException {
+        writer.write("\\fi");
         Main.newLine(writer);
     }
 
@@ -544,6 +554,11 @@ public abstract class TikZUtils {
      */
     public static void printTikzEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{tikzpicture}");
+        Main.newLine(writer);
+    }
+
+    public static void printToggleForSolutions(final BufferedWriter writer) throws IOException {
+        writer.write("\\ifprintanswers");
         Main.newLine(writer);
     }
 

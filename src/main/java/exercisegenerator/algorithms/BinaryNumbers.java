@@ -12,7 +12,7 @@ public class BinaryNumbers {
     public static final int DEFAULT_BINARY_CONTENT_LENGTH = 1;
 
     public static final String EXERCISE_TEXT_PATTERN_TO_ONES =
-        "Die Zahl %d wird im %d-bit Einerkomplement dargestellt als:\\\\[2ex]";
+        "Die Zahl %s wird im %d-bit Einerkomplement dargestellt als:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_ONES =
         "Die Binärzahl %s im %d-bit Einerkomplement hat den Wert:\\\\[2ex]";
@@ -21,7 +21,7 @@ public class BinaryNumbers {
         "Die Binärzahl %s im %d-bit Zweierkomplement hat den Wert:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_TO_TWOS =
-        "Die Zahl %d wird im %d-bit Zweierkomplement dargestellt als:\\\\[2ex]";
+        "Die Zahl %s wird im %d-bit Zweierkomplement dargestellt als:\\\\[2ex]";
 
     public static void fromOnesComplement(final AlgorithmInput input) throws IOException {
         final List<Pair<Integer, Integer>> tasks = BinaryNumbers.parseOrGenerateInput(input.options);
@@ -31,12 +31,54 @@ public class BinaryNumbers {
         }
     }
 
+    public static void fromOnesComplement(
+        final int number,
+        final int length,
+        final int contentLength,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        final BitString bitstring = BinaryNumbers.toOnesComplement(number, length);
+        BinaryNumbers.complementExercise(
+            bitstring.toString(),
+            length,
+            BinaryNumbers.EXERCISE_TEXT_PATTERN_FROM_ONES,
+            1,
+            contentLength,
+            exerciseWriter
+        );
+        BinaryNumbers.complementSolution(BinaryNumbers.enhanceIntegerSolution(number), contentLength, solutionWriter);
+    }
+
     public static void fromTwosComplement(final AlgorithmInput input) throws IOException {
         final List<Pair<Integer, Integer>> tasks = BinaryNumbers.parseOrGenerateInput(input.options);
         final int contentLength = BinaryNumbers.getMaximumContentLength(tasks);
         for (final Pair<Integer, Integer> task : tasks) {
             BinaryNumbers.fromTwosComplement(task.x, task.y, contentLength, input.exerciseWriter, input.solutionWriter);
         }
+    }
+
+    public static void fromTwosComplement(
+        final int number,
+        final int length,
+        final int contentLength,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        final BitString bitstring = BinaryNumbers.toTwosComplement(number, length);
+        BinaryNumbers.complementExercise(
+            bitstring.toString(),
+            length,
+            BinaryNumbers.EXERCISE_TEXT_PATTERN_FROM_TWOS,
+            1,
+            contentLength,
+            exerciseWriter
+        );
+        BinaryNumbers.complementSolution(
+            BinaryNumbers.enhanceIntegerSolution(number),
+            contentLength,
+            solutionWriter
+        );
     }
 
     public static void toOnesComplement(final AlgorithmInput input) throws IOException {
@@ -65,8 +107,19 @@ public class BinaryNumbers {
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
-        BinaryNumbers.toOnesComplementExercise(number, length, exWriter);
-        BinaryNumbers.toOnesComplementSolution(number, length, solWriter);
+        BinaryNumbers.complementExercise(
+            String.valueOf(number),
+            length,
+            BinaryNumbers.EXERCISE_TEXT_PATTERN_TO_ONES,
+            length,
+            BinaryNumbers.DEFAULT_BINARY_CONTENT_LENGTH,
+            exWriter
+        );
+        BinaryNumbers.complementSolution(
+            BinaryNumbers.enhanceBitStringSolution(BinaryNumbers.toOnesComplement(number, length)),
+            BinaryNumbers.DEFAULT_BINARY_CONTENT_LENGTH,
+            solWriter
+        );
     }
 
     public static void toTwosComplement(final AlgorithmInput input) throws IOException {
@@ -95,8 +148,19 @@ public class BinaryNumbers {
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
-        BinaryNumbers.toTwosComplementExercise(number, length, exWriter);
-        BinaryNumbers.toTwosComplementSolution(number, length, solWriter);
+        BinaryNumbers.complementExercise(
+            String.valueOf(number),
+            length,
+            BinaryNumbers.EXERCISE_TEXT_PATTERN_TO_TWOS,
+            length,
+            BinaryNumbers.DEFAULT_BINARY_CONTENT_LENGTH,
+            exWriter
+        );
+        BinaryNumbers.complementSolution(
+            BinaryNumbers.enhanceBitStringSolution(BinaryNumbers.toTwosComplement(number, length)),
+            BinaryNumbers.DEFAULT_BINARY_CONTENT_LENGTH,
+            solWriter
+        );
     }
 
     public static BitString toUnsignedBinary(final int number, final int length) {
@@ -116,90 +180,96 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static void fromComplementExercise(
+    private static boolean algorithmUsesOnesComplement(final Map<Flag, String> options) {
+        switch (Algorithm.forName(options.get(Flag.ALGORITHM)).get()) {
+        case TO_ONES_COMPLEMENT:
+        case FROM_ONES_COMPLEMENT:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    private static void complementExercise(
+        final String number,
+        final int bitLength,
         final String textPattern,
-        final String number,
-        final int length,
+        final int solutionLength,
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write(String.format(textPattern, number, length));
+        writer.write(String.format(textPattern, number, bitLength));
         Main.newLine(writer);
+        TikZUtils.printToggleForSolutions(writer);
+        TikZUtils.printElse(writer);
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(1, Optional.empty(), contentLength, writer);
+        TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(solutionLength, Optional.empty(), contentLength, writer);
+        TikZUtils.printTikzEnd(writer);
+        TikZUtils.printEndIf(writer);
+        Main.newLine(writer);
+    }
+
+    private static void complementSolution(
+        final List<? extends ItemWithTikZInformation<?>> solution,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        TikZUtils.printListAndReturnLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
         TikZUtils.printTikzEnd(writer);
         Main.newLine(writer);
     }
 
-    private static void fromComplementSolution(
-        final int number,
-        final int length,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        TikZUtils.printListAndReturnLeftmostNodesName(
-            Collections.singletonList(new ItemWithTikZInformation<>(Optional.of(number))),
-            Optional.empty(),
-            contentLength,
-            writer
-        );
-        TikZUtils.printTikzEnd(writer);
-        Main.newLine(writer);
+    private static List<ItemWithTikZInformation<Bit>> enhanceBitStringSolution(final BitString solution) {
+        return solution.stream().map(b -> new ItemWithTikZInformation<Bit>(Optional.of(b))).toList();
     }
 
-    private static void fromOnesComplement(
-        final int number,
-        final int length,
-        final int contentLength,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
-    ) throws IOException {
-        final BitString bitstring = BinaryNumbers.toOnesComplement(number, length);
-        BinaryNumbers.fromOnesComplementExercise(bitstring.toString(), length, contentLength, exerciseWriter);
-        BinaryNumbers.fromComplementSolution(number, length, contentLength, solutionWriter);
+    private static List<ItemWithTikZInformation<Integer>> enhanceIntegerSolution(final int number) {
+        return Collections.singletonList(new ItemWithTikZInformation<>(Optional.of(number)));
     }
 
-    private static void fromOnesComplementExercise(
-        final String number,
-        final int length,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        BinaryNumbers.fromComplementExercise(
-            BinaryNumbers.EXERCISE_TEXT_PATTERN_FROM_ONES,
-            number,
-            length,
-            contentLength,
-            writer
-        );
+    private static List<Pair<Integer, Integer>> generateInput(final Map<Flag, String> options) {
+        final Random gen = new Random();
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int maxBitLength = BinaryNumbers.generateMaxBitLength(options, gen);
+        final List<Pair<Integer, Integer>> result = new ArrayList<Pair<Integer, Integer>>(numOfTasks);
+        final boolean onesComplement = BinaryNumbers.algorithmUsesOnesComplement(options);
+        for (int i = 0; i < numOfTasks; i++) {
+            result.add(BinaryNumbers.generateTask(gen, maxBitLength, onesComplement));
+        }
+        return result;
     }
 
-    private static void fromTwosComplement(
-        final int number,
-        final int length,
-        final int contentLength,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
-    ) throws IOException {
-        final BitString bitstring = BinaryNumbers.toTwosComplement(number, length);
-        BinaryNumbers.fromTwosComplementExercise(bitstring.toString(), length, contentLength, exerciseWriter);
-        BinaryNumbers.fromComplementSolution(number, length, contentLength, solutionWriter);
+    private static int generateMaxBitLength(final Map<Flag, String> options, final Random gen) {
+        if (options.containsKey(Flag.CAPACITY)) {
+            return Integer.parseInt(options.get(Flag.CAPACITY));
+        }
+        return 8;
     }
 
-    private static void fromTwosComplementExercise(
-        final String number,
-        final int length,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        BinaryNumbers.fromComplementExercise(
-            BinaryNumbers.EXERCISE_TEXT_PATTERN_FROM_TWOS,
-            number,
-            length,
-            contentLength,
-            writer
-        );
+    private static int generateNumOfTasks(final Map<Flag, String> options, final Random gen) {
+        if (options.containsKey(Flag.LENGTH)) {
+            return Integer.parseInt(options.get(Flag.LENGTH));
+        }
+        return 3;
+    }
+
+    private static Pair<Integer, Integer> generateTask(
+        final Random gen,
+        final int maxBitLength,
+        final boolean onesComplement
+    ) {
+        final int bitLength = gen.nextInt(maxBitLength - 1) + 2;
+        int limit = (int)Math.pow(2, bitLength);
+        final int toSubtract = limit / 2;
+        if (onesComplement) {
+            limit--;
+        }
+        int number = gen.nextInt(limit) - toSubtract;
+        if (onesComplement) {
+            number++;
+        }
+        return new Pair<Integer, Integer>(number, bitLength);
     }
 
     private static int getMaximumContentLength(final List<Pair<Integer, Integer>> tasks) {
@@ -215,111 +285,26 @@ public class BinaryNumbers {
         return number > power - 1 || number < -power;
     }
 
+    private static List<Pair<Integer, Integer>> parseInput(
+        final BufferedReader reader,
+        final Map<Flag, String> options
+    ) throws IOException {
+        return Arrays.stream(reader.readLine().split(";"))
+            .map(s -> {
+                final String[] pair = s.split(",");
+                if (pair.length != 2) {
+                    throw new IllegalArgumentException("Input must only contain pairs of numbers!");
+                }
+                return new Pair<Integer, Integer>(Integer.parseInt(pair[0]), Integer.parseInt(pair[1]));
+            }).toList();
+    }
+
     private static List<Pair<Integer, Integer>> parseOrGenerateInput(final Map<Flag, String> options)
     throws IOException {
         return new ParserAndGenerator<List<Pair<Integer, Integer>>>(
-            (final BufferedReader reader) -> {
-                return Arrays.stream(reader.readLine().split(";"))
-                    .map(s -> {
-                        final String[] pair = s.split(",");
-                        if (pair.length != 2) {
-                            throw new IllegalArgumentException("Input must only contain pairs of numbers!");
-                        }
-                        return new Pair<Integer, Integer>(Integer.parseInt(pair[0]), Integer.parseInt(pair[1]));
-                    }).toList();
-            },
-            () -> {
-                final int length;
-                final Random gen = new Random();
-                if (options.containsKey(Flag.LENGTH)) {
-                    length = Integer.parseInt(options.get(Flag.LENGTH));
-                } else {
-                    length = 3;
-                }
-                final int maxBitLength;
-                if (options.containsKey(Flag.CAPACITY)) {
-                    maxBitLength = Integer.parseInt(options.get(Flag.CAPACITY));
-                } else {
-                    maxBitLength = 8;
-                }
-                final List<Pair<Integer, Integer>> result = new ArrayList<Pair<Integer, Integer>>(length);
-                final boolean onesComplement;
-                switch (Algorithm.forName(options.get(Flag.ALGORITHM)).get()) {
-                case TO_ONES_COMPLEMENT:
-                case FROM_ONES_COMPLEMENT:
-                    onesComplement = true;;
-                    break;
-                default:
-                    onesComplement = false;
-                }
-                for (int i = 0; i < length; i++) {
-                    final int bitLength = gen.nextInt(maxBitLength - 1) + 2;
-                    int limit = (int)Math.pow(2, bitLength);
-                    final int toSubtract = limit / 2;
-                    if (onesComplement) {
-                        limit--;
-                    }
-                    int number = gen.nextInt(limit) - toSubtract;
-                    if (onesComplement) {
-                        number++;
-                    }
-                    result.add(new Pair<Integer, Integer>(number, bitLength));
-                }
-                return result;
-            }
+            BinaryNumbers::parseInput,
+            BinaryNumbers::generateInput
         ).getResult(options);
-    }
-
-    private static void toComplementExercise(
-        final int number,
-        final int length,
-        final String textPattern,
-        final BufferedWriter writer
-    ) throws IOException {
-        writer.write(String.format(textPattern, number, length));
-        Main.newLine(writer);
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(
-            length,
-            Optional.empty(),
-            BinaryNumbers.DEFAULT_BINARY_CONTENT_LENGTH,
-            writer
-        );
-        TikZUtils.printTikzEnd(writer);
-        Main.newLine(writer);
-    }
-
-    private static void toComplementSolution(final BitString solution, final BufferedWriter writer)
-    throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        TikZUtils.printListAndReturnLeftmostNodesName(
-            solution.stream().map(b -> new ItemWithTikZInformation<Bit>(Optional.of(b))).toList(),
-            Optional.empty(),
-            BinaryNumbers.DEFAULT_BINARY_CONTENT_LENGTH,
-            writer
-        );
-        TikZUtils.printTikzEnd(writer);
-        Main.newLine(writer);
-    }
-
-    private static void toOnesComplementExercise(final int number, final int length, final BufferedWriter writer)
-    throws IOException {
-        BinaryNumbers.toComplementExercise(number, length, BinaryNumbers.EXERCISE_TEXT_PATTERN_TO_ONES, writer);
-    }
-
-    private static void toOnesComplementSolution(final int number, final int length, final BufferedWriter writer)
-    throws IOException {
-        BinaryNumbers.toComplementSolution(BinaryNumbers.toOnesComplement(number, length), writer);
-    }
-
-    private static void toTwosComplementExercise(final int number, final int length, final BufferedWriter writer)
-    throws IOException {
-        BinaryNumbers.toComplementExercise(number, length, BinaryNumbers.EXERCISE_TEXT_PATTERN_TO_TWOS, writer);
-    }
-
-    private static void toTwosComplementSolution(final int number, final int length, final BufferedWriter writer)
-    throws IOException {
-        BinaryNumbers.toComplementSolution(BinaryNumbers.toTwosComplement(number, length), writer);
     }
 
 }

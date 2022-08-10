@@ -28,13 +28,16 @@ public class BinaryNumbersTest {
         Assert.assertEquals(
             exResult.toString(),
             "Die Zahl -3 wird im 4-bit Einerkomplement dargestellt als:\\\\[2ex]\n"
+            + "\\ifprintanswers\n"
+            + "\\else\n"
             + "\\begin{tikzpicture}\n"
             + "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]\n"
             + "\\node[node] (n0) {\\phantom{0}};\n"
             + "\\node[node] (n1) [right=of n0] {\\phantom{0}};\n"
             + "\\node[node] (n2) [right=of n1] {\\phantom{0}};\n"
             + "\\node[node] (n3) [right=of n2] {\\phantom{0}};\n"
-            + "\\end{tikzpicture}\n\n"
+            + "\\end{tikzpicture}\n"
+            + "\\fi\n\n"
         );
         Assert.assertEquals(
             solResult.toString(),
@@ -61,6 +64,8 @@ public class BinaryNumbersTest {
         Assert.assertEquals(
             exResult.toString(),
             "Die Zahl 7 wird im 8-bit Einerkomplement dargestellt als:\\\\[2ex]\n"
+            + "\\ifprintanswers\n"
+            + "\\else\n"
             + "\\begin{tikzpicture}\n"
             + "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]\n"
             + "\\node[node] (n0) {\\phantom{0}};\n"
@@ -71,7 +76,8 @@ public class BinaryNumbersTest {
             + "\\node[node] (n5) [right=of n4] {\\phantom{0}};\n"
             + "\\node[node] (n6) [right=of n5] {\\phantom{0}};\n"
             + "\\node[node] (n7) [right=of n6] {\\phantom{0}};\n"
-            + "\\end{tikzpicture}\n\n"
+            + "\\end{tikzpicture}\n"
+            + "\\fi\n\n"
         );
         Assert.assertEquals(
             solResult.toString(),
@@ -121,6 +127,8 @@ public class BinaryNumbersTest {
         Assert.assertEquals(
             exResult.toString(),
             "Die Zahl -13 wird im 7-bit Zweierkomplement dargestellt als:\\\\[2ex]\n"
+            + "\\ifprintanswers\n"
+            + "\\else\n"
             + "\\begin{tikzpicture}\n"
             + "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]\n"
             + "\\node[node] (n0) {\\phantom{0}};\n"
@@ -130,7 +138,8 @@ public class BinaryNumbersTest {
             + "\\node[node] (n4) [right=of n3] {\\phantom{0}};\n"
             + "\\node[node] (n5) [right=of n4] {\\phantom{0}};\n"
             + "\\node[node] (n6) [right=of n5] {\\phantom{0}};\n"
-            + "\\end{tikzpicture}\n\n"
+            + "\\end{tikzpicture}\n"
+            + "\\fi\n\n"
         );
         Assert.assertEquals(
             solResult.toString(),
@@ -160,13 +169,16 @@ public class BinaryNumbersTest {
         Assert.assertEquals(
             exResult.toString(),
             "Die Zahl 5 wird im 4-bit Zweierkomplement dargestellt als:\\\\[2ex]\n"
+            + "\\ifprintanswers\n"
+            + "\\else\n"
             + "\\begin{tikzpicture}\n"
             + "[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]\n"
             + "\\node[node] (n0) {\\phantom{0}};\n"
             + "\\node[node] (n1) [right=of n0] {\\phantom{0}};\n"
             + "\\node[node] (n2) [right=of n1] {\\phantom{0}};\n"
             + "\\node[node] (n3) [right=of n2] {\\phantom{0}};\n"
-            + "\\end{tikzpicture}\n\n"
+            + "\\end{tikzpicture}\n"
+            + "\\fi\n\n"
         );
         Assert.assertEquals(
             solResult.toString(),

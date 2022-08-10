@@ -784,9 +784,9 @@ public abstract class Sorting {
                 0;
     }
 
-    private static Integer[] parseOrGenerateArray(final Map<Flag, String> options) throws IOException {
+    private static Integer[] parseOrGenerateArray(final Map<Flag, String> flags) throws IOException {
         return new ParserAndGenerator<Integer[]>(
-            (final BufferedReader reader) -> {
+            (final BufferedReader reader, final Map<Flag, String> options) -> {
                 final String[] numbers = reader.readLine().split(",");
                 final Integer[] array = new Integer[numbers.length];
                 for (int i = 0; i < array.length; i++) {
@@ -794,7 +794,7 @@ public abstract class Sorting {
                 }
                 return array;
             },
-            () -> {
+            (final Map<Flag, String> options) -> {
                 final int length;
                 final Random gen = new Random();
                 if (options.containsKey(Flag.LENGTH)) {
@@ -808,7 +808,7 @@ public abstract class Sorting {
                 }
                 return array;
             }
-        ).getResult(options);
+        ).getResult(flags);
     }
 
     private static <E extends Exception> void sort(
