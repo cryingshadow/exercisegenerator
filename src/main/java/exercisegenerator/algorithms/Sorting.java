@@ -784,36 +784,31 @@ public abstract class Sorting {
                 0;
     }
 
-    private static Integer[] parseOrGenerateArray(final Map<Flag, String> options) {
-        final String[] numbers;
-        if (options.containsKey(Flag.SOURCE)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                numbers = reader.readLine().split(",");
-            } catch (final IOException e) {
-                e.printStackTrace();
-                return null;
+    private static Integer[] parseOrGenerateArray(final Map<Flag, String> options) throws IOException {
+        return new ParserAndGenerator<Integer[]>(
+            (final BufferedReader reader) -> {
+                final String[] numbers = reader.readLine().split(",");
+                final Integer[] array = new Integer[numbers.length];
+                for (int i = 0; i < array.length; i++) {
+                    array[i] = Integer.parseInt(numbers[i].trim());
+                }
+                return array;
+            },
+            () -> {
+                final int length;
+                final Random gen = new Random();
+                if (options.containsKey(Flag.LENGTH)) {
+                    length = Integer.parseInt(options.get(Flag.LENGTH));
+                } else {
+                    length = gen.nextInt(16) + 5;
+                }
+                final Integer[] array = new Integer[length];
+                for (int i = 0; i < array.length; i++) {
+                    array[i] = gen.nextInt(Main.NUMBER_LIMIT);
+                }
+                return array;
             }
-        } else if (Main.STUDENT_MODE) {
-            final int length;
-            final Random gen = new Random();
-            if (options.containsKey(Flag.LENGTH)) {
-                length = Integer.parseInt(options.get(Flag.LENGTH));
-            } else {
-                length = gen.nextInt(16) + 5;
-            }
-            final Integer[] array = new Integer[length];
-            for (int i = 0; i < array.length; i++) {
-                array[i] = gen.nextInt(Main.NUMBER_LIMIT);
-            }
-            return array;
-        } else {
-            numbers = options.get(Flag.INPUT).split(",");
-        }
-        final Integer[] array = new Integer[numbers.length];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = Integer.parseInt(numbers[i].trim());
-        }
-        return array;
+        ).getResult(options);
     }
 
     private static <E extends Exception> void sort(

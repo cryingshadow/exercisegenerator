@@ -119,6 +119,26 @@ public enum Algorithm {
         GraphAlgorithms::fordFulkerson
     ),
 
+    FROM_ONES_COMPLEMENT(
+        "fromonescompl",
+        "One's Complement (from)",
+        new String[] {
+            "Transform numbers from binary representation using the one's complement to decimal representation.",
+            "Needs the -l flag to specify the binary length."
+        },
+        BinaryNumbers::fromOnesComplement
+    ),
+
+    FROM_TWOS_COMPLEMENT(
+        "fromtwoscompl",
+        "Two's Complement (from)",
+        new String[] {
+            "Transform numbers from binary representation using the two's complement to decimal representation.",
+            "Needs the -l flag to specify the binary length."
+        },
+        BinaryNumbers::fromTwosComplement
+    ),
+
     /**
      * Linked hashing on Integer arrays with the division method.
      */
