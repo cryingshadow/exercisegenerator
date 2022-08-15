@@ -3,14 +3,14 @@ package exercisegenerator.io;
 /**
  * Styles for TikZ environments.
  * @author Thomas Stroeder
- * @version 1.0.1
+ * @version 1.0.2
  */
 public enum TikZStyle {
 
     /**
      * Array style.
      */
-    ARRAY("[node/.style={rectangle,draw=black,thick,inner sep=5pt}, node distance=0.25 and 0]"),
+    ARRAY("[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Huge}},node distance=0.25 and 0]"),
 
     /**
      * Borderless Array style (for String-Arrays).

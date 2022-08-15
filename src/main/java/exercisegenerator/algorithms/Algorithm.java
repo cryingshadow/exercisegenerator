@@ -124,7 +124,8 @@ public enum Algorithm {
         "One's Complement (from)",
         new String[] {
             "Transform numbers from binary representation using the one's complement to decimal representation.",
-            "Needs the -l flag to specify the binary length."
+            "Needs the -c flag to specify the binary length.",
+            "You can specify the number of tasks with the -l flag."
         },
         BinaryNumbers::fromOnesComplement
     ),
@@ -134,7 +135,8 @@ public enum Algorithm {
         "Two's Complement (from)",
         new String[] {
             "Transform numbers from binary representation using the two's complement to decimal representation.",
-            "Needs the -l flag to specify the binary length."
+            "Needs the -c flag to specify the binary length.",
+            "You can specify the number of tasks with the -l flag."
         },
         BinaryNumbers::fromTwosComplement
     ),
@@ -490,7 +492,8 @@ public enum Algorithm {
         "One's Complement (to)",
         new String[] {
             "Transform numbers from decimal to binary representation using the one's complement.",
-            "Needs the -l flag to specify the binary length."
+            "Needs the -c flag to specify the binary length.",
+            "You can specify the number of tasks with the -l flag."
         },
         BinaryNumbers::toOnesComplement
     ),
@@ -500,7 +503,8 @@ public enum Algorithm {
         "Two's Complement (to)",
         new String[] {
             "Transform numbers from decimal to binary representation using the two's complement.",
-            "Needs the -l flag to specify the binary length."
+            "Needs the -c flag to specify the binary length.",
+            "You can specify the number of tasks with the -l flag."
         },
         BinaryNumbers::toTwosComplement
     ),

@@ -202,7 +202,7 @@ public abstract class Sorting {
             );
             TikZUtils.printTikzEnd(writer);
             TikZUtils.printSamePageEnd(writer);
-            TikZUtils.printVerticalSpace(res, writer);
+            TikZUtils.printVerticalSpaceForStep(res, writer);
             i = j;
         }
         return res;
@@ -305,7 +305,7 @@ public abstract class Sorting {
         );
         TikZUtils.printTikzEnd(writer);
         TikZUtils.printSamePageEnd(writer);
-        TikZUtils.printVerticalSpace(step, writer);
+        TikZUtils.printVerticalSpaceForStep(step, writer);
         final boolean[] separate = new boolean[array.length - 1];
         Arrays.fill(separate, false);
         for (int i = array.length / 2; i > 0; i--) {
@@ -332,7 +332,7 @@ public abstract class Sorting {
             );
             TikZUtils.printTikzEnd(writer);
             TikZUtils.printSamePageEnd(writer);
-            TikZUtils.printVerticalSpace(step, writer);
+            TikZUtils.printVerticalSpaceForStep(step, writer);
             step = Sorting.heapifyWithTrees(array, 1, i, separate, step, writer);
         }
         return step - 1;

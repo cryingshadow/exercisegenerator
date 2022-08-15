@@ -61,6 +61,10 @@ public abstract class TikZUtils {
      */
     private static int number = 0;
 
+    public static String code(final String text) {
+        return String.format("\\code{%s}", text);
+    }
+
     /**
      * Prints a new stretch factor for the array height.
      * @param stretch The stretch factor.
@@ -213,7 +217,9 @@ public abstract class TikZUtils {
      * @throws IOException If some error occurs during output.
      */
     public static void printEnd(final String environment, final BufferedWriter writer) throws IOException {
-        writer.write("\\end{" + environment + "}");
+        writer.write("\\end{");
+        writer.write(environment);
+        writer.write("}");
         Main.newLine(writer);
     }
 
@@ -360,6 +366,17 @@ public abstract class TikZUtils {
                 );
         }
         return firstName;
+    }
+
+    public static void printMinipageBeginning(final String length, final BufferedWriter writer) throws IOException {
+        writer.write("\\begin{minipage}{");
+        writer.write(length);
+        writer.write("}");
+        Main.newLine(writer);
+    }
+
+    public static void printMinipageEnd(final BufferedWriter writer) throws IOException {
+        TikZUtils.printEnd("minipage", writer);
     }
 
     /**
@@ -674,13 +691,24 @@ public abstract class TikZUtils {
         return firstName;
     }
 
+    public static void printVerticalProtectedSpace(final BufferedWriter writer) throws IOException {
+        TikZUtils.printVerticalProtectedSpace("1ex", writer);
+    }
+
+    public static void printVerticalProtectedSpace(final String space, final BufferedWriter writer) throws IOException {
+        Main.newLine(writer);
+        writer.write(String.format("\\vspace*{%s}", space));
+        Main.newLine(writer);
+        Main.newLine(writer);
+    }
+
     /**
      * Prints vertical space
      * @param step The next evaluation step.
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public static void printVerticalSpace(final int step, final BufferedWriter writer) throws IOException {
+    public static void printVerticalSpaceForStep(final int step, final BufferedWriter writer) throws IOException {
         if (step % 3 == 0) {
             Main.newLine(writer);
             writer.write("~\\\\");
@@ -758,6 +786,14 @@ public abstract class TikZUtils {
 
     public static void reset() {
         TikZUtils.number = 0;
+    }
+
+    public static String widthOf(final String text) {
+        return String.format("\\widthof{%s}", text);
+    }
+
+    public static String widthOfComplement(final String text) {
+        return String.format("\\textwidth-\\widthof{%s}", text);
     }
 
     private static String printListItemAndReturnNodeName(
