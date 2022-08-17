@@ -111,6 +111,19 @@ public class BinaryNumbersTest {
     }
 
     @Test
+    public void fromFloatUnit() {
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("00110110"), 3, 4), "1,375");
+        Assert.assertEquals(
+            BinaryNumbers.fromFloat(BitString.parse("01000001011011000000000000000000"), 8, 23),
+            "14,75"
+        );
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("10010000"), 3, 4), "-0,25");
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("00000000"), 3, 4), "0,0");
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("10000000"), 3, 4), "-0,0");
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("00010000"), 3, 4), "0,25");
+    }
+
+    @Test
     public void fromOnesComplementUnit() {
         Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("0011")), 3);
         Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("0100")), 4);

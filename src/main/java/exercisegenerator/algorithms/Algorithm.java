@@ -119,6 +119,18 @@ public enum Algorithm {
         GraphAlgorithms::fordFulkerson
     ),
 
+    FROM_FLOAT(
+        "fromfloat",
+        "Float (from)",
+        new String[] {
+            "Transform binary float numbers to decimal rational numbers.",
+            "Needs the -c flag to specify the length of the mantissa "
+            + "and the -d flag to specify the length of the exponent.",
+            "You can specify the number of tasks with the -l flag."
+        },
+        BinaryNumbers::fromFloat
+    ),
+
     FROM_ONES_COMPLEMENT(
         "fromonescompl",
         "One's Complement (from)",
@@ -417,7 +429,7 @@ public enum Algorithm {
             )
         },
         Sorting::quicksort
-    ),
+    ), //TODO extra flag for deletion
 
     /**
      * Insertion and deletion in Red-Black-trees with int values.
@@ -434,7 +446,7 @@ public enum Algorithm {
             )
         },
         TreeAlgorithms::rbtree
-    ), //TODO extra flag for deletion
+    ),
 
     /**
      * Detection of strongly connected components.
@@ -492,7 +504,7 @@ public enum Algorithm {
         "Float (to)",
         new String[] {
             "Transform rational numbers from decimal to binary float representation.",
-            "Needs the -c flag to specify the length of the mantisse "
+            "Needs the -c flag to specify the length of the mantissa "
             + "and the -d flag to specify the length of the exponent.",
             "You can specify the number of tasks with the -l flag."
         },

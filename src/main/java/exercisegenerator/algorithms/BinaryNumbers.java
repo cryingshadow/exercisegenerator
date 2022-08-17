@@ -21,6 +21,18 @@ public class BinaryNumbers {
         }
     }
 
+    private static class BitStringFloatTask extends BinaryTask {
+        private final BitString bitString;
+        private final int exponentLength;
+        private final int mantissaLength;
+
+        private BitStringFloatTask(final BitString bitString, final int exponentLength, final int mantissaLength) {
+            this.bitString = bitString;
+            this.exponentLength = exponentLength;
+            this.mantissaLength = mantissaLength;
+        }
+    }
+
     private static class NumberComplementTask extends BinaryTask {
         private final int bitLength;
         private final int number;
@@ -33,13 +45,13 @@ public class BinaryNumbers {
 
     private static class NumberFloatTask extends BinaryTask {
         private final int exponentLength;
-        private final int mantisseLength;
+        private final int mantissaLength;
         private final String number;
 
-        private NumberFloatTask(final String number, final int exponentLength, final int mantisseLength) {
+        private NumberFloatTask(final String number, final int exponentLength, final int mantissaLength) {
             this.number = number;
             this.exponentLength = exponentLength;
-            this.mantisseLength = mantisseLength;
+            this.mantissaLength = mantissaLength;
         }
     }
 
@@ -50,6 +62,64 @@ public class BinaryNumbers {
         private NumberWithLeadingZeros(final int number, final int leadingZeros) {
             this.number = number;
             this.leadingZeros = leadingZeros;
+        }
+
+        public String getAfterComma() {
+            return String.valueOf(this.number).substring(-this.leadingZeros);
+        }
+
+        public int getBeforeComma() {
+            if (this.leadingZeros < 0) {
+                return Integer.parseInt(String.valueOf(this.number).substring(0, -this.leadingZeros));
+            }
+            return 0;
+        }
+
+        @Override
+        public String toString() {
+            if (this.leadingZeros < 0) {
+                final String numberAsString = String.valueOf(this.number);
+                final String beforeComma = numberAsString.substring(0, -this.leadingZeros);
+                final String afterComma = numberAsString.substring(-this.leadingZeros);
+                return beforeComma + "," + afterComma;
+            }
+            return "0," + "0".repeat(this.leadingZeros) + this.number;
+        }
+
+        private NumberWithLeadingZeros add(final NumberWithLeadingZeros other) {
+            final int thisDecimalLength = BinaryNumbers.decimalLength(this.number);
+            final int thisLength = thisDecimalLength + this.leadingZeros;
+            final int otherDecimalLength = BinaryNumbers.decimalLength(other.number);
+            final int otherLength = otherDecimalLength + other.leadingZeros;
+            if (thisLength > otherLength) {
+                final int lengthDifference = thisLength - otherLength;
+                final int otherNumber = other.number * (int)Math.pow(10, lengthDifference);
+                final int nextNumber = this.number + otherNumber;
+                if (
+                    BinaryNumbers.decimalLength(nextNumber)
+                    > Math.max(thisDecimalLength, BinaryNumbers.decimalLength(otherNumber))
+                ) {
+                    return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros) - 1);
+                }
+                return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros));
+            } else if (otherLength > thisLength) {
+                final int lengthDifference = otherLength- thisLength;
+                final int thisNumber = this.number * (int)Math.pow(10, lengthDifference);
+                final int nextNumber = thisNumber + other.number;
+                if (
+                    BinaryNumbers.decimalLength(nextNumber)
+                    > Math.max(BinaryNumbers.decimalLength(thisNumber), otherDecimalLength)
+                ) {
+                    return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros) - 1);
+                }
+                return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros));
+            } else {
+                final int nextNumber = this.number + other.number;
+                if (BinaryNumbers.decimalLength(nextNumber) > Math.max(thisDecimalLength, otherDecimalLength)) {
+                    return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros) - 1);
+                }
+                return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros));
+            }
         }
     }
 
@@ -68,6 +138,9 @@ public class BinaryNumbers {
     public static final String EXERCISE_TEXT_PATTERN_TO_ONES =
         "Stellen Sie die folgenden Dezimalzahlen im %d-bit Einerkomplement dar:\\\\[2ex]";
 
+    private static final String EXERCISE_TEXT_PATTERN_FROM_FLOAT =
+        "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen nach IEEE 754 die jeweilige rationale Zahl an:\\\\[2ex]";
+
     private static final String EXERCISE_TEXT_PATTERN_FROM_ONES =
         "Geben Sie den Dezimalwert der folgenden Binärzahlen im %d-bit Einerkomplement an:\\\\[2ex]";
 
@@ -79,6 +152,53 @@ public class BinaryNumbers {
 
     private static final String EXERCISE_TEXT_PATTERN_TO_TWOS =
         "Stellen Sie die folgenden Dezimalzahlen im %d-bit Zweierkomplement dar:\\\\[2ex]";
+
+    public static void fromFloat(final AlgorithmInput input) throws IOException {
+        BinaryNumbers.allBinaryTasks(
+            input,
+            String.format(
+                BinaryNumbers.EXERCISE_TEXT_PATTERN_FROM_FLOAT,
+                BinaryNumbers.getExponentLength(input.options),
+                BinaryNumbers.getMantissaLength(input.options)
+            ),
+            task -> new SolvedBinaryTask(
+                BinaryNumbers.fromFloat(task.bitString, task.exponentLength, task.mantissaLength),
+                task.bitString
+            ),
+            BinaryNumbers::parseOrGenerateBitStringFloatTasks,
+            BinaryNumbers::toBitStringTask,
+            BinaryNumbers::toNumberSolution,
+            BinaryNumbers::getMaximumContentLength
+        );
+    }
+
+    public static String fromFloat(final BitString bitString, final int exponentLength, final int mantissaLength) {
+        final String sign = bitString.getFirst().isZero() ? "" : "-";
+        final int excess = BinaryNumbers.getExcess(exponentLength);
+        final int exponent = bitString.subString(1, exponentLength + 1).toUnsignedInt() - excess;
+        final BitString afterComma = bitString.subString(exponentLength + 1);
+        final BitString beforeComma = new BitString();
+        beforeComma.add(Bit.ONE);
+        if (exponent < 0) {
+            if (-exponent == excess && afterComma.toUnsignedInt() == 0) {
+                return sign + "0,0";
+            }
+            for (int i = 0; i < -exponent; i++) {
+                BinaryNumbers.shiftOneBitRight(beforeComma, afterComma);
+            }
+        } else {
+            for (int i = 0; i < exponent; i++) {
+                BinaryNumbers.shiftOneBitLeft(beforeComma, afterComma);
+            }
+        }
+        final NumberWithLeadingZeros numberAfterComma = BinaryNumbers.toNumberAfterComma(afterComma);
+        return String.format(
+            "%s%d,%s",
+            sign,
+            beforeComma.toUnsignedInt() + numberAfterComma.getBeforeComma(),
+            numberAfterComma.getAfterComma()
+        );
+    }
 
     public static void fromOnesComplement(final AlgorithmInput input) throws IOException {
         BinaryNumbers.allBinaryTasks(
@@ -130,11 +250,11 @@ public class BinaryNumbers {
             String.format(
                 BinaryNumbers.EXERCISE_TEXT_PATTERN_TO_FLOAT,
                 BinaryNumbers.getExponentLength(input.options),
-                BinaryNumbers.getMantisseLength(input.options)
+                BinaryNumbers.getMantissaLength(input.options)
             ),
             task -> new SolvedBinaryTask(
                 task.number,
-                BinaryNumbers.toFloat(task.number, task.exponentLength, task.mantisseLength)
+                BinaryNumbers.toFloat(task.number, task.exponentLength, task.mantissaLength)
             ),
             BinaryNumbers::parseOrGenerateNumberFloatTasks,
             BinaryNumbers::toNumberTask,
@@ -143,7 +263,7 @@ public class BinaryNumbers {
         );
     }
 
-    public static BitString toFloat(final String number, final int exponentLength, final int mantisseLength) {
+    public static BitString toFloat(final String number, final int exponentLength, final int mantissaLength) {
         final String[] parts = number.split(",");
         final int numBeforeComma = Integer.parseInt(parts[0]);
         if (BinaryNumbers.outOfBoundsForFloat(numBeforeComma, exponentLength)) {
@@ -153,25 +273,25 @@ public class BinaryNumbers {
         }
         final BitString result = new BitString();
         BinaryNumbers.addSign(parts[0], result);
-        final int excess = ((int)Math.pow(2, exponentLength - 1)) - 1;
+        final int excess = BinaryNumbers.getExcess(exponentLength);
         if (Math.abs(numBeforeComma) > 0) {
             return BinaryNumbers.toFloatForNonNegativeExponent(
                 parts,
                 numBeforeComma,
                 exponentLength,
                 excess,
-                mantisseLength,
+                mantissaLength,
                 result
             );
         }
         if (parts.length == 1) {
-            return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantisseLength);
+            return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
         }
         final NumberWithLeadingZeros numAfterComma = BinaryNumbers.parseNumberWithLeadingZeros(parts[1]);
         if (numAfterComma.number == 0) {
-            return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantisseLength);
+            return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
         }
-        return BinaryNumbers.toFloatForNegativeExponent(numAfterComma, exponentLength, excess, mantisseLength, result);
+        return BinaryNumbers.toFloatForNegativeExponent(numAfterComma, exponentLength, excess, mantissaLength, result);
     }
 
     public static void toOnesComplement(final AlgorithmInput input) throws IOException {
@@ -294,32 +414,32 @@ public class BinaryNumbers {
         BinaryNumbers.binaryEnd(input.exerciseWriter, input.solutionWriter);
     }
 
-    private static int appendExponentAndBitsBeforeAndReturnMantisseBitsFromBefore(
+    private static int appendExponentAndBitsBeforeAndReturnMantissaBitsFromBefore(
         final int numBefore,
         final int exponentLength,
         final int excess,
         final BitString result
     ) {
         final BitString bitsBefore = BinaryNumbers.toUnsignedBinary(numBefore, 0);
-        final int mantisseBitsFromBefore = bitsBefore.size() - 1;
-        final BitString exponent = BinaryNumbers.toUnsignedBinary(mantisseBitsFromBefore + excess, exponentLength);
+        final int mantissaBitsFromBefore = bitsBefore.size() - 1;
+        final BitString exponent = BinaryNumbers.toUnsignedBinary(mantissaBitsFromBefore + excess, exponentLength);
         result.append(exponent);
         final Iterator<Bit> iterator = bitsBefore.iterator();
         iterator.next();
         while (iterator.hasNext()) {
             result.add(iterator.next());
         }
-        return mantisseBitsFromBefore;
+        return mantissaBitsFromBefore;
     }
 
-    private static void appendMantisse(
+    private static void appendMantissa(
         final NumberWithLeadingZeros numAfterComma,
-        final int mantisseBitsLeft,
+        final int mantissaBitsLeft,
         final BitString result
     ) {
         Pair<Bit, NumberWithLeadingZeros> nextBitAndNumberWithLeadingZeros =
             BinaryNumbers.getNextBitAndNumberWithLeadingZeros(numAfterComma);
-        for (int i = 0; i < mantisseBitsLeft; i++) {
+        for (int i = 0; i < mantissaBitsLeft; i++) {
             result.add(nextBitAndNumberWithLeadingZeros.x);
             nextBitAndNumberWithLeadingZeros =
                 BinaryNumbers.getNextBitAndNumberWithLeadingZeros(nextBitAndNumberWithLeadingZeros.y);
@@ -420,6 +540,24 @@ public class BinaryNumbers {
         return result;
     }
 
+    private static List<BitStringFloatTask> generateBitStringFloatTasks(final Map<Flag, String> options) {
+        final Random gen = new Random();
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int exponentLength = BinaryNumbers.getExponentLength(options);
+        final int mantissaLength = BinaryNumbers.getMantissaLength(options);
+        final List<BitStringFloatTask> result = new ArrayList<BitStringFloatTask>(numOfTasks);
+        for (int i = 0; i < numOfTasks; i++) {
+            result.add(
+                new BitStringFloatTask(
+                    BinaryNumbers.generateBitString(gen, exponentLength + mantissaLength + 1),
+                    exponentLength,
+                    mantissaLength
+                )
+            );
+        }
+        return result;
+    }
+
     private static List<NumberComplementTask> generateNumberComplementTasks(final Map<Flag, String> options) {
         final Random gen = new Random();
         final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
@@ -441,14 +579,14 @@ public class BinaryNumbers {
         final Random gen = new Random();
         final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
         final int exponentLength = BinaryNumbers.getExponentLength(options);
-        final int mantisseLength = BinaryNumbers.getMantisseLength(options);
+        final int mantissaLength = BinaryNumbers.getMantissaLength(options);
         final List<NumberFloatTask> result = new ArrayList<NumberFloatTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
             result.add(
                 new NumberFloatTask(
                     BinaryNumbers.generateRationalNumberWithinRange(gen, exponentLength),
                     exponentLength,
-                    mantisseLength
+                    mantissaLength
                 )
             );
         }
@@ -488,6 +626,10 @@ public class BinaryNumbers {
         return Integer.parseInt(options.get(Flag.CAPACITY));
     }
 
+    private static int getExcess(final int exponentLength) {
+        return ((int)Math.pow(2, exponentLength - 1)) - 1;
+    }
+
     private static int getExponentLength(final Map<Flag, String> options) {
         return Integer.parseInt(options.get(Flag.DEGREE));
     }
@@ -501,7 +643,7 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static int getMantisseLength(final Map<Flag, String> options) {
+    private static int getMantissaLength(final Map<Flag, String> options) {
         return Integer.parseInt(options.get(Flag.CAPACITY));
     }
 
@@ -557,6 +699,17 @@ public class BinaryNumbers {
             .toList();
     }
 
+    private static List<BitStringFloatTask> parseBitStringFloatTasks(
+        final BufferedReader reader,
+        final Map<Flag, String> options
+    ) throws IOException {
+        final int exponentLength = BinaryNumbers.getExponentLength(options);
+        final int mantissaLength = BinaryNumbers.getMantissaLength(options);
+        return Arrays.stream(reader.readLine().split(";"))
+            .map(bitstring -> new BitStringFloatTask(BitString.parse(bitstring), exponentLength, mantissaLength))
+            .toList();
+    }
+
     private static List<NumberComplementTask> parseNumberComplementTasks(
         final BufferedReader reader,
         final Map<Flag, String> options
@@ -572,9 +725,9 @@ public class BinaryNumbers {
         final Map<Flag, String> options
     ) throws IOException {
         final int exponentLength = BinaryNumbers.getExponentLength(options);
-        final int mantisseLength = BinaryNumbers.getMantisseLength(options);
+        final int mantissaLength = BinaryNumbers.getMantissaLength(options);
         return Arrays.stream(reader.readLine().split(";"))
-            .map(n -> new NumberFloatTask(n, exponentLength, mantisseLength))
+            .map(n -> new NumberFloatTask(n, exponentLength, mantissaLength))
             .toList();
     }
 
@@ -594,6 +747,15 @@ public class BinaryNumbers {
         ).getResult(options);
     }
 
+    private static List<BitStringFloatTask> parseOrGenerateBitStringFloatTasks(
+        final Map<Flag, String> options
+    ) throws IOException {
+        return new ParserAndGenerator<List<BitStringFloatTask>>(
+            BinaryNumbers::parseBitStringFloatTasks,
+            BinaryNumbers::generateBitStringFloatTasks
+        ).getResult(options);
+    }
+
     private static List<NumberComplementTask> parseOrGenerateNumberComplementTasks(final Map<Flag, String> options)
     throws IOException {
         return new ParserAndGenerator<List<NumberComplementTask>>(
@@ -610,6 +772,24 @@ public class BinaryNumbers {
         ).getResult(options);
     }
 
+    private static void shiftOneBitLeft(final BitString beforeComma, final BitString afterComma) {
+        final Bit bit = afterComma.pollFirst();
+        if (bit == null) {
+            beforeComma.add(Bit.ZERO);
+        } else {
+            beforeComma.add(bit);
+        }
+    }
+
+    private static void shiftOneBitRight(final BitString beforeComma, final BitString afterComma) {
+        final Bit bit = beforeComma.pollLast();
+        if (bit == null) {
+            afterComma.addFirst(Bit.ZERO);
+        } else {
+            afterComma.addFirst(bit);
+        }
+    }
+
     private static List<ItemWithTikZInformation<Bit>> toBitStringSolution(final SolvedBinaryTask solvedTask) {
         return solvedTask.bitString.stream().map(b -> new ItemWithTikZInformation<Bit>(Optional.of(b))).toList();
     }
@@ -622,7 +802,7 @@ public class BinaryNumbers {
         final NumberWithLeadingZeros numAfterComma,
         final int exponentLength,
         final int excess,
-        final int mantisseLength,
+        final int mantissaLength,
         final BitString result
     ) {
         Pair<Bit, NumberWithLeadingZeros> nextBitAndNumberWithLeadingZeros =
@@ -631,15 +811,15 @@ public class BinaryNumbers {
         while (nextBitAndNumberWithLeadingZeros.x.isZero()) {
             exponent--;
             if (exponent < 0) {
-                return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantisseLength);
+                return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
             }
             nextBitAndNumberWithLeadingZeros =
                 BinaryNumbers.getNextBitAndNumberWithLeadingZeros(nextBitAndNumberWithLeadingZeros.y);
         }
         result.append(BinaryNumbers.toUnsignedBinary(exponent, exponentLength));
-        BinaryNumbers.appendMantisse(
+        BinaryNumbers.appendMantissa(
             nextBitAndNumberWithLeadingZeros.y,
-            mantisseLength,
+            mantissaLength,
             result
         );
         return result;
@@ -650,25 +830,37 @@ public class BinaryNumbers {
         final int numBefore,
         final int exponentLength,
         final int excess,
-        final int mantisseLength,
+        final int mantissaLength,
         final BitString result
     ) {
-        final int mantisseBitsLeft =
-            mantisseLength
-            - BinaryNumbers.appendExponentAndBitsBeforeAndReturnMantisseBitsFromBefore(
+        final int mantissaBitsLeft =
+            mantissaLength
+            - BinaryNumbers.appendExponentAndBitsBeforeAndReturnMantissaBitsFromBefore(
                 numBefore,
                 exponentLength,
                 excess,
                 result
             );
         if (parts.length == 1) {
-            return BinaryNumbers.fillUpWithZeros(result, mantisseBitsLeft);
+            return BinaryNumbers.fillUpWithZeros(result, mantissaBitsLeft);
         }
-        BinaryNumbers.appendMantisse(
+        BinaryNumbers.appendMantissa(
             BinaryNumbers.parseNumberWithLeadingZeros(parts[1]),
-            mantisseBitsLeft,
+            mantissaBitsLeft,
             result
         );
+        return result;
+    }
+
+    private static NumberWithLeadingZeros toNumberAfterComma(final BitString afterComma) {
+        NumberWithLeadingZeros result = new NumberWithLeadingZeros(0, 0);
+        int factor = 5;
+        for (final Bit bit : afterComma) {
+            if (!bit.isZero()) {
+                result = result.add(new NumberWithLeadingZeros(factor, 0));
+            }
+            factor *= 5;
+        }
         return result;
     }
 

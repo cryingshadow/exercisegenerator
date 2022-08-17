@@ -129,6 +129,37 @@ public class MainTest {
     }
 
     @Test
+    public void fromFloat() throws IOException {
+        if (!Main.STUDENT_MODE) {
+            final int mantisseLength = 4;
+            final int exponentLength = 3;
+            final BinaryTestCase[] cases =
+                new BinaryTestCase[] {
+                    new BinaryTestCase("-3,5", new int[] {1,1,0,0,1,1,0,0}),
+                    new BinaryTestCase("1,375", new int[] {0,0,1,1,0,1,1,0}),
+                    new BinaryTestCase("-7,0", new int[] {1,1,0,1,1,1,0,0})
+                };
+            Main.main(
+                new String[]{
+                    "-a", "fromfloat",
+                    "-e", MainTest.EX_FILE,
+                    "-t", MainTest.SOL_FILE,
+                    "-c", String.valueOf(mantisseLength),
+                    "-d", String.valueOf(exponentLength),
+                    "-i", MainTest.toBitStringInput(cases)
+                }
+            );
+            try (
+                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            ) {
+                Assert.assertEquals(exReader.readLine(), Patterns.fromFloat(exponentLength, mantisseLength));
+                MainTest.fromBinary(cases, exReader, solReader);
+            }
+        }
+    }
+
+    @Test
     public void fromOnesComplement() throws IOException {
         if (!Main.STUDENT_MODE) {
             final int bitLength = 8;

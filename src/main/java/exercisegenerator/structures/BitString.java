@@ -14,6 +14,14 @@ public class BitString extends LinkedList<Bit> {
                 .collect(Collectors.toCollection(BitString::new));
     }
 
+    public BitString() {
+        super();
+    }
+
+    public BitString(final List<? extends Bit> bitString) {
+        super(bitString);
+    }
+
     public void append(final BitString toAppend) {
         for (final Bit bit : toAppend) {
             this.add(bit);
@@ -43,6 +51,14 @@ public class BitString extends LinkedList<Bit> {
 
     public BitString invert() {
         return this.stream().map(b -> b.invert()).collect(Collectors.toCollection(BitString::new));
+    }
+
+    public BitString subString(final int fromIndex) {
+        return this.subString(fromIndex, this.size());
+    }
+
+    public BitString subString(final int fromIndex, final int toIndexExclusive) {
+        return new BitString(this.subList(fromIndex, toIndexExclusive));
     }
 
     @Override
