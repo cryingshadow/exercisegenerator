@@ -7,6 +7,19 @@ public class BitString extends LinkedList<Bit> {
 
     private static final long serialVersionUID = -3160588348086277796L;
 
+    public static BitString parse(final String bitString) {
+        return
+            bitString.chars()
+                .mapToObj(c -> c == '0' ? Bit.ZERO : Bit.ONE)
+                .collect(Collectors.toCollection(BitString::new));
+    }
+
+    public void append(final BitString toAppend) {
+        for (final Bit bit : toAppend) {
+            this.add(bit);
+        }
+    }
+
     public BitString increment() {
         final BitString result = new BitString();
         final Iterator<Bit> iterator = this.descendingIterator();
@@ -39,6 +52,17 @@ public class BitString extends LinkedList<Bit> {
             result.append(b.toString());
         }
         return result.toString();
+    }
+
+    public int toUnsignedInt() {
+        final Iterator<Bit> iterator = this.descendingIterator();
+        int exponent = 1;
+        int result = 0;
+        while (iterator.hasNext()) {
+            result += exponent * iterator.next().value;
+            exponent *= 2;
+        }
+        return result;
     }
 
 }

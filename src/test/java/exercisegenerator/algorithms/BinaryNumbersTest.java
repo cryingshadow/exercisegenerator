@@ -7,10 +7,11 @@ import org.testng.annotations.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
+import exercisegenerator.structures.*;
 
 public class BinaryNumbersTest {
 
-    public static void complementEnd(final BufferedReader exReader, final BufferedReader solReader)
+    public static void binaryEnd(final BufferedReader exReader, final BufferedReader solReader)
     throws IOException {
         Assert.assertEquals(exReader.readLine(), "\\fi");
         Assert.assertEquals(exReader.readLine(), "");
@@ -20,7 +21,7 @@ public class BinaryNumbersTest {
         Assert.assertNull(solReader.readLine());
     }
 
-    public static void complementMiddle(final BufferedReader exReader, final BufferedReader solReader)
+    public static void binaryMiddle(final BufferedReader exReader, final BufferedReader solReader)
     throws IOException {
         Assert.assertEquals(exReader.readLine(), "");
         Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
@@ -31,15 +32,15 @@ public class BinaryNumbersTest {
         Assert.assertEquals(solReader.readLine(), "");
     }
 
-    public static void complementStart(final BufferedReader exReader, final BufferedReader solReader)
+    public static void binaryStart(final BufferedReader exReader, final BufferedReader solReader)
     throws IOException {
         Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
         Assert.assertEquals(exReader.readLine(), "\\else");
     }
 
-    public static int fromComplement(
+    public static int fromBinary(
         int currentNodeNumber,
-        final int number,
+        final String number,
         final int[] binaryNumber,
         final int contentLength,
         final BufferedReader exReader,
@@ -67,9 +68,9 @@ public class BinaryNumbersTest {
         return currentNodeNumber;
     }
 
-    public static int toComplement(
+    public static int toBinary(
         int currentNodeNumber,
-        final int number,
+        final String number,
         final int[] binaryNumber,
         final BufferedReader exReader,
         final BufferedReader solReader
@@ -109,9 +110,56 @@ public class BinaryNumbersTest {
         return currentNodeNumber;
     }
 
+    @Test
+    public void fromOnesComplementUnit() {
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("0011")), 3);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("0100")), 4);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("00")), 0);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("000000000")), 0);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("00000000001")), 1);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("0111")), 7);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("1010")), -5);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("1000")), -7);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("1111011")), -4);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("110")), -1);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("1")), 0);
+        Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("0")), 0);
+    }
+
+    @Test
+    public void fromTwosComplementUnit() {
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("0011")), 3);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("0100")), 4);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("00")), 0);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("000000000")), 0);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("00000000001")), 1);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("0111")), 7);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("1011")), -5);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("1001")), -7);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("1111100")), -4);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("111")), -1);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("1000")), -8);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("1")), -1);
+        Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("0")), 0);
+    }
+
     @BeforeMethod
     public void prepare() {
         TikZUtils.reset();
+    }
+
+    @Test
+    public void toFloatUnit() {
+        Assert.assertEquals(BinaryNumbers.toFloat("1,4", 3, 4).toString(), "00110110");
+        Assert.assertEquals(BinaryNumbers.toFloat("18,4", 8, 23).toString(), "01000001100100110011001100110011");
+        Assert.assertEquals(BinaryNumbers.toFloat("-0,25", 3, 4).toString(), "10010000");
+        Assert.assertEquals(BinaryNumbers.toFloat("0", 3, 4).toString(), "00000000");
+        Assert.assertEquals(BinaryNumbers.toFloat("-0", 3, 4).toString(), "10000000");
+        Assert.assertEquals(BinaryNumbers.toFloat("-0,1", 3, 4).toString(), "10000000");
+        Assert.assertEquals(BinaryNumbers.toFloat("0,0", 3, 4).toString(), "00000000");
+        Assert.assertEquals(BinaryNumbers.toFloat("0,00", 3, 4).toString(), "00000000");
+        Assert.assertEquals(BinaryNumbers.toFloat("-00,0", 3, 4).toString(), "10000000");
+        Assert.assertEquals(BinaryNumbers.toFloat("0,2500", 3, 4).toString(), "00010000");
     }
 
     @Test

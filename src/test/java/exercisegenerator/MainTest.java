@@ -13,15 +13,15 @@ import exercisegenerator.util.*;
 
 public class MainTest {
 
-    private static class ComplementInput {
+    private static class BinaryInput {
         private final int currentNodeNumber;
         private final BufferedReader exReader;
         private final BufferedReader solReader;
-        private final ComplementTestCase test;
+        private final BinaryTestCase test;
 
-        private ComplementInput(
+        private BinaryInput(
             final int currentNodeNumber,
-            final ComplementTestCase test,
+            final BinaryTestCase test,
             final BufferedReader exReader,
             final BufferedReader solReader
         ) {
@@ -32,11 +32,11 @@ public class MainTest {
         }
     }
 
-    private static class ComplementTestCase {
+    private static class BinaryTestCase {
         private final int[] binaryNumber;
-        private final int number;
+        private final String number;
 
-        private ComplementTestCase(final int number, final int[] binaryNumber) {
+        private BinaryTestCase(final String number, final int[] binaryNumber) {
             this.number = number;
             this.binaryNumber = binaryNumber;
         }
@@ -46,33 +46,34 @@ public class MainTest {
 
     private static final String SOL_FILE = "C:\\Daten\\Test\\exgen\\sol.tex";
 
-    private static void complement(
-        final CheckedFunction<ComplementInput, Integer, IOException> algorithm,
-        final ComplementTestCase[] cases,
+    private static void binaryTest(
+        final CheckedFunction<BinaryInput, Integer, IOException> algorithm,
+        final BinaryTestCase[] cases,
         final BufferedReader exReader,
         final BufferedReader solReader
     ) throws IOException {
         int currentNodeNumber = 0;
-        BinaryNumbersTest.complementStart(exReader, solReader);
+        BinaryNumbersTest.binaryStart(exReader, solReader);
         boolean first = true;
-        for (final ComplementTestCase test : cases) {
+        for (final BinaryTestCase test : cases) {
             if (first) {
                 first = false;
             } else {
-                BinaryNumbersTest.complementMiddle(exReader, solReader);
+                BinaryNumbersTest.binaryMiddle(exReader, solReader);
             }
-            currentNodeNumber = algorithm.apply(new ComplementInput(currentNodeNumber, test, exReader, solReader));
+            currentNodeNumber =
+                algorithm.apply(new BinaryInput(currentNodeNumber, test, exReader, solReader));
         }
-        BinaryNumbersTest.complementEnd(exReader, solReader);
+        BinaryNumbersTest.binaryEnd(exReader, solReader);
     }
 
-    private static void fromComplement(
-        final ComplementTestCase[] cases,
+    private static void fromBinary(
+        final BinaryTestCase[] cases,
         final BufferedReader exReader,
         final BufferedReader solReader
     ) throws IOException {
-        MainTest.complement(
-            input -> BinaryNumbersTest.fromComplement(
+        MainTest.binaryTest(
+            input -> BinaryNumbersTest.fromBinary(
                 input.currentNodeNumber,
                 input.test.number,
                 input.test.binaryNumber,
@@ -86,13 +87,13 @@ public class MainTest {
         );
     }
 
-    private static void toComplement(
-        final ComplementTestCase[] cases,
+    private static void toBinary(
+        final BinaryTestCase[] cases,
         final BufferedReader exReader,
         final BufferedReader solReader
     ) throws IOException {
-        MainTest.complement(
-            input -> BinaryNumbersTest.toComplement(
+        MainTest.binaryTest(
+            input -> BinaryNumbersTest.toBinary(
                 input.currentNodeNumber,
                 input.test.number,
                 input.test.binaryNumber,
@@ -105,8 +106,14 @@ public class MainTest {
         );
     }
 
-    private static String toInput(final ComplementTestCase[] cases) {
-        return Arrays.stream(cases).map(c -> String.valueOf(c.number)).collect(Collectors.joining(","));
+    private static String toBitStringInput(final BinaryTestCase[] cases) {
+        return Arrays.stream(cases)
+            .map(c -> Arrays.stream(c.binaryNumber).mapToObj(n -> String.valueOf(n)).collect(Collectors.joining()))
+            .collect(Collectors.joining(";"));
+    }
+
+    private static String toNumberInput(final BinaryTestCase[] cases) {
+        return Arrays.stream(cases).map(c -> c.number).collect(Collectors.joining(";"));
     }
 
     @AfterMethod
@@ -125,11 +132,11 @@ public class MainTest {
     public void fromOnesComplement() throws IOException {
         if (!Main.STUDENT_MODE) {
             final int bitLength = 8;
-            final ComplementTestCase[] cases =
-                new ComplementTestCase[] {
-                    new ComplementTestCase(-3, new int[] {1,1,1,1,1,1,0,0}),
-                    new ComplementTestCase(5, new int[] {0,0,0,0,0,1,0,1}),
-                    new ComplementTestCase(-111, new int[] {1,0,0,1,0,0,0,0})
+            final BinaryTestCase[] cases =
+                new BinaryTestCase[] {
+                    new BinaryTestCase("-3", new int[] {1,1,1,1,1,1,0,0}),
+                    new BinaryTestCase("5", new int[] {0,0,0,0,0,1,0,1}),
+                    new BinaryTestCase("-111", new int[] {1,0,0,1,0,0,0,0})
                 };
             Main.main(
                 new String[]{
@@ -137,7 +144,7 @@ public class MainTest {
                     "-e", MainTest.EX_FILE,
                     "-t", MainTest.SOL_FILE,
                     "-c", String.valueOf(bitLength),
-                    "-i", MainTest.toInput(cases)
+                    "-i", MainTest.toBitStringInput(cases)
                 }
             );
             try (
@@ -145,7 +152,7 @@ public class MainTest {
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
                 Assert.assertEquals(exReader.readLine(), Patterns.fromOnes(bitLength));
-                MainTest.fromComplement(cases, exReader, solReader);
+                MainTest.fromBinary(cases, exReader, solReader);
             }
         }
     }
@@ -154,11 +161,11 @@ public class MainTest {
     public void fromTwosComplement() throws IOException {
         if (!Main.STUDENT_MODE) {
             final int bitLength = 5;
-            final ComplementTestCase[] cases =
-                new ComplementTestCase[] {
-                    new ComplementTestCase(-3, new int[] {1,1,1,0,1}),
-                    new ComplementTestCase(1, new int[] {0,0,0,0,1}),
-                    new ComplementTestCase(-13, new int[] {1,0,0,1,1})
+            final BinaryTestCase[] cases =
+                new BinaryTestCase[] {
+                    new BinaryTestCase("-3", new int[] {1,1,1,0,1}),
+                    new BinaryTestCase("1", new int[] {0,0,0,0,1}),
+                    new BinaryTestCase("-13", new int[] {1,0,0,1,1})
                 };
             Main.main(
                 new String[]{
@@ -166,7 +173,7 @@ public class MainTest {
                     "-e", MainTest.EX_FILE,
                     "-t", MainTest.SOL_FILE,
                     "-c", String.valueOf(bitLength),
-                    "-i", MainTest.toInput(cases)
+                    "-i", MainTest.toBitStringInput(cases)
                 }
             );
             try (
@@ -174,7 +181,7 @@ public class MainTest {
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
                 Assert.assertEquals(exReader.readLine(), Patterns.fromTwos(bitLength));
-                MainTest.fromComplement(cases, exReader, solReader);
+                MainTest.fromBinary(cases, exReader, solReader);
             }
         }
     }
@@ -258,14 +265,45 @@ public class MainTest {
     }
 
     @Test
+    public void toFloat() throws IOException {
+        if (!Main.STUDENT_MODE) {
+            final int exponentLength = 3;
+            final int mantisseLength = 4;
+            final BinaryTestCase[] cases =
+                new BinaryTestCase[] {
+                    new BinaryTestCase("-3,5", new int[] {1,1,0,0,1,1,0,0}),
+                    new BinaryTestCase("1,4", new int[] {0,0,1,1,0,1,1,0}),
+                    new BinaryTestCase("-7,18", new int[] {1,1,0,1,1,1,0,0})
+                };
+            Main.main(
+                new String[]{
+                    "-a", "tofloat",
+                    "-e", MainTest.EX_FILE,
+                    "-t", MainTest.SOL_FILE,
+                    "-c", String.valueOf(mantisseLength),
+                    "-d", String.valueOf(exponentLength),
+                    "-i", MainTest.toNumberInput(cases)
+                }
+            );
+            try (
+                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            ) {
+                Assert.assertEquals(exReader.readLine(), Patterns.toFloat(exponentLength, mantisseLength));
+                MainTest.toBinary(cases, exReader, solReader);
+            }
+        }
+    }
+
+    @Test
     public void toOnesComplement() throws IOException {
         if (!Main.STUDENT_MODE) {
             final int bitLength = 4;
-            final ComplementTestCase[] cases =
-                new ComplementTestCase[] {
-                    new ComplementTestCase(3, new int[] {0,0,1,1}),
-                    new ComplementTestCase(-1, new int[] {1,1,1,0}),
-                    new ComplementTestCase(-2, new int[] {1,1,0,1})
+            final BinaryTestCase[] cases =
+                new BinaryTestCase[] {
+                    new BinaryTestCase("3", new int[] {0,0,1,1}),
+                    new BinaryTestCase("-1", new int[] {1,1,1,0}),
+                    new BinaryTestCase("-2", new int[] {1,1,0,1})
                 };
             Main.main(
                 new String[]{
@@ -273,7 +311,7 @@ public class MainTest {
                     "-e", MainTest.EX_FILE,
                     "-t", MainTest.SOL_FILE,
                     "-c", String.valueOf(bitLength),
-                    "-i", MainTest.toInput(cases)
+                    "-i", MainTest.toNumberInput(cases)
                 }
             );
             try (
@@ -281,7 +319,7 @@ public class MainTest {
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
                 Assert.assertEquals(exReader.readLine(), Patterns.toOnes(bitLength));
-                MainTest.toComplement(cases, exReader, solReader);
+                MainTest.toBinary(cases, exReader, solReader);
             }
         }
     }
@@ -290,11 +328,11 @@ public class MainTest {
     public void toTwosComplement() throws IOException {
         if (!Main.STUDENT_MODE) {
             final int bitLength = 6;
-            final ComplementTestCase[] cases =
-                new ComplementTestCase[] {
-                    new ComplementTestCase(-3, new int[] {1,1,1,1,0,1}),
-                    new ComplementTestCase(1, new int[] {0,0,0,0,0,1}),
-                    new ComplementTestCase(-29, new int[] {1,0,0,0,1,1})
+            final BinaryTestCase[] cases =
+                new BinaryTestCase[] {
+                    new BinaryTestCase("-3", new int[] {1,1,1,1,0,1}),
+                    new BinaryTestCase("1", new int[] {0,0,0,0,0,1}),
+                    new BinaryTestCase("-29", new int[] {1,0,0,0,1,1})
                 };
             Main.main(
                 new String[]{
@@ -302,7 +340,7 @@ public class MainTest {
                     "-e", MainTest.EX_FILE,
                     "-t", MainTest.SOL_FILE,
                     "-c", String.valueOf(bitLength),
-                    "-i", MainTest.toInput(cases)
+                    "-i", MainTest.toNumberInput(cases)
                 }
             );
             try (
@@ -310,7 +348,7 @@ public class MainTest {
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
                 Assert.assertEquals(exReader.readLine(), Patterns.toTwos(bitLength));
-                MainTest.toComplement(cases, exReader, solReader);
+                MainTest.toBinary(cases, exReader, solReader);
             }
         }
     }

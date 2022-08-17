@@ -487,6 +487,18 @@ public enum Algorithm {
         GraphAlgorithms::sharir
     ),
 
+    TO_FLOAT(
+        "tofloat",
+        "Float (to)",
+        new String[] {
+            "Transform rational numbers from decimal to binary float representation.",
+            "Needs the -c flag to specify the length of the mantisse "
+            + "and the -d flag to specify the length of the exponent.",
+            "You can specify the number of tasks with the -l flag."
+        },
+        BinaryNumbers::toFloat
+    ),
+
     TO_ONES_COMPLEMENT(
         "toonescompl",
         "One's Complement (to)",

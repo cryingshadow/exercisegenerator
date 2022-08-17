@@ -16,11 +16,11 @@ public class Patterns {
         return String.format("\\begin{minipage}{\\textwidth-\\widthof{%s}}", Patterns.forBinaryNumber(binaryNumber));
     }
 
-    public static String beginMinipageForNumber(final int number) {
+    public static String beginMinipageForNumber(final String number) {
         return String.format("\\begin{minipage}{\\widthof{%s}}", Patterns.forNumber(number));
     }
 
-    public static String beginMinipageForNumberComplement(final int number) {
+    public static String beginMinipageForNumberComplement(final String number) {
         return String.format("\\begin{minipage}{\\textwidth-\\widthof{%s}}", Patterns.forNumber(number));
     }
 
@@ -31,8 +31,16 @@ public class Patterns {
         );
     }
 
-    public static String forNumber(final int number) {
-        return String.format("$%d = {}$", number);
+    public static String forNumber(final String number) {
+        return String.format("$%s = {}$", number);
+    }
+
+    public static String fromFloat(final int exponentLength, final int mantisseLength) {
+        return String.format(
+            "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen nach IEEE 754 die jeweilige rationale Zahl an:\\\\[2ex]",
+            exponentLength,
+            mantisseLength
+        );
     }
 
     public static String fromOnes(final int bitLength) {
@@ -85,15 +93,23 @@ public class Patterns {
         return Patterns.singleNode("n" + String.valueOf(number), String.valueOf(content));
     }
 
-    public static String singleNode(final int number, final int content, final int contentLength) {
+    public static String singleNode(final int number, final String content, final int contentLength) {
         return Patterns.singleNode(
             "n" + String.valueOf(number),
-            Patterns.padWithPhantom(String.valueOf(content), contentLength)
+            Patterns.padWithPhantom(content, contentLength)
         );
     }
 
     public static String singleNode(final String name, final String content) {
         return String.format("\\node[node] (%s) {%s};", name, content);
+    }
+
+    public static String toFloat(final int exponentLength, final int mantisseLength) {
+        return String.format(
+            "Geben Sie zu den folgenden rationalen Zahlen die jeweilige 1.%d.%d Gleitkommazahl nach IEEE 754 an:\\\\[2ex]",
+            exponentLength,
+            mantisseLength
+        );
     }
 
     public static String toOnes(final int bitLength) {
