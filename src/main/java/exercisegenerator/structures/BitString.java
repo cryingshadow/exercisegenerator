@@ -53,6 +53,10 @@ public class BitString extends LinkedList<Bit> {
         return this.stream().map(b -> b.invert()).collect(Collectors.toCollection(BitString::new));
     }
 
+    public boolean isZero() {
+        return this.toUnsignedInt() == 0;
+    }
+
     public BitString subString(final int fromIndex) {
         return this.subString(fromIndex, this.size());
     }

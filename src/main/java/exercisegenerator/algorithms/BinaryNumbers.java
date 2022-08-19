@@ -177,13 +177,19 @@ public class BinaryNumbers {
         final int excess = BinaryNumbers.getExcess(exponentLength);
         final int exponent = bitString.subString(1, exponentLength + 1).toUnsignedInt() - excess;
         final BitString afterComma = bitString.subString(exponentLength + 1);
-        final BitString beforeComma = new BitString();
-        beforeComma.add(Bit.ONE);
-        if (exponent < 0) {
-            if (-exponent == excess && afterComma.toUnsignedInt() == 0) {
-                return sign + "0,0";
+        if (exponent == excess + 1) {
+            if (afterComma.isZero()) {
+                return sign + "inf";
             }
-            for (int i = 0; i < -exponent; i++) {
+            return "NaN";
+        }
+        final BitString beforeComma = new BitString();
+        if (exponent > -excess) {
+            beforeComma.add(Bit.ONE);
+        }
+        if (exponent < 0) {
+            final boolean denormalized = -exponent == excess;
+            for (int i = denormalized ? 1 : 0; i < -exponent; i++) {
                 BinaryNumbers.shiftOneBitRight(beforeComma, afterComma);
             }
         } else {
@@ -264,15 +270,18 @@ public class BinaryNumbers {
     }
 
     public static BitString toFloat(final String number, final int exponentLength, final int mantissaLength) {
-        final String[] parts = number.split(",");
-        final int numBeforeComma = Integer.parseInt(parts[0]);
-        if (BinaryNumbers.outOfBoundsForFloat(numBeforeComma, exponentLength)) {
+        final String[] parts = number.strip().split(",");
+        if (parts.length > 2) {
             throw new IllegalArgumentException(
-                String.format("Number is out of bounds for a %d-bit exponent!", exponentLength)
+                String.format("%s is not a syntactically correct rational number!", number)
             );
         }
         final BitString result = new BitString();
         BinaryNumbers.addSign(parts[0], result);
+        if (parts.length == 1 && parts[0].matches("-?inf")) {
+            return BinaryNumbers.toInfitiny(exponentLength, mantissaLength, result);
+        }
+        final int numBeforeComma = Integer.parseInt(parts[0]);
         final int excess = BinaryNumbers.getExcess(exponentLength);
         if (Math.abs(numBeforeComma) > 0) {
             return BinaryNumbers.toFloatForNonNegativeExponent(
@@ -285,10 +294,12 @@ public class BinaryNumbers {
             );
         }
         if (parts.length == 1) {
+            // number is zero
             return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
         }
         final NumberWithLeadingZeros numAfterComma = BinaryNumbers.parseNumberWithLeadingZeros(parts[1]);
         if (numAfterComma.number == 0) {
+            // number is zero
             return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
         }
         return BinaryNumbers.toFloatForNegativeExponent(numAfterComma, exponentLength, excess, mantissaLength, result);
@@ -516,8 +527,15 @@ public class BinaryNumbers {
         return String.valueOf(positiveNumber).length();
     }
 
-    private static BitString fillUpWithZeros(final BitString result, final int bitsLeft) {
-        result.append(BinaryNumbers.toUnsignedBinary(0, bitsLeft));
+    private static BitString fillUpWithOnes(final BitString result, final int bitsToFill) {
+        for (int i = 0; i < bitsToFill; i++) {
+            result.add(Bit.ONE);
+        }
+        return result;
+    }
+
+    private static BitString fillUpWithZeros(final BitString result, final int bitsToFill) {
+        result.append(BinaryNumbers.toUnsignedBinary(0, bitsToFill));
         return result;
     }
 
@@ -677,7 +695,7 @@ public class BinaryNumbers {
     }
 
     private static boolean outOfBoundsForFloat(final int numBefore, final int exponentLength) {
-        final int bitLength = ((int)Math.pow(2, exponentLength - 1)) + 2;
+        final int bitLength = ((int)Math.pow(2, exponentLength - 1)) + 1;
         return BinaryNumbers.outOfBoundsForOnesComplement(numBefore, bitLength);
     }
 
@@ -810,16 +828,23 @@ public class BinaryNumbers {
         int exponent = excess - 1;
         while (nextBitAndNumberWithLeadingZeros.x.isZero()) {
             exponent--;
-            if (exponent < 0) {
+            if (exponent < -mantissaLength + 1) {
+                // round to zero
                 return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
             }
             nextBitAndNumberWithLeadingZeros =
                 BinaryNumbers.getNextBitAndNumberWithLeadingZeros(nextBitAndNumberWithLeadingZeros.y);
         }
-        result.append(BinaryNumbers.toUnsignedBinary(exponent, exponentLength));
+        final boolean denormalized = exponent < 1;
+        if (denormalized) {
+            BinaryNumbers.fillUpWithZeros(result, exponentLength - exponent);
+            result.add(Bit.ONE);
+        } else {
+            result.append(BinaryNumbers.toUnsignedBinary(exponent, exponentLength));
+        }
         BinaryNumbers.appendMantissa(
             nextBitAndNumberWithLeadingZeros.y,
-            mantissaLength,
+            denormalized ? mantissaLength + exponent - 1 : mantissaLength,
             result
         );
         return result;
@@ -833,6 +858,9 @@ public class BinaryNumbers {
         final int mantissaLength,
         final BitString result
     ) {
+        if (BinaryNumbers.outOfBoundsForFloat(numBefore, exponentLength)) {
+            return BinaryNumbers.toInfitiny(exponentLength, mantissaLength, result);
+        }
         final int mantissaBitsLeft =
             mantissaLength
             - BinaryNumbers.appendExponentAndBitsBeforeAndReturnMantissaBitsFromBefore(
@@ -849,6 +877,12 @@ public class BinaryNumbers {
             mantissaBitsLeft,
             result
         );
+        return result;
+    }
+
+    private static BitString toInfitiny(final int exponentLength, final int mantissaLength, final BitString result) {
+        BinaryNumbers.fillUpWithOnes(result, exponentLength);
+        BinaryNumbers.fillUpWithZeros(result, mantissaLength);
         return result;
     }
 
