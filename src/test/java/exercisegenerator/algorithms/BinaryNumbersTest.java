@@ -13,6 +13,9 @@ public class BinaryNumbersTest {
 
     public static void binaryEnd(final BufferedReader exReader, final BufferedReader solReader)
     throws IOException {
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+        Assert.assertEquals(exReader.readLine(), "");
         Assert.assertEquals(exReader.readLine(), "\\fi");
         Assert.assertEquals(exReader.readLine(), "");
         Assert.assertNull(exReader.readLine());
@@ -35,6 +38,9 @@ public class BinaryNumbersTest {
     public static void binaryStart(final BufferedReader exReader, final BufferedReader solReader)
     throws IOException {
         Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
+        Assert.assertEquals(exReader.readLine(), "");
         Assert.assertEquals(exReader.readLine(), "\\else");
     }
 

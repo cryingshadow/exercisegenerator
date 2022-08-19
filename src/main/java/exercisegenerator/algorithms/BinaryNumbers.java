@@ -465,11 +465,13 @@ public class BinaryNumbers {
         exerciseWriter.write(exerciseText);
         Main.newLine(exerciseWriter);
         TikZUtils.printToggleForSolutions(exerciseWriter);
+        TikZUtils.printVerticalProtectedSpace("-3ex", exerciseWriter);
         TikZUtils.printElse(exerciseWriter);
     }
 
     private static void binaryEnd(final BufferedWriter exerciseWriter, final BufferedWriter solutionWriter)
     throws IOException {
+        TikZUtils.printVerticalProtectedSpace(exerciseWriter);
         TikZUtils.printEndIf(exerciseWriter);
         Main.newLine(exerciseWriter);
         Main.newLine(solutionWriter);
