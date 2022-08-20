@@ -8,14 +8,6 @@ public class Patterns {
     public static final String ARRAY_STYLE =
         "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Huge}},node distance=0.25 and 0]";
 
-    public static String beginMinipageForBinaryNumber(final int[] binaryNumber) {
-        return String.format("\\begin{minipage}{\\widthof{%s}}", Patterns.forBinaryNumber(binaryNumber));
-    }
-
-    public static String beginMinipageForBinaryNumberComplement(final int[] binaryNumber) {
-        return String.format("\\begin{minipage}{\\textwidth-\\widthof{%s}}", Patterns.forBinaryNumber(binaryNumber));
-    }
-
     public static String beginMinipageForNumber(final String number) {
         return String.format("\\begin{minipage}{\\widthof{%s}}", Patterns.forNumber(number));
     }
@@ -24,11 +16,12 @@ public class Patterns {
         return String.format("\\begin{minipage}{\\textwidth-\\widthof{%s}}", Patterns.forNumber(number));
     }
 
-    public static String forBinaryNumber(final int[] binaryNumber) {
-        return String.format(
-            "$\\code{%s} = {}$",
-            Arrays.stream(binaryNumber).mapToObj(bit -> String.valueOf(bit)).collect(Collectors.joining())
-        );
+    public static String binaryNumberToString(final int[] binaryNumber) {
+        return Arrays.stream(binaryNumber).mapToObj(bit -> String.valueOf(bit)).collect(Collectors.joining());
+    }
+
+    public static String encodeBinaryNumberForTask(final int[] binaryNumber) {
+        return String.format("$\\code{%s} = {}$", Patterns.binaryNumberToString(binaryNumber));
     }
 
     public static String forNumber(final String number) {
@@ -102,6 +95,14 @@ public class Patterns {
 
     public static String singleNode(final String name, final String content) {
         return String.format("\\node[node] (%s) {%s};", name, content);
+    }
+
+    public static String toCode(final int[] binaryNumber) {
+        return Patterns.toCode(Patterns.binaryNumberToString(binaryNumber));
+    }
+
+    public static String toCode(final String text) {
+        return String.format("\\code{%s}", text);
     }
 
     public static String toFloat(final int exponentLength, final int mantisseLength) {

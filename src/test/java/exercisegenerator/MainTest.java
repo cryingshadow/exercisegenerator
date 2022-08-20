@@ -72,11 +72,19 @@ public class MainTest {
         final BufferedReader exReader,
         final BufferedReader solReader
     ) throws IOException {
+        final String longestNumber =
+            "-" +
+            Arrays.stream(cases)
+            .map(c -> Patterns.toCode(c.binaryNumber))
+            .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length()))
+            .findFirst()
+            .get();
         MainTest.binaryTest(
             input -> BinaryNumbersTest.fromBinary(
                 input.currentNodeNumber,
                 input.test.number,
                 input.test.binaryNumber,
+                longestNumber,
                 Arrays.stream(cases).mapToInt(test -> String.valueOf(test.number).length()).max().getAsInt(),
                 input.exReader,
                 input.solReader
@@ -92,11 +100,19 @@ public class MainTest {
         final BufferedReader exReader,
         final BufferedReader solReader
     ) throws IOException {
+        final String longestNumber =
+            "-" +
+            Arrays.stream(cases)
+            .map(c -> c.number)
+            .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length()))
+            .findFirst()
+            .get();
         MainTest.binaryTest(
             input -> BinaryNumbersTest.toBinary(
                 input.currentNodeNumber,
                 input.test.number,
                 input.test.binaryNumber,
+                longestNumber,
                 input.exReader,
                 input.solReader
             ),

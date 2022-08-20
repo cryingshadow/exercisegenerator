@@ -228,6 +228,16 @@ public abstract class TikZUtils {
         Main.newLine(writer);
     }
 
+    public static void printFlushRightBeginning(final BufferedWriter writer) throws IOException {
+        writer.write("\\begin{flushright}");
+        Main.newLine(writer);
+    }
+
+    public static void printFlushRightEnd(final BufferedWriter writer) throws IOException {
+        writer.write("\\end{flushright}");
+        Main.newLine(writer);
+    }
+
     public static String printIntegerArrayAndReturnLeftMostNodesName(
         final Integer[] array,
         final boolean[] separate,

@@ -404,6 +404,13 @@ public class BinaryNumbers {
     ) throws IOException {
         final List<T> tasks = parserOrGenerator.apply(input.options);
         final List<SolvedBinaryTask> solvedTasks = tasks.stream().map(algorithm).toList();
+        final String longestTask =
+            "-" +
+            solvedTasks.stream()
+            .map(toTaskText)
+            .sorted((s1,s2) -> Integer.compare(s2.length(), s1.length()))
+            .findFirst()
+            .get();
         final int contentLength = toContentLength.apply(solvedTasks);
         BinaryNumbers.binaryBeginning(exerciseText, input.exerciseWriter, input.solutionWriter);
         boolean first = true;
@@ -417,6 +424,7 @@ public class BinaryNumbers {
             BinaryNumbers.binaryTask(
                 toTaskText.apply(solvedTask),
                 toSolution.apply(solvedTask),
+                longestTask,
                 contentLength,
                 input.exerciseWriter,
                 input.solutionWriter
@@ -480,21 +488,26 @@ public class BinaryNumbers {
     private static void binaryTask(
         final String task,
         final List<? extends ItemWithTikZInformation<?>> solution,
+        final String longestTask,
         final int contentLength,
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
-        BinaryNumbers.binaryTaskExercise(task, solution.size(), contentLength, exerciseWriter);
-        BinaryNumbers.binaryTaskSolution(task, solution, contentLength, solutionWriter);
+        BinaryNumbers.binaryTaskExercise(task, solution.size(), longestTask, contentLength, exerciseWriter);
+        BinaryNumbers.binaryTaskSolution(task, solution, longestTask, contentLength, solutionWriter);
     }
 
-    private static void binaryTaskBeginning(final String task, final BufferedWriter writer) throws IOException {
-        final String taskText = String.format("$%s = {}$", task);
-        TikZUtils.printMinipageBeginning(TikZUtils.widthOf(taskText), writer);
+    private static void binaryTaskBeginning(final String task, final String longestTask, final BufferedWriter writer)
+    throws IOException {
+        final String taskText = BinaryNumbers.toTaskText(task);
+        final String longestTaskText = BinaryNumbers.toTaskText(longestTask);
+        TikZUtils.printMinipageBeginning(TikZUtils.widthOf(longestTaskText), writer);
+        TikZUtils.printFlushRightBeginning(writer);
         writer.write(taskText);
         Main.newLine(writer);
+        TikZUtils.printFlushRightEnd(writer);
         TikZUtils.printMinipageEnd(writer);
-        TikZUtils.printMinipageBeginning(TikZUtils.widthOfComplement(taskText), writer);
+        TikZUtils.printMinipageBeginning(TikZUtils.widthOfComplement(longestTaskText), writer);
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
     }
 
@@ -506,10 +519,11 @@ public class BinaryNumbers {
     private static void binaryTaskExercise(
         final String task,
         final int solutionLength,
+        final String longestTask,
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        BinaryNumbers.binaryTaskBeginning(task, writer);
+        BinaryNumbers.binaryTaskBeginning(task, longestTask, writer);
         TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(solutionLength, Optional.empty(), contentLength, writer);
         BinaryNumbers.binaryTaskEnd(writer);
     }
@@ -517,10 +531,11 @@ public class BinaryNumbers {
     private static void binaryTaskSolution(
         final String task,
         final List<? extends ItemWithTikZInformation<?>> solution,
+        final String longestTask,
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        BinaryNumbers.binaryTaskBeginning(task, writer);
+        BinaryNumbers.binaryTaskBeginning(task, longestTask, writer);
         TikZUtils.printListAndReturnLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
         BinaryNumbers.binaryTaskEnd(writer);
     }
@@ -906,6 +921,10 @@ public class BinaryNumbers {
 
     private static String toNumberTask(final SolvedBinaryTask solvedTask) {
         return solvedTask.number;
+    }
+
+    private static String toTaskText(final String task) {
+        return String.format("$%s = {}$", task);
     }
 
 }
