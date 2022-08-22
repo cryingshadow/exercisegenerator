@@ -342,7 +342,7 @@ public abstract class Sorting {
         Sorting.sort(
             input,
             Algorithm.INSERTIONSORT.longName,
-            "Iteration der \\\\\\\"au\\\\ss{}eren Schleife",
+            "Iteration der \\\"au\\ss{}eren Schleife",
             "",
             Sorting::insertionsort
         );
@@ -864,6 +864,7 @@ public abstract class Sorting {
             }
             TikZUtils.printTikzEnd(exerciseWriter);
         }
+        TikZUtils.printEndIf(exerciseWriter);
     }
 
     /**
@@ -888,12 +889,18 @@ public abstract class Sorting {
         if (!options.containsKey(Flag.EXERCISE)) {
             return Optional.empty();
         }
-        if (Main.STUDENT_MODE) {
-            exerciseWriter.write("Sortieren Sie das folgende Array mithilfe von " + alg + ".");
-            Main.newLine(exerciseWriter);
-            exerciseWriter.write("Geben Sie dazu das Array nach jeder " + op + " an" + additional + ".\\\\[2ex]");
-            Main.newLine(exerciseWriter);
-        }
+        exerciseWriter.write("Sortieren Sie das folgende Array mithilfe von ");
+        exerciseWriter.write(alg);
+        exerciseWriter.write(".");
+        Main.newLine(exerciseWriter);
+        exerciseWriter.write("Geben Sie dazu das Array nach jeder ");
+        exerciseWriter.write(op);
+        exerciseWriter.write(" an");
+        exerciseWriter.write(additional);
+        exerciseWriter.write(".\\\\[2ex]");
+        Main.newLine(exerciseWriter);
+        TikZUtils.printToggleForSolutions(exerciseWriter);
+        TikZUtils.printElse(exerciseWriter);
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
         return Optional.of(
             TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(

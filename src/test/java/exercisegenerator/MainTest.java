@@ -243,6 +243,10 @@ public class MainTest {
                 BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
                 BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
             ) {
+                Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Insertionsort.");
+                Assert.assertEquals(exReader.readLine(), "Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]");
+                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
                 Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {\\phantom{0}3};");
@@ -271,6 +275,7 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n48) [right=of n47] {\\phantom{00}};");
                 Assert.assertEquals(exReader.readLine(), "\\node[node] (n49) [right=of n48] {\\phantom{00}};");
                 Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertNull(exReader.readLine());
 
                 Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
