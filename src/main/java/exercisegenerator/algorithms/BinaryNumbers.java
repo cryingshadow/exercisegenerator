@@ -139,7 +139,7 @@ public class BinaryNumbers {
         "Stellen Sie die folgenden Dezimalzahlen im %d-bit Einerkomplement dar:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_FLOAT =
-        "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen nach IEEE 754 die jeweilige rationale Zahl an:\\\\[2ex]";
+        "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen die jeweilige rationale Zahl an:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_ONES =
         "Geben Sie den Dezimalwert der folgenden Binärzahlen im %d-bit Einerkomplement an:\\\\[2ex]";
@@ -148,7 +148,7 @@ public class BinaryNumbers {
         "Geben Sie den Dezimalwert der folgenden Binärzahlen im %d-bit Zweierkomplement an:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_TO_FLOAT =
-        "Geben Sie zu den folgenden rationalen Zahlen die jeweilige 1.%d.%d Gleitkommazahl nach IEEE 754 an:\\\\[2ex]";
+        "Geben Sie zu den folgenden rationalen Zahlen die jeweilige 1.%d.%d Gleitkommazahl an:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_TO_TWOS =
         "Stellen Sie die folgenden Dezimalzahlen im %d-bit Zweierkomplement dar:\\\\[2ex]";

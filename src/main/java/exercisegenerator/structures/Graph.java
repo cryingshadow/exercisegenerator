@@ -136,8 +136,11 @@ public class Graph<N, E> {
      * @param directed TODO
      * @throws IOException If some error occurs during output.
      */
-    public void printTikZ(final BufferedWriter writer, final Map<Node<N>,List<Pair<E,Node<N>>>> adListsParam, final boolean directed)
-    throws IOException {
+    public void printTikZ(
+        final BufferedWriter writer,
+        final Map<Node<N>,List<Pair<E,Node<N>>>> adListsParam,
+        final boolean directed
+    ) throws IOException {
         final Map<Node<N>,List<Pair<E,Node<N>>>> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
         if (directed) {
             TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
@@ -275,8 +278,11 @@ public class Graph<N, E> {
      * @throws IOException If some error occurs during input, the input does not comply to the expected format, or if
      *                     we have an edge adjacent to a non-existing node.
      */
-    public void setGraphFromInput(final BufferedReader reader, final LabelParser<N> nodeParser, final LabelParser<E> edgeParser)
-    throws IOException {
+    public void setGraphFromInput(
+        final BufferedReader reader,
+        final LabelParser<N> nodeParser,
+        final LabelParser<E> edgeParser
+    ) throws IOException {
         String line = reader.readLine();
         final Map<Pair<Integer, Integer>, Node<N>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<N>>();
         final Map<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>> edges =

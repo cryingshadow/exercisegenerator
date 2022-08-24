@@ -30,7 +30,7 @@ public class Patterns {
 
     public static String fromFloat(final int exponentLength, final int mantisseLength) {
         return String.format(
-            "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen nach IEEE 754 die jeweilige rationale Zahl an:\\\\[2ex]",
+            "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen die jeweilige rationale Zahl an:\\\\[2ex]",
             exponentLength,
             mantisseLength
         );
@@ -107,7 +107,7 @@ public class Patterns {
 
     public static String toFloat(final int exponentLength, final int mantisseLength) {
         return String.format(
-            "Geben Sie zu den folgenden rationalen Zahlen die jeweilige 1.%d.%d Gleitkommazahl nach IEEE 754 an:\\\\[2ex]",
+            "Geben Sie zu den folgenden rationalen Zahlen die jeweilige 1.%d.%d Gleitkommazahl an:\\\\[2ex]",
             exponentLength,
             mantisseLength
         );

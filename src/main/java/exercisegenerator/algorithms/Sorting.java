@@ -356,12 +356,13 @@ public abstract class Sorting {
      * @throws IOException If some error occurs while outputting the solution.
      */
     public static int insertionsort(final Integer[] array, final BufferedWriter writer) throws IOException {
+        final int contentLength = Sorting.getMaximumContentLength(array);
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor =
             TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
                 array,
                 Optional.empty(),
-                Algorithm.DEFAULT_CONTENT_LENGTH,
+                contentLength,
                 writer
             );
         int res = 0;
@@ -377,7 +378,7 @@ public abstract class Sorting {
                 TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
                     array,
                     Optional.of(anchor),
-                    Algorithm.DEFAULT_CONTENT_LENGTH,
+                    contentLength,
                     writer
                 );
             res++;
@@ -778,6 +779,10 @@ public abstract class Sorting {
         return res;
     }
 
+    private static int getMaximumContentLength(final Integer[] array) {
+        return Arrays.stream(array).mapToInt(n -> String.valueOf(n).length()).max().getAsInt();
+    }
+
     private static int getRows(final Map<Flag, String> options) {
         return !Main.STUDENT_MODE && options.containsKey(Flag.LENGTH) ?
             Integer.parseInt(options.get(Flag.LENGTH)) :
@@ -845,12 +850,13 @@ public abstract class Sorting {
         final Map<Flag, String> options,
         final BufferedWriter exerciseWriter
     ) throws IOException {
+        final int contentLength = Sorting.getMaximumContentLength(array);
         if (options.containsKey(Flag.EXERCISE)) {
             String anchor =
                 TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(
                     array.length,
                     anchorParam,
-                    Algorithm.DEFAULT_CONTENT_LENGTH,
+                    contentLength,
                     exerciseWriter
                 );
             for (int i = 1; i < rows; i++) {
@@ -858,7 +864,7 @@ public abstract class Sorting {
                     TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(
                         array.length,
                         Optional.of(anchor),
-                        Algorithm.DEFAULT_CONTENT_LENGTH,
+                        contentLength,
                         exerciseWriter
                     );
             }
@@ -906,7 +912,7 @@ public abstract class Sorting {
             TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
                 array,
                 Optional.empty(),
-                Algorithm.DEFAULT_CONTENT_LENGTH,
+                Sorting.getMaximumContentLength(array),
                 exerciseWriter
             )
         );

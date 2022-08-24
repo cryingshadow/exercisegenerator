@@ -489,8 +489,8 @@ public abstract class TikZUtils {
      * @throws IOException If some error occurs during output.
      */
     public static void printSolutionSpaceBeginning(final BufferedWriter writer) throws IOException {
-        writer.write("\\solutionSpace{");
-        Main.newLine(writer);
+        TikZUtils.printToggleForSolutions(writer);
+        TikZUtils.printElse(writer);
     }
 
     /**
@@ -499,8 +499,7 @@ public abstract class TikZUtils {
      * @throws IOException If some error occurs during output.
      */
     public static void printSolutionSpaceEnd(final BufferedWriter writer) throws IOException {
-        writer.write("}");
-        Main.newLine(writer);
+        TikZUtils.printEndIf(writer);
     }
 
     /**

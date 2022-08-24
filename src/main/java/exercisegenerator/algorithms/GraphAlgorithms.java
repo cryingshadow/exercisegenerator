@@ -34,7 +34,8 @@ public abstract class GraphAlgorithms {
     /**
      * The set of those graph algorithms needing a start node.
      */
-    private static final Set<String> GRAPH_ALGORITHMS_WITH_START_NODE = GraphAlgorithms.initGraphAlgorithmsWithStartNode();
+    private static final Set<String> GRAPH_ALGORITHMS_WITH_START_NODE =
+        GraphAlgorithms.initGraphAlgorithmsWithStartNode();
 
     /**
      * The name of a residual graph.
@@ -540,34 +541,21 @@ public abstract class GraphAlgorithms {
 
     public static void dijkstra(final AlgorithmInput input) throws Exception {
         final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
-        GraphAlgorithms.dijkstra(
+        GraphAlgorithms.printDijkstra(
             pair.x,
             pair.y,
-            new StringNodeComparator(),
+            GraphAlgorithms.dijkstra(pair.x, pair.y, new StringNodeComparator()),
             Algorithm.parsePreprintMode(input.options),
             input.exerciseWriter,
             input.solutionWriter
         );
     }
 
-    /**
-     * Prints exercise and solution for the Dijkstra Algorithm.
-     * @param graph The graph.
-     * @param start The start node.
-     * @param comp A comparator for sorting the nodes in the table (may be null - then no sorting is applied).
-     * @param mode The preprint mode.
-     * @param exWriter The writer to send the exercise output to.
-     * @param solWriter The writer to send the solution output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static <N> void dijkstra(
+    public static <N> DijkstraTables dijkstra(
         final Graph<N, Integer> graph,
         final Node<N> start,
-        final Comparator<Node<N>> comp,
-        final PreprintMode mode,
-        final BufferedWriter exWriter,
-        final BufferedWriter solWriter
-    ) throws IOException {
+        final Comparator<Node<N>> comp
+    ) {
         final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
         if (comp != null) {
             Collections.sort(nodes, comp);
@@ -578,186 +566,54 @@ public abstract class GraphAlgorithms {
         final String[][] exColor;
         final String[][] solColor;
         final Integer[] distances = new Integer[size];
-        final Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
-        int i = 1;
-        int current = 0;
+        final Map<Node<N>, Integer> nodeIds = new LinkedHashMap<Node<N>, Integer>();
         final Set<Integer> used = new LinkedHashSet<Integer>();
-        switch (Main.TEXT_VERSION) {
-            case ABRAHAM:
-                exTable = new String[size][size + 1];
-                solTable = new String[size][size + 1];
-                exColor = new String[size][size + 1];
-                solColor = new String[size][size + 1];
-                solTable[0][0] = "\\texttt{v}";
-                exTable[0][0] = solTable[0][0];
-                for (final Node<N> node : nodes) {
-                    if (!node.equals(start)) {
-                        solTable[0][i + 1] =
-                            String.format(
-                                "\\texttt{key[}%s\\texttt{]}",
-                                node.label.isEmpty() ? "" : node.label.get().toString()
-                            );
-                        exTable[0][i + 1] = solTable[0][i + 1];
-                        ids.put(node, i);
-                        i++;
-                    }
-                }
-                solTable[0][1] =
-                    String.format(
-                        "\\texttt{key[}%s\\texttt{]}",
-                        start.label.isEmpty() ? "" : start.label.get().toString()
-                    );
-                exTable[0][1] = solTable[0][1];
-                distances[current] = 0;
-                for (i = 1; i < size; i++) {
-                    used.add(current);
-                    final Node<N> currentNode = nodes.get(current);
-                    solTable[i][0] = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
-                    exTable[i][0] = "";
-                    for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
-                        final Integer to = ids.get(edge.y);
-                        if (to != null && (distances[to] == null || distances[to] > distances[current] + edge.x)) {
-                            distances[to] = distances[current] + edge.x;
-                        }
-                    }
-                    Integer curMin = null;
-                    int minIndex = -1;
-                    for (int j = 1; j <= size; j++) {
-                        final Integer dist = distances[j - 1];
-                        if (dist == null) {
-                            solTable[i][j] = "$\\infty$";
-                        } else {
-                            if (!used.contains(j - 1) && (curMin == null || curMin > dist)) {
-                                curMin = dist;
-                                minIndex = j - 1;
-                            }
-                            solTable[i][j] = "" + dist;
-                        }
-                        exTable[i][j] = "";
-                    }
-                    if (minIndex < 0) {
-                        // no shortening possible
-                        break;
-                    }
-                    current = minIndex;
-                    solColor[i][current + 1] = "black!20";
-                }
+        exTable = new String[size][size];
+        solTable = new String[size][size];
+        exColor = new String[size][size];
+        solColor = new String[size][size];
+        GraphAlgorithms.fillRowHeadingsAndIdsForDijkstra(exTable, solTable, nodes, nodeIds, start);
+        distances[0] = 0;
+        int currentNodeId = 0;
+        for (int columnIndex = 1; columnIndex < size; columnIndex++) {
+            used.add(currentNodeId);
+            final Node<N> currentNode = nodes.get(currentNodeId);
+            GraphAlgorithms.setColumnHeadForDijkstra(exTable, solTable, columnIndex, currentNode);
+            GraphAlgorithms.improveDistancesForNode(currentNode, currentNodeId, graph, nodeIds, distances);
+            final Optional<Integer> nodeIndexWithMinimumDistance =
+                GraphAlgorithms.computeNodeIndexWithMinimumDistance(
+                    columnIndex,
+                    size,
+                    distances,
+                    used,
+                    exTable,
+                    solTable
+                );
+            if (nodeIndexWithMinimumDistance.isEmpty()) {
+                // no shortening possible
                 break;
-            case GENERAL:
-                exTable = new String[size][size];
-                solTable = new String[size][size];
-                exColor = new String[size][size];
-                solColor = new String[size][size];
-                solTable[0][0] = "\\textbf{Knoten}";
-                exTable[0][0] = solTable[0][0];
-                for (final Node<N> node : nodes) {
-                    if (!node.equals(start)) {
-                        solTable[0][i] =
-                            String.format("\\textbf{%s}", node.label.isEmpty() ? "" : node.label.get().toString());
-                        exTable[0][i] = solTable[0][i];
-                        ids.put(node, i);
-                        i++;
-                    }
-                }
-                distances[current] = 0;
-                for (i = 1; i < size; i++) {
-                    used.add(current);
-                    final Node<N> currentNode = nodes.get(current);
-                    solTable[i][0] = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
-                    exTable[i][0] = "";
-                    for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
-                        final Integer to = ids.get(edge.y);
-                        if (to != null && (distances[to] == null || distances[to] > distances[current] + edge.x)) {
-                            distances[to] = distances[current] + edge.x;
-                        }
-                    }
-                    Integer curMin = null;
-                    int minIndex = -1;
-                    for (int j = 1; j < size; j++) {
-                        final Integer dist = distances[j];
-                        if (dist == null) {
-                            solTable[i][j] = "$\\infty$";
-                        } else {
-                            if (used.contains(j)) {
-                                solTable[i][j] = "\\textbf{--}";
-                            } else {
-                                if (curMin == null || curMin > dist) {
-                                    curMin = dist;
-                                    minIndex = j;
-                                }
-                                solTable[i][j] = "" + dist;
-                            }
-                        }
-                        exTable[i][j] = "";
-                    }
-                    if (minIndex < 0) {
-                        // no shortening possible
-                        break;
-                    }
-                    current = minIndex;
-                    solColor[i][current + 1] = "black!20";
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unkown text version!");
+            }
+            currentNodeId = nodeIndexWithMinimumDistance.get();
+            solColor[columnIndex][currentNodeId] = "black!20";
         }
-        exTable[1][0] = start.label.isEmpty() ? "" : start.label.get().toString();
-        exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
-        Main.newLine(exWriter);
-        TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-        graph.printTikZ(GraphPrintMode.ALL, 1, null, exWriter);
-        Main.newLine(exWriter);
-        TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-        Main.newLine(exWriter);
-        exWriter.write("F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem ");
-        exWriter.write("\\emphasize{Startknoten ");
-        exWriter.write(start.label.isEmpty() ? "" : start.label.get().toString());
-        exWriter.write("} aus.");
-        switch (mode) {
-            case ALWAYS:
-            case SOLUTION_SPACE:
-                switch (Main.TEXT_VERSION) {
-                    case ABRAHAM:
-                        exWriter.write(" F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
-                        exWriter.write("\\texttt{v} und \\texttt{key} \\emphasize{nach jeder Iteration} der ");
-                        exWriter.write("\\texttt{while}-Schleife eintragen:\\\\[2ex]");
-                        break;
-                    default:
-                        exWriter.write(" F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
-                }
-                break;
-            case NEVER:
-                // do nothing
+        exTable[1][0] = GraphAlgorithms.toColumnHeading(start.label);
+        if (Main.TEXT_VERSION == TextVersion.ABRAHAM) {
+            final String[][] exTableExtended = new String[size][size + 1];
+            final String[][] exColorExtended = new String[size][size + 1];
+            final String[][] solTableExtended = new String[size][size + 1];
+            final String[][] solColorExtended = new String[size][size + 1];
+            GraphAlgorithms.copyToExtended(exTable, exTableExtended);
+            GraphAlgorithms.copyToExtended(exColor, exColorExtended);
+            GraphAlgorithms.copyToExtended(solTable, solTableExtended);
+            GraphAlgorithms.copyToExtended(solColor, solColorExtended);
+            solTableExtended[0][1] = GraphAlgorithms.toRowHeading(start.label);
+            exTableExtended[0][1] = solTableExtended[0][1];
+            for (int i = 1; i < size; i++) {
+                solTableExtended[i][1] = String.valueOf(0);
+            }
+            return new DijkstraTables(exTableExtended, exColorExtended, solTableExtended, solColorExtended);
         }
-        Main.newLine(exWriter);
-        switch (mode) {
-            case SOLUTION_SPACE:
-                TikZUtils.printSolutionSpaceBeginning(exWriter);
-                // fall-through
-            case ALWAYS:
-                TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
-                Main.newLine(exWriter);
-                TikZUtils.printArrayStretch(1.5, exWriter);
-                TikZUtils.printTable(exTable, exColor, "2cm", exWriter, false, 10);
-                TikZUtils.printArrayStretch(1.0, exWriter);
-                TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
-                if (mode == PreprintMode.SOLUTION_SPACE) {
-                    TikZUtils.printSolutionSpaceEnd(exWriter);
-                }
-                break;
-            case NEVER:
-                // do nothing
-        }
-        TikZUtils.printArrayStretch(1.5, solWriter);
-        TikZUtils.printTable(solTable, solColor, "2cm", solWriter, false, 10);
-        TikZUtils.printArrayStretch(1.0, solWriter);
-        Main.newLine(solWriter);
-        solWriter.write("\\vspace*{1ex}");
-        Main.newLine(solWriter);
-        Main.newLine(solWriter);
-        solWriter.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
-        solWriter.write(" Distanz sicher berechnet worden ist.");
-        Main.newLine(solWriter);
+        return new DijkstraTables(exTable, exColor, solTable, solColor);
     }
 
     public static void floyd(final AlgorithmInput input) throws Exception {
@@ -1570,6 +1426,39 @@ public abstract class GraphAlgorithms {
         return min;
     }
 
+    private static Optional<Integer> computeNodeIndexWithMinimumDistance(
+        final int columnIndex,
+        final int size,
+        final Integer[] distances,
+        final Set<Integer> used,
+        final String[][] exTable,
+        final String[][] solTable
+    ) {
+        Integer currentMinimumDistance = null;
+        int indexOfNodeWithMinimumDistance = -1;
+        for (int toNodeIndex = 1; toNodeIndex < size; toNodeIndex++) {
+            final Integer distanceToNode = distances[toNodeIndex];
+            if (distanceToNode == null) {
+                solTable[columnIndex][toNodeIndex] = "$\\infty$";
+            } else {
+                if (used.contains(toNodeIndex)) {
+                    solTable[columnIndex][toNodeIndex] = "\\textbf{--}";
+                } else {
+                    if (currentMinimumDistance == null || currentMinimumDistance > distanceToNode) {
+                        currentMinimumDistance = distanceToNode;
+                        indexOfNodeWithMinimumDistance = toNodeIndex;
+                    }
+                    solTable[columnIndex][toNodeIndex] = String.valueOf(distanceToNode);
+                }
+            }
+            exTable[columnIndex][toNodeIndex] = "";
+        }
+        if (currentMinimumDistance == null) {
+            return Optional.empty();
+        }
+        return Optional.of(indexOfNodeWithMinimumDistance);
+    }
+
     /**
      * Builds the residual graph from the specified flow network.
      * @param graph The flow network.
@@ -1610,6 +1499,13 @@ public abstract class GraphAlgorithms {
         return res;
     }
 
+    private static void copyToExtended(final String[][] table, final String[][] tableExtended) {
+        for (int i = 0; i < table.length; i++) {
+            tableExtended[i][0] = table[i][0];
+            System.arraycopy(table[i], 1, tableExtended[i], 2, table.length - 1);
+        }
+    }
+
     /**
      * @param remainingNodes The number of nodes yet to be added.
      * @param minYPos The minimal y position in the current level.
@@ -1637,6 +1533,26 @@ public abstract class GraphAlgorithms {
             neededNodes += itMaxY - itMinY + 1;
         }
         return neededNodes <= remainingNodes;
+    }
+
+    private static <N> void fillRowHeadingsAndIdsForDijkstra(
+        final String[][] exTable,
+        final String[][] solTable,
+        final List<Node<N>> nodes,
+        final Map<Node<N>, Integer> nodeIds,
+        final Node<N> start
+    ) {
+        int rowIndex = 1;
+        solTable[0][0] = Main.TEXT_VERSION == TextVersion.ABRAHAM ? "\\texttt{v}" : "\\textbf{Knoten}";
+        exTable[0][0] = solTable[0][0];
+        for (final Node<N> node : nodes) {
+            if (!node.equals(start)) {
+                solTable[0][rowIndex] = GraphAlgorithms.toRowHeading(node.label);
+                exTable[0][rowIndex] = solTable[0][rowIndex];
+                nodeIds.put(node, rowIndex);
+                rowIndex++;
+            }
+        }
     }
 
     private static void gridGraph(final AlgorithmInput input, final String name) throws IOException {
@@ -1742,6 +1658,24 @@ public abstract class GraphAlgorithms {
             break;
         default:
 
+        }
+    }
+
+    private static <N> void improveDistancesForNode(
+        final Node<N> currentNode,
+        final int currentNodeId,
+        final Graph<N, Integer> graph,
+        final Map<Node<N>, Integer> nodeIds,
+        final Integer[] distances
+    ) {
+        for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
+            final Integer toNodeId = nodeIds.get(edge.y);
+            if (
+                toNodeId != null
+                && (distances[toNodeId] == null || distances[toNodeId] > distances[currentNodeId] + edge.x)
+            ) {
+                distances[toNodeId] = distances[currentNodeId] + edge.x;
+            }
         }
     }
 
@@ -1874,7 +1808,13 @@ public abstract class GraphAlgorithms {
         }
         Node<String> node = null;
         if (options.containsKey(Flag.OPERATIONS)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
+            final String operations = options.get(Flag.OPERATIONS);
+            try (
+                BufferedReader reader =
+                    new BufferedReader(
+                        options.containsKey(Flag.INPUT) ? new StringReader(operations) : new FileReader(operations)
+                    )
+            ) {
                 final Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
                 if (!nodes.isEmpty()) {
                     node = nodes.iterator().next();
@@ -2043,6 +1983,87 @@ public abstract class GraphAlgorithms {
     }
 
     /**
+     * Prints exercise and solution for the Dijkstra algorithm.
+     * @param graph The graph.
+     * @param start The start node.
+     * @param comp A comparator for sorting the nodes in the table (may be null - then no sorting is applied).
+     * @param mode The preprint mode.
+     * @param exWriter The writer to send the exercise output to.
+     * @param solWriter The writer to send the solution output to.
+     * @throws IOException If some error occurs during output.
+     */
+    private static <N> void printDijkstra(
+        final Graph<N, Integer> graph,
+        final Node<N> start,
+        final DijkstraTables tables,
+        final PreprintMode mode,
+        final BufferedWriter exWriter,
+        final BufferedWriter solWriter
+    ) throws IOException {
+        exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
+        Main.newLine(exWriter);
+        TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+        graph.printTikZ(GraphPrintMode.ALL, 1, null, exWriter);
+        Main.newLine(exWriter);
+        TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+        Main.newLine(exWriter);
+        exWriter.write("F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem ");
+        exWriter.write("\\emphasize{Startknoten ");
+        exWriter.write(start.label.isEmpty() ? "" : start.label.get().toString());
+        exWriter.write("} aus.");
+        switch (mode) {
+            case ALWAYS:
+            case SOLUTION_SPACE:
+                switch (Main.TEXT_VERSION) {
+                    case ABRAHAM:
+                        exWriter.write(" F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
+                        exWriter.write("\\texttt{v} und \\texttt{key} \\emphasize{nach jeder Iteration} der ");
+                        exWriter.write("\\texttt{while}-Schleife eintragen:\\\\[2ex]");
+                        break;
+                    default:
+                        exWriter.write(" F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+                }
+                break;
+            case NEVER:
+                // do nothing
+        }
+        Main.newLine(exWriter);
+        switch (mode) {
+            case SOLUTION_SPACE:
+                TikZUtils.printSolutionSpaceBeginning(exWriter);
+                // fall-through
+            case ALWAYS:
+                TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+                Main.newLine(exWriter);
+                TikZUtils.printArrayStretch(1.5, exWriter);
+                TikZUtils.printTable(tables.exTable, tables.exColor, "2cm", exWriter, false, 10);
+                TikZUtils.printArrayStretch(1.0, exWriter);
+                TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+                if (mode == PreprintMode.SOLUTION_SPACE) {
+                    TikZUtils.printSolutionSpaceEnd(exWriter);
+                }
+                break;
+            case NEVER:
+                // do nothing
+        }
+        Main.newLine(exWriter);
+        TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
+        Main.newLine(solWriter);
+        TikZUtils.printArrayStretch(1.5, solWriter);
+        TikZUtils.printTable(tables.solTable, tables.solColor, "2cm", solWriter, false, 10);
+        TikZUtils.printArrayStretch(1.0, solWriter);
+        TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
+        Main.newLine(solWriter);
+        solWriter.write("\\vspace*{1ex}");
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
+        solWriter.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
+        solWriter.write(" Distanz sicher berechnet worden ist.");
+        Main.newLine(solWriter);
+        Main.newLine(solWriter);
+    }
+
+    /**
      * Prints the specified table with the specified cell colors and possibly insert line breaks.
      * @param count The current number of tables printed in one row.
      * @param tableCount The max number of tables printed in one row.
@@ -2153,6 +2174,20 @@ public abstract class GraphAlgorithms {
         return null;
     }
 
+    private static <N> void setColumnHeadForDijkstra(
+        final String[][] exTable,
+        final String[][] solTable,
+        final int columnIndex,
+        final Node<N> currentNode
+    ) {
+        exTable[columnIndex][0] = "";
+        solTable[columnIndex][0] = GraphAlgorithms.toColumnHeading(currentNode.label);
+    }
+
+    private static <N> String toColumnHeading(final Optional<N> label) {
+        return GraphAlgorithms.toHeading(label);
+    }
+
     /**
      * @param graph Some residual graph.
      * @param path A path through this residual graph.
@@ -2176,6 +2211,16 @@ public abstract class GraphAlgorithms {
             cur = next;
         }
         return res;
+    }
+
+    private static <N> String toHeading(final Optional<N> label) {
+        return label.isEmpty() ? "" : String.format("\\textbf{%s}", label.get().toString());
+    }
+
+    private static <N> String toRowHeading(final Optional<N> label) {
+        return Main.TEXT_VERSION == TextVersion.ABRAHAM ?
+            (label.isEmpty() ? "" : String.format("\\texttt{key[}%s\\texttt{]}", label.get().toString())) :
+                GraphAlgorithms.toHeading(label);
     }
 
     /**
