@@ -10,10 +10,46 @@ import exercisegenerator.structures.*;
 
 public class CodingAlgorithmsTest {
 
-//    @Test
-//    public void decodeHuffmanTest() {
-//        throw new RuntimeException("Test not implemented");
-//    }
+    @Test
+    public void decodeHuffmanTest() {
+        final Map<Character, String> codeBook = new LinkedHashMap<Character, String>();
+        codeBook.put(' ', "011");
+        codeBook.put('.', "101010");
+        codeBook.put('B', "101011");
+        codeBook.put('F', "101100");
+        codeBook.put('T', "101101");
+        codeBook.put('a', "1110");
+        codeBook.put('c', "101110");
+        codeBook.put('d', "101111");
+        codeBook.put('e', "1111");
+        codeBook.put('g', "110000");
+        codeBook.put('h', "01001");
+        codeBook.put('i', "10000");
+        codeBook.put('j', "110001");
+        codeBook.put('k', "110010");
+        codeBook.put('l', "10001");
+        codeBook.put('m', "10010");
+        codeBook.put('n', "0001");
+        codeBook.put('o', "10011");
+        codeBook.put('p', "110011");
+        codeBook.put('q', "110100");
+        codeBook.put('r', "001");
+        codeBook.put('s', "110101");
+        codeBook.put('t', "0101");
+        codeBook.put('u', "10100");
+        codeBook.put('v', "110110");
+        codeBook.put('w', "110111");
+        codeBook.put('x', "00000");
+        codeBook.put('y', "00001");
+        codeBook.put('z', "01000");
+        final HuffmanTree tree = new HuffmanTree(codeBook);
+        final String result =
+            CodingAlgorithms.decodeHuffman(
+                "10110000111100001010000111100011110110000010101110000100100111100101001110010110011100011111010101010111101101111001110111111001001001100011001111010101011111000101110110111100000010000011110100101001111001011101111101000011011100100101110101111100000111110010001101010",
+                tree
+            );
+        Assert.assertEquals(result, "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern.");
+    }
 
     @Test
     public void encodeHuffmanTest() throws IOException {

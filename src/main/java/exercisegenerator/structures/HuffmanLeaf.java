@@ -22,6 +22,11 @@ public class HuffmanLeaf extends HuffmanNode {
     }
 
     @Override
+    Pair<Character, List<Character>> decode(final List<Character> targetText) {
+        return new Pair<Character, List<Character>>(this.sourceSymbol, targetText);
+    }
+
+    @Override
     void fillCodeBook(final String prefix, final Map<Character, String> codeBook) {
         codeBook.put(this.sourceSymbol, prefix);
     }

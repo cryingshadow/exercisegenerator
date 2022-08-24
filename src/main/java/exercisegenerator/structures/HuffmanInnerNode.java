@@ -25,6 +25,11 @@ public class HuffmanInnerNode extends HuffmanNode {
     }
 
     @Override
+    Pair<Character, List<Character>> decode(final List<Character> targetText) {
+        return this.children.get(targetText.get(0)).decode(targetText.subList(1, targetText.size()));
+    }
+
+    @Override
     void fillCodeBook(final String prefix, final Map<Character, String> codeBook) {
         for (final Map.Entry<Character, HuffmanNode> child : this.children.entrySet()) {
             child.getValue().fillCodeBook(prefix + child.getKey(), codeBook);

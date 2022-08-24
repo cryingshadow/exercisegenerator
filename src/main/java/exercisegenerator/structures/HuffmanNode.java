@@ -27,6 +27,8 @@ public abstract class HuffmanNode implements Comparable<HuffmanNode> {
 
     public abstract char getLeastSourceSymbol();
 
+    abstract Pair<Character, List<Character>> decode(List<Character> targetText);
+
     abstract void fillCodeBook(String prefix, Map<Character, String> codeBook);
 
 }

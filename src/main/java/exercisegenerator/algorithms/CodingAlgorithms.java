@@ -14,6 +14,10 @@ public abstract class CodingAlgorithms {
 
     }
 
+    public static String decodeHuffman(final String targetText, final HuffmanTree tree) {
+        return tree.decode(targetText);
+    }
+
     public static void encodeHuffman(final AlgorithmInput input) {
         final String sourceText = CodingAlgorithms.parseOrGenerateInputText(input.options);
         final List<Character> targetAlphabet = CodingAlgorithms.parseOrGenerateTargetAlphabet(input.options);
