@@ -1,133 +1,15 @@
 package exercisegenerator.algorithms;
 
-import java.io.*;
-
 import org.testng.*;
 import org.testng.annotations.*;
 
-import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
 public class BinaryNumbersTest {
 
-    public static void binaryEnd(final BufferedReader exReader, final BufferedReader solReader)
-    throws IOException {
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\fi");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertNull(exReader.readLine());
-
-        Assert.assertEquals(solReader.readLine(), "");
-        Assert.assertNull(solReader.readLine());
-    }
-
-    public static void binaryMiddle(final BufferedReader exReader, final BufferedReader solReader)
-    throws IOException {
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-        Assert.assertEquals(exReader.readLine(), "");
-
-        Assert.assertEquals(solReader.readLine(), "");
-        Assert.assertEquals(solReader.readLine(), "\\vspace*{1ex}");
-        Assert.assertEquals(solReader.readLine(), "");
-    }
-
-    public static void binaryStart(final BufferedReader exReader, final BufferedReader solReader)
-    throws IOException {
-        Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\else");
-    }
-
-    public static int fromBinary(
-        int currentNodeNumber,
-        final String number,
-        final int[] binaryNumber,
-        final String longestNumber,
-        final int contentLength,
-        final BufferedReader exReader,
-        final BufferedReader solReader
-    ) throws IOException {
-        Assert.assertEquals(exReader.readLine(), Patterns.beginMinipageForNumber(longestNumber));
-        Assert.assertEquals(exReader.readLine(), "\\begin{flushright}");
-        Assert.assertEquals(exReader.readLine(), Patterns.encodeBinaryNumberForTask(binaryNumber));
-        Assert.assertEquals(exReader.readLine(), "\\end{flushright}");
-        Assert.assertEquals(exReader.readLine(), "\\end{minipage}");
-        Assert.assertEquals(exReader.readLine(), Patterns.beginMinipageForNumberComplement(longestNumber));
-        Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-        Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-        Assert.assertEquals(exReader.readLine(), Patterns.singleEmptyNode(currentNodeNumber++, contentLength));
-        Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-        Assert.assertEquals(exReader.readLine(), "\\end{minipage}");
-
-        Assert.assertEquals(solReader.readLine(), Patterns.beginMinipageForNumber(longestNumber));
-        Assert.assertEquals(solReader.readLine(), "\\begin{flushright}");
-        Assert.assertEquals(solReader.readLine(), Patterns.encodeBinaryNumberForTask(binaryNumber));
-        Assert.assertEquals(solReader.readLine(), "\\end{flushright}");
-        Assert.assertEquals(solReader.readLine(), "\\end{minipage}");
-        Assert.assertEquals(solReader.readLine(), Patterns.beginMinipageForNumberComplement(longestNumber));
-        Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
-        Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-        Assert.assertEquals(solReader.readLine(), Patterns.singleNode(currentNodeNumber++, number, contentLength));
-        Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
-        Assert.assertEquals(solReader.readLine(), "\\end{minipage}");
-        return currentNodeNumber;
-    }
-
-    public static int toBinary(
-        int currentNodeNumber,
-        final String number,
-        final int[] binaryNumber,
-        final String longestNumber,
-        final BufferedReader exReader,
-        final BufferedReader solReader
-    ) throws IOException {
-        final int contentLength = 1;
-        Assert.assertEquals(exReader.readLine(), Patterns.beginMinipageForNumber(longestNumber));
-        Assert.assertEquals(exReader.readLine(), "\\begin{flushright}");
-        Assert.assertEquals(exReader.readLine(), Patterns.forNumber(number));
-        Assert.assertEquals(exReader.readLine(), "\\end{flushright}");
-        Assert.assertEquals(exReader.readLine(), "\\end{minipage}");
-        Assert.assertEquals(exReader.readLine(), Patterns.beginMinipageForNumberComplement(longestNumber));
-        Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-        Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-        Assert.assertEquals(exReader.readLine(), Patterns.singleEmptyNode(currentNodeNumber++, contentLength));
-        for (int i = 1; i < binaryNumber.length; i++) {
-            Assert.assertEquals(
-                exReader.readLine(),
-                Patterns.rightEmptyNodeToPredecessor(currentNodeNumber++, contentLength)
-            );
-        }
-        Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-        Assert.assertEquals(exReader.readLine(), "\\end{minipage}");
-
-        Assert.assertEquals(solReader.readLine(), Patterns.beginMinipageForNumber(longestNumber));
-        Assert.assertEquals(solReader.readLine(), "\\begin{flushright}");
-        Assert.assertEquals(solReader.readLine(), Patterns.forNumber(number));
-        Assert.assertEquals(solReader.readLine(), "\\end{flushright}");
-        Assert.assertEquals(solReader.readLine(), "\\end{minipage}");
-        Assert.assertEquals(solReader.readLine(), Patterns.beginMinipageForNumberComplement(longestNumber));
-        Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
-        Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-        Assert.assertEquals(solReader.readLine(), Patterns.singleNode(currentNodeNumber++, binaryNumber[0]));
-        for (int i = 1; i < binaryNumber.length; i++) {
-            Assert.assertEquals(
-                solReader.readLine(),
-                Patterns.rightNodeToPredecessor(currentNodeNumber++, binaryNumber[i])
-            );
-        }
-        Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
-        Assert.assertEquals(solReader.readLine(), "\\end{minipage}");
-        return currentNodeNumber;
-    }
-
     @Test
-    public void fromFloatUnit() {
+    public void fromFloat() {
         Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("00110110"), 3, 4), "1,375");
         Assert.assertEquals(
             BinaryNumbers.fromFloat(BitString.parse("01000001011011000000000000000000"), 8, 23),
@@ -144,7 +26,7 @@ public class BinaryNumbersTest {
     }
 
     @Test
-    public void fromOnesComplementUnit() {
+    public void fromOnesComplement() {
         Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("0011")), 3);
         Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("0100")), 4);
         Assert.assertEquals(BinaryNumbers.fromOnesComplement(BitString.parse("00")), 0);
@@ -160,7 +42,7 @@ public class BinaryNumbersTest {
     }
 
     @Test
-    public void fromTwosComplementUnit() {
+    public void fromTwosComplement() {
         Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("0011")), 3);
         Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("0100")), 4);
         Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse("00")), 0);
@@ -182,7 +64,7 @@ public class BinaryNumbersTest {
     }
 
     @Test
-    public void toFloatUnit() {
+    public void toFloat() {
         Assert.assertEquals(BinaryNumbers.toFloat("1,4", 3, 4).toString(), "00110110");
         Assert.assertEquals(BinaryNumbers.toFloat("18,4", 8, 23).toString(), "01000001100100110011001100110011");
         Assert.assertEquals(BinaryNumbers.toFloat("-0,25", 3, 4).toString(), "10010000");
@@ -199,7 +81,7 @@ public class BinaryNumbersTest {
     }
 
     @Test
-    public void toOnesComplementUnit() {
+    public void toOnesComplement() {
         Assert.assertEquals(BinaryNumbers.toOnesComplement(3, 4).toString(), "0011");
         Assert.assertEquals(BinaryNumbers.toOnesComplement(4, 4).toString(), "0100");
         Assert.assertEquals(BinaryNumbers.toOnesComplement(0, 2).toString(), "00");
@@ -218,7 +100,7 @@ public class BinaryNumbersTest {
     }
 
     @Test
-    public void toTwosComplementUnit() {
+    public void toTwosComplement() {
         Assert.assertEquals(BinaryNumbers.toTwosComplement(3, 4).toString(), "0011");
         Assert.assertEquals(BinaryNumbers.toTwosComplement(4, 4).toString(), "0100");
         Assert.assertEquals(BinaryNumbers.toTwosComplement(0, 2).toString(), "00");

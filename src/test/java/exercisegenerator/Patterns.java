@@ -8,24 +8,26 @@ public class Patterns {
     public static final String ARRAY_STYLE =
         "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Huge}},node distance=0.25 and 0]";
 
-    public static String beginMinipageForNumber(final String number) {
-        return String.format("\\begin{minipage}{\\widthof{%s}}", Patterns.forNumber(number));
+    public static String beginMinipageForAssignmentLeftHandSide(final String longestLeftHandSide) {
+        return String.format(
+            "\\begin{minipage}{\\widthof{%s}}",
+            Patterns.forAssignmentLeftHandSide(longestLeftHandSide)
+        );
     }
 
-    public static String beginMinipageForNumberComplement(final String number) {
-        return String.format("\\begin{minipage}{\\textwidth-\\widthof{%s}}", Patterns.forNumber(number));
+    public static String beginMinipageForAssignmentRightHandSide(final String longestLeftHandSide) {
+        return String.format(
+            "\\begin{minipage}{\\textwidth-\\widthof{%s}}",
+            Patterns.forAssignmentLeftHandSide(longestLeftHandSide)
+        );
     }
 
     public static String binaryNumberToString(final int[] binaryNumber) {
         return Arrays.stream(binaryNumber).mapToObj(bit -> String.valueOf(bit)).collect(Collectors.joining());
     }
 
-    public static String encodeBinaryNumberForTask(final int[] binaryNumber) {
-        return String.format("$\\code{%s} = {}$", Patterns.binaryNumberToString(binaryNumber));
-    }
-
-    public static String forNumber(final String number) {
-        return String.format("$%s = {}$", number);
+    public static String forAssignmentLeftHandSide(final String leftHandSide) {
+        return String.format("$%s = {}$", leftHandSide);
     }
 
     public static String fromFloat(final int exponentLength, final int mantisseLength) {
@@ -66,24 +68,20 @@ public class Patterns {
         return Patterns.rightEmptyNode(number, number - 1, contentLength);
     }
 
-    public static String rightNode(final int number, final int rightOf, final int content) {
-        return Patterns.rightNode("n" + String.valueOf(number), "n" + String.valueOf(rightOf), String.valueOf(content));
+    public static String rightNode(final int number, final int rightOf, final String content) {
+        return Patterns.rightNode("n" + String.valueOf(number), "n" + String.valueOf(rightOf), content);
     }
 
     public static String rightNode(final String name, final String rightOf, final String content) {
         return String.format("\\node[node] (%s) [right=of %s] {%s};", name, rightOf, content);
     }
 
-    public static String rightNodeToPredecessor(final int number, final int content) {
+    public static String rightNodeToPredecessor(final int number, final String content) {
         return Patterns.rightNode(number, number - 1, content);
     }
 
     public static String singleEmptyNode(final int number, final int contentLength) {
         return Patterns.singleNode("n" + String.valueOf(number), Patterns.phantom(contentLength));
-    }
-
-    public static String singleNode(final int number, final int content) {
-        return Patterns.singleNode("n" + String.valueOf(number), String.valueOf(content));
     }
 
     public static String singleNode(final int number, final String content, final int contentLength) {
@@ -118,6 +116,10 @@ public class Patterns {
             "Stellen Sie die folgenden Dezimalzahlen im %d-bit Einerkomplement dar:\\\\[2ex]",
             bitLength
         );
+    }
+
+    public static List<String> toRightHandSide(final int[] binaryNumber) {
+        return Arrays.stream(binaryNumber).mapToObj(String::valueOf).toList();
     }
 
     public static String toTwos(final int bitLength) {

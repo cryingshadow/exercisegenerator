@@ -7,7 +7,6 @@ import java.util.stream.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
-import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.util.*;
 
@@ -46,6 +45,39 @@ public class MainTest {
 
     private static final String SOL_FILE = "C:\\Daten\\Test\\exgen\\sol.tex";
 
+    private static void assignmentEnd(final BufferedReader exReader, final BufferedReader solReader)
+    throws IOException {
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\fi");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertNull(exReader.readLine());
+
+        Assert.assertEquals(solReader.readLine(), "");
+        Assert.assertNull(solReader.readLine());
+    }
+
+    private static void assignmentMiddle(final BufferedReader exReader, final BufferedReader solReader)
+    throws IOException {
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+        Assert.assertEquals(exReader.readLine(), "");
+
+        Assert.assertEquals(solReader.readLine(), "");
+        Assert.assertEquals(solReader.readLine(), "\\vspace*{1ex}");
+        Assert.assertEquals(solReader.readLine(), "");
+    }
+
+    private static void assignmentStart(final BufferedReader exReader, final BufferedReader solReader)
+    throws IOException {
+        Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\else");
+    }
+
     private static void binaryTest(
         final CheckedFunction<BinaryInput, Integer, IOException> algorithm,
         final BinaryTestCase[] cases,
@@ -53,18 +85,71 @@ public class MainTest {
         final BufferedReader solReader
     ) throws IOException {
         int currentNodeNumber = 0;
-        BinaryNumbersTest.binaryStart(exReader, solReader);
+        MainTest.assignmentStart(exReader, solReader);
         boolean first = true;
         for (final BinaryTestCase test : cases) {
             if (first) {
                 first = false;
             } else {
-                BinaryNumbersTest.binaryMiddle(exReader, solReader);
+                MainTest.assignmentMiddle(exReader, solReader);
             }
             currentNodeNumber =
                 algorithm.apply(new BinaryInput(currentNodeNumber, test, exReader, solReader));
         }
-        BinaryNumbersTest.binaryEnd(exReader, solReader);
+        MainTest.assignmentEnd(exReader, solReader);
+    }
+
+    private static int checkAssignment(
+        int currentNodeNumber,
+        final String leftHandSide,
+        final List<String> rightHandSide,
+        final int contentLength,
+        final String longestLeftHandSide,
+        final BufferedReader exReader,
+        final BufferedReader solReader
+    ) throws IOException {
+        Assert.assertEquals(exReader.readLine(), Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide));
+        Assert.assertEquals(exReader.readLine(), "\\begin{flushright}");
+        Assert.assertEquals(exReader.readLine(), Patterns.forAssignmentLeftHandSide(leftHandSide));
+        Assert.assertEquals(exReader.readLine(), "\\end{flushright}");
+        Assert.assertEquals(exReader.readLine(), "\\end{minipage}");
+        Assert.assertEquals(exReader.readLine(), Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide));
+        Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
+        Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
+        Assert.assertEquals(exReader.readLine(), Patterns.singleEmptyNode(currentNodeNumber++, contentLength));
+        for (int i = 1; i < rightHandSide.size(); i++) {
+            Assert.assertEquals(
+                exReader.readLine(),
+                Patterns.rightEmptyNodeToPredecessor(currentNodeNumber++, contentLength)
+            );
+        }
+        Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+        Assert.assertEquals(exReader.readLine(), "\\end{minipage}");
+
+        Assert.assertEquals(solReader.readLine(), Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide));
+        Assert.assertEquals(solReader.readLine(), "\\begin{flushright}");
+        Assert.assertEquals(solReader.readLine(), Patterns.forAssignmentLeftHandSide(leftHandSide));
+        Assert.assertEquals(solReader.readLine(), "\\end{flushright}");
+        Assert.assertEquals(solReader.readLine(), "\\end{minipage}");
+        Assert.assertEquals(
+            solReader.readLine(),
+            Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide)
+        );
+        Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
+        Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
+        Assert.assertEquals(
+            solReader.readLine(),
+            Patterns.singleNode(currentNodeNumber++, rightHandSide.get(0), contentLength)
+        );
+        for (int i = 1; i < rightHandSide.size(); i++) {
+            Assert.assertEquals(
+                solReader.readLine(),
+                Patterns.rightNodeToPredecessor(currentNodeNumber++, rightHandSide.get(i))
+            );
+        }
+        Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
+        Assert.assertEquals(solReader.readLine(), "\\end{minipage}");
+        return currentNodeNumber;
     }
 
     private static void fromBinary(
@@ -80,12 +165,12 @@ public class MainTest {
             .findFirst()
             .get();
         MainTest.binaryTest(
-            input -> BinaryNumbersTest.fromBinary(
+            input -> MainTest.checkAssignment(
                 input.currentNodeNumber,
-                input.test.number,
-                input.test.binaryNumber,
-                longestNumber,
+                Patterns.toCode(input.test.binaryNumber),
+                Collections.singletonList(input.test.number),
                 Arrays.stream(cases).mapToInt(test -> String.valueOf(test.number).length()).max().getAsInt(),
+                longestNumber,
                 input.exReader,
                 input.solReader
             ),
@@ -108,10 +193,11 @@ public class MainTest {
             .findFirst()
             .get();
         MainTest.binaryTest(
-            input -> BinaryNumbersTest.toBinary(
+            input -> MainTest.checkAssignment(
                 input.currentNodeNumber,
                 input.test.number,
-                input.test.binaryNumber,
+                Patterns.toRightHandSide(input.test.binaryNumber),
+                1,
                 longestNumber,
                 input.exReader,
                 input.solReader
