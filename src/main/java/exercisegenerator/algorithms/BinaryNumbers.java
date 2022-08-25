@@ -421,7 +421,7 @@ public class BinaryNumbers {
                 TikZUtils.printVerticalProtectedSpace(input.exerciseWriter);
                 TikZUtils.printVerticalProtectedSpace(input.solutionWriter);
             }
-            BinaryNumbers.binaryTask(
+            Algorithm.assignment(
                 toTaskText.apply(solvedTask),
                 toSolution.apply(solvedTask),
                 longestTask,
@@ -472,9 +472,7 @@ public class BinaryNumbers {
     ) throws IOException {
         exerciseWriter.write(exerciseText);
         Main.newLine(exerciseWriter);
-        TikZUtils.printToggleForSolutions(exerciseWriter);
-        TikZUtils.printVerticalProtectedSpace("-3ex", exerciseWriter);
-        TikZUtils.printElse(exerciseWriter);
+        TikZUtils.printSolutionSpaceBeginning(exerciseWriter);
     }
 
     private static void binaryEnd(final BufferedWriter exerciseWriter, final BufferedWriter solutionWriter)
@@ -483,61 +481,6 @@ public class BinaryNumbers {
         TikZUtils.printEndIf(exerciseWriter);
         Main.newLine(exerciseWriter);
         Main.newLine(solutionWriter);
-    }
-
-    private static void binaryTask(
-        final String task,
-        final List<? extends ItemWithTikZInformation<?>> solution,
-        final String longestTask,
-        final int contentLength,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
-    ) throws IOException {
-        BinaryNumbers.binaryTaskExercise(task, solution.size(), longestTask, contentLength, exerciseWriter);
-        BinaryNumbers.binaryTaskSolution(task, solution, longestTask, contentLength, solutionWriter);
-    }
-
-    private static void binaryTaskBeginning(final String task, final String longestTask, final BufferedWriter writer)
-    throws IOException {
-        final String taskText = BinaryNumbers.toTaskText(task);
-        final String longestTaskText = BinaryNumbers.toTaskText(longestTask);
-        TikZUtils.printMinipageBeginning(TikZUtils.widthOf(longestTaskText), writer);
-        TikZUtils.printFlushRightBeginning(writer);
-        writer.write(taskText);
-        Main.newLine(writer);
-        TikZUtils.printFlushRightEnd(writer);
-        TikZUtils.printMinipageEnd(writer);
-        TikZUtils.printMinipageBeginning(TikZUtils.widthOfComplement(longestTaskText), writer);
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-    }
-
-    private static void binaryTaskEnd(final BufferedWriter writer) throws IOException {
-        TikZUtils.printTikzEnd(writer);
-        TikZUtils.printMinipageEnd(writer);
-    }
-
-    private static void binaryTaskExercise(
-        final String task,
-        final int solutionLength,
-        final String longestTask,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        BinaryNumbers.binaryTaskBeginning(task, longestTask, writer);
-        TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(solutionLength, Optional.empty(), contentLength, writer);
-        BinaryNumbers.binaryTaskEnd(writer);
-    }
-
-    private static void binaryTaskSolution(
-        final String task,
-        final List<? extends ItemWithTikZInformation<?>> solution,
-        final String longestTask,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        BinaryNumbers.binaryTaskBeginning(task, longestTask, writer);
-        TikZUtils.printListAndReturnLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
-        BinaryNumbers.binaryTaskEnd(writer);
     }
 
     private static int decimalLength(final int positiveNumber) {
@@ -921,10 +864,6 @@ public class BinaryNumbers {
 
     private static String toNumberTask(final SolvedBinaryTask solvedTask) {
         return solvedTask.number;
-    }
-
-    private static String toTaskText(final String task) {
-        return String.format("$%s = {}$", task);
     }
 
 }

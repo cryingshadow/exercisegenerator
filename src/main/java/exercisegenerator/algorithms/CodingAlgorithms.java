@@ -2,7 +2,9 @@ package exercisegenerator.algorithms;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
+import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
@@ -18,8 +20,8 @@ public abstract class CodingAlgorithms {
         return tree.decode(targetText);
     }
 
-    public static void encodeHuffman(final AlgorithmInput input) {
-        final String sourceText = CodingAlgorithms.parseOrGenerateInputText(input.options);
+    public static void encodeHuffman(final AlgorithmInput input) throws IOException {
+        final String sourceText = CodingAlgorithms.parseOrGenerateSourceText(input.options);
         final List<Character> targetAlphabet = CodingAlgorithms.parseOrGenerateTargetAlphabet(input.options);
         final Pair<HuffmanTree, String> result = CodingAlgorithms.encodeHuffman(sourceText, targetAlphabet);
         CodingAlgorithms.printExerciseAndSolution(
@@ -39,14 +41,99 @@ public abstract class CodingAlgorithms {
         return new Pair<HuffmanTree, String>(tree, tree.toEncoder().encode(sourceText));
     }
 
-    private static String parseOrGenerateInputText(final Map<Flag, String> options) {
-        // TODO Auto-generated method stub
-        return null;
+    private static List<Character> generateAlphabet(final int alphabetSize, final Random gen) {
+        final List<Character> biggestAlphabet = new ArrayList<Character>();
+        for (int i = 32; i < 127; i++) {
+            biggestAlphabet.add(Character.valueOf((char)i));
+        }
+        if (alphabetSize >= biggestAlphabet.size()) {
+            return biggestAlphabet;
+        }
+        final List<Character> result = new ArrayList<Character>();
+        for (int i = 0; i < alphabetSize; i++) {
+            result.add(biggestAlphabet.remove(gen.nextInt(biggestAlphabet.size())));
+        }
+        return result;
     }
 
-    private static List<Character> parseOrGenerateTargetAlphabet(final Map<Flag, String> options) {
-        // TODO Auto-generated method stub
-        return null;
+    private static String generateSourceText(final Map<Flag, String> options) {
+        final Random gen = new Random();
+        final int alphabetSize = CodingAlgorithms.parseOrGenerateAlphabetSize(options, gen);
+        final int textLength = CodingAlgorithms.parseOrGenerateTextLength(options, gen);
+        final List<Character> alphabet = CodingAlgorithms.generateAlphabet(alphabetSize, gen);
+        final StringBuilder result = new StringBuilder();
+        for (int i = 0; i < textLength; i++) {
+            result.append(alphabet.get(gen.nextInt(alphabetSize)));
+        }
+        return result.toString();
+    }
+
+    private static int parseOrGenerateAlphabetSize(final Map<Flag, String> options, final Random gen) {
+        if (options.containsKey(Flag.DEGREE)) {
+            return Integer.parseInt(options.get(Flag.DEGREE));
+        }
+        return gen.nextInt(6) + 5;
+    }
+
+    private static String parseOrGenerateSourceText(final Map<Flag, String> options) throws IOException {
+        return new ParserAndGenerator<String>(
+            CodingAlgorithms::parseSourceText,
+            CodingAlgorithms::generateSourceText
+        ).getResult(options);
+    }
+
+    private static List<Character> parseOrGenerateTargetAlphabet(final Map<Flag, String> options) throws IOException {
+        if (options.containsKey(Flag.OPERATIONS)) {
+            return options.get(Flag.OPERATIONS).chars().mapToObj(c -> (char)c).toList();
+        }
+        return Arrays.asList('0', '1');
+    }
+
+    private static int parseOrGenerateTextLength(final Map<Flag, String> options, final Random gen) {
+        if (options.containsKey(Flag.LENGTH)) {
+            return Integer.parseInt(options.get(Flag.LENGTH));
+        }
+        return gen.nextInt(16) + 5;
+    }
+
+    private static String parseSourceText(final BufferedReader reader, final Map<Flag, String> options)
+    throws IOException {
+        return reader.readLine();
+    }
+
+    private static void printCode(
+        final String code,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        exerciseWriter.write("\\textbf{Code:}\\\\");
+        Main.newLine(exerciseWriter);
+        solutionWriter.write("\\textbf{Code:}\\\\");
+        Main.newLine(solutionWriter);
+        solutionWriter.write(code);
+        Main.newLine(solutionWriter);
+    }
+
+    private static void printCodeBook(
+        final Map<Character, String> codeBook,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        exerciseWriter.write("\\textbf{Codebuch:}\\\\[2ex]");
+        Main.newLine(exerciseWriter);
+        solutionWriter.write("\\textbf{Codebuch:}\\\\[2ex]");
+        Main.newLine(solutionWriter);
+        final int contentLength = codeBook.values().stream().mapToInt(String::length).max().getAsInt();
+        for (final Pair<Character, String> assignment : CodingAlgorithms.toSortedList(codeBook)) {
+            Algorithm.assignment(
+                String.format("'%s'", assignment.x),
+                Collections.singletonList(new ItemWithTikZInformation<String>(Optional.of(assignment.y))),
+                "'M'",
+                contentLength,
+                exerciseWriter,
+                solutionWriter
+            );
+        }
     }
 
     private static void printExerciseAndSolution(
@@ -55,9 +142,42 @@ public abstract class CodingAlgorithms {
         final Pair<HuffmanTree, String> result,
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
-    ) {
-        // TODO Auto-generated method stub
+    ) throws IOException {
+        exerciseWriter.write("Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{");
+        exerciseWriter.write(targetAlphabet.stream().map(String::valueOf).collect(Collectors.joining(",")));
+        exerciseWriter.write("\\}$ und den folgenden Eingabetext:\\\\");
+        Main.newLine(exerciseWriter);
+        TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
+        exerciseWriter.write(sourceText);
+        Main.newLine(exerciseWriter);
+        TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
+        TikZUtils.printVerticalProtectedSpace(exerciseWriter);
+        exerciseWriter.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
+        Main.newLine(exerciseWriter);
+        TikZUtils.printSolutionSpaceBeginning(exerciseWriter);
+        CodingAlgorithms.printCodeBook(result.x.toCodeBook(), exerciseWriter, solutionWriter);
+        TikZUtils.printVerticalProtectedSpace(exerciseWriter);
+        TikZUtils.printVerticalProtectedSpace(solutionWriter);
+        CodingAlgorithms.printCode(result.y, exerciseWriter, solutionWriter);
+        TikZUtils.printSolutionSpaceEnd(exerciseWriter);
+        Main.newLine(exerciseWriter);
+        Main.newLine(solutionWriter);
+    }
 
+    private static List<Pair<Character, String>> toSortedList(final Map<Character, String> codeBook) {
+        return codeBook.entrySet()
+            .stream()
+            .map(entry -> new Pair<Character, String>(entry.getKey(), entry.getValue()))
+            .sorted(
+                new Comparator<Pair<Character, String>>() {
+
+                    @Override
+                    public int compare(final Pair<Character, String> pair1, final Pair<Character, String> pair2) {
+                        return Character.compare(pair1.x, pair2.x);
+                    }
+
+                }
+            ).toList();
     }
 
 }

@@ -266,6 +266,9 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
                 Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+                Assert.assertEquals(exReader.readLine(), "");
+                Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
+                Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "\\else");
                 Assert.assertEquals(exReader.readLine(), "\\begin{center}");
                 Assert.assertEquals(exReader.readLine(), "");
@@ -279,6 +282,9 @@ public class MainTest {
                 Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
                 Assert.assertEquals(exReader.readLine(), "\\renewcommand{\\arraystretch}{1.0}");
                 Assert.assertEquals(exReader.readLine(), "\\end{center}");
+                Assert.assertEquals(exReader.readLine(), "");
+                Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+                Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertEquals(exReader.readLine(), "\\fi");
                 Assert.assertEquals(exReader.readLine(), "");
                 Assert.assertNull(exReader.readLine());
@@ -302,6 +308,94 @@ public class MainTest {
                 Assert.assertEquals(solReader.readLine(), "");
                 Assert.assertNull(solReader.readLine());
             }
+        }
+    }
+
+    @Test
+    public void encodeHuffman() throws IOException {
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        Main.main(
+            new String[]{
+                "-a", "tohuff",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-i", "GEIERMEIER",
+            }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "GEIERMEIER");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
+            MainTest.assignmentStart(exReader, solReader);
+            Assert.assertEquals(exReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
+            Assert.assertEquals(solReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
+            final int longestCodeLength = 3;
+            final String longestLeftHandSide = "'M'";
+            int currentNodeNumber =
+                MainTest.checkAssignment(
+                    0,
+                    "'E'",
+                    Collections.singletonList("11"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            currentNodeNumber =
+                MainTest.checkAssignment(
+                    currentNodeNumber,
+                    "'G'",
+                    Collections.singletonList("100"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            currentNodeNumber =
+                MainTest.checkAssignment(
+                    currentNodeNumber,
+                    "'I'",
+                    Collections.singletonList("00"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            currentNodeNumber =
+                MainTest.checkAssignment(
+                    currentNodeNumber,
+                    "'M'",
+                    Collections.singletonList("101"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            currentNodeNumber =
+                MainTest.checkAssignment(
+                    currentNodeNumber,
+                    "'R'",
+                    Collections.singletonList("01"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            MainTest.assignmentMiddle(exReader, solReader);
+            Assert.assertEquals(exReader.readLine(), "\\textbf{Code:}\\\\");
+            Assert.assertEquals(solReader.readLine(), "\\textbf{Code:}\\\\");
+            Assert.assertEquals(solReader.readLine(), "1001100110110111001101");
+            MainTest.assignmentEnd(exReader, solReader);
         }
     }
 

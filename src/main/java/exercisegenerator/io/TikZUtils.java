@@ -490,6 +490,7 @@ public abstract class TikZUtils {
      */
     public static void printSolutionSpaceBeginning(final BufferedWriter writer) throws IOException {
         TikZUtils.printToggleForSolutions(writer);
+        TikZUtils.printVerticalProtectedSpace("-3ex", writer);
         TikZUtils.printElse(writer);
     }
 
@@ -499,6 +500,7 @@ public abstract class TikZUtils {
      * @throws IOException If some error occurs during output.
      */
     public static void printSolutionSpaceEnd(final BufferedWriter writer) throws IOException {
+        TikZUtils.printVerticalProtectedSpace(writer);
         TikZUtils.printEndIf(writer);
     }
 

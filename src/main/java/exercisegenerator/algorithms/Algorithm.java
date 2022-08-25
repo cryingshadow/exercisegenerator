@@ -48,7 +48,7 @@ public enum Algorithm {
             )
         },
         TreeAlgorithms::btree
-    ), //TODO extra flag for deletion
+    ),
 
     /**
      * Bubblesort on Integer arrays.
@@ -65,7 +65,7 @@ public enum Algorithm {
             )
         },
         Sorting::bubblesort
-    ),
+    ), //TODO extra flag for deletion
 
     /**
      * Dijkstra's algorithm to find shortest paths from a single source.
@@ -511,6 +511,18 @@ public enum Algorithm {
         BinaryNumbers::toFloat
     ),
 
+    TO_HUFFMAN(
+        "tohuff",
+        "Huffman encoding",
+        new String[] {
+            "Encodes a text using the Huffman code.",
+            "You can specify the target alphabet with the -o flag (defaults to 01 if not specified).",
+            "You can furthermore specify the number of different letters used for the source text with the -d flag and "
+            + "its length with the -l flag."
+        },
+        CodingAlgorithms::encodeHuffman
+    ),
+
     TO_ONES_COMPLEMENT(
         "toonescompl",
         "One's Complement (to)",
@@ -569,6 +581,30 @@ public enum Algorithm {
 
     public static final int DEFAULT_CONTENT_LENGTH = 2;
 
+    public static void assignment(
+        final String leftHandSide,
+        final List<? extends ItemWithTikZInformation<?>> rightHandSide,
+        final String longestLeftHandSide,
+        final int contentLength,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        Algorithm.assignmentExercise(
+            leftHandSide,
+            rightHandSide.size(),
+            longestLeftHandSide,
+            contentLength,
+            exerciseWriter
+        );
+        Algorithm.assignmentSolution(
+            leftHandSide,
+            rightHandSide,
+            longestLeftHandSide,
+            contentLength,
+            solutionWriter
+        );
+    }
+
     public static Optional<Algorithm> forName(final String name) {
         for (final Algorithm alg : Algorithm.values()) {
             if (Main.STUDENT_MODE && !alg.enabled) {
@@ -599,6 +635,56 @@ public enum Algorithm {
             }
         }
         return PreprintMode.ALWAYS;
+    }
+
+    private static void assignmentBeginning(
+        final String leftHandSide,
+        final String longestLeftHandSide,
+        final BufferedWriter writer
+    ) throws IOException {
+        final String leftHandSideText = Algorithm.toLeftHandSideText(leftHandSide);
+        final String longestLeftHandSideText = Algorithm.toLeftHandSideText(longestLeftHandSide);
+        TikZUtils.printMinipageBeginning(TikZUtils.widthOf(longestLeftHandSideText), writer);
+        TikZUtils.printFlushRightBeginning(writer);
+        writer.write(leftHandSideText);
+        Main.newLine(writer);
+        TikZUtils.printFlushRightEnd(writer);
+        TikZUtils.printMinipageEnd(writer);
+        TikZUtils.printMinipageBeginning(TikZUtils.widthOfComplement(longestLeftHandSideText), writer);
+        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+    }
+
+    private static void assignmentEnd(final BufferedWriter writer) throws IOException {
+        TikZUtils.printTikzEnd(writer);
+        TikZUtils.printMinipageEnd(writer);
+    }
+
+    private static void assignmentExercise(
+        final String task,
+        final int solutionLength,
+        final String longestTask,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        Algorithm.assignmentBeginning(task, longestTask, writer);
+        TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(solutionLength, Optional.empty(), contentLength, writer);
+        Algorithm.assignmentEnd(writer);
+    }
+
+    private static void assignmentSolution(
+        final String task,
+        final List<? extends ItemWithTikZInformation<?>> solution,
+        final String longestTask,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        Algorithm.assignmentBeginning(task, longestTask, writer);
+        TikZUtils.printListAndReturnLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
+        Algorithm.assignmentEnd(writer);
+    }
+
+    private static String toLeftHandSideText(final String leftHandSide) {
+        return String.format("$%s = {}$", leftHandSide);
     }
 
     public final CheckedConsumer<AlgorithmInput, ? extends Exception> algorithm;
