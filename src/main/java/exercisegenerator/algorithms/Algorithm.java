@@ -131,6 +131,16 @@ public enum Algorithm {
         BinaryNumbers::fromFloat
     ),
 
+    FROM_HUFFMAN(
+        "fromhuff",
+        "Huffman decoding",
+        new String[] {
+            "Decodes a text using the Huffman code.",
+            "Needs the -o flag to specify the code book."
+        },
+        CodingAlgorithms::decodeHuffman
+    ),
+
     FROM_ONES_COMPLEMENT(
         "fromonescompl",
         "One's Complement (from)",

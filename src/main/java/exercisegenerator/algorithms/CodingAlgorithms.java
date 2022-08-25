@@ -12,8 +12,20 @@ public abstract class CodingAlgorithms {
 
     public static final List<Character> BINARY_ALPHABET = Arrays.asList('0', '1');
 
-    public static void decodeHuffman(final AlgorithmInput input) {
+    private static final String CODE_BOOK_FORMAT_ERROR_MESSAGE =
+        "The specified code book does not match the expected format (entries of the form 'S':\"C\" for a symbol S and a code C, separated by commas)!";
 
+    public static void decodeHuffman(final AlgorithmInput input) throws IOException {
+        final Map<Character, String> codeBook = CodingAlgorithms.parseCodeBook(input.options);
+        final String targetText = CodingAlgorithms.parseOrGenerateTargetText(codeBook, input.options);
+        final String result = CodingAlgorithms.decodeHuffman(targetText, new HuffmanTree(codeBook));
+        CodingAlgorithms.printExerciseAndSolutionForHuffmanDecoding(
+            targetText,
+            codeBook,
+            result,
+            input.exerciseWriter,
+            input.solutionWriter
+        );
     }
 
     public static String decodeHuffman(final String targetText, final HuffmanTree tree) {
@@ -24,7 +36,7 @@ public abstract class CodingAlgorithms {
         final String sourceText = CodingAlgorithms.parseOrGenerateSourceText(input.options);
         final List<Character> targetAlphabet = CodingAlgorithms.parseOrGenerateTargetAlphabet(input.options);
         final Pair<HuffmanTree, String> result = CodingAlgorithms.encodeHuffman(sourceText, targetAlphabet);
-        CodingAlgorithms.printExerciseAndSolution(
+        CodingAlgorithms.printExerciseAndSolutionForHuffmanEncoding(
             sourceText,
             targetAlphabet,
             result,
@@ -68,6 +80,36 @@ public abstract class CodingAlgorithms {
         return result.toString();
     }
 
+    private static String generateTargetText(final Map<Character, String> codeBook, final Map<Flag, String> options) {
+        final Random gen = new Random();
+        final int length = CodingAlgorithms.parseOrGenerateTextLength(options, gen);
+        final StringBuilder result = new StringBuilder();
+        final List<String> samples = new ArrayList<String>(codeBook.values());
+        for (int i = 0; i < length; i++) {
+            result.append(samples.get(gen.nextInt(samples.size())));
+        }
+        return result.toString();
+    }
+
+    private static Map<Character, String> parseCodeBook(final Map<Flag, String> options) {
+        return Arrays.stream(options.get(Flag.OPERATIONS).split(","))
+            .map(entry -> {
+                final String[] assignment = entry.split(":");
+                if (assignment.length != 2 || !assignment[0].matches("'.'") || !assignment[1].matches("\".+\"")) {
+                    throw new IllegalArgumentException(CodingAlgorithms.CODE_BOOK_FORMAT_ERROR_MESSAGE);
+                }
+                return new Pair<Character, String>(
+                    assignment[0].charAt(1),
+                    assignment[1].substring(1, assignment[1].length() - 1)
+                );
+            }).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+
+    private static String parseInputText(final BufferedReader reader, final Map<Flag, String> options)
+    throws IOException {
+        return reader.readLine();
+    }
+
     private static int parseOrGenerateAlphabetSize(final Map<Flag, String> options, final Random gen) {
         if (options.containsKey(Flag.DEGREE)) {
             return Integer.parseInt(options.get(Flag.DEGREE));
@@ -77,7 +119,7 @@ public abstract class CodingAlgorithms {
 
     private static String parseOrGenerateSourceText(final Map<Flag, String> options) throws IOException {
         return new ParserAndGenerator<String>(
-            CodingAlgorithms::parseSourceText,
+            CodingAlgorithms::parseInputText,
             CodingAlgorithms::generateSourceText
         ).getResult(options);
     }
@@ -86,7 +128,17 @@ public abstract class CodingAlgorithms {
         if (options.containsKey(Flag.OPERATIONS)) {
             return options.get(Flag.OPERATIONS).chars().mapToObj(c -> (char)c).toList();
         }
-        return Arrays.asList('0', '1');
+        return CodingAlgorithms.BINARY_ALPHABET;
+    }
+
+    private static String parseOrGenerateTargetText(
+        final Map<Character, String> codeBook,
+        final Map<Flag, String> options
+    ) throws IOException {
+        return new ParserAndGenerator<String>(
+            CodingAlgorithms::parseInputText,
+            flags -> CodingAlgorithms.generateTargetText(codeBook, flags)
+        ).getResult(options);
     }
 
     private static int parseOrGenerateTextLength(final Map<Flag, String> options, final Random gen) {
@@ -94,11 +146,6 @@ public abstract class CodingAlgorithms {
             return Integer.parseInt(options.get(Flag.LENGTH));
         }
         return gen.nextInt(16) + 5;
-    }
-
-    private static String parseSourceText(final BufferedReader reader, final Map<Flag, String> options)
-    throws IOException {
-        return reader.readLine();
     }
 
     private static void printCode(
@@ -110,11 +157,29 @@ public abstract class CodingAlgorithms {
         Main.newLine(exerciseWriter);
         solutionWriter.write("\\textbf{Code:}\\\\");
         Main.newLine(solutionWriter);
-        solutionWriter.write(code);
+        solutionWriter.write(TikZUtils.code(code));
         Main.newLine(solutionWriter);
     }
 
-    private static void printCodeBook(
+    private static void printCodeBookForDecoding(final Map<Character, String> codeBook, final BufferedWriter writer)
+    throws IOException {
+        writer.write("\\textbf{Codebuch:}");
+        Main.newLine(writer);
+        TikZUtils.printBeginning("align*", writer);
+        for (final Pair<Character, String> assignment : CodingAlgorithms.toSortedList(codeBook)) {
+            writer.write(
+                String.format(
+                    "\\code{`%s'} &= \\code{\\textquotedbl{}%s\\textquotedbl{}}\\\\",
+                    assignment.x,
+                    assignment.y
+                )
+            );
+            Main.newLine(writer);
+        }
+        TikZUtils.printEnd("align*", writer);
+    }
+
+    private static void printCodeBookForEncoding(
         final Map<Character, String> codeBook,
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
@@ -126,9 +191,11 @@ public abstract class CodingAlgorithms {
         final int contentLength = codeBook.values().stream().mapToInt(String::length).max().getAsInt();
         for (final Pair<Character, String> assignment : CodingAlgorithms.toSortedList(codeBook)) {
             Algorithm.assignment(
-                String.format("'%s'", assignment.x),
-                Collections.singletonList(new ItemWithTikZInformation<String>(Optional.of(assignment.y))),
-                "'M'",
+                String.format("\\code{`%s'}", assignment.x),
+                Collections.singletonList(
+                    new ItemWithTikZInformation<String>(Optional.of(TikZUtils.code(assignment.y)))
+                ),
+                "\\code{`M'}",
                 contentLength,
                 exerciseWriter,
                 solutionWriter
@@ -136,7 +203,34 @@ public abstract class CodingAlgorithms {
         }
     }
 
-    private static void printExerciseAndSolution(
+    private static void printExerciseAndSolutionForHuffmanDecoding(
+        final String targetText,
+        final Map<Character, String> codeBook,
+        final String result,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        exerciseWriter.write(
+            "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\"
+        );
+        Main.newLine(exerciseWriter);
+        TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
+        exerciseWriter.write(TikZUtils.code(targetText));
+        Main.newLine(exerciseWriter);
+        TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
+        TikZUtils.printVerticalProtectedSpace(exerciseWriter);
+        CodingAlgorithms.printCodeBookForDecoding(codeBook, exerciseWriter);
+        TikZUtils.printVerticalProtectedSpace("-3ex", exerciseWriter);
+        exerciseWriter.write("\\textbf{Quelltext:}\\\\[2ex]");
+        Main.newLine(exerciseWriter);
+        Main.newLine(exerciseWriter);
+
+        solutionWriter.write(TikZUtils.code(result));
+        Main.newLine(solutionWriter);
+        Main.newLine(solutionWriter);
+    }
+
+    private static void printExerciseAndSolutionForHuffmanEncoding(
         final String sourceText,
         final List<Character> targetAlphabet,
         final Pair<HuffmanTree, String> result,
@@ -155,7 +249,7 @@ public abstract class CodingAlgorithms {
         exerciseWriter.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
         Main.newLine(exerciseWriter);
         TikZUtils.printSolutionSpaceBeginning(exerciseWriter);
-        CodingAlgorithms.printCodeBook(result.x.toCodeBook(), exerciseWriter, solutionWriter);
+        CodingAlgorithms.printCodeBookForEncoding(result.x.toCodeBook(), exerciseWriter, solutionWriter);
         TikZUtils.printVerticalProtectedSpace(exerciseWriter);
         TikZUtils.printVerticalProtectedSpace(solutionWriter);
         CodingAlgorithms.printCode(result.y, exerciseWriter, solutionWriter);
