@@ -279,82 +279,83 @@ public class MainTest {
 
     @Test
     public void dijkstra() throws IOException {
-        if (!Main.STUDENT_MODE) {
-            Main.main(
-                new String[]{
-                    "-a", "dijkstra",
-                    "-e", MainTest.EX_FILE,
-                    "-t", MainTest.SOL_FILE,
-                    "-p", "solutionSpace",
-                    "-i", " A , |2, B \n5| , | , |3\n C ,4| , D",
-                    "-o", "A"
-                }
-            );
-            try (
-                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
-            ) {
-                Assert.assertEquals(exReader.readLine(), "Betrachten Sie den folgenden Graphen:\\\\[2ex]");
-                Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-                Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-                Assert.assertEquals(exReader.readLine(), "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) at (0.0,1.0) {A};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) at (1.0,1.0) {B};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) at (0.0,0.0) {C};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) at (1.0,0.0) {D};");
-                Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n1) to node[auto, swap] {5} (n3);");
-                Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n2) to node[auto, swap] {2} (n1);");
-                Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n3) to node[auto, swap] {4} (n4);");
-                Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n4) to node[auto, swap] {3} (n2);");
-                Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertEquals(exReader.readLine(), "\\end{center}");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertEquals(exReader.readLine(), "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
-                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertEquals(exReader.readLine(), "\\else");
-                Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertEquals(exReader.readLine(), "\\renewcommand{\\arraystretch}{1.5}");
-                Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{4}{C{2cm}|}}");
-                Assert.assertEquals(exReader.readLine(), "\\hline");
-                Assert.assertEquals(exReader.readLine(), "\\textbf{Knoten} & \\textbf{A} &  & \\\\\\hline");
-                Assert.assertEquals(exReader.readLine(), "\\textbf{B} &  &  & \\\\\\hline");
-                Assert.assertEquals(exReader.readLine(), "\\textbf{C} &  &  & \\\\\\hline");
-                Assert.assertEquals(exReader.readLine(), "\\textbf{D} &  &  & \\\\\\hline");
-                Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
-                Assert.assertEquals(exReader.readLine(), "\\renewcommand{\\arraystretch}{1.0}");
-                Assert.assertEquals(exReader.readLine(), "\\end{center}");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertEquals(exReader.readLine(), "\\fi");
-                Assert.assertEquals(exReader.readLine(), "");
-                Assert.assertNull(exReader.readLine());
-
-                Assert.assertEquals(solReader.readLine(), "\\begin{center}");
-                Assert.assertEquals(solReader.readLine(), "");
-                Assert.assertEquals(solReader.readLine(), "\\renewcommand{\\arraystretch}{1.5}");
-                Assert.assertEquals(solReader.readLine(), "\\begin{tabular}{|*{4}{C{2cm}|}}");
-                Assert.assertEquals(solReader.readLine(), "\\hline");
-                Assert.assertEquals(solReader.readLine(), "\\textbf{Knoten} & \\textbf{A} & \\textbf{C} & \\textbf{D}\\\\\\hline");
-                Assert.assertEquals(solReader.readLine(), "\\textbf{B} & $\\infty$ & $\\infty$ & \\cellcolor{black!20}12\\\\\\hline");
-                Assert.assertEquals(solReader.readLine(), "\\textbf{C} & \\cellcolor{black!20}5 & \\textbf{--} & \\textbf{--}\\\\\\hline");
-                Assert.assertEquals(solReader.readLine(), "\\textbf{D} & $\\infty$ & \\cellcolor{black!20}9 & \\textbf{--}\\\\\\hline");
-                Assert.assertEquals(solReader.readLine(), "\\end{tabular}");
-                Assert.assertEquals(solReader.readLine(), "\\renewcommand{\\arraystretch}{1.0}");
-                Assert.assertEquals(solReader.readLine(), "\\end{center}");
-                Assert.assertEquals(solReader.readLine(), "");
-                Assert.assertEquals(solReader.readLine(), "\\vspace*{1ex}");
-                Assert.assertEquals(solReader.readLine(), "");
-                Assert.assertEquals(solReader.readLine(), "Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale Distanz sicher berechnet worden ist.");
-                Assert.assertEquals(solReader.readLine(), "");
-                Assert.assertNull(solReader.readLine());
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        Main.main(
+            new String[]{
+                "-a", "dijkstra",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-p", "solutionSpace",
+                "-i", " A , |2, B \n5| , | , |3\n C ,4| , D",
+                "-o", "A"
             }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), "Betrachten Sie den folgenden Graphen:\\\\[2ex]");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
+            Assert.assertEquals(exReader.readLine(), "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) at (0.0,1.0) {A};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) at (1.0,1.0) {B};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) at (0.0,0.0) {C};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) at (1.0,0.0) {D};");
+            Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n1) to node[auto, swap] {5} (n3);");
+            Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n2) to node[auto, swap] {2} (n1);");
+            Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n3) to node[auto, swap] {4} (n4);");
+            Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n4) to node[auto, swap] {3} (n2);");
+            Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+            Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\else");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\renewcommand{\\arraystretch}{1.5}");
+            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{4}{C{2cm}|}}");
+            Assert.assertEquals(exReader.readLine(), "\\hline");
+            Assert.assertEquals(exReader.readLine(), "\\textbf{Knoten} & \\textbf{A} &  & \\\\\\hline");
+            Assert.assertEquals(exReader.readLine(), "\\textbf{B} &  &  & \\\\\\hline");
+            Assert.assertEquals(exReader.readLine(), "\\textbf{C} &  &  & \\\\\\hline");
+            Assert.assertEquals(exReader.readLine(), "\\textbf{D} &  &  & \\\\\\hline");
+            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
+            Assert.assertEquals(exReader.readLine(), "\\renewcommand{\\arraystretch}{1.0}");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\fi");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertNull(exReader.readLine());
+
+            Assert.assertEquals(solReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(solReader.readLine(), "");
+            Assert.assertEquals(solReader.readLine(), "\\renewcommand{\\arraystretch}{1.5}");
+            Assert.assertEquals(solReader.readLine(), "\\begin{tabular}{|*{4}{C{2cm}|}}");
+            Assert.assertEquals(solReader.readLine(), "\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\textbf{Knoten} & \\textbf{A} & \\textbf{C} & \\textbf{D}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\textbf{B} & $\\infty$ & $\\infty$ & \\cellcolor{black!20}12\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\textbf{C} & \\cellcolor{black!20}5 & \\textbf{--} & \\textbf{--}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\textbf{D} & $\\infty$ & \\cellcolor{black!20}9 & \\textbf{--}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\end{tabular}");
+            Assert.assertEquals(solReader.readLine(), "\\renewcommand{\\arraystretch}{1.0}");
+            Assert.assertEquals(solReader.readLine(), "\\end{center}");
+            Assert.assertEquals(solReader.readLine(), "");
+            Assert.assertEquals(solReader.readLine(), "\\vspace*{1ex}");
+            Assert.assertEquals(solReader.readLine(), "");
+            Assert.assertEquals(solReader.readLine(), "Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale Distanz sicher berechnet worden ist.");
+            Assert.assertEquals(solReader.readLine(), "");
+            Assert.assertNull(solReader.readLine());
         }
     }
 
@@ -448,168 +449,172 @@ public class MainTest {
 
     @Test
     public void fromFloat() throws IOException {
-        if (!Main.STUDENT_MODE) {
-            final int mantisseLength = 4;
-            final int exponentLength = 3;
-            final BinaryTestCase[] cases =
-                new BinaryTestCase[] {
-                    new BinaryTestCase("-3,5", new int[] {1,1,0,0,1,1,0,0}),
-                    new BinaryTestCase("1,375", new int[] {0,0,1,1,0,1,1,0}),
-                    new BinaryTestCase("-7,0", new int[] {1,1,0,1,1,1,0,0})
-                };
-            Main.main(
-                new String[]{
-                    "-a", "fromfloat",
-                    "-e", MainTest.EX_FILE,
-                    "-t", MainTest.SOL_FILE,
-                    "-c", String.valueOf(mantisseLength),
-                    "-d", String.valueOf(exponentLength),
-                    "-i", MainTest.toBitStringInput(cases)
-                }
-            );
-            try (
-                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
-            ) {
-                Assert.assertEquals(exReader.readLine(), Patterns.fromFloat(exponentLength, mantisseLength));
-                MainTest.fromBinary(cases, exReader, solReader);
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        final int mantisseLength = 4;
+        final int exponentLength = 3;
+        final BinaryTestCase[] cases =
+            new BinaryTestCase[] {
+                new BinaryTestCase("-3,5", new int[] {1,1,0,0,1,1,0,0}),
+                new BinaryTestCase("1,375", new int[] {0,0,1,1,0,1,1,0}),
+                new BinaryTestCase("-7,0", new int[] {1,1,0,1,1,1,0,0})
+            };
+        Main.main(
+            new String[]{
+                "-a", "fromfloat",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-c", String.valueOf(mantisseLength),
+                "-d", String.valueOf(exponentLength),
+                "-i", MainTest.toBitStringInput(cases)
             }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), Patterns.fromFloat(exponentLength, mantisseLength));
+            MainTest.fromBinary(cases, exReader, solReader);
         }
     }
 
     @Test
     public void fromOnesComplement() throws IOException {
-        if (!Main.STUDENT_MODE) {
-            final int bitLength = 8;
-            final BinaryTestCase[] cases =
-                new BinaryTestCase[] {
-                    new BinaryTestCase("-3", new int[] {1,1,1,1,1,1,0,0}),
-                    new BinaryTestCase("5", new int[] {0,0,0,0,0,1,0,1}),
-                    new BinaryTestCase("-111", new int[] {1,0,0,1,0,0,0,0})
-                };
-            Main.main(
-                new String[]{
-                    "-a", "fromonescompl",
-                    "-e", MainTest.EX_FILE,
-                    "-t", MainTest.SOL_FILE,
-                    "-c", String.valueOf(bitLength),
-                    "-i", MainTest.toBitStringInput(cases)
-                }
-            );
-            try (
-                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
-            ) {
-                Assert.assertEquals(exReader.readLine(), Patterns.fromOnes(bitLength));
-                MainTest.fromBinary(cases, exReader, solReader);
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        final int bitLength = 8;
+        final BinaryTestCase[] cases =
+            new BinaryTestCase[] {
+                new BinaryTestCase("-3", new int[] {1,1,1,1,1,1,0,0}),
+                new BinaryTestCase("5", new int[] {0,0,0,0,0,1,0,1}),
+                new BinaryTestCase("-111", new int[] {1,0,0,1,0,0,0,0})
+            };
+        Main.main(
+            new String[]{
+                "-a", "fromonescompl",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-c", String.valueOf(bitLength),
+                "-i", MainTest.toBitStringInput(cases)
             }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), Patterns.fromOnes(bitLength));
+            MainTest.fromBinary(cases, exReader, solReader);
         }
     }
 
     @Test
     public void fromTwosComplement() throws IOException {
-        if (!Main.STUDENT_MODE) {
-            final int bitLength = 5;
-            final BinaryTestCase[] cases =
-                new BinaryTestCase[] {
-                    new BinaryTestCase("-3", new int[] {1,1,1,0,1}),
-                    new BinaryTestCase("1", new int[] {0,0,0,0,1}),
-                    new BinaryTestCase("-13", new int[] {1,0,0,1,1})
-                };
-            Main.main(
-                new String[]{
-                    "-a", "fromtwoscompl",
-                    "-e", MainTest.EX_FILE,
-                    "-t", MainTest.SOL_FILE,
-                    "-c", String.valueOf(bitLength),
-                    "-i", MainTest.toBitStringInput(cases)
-                }
-            );
-            try (
-                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
-            ) {
-                Assert.assertEquals(exReader.readLine(), Patterns.fromTwos(bitLength));
-                MainTest.fromBinary(cases, exReader, solReader);
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        final int bitLength = 5;
+        final BinaryTestCase[] cases =
+            new BinaryTestCase[] {
+                new BinaryTestCase("-3", new int[] {1,1,1,0,1}),
+                new BinaryTestCase("1", new int[] {0,0,0,0,1}),
+                new BinaryTestCase("-13", new int[] {1,0,0,1,1})
+            };
+        Main.main(
+            new String[]{
+                "-a", "fromtwoscompl",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-c", String.valueOf(bitLength),
+                "-i", MainTest.toBitStringInput(cases)
             }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), Patterns.fromTwos(bitLength));
+            MainTest.fromBinary(cases, exReader, solReader);
         }
     }
 
     @Test
     public void insertionsort() throws IOException {
-        if (!Main.STUDENT_MODE) {
-            Main.main(
-                new String[]{"-a", "insertionsort", "-e", MainTest.EX_FILE, "-t", MainTest.SOL_FILE, "-i", "3,5,1,4,2"}
-            );
-            try (
-                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
-            ) {
-                Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Insertionsort.");
-                Assert.assertEquals(exReader.readLine(), "Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]");
-                Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
-                Assert.assertEquals(exReader.readLine(), "\\else");
-                Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-                Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {3};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) [right=of n0] {5};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) [right=of n1] {1};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) [right=of n2] {4};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) [right=of n3] {2};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n30) [below=of n0] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n31) [right=of n30] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n32) [right=of n31] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n33) [right=of n32] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n34) [right=of n33] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n35) [below=of n30] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n36) [right=of n35] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n37) [right=of n36] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n38) [right=of n37] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n39) [right=of n38] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n40) [below=of n35] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n41) [right=of n40] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n42) [right=of n41] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n43) [right=of n42] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n44) [right=of n43] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n45) [below=of n40] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n46) [right=of n45] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n47) [right=of n46] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n48) [right=of n47] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\node[node] (n49) [right=of n48] {\\phantom{0}};");
-                Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-                Assert.assertEquals(exReader.readLine(), "\\fi");
-                Assert.assertNull(exReader.readLine());
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        Main.main(
+            new String[]{"-a", "insertionsort", "-e", MainTest.EX_FILE, "-t", MainTest.SOL_FILE, "-i", "3,5,1,4,2"}
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Insertionsort.");
+            Assert.assertEquals(exReader.readLine(), "Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]");
+            Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+            Assert.assertEquals(exReader.readLine(), "\\else");
+            Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
+            Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {3};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) [right=of n0] {5};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) [right=of n1] {1};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) [right=of n2] {4};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) [right=of n3] {2};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n30) [below=of n0] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n31) [right=of n30] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n32) [right=of n31] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n33) [right=of n32] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n34) [right=of n33] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n35) [below=of n30] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n36) [right=of n35] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n37) [right=of n36] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n38) [right=of n37] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n39) [right=of n38] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n40) [below=of n35] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n41) [right=of n40] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n42) [right=of n41] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n43) [right=of n42] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n44) [right=of n43] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n45) [below=of n40] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n46) [right=of n45] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n47) [right=of n46] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n48) [right=of n47] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n49) [right=of n48] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+            Assert.assertEquals(exReader.readLine(), "\\fi");
+            Assert.assertNull(exReader.readLine());
 
-                Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
-                Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n5) {3};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n6) [right=of n5] {5};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n7) [right=of n6] {1};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n8) [right=of n7] {4};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n9) [right=of n8] {2};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n10) [below=of n5] {3};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n11) [right=of n10] {5};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n12) [right=of n11] {1};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n13) [right=of n12] {4};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n14) [right=of n13] {2};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n15) [below=of n10] {1};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n16) [right=of n15] {3};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n17) [right=of n16] {5};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n18) [right=of n17] {4};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n19) [right=of n18] {2};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n20) [below=of n15] {1};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n21) [right=of n20] {3};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n22) [right=of n21] {4};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n23) [right=of n22] {5};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n24) [right=of n23] {2};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n25) [below=of n20] {1};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n26) [right=of n25] {2};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n27) [right=of n26] {3};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n28) [right=of n27] {4};");
-                Assert.assertEquals(solReader.readLine(), "\\node[node] (n29) [right=of n28] {5};");
-                Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
-                Assert.assertNull(solReader.readLine());
-            }
+            Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
+            Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n5) {3};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n6) [right=of n5] {5};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n7) [right=of n6] {1};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n8) [right=of n7] {4};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n9) [right=of n8] {2};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n10) [below=of n5] {3};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n11) [right=of n10] {5};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n12) [right=of n11] {1};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n13) [right=of n12] {4};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n14) [right=of n13] {2};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n15) [below=of n10] {1};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n16) [right=of n15] {3};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n17) [right=of n16] {5};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n18) [right=of n17] {4};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n19) [right=of n18] {2};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n20) [below=of n15] {1};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n21) [right=of n20] {3};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n22) [right=of n21] {4};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n23) [right=of n22] {5};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n24) [right=of n23] {2};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n25) [below=of n20] {1};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n26) [right=of n25] {2};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n27) [right=of n26] {3};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n28) [right=of n27] {4};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n29) [right=of n28] {5};");
+            Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
+            Assert.assertNull(solReader.readLine());
         }
     }
 
@@ -620,90 +625,93 @@ public class MainTest {
 
     @Test
     public void toFloat() throws IOException {
-        if (!Main.STUDENT_MODE) {
-            final int exponentLength = 3;
-            final int mantisseLength = 4;
-            final BinaryTestCase[] cases =
-                new BinaryTestCase[] {
-                    new BinaryTestCase("-3,5", new int[] {1,1,0,0,1,1,0,0}),
-                    new BinaryTestCase("1,4", new int[] {0,0,1,1,0,1,1,0}),
-                    new BinaryTestCase("-7,18", new int[] {1,1,0,1,1,1,0,0})
-                };
-            Main.main(
-                new String[]{
-                    "-a", "tofloat",
-                    "-e", MainTest.EX_FILE,
-                    "-t", MainTest.SOL_FILE,
-                    "-c", String.valueOf(mantisseLength),
-                    "-d", String.valueOf(exponentLength),
-                    "-i", MainTest.toNumberInput(cases)
-                }
-            );
-            try (
-                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
-            ) {
-                Assert.assertEquals(exReader.readLine(), Patterns.toFloat(exponentLength, mantisseLength));
-                MainTest.toBinary(cases, exReader, solReader);
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        final int exponentLength = 3;
+        final int mantisseLength = 4;
+        final BinaryTestCase[] cases =
+            new BinaryTestCase[] {
+                new BinaryTestCase("-3,5", new int[] {1,1,0,0,1,1,0,0}),
+                new BinaryTestCase("1,4", new int[] {0,0,1,1,0,1,1,0}),
+                new BinaryTestCase("-7,18", new int[] {1,1,0,1,1,1,0,0})
+            };
+        Main.main(
+            new String[]{
+                "-a", "tofloat",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-c", String.valueOf(mantisseLength),
+                "-d", String.valueOf(exponentLength),
+                "-i", MainTest.toNumberInput(cases)
             }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), Patterns.toFloat(exponentLength, mantisseLength));
+            MainTest.toBinary(cases, exReader, solReader);
         }
     }
 
     @Test
     public void toOnesComplement() throws IOException {
-        if (!Main.STUDENT_MODE) {
-            final int bitLength = 4;
-            final BinaryTestCase[] cases =
-                new BinaryTestCase[] {
-                    new BinaryTestCase("3", new int[] {0,0,1,1}),
-                    new BinaryTestCase("-1", new int[] {1,1,1,0}),
-                    new BinaryTestCase("-2", new int[] {1,1,0,1})
-                };
-            Main.main(
-                new String[]{
-                    "-a", "toonescompl",
-                    "-e", MainTest.EX_FILE,
-                    "-t", MainTest.SOL_FILE,
-                    "-c", String.valueOf(bitLength),
-                    "-i", MainTest.toNumberInput(cases)
-                }
-            );
-            try (
-                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
-            ) {
-                Assert.assertEquals(exReader.readLine(), Patterns.toOnes(bitLength));
-                MainTest.toBinary(cases, exReader, solReader);
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        final int bitLength = 4;
+        final BinaryTestCase[] cases =
+            new BinaryTestCase[] {
+                new BinaryTestCase("3", new int[] {0,0,1,1}),
+                new BinaryTestCase("-1", new int[] {1,1,1,0}),
+                new BinaryTestCase("-2", new int[] {1,1,0,1})
+            };
+        Main.main(
+            new String[]{
+                "-a", "toonescompl",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-c", String.valueOf(bitLength),
+                "-i", MainTest.toNumberInput(cases)
             }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), Patterns.toOnes(bitLength));
+            MainTest.toBinary(cases, exReader, solReader);
         }
     }
 
     @Test
     public void toTwosComplement() throws IOException {
-        if (!Main.STUDENT_MODE) {
-            final int bitLength = 6;
-            final BinaryTestCase[] cases =
-                new BinaryTestCase[] {
-                    new BinaryTestCase("-3", new int[] {1,1,1,1,0,1}),
-                    new BinaryTestCase("1", new int[] {0,0,0,0,0,1}),
-                    new BinaryTestCase("-29", new int[] {1,0,0,0,1,1})
-                };
-            Main.main(
-                new String[]{
-                    "-a", "totwoscompl",
-                    "-e", MainTest.EX_FILE,
-                    "-t", MainTest.SOL_FILE,
-                    "-c", String.valueOf(bitLength),
-                    "-i", MainTest.toNumberInput(cases)
-                }
-            );
-            try (
-                BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-                BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
-            ) {
-                Assert.assertEquals(exReader.readLine(), Patterns.toTwos(bitLength));
-                MainTest.toBinary(cases, exReader, solReader);
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        final int bitLength = 6;
+        final BinaryTestCase[] cases =
+            new BinaryTestCase[] {
+                new BinaryTestCase("-3", new int[] {1,1,1,1,0,1}),
+                new BinaryTestCase("1", new int[] {0,0,0,0,0,1}),
+                new BinaryTestCase("-29", new int[] {1,0,0,0,1,1})
+            };
+        Main.main(
+            new String[]{
+                "-a", "totwoscompl",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-c", String.valueOf(bitLength),
+                "-i", MainTest.toNumberInput(cases)
             }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), Patterns.toTwos(bitLength));
+            MainTest.toBinary(cases, exReader, solReader);
         }
     }
 
