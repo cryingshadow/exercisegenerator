@@ -540,6 +540,79 @@ public class MainTest {
     }
 
     @Test
+    public void hashing() throws IOException {
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        Main.main(
+            new String[]{
+                "-a", "hashMultiplicationQuadratic",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-i", "11,0.7,7,3\n3,5,1,4,2,1",
+                "-p", "solutionSpace"
+            }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\[2ex]");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "3, 5, 1, 4, 2, 1.");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\else");
+            Assert.assertEquals(exReader.readLine(), "{\\Large");
+            Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
+            Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) [right=of n0] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) [right=of n1] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) [right=of n2] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) [right=of n3] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n5) [right=of n4] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n6) [right=of n5] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n7) [right=of n6] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n8) [right=of n7] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n9) [right=of n8] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\node[node] (n10) [right=of n9] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
+            Assert.assertEquals(exReader.readLine(), "}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\fi");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertNull(exReader.readLine());
+
+            Assert.assertEquals(solReader.readLine(), "m = 11, c = 0,70, $c_1$ = 7, $c_2$ = 3:\\\\[2ex]");
+            Assert.assertEquals(solReader.readLine(), "{\\Large");
+            Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
+            Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n11) {\\phantom{0}};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n12) [right=of n11] {3};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n13) [right=of n12] {\\phantom{0}};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n14) [right=of n13] {\\phantom{0}};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n15) [right=of n14] {2};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n16) [right=of n15] {5};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n17) [right=of n16] {1};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n18) [right=of n17] {1};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n19) [right=of n18] {4};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n20) [right=of n19] {\\phantom{0}};");
+            Assert.assertEquals(solReader.readLine(), "\\node[node] (n21) [right=of n20] {\\phantom{0}};");
+            Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
+            Assert.assertEquals(solReader.readLine(), "}");
+            Assert.assertEquals(solReader.readLine(), "");
+            Assert.assertNull(solReader.readLine());
+        }
+    }
+
+    @Test
     public void insertionsort() throws IOException {
         if (Main.STUDENT_MODE) {
             return;
