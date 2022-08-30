@@ -557,10 +557,12 @@ public class MainTest {
             BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
             BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
         ) {
-            Assert.assertEquals(exReader.readLine(), "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\[2ex]");
+            Assert.assertEquals(exReader.readLine(), "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\");
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
             Assert.assertEquals(exReader.readLine(), "3, 5, 1, 4, 2, 1.");
             Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\vspace*{3ex}");
             Assert.assertEquals(exReader.readLine(), "");
             Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
             Assert.assertEquals(exReader.readLine(), "");

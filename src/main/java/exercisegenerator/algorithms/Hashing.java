@@ -634,17 +634,17 @@ public abstract class Hashing {
         exerciseWriter.write(String.valueOf(capacity));
         exerciseWriter.write(" unter Verwendung der ");
         exerciseWriter.write(options.optionsText);
-        exerciseWriter.write(":\\\\[2ex]");
+        exerciseWriter.write(":\\\\");
         Main.newLine(exerciseWriter);
         TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
         exerciseWriter.write(values.stream().map(String::valueOf).collect(Collectors.joining(", ")));
         exerciseWriter.write(".");
         Main.newLine(exerciseWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
-        Main.newLine(exerciseWriter);
         switch (options.preprintMode) {
             case ALWAYS:
             case SOLUTION_SPACE:
+                TikZUtils.printVerticalProtectedSpace("3ex", exerciseWriter);
                 if (options.preprintMode == PreprintMode.SOLUTION_SPACE) {
                     TikZUtils.printSolutionSpaceBeginning(exerciseWriter);
                 }
@@ -658,6 +658,7 @@ public abstract class Hashing {
                 }
                 break;
             case NEVER:
+                Main.newLine(exerciseWriter);
         }
         Main.newLine(exerciseWriter);
 
