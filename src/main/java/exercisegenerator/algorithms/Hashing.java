@@ -68,6 +68,14 @@ public abstract class Hashing {
     private static final int[] PRIMES_5_101 =
         new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
 
+    public static HashList[] createEmptyArray(final int length) {
+        final HashList[] result = new HashList[length];
+        for (int i = 0; i < length; i++) {
+            result[i] = new HashList();
+        }
+        return result;
+    }
+
     public static void hashDiv(final AlgorithmInput input) throws Exception {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
         final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
@@ -352,14 +360,6 @@ public abstract class Hashing {
         for (int i = 0; i < hashTable.length; i++) {
             hashTable[i].addAll(initialHashTable[i]);
         }
-    }
-
-    private static HashList[] createEmptyArray(final int length) {
-        final HashList[] result = new HashList[length];
-        for (int i = 0; i < length; i++) {
-            result[i] = new HashList();
-        }
-        return result;
     }
 
     /**
