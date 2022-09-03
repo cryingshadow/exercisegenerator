@@ -1,0 +1,27 @@
+plugins {
+    id 'application'
+    id 'eclipse'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.testng:testng:7.4.0'
+}
+
+application {
+    mainClass = 'exercisegenerator.Main'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'exercisegenerator.Main'
+    }
+    baseName = 'exercisegenerator'
+}
+
+tasks.named('test') {
+    useTestNG()
+}
