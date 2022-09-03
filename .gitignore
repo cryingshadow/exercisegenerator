@@ -18,3 +18,4 @@ build
 *.rar
 hs_err_pid*
 gradlew*
+/build.sh
