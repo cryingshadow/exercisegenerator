@@ -35,7 +35,7 @@ public enum Algorithm {
     /**
      * Insertion and deletion in B-trees with int values.
      */
-    BTREE(
+    BTREE( //TODO extra flag for deletion
         "btree",
         IntBTree.NAME_OF_BTREE_WITH_DEGREE_2,
         new String[]{
@@ -65,7 +65,7 @@ public enum Algorithm {
             )
         },
         Sorting::bubblesort
-    ), //TODO extra flag for deletion
+    ),
 
     /**
      * Dijkstra's algorithm to find shortest paths from a single source.
@@ -161,6 +161,15 @@ public enum Algorithm {
             "You can specify the number of tasks with the -l flag."
         },
         BinaryNumbers::fromTwosComplement
+    ),
+
+    FROM_VIGENERE(
+        "fromvigenere",
+        "Vigenere cipher (from)",
+        new String[] {
+            "Decode a text with the specified keyword using the Vigenere cipher."
+        },
+        Cryptography::vigenereDecode
     ),
 
     /**
@@ -439,12 +448,12 @@ public enum Algorithm {
             )
         },
         Sorting::quicksort
-    ), //TODO extra flag for deletion
+    ),
 
     /**
      * Insertion and deletion in Red-Black-trees with int values.
      */
-    RBTREE(
+    RBTREE( //TODO extra flag for deletion
         "rbtree",
         "Rot-Schwarz-Baum",
         new String[]{
@@ -553,6 +562,15 @@ public enum Algorithm {
             "You can specify the number of tasks with the -l flag."
         },
         BinaryNumbers::toTwosComplement
+    ),
+
+    TO_VIGENERE(
+        "tovigenere",
+        "Vigenere cipher (to)",
+        new String[] {
+            "Encode a text with the specified keyword using the Vigenere cipher."
+        },
+        Cryptography::vigenereEncode
     ),
 
     /**

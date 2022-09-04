@@ -648,11 +648,13 @@ public abstract class Hashing {
                 if (options.preprintMode == PreprintMode.SOLUTION_SPACE) {
                     TikZUtils.printSolutionSpaceBeginning(exerciseWriter);
                 }
+                TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
                 exerciseWriter.write("{\\Large");
                 Main.newLine(exerciseWriter);
                 Hashing.printArray(initialArray, contentLength, options.probing, exerciseWriter);
                 exerciseWriter.write("}");
                 Main.newLine(exerciseWriter);
+                TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
                 if (options.preprintMode == PreprintMode.SOLUTION_SPACE) {
                     TikZUtils.printSolutionSpaceEnd(exerciseWriter);
                 }
@@ -662,6 +664,7 @@ public abstract class Hashing {
         }
         Main.newLine(exerciseWriter);
 
+        TikZUtils.printBeginning(TikZUtils.CENTER, solutionWriter);
         solutionWriter.write(options.parameterText);
         Main.newLine(solutionWriter);
         solutionWriter.write("{\\Large");
@@ -669,6 +672,7 @@ public abstract class Hashing {
         Hashing.printArray(result, contentLength, options.probing, solutionWriter);
         solutionWriter.write("}");
         Main.newLine(solutionWriter);
+        TikZUtils.printEnd(TikZUtils.CENTER, solutionWriter);
         Main.newLine(solutionWriter);
     }
 

@@ -569,6 +569,7 @@ public class MainTest {
             Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
             Assert.assertEquals(exReader.readLine(), "");
             Assert.assertEquals(exReader.readLine(), "\\else");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
             Assert.assertEquals(exReader.readLine(), "{\\Large");
             Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
             Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
@@ -585,6 +586,7 @@ public class MainTest {
             Assert.assertEquals(exReader.readLine(), "\\node[node] (n10) [right=of n9] {\\phantom{0}};");
             Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
             Assert.assertEquals(exReader.readLine(), "}");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
             Assert.assertEquals(exReader.readLine(), "");
             Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
             Assert.assertEquals(exReader.readLine(), "");
@@ -592,6 +594,7 @@ public class MainTest {
             Assert.assertEquals(exReader.readLine(), "");
             Assert.assertNull(exReader.readLine());
 
+            Assert.assertEquals(solReader.readLine(), "\\begin{center}");
             Assert.assertEquals(solReader.readLine(), "m = 11, c = 0,70, $c_1$ = 7, $c_2$ = 3:\\\\[2ex]");
             Assert.assertEquals(solReader.readLine(), "{\\Large");
             Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
@@ -609,6 +612,7 @@ public class MainTest {
             Assert.assertEquals(solReader.readLine(), "\\node[node] (n21) [right=of n20] {\\phantom{0}};");
             Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
             Assert.assertEquals(solReader.readLine(), "}");
+            Assert.assertEquals(solReader.readLine(), "\\end{center}");
             Assert.assertEquals(solReader.readLine(), "");
             Assert.assertNull(solReader.readLine());
         }
@@ -787,6 +791,92 @@ public class MainTest {
         ) {
             Assert.assertEquals(exReader.readLine(), Patterns.toTwos(bitLength));
             MainTest.toBinary(cases, exReader, solReader);
+        }
+    }
+
+    @Test
+    public void vigenereDecode() throws IOException {
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        Main.main(
+            new String[]{
+                "-a", "fromvigenere",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-i", "URKSAK\nSAKRAL\nAKLRSU"
+            }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), "Entschl\\\"usseln Sie den Text");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "\\code{URKSAK}");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "unter Benutzung des Schl\\\"usselworts");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "\\code{SAKRAL}");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "auf dem Alphabet");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{6}{C{1.5em}|}}");
+            Assert.assertEquals(exReader.readLine(), "\\hline");
+            Assert.assertEquals(exReader.readLine(), "0 & 1 & 2 & 3 & 4 & 5\\\\\\hline");
+            Assert.assertEquals(exReader.readLine(), "A & K & L & R & S & U\\\\\\hline");
+            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "mithilfe der Vigen\\'ere-Verschl\\\"usselung.");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertNull(exReader.readLine());
+
+            Assert.assertEquals(solReader.readLine(), "\\code{KRAKAU}");
+            Assert.assertEquals(solReader.readLine(), "");
+            Assert.assertNull(solReader.readLine());
+        }
+    }
+
+    @Test
+    public void vigenereEncode() throws IOException {
+        if (Main.STUDENT_MODE) {
+            return;
+        }
+        Main.main(
+            new String[]{
+                "-a", "tovigenere",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-i", "KLAUSUR\nSAKRAL\nAKLRSU"
+            }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            Assert.assertEquals(exReader.readLine(), "Verschl\\\"usseln Sie den Text");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "\\code{KLAUSUR}");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "unter Benutzung des Schl\\\"usselworts");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "\\code{SAKRAL}");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "auf dem Alphabet");
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{6}{C{1.5em}|}}");
+            Assert.assertEquals(exReader.readLine(), "\\hline");
+            Assert.assertEquals(exReader.readLine(), "0 & 1 & 2 & 3 & 4 & 5\\\\\\hline");
+            Assert.assertEquals(exReader.readLine(), "A & K & L & R & S & U\\\\\\hline");
+            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "mithilfe der Vigen\\'ere-Verschl\\\"usselung.");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertNull(exReader.readLine());
+
+            Assert.assertEquals(solReader.readLine(), "\\code{ULKLSKK}");
+            Assert.assertEquals(solReader.readLine(), "");
+            Assert.assertNull(solReader.readLine());
         }
     }
 
