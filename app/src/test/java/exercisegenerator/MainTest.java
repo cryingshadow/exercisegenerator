@@ -41,9 +41,17 @@ public class MainTest {
         }
     }
 
-    private static final String EX_FILE = "C:\\Daten\\Test\\exgen\\ex.tex";
+    private static final String EX_FILE;
 
-    private static final String SOL_FILE = "C:\\Daten\\Test\\exgen\\sol.tex";
+    private static final String SOL_FILE;
+
+    private static final String TEST_DIR;
+
+    static {
+        TEST_DIR = "C:\\Daten\\Test\\exgen";
+        EX_FILE = MainTest.TEST_DIR + "\\ex.tex";
+        SOL_FILE = MainTest.TEST_DIR + "\\sol.tex";
+    }
 
     private static void assignmentEnd(final BufferedReader exReader, final BufferedReader solReader)
     throws IOException {
@@ -700,6 +708,12 @@ public class MainTest {
     @BeforeMethod
     public void prepare() {
         TikZUtils.reset();
+        final File testDir = new File(MainTest.TEST_DIR);
+        if (!testDir.exists()) {
+            if (!testDir.mkdirs()) {
+                throw new IllegalStateException("Cannot init test directory!");
+            }
+        }
     }
 
     @Test
