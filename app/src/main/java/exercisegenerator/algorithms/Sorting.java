@@ -779,41 +779,43 @@ public abstract class Sorting {
         return res;
     }
 
+    private static Integer[] generateArray(final Parameters options) {
+        final int length;
+        final Random gen = new Random();
+        if (options.containsKey(Flag.LENGTH)) {
+            length = Integer.parseInt(options.get(Flag.LENGTH));
+        } else {
+            length = gen.nextInt(16) + 5;
+        }
+        final Integer[] array = new Integer[length];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = gen.nextInt(Main.NUMBER_LIMIT);
+        }
+        return array;
+    }
+
     private static int getMaximumContentLength(final Integer[] array) {
         return Arrays.stream(array).mapToInt(n -> String.valueOf(n).length()).max().getAsInt();
     }
 
-    private static int getRows(final Map<Flag, String> options) {
+    private static int getRows(final Parameters options) {
         return !Main.STUDENT_MODE && options.containsKey(Flag.LENGTH) ?
             Integer.parseInt(options.get(Flag.LENGTH)) :
                 0;
     }
 
-    private static Integer[] parseOrGenerateArray(final Map<Flag, String> flags) throws IOException {
-        return new ParserAndGenerator<Integer[]>(
-            (final BufferedReader reader, final Map<Flag, String> options) -> {
-                final String[] numbers = reader.readLine().split(",");
-                final Integer[] array = new Integer[numbers.length];
-                for (int i = 0; i < array.length; i++) {
-                    array[i] = Integer.parseInt(numbers[i].trim());
-                }
-                return array;
-            },
-            (final Map<Flag, String> options) -> {
-                final int length;
-                final Random gen = new Random();
-                if (options.containsKey(Flag.LENGTH)) {
-                    length = Integer.parseInt(options.get(Flag.LENGTH));
-                } else {
-                    length = gen.nextInt(16) + 5;
-                }
-                final Integer[] array = new Integer[length];
-                for (int i = 0; i < array.length; i++) {
-                    array[i] = gen.nextInt(Main.NUMBER_LIMIT);
-                }
-                return array;
-            }
-        ).getResult(flags);
+    private static Integer[] parseArray(final BufferedReader reader, final Parameters options)
+    throws IOException {
+        final String[] numbers = reader.readLine().split(",");
+        final Integer[] array = new Integer[numbers.length];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = Integer.parseInt(numbers[i].trim());
+        }
+        return array;
+    }
+
+    private static Integer[] parseOrGenerateArray(final Parameters flags) throws IOException {
+        return new ParserAndGenerator<Integer[]>(Sorting::parseArray, Sorting::generateArray).getResult(flags);
     }
 
     private static <E extends Exception> void sort(
@@ -847,7 +849,7 @@ public abstract class Sorting {
         final Integer[] array,
         final int rows,
         final Optional<String> anchorParam,
-        final Map<Flag, String> options,
+        final Parameters options,
         final BufferedWriter exerciseWriter
     ) throws IOException {
         final int contentLength = Sorting.getMaximumContentLength(array);
@@ -889,7 +891,7 @@ public abstract class Sorting {
         final String alg,
         final String op,
         final String additional,
-        final Map<Flag, String> options,
+        final Parameters options,
         final BufferedWriter exerciseWriter
     ) throws IOException {
         if (!options.containsKey(Flag.EXERCISE)) {

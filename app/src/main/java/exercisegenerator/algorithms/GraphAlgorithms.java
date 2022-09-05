@@ -1704,7 +1704,7 @@ public abstract class GraphAlgorithms {
         return res;
     }
 
-    private static FlowNetworkInput<String, FlowPair> parseOrGenerateFlowNetwork(final Map<Flag, String> options) {
+    private static FlowNetworkInput<String, FlowPair> parseOrGenerateFlowNetwork(final Parameters options) {
         final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
         if (options.containsKey(Flag.SOURCE)) {
             try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
@@ -1772,7 +1772,7 @@ public abstract class GraphAlgorithms {
         return res;
     }
 
-    private static Pair<Graph<String, Integer>, Node<String>> parseOrGenerateGraph(final Map<Flag, String> options) {
+    private static Pair<Graph<String, Integer>, Node<String>> parseOrGenerateGraph(final Parameters options) {
         final Graph<String, Integer> graph;
         final String alg = options.get(Flag.ALGORITHM);
         if (options.containsKey(Flag.SOURCE)) {
@@ -1832,7 +1832,7 @@ public abstract class GraphAlgorithms {
         return new Pair<Graph<String, Integer>, Node<String>>(graph, node);
     }
 
-    private static int[][] parseOrGenerateGridGraph(final Map<Flag, String> options) {
+    private static int[][] parseOrGenerateGridGraph(final Parameters options) {
         final GridGraph graph = new GridGraph();
         final int[][] sparseAdjacencyMatrix =
             new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];

@@ -502,7 +502,7 @@ public abstract class TreeAlgorithms {
      * @return The operations specified in the operation file or null if no such file is specified in the program
      *         arguments.
      */
-    private static Deque<Pair<Integer, Boolean>> parseOrGenerateOperations(final Map<Flag, String> options) {
+    private static Deque<Pair<Integer, Boolean>> parseOrGenerateOperations(final Parameters options) {
         if (!options.containsKey(Flag.OPERATIONS)) {
             if (Main.STUDENT_MODE) {
                 final Random gen = new Random();
@@ -541,7 +541,7 @@ public abstract class TreeAlgorithms {
         return deque;
     }
 
-    private static Deque<Pair<Integer, Boolean>> parseOrGenerateTreeValues(final Map<Flag, String> options) {
+    private static Deque<Pair<Integer, Boolean>> parseOrGenerateTreeValues(final Parameters options) {
         final String[] nums;
         if (options.containsKey(Flag.SOURCE)) {
             try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {

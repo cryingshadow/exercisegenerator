@@ -376,7 +376,7 @@ public abstract class Hashing {
         return Hashing.gcd(number2, number1%number2);
     }
 
-    private static int generateCapacity(final int numberOfValues, final Map<Flag, String> options) {
+    private static int generateCapacity(final int numberOfValues, final Parameters options) {
         final Random gen = new Random();
         final int length = (int)(numberOfValues * 1.25);
         final String alg = options.get(Flag.ALGORITHM);
@@ -396,7 +396,7 @@ public abstract class Hashing {
     private static HashResultWithProbingFactors generateProbingFactorsAndComputeResult(
         final int capacity,
         final CheckedBiFunction<Integer, Integer, HashList[], HashException> hashingAlgorithm,
-        final Map<Flag, String> options
+        final Parameters options
     ) {
         final Random gen = new Random();
         HashList[] result = null;
@@ -418,7 +418,7 @@ public abstract class Hashing {
         return new HashResultWithProbingFactors(result, linearProbingFactor, quadraticProbingFactor);
     }
 
-    private static List<Integer> generateValues(final Map<Flag, String> options) {
+    private static List<Integer> generateValues(final Parameters options) {
         final Random gen = new Random();
         final int length =
             options.containsKey(Flag.LENGTH) ? Integer.parseInt(options.get(Flag.LENGTH)) : gen.nextInt(16) + 5;
@@ -516,17 +516,17 @@ public abstract class Hashing {
         return true;
     }
 
-    private static int parseCapacity(final BufferedReader reader, final Map<Flag, String> options)
+    private static int parseCapacity(final BufferedReader reader, final Parameters options)
     throws NumberFormatException, IOException {
         return Integer.parseInt(reader.readLine().split(",")[0]);
     }
 
-    private static double parseMultiplicationFactor(final BufferedReader reader, final Map<Flag, String> options)
+    private static double parseMultiplicationFactor(final BufferedReader reader, final Parameters options)
     throws NumberFormatException, IOException {
         return Double.parseDouble(reader.readLine().split(",")[1]);
     }
 
-    private static int parseOrGenerateCapacity(final int numberOfValues, final Map<Flag, String> options)
+    private static int parseOrGenerateCapacity(final int numberOfValues, final Parameters options)
     throws IOException {
         return new ParserAndGenerator<Integer>(
             Hashing::parseCapacity,
@@ -534,7 +534,7 @@ public abstract class Hashing {
         ).getResult(options);
     }
 
-    private static HashList[] parseOrGenerateInitialArray(final int numberOfValues, final Map<Flag, String> options)
+    private static HashList[] parseOrGenerateInitialArray(final int numberOfValues, final Parameters options)
     throws IOException {
         if (!options.containsKey(Flag.OPERATIONS)) {
             return Hashing.createEmptyArray(Hashing.parseOrGenerateCapacity(numberOfValues, options));
@@ -547,7 +547,7 @@ public abstract class Hashing {
             ).toArray(HashList[]::new);
     }
 
-    private static double parseOrGenerateMultiplicationFactor(final Map<Flag, String> options) throws IOException {
+    private static double parseOrGenerateMultiplicationFactor(final Parameters options) throws IOException {
         return new ParserAndGenerator<Double>(
             Hashing::parseMultiplicationFactor,
             flags -> Hashing.getRandomFactorBetweenZeroAndOne(new Random())
@@ -557,7 +557,7 @@ public abstract class Hashing {
     private static HashResultWithProbingFactors parseOrGenerateProbingFactorsAndComputeResult(
         final int capacity,
         final CheckedBiFunction<Integer, Integer, HashList[], HashException> hashingAlgorithm,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         return new ParserAndGenerator<HashResultWithProbingFactors>(
             (reader, flags) -> Hashing.parseProbingFactorsAndComputeResult(reader, hashingAlgorithm, flags),
@@ -565,7 +565,7 @@ public abstract class Hashing {
         ).getResult(options);
     }
 
-    private static List<Integer> parseOrGenerateValues(final Map<Flag, String> options) throws IOException {
+    private static List<Integer> parseOrGenerateValues(final Parameters options) throws IOException {
         return new ParserAndGenerator<List<Integer>>(
             Hashing::parseValues,
             Hashing::generateValues
@@ -575,7 +575,7 @@ public abstract class Hashing {
     private static HashResultWithProbingFactors parseProbingFactorsAndComputeResult(
         final BufferedReader reader,
         final CheckedBiFunction<Integer, Integer, HashList[], HashException> hashingAlgorithm,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         final String[] parameters = reader.readLine().split(",");
         final int linearProbingFactor = Integer.parseInt(parameters[parameters.length - 2]);
@@ -593,7 +593,7 @@ public abstract class Hashing {
 
     private static List<Integer> parseValues(
         final BufferedReader reader,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         reader.readLine();
         return Arrays.stream(reader.readLine().split(",")).map(Integer::parseInt).toList();

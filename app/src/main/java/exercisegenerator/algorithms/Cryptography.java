@@ -38,17 +38,17 @@ public abstract class Cryptography {
         return Cryptography.vigenere(sourceText, keyword, square::encode);
     }
 
-    private static List<Character> generateAlphabet(final Map<Flag, String> options) {
+    private static List<Character> generateAlphabet(final Parameters options) {
         return Cryptography.ALPHABET26;
     }
 
-    private static String generateInputText(final List<Character> alphabet, final Map<Flag, String> flags) {
+    private static String generateInputText(final List<Character> alphabet, final Parameters flags) {
         final Random gen = new Random();
         final int size = gen.nextInt(26) + 5;
         return Cryptography.generateText(alphabet, size, gen);
     }
 
-    private static String generateKeyword(final List<Character> alphabet, final Map<Flag, String> flags) {
+    private static String generateKeyword(final List<Character> alphabet, final Parameters flags) {
         final Random gen = new Random();
         final int size = gen.nextInt(17) + 4;
         return Cryptography.generateText(alphabet, size, gen);
@@ -62,7 +62,7 @@ public abstract class Cryptography {
         return result.toString();
     }
 
-    private static List<Character> parseAlphabet(final BufferedReader reader, final Map<Flag, String> options)
+    private static List<Character> parseAlphabet(final BufferedReader reader, final Parameters options)
     throws IOException {
         if (reader.readLine() == null) {
             return Cryptography.generateAlphabet(options);
@@ -80,7 +80,7 @@ public abstract class Cryptography {
     private static String parseInputText(
         final BufferedReader reader,
         final List<Character> alphabet,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         final String text = reader.readLine();
         if (text == null || text.isBlank()) {
@@ -92,7 +92,7 @@ public abstract class Cryptography {
     private static String parseKeyword(
         final BufferedReader reader,
         final List<Character> alphabet,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         if (reader.readLine() == null) {
             return Cryptography.generateKeyword(alphabet, options);
@@ -104,14 +104,14 @@ public abstract class Cryptography {
         return keyword;
     }
 
-    private static List<Character> parseOrGenerateAlphabet(final Map<Flag, String> options) throws IOException {
+    private static List<Character> parseOrGenerateAlphabet(final Parameters options) throws IOException {
         return new ParserAndGenerator<List<Character>>(
             Cryptography::parseAlphabet,
             Cryptography::generateAlphabet
         ).getResult(options);
     }
 
-    private static String parseOrGenerateInputText(final List<Character> alphabet, final Map<Flag, String> options)
+    private static String parseOrGenerateInputText(final List<Character> alphabet, final Parameters options)
     throws IOException {
         return new ParserAndGenerator<String>(
             (reader, flags) -> Cryptography.parseInputText(reader, alphabet, flags),
@@ -119,7 +119,7 @@ public abstract class Cryptography {
         ).getResult(options);
     }
 
-    private static String parseOrGenerateKeyword(final List<Character> alphabet, final Map<Flag, String> options)
+    private static String parseOrGenerateKeyword(final List<Character> alphabet, final Parameters options)
     throws IOException {
         return new ParserAndGenerator<String>(
             (reader, flags) -> Cryptography.parseKeyword(reader, alphabet, flags),

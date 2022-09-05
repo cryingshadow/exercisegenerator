@@ -276,7 +276,7 @@ public abstract class GeometricAlgorithms {
         return (GeometricAlgorithms.polarAngle(firstSegment, secondSegment));
     }
 
-    private static ArrayList<Pair<Double, Double>> parseOrGenerateConvexHullProblem(final Map<Flag, String> options) {
+    private static ArrayList<Pair<Double, Double>> parseOrGenerateConvexHullProblem(final Parameters options) {
         String line = null;
         final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
         if (options.containsKey(Flag.SOURCE)) {

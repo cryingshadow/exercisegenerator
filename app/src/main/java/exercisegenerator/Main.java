@@ -94,7 +94,7 @@ public class Main {
             System.out.println("The number of arguments must be even (flag/value pairs)!");
             return;
         }
-        final Map<Flag, String> options;
+        final Parameters options;
         try {
             options = Main.parseFlags(args);
         } catch (final Exception e) {
@@ -131,15 +131,15 @@ public class Main {
         writer.write(Main.lineSeparator);
     }
 
-    private static BufferedWriter getExerciseWriter(final Map<Flag, String> options) throws IOException {
+    private static BufferedWriter getExerciseWriter(final Parameters options) throws IOException {
         return Main.getWriterByFlag(options, Flag.EXERCISE);
     }
 
-    private static BufferedWriter getSolutionWriter(final Map<Flag, String> options) throws IOException {
+    private static BufferedWriter getSolutionWriter(final Parameters options) throws IOException {
         return Main.getWriterByFlag(options, Flag.TARGET);
     }
 
-    private static BufferedWriter getWriterByFlag(final Map<Flag, String> options, final Flag flag) throws IOException {
+    private static BufferedWriter getWriterByFlag(final Parameters options, final Flag flag) throws IOException {
         return
             new BufferedWriter(
                 options.containsKey(flag) ?
@@ -186,8 +186,8 @@ public class Main {
      * @return A map from Flags to their values parsed from the program arguments.
      * @throws Exception If the program arguments are not of the desired form.
      */
-    private static Map<Flag, String> parseFlags(final String[] args) throws Exception {
-        final Map<Flag, String> res = new LinkedHashMap<Flag, String>();
+    private static Parameters parseFlags(final String[] args) throws Exception {
+        final Parameters res = new Parameters();
         outer: for (int i = 0; i < args.length - 1; i += 2) {
             final String option = args[i];
             for (final Flag flag : Flag.values()) {

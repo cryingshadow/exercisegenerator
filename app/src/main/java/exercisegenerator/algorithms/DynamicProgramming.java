@@ -476,7 +476,7 @@ public abstract class DynamicProgramming {
     }
 
     private static Pair<Pair<Integer[], Integer[]>, Integer> parseOrGenerateKnapsackProblem(
-        final Map<Flag, String> options
+        final Parameters options
     ) {
         Integer[] weights = null;
         Integer[] values = null;
@@ -599,7 +599,7 @@ public abstract class DynamicProgramming {
             );
     }
 
-    private static Pair<String, String> parseOrGenerateLCSProblem(final Map<Flag, String> options) {
+    private static Pair<String, String> parseOrGenerateLCSProblem(final Parameters options) {
         String wordA = null;
         String wordB = null;
         if (options.containsKey(Flag.SOURCE)) {

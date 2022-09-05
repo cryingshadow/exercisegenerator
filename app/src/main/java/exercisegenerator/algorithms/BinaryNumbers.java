@@ -383,7 +383,7 @@ public class BinaryNumbers {
         result.add(sign);
     }
 
-    private static boolean algorithmUsesOnesComplement(final Map<Flag, String> options) {
+    private static boolean algorithmUsesOnesComplement(final Parameters options) {
         switch (Algorithm.forName(options.get(Flag.ALGORITHM)).get()) {
         case TO_ONES_COMPLEMENT:
         case FROM_ONES_COMPLEMENT:
@@ -397,7 +397,7 @@ public class BinaryNumbers {
         final AlgorithmInput input,
         final String exerciseText,
         final Function<T, SolvedBinaryTask> algorithm,
-        final CheckedFunction<Map<Flag, String>, List<T>, IOException> parserOrGenerator,
+        final CheckedFunction<Parameters, List<T>, IOException> parserOrGenerator,
         final Function<SolvedBinaryTask, String> toTaskText,
         final Function<SolvedBinaryTask, List<? extends ItemWithTikZInformation<?>>> toSolution,
         final Function<List<SolvedBinaryTask>, Integer> toContentLength
@@ -507,7 +507,7 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static List<BitStringComplementTask> generateBitStringComplementTasks(final Map<Flag, String> options) {
+    private static List<BitStringComplementTask> generateBitStringComplementTasks(final Parameters options) {
         final Random gen = new Random();
         final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
         final int bitLength = BinaryNumbers.getBitLength(options);
@@ -518,7 +518,7 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static List<BitStringFloatTask> generateBitStringFloatTasks(final Map<Flag, String> options) {
+    private static List<BitStringFloatTask> generateBitStringFloatTasks(final Parameters options) {
         final Random gen = new Random();
         final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
         final int exponentLength = BinaryNumbers.getExponentLength(options);
@@ -536,7 +536,7 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static List<NumberComplementTask> generateNumberComplementTasks(final Map<Flag, String> options) {
+    private static List<NumberComplementTask> generateNumberComplementTasks(final Parameters options) {
         final Random gen = new Random();
         final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
         final int bitLength = BinaryNumbers.getBitLength(options);
@@ -553,7 +553,7 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static List<NumberFloatTask> generateNumberFloatTasks(final Map<Flag, String> options) {
+    private static List<NumberFloatTask> generateNumberFloatTasks(final Parameters options) {
         final Random gen = new Random();
         final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
         final int exponentLength = BinaryNumbers.getExponentLength(options);
@@ -588,7 +588,7 @@ public class BinaryNumbers {
         return number;
     }
 
-    private static int generateNumOfTasks(final Map<Flag, String> options, final Random gen) {
+    private static int generateNumOfTasks(final Parameters options, final Random gen) {
         if (options.containsKey(Flag.LENGTH)) {
             return Integer.parseInt(options.get(Flag.LENGTH));
         }
@@ -600,7 +600,7 @@ public class BinaryNumbers {
         return String.format("%d,%d", gen.nextInt(2 * limit - 1) - limit + 1, gen.nextInt(100000));
     }
 
-    private static int getBitLength(final Map<Flag, String> options) {
+    private static int getBitLength(final Parameters options) {
         return Integer.parseInt(options.get(Flag.CAPACITY));
     }
 
@@ -608,7 +608,7 @@ public class BinaryNumbers {
         return ((int)Math.pow(2, exponentLength - 1)) - 1;
     }
 
-    private static int getExponentLength(final Map<Flag, String> options) {
+    private static int getExponentLength(final Parameters options) {
         return Integer.parseInt(options.get(Flag.DEGREE));
     }
 
@@ -621,7 +621,7 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static int getMantissaLength(final Map<Flag, String> options) {
+    private static int getMantissaLength(final Parameters options) {
         return Integer.parseInt(options.get(Flag.CAPACITY));
     }
 
@@ -670,7 +670,7 @@ public class BinaryNumbers {
 
     private static List<BitStringComplementTask> parseBitStringComplementTasks(
         final BufferedReader reader,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         return Arrays.stream(reader.readLine().split(";"))
             .map(bitstring -> new BitStringComplementTask(BitString.parse(bitstring)))
@@ -679,7 +679,7 @@ public class BinaryNumbers {
 
     private static List<BitStringFloatTask> parseBitStringFloatTasks(
         final BufferedReader reader,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         final int exponentLength = BinaryNumbers.getExponentLength(options);
         final int mantissaLength = BinaryNumbers.getMantissaLength(options);
@@ -690,7 +690,7 @@ public class BinaryNumbers {
 
     private static List<NumberComplementTask> parseNumberComplementTasks(
         final BufferedReader reader,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         final int bitLength = BinaryNumbers.getBitLength(options);
         return Arrays.stream(reader.readLine().split(";"))
@@ -700,7 +700,7 @@ public class BinaryNumbers {
 
     private static List<NumberFloatTask> parseNumberFloatTasks(
         final BufferedReader reader,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         final int exponentLength = BinaryNumbers.getExponentLength(options);
         final int mantissaLength = BinaryNumbers.getMantissaLength(options);
@@ -717,7 +717,7 @@ public class BinaryNumbers {
     }
 
     private static List<BitStringComplementTask> parseOrGenerateBitStringComplementTasks(
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         return new ParserAndGenerator<List<BitStringComplementTask>>(
             BinaryNumbers::parseBitStringComplementTasks,
@@ -726,7 +726,7 @@ public class BinaryNumbers {
     }
 
     private static List<BitStringFloatTask> parseOrGenerateBitStringFloatTasks(
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         return new ParserAndGenerator<List<BitStringFloatTask>>(
             BinaryNumbers::parseBitStringFloatTasks,
@@ -734,7 +734,7 @@ public class BinaryNumbers {
         ).getResult(options);
     }
 
-    private static List<NumberComplementTask> parseOrGenerateNumberComplementTasks(final Map<Flag, String> options)
+    private static List<NumberComplementTask> parseOrGenerateNumberComplementTasks(final Parameters options)
     throws IOException {
         return new ParserAndGenerator<List<NumberComplementTask>>(
             BinaryNumbers::parseNumberComplementTasks,
@@ -742,7 +742,7 @@ public class BinaryNumbers {
         ).getResult(options);
     }
 
-    private static List<NumberFloatTask> parseOrGenerateNumberFloatTasks(final Map<Flag, String> options)
+    private static List<NumberFloatTask> parseOrGenerateNumberFloatTasks(final Parameters options)
     throws IOException {
         return new ParserAndGenerator<List<NumberFloatTask>>(
             BinaryNumbers::parseNumberFloatTasks,

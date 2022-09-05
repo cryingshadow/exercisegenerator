@@ -649,7 +649,7 @@ public enum Algorithm {
         return input.options.containsKey(Flag.EXERCISE) ? Optional.of(input.exerciseWriter) : Optional.empty();
     }
 
-    public static PreprintMode parsePreprintMode(final Map<Flag, String> options) throws Exception {
+    public static PreprintMode parsePreprintMode(final Parameters options) throws Exception {
         if (options.containsKey(Flag.PREPRINT_MODE)) {
             switch (options.get(Flag.PREPRINT_MODE)) {
                 case "always":

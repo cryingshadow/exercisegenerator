@@ -68,7 +68,7 @@ public abstract class CodingAlgorithms {
         return result;
     }
 
-    private static String generateSourceText(final Map<Flag, String> options) {
+    private static String generateSourceText(final Parameters options) {
         final Random gen = new Random();
         final int alphabetSize = CodingAlgorithms.parseOrGenerateAlphabetSize(options, gen);
         final int textLength = CodingAlgorithms.parseOrGenerateTextLength(options, gen);
@@ -80,7 +80,7 @@ public abstract class CodingAlgorithms {
         return result.toString();
     }
 
-    private static String generateTargetText(final Map<Character, String> codeBook, final Map<Flag, String> options) {
+    private static String generateTargetText(final Map<Character, String> codeBook, final Parameters options) {
         final Random gen = new Random();
         final int length = CodingAlgorithms.parseOrGenerateTextLength(options, gen);
         final StringBuilder result = new StringBuilder();
@@ -91,7 +91,7 @@ public abstract class CodingAlgorithms {
         return result.toString();
     }
 
-    private static Map<Character, String> parseCodeBook(final Map<Flag, String> options) {
+    private static Map<Character, String> parseCodeBook(final Parameters options) {
         return Arrays.stream(options.get(Flag.OPERATIONS).split(","))
             .map(entry -> {
                 final String[] assignment = entry.split(":");
@@ -105,26 +105,26 @@ public abstract class CodingAlgorithms {
             }).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
-    private static String parseInputText(final BufferedReader reader, final Map<Flag, String> options)
+    private static String parseInputText(final BufferedReader reader, final Parameters options)
     throws IOException {
         return reader.readLine();
     }
 
-    private static int parseOrGenerateAlphabetSize(final Map<Flag, String> options, final Random gen) {
+    private static int parseOrGenerateAlphabetSize(final Parameters options, final Random gen) {
         if (options.containsKey(Flag.DEGREE)) {
             return Integer.parseInt(options.get(Flag.DEGREE));
         }
         return gen.nextInt(6) + 5;
     }
 
-    private static String parseOrGenerateSourceText(final Map<Flag, String> options) throws IOException {
+    private static String parseOrGenerateSourceText(final Parameters options) throws IOException {
         return new ParserAndGenerator<String>(
             CodingAlgorithms::parseInputText,
             CodingAlgorithms::generateSourceText
         ).getResult(options);
     }
 
-    private static List<Character> parseOrGenerateTargetAlphabet(final Map<Flag, String> options) throws IOException {
+    private static List<Character> parseOrGenerateTargetAlphabet(final Parameters options) throws IOException {
         if (options.containsKey(Flag.OPERATIONS)) {
             return options.get(Flag.OPERATIONS).chars().mapToObj(c -> (char)c).toList();
         }
@@ -133,7 +133,7 @@ public abstract class CodingAlgorithms {
 
     private static String parseOrGenerateTargetText(
         final Map<Character, String> codeBook,
-        final Map<Flag, String> options
+        final Parameters options
     ) throws IOException {
         return new ParserAndGenerator<String>(
             CodingAlgorithms::parseInputText,
@@ -141,7 +141,7 @@ public abstract class CodingAlgorithms {
         ).getResult(options);
     }
 
-    private static int parseOrGenerateTextLength(final Map<Flag, String> options, final Random gen) {
+    private static int parseOrGenerateTextLength(final Parameters options, final Random gen) {
         if (options.containsKey(Flag.LENGTH)) {
             return Integer.parseInt(options.get(Flag.LENGTH));
         }
