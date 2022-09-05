@@ -638,8 +638,8 @@ public abstract class GraphAlgorithms {
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
-        final int tableCount = Main.STUDENT_MODE ? 1 : 2;
-        final int tableMaxWidth = Main.STUDENT_MODE ? 10 : 0;
+        final int tableCount = 1; // TODO had a choice for 2 when not in student mode
+        final int tableMaxWidth = 10; // TODO rename, current name does not reflect usage; had a choice for 0 when not in student mode
         final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
         final int size = nodes.size();
         final ArrayList<String[][]> exercises = new ArrayList<String[][]>();
@@ -1226,17 +1226,14 @@ public abstract class GraphAlgorithms {
         GraphAlgorithms.gridGraph(input, "sharir");
     }
 
-    public static void topologicsort(final AlgorithmInput input) {
+    public static void topologicsort(final AlgorithmInput input) throws IOException {
         boolean fail;
         final GridGraph graph = new GridGraph();
         final int[][] sparseAdjacencyMatrix = GraphAlgorithms.parseOrGenerateGridGraph(input.options);
         do {
             try{
                 fail = false;
-                boolean writeText = true;
-                if (input.options.containsKey(Flag.SOURCE) || !Main.STUDENT_MODE) {
-                    writeText = false;
-                }
+                final boolean writeText = true; // TODO check whether this can be removed
                 GraphAlgorithms.gridGraph(
                     graph,
                     sparseAdjacencyMatrix,
@@ -1555,6 +1552,125 @@ public abstract class GraphAlgorithms {
         }
     }
 
+    private static FlowNetworkInput<String, FlowPair> generateFlowNetwork(final Parameters options) {
+        final Random gen = new Random();
+        final int numOfNodes;
+        if (options.containsKey(Flag.LENGTH)) {
+            numOfNodes = Integer.parseInt(options.get(Flag.LENGTH));
+        } else {
+            numOfNodes = gen.nextInt(16) + 3;
+        }
+        final FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
+        res.graph = GraphAlgorithms.createRandomFlowNetwork(gen, numOfNodes);
+        res.source = res.graph.getNodesWithLabel("s").iterator().next();
+        res.sink = res.graph.getNodesWithLabel("t").iterator().next();
+        res.multiplier = 1.0;
+        res.twocolumns = false;
+        return res;
+    }
+
+    private static Pair<Graph<String, Integer>, Node<String>> generateGraph(final Parameters options) {
+        final String alg = options.get(Flag.ALGORITHM);
+        final Random gen = new Random();
+        final int numOfNodes;
+        if (options.containsKey(Flag.LENGTH)) {
+            numOfNodes = Integer.parseInt(options.get(Flag.LENGTH));
+        } else {
+            numOfNodes = gen.nextInt(16) + 5;
+        }
+        final Graph<String, Integer> graph =
+            GraphAlgorithms.createRandomGraph(
+                gen,
+                numOfNodes,
+                GraphAlgorithms.UNDIRECTED_GRAPH_ALGORITHMS.contains(alg)
+            );
+        return new Pair<Graph<String, Integer>, Node<String>>(
+            graph,
+            GraphAlgorithms.parseOrGenerateStartNode(graph, options)
+        );
+    }
+
+    private static int[][] generateGridGraph(final Parameters options) {
+        final GridGraph graph = new GridGraph();
+        final int[][] sparseAdjacencyMatrix =
+            new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
+        final String errorMessage =
+            new String(
+                "You need to provide "
+                + graph.numOfNodesInSparseAdjacencyMatrix()
+                + " lines and each line has to carry "
+                + graph.numOfNeighborsInSparseAdjacencyMatrix()
+                + " numbers being either 0, -1, 1 or 2, which are separated by ','!\n"
+                + "Example:\n"
+                + "x,0,0,x,x,x\nx,0,0,0,0,x\nx,0,0,0,0,x\nx,x,0,0,0,x\n0,2,0,1,1,0\n0,0,2,1,1,0\n0,0,0,0,0,0\n2,-1,0,x,x,x\n0,1,2,1,-1,1\n"
+                + "0,0,0,0,0,0\n0,x,0,0,0,0\n1,2,0,0,0,1\n0,0,0,0,0,0\n0,0,0,0,0,0\n0,0,x,x,x,x\n0,0,x,x,0,0\n0,0,x,x,0,0\n0,x,x,x,0,0\n\n"
+                + "where x can be anything and will not affect the resulting graph."
+            );
+        final Random gen = new Random();
+        if (Algorithm.SHARIR.name.equals(options.get(Flag.ALGORITHM))) {
+            final int[] numbers = new int[18];
+            for (int i = 0; i < numbers.length; i++) {
+                final int rndNumber = gen.nextInt(9);
+                if (rndNumber < 3) {
+                    numbers[i] = -1;
+                } else if (rndNumber < 4) {
+                    numbers[i] = 0;
+                } else if (rndNumber < 7) {
+                    numbers[i] = 1;
+                } else {
+                    numbers[i] = 2;
+                }
+            }
+            sparseAdjacencyMatrix[4][1] = numbers[0];
+            sparseAdjacencyMatrix[4][2] = numbers[1];
+
+            sparseAdjacencyMatrix[5][2] = numbers[2];
+            sparseAdjacencyMatrix[5][3] = numbers[3];
+            sparseAdjacencyMatrix[5][4] = numbers[4];
+
+            sparseAdjacencyMatrix[8][0] = numbers[5];
+            sparseAdjacencyMatrix[8][1] = numbers[6];
+            sparseAdjacencyMatrix[8][2] = numbers[7];
+            sparseAdjacencyMatrix[8][4] = numbers[8];
+            sparseAdjacencyMatrix[8][5] = numbers[9];
+
+            sparseAdjacencyMatrix[9][0] = numbers[10];
+            sparseAdjacencyMatrix[9][2] = numbers[11];
+            sparseAdjacencyMatrix[9][3] = numbers[12];
+            sparseAdjacencyMatrix[9][4] = numbers[13];
+
+            sparseAdjacencyMatrix[12][0] = numbers[14];
+            sparseAdjacencyMatrix[12][1] = numbers[15];
+            sparseAdjacencyMatrix[12][4] = numbers[16];
+            sparseAdjacencyMatrix[12][5] = numbers[17];
+        } else {
+            for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
+                for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
+                    if (graph.isNecessarySparseMatrixEntry(i,j) ) {
+                        final int rndNumber = gen.nextInt(18);
+                        int entry = 0;
+                        if (rndNumber >= 10 && rndNumber < 13) {
+                            entry = -1;
+                        } else if (rndNumber >= 13 && rndNumber < 16) {
+                            entry = 1;
+                        } else if (rndNumber >= 16) {
+                            entry = 2;
+                        }
+                        if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                            sparseAdjacencyMatrix[i][j] = entry;
+                        } else {
+                            System.out.println(errorMessage);
+                            return null;
+                        }
+                    } else {
+                        sparseAdjacencyMatrix[i][j] = 0;
+                    }
+                }
+            }
+        }
+        return sparseAdjacencyMatrix;
+    }
+
     private static void gridGraph(final AlgorithmInput input, final String name) throws IOException {
         GraphAlgorithms.gridGraph(
             new GridGraph(),
@@ -1684,10 +1800,10 @@ public abstract class GraphAlgorithms {
      */
     private static Set<String> initGraphAlgorithmsWithStartNode() {
         final Set<String> res = new LinkedHashSet<String>();
-        if (!Main.STUDENT_MODE || Algorithm.DIJKSTRA.enabled) {
+        if (Algorithm.DIJKSTRA.enabled) {
             res.add(Algorithm.DIJKSTRA.name);
         }
-        if (!Main.STUDENT_MODE || Algorithm.PRIM.enabled) {
+        if (Algorithm.PRIM.enabled) {
             res.add(Algorithm.PRIM.name);
         }
         return res;
@@ -1698,62 +1814,36 @@ public abstract class GraphAlgorithms {
      */
     private static Set<String> initUndirectedGraphAlgorithms() {
         final Set<String> res = new LinkedHashSet<String>();
-        if (!Main.STUDENT_MODE || Algorithm.PRIM.enabled) {
+        if (Algorithm.PRIM.enabled) {
             res.add(Algorithm.PRIM.name);
         }
         return res;
     }
 
-    private static FlowNetworkInput<String, FlowPair> parseOrGenerateFlowNetwork(final Parameters options) {
+    private static FlowNetworkInput<String, FlowPair> parseFlowNetwork(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
         final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
-        if (options.containsKey(Flag.SOURCE)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
-            } catch (final IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        } else if (Main.STUDENT_MODE) {
-            final Random gen = new Random();
-            final int numOfNodes;
-            if (options.containsKey(Flag.LENGTH)) {
-                numOfNodes = Integer.parseInt(options.get(Flag.LENGTH));
-            } else {
-                numOfNodes = gen.nextInt(16) + 3;
-            }
-            final FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
-            res.graph = GraphAlgorithms.createRandomFlowNetwork(gen, numOfNodes);
-            res.source = res.graph.getNodesWithLabel("s").iterator().next();
-            res.sink = res.graph.getNodesWithLabel("t").iterator().next();
-            res.multiplier = 1.0;
-            res.twocolumns = false;
-            return res;
-        } else {
-            try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
-                graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
-            } catch (final IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
+        graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
         Node<String> source = null;
         Node<String> sink = null;
         double multiplier = 1.0;
         boolean twocolumns = false;
         if (options.containsKey(Flag.OPERATIONS)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
-                Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
+            try (BufferedReader operationsReader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
+                Set<Node<String>> nodes = graph.getNodesWithLabel(operationsReader.readLine().trim());
                 if (!nodes.isEmpty()) {
                     source = nodes.iterator().next();
                 }
-                nodes = graph.getNodesWithLabel(reader.readLine().trim());
+                nodes = graph.getNodesWithLabel(operationsReader.readLine().trim());
                 if (!nodes.isEmpty()) {
                     sink = nodes.iterator().next();
                 }
-                final String mult = reader.readLine();
+                final String mult = operationsReader.readLine();
                 if (mult != null && !"".equals(mult.trim())) {
                     multiplier = Double.parseDouble(mult);
-                    final String twocols = reader.readLine();
+                    final String twocols = operationsReader.readLine();
                     if (twocols != null && !"".equals(twocols.trim())) {
                         twocolumns = Boolean.parseBoolean(twocols);
                     }
@@ -1772,71 +1862,23 @@ public abstract class GraphAlgorithms {
         return res;
     }
 
-    private static Pair<Graph<String, Integer>, Node<String>> parseOrGenerateGraph(final Parameters options) {
-        final Graph<String, Integer> graph;
-        final String alg = options.get(Flag.ALGORITHM);
-        if (options.containsKey(Flag.SOURCE)) {
-            graph = new Graph<String, Integer>();
-            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
-            } catch (final IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        } else if (Main.STUDENT_MODE) {
-            final Random gen = new Random();
-            final int numOfNodes;
-            if (options.containsKey(Flag.LENGTH)) {
-                numOfNodes = Integer.parseInt(options.get(Flag.LENGTH));
-            } else {
-                numOfNodes = gen.nextInt(16) + 5;
-            }
-            graph =
-                GraphAlgorithms.createRandomGraph(
-                    gen,
-                    numOfNodes,
-                    GraphAlgorithms.UNDIRECTED_GRAPH_ALGORITHMS.contains(alg)
-                );
-        } else {
-            graph = new Graph<String, Integer>();
-            try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
-                graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
-            } catch (final IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-        Node<String> node = null;
-        if (options.containsKey(Flag.OPERATIONS)) {
-            final String operations = options.get(Flag.OPERATIONS);
-            try (
-                BufferedReader reader =
-                    new BufferedReader(
-                        options.containsKey(Flag.INPUT) ? new StringReader(operations) : new FileReader(operations)
-                    )
-            ) {
-                final Set<Node<String>> nodes = graph.getNodesWithLabel(reader.readLine().trim());
-                if (!nodes.isEmpty()) {
-                    node = nodes.iterator().next();
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        } else if (Main.STUDENT_MODE && GraphAlgorithms.GRAPH_ALGORITHMS_WITH_START_NODE.contains(alg)) {
-            final Set<Node<String>> nodes = graph.getNodesWithLabel("A");
-            if (!nodes.isEmpty()) {
-                node = nodes.iterator().next();
-            }
-        }
-        return new Pair<Graph<String, Integer>, Node<String>>(graph, node);
+    private static Pair<Graph<String, Integer>, Node<String>> parseGraph(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        final Graph<String, Integer> graph = new Graph<String, Integer>();
+        graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
+        return new Pair<Graph<String, Integer>, Node<String>>(
+            graph,
+            GraphAlgorithms.parseOrGenerateStartNode(graph, options)
+        );
     }
 
-    private static int[][] parseOrGenerateGridGraph(final Parameters options) {
+    private static int[][] parseGridGraph(final BufferedReader reader, final Parameters options) throws IOException {
         final GridGraph graph = new GridGraph();
         final int[][] sparseAdjacencyMatrix =
             new int[graph.numOfNodesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
-        String errorMessage =
+        final String errorMessage =
             new String(
                 "You need to provide "
                 + graph.numOfNodesInSparseAdjacencyMatrix()
@@ -1848,138 +1890,84 @@ public abstract class GraphAlgorithms {
                 + "0,0,0,0,0,0\n0,x,0,0,0,0\n1,2,0,0,0,1\n0,0,0,0,0,0\n0,0,0,0,0,0\n0,0,x,x,x,x\n0,0,x,x,0,0\n0,0,x,x,0,0\n0,x,x,x,0,0\n\n"
                 + "where x can be anything and will not affect the resulting graph."
             );
-        if (options.containsKey(Flag.SOURCE)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                String line = null;
-                int rowNum = 0;
-                while ((line = reader.readLine()) != null) {
-                    final String[] nodes = line.split(",");
-                    if (nodes.length != graph.numOfNeighborsInSparseAdjacencyMatrix()) {
-                        System.out.println(errorMessage);
-                        return null;
-                    }
-                    for (int i = 0; i < graph.numOfNeighborsInSparseAdjacencyMatrix(); i++) {
-                        if (graph.isNecessarySparseMatrixEntry(rowNum,i) ) {
-                            final int entry = Integer.parseInt(nodes[i].trim());
-                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
-                                sparseAdjacencyMatrix[rowNum][i] = entry;
-                            } else {
-                                System.out.println(errorMessage);
-                                return null;
-                            }
-                        } else {
-                            sparseAdjacencyMatrix[rowNum][i] = 0;
-                        }
-                    }
-                    rowNum++;
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else if (Main.STUDENT_MODE) {
-            final Random gen = new Random();
-            if (Algorithm.SHARIR.name.equals(options.get(Flag.ALGORITHM))) {
-                final int[] numbers = new int[18];
-                for (int i = 0; i < numbers.length; i++) {
-                    final int rndNumber = gen.nextInt(9);
-                    if (rndNumber < 3) {
-                        numbers[i] = -1;
-                    } else if (rndNumber < 4) {
-                        numbers[i] = 0;
-                    } else if (rndNumber < 7) {
-                        numbers[i] = 1;
-                    } else {
-                        numbers[i] = 2;
-                    }
-                }
-                sparseAdjacencyMatrix[4][1] = numbers[0];
-                sparseAdjacencyMatrix[4][2] = numbers[1];
-
-                sparseAdjacencyMatrix[5][2] = numbers[2];
-                sparseAdjacencyMatrix[5][3] = numbers[3];
-                sparseAdjacencyMatrix[5][4] = numbers[4];
-
-                sparseAdjacencyMatrix[8][0] = numbers[5];
-                sparseAdjacencyMatrix[8][1] = numbers[6];
-                sparseAdjacencyMatrix[8][2] = numbers[7];
-                sparseAdjacencyMatrix[8][4] = numbers[8];
-                sparseAdjacencyMatrix[8][5] = numbers[9];
-
-                sparseAdjacencyMatrix[9][0] = numbers[10];
-                sparseAdjacencyMatrix[9][2] = numbers[11];
-                sparseAdjacencyMatrix[9][3] = numbers[12];
-                sparseAdjacencyMatrix[9][4] = numbers[13];
-
-                sparseAdjacencyMatrix[12][0] = numbers[14];
-                sparseAdjacencyMatrix[12][1] = numbers[15];
-                sparseAdjacencyMatrix[12][4] = numbers[16];
-                sparseAdjacencyMatrix[12][5] = numbers[17];
-            } else {
-                for (int i = 0; i < graph.numOfNodesInSparseAdjacencyMatrix(); i++) {
-                    for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
-                        if (graph.isNecessarySparseMatrixEntry(i,j) ) {
-                            final int rndNumber = gen.nextInt(18);
-                            int entry = 0;
-                            if (rndNumber >= 10 && rndNumber < 13) {
-                                entry = -1;
-                            } else if (rndNumber >= 13 && rndNumber < 16) {
-                                entry = 1;
-                            } else if (rndNumber >= 16) {
-                                entry = 2;
-                            }
-                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
-                                sparseAdjacencyMatrix[i][j] = entry;
-                            } else {
-                                System.out.println(errorMessage);
-                                return null;
-                            }
-                        } else {
-                            sparseAdjacencyMatrix[i][j] = 0;
-                        }
-                    }
-                }
-            }
-        } else {
-            errorMessage =
-                new String(
-                    "You need to provide "
-                    + graph.numOfNodesInSparseAdjacencyMatrix()
-                    + " sections, which are separated by '|' and each section has to carry "
-                    + graph.numOfNeighborsInSparseAdjacencyMatrix()
-                    + " numbers being either 0, -1, 1 or 2, which are separated by ','!\n"
-                    + "Example:\n"
-                    + "x,0,0,x,x,x|x,0,0,0,0,x|x,0,0,0,0,x|x,x,0,0,0,x|0,2,0,1,1,0|0,0,2,1,1,0|0,0,0,0,0,0|2,-1,0,x,x,x|0,1,2,1,-1,1|"
-                    + "0,0,0,0,0,0|0,x,0,0,0,0|1,2,0,0,0,1|0,0,0,0,0,0|0,0,0,0,0,0|0,0,x,x,x,x|0,0,x,x,0,0|0,0,x,x,0,0|0,x,x,x,0,0\n\n"
-                    + "where x can be anything and will not affect the resulting graph."
-                );
-            final String[] nodes = options.get(Flag.INPUT).split("|");
-            if (nodes.length != graph.numOfNodesInSparseAdjacencyMatrix()) {
+        String line = null;
+        int rowNum = 0;
+        while ((line = reader.readLine()) != null) {
+            final String[] nodes = line.split(",");
+            if (nodes.length != graph.numOfNeighborsInSparseAdjacencyMatrix()) {
                 System.out.println(errorMessage);
                 return null;
             }
-            for (int i = 0; i < nodes.length; i++) {
-                final String[] neighbors = nodes[i].split(",");
-                if (neighbors.length != graph.numOfNeighborsInSparseAdjacencyMatrix()) {
-                    System.out.println(errorMessage);
-                    return null;
-                }
-                for (int j = 0; j < neighbors.length; j++) {
-                    if (graph.isNecessarySparseMatrixEntry(i,j) ) {
-                        final int entry = Integer.parseInt(neighbors[j].trim());
-                        if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
-                            sparseAdjacencyMatrix[i][j] = entry;
-                        } else {
-                            System.out.println(errorMessage);
-                            return null;
-                        }
+            for (int i = 0; i < graph.numOfNeighborsInSparseAdjacencyMatrix(); i++) {
+                if (graph.isNecessarySparseMatrixEntry(rowNum,i) ) {
+                    final int entry = Integer.parseInt(nodes[i].trim());
+                    if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
+                        sparseAdjacencyMatrix[rowNum][i] = entry;
                     } else {
-                        sparseAdjacencyMatrix[i][j] = 0;
+                        System.out.println(errorMessage);
+                        return null;
                     }
+                } else {
+                    sparseAdjacencyMatrix[rowNum][i] = 0;
                 }
             }
+            rowNum++;
         }
         return sparseAdjacencyMatrix;
+    }
+
+    private static FlowNetworkInput<String, FlowPair> parseOrGenerateFlowNetwork(final Parameters options)
+    throws IOException {
+        return new ParserAndGenerator<FlowNetworkInput<String, FlowPair>>(
+            GraphAlgorithms::parseFlowNetwork,
+            GraphAlgorithms::generateFlowNetwork
+        ).getResult(options);
+    }
+
+    private static Pair<Graph<String, Integer>, Node<String>> parseOrGenerateGraph(final Parameters options)
+    throws IOException {
+        return new ParserAndGenerator<Pair<Graph<String, Integer>, Node<String>>>(
+            GraphAlgorithms::parseGraph,
+            GraphAlgorithms::generateGraph
+        ).getResult(options);
+    }
+
+    private static int[][] parseOrGenerateGridGraph(final Parameters options) throws IOException {
+        return new ParserAndGenerator<int[][]>(
+            GraphAlgorithms::parseGridGraph,
+            GraphAlgorithms::generateGridGraph
+        ).getResult(options);
+    }
+
+    private static Node<String> parseOrGenerateStartNode(final Graph<String, Integer> graph, final Parameters options) {
+        Node<String> node = null;
+        if (options.containsKey(Flag.OPERATIONS)) {
+            final String operations = options.get(Flag.OPERATIONS);
+            try (
+                BufferedReader operationsReader =
+                    new BufferedReader(
+                        options.containsKey(Flag.INPUT) ? new StringReader(operations) : new FileReader(operations)
+                    )
+            ) {
+                final Set<Node<String>> nodes = graph.getNodesWithLabel(operationsReader.readLine().trim());
+                if (!nodes.isEmpty()) {
+                    node = nodes.iterator().next();
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        } else if (
+            !options.containsKey(Flag.SOURCE)
+            && !options.containsKey(Flag.INPUT)
+            && GraphAlgorithms.GRAPH_ALGORITHMS_WITH_START_NODE.contains(options.get(Flag.ALGORITHM))
+        ) {
+            final Set<Node<String>> nodes = graph.getNodesWithLabel("A");
+            if (!nodes.isEmpty()) {
+                node = nodes.iterator().next();
+            }
+        }
+        return node;
     }
 
     /**

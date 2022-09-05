@@ -3,7 +3,6 @@ package exercisegenerator.io;
 import java.io.*;
 import java.util.function.*;
 
-import exercisegenerator.*;
 import exercisegenerator.util.*;
 
 public class ParserAndGenerator<T> {
@@ -25,13 +24,12 @@ public class ParserAndGenerator<T> {
             try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                 return this.parser.apply(reader, options);
             }
-        } else if (Main.STUDENT_MODE) {
-            return this.generator.apply(options);
-        } else {
+        } else if (options.containsKey(Flag.INPUT)) {
             try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
                 return this.parser.apply(reader, options);
             }
         }
+        return this.generator.apply(options);
     }
 
 }

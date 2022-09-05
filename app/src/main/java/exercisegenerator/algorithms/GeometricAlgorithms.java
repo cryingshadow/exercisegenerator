@@ -276,49 +276,46 @@ public abstract class GeometricAlgorithms {
         return (GeometricAlgorithms.polarAngle(firstSegment, secondSegment));
     }
 
-    private static ArrayList<Pair<Double, Double>> parseOrGenerateConvexHullProblem(final Parameters options) {
-        String line = null;
+    private static ArrayList<Pair<Double, Double>> generateConvexHullProblem(final Parameters options) {
         final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
-        if (options.containsKey(Flag.SOURCE)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                while ((line = reader.readLine()) != null) {
-                    line = line.trim();
-                    final String[] splitted = line.split(",");
-                    input.add(
-                        new Pair<Double,Double>(
-                            Double.parseDouble(splitted[0].trim()),
-                            Double.parseDouble(splitted[1].trim())
-                        )
-                    );
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        } else if (Main.STUDENT_MODE) {
-            final Random gen = new Random();
-            final int numOfPoints;
-            if (options.containsKey(Flag.LENGTH)) {
-                numOfPoints = Integer.parseInt(options.get(Flag.LENGTH));
-            } else {
-                numOfPoints = gen.nextInt(16) + 5;
-            }
-            for (int i = 0; i < numOfPoints; ++i) {
-                input.add(new Pair<Double,Double>((double)gen.nextInt(11), (double)gen.nextInt(11)));
-            }
+        final Random gen = new Random();
+        final int numOfPoints;
+        if (options.containsKey(Flag.LENGTH)) {
+            numOfPoints = Integer.parseInt(options.get(Flag.LENGTH));
         } else {
-            final String[] nums = options.get(Flag.INPUT).split(";");
-            for (int i = 0; i < nums.length; ++i) {
-                final String[] splitted = nums[i].split(",");
-                input.add(
-                    new Pair<Double,Double>(
-                        Double.parseDouble(splitted[0].trim()),
-                        Double.parseDouble(splitted[1].trim())
-                    )
-                );
-            }
+            numOfPoints = gen.nextInt(16) + 5;
+        }
+        for (int i = 0; i < numOfPoints; ++i) {
+            input.add(new Pair<Double,Double>((double)gen.nextInt(11), (double)gen.nextInt(11)));
         }
         return input;
+    }
+
+    private static ArrayList<Pair<Double, Double>> parseConvexHullProblem(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        String line = null;
+        final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
+        while ((line = reader.readLine()) != null) {
+            line = line.trim();
+            final String[] splitted = line.split(",");
+            input.add(
+                new Pair<Double,Double>(
+                    Double.parseDouble(splitted[0].trim()),
+                    Double.parseDouble(splitted[1].trim())
+                )
+            );
+        }
+        return input;
+    }
+
+    private static ArrayList<Pair<Double, Double>> parseOrGenerateConvexHullProblem(final Parameters options)
+    throws IOException {
+        return new ParserAndGenerator<ArrayList<Pair<Double, Double>>>(
+            GeometricAlgorithms::parseConvexHullProblem,
+            GeometricAlgorithms::generateConvexHullProblem
+        ).getResult(options);
     }
 
     /**

@@ -26,10 +26,6 @@ public class DSALExercisesTest {
             System.out.println("Path must be specified!");
             return;
         }
-        if (!Main.STUDENT_MODE) {
-            System.out.println("Student mode must be enabled!");
-            return;
-        }
         final String path = args[0];
         final String[] nextArgs = new String[6];
         nextArgs[0] = "-e";

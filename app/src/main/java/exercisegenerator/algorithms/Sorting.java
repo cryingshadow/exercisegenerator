@@ -799,9 +799,10 @@ public abstract class Sorting {
     }
 
     private static int getRows(final Parameters options) {
-        return !Main.STUDENT_MODE && options.containsKey(Flag.LENGTH) ?
-            Integer.parseInt(options.get(Flag.LENGTH)) :
-                0;
+        return (options.containsKey(Flag.SOURCE) || options.containsKey(Flag.INPUT))
+            && options.containsKey(Flag.LENGTH) ?
+                Integer.parseInt(options.get(Flag.LENGTH)) :
+                    0;
     }
 
     private static Integer[] parseArray(final BufferedReader reader, final Parameters options)

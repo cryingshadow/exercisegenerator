@@ -497,6 +497,32 @@ public abstract class TreeAlgorithms {
         assert (tree.isBalanced()) : "AVL tree is not balanced!";
     }
 
+    private static Deque<Pair<Integer, Boolean>> generateTreeValues(final Parameters options) {
+        final int length;
+        final Random gen = new Random();
+        if (options.containsKey(Flag.LENGTH)) {
+            length = Integer.parseInt(options.get(Flag.LENGTH));
+        } else {
+            length = gen.nextInt(16) + 5;
+        }
+        final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
+        final List<Integer> in = new ArrayList<Integer>();
+        for (int i = 0; i < length; i++) {
+            if (
+                (options.containsKey(Flag.VARIANT) && options.get(Flag.VARIANT).equals("1"))
+                || in.isEmpty()
+                || gen.nextInt(3) > 0
+            ) {
+                final int next = gen.nextInt(Main.NUMBER_LIMIT);
+                deque.offer(new Pair<Integer, Boolean>(next, true));
+                in.add(next);
+            } else {
+                deque.offer(new Pair<Integer, Boolean>(in.remove(gen.nextInt(in.size())), false));
+            }
+        }
+        return deque;
+    }
+
     /**
      * @param options The program arguments.
      * @return The operations specified in the operation file or null if no such file is specified in the program
@@ -504,23 +530,20 @@ public abstract class TreeAlgorithms {
      */
     private static Deque<Pair<Integer, Boolean>> parseOrGenerateOperations(final Parameters options) {
         if (!options.containsKey(Flag.OPERATIONS)) {
-            if (Main.STUDENT_MODE) {
-                final Random gen = new Random();
-                final int length = gen.nextInt(20);
-                final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
-                final List<Integer> in = new ArrayList<Integer>();
-                for (int i = 0; i < length; i++) {
-                    if (in.isEmpty() || gen.nextInt(3) > 0) {
-                        final int next = gen.nextInt(Main.NUMBER_LIMIT);
-                        deque.offer(new Pair<Integer, Boolean>(next, true));
-                        in.add(next);
-                    } else {
-                        deque.offer(new Pair<Integer, Boolean>(in.remove(gen.nextInt(in.size())), false));
-                    }
+            final Random gen = new Random();
+            final int length = gen.nextInt(20);
+            final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
+            final List<Integer> in = new ArrayList<Integer>();
+            for (int i = 0; i < length; i++) {
+                if (in.isEmpty() || gen.nextInt(3) > 0) {
+                    final int next = gen.nextInt(Main.NUMBER_LIMIT);
+                    deque.offer(new Pair<Integer, Boolean>(next, true));
+                    in.add(next);
+                } else {
+                    deque.offer(new Pair<Integer, Boolean>(in.remove(gen.nextInt(in.size())), false));
                 }
-                return deque;
             }
-            return new ArrayDeque<Pair<Integer, Boolean>>();
+            return deque;
         }
         String[] nums = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
@@ -541,42 +564,17 @@ public abstract class TreeAlgorithms {
         return deque;
     }
 
-    private static Deque<Pair<Integer, Boolean>> parseOrGenerateTreeValues(final Parameters options) {
-        final String[] nums;
-        if (options.containsKey(Flag.SOURCE)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                nums = reader.readLine().split(",");
-            } catch (final IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else if (Main.STUDENT_MODE) {
-            final int length;
-            final Random gen = new Random();
-            if (options.containsKey(Flag.LENGTH)) {
-                length = Integer.parseInt(options.get(Flag.LENGTH));
-            } else {
-                length = gen.nextInt(16) + 5;
-            }
-            final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
-            final List<Integer> in = new ArrayList<Integer>();
-            for (int i = 0; i < length; i++) {
-                if (
-                    (options.containsKey(Flag.VARIANT) && options.get(Flag.VARIANT).equals("1"))
-                    || in.isEmpty()
-                    || gen.nextInt(3) > 0
-                ) {
-                    final int next = gen.nextInt(Main.NUMBER_LIMIT);
-                    deque.offer(new Pair<Integer, Boolean>(next, true));
-                    in.add(next);
-                } else {
-                    deque.offer(new Pair<Integer, Boolean>(in.remove(gen.nextInt(in.size())), false));
-                }
-            }
-            return deque;
-        } else {
-            nums = options.get(Flag.INPUT).split(",");
-        }
+    private static Deque<Pair<Integer, Boolean>> parseOrGenerateTreeValues(final Parameters options)
+    throws IOException {
+        return new ParserAndGenerator<Deque<Pair<Integer, Boolean>>>(
+            TreeAlgorithms::parseTreeValues,
+            TreeAlgorithms::generateTreeValues
+        ).getResult(options);
+    }
+
+    private static Deque<Pair<Integer, Boolean>> parseTreeValues(final BufferedReader reader, final Parameters options)
+    throws IOException {
+        final String[] nums = reader.readLine().split(",");
         final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
         for (final String num : nums) {
             final String trimmed = num.trim();

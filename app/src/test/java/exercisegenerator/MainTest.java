@@ -240,9 +240,6 @@ public class MainTest {
 
     @Test
     public void decodeHuffman() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         Main.main(
             new String[]{
                 "-a", "fromhuff",
@@ -287,9 +284,6 @@ public class MainTest {
 
     @Test
     public void dijkstra() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         Main.main(
             new String[]{
                 "-a", "dijkstra",
@@ -369,9 +363,6 @@ public class MainTest {
 
     @Test
     public void encodeHuffman() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         Main.main(
             new String[]{
                 "-a", "tohuff",
@@ -457,9 +448,6 @@ public class MainTest {
 
     @Test
     public void fromFloat() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         final int mantisseLength = 4;
         final int exponentLength = 3;
         final BinaryTestCase[] cases =
@@ -489,9 +477,6 @@ public class MainTest {
 
     @Test
     public void fromOnesComplement() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         final int bitLength = 8;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -519,9 +504,6 @@ public class MainTest {
 
     @Test
     public void fromTwosComplement() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         final int bitLength = 5;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -549,9 +531,6 @@ public class MainTest {
 
     @Test
     public void hashing() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         Main.main(
             new String[]{
                 "-a", "hashMultiplicationQuadratic",
@@ -628,9 +607,6 @@ public class MainTest {
 
     @Test
     public void insertionsort() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         Main.main(
             new String[]{"-a", "insertionsort", "-e", MainTest.EX_FILE, "-t", MainTest.SOL_FILE, "-i", "3,5,1,4,2"}
         );
@@ -718,9 +694,6 @@ public class MainTest {
 
     @Test
     public void toFloat() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         final int exponentLength = 3;
         final int mantisseLength = 4;
         final BinaryTestCase[] cases =
@@ -750,9 +723,6 @@ public class MainTest {
 
     @Test
     public void toOnesComplement() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         final int bitLength = 4;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -780,9 +750,6 @@ public class MainTest {
 
     @Test
     public void toTwosComplement() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         final int bitLength = 6;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -810,9 +777,6 @@ public class MainTest {
 
     @Test
     public void vigenereDecode() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         Main.main(
             new String[]{
                 "-a", "fromvigenere",
@@ -853,9 +817,6 @@ public class MainTest {
 
     @Test
     public void vigenereEncode() throws IOException {
-        if (Main.STUDENT_MODE) {
-            return;
-        }
         Main.main(
             new String[]{
                 "-a", "tovigenere",

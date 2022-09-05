@@ -22,11 +22,6 @@ public class Main {
     public static final int NUMBER_LIMIT;
 
     /**
-     * Flag used to turn off some options for the student version.
-     */
-    public static final boolean STUDENT_MODE;
-
-    /**
      * Text version.
      */
     public static final TextVersion TEXT_VERSION;
@@ -43,7 +38,6 @@ public class Main {
 
     static {
         NUMBER_LIMIT = 100;
-        STUDENT_MODE = false;
         TEXT_VERSION = TextVersion.GENERAL;
         HELP = Main.initHelpText();
         Main.lineSeparator = System.lineSeparator();
@@ -56,7 +50,7 @@ public class Main {
         return String.join(
             ", ",
             Arrays.stream(Algorithm.values())
-                .filter(alg -> (!Main.STUDENT_MODE || alg.enabled))
+                .filter(alg -> alg.enabled)
                 .map(alg -> alg.name)
                 .toList()
         );
@@ -109,7 +103,8 @@ public class Main {
             BufferedWriter solutionWriter = Main.getSolutionWriter(options);
             BufferedWriter exerciseWriter = Main.getExerciseWriter(options);
         ) {
-            if (Main.STUDENT_MODE) {
+            final boolean standalone = Main.standalone(options);
+            if (standalone) {
                 Main.printLaTeXBeginning(exerciseWriter, solutionWriter);
             }
             final Optional<Algorithm> algorithm = Algorithm.forName(options.get(Flag.ALGORITHM));
@@ -118,7 +113,7 @@ public class Main {
                 return;
             }
             algorithm.get().algorithm.accept(new AlgorithmInput(exerciseWriter, solutionWriter, options));
-            if (Main.STUDENT_MODE) {
+            if (standalone) {
                 TikZUtils.printLaTeXEnd(exerciseWriter);
                 TikZUtils.printLaTeXEnd(solutionWriter);
             }
@@ -153,11 +148,7 @@ public class Main {
      */
     private static String[] initHelpText() {
         final List<String> text = new ArrayList<String>();
-        text.add(
-            "This is ExerciseCreator version "
-            + Main.VERSION
-            + (Main.STUDENT_MODE ? " (student)." : ".")
-        );
+        text.add(String.format("This is ExerciseCreator version %s.", Main.VERSION));
         text.add(
             "Please read the license contained in this JAR file. By using this software, you agree to this license."
         );
@@ -166,11 +157,9 @@ public class Main {
             + "be followed by exactly one argument:"
         );
         for (final Flag flag : Flag.values()) {
-            if (!Main.STUDENT_MODE || flag.forStudents) {
-                text.add("");
-                text.add(flag.shortName);
-                text.add(flag.docu);
-            }
+            text.add("");
+            text.add(flag.shortName);
+            text.add(flag.docu);
         }
         String[] res = new String[text.size()];
         res = text.toArray(res);
@@ -191,11 +180,6 @@ public class Main {
         outer: for (int i = 0; i < args.length - 1; i += 2) {
             final String option = args[i];
             for (final Flag flag : Flag.values()) {
-                if (Main.STUDENT_MODE) {
-                    if (!flag.forStudents) {
-                        continue;
-                    }
-                }
                 if (!flag.shortName.equals(option)) {
                     continue;
                 }
@@ -223,9 +207,6 @@ public class Main {
         }
         if (!res.containsKey(Flag.ALGORITHM)) {
             throw new Exception("No algorithm specified!");
-        }
-        if (!Main.STUDENT_MODE && !res.containsKey(Flag.SOURCE) && !res.containsKey(Flag.INPUT)) {
-            throw new Exception("No input specified!");
         }
         if (!res.containsKey(Flag.TARGET) && !res.containsKey(Flag.EXERCISE)) {
             throw new Exception(
@@ -264,6 +245,11 @@ public class Main {
                 }
             }
         }
+    }
+
+    private static boolean standalone(final Parameters options) {
+        // TODO create own parameter
+        return !options.containsKey(Flag.SOURCE) && !options.containsKey(Flag.INPUT);
     }
 
 }
