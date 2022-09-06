@@ -29,7 +29,7 @@ public enum Algorithm {
     /**
      * Insertion and deletion in B-trees with int values.
      */
-    BTREE( //TODO extra flag for deletion
+    BTREE(
         "btree",
         IntBTree.NAME_OF_BTREE_WITH_DEGREE_2,
         new String[]{
@@ -369,7 +369,7 @@ public enum Algorithm {
     /**
      * Insertion and deletion in Red-Black-trees with int values.
      */
-    RBTREE( //TODO extra flag for deletion
+    RBTREE(
         "rbtree",
         "Rot-Schwarz-Baum",
         new String[]{

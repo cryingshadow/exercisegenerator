@@ -33,6 +33,13 @@ public abstract class ArrayUtils {
         }
     }
 
+    public static int[] copy(final int[] array) {
+        final int length = array.length;
+        final int[] result = new int[length];
+        System.arraycopy(array, 0, result, 0, length);
+        return result;
+    }
+
     /**
      * Swaps the array elements at indices a and b if both indices are greater than or equal to 0. If one of the
      * indices is negative, this method does nothing. If otherwise one of the indices is bigger than the array length
@@ -41,7 +48,7 @@ public abstract class ArrayUtils {
      * @param a The first index.
      * @param b The second index.
      */
-    public static void swap(final Integer[] array, final int a, final int b) {
+    public static void swap(final int[] array, final int a, final int b) {
         if (a >= 0 && b >= 0) {
             final int store = array[a];
             array[a] = array[b];

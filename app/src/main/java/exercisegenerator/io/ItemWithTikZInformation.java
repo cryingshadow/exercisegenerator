@@ -51,4 +51,25 @@ public class ItemWithTikZInformation<T> {
         this.optionalIndex = optionalIndex;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof ItemWithTikZInformation)) {
+            return false;
+        }
+        final ItemWithTikZInformation<?> other = (ItemWithTikZInformation<?>)o;
+        return
+            this.separateBefore == other.separateBefore
+            && this.marker == other.marker
+            && this.optionalContent.equals(other.optionalContent)
+            && this.optionalIndex.equals(other.optionalIndex);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.optionalContent.hashCode()
+            + this.optionalIndex.hashCode()
+            + (this.separateBefore ? 3 : 0)
+            + (this.marker ? 7 : 0);
+    }
+
 }

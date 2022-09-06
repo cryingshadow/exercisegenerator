@@ -2,6 +2,7 @@ package exercisegenerator.algorithms;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
@@ -46,7 +47,7 @@ public abstract class Sorting {
     /**
      * Flag indicating whether elements equal to the pivot element should end up in the left partition.
      */
-    private static final PartitionMode PARTITION_MODE = PartitionMode.EQUAL_RIGHT;
+    private static final PartitionMode PARTITION_MODE = PartitionMode.EQUAL_RIGHT; // TODO parameterize
 
     public static void bubblesort(final AlgorithmInput input) throws IOException {
         Sorting.sort(
@@ -58,152 +59,24 @@ public abstract class Sorting {
         );
     }
 
-    /**
-     * Sorts the specified array using bubblesort and outputs the solution as a TikZ picture to the specified writer.
-     * @param array The array to sort.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
-     */
-    public static int bubblesort(final Integer[] array, final BufferedWriter writer) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor =
-            TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                array,
-                Optional.empty(),
-                Algorithm.DEFAULT_CONTENT_LENGTH,
-                writer
-            );
-        int res = 0;
+    public static List<List<ItemWithTikZInformation<Integer>>> bubblesort(final int[] initialArray) {
+        final List<List<ItemWithTikZInformation<Integer>>> result =
+            new ArrayList<List<ItemWithTikZInformation<Integer>>>();
+        result.add(Sorting.toTikZItems(initialArray));
+        final int[] array = ArrayUtils.copy(initialArray);
         int length = array.length;
         while (length > 1) {
             int n = 1;
             for (int i = 0; i < length - 1; i++) {
                 if (array[i] > array[i + 1]) {
                     ArrayUtils.swap(array, i, i + 1);
-                    anchor =
-                        TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                            array,
-                            Optional.of(anchor),
-                            Algorithm.DEFAULT_CONTENT_LENGTH,
-                            writer
-                        );
-                    res++;
+                    result.add(Sorting.toTikZItems(array));
                     n = i + 1;
                 }
             }
             length = n;
         }
-        //        for (int i = 0; i < array.length - 1; i++) {
-        //            for (int j = array.length - 1; j > i; j--) {
-        //                if (array[j] < array[j - 1]) {
-        //                    SortingExercise.swap(array, j, j - 1);
-        //                    anchor = SortingExercise.printArray(array, null, null, anchor, writer);
-        //                    res++;
-        //                }
-        //            }
-        //        }
-        TikZUtils.printTikzEnd(writer);
-        return res;
-    }
-
-    /**
-     * Establishes the heap property on the branch starting at index <code>from</code> when interpreting the array up
-     * to index <code>to</code> as a heap by sinking the element at index <code>from</code> as far as necessary.
-     * Moreover, the current state of the array is output to writer after each swap operation.
-     * @param array The array.
-     * @param from The index of the element to sink.
-     * @param to The length of the array part to be interpreted as a heap.
-     * @param anchor The name of the left-most node of the recent row in the TikZ array output.
-     * @param separate Indicates which nodes in the array output should be separated horizontally.
-     * @param writer The writer to send the output to.
-     * @return The number of rows needed for the solution and the name of the left-most node of the most recent row in
-     *         the TikZ array output.
-     * @throws IOException If some error occurs during solution output.
-     */
-    public static Object[] heapify(
-        final Integer[] array,
-        final int from,
-        final int to,
-        final String anchor,
-        final boolean[] separate,
-        final BufferedWriter writer
-    ) throws IOException {
-        int i = from;
-        String newAnchor = anchor;
-        int res = 0;
-        while (i <= to / 2) {
-            int j = 2 * i;
-            if (j < to && array[j] > array[j - 1]) {
-                j++;
-            }
-            if (array[j - 1] <= array[i - 1]) {
-                break;
-            }
-            ArrayUtils.swap(array, j - 1, i - 1);
-            newAnchor =
-                TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                    array,
-                    separate,
-                    Optional.ofNullable(newAnchor),
-                    Algorithm.DEFAULT_CONTENT_LENGTH,
-                    writer
-                );
-            res++;
-            i = j;
-        }
-        return new Object[]{res, newAnchor};
-    }
-
-    /**
-     * Establishes the heap property on the branch starting at index <code>from</code> when interpreting the array up
-     * to index <code>to</code> as a heap by sinking the element at index <code>from</code> as far as necessary.
-     * Moreover, the current state of the array is output both as tree and array to writer after each swap operation.
-     * @param array The array.
-     * @param from The index of the element to sink.
-     * @param to The length of the array part to be interpreted as a heap.
-     * @param separate Indicates which nodes in the array output should be separated horizontally.
-     * @param step The current evaluation step.
-     * @param writer The writer to send the output to.
-     * @return The next evaluation step after this heapification has been performed.
-     * @throws IOException If some error occurs during solution output.
-     */
-    public static int heapifyWithTrees(
-        final Integer[] array,
-        final int from,
-        final int to,
-        final boolean[] separate,
-        final int step,
-        final BufferedWriter writer
-    ) throws IOException {
-        int res = step;
-        int i = from;
-        while (i <= to / 2) {
-            int j = 2 * i;
-            if (j < to && array[j] > array[j - 1]) {
-                j++;
-            }
-            if (array[j - 1] <= array[i - 1]) {
-                break;
-            }
-            ArrayUtils.swap(array, j - 1, i - 1);
-            TikZUtils.printSamePageBeginning(res++, TikZUtils.COL_WIDTH, writer);
-            TikZUtils.printTree(array, to - 1, writer);
-            TikZUtils.printProtectedNewline(writer);
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                array,
-                separate,
-                Optional.empty(),
-                Algorithm.DEFAULT_CONTENT_LENGTH,
-                writer
-            );
-            TikZUtils.printTikzEnd(writer);
-            TikZUtils.printSamePageEnd(writer);
-            TikZUtils.printVerticalSpaceForStep(res, writer);
-            i = j;
-        }
-        return res;
+        return result;
     }
 
     public static void heapsort(final AlgorithmInput input) throws IOException {
@@ -216,59 +89,28 @@ public abstract class Sorting {
         );
     }
 
-    /**
-     * Sorts the specified array using heapsort and outputs the solution as a TikZ picture to the specified writer.
-     * @param array The array to sort.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
-     */
-    public static int heapsort(final Integer[] array, final BufferedWriter writer) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor =
-            TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                array,
-                Optional.empty(),
-                Algorithm.DEFAULT_CONTENT_LENGTH,
-                writer
-            );
-        int res = 0;
+    public static List<List<ItemWithTikZInformation<Integer>>> heapsort(final int[] initialArray) {
+        final List<List<ItemWithTikZInformation<Integer>>> result =
+            new ArrayList<List<ItemWithTikZInformation<Integer>>>();
+        result.add(Sorting.toTikZItems(initialArray));
+        final int[] array = ArrayUtils.copy(initialArray);
         final boolean[] separate = new boolean[array.length - 1];
         Arrays.fill(separate, false);
         for (int i = array.length / 2; i > 0; i--) {
-            final Object[] heapified = Sorting.heapify(array, i, array.length, anchor, separate, writer);
-            res += (Integer)heapified[0];
-            anchor = (String)heapified[1];
+            Sorting.heapify(array, i, array.length, separate, result);
         }
         for (int i = array.length - 1; i > 0; i--) {
             ArrayUtils.swap(array, 0, i);
-            res++;
             if (i < separate.length) {
                 separate[i] = false;
             }
-            if (i > 0) {
+            if (i > 0) { // TODO check whether 1 is better here
                 separate[i - 1] = true;
             }
-            final Object[] heapified =
-                Sorting.heapify(
-                    array,
-                    1,
-                    i,
-                    TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                        array,
-                        separate,
-                        Optional.ofNullable(anchor),
-                        Algorithm.DEFAULT_CONTENT_LENGTH,
-                        writer
-                    ),
-                    separate,
-                    writer
-                );
-            res += (Integer)heapified[0];
-            anchor = (String)heapified[1];
+            result.add(Sorting.toTikZItems(array, separate));
+            Sorting.heapify(array, 1, i, separate, result);
         }
-        TikZUtils.printTikzEnd(writer);
-        return res;
+        return result;
     }
 
     public static void heapsortWithTrees(final AlgorithmInput input) throws IOException {
@@ -277,63 +119,8 @@ public abstract class Sorting {
             Algorithm.HEAPSORT_TREE.longName,
             "Swap-Operation",
             "",
-            Sorting::heapsortWithTrees
+            Sorting::heapsort
         );
-    }
-
-    /**
-     * Sorts the specified array using heapsort and outputs the solution as a TikZ picture to the specified writer.
-     * Here, in addition to the arrays, a tree interpretation of the arrays is output.
-     * @param array The array to sort.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
-     */
-    public static int heapsortWithTrees(final Integer[] array, final BufferedWriter writer) throws IOException {
-        int step = 0;
-        TikZUtils.printSamePageBeginning(step++, TikZUtils.COL_WIDTH, writer);
-        TikZUtils.printTree(array, array.length - 1, writer);
-        TikZUtils.printProtectedNewline(writer);
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-            array,
-            Optional.empty(),
-            Algorithm.DEFAULT_CONTENT_LENGTH,
-            writer
-        );
-        TikZUtils.printTikzEnd(writer);
-        TikZUtils.printSamePageEnd(writer);
-        TikZUtils.printVerticalSpaceForStep(step, writer);
-        final boolean[] separate = new boolean[array.length - 1];
-        Arrays.fill(separate, false);
-        for (int i = array.length / 2; i > 0; i--) {
-            step = Sorting.heapifyWithTrees(array, i, array.length, separate, step, writer);
-        }
-        for (int i = array.length - 1; i > 0; i--) {
-            ArrayUtils.swap(array, 0, i);
-            if (i < separate.length) {
-                separate[i] = false;
-            }
-            TikZUtils.printSamePageBeginning(step++, TikZUtils.COL_WIDTH, writer);
-            if (i > 1) {
-                separate[i - 1] = true;
-                TikZUtils.printTree(array, i - 1, writer);
-                TikZUtils.printProtectedNewline(writer);
-            }
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                array,
-                separate,
-                Optional.empty(),
-                Algorithm.DEFAULT_CONTENT_LENGTH,
-                writer
-            );
-            TikZUtils.printTikzEnd(writer);
-            TikZUtils.printSamePageEnd(writer);
-            TikZUtils.printVerticalSpaceForStep(step, writer);
-            step = Sorting.heapifyWithTrees(array, 1, i, separate, step, writer);
-        }
-        return step - 1;
     }
 
     public static void insertionsort(final AlgorithmInput input) throws IOException {
@@ -346,24 +133,13 @@ public abstract class Sorting {
         );
     }
 
-    /**
-     * Sorts the specified array using insertionsort and outputs the solution as a TikZ picture to the specified writer.
-     * @param array The array to sort.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
-     */
-    public static int insertionsort(final Integer[] array, final BufferedWriter writer) throws IOException {
-        final int contentLength = Sorting.getMaximumContentLength(array);
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor =
-            TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                array,
-                Optional.empty(),
-                contentLength,
-                writer
-            );
-        int res = 0;
+    public static List<List<ItemWithTikZInformation<Integer>>> insertionsort(final int[] initialArray) {
+        final List<List<ItemWithTikZInformation<Integer>>> result =
+            new ArrayList<List<ItemWithTikZInformation<Integer>>>();
+        result.add(Sorting.toTikZItems(initialArray));
+        final int length = initialArray.length;
+        final int[] array = ArrayUtils.copy(initialArray);
+        System.arraycopy(initialArray, 0, array, 0, length);
         for (int i = 1; i < array.length; i++) {
             final int insert = array[i];
             int j = i;
@@ -372,17 +148,153 @@ public abstract class Sorting {
                 j--;
             }
             array[j] = insert;
-            anchor =
-                TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                    array,
-                    Optional.of(anchor),
-                    contentLength,
-                    writer
-                );
-            res++;
+            result.add(Sorting.toTikZItems(array));
         }
-        TikZUtils.printTikzEnd(writer);
-        return res;
+        return result;
+    }
+
+    public static void mergesort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.MERGESORT.longName,
+            "Merge-Operation",
+            "",
+            (array) -> Sorting.mergesort(array, false)
+        );
+    }
+
+    public static List<List<ItemWithTikZInformation<Integer>>> mergesort(
+        final int[] initialArray,
+        final boolean printSplitting
+    ) {
+        final List<List<ItemWithTikZInformation<Integer>>> result =
+            new ArrayList<List<ItemWithTikZInformation<Integer>>>();
+        final int[] array = ArrayUtils.copy(initialArray);
+        final boolean[] separate = new boolean[array.length - 1];
+        Arrays.fill(separate, false);
+        result.add(Sorting.toTikZItems(initialArray, separate));
+        Sorting.mergesort(array, 0, array.length - 1, separate, printSplitting, result);
+        return result;
+    }
+
+    public static void mergesortSplit(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.MERGESORT_SPLIT.longName,
+            "Merge-Operation",
+            "",
+            (array) -> Sorting.mergesort(array, true)
+        );
+    }
+
+    public static void quicksort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.QUICKSORT.longName,
+            "Partition-Operation",
+            " und markieren Sie das jeweils verwendete Pivot-Element",
+            Sorting::quicksort
+        );
+    }
+
+    public static List<List<ItemWithTikZInformation<Integer>>> quicksort(final int[] initialArray) {
+        final List<List<ItemWithTikZInformation<Integer>>> result =
+            new ArrayList<List<ItemWithTikZInformation<Integer>>>();
+        result.add(Sorting.toTikZItems(initialArray));
+        final int[] array = ArrayUtils.copy(initialArray);
+        final boolean[] separate = new boolean[array.length - 1];
+        final boolean[] mark = new boolean[array.length];
+        Arrays.fill(separate, false);
+        Arrays.fill(mark, false);
+        Sorting.quicksort(array, 0, array.length - 1, separate, mark, result);
+        return result;
+    }
+
+    public static void selectionsort(final AlgorithmInput input) throws IOException {
+        Sorting.sort(
+            input,
+            Algorithm.SELECTIONSORT.longName,
+            "Swap-Operation",
+            "",
+            Sorting::selectionsort
+        );
+    }
+
+    public static List<List<ItemWithTikZInformation<Integer>>> selectionsort(final int[] initialArray) {
+        final List<List<ItemWithTikZInformation<Integer>>> result =
+            new ArrayList<List<ItemWithTikZInformation<Integer>>>();
+        result.add(Sorting.toTikZItems(initialArray));
+        final int[] array = ArrayUtils.copy(initialArray);
+        for (int i = 0; i < array.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < array.length; j++) {
+                if (array[j] < array[min]) {
+                    min = j;
+                }
+            }
+            if (i != min) {
+                ArrayUtils.swap(array, i, min);
+                result.add(Sorting.toTikZItems(array));
+            }
+        }
+        return result;
+    }
+
+    private static int[] generateArray(final Parameters options) {
+        final int length;
+        final Random gen = new Random();
+        if (options.containsKey(Flag.LENGTH)) {
+            length = Integer.parseInt(options.get(Flag.LENGTH));
+        } else {
+            length = gen.nextInt(16) + 5;
+        }
+        final int[] array = new int[length];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = gen.nextInt(Main.NUMBER_LIMIT);
+        }
+        return array;
+    }
+
+    private static int getMaximumContentLength(final int[] array) {
+        return Arrays.stream(array).map(n -> String.valueOf(n).length()).max().getAsInt();
+    }
+
+    private static int getSeparationIndex(final List<ItemWithTikZInformation<Integer>> list) {
+        int result = -1;
+        for (final ItemWithTikZInformation<Integer> item : list) {
+            if (item.separateBefore) {
+                return result;
+            }
+            result++;
+        }
+        return result;
+    }
+
+    /**
+     * Establishes the heap property on the branch starting at index <code>from</code> when interpreting the array up
+     * to index <code>to</code> as a heap by sinking the element at index <code>from</code> as far as necessary.
+     * Moreover, the current state of the array is added to the solution after each swap operation.
+     */
+    private static void heapify(
+        final int[] array,
+        final int from,
+        final int to,
+        final boolean[] separate,
+        final List<List<ItemWithTikZInformation<Integer>>> result
+    ) {
+        int i = from;
+        while (i <= to / 2) {
+            int j = 2 * i;
+            if (j < to && array[j] > array[j - 1]) {
+                j++;
+            }
+            if (array[j - 1] <= array[i - 1]) {
+                break;
+            }
+            ArrayUtils.swap(array, j - 1, i - 1);
+            result.add(Sorting.toTikZItems(array, separate));
+            i = j;
+        }
     }
 
     /**
@@ -393,8 +305,8 @@ public abstract class Sorting {
      * @param middle The middle index.
      * @param end The end index.
      */
-    public static void merge(final Integer[] array, final int start, final int middle, final int end) {
-        final Integer[] copy = new Integer[end - start + 1];
+    private static void merge(final int[] array, final int start, final int middle, final int end) {
+        final int[] copy = new int[end - start + 1];
         int i = 0;
         int j = start;
         int k = middle + 1;
@@ -414,130 +326,41 @@ public abstract class Sorting {
         System.arraycopy(copy, 0, array, start, copy.length);
     }
 
-    public static void mergesort(final AlgorithmInput input) throws IOException {
-        Sorting.sort(
-            input,
-            Algorithm.MERGESORT.longName,
-            "Merge-Operation",
-            "",
-            (array, writer) -> Sorting.mergesort(array, false, writer)
-        );
-    }
-
-    /**
-     * Sorts the specified array using mergesort and outputs the solution as a TikZ picture to the specified writer.
-     * @param array The array to sort.
-     * @param printSplitting Flag indicating whether to print the splitting in the beginning.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
-     */
-    public static int mergesort(final Integer[] array, final boolean printSplitting, final BufferedWriter writer) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        final boolean[] separate = new boolean[array.length - 1];
-        Arrays.fill(separate, !printSplitting);
-        final boolean[] mark = new boolean[array.length];
-        Arrays.fill(mark, true);
-        final int res =
-            (Integer)Sorting.mergesort(
-                array,
-                0,
-                array.length - 1,
-                TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                    array,
-                    separate,
-                    Optional.empty(),
-                    Algorithm.DEFAULT_CONTENT_LENGTH,
-                    writer
-                ),
-                separate,
-                mark,
-                printSplitting,
-                writer
-            )[0];
-        TikZUtils.printTikzEnd(writer);
-        return res;
-    }
-
-    /**
-     * The actual recursive mergesort algorithm. It sorts the array part from start to end using mergesort while
-     * outputting the solution as a TikZ picture to the specified writer.
-     * @param array The array.
-     * @param start The start index.
-     * @param end The end index.
-     * @param anchor The name of the left-most node of the recent row in the TikZ array output.
-     * @param separate Indicates which nodes should be separated horizontally in the array output.
-     * @param mark An array of equal length to <code>array</code> and all entries set to true. Just passed to avoid
-     *             re-allocation of the same array over and over again.
-     * @param printSplitting Flag indicating whether to print the splitting in the beginning.
-     * @param writer The writer to send the output to.
-     * @return The number of rows needed for the solution and the name of the left-most node of the most recent row in
-     *         the TikZ array output.
-     * @throws IOException If some error occurs during solution output.
-     */
-    public static Object[] mergesort(
-        final Integer[] array,
+    private static void mergesort(
+        final int[] array,
         final int start,
         final int end,
-        final String anchor,
         final boolean[] separate,
-        final boolean[] mark,
         final boolean printSplitting,
-        final BufferedWriter writer
-    ) throws IOException {
-        if (start < end) {
-            final int middle = (start + end) / 2;
-            String newAnchor = anchor;
-            if (printSplitting) {
-                separate[middle] = true;
-                newAnchor =
-                    TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                        array,
-                        separate,
-                        mark,
-                        Optional.ofNullable(newAnchor),
-                        Algorithm.DEFAULT_CONTENT_LENGTH,
-                        writer
-                    );
-            }
-            final Object[] firstStep =
-                Sorting.mergesort(array, start, middle, newAnchor, separate, mark, printSplitting, writer);
-            final Object[] secondStep =
-                Sorting.mergesort(
-                    array,
-                    middle + 1,
-                    end,
-                    (String)firstStep[1],
-                    separate,
-                    mark,
-                    printSplitting,
-                    writer
-                );
-            Sorting.merge(array, start, middle, end);
-            separate[middle] = false;
-            return new Object[]{
-                ((Integer)firstStep[0]) + ((Integer)secondStep[0]) + 1,
-                TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                    array,
-                    separate,
-                    Optional.ofNullable((String)secondStep[1]),
-                    Algorithm.DEFAULT_CONTENT_LENGTH,
-                    writer
-                )
-            };
-        } else {
-            return new Object[]{0, anchor};
+        final List<List<ItemWithTikZInformation<Integer>>> result
+    ) {
+        if (start >= end) {
+            return;
         }
+        final int middle = (start + end) / 2;
+        if (printSplitting) {
+            separate[middle] = true;
+            result.add(Sorting.toTikZItems(array, separate));
+        }
+        Sorting.mergesort(array, start, middle, separate, printSplitting, result);
+        Sorting.mergesort(array, middle + 1, end, separate, printSplitting, result);
+        Sorting.merge(array, start, middle, end);
+        separate[middle] = false;
+        result.add(Sorting.toTikZItems(array, separate));
     }
 
-    public static void mergesortSplit(final AlgorithmInput input) throws IOException {
-        Sorting.sort(
-            input,
-            Algorithm.MERGESORT_SPLIT.longName,
-            "Merge-Operation",
-            "",
-            (array, writer) -> Sorting.mergesort(array, true, writer)
-        );
+    private static int[] parseArray(final BufferedReader reader, final Parameters options)
+    throws IOException {
+        final String[] numbers = reader.readLine().split(",");
+        final int[] array = new int[numbers.length];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = Integer.parseInt(numbers[i].trim());
+        }
+        return array;
+    }
+
+    private static int[] parseOrGenerateArray(final Parameters flags) throws IOException {
+        return new ParserAndGenerator<int[]>(Sorting::parseArray, Sorting::generateArray).getResult(flags);
     }
 
     /**
@@ -551,7 +374,7 @@ public abstract class Sorting {
      * @param end The end index.
      * @return The index of the Pivot element after partitioning.
      */
-    public static int partition(final Integer[] array, final int start, final int end) {
+    private static int partition(final int[] array, final int start, final int end) {
         int i = start - 1;
         int j = end;
         switch (Sorting.PARTITION_MODE) {
@@ -615,206 +438,180 @@ public abstract class Sorting {
         return i;
     }
 
-    public static void quicksort(final AlgorithmInput input) throws IOException {
-        Sorting.sort(
-            input,
-            Algorithm.QUICKSORT.longName,
-            "Partition-Operation",
-            " und markieren Sie das jeweils verwendete Pivot-Element",
-            Sorting::quicksort
-        );
-    }
-
-    /**
-     * Sorts the specified array using quicksort and outputs the solution as a TikZ picture to the specified writer.
-     * @param array The array to sort.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
-     */
-    public static int quicksort(final Integer[] array, final BufferedWriter writer) throws IOException {
+    private static void printExerciseText(
+        final String alg,
+        final String op,
+        final String additional,
+        final int[] array,
+        final int rows,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Sortieren Sie das folgende Array mithilfe von ");
+        writer.write(alg);
+        writer.write(".");
+        Main.newLine(writer);
+        writer.write("Geben Sie dazu das Array nach jeder ");
+        writer.write(op);
+        writer.write(" an");
+        writer.write(additional);
+        writer.write(".\\\\[2ex]");
+        Main.newLine(writer);
+        TikZUtils.printToggleForSolutions(writer);
+        TikZUtils.printElse(writer);
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        final boolean[] separate = new boolean[array.length - 1];
-        final boolean[] mark = new boolean[array.length];
-        Arrays.fill(separate, false);
-        Arrays.fill(mark, false);
-        final int res =
-            (Integer)Sorting.quicksort(
-                array,
-                0,
-                array.length - 1,
-                TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                    array,
-                    separate,
-                    mark,
-                    Optional.empty(),
-                    Algorithm.DEFAULT_CONTENT_LENGTH,
-                    writer
-                ),
-                separate,
-                mark,
+        String anchor =
+            TikZUtils.printListAndReturnLeftmostNodesName(
+                Sorting.toTikZItems(array),
+                Optional.empty(),
+                Sorting.getMaximumContentLength(array),
                 writer
-            )[0];
+            );
+        for (int i = 0; i < rows; i++) {
+            anchor =
+                TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(
+                    array.length,
+                    Optional.of(anchor),
+                    contentLength,
+                    writer
+                );
+        }
         TikZUtils.printTikzEnd(writer);
-        return res;
+        TikZUtils.printEndIf(writer);
+    }
+
+    private static void printSolution(
+        final List<List<ItemWithTikZInformation<Integer>>> solution,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        String anchor = null;
+        for (final List<ItemWithTikZInformation<Integer>> list : solution) {
+            anchor =
+                TikZUtils.printListAndReturnLeftmostNodesName(
+                    list,
+                    Optional.ofNullable(anchor),
+                    contentLength,
+                    writer
+                );
+        }
+        TikZUtils.printTikzEnd(writer);
+    }
+
+    private static void printSolutionWithTrees(
+        final List<List<ItemWithTikZInformation<Integer>>> solution,
+        final int contentLength,
+        final BufferedWriter writer
+    ) throws IOException {
+        int step = 0;
+        for (final List<ItemWithTikZInformation<Integer>> list : solution) {
+            TikZUtils.printSamePageBeginning(step++, TikZUtils.COL_WIDTH, writer);
+            Sorting.printTree(list, writer);
+            TikZUtils.printProtectedNewline(writer);
+            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+            TikZUtils.printListAndReturnLeftmostNodesName(list, Optional.empty(), contentLength, writer);
+            TikZUtils.printTikzEnd(writer);
+            TikZUtils.printSamePageEnd(writer);
+            Sorting.printVerticalSpaceForStep(step, writer);
+        }
     }
 
     /**
-     * The actual quicksort algorithm. It sorts the array part from start to end using quicksort while outputting the
-     * solution as a TikZ picture to the specified writer.
+     * Prints the specified array interpreted as binary tree up to the specified index.
+     * @param array The array.
+     * @param to The index to which the tree should be printed.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
+     */
+    private static void printTree(
+        final List<ItemWithTikZInformation<Integer>> list,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int to = Sorting.getSeparationIndex(list);
+        if (to < 0) {
+            return;
+        }
+        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        if (to > 0) {
+            writer.write("\\Tree");
+            Sorting.printTree(list, 0, to, writer);
+        } else {
+            writer.write(
+                String.format("\\node[circle,draw=black,thick,inner sep=5pt] {%d};", list.get(0).optionalContent.get())
+            );
+        }
+        Main.newLine(writer);
+        TikZUtils.printTikzEnd(writer);
+    }
+
+    /**
+     * Prints the specified array interpreted as binary tree from the specified start index (i.e., it prints the
+     * subtree starting with the element at the specified start index) to the specified end index.
      * @param array The array.
      * @param start The start index.
      * @param end The end index.
-     * @param anchor The name of the left-most node of the recent row in the TikZ array output.
-     * @param separate Indicates which nodes should be separated horizontally in the array output.
-     * @param mark Indicates which nodes should be marked by a grey background in the TikZ array output (these are the
-     *             Pivot elements used).
      * @param writer The writer to send the output to.
-     * @return The number of rows needed for the solution and the name of the left-most node of the most recent row in
-     *         the TikZ array output.
-     * @throws IOException If some error occurs during solution output.
+     * @throws IOException If some error occurs during output.
      */
-    public static Object[] quicksort(
-        final Integer[] array,
+    private static void printTree(
+        final List<ItemWithTikZInformation<Integer>> list,
         final int start,
         final int end,
-        final String anchor,
-        final boolean[] separate,
-        final boolean[] mark,
         final BufferedWriter writer
     ) throws IOException {
-        if (start < end) {
-            final int middle = Sorting.partition(array, start, end);
-            if (middle > 0) {
-                separate[middle - 1] = true;
+        final int next = 2 * start + 1;
+        final int valueAtStart = list.get(start).optionalContent.get();
+        if (next <= end) {
+            writer.write(" [." + valueAtStart);
+            Sorting.printTree(list, next, end, writer);
+            if (next + 1 <= end) {
+                Sorting.printTree(list, next + 1, end, writer);
             }
-            if (middle < array.length - 1) {
-                separate[middle] = true;
-            }
-            Arrays.fill(mark, false);
-            mark[middle] = true;
-            final Object[] firstStep =
-                Sorting.quicksort(
-                    array,
-                    start,
-                    middle - 1,
-                    TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                        array,
-                        separate,
-                        mark,
-                        Optional.ofNullable(anchor),
-                        Algorithm.DEFAULT_CONTENT_LENGTH,
-                        writer
-                    ),
-                    separate,
-                    mark,
-                    writer
-                );
-            final Object[] secondStep =
-                Sorting.quicksort(
-                    array,
-                    middle + 1,
-                    end,
-                    (String)firstStep[1],
-                    separate,
-                    mark,
-                    writer
-                );
-            return new Object[]{((Integer)secondStep[0]) + ((Integer)firstStep[0]) + 1, secondStep[1]};
+            writer.write(" ]");
         } else {
-            return new Object[]{0, anchor};
+            writer.write(" " + valueAtStart);
         }
-    }
-
-    public static void selectionsort(final AlgorithmInput input) throws IOException {
-        Sorting.sort(
-            input,
-            Algorithm.SELECTIONSORT.longName,
-            "Swap-Operation",
-            "",
-            Sorting::selectionsort
-        );
     }
 
     /**
-     * Sorts the specified array using selectionsort and outputs the solution as a TikZ picture to the specified writer.
-     * @param array The array to sort.
-     * @param writer The writer for outputting the solution.
-     * @return The number of rows needed for the solution (excluding the original array).
-     * @throws IOException If some error occurs while outputting the solution.
+     * Prints vertical space
+     * @param step The next evaluation step.
+     * @param writer The writer to send the output to.
+     * @throws IOException If some error occurs during output.
      */
-    public static int selectionsort(final Integer[] array, final BufferedWriter writer)
-    throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor =
-            TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                array,
-                Optional.empty(),
-                Algorithm.DEFAULT_CONTENT_LENGTH,
-                writer
-            );
-        int res = 0;
-        for (int i = 0; i < array.length - 1; i++) {
-            int min = i;
-            for (int j = i + 1; j < array.length; j++) {
-                if (array[j] < array[min]) {
-                    min = j;
-                }
-            }
-            if (i != min) {
-                ArrayUtils.swap(array, i, min);
-                anchor =
-                    TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                        array,
-                        Optional.of(anchor),
-                        Algorithm.DEFAULT_CONTENT_LENGTH,
-                        writer
-                    );
-                res++;
-            }
+    private static void printVerticalSpaceForStep(final int step, final BufferedWriter writer) throws IOException {
+        if (step % 3 == 0) {
+            Main.newLine(writer);
+            writer.write("~\\\\");
+            Main.newLine(writer);
+            Main.newLine(writer);
         }
-        TikZUtils.printTikzEnd(writer);
-        return res;
     }
 
-    private static Integer[] generateArray(final Parameters options) {
-        final int length;
-        final Random gen = new Random();
-        if (options.containsKey(Flag.LENGTH)) {
-            length = Integer.parseInt(options.get(Flag.LENGTH));
-        } else {
-            length = gen.nextInt(16) + 5;
+    private static void quicksort(
+        final int[] array,
+        final int start,
+        final int end,
+        final boolean[] separate,
+        final boolean[] mark,
+        final List<List<ItemWithTikZInformation<Integer>>> result
+    ) {
+        if (start >= end) {
+            return;
         }
-        final Integer[] array = new Integer[length];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = gen.nextInt(Main.NUMBER_LIMIT);
+        final int middle = Sorting.partition(array, start, end);
+        if (middle > 0) {
+            separate[middle - 1] = true;
         }
-        return array;
-    }
-
-    private static int getMaximumContentLength(final Integer[] array) {
-        return Arrays.stream(array).mapToInt(n -> String.valueOf(n).length()).max().getAsInt();
-    }
-
-    private static int getRows(final Parameters options) {
-        return (options.containsKey(Flag.SOURCE) || options.containsKey(Flag.INPUT))
-            && options.containsKey(Flag.LENGTH) ?
-                Integer.parseInt(options.get(Flag.LENGTH)) :
-                    0;
-    }
-
-    private static Integer[] parseArray(final BufferedReader reader, final Parameters options)
-    throws IOException {
-        final String[] numbers = reader.readLine().split(",");
-        final Integer[] array = new Integer[numbers.length];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = Integer.parseInt(numbers[i].trim());
+        if (middle < array.length - 1) {
+            separate[middle] = true;
         }
-        return array;
-    }
-
-    private static Integer[] parseOrGenerateArray(final Parameters flags) throws IOException {
-        return new ParserAndGenerator<Integer[]>(Sorting::parseArray, Sorting::generateArray).getResult(flags);
+        Arrays.fill(mark, false);
+        mark[middle] = true;
+        result.add(Sorting.toTikZItems(array, separate, mark));
+        Sorting.quicksort(array, start, middle - 1, separate, mark, result);
+        Sorting.quicksort(array, middle + 1, end, separate, mark, result);
     }
 
     private static <E extends Exception> void sort(
@@ -822,101 +619,57 @@ public abstract class Sorting {
         final String name,
         final String operation,
         final String suffix,
-        final CheckedBiFunction<Integer[], BufferedWriter, Integer, E> sort
-    ) throws E {
-        try {
-            final Integer[] array = Sorting.parseOrGenerateArray(input.options);
-            final Optional<String> anchor =
-                Sorting.sortPreProcessing(array, name, operation, suffix, input.options, input.exerciseWriter);
-            final int rows = Sorting.getRows(input.options) + sort.apply(array, input.solutionWriter);
-            Sorting.sortPostProcessing(array, rows, anchor, input.options, input.exerciseWriter);
-        } catch (final IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
-     * Prints empty rows for solving the exercise on the sheet directly.
-     * @param array The sorted array.
-     * @param rows The number of empty rows to be printed in the exercise.
-     * @param anchorParam The name of the node used to orient the empty rows.
-     * @param options The parsed flags.
-     * @param exerciseWriter The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    private static void sortPostProcessing(
-        final Integer[] array,
-        final int rows,
-        final Optional<String> anchorParam,
-        final Parameters options,
-        final BufferedWriter exerciseWriter
+        final Function<int[], List<List<ItemWithTikZInformation<Integer>>>> sort
     ) throws IOException {
+        final int[] array = Sorting.parseOrGenerateArray(input.options);
+        final List<List<ItemWithTikZInformation<Integer>>> solution = sort.apply(array);
         final int contentLength = Sorting.getMaximumContentLength(array);
-        if (options.containsKey(Flag.EXERCISE)) {
-            String anchor =
-                TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(
-                    array.length,
-                    anchorParam,
-                    contentLength,
-                    exerciseWriter
-                );
-            for (int i = 1; i < rows; i++) {
-                anchor =
-                    TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(
-                        array.length,
-                        Optional.of(anchor),
-                        contentLength,
-                        exerciseWriter
-                    );
-            }
-            TikZUtils.printTikzEnd(exerciseWriter);
+        if (input.options.containsKey(Flag.EXERCISE)) {
+            Sorting.printExerciseText(
+                name,
+                operation,
+                suffix,
+                array,
+                solution.size() - 1,
+                contentLength,
+                input.exerciseWriter
+            );
         }
-        TikZUtils.printEndIf(exerciseWriter);
+        if (input.options.get(Flag.ALGORITHM).equals(Algorithm.HEAPSORT_TREE.name)) {
+            Sorting.printSolutionWithTrees(solution, contentLength, input.solutionWriter);
+        } else {
+            Sorting.printSolution(solution, contentLength, input.solutionWriter);
+        }
     }
 
-    /**
-     * Prints the exercise text to the specified writer.
-     * @param array The array to sort.
-     * @param alg The name of the sorting algorithm.
-     * @param op The operation after which the state of the array is to be given as intermediate result.
-     * @param additional Additional instruction on how to write up the solution.
-     * @param options The parsed flags.
-     * @param exerciseWriter The writer to send the output to.
-     * @return The name of the node used to orient empty rows in the exercise text.
-     * @throws IOException If some error occurs during output.
-     */
-    private static Optional<String> sortPreProcessing(
-        final Integer[] array,
-        final String alg,
-        final String op,
-        final String additional,
-        final Parameters options,
-        final BufferedWriter exerciseWriter
-    ) throws IOException {
-        if (!options.containsKey(Flag.EXERCISE)) {
-            return Optional.empty();
+    private static List<ItemWithTikZInformation<Integer>> toTikZItems(final int[] array) {
+        return Arrays.stream(array)
+            .mapToObj((final int i) -> new ItemWithTikZInformation<Integer>(Optional.of(i), false, false))
+            .toList();
+    }
+
+    private static List<ItemWithTikZInformation<Integer>> toTikZItems(final int[] array, final boolean[] separate) {
+        final List<ItemWithTikZInformation<Integer>> result = new ArrayList<ItemWithTikZInformation<Integer>>();
+        result.add(new ItemWithTikZInformation<Integer>(Optional.of(array[0]), false));
+        for (int i = 1; i < array.length; i++) {
+            result.add(new ItemWithTikZInformation<Integer>(Optional.of(array[i]), separate[i - 1]));
         }
-        exerciseWriter.write("Sortieren Sie das folgende Array mithilfe von ");
-        exerciseWriter.write(alg);
-        exerciseWriter.write(".");
-        Main.newLine(exerciseWriter);
-        exerciseWriter.write("Geben Sie dazu das Array nach jeder ");
-        exerciseWriter.write(op);
-        exerciseWriter.write(" an");
-        exerciseWriter.write(additional);
-        exerciseWriter.write(".\\\\[2ex]");
-        Main.newLine(exerciseWriter);
-        TikZUtils.printToggleForSolutions(exerciseWriter);
-        TikZUtils.printElse(exerciseWriter);
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, exerciseWriter);
-        return Optional.of(
-            TikZUtils.printIntegerArrayAndReturnLeftMostNodesName(
-                array,
-                Optional.empty(),
-                Sorting.getMaximumContentLength(array),
-                exerciseWriter
-            )
-        );
+        return result;
+    }
+
+    private static List<ItemWithTikZInformation<Integer>> toTikZItems(
+        final int[] array,
+        final boolean[] separate,
+        final boolean[] markers
+    ) {
+        final List<ItemWithTikZInformation<Integer>> result = new ArrayList<ItemWithTikZInformation<Integer>>();
+        result.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[0]), markers[0], false));
+        for (int i = 1; i < array.length; i++) {
+            result.add(
+                new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[i]), markers[i], separate[i - 1])
+            );
+        }
+        return result;
     }
 
 }

@@ -551,6 +551,8 @@ public class MainTest {
             BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
             BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
         ) {
+            final int contentLength = 1;
+            int nodeNumber = 0;
             Assert.assertEquals(exReader.readLine(), "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\");
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
             Assert.assertEquals(exReader.readLine(), "3, 5, 1, 4, 2, 1.");
@@ -567,17 +569,13 @@ public class MainTest {
             Assert.assertEquals(exReader.readLine(), "{\\Large");
             Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
             Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) [right=of n0] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) [right=of n1] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) [right=of n2] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) [right=of n3] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n5) [right=of n4] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n6) [right=of n5] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n7) [right=of n6] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n8) [right=of n7] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n9) [right=of n8] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n10) [right=of n9] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), Patterns.singleEmptyNode(nodeNumber++, contentLength));
+            for (int i = 1; i < 11; i++) {
+                Assert.assertEquals(
+                    exReader.readLine(),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
+                );
+            }
             Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
             Assert.assertEquals(exReader.readLine(), "}");
             Assert.assertEquals(exReader.readLine(), "\\end{center}");
@@ -593,17 +591,29 @@ public class MainTest {
             Assert.assertEquals(solReader.readLine(), "{\\Large");
             Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
             Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n11) {\\phantom{0}};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n12) [right=of n11] {3};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n13) [right=of n12] {\\phantom{0}};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n14) [right=of n13] {\\phantom{0}};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n15) [right=of n14] {2};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n16) [right=of n15] {5};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n17) [right=of n16] {1};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n18) [right=of n17] {1};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n19) [right=of n18] {4};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n20) [right=of n19] {\\phantom{0}};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n21) [right=of n20] {\\phantom{0}};");
+            Assert.assertEquals(solReader.readLine(), Patterns.singleEmptyNode(nodeNumber++, contentLength));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
+            Assert.assertEquals(
+                solReader.readLine(),
+                Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
+            );
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+            Assert.assertEquals(
+                solReader.readLine(),
+                Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
+            );
             Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
             Assert.assertEquals(solReader.readLine(), "}");
             Assert.assertEquals(solReader.readLine(), "\\end{center}");
@@ -627,68 +637,65 @@ public class MainTest {
             BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
             BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
         ) {
+            final int contentLength = 1;
+            int nodeNumber = 0;
             Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Insertionsort.");
             Assert.assertEquals(exReader.readLine(), "Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]");
             Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
             Assert.assertEquals(exReader.readLine(), "\\else");
             Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
             Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n0) {3};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) [right=of n0] {5};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) [right=of n1] {1};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) [right=of n2] {4};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) [right=of n3] {2};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n30) [below=of n0] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n31) [right=of n30] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n32) [right=of n31] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n33) [right=of n32] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n34) [right=of n33] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n35) [below=of n30] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n36) [right=of n35] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n37) [right=of n36] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n38) [right=of n37] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n39) [right=of n38] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n40) [below=of n35] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n41) [right=of n40] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n42) [right=of n41] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n43) [right=of n42] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n44) [right=of n43] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n45) [below=of n40] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n46) [right=of n45] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n47) [right=of n46] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n48) [right=of n47] {\\phantom{0}};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n49) [right=of n48] {\\phantom{0}};");
+            Assert.assertEquals(exReader.readLine(), Patterns.singleNode(nodeNumber++, "3", contentLength));
+            Assert.assertEquals(exReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+            Assert.assertEquals(exReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+            Assert.assertEquals(exReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+            Assert.assertEquals(exReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+            int belowOf = 0;
+            for (int i = 0; i < 4; i++) {
+                Assert.assertEquals(exReader.readLine(), Patterns.belowEmptyNode(nodeNumber++, belowOf, contentLength));
+                belowOf = nodeNumber - 1;
+                for (int j = 0; j < 4; j++) {
+                    Assert.assertEquals(
+                        exReader.readLine(),
+                        Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
+                    );
+                }
+            }
             Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
             Assert.assertEquals(exReader.readLine(), "\\fi");
             Assert.assertNull(exReader.readLine());
 
             Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
             Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n5) {3};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n6) [right=of n5] {5};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n7) [right=of n6] {1};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n8) [right=of n7] {4};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n9) [right=of n8] {2};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n10) [below=of n5] {3};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n11) [right=of n10] {5};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n12) [right=of n11] {1};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n13) [right=of n12] {4};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n14) [right=of n13] {2};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n15) [below=of n10] {1};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n16) [right=of n15] {3};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n17) [right=of n16] {5};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n18) [right=of n17] {4};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n19) [right=of n18] {2};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n20) [below=of n15] {1};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n21) [right=of n20] {3};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n22) [right=of n21] {4};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n23) [right=of n22] {5};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n24) [right=of n23] {2};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n25) [below=of n20] {1};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n26) [right=of n25] {2};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n27) [right=of n26] {3};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n28) [right=of n27] {4};");
-            Assert.assertEquals(solReader.readLine(), "\\node[node] (n29) [right=of n28] {5};");
+            belowOf = nodeNumber;
+            Assert.assertEquals(solReader.readLine(), Patterns.singleNode(nodeNumber++, "3", contentLength));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+            Assert.assertEquals(solReader.readLine(), Patterns.belowNode(nodeNumber++, belowOf, 3, contentLength));
+            belowOf = nodeNumber - 1;
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+            Assert.assertEquals(solReader.readLine(), Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
+            belowOf = nodeNumber - 1;
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+            Assert.assertEquals(solReader.readLine(), Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
+            belowOf = nodeNumber - 1;
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+            Assert.assertEquals(solReader.readLine(), Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
             Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
             Assert.assertNull(solReader.readLine());
         }

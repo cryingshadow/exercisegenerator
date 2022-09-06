@@ -22,6 +22,26 @@ public class Patterns {
         );
     }
 
+    public static String belowEmptyNode(final int number, final int belowOf, final int contentLength) {
+        return Patterns.belowNode(
+            "n" + String.valueOf(number),
+            "n" + String.valueOf(belowOf),
+            Patterns.phantom(contentLength)
+        );
+    }
+
+    public static String belowNode(final int number, final int belowOf, final int content, final int contentLength) {
+        return Patterns.belowNode(
+            "n" + number,
+            "n" + belowOf,
+            Patterns.padWithPhantom(String.valueOf(content), contentLength)
+        );
+    }
+
+    public static String belowNode(final String name, final String belowOf, final String content) {
+        return String.format("\\node[node] (%s) [below=of %s] {%s};", name, belowOf, content);
+    }
+
     public static String binaryNumberToString(final int[] binaryNumber) {
         return Arrays.stream(binaryNumber).mapToObj(bit -> String.valueOf(bit)).collect(Collectors.joining());
     }

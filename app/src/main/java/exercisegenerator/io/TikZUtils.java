@@ -236,53 +236,6 @@ public abstract class TikZUtils {
         Main.newLine(writer);
     }
 
-    public static String printIntegerArrayAndReturnLeftMostNodesName(
-        final Integer[] array,
-        final boolean[] separate,
-        final boolean[] markers,
-        final Optional<String> below,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        final List<ItemWithTikZInformation<Integer>> list = new ArrayList<ItemWithTikZInformation<Integer>>();
-        list.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[0]), markers[0], false));
-        for (int i = 1; i < array.length; i++) {
-            list.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[i]), markers[i], separate[i - 1]));
-        }
-        return TikZUtils.printListAndReturnLeftmostNodesName(list, below, contentLength, writer);
-    }
-
-    public static String printIntegerArrayAndReturnLeftMostNodesName(
-        final Integer[] array,
-        final boolean[] separate,
-        final Optional<String> below,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        final List<ItemWithTikZInformation<Integer>> list = new ArrayList<ItemWithTikZInformation<Integer>>();
-        list.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[0]), false));
-        for (int i = 1; i < array.length; i++) {
-            list.add(new ItemWithTikZInformation<Integer>(Optional.ofNullable(array[i]), separate[i - 1]));
-        }
-        return TikZUtils.printListAndReturnLeftmostNodesName(list, below, contentLength, writer);
-    }
-
-    public static String printIntegerArrayAndReturnLeftMostNodesName(
-        final Integer[] array,
-        final Optional<String> below,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        return TikZUtils.printListAndReturnLeftmostNodesName(
-            Arrays.stream(array)
-                .map((final Integer i) -> new ItemWithTikZInformation<Integer>(Optional.ofNullable(i), false, false))
-                .toList(),
-            below,
-            contentLength,
-            writer
-        );
-    }
-
     /**
      * Prints the header of a LaTeX file with the required packages and settings for our exercise environment.
      * @param writer The writer to send the output to.
@@ -589,51 +542,6 @@ public abstract class TikZUtils {
     }
 
     /**
-     * Prints the specified array interpreted as binary tree up to the specified index.
-     * @param array The array.
-     * @param to The index to which the tree should be printed.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printTree(final Integer[] array, final int to, final BufferedWriter writer) throws IOException {
-        if (to < 0) {
-            return;
-        }
-        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
-        if (to > 0) {
-            writer.write("\\Tree");
-            TikZUtils.printTree(array, 0, to, writer);
-        } else {
-            writer.write("\\node[circle,draw=black,thick,inner sep=5pt] {" + array[0] + "};");
-        }
-        Main.newLine(writer);
-        TikZUtils.printTikzEnd(writer);
-    }
-
-    /**
-     * Prints the specified array interpreted as binary tree from the specified start index (i.e., it prints the
-     * subtree starting with the element at the specified start index) to the specified end index.
-     * @param array The array.
-     * @param start The start index.
-     * @param end The end index.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printTree(final Integer[] array, final int start, final int end, final BufferedWriter writer) throws IOException {
-        final int next = 2 * start + 1;
-        if (next <= end) {
-            writer.write(" [." + array[start]);
-            TikZUtils.printTree(array, next, end, writer);
-            if (next + 1 <= end) {
-                TikZUtils.printTree(array, next + 1, end, writer);
-            }
-            writer.write(" ]");
-        } else {
-            writer.write(" " + array[start]);
-        }
-    }
-
-    /**
      * Prints a colum of nodes with the contents of the array.
      * @param array The array of values.
      * @param separate An array indicating which nodes should be separated vertically. Must have a size exactly one
@@ -709,21 +617,6 @@ public abstract class TikZUtils {
         writer.write(String.format("\\vspace*{%s}", space));
         Main.newLine(writer);
         Main.newLine(writer);
-    }
-
-    /**
-     * Prints vertical space
-     * @param step The next evaluation step.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printVerticalSpaceForStep(final int step, final BufferedWriter writer) throws IOException {
-        if (step % 3 == 0) {
-            Main.newLine(writer);
-            writer.write("~\\\\");
-            Main.newLine(writer);
-            Main.newLine(writer);
-        }
     }
 
     /**
