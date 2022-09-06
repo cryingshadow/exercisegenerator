@@ -34,9 +34,6 @@ public class Pair<X, Y> implements Map.Entry<X, Y>, java.io.Serializable {
         this.y = value;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -66,25 +63,16 @@ public class Pair<X, Y> implements Map.Entry<X, Y>, java.io.Serializable {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map.Entry#getKey()
-     */
     @Override
     public X getKey() {
         return this.x;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map.Entry#getValue()
-     */
     @Override
     public Y getValue() {
         return this.y;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -104,9 +92,6 @@ public class Pair<X, Y> implements Map.Entry<X, Y>, java.io.Serializable {
         return old;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map.Entry#setValue(java.lang.Object)
-     */
     @Override
     public Y setValue(final Y value) {
         final Y old = this.y;
@@ -114,17 +99,13 @@ public class Pair<X, Y> implements Map.Entry<X, Y>, java.io.Serializable {
         return old;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return
-            "("
-            + (this.x == null ? "null" : this.x.toString())
-            + ","
-            + (this.y == null ? "null" : this.y.toString())
-            + ")";
+        return String.format(
+            "(%s,%s)",
+            this.x == null ? "null" : this.x.toString(),
+            this.y == null ? "null" : this.y.toString()
+        );
     }
 
 }

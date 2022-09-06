@@ -39,8 +39,8 @@ public class GridGraph {
     }
 
     /**
-     * Creates the graph with node positioned according to a grid and the given sparse version of the adjacency matrix of
-     * the graph to create.
+     * Creates the graph with node positioned according to a grid and the given sparse version of the adjacency matrix
+     * of the graph to create.
      * @param sparseAdjacencyMatrix The sparse version of the adjacency matrix of the graph to create.
      */
     public void createGraph(final int[][] sparseAdjacencyMatrix) {
@@ -59,7 +59,10 @@ public class GridGraph {
                 this.addEdges(nodeNum, nodeNum+this.numOfColumnsInGrid(), sparseAdjacencyMatrix[i][2]);
             }
             // south-west
-            if (nodeNum + this.numOfColumnsInGrid() < this.numOfAllNodes() - 1 && nodeNum % this.numOfColumnsInGrid() > 0) {
+            if (
+                nodeNum + this.numOfColumnsInGrid() < this.numOfAllNodes() - 1
+                && nodeNum % this.numOfColumnsInGrid() > 0
+            ) {
                 this.addEdges(nodeNum, nodeNum+this.numOfColumnsInGrid()-1, sparseAdjacencyMatrix[i][3]);
             }
             // west
@@ -132,12 +135,12 @@ public class GridGraph {
     }
 
     public boolean nodeHasAdjacentNodes(final int nodeNumber) {
-        for(int i = 0; i < this.numOfAllNodes(); i++) {
+        for (int i = 0; i < this.numOfAllNodes(); i++) {
             if (this.mAdjacencyMatrix[nodeNumber][i]) {
                 return true;
             }
         }
-        for(int i = 0; i < this.numOfAllNodes(); i++) {
+        for (int i = 0; i < this.numOfAllNodes(); i++) {
             if (this.mAdjacencyMatrix[i][nodeNumber]) {
                 return true;
             }
@@ -163,7 +166,8 @@ public class GridGraph {
     }
 
     /**
-     * Returns the number of all nodes, that includes the nodes which have no adjacent node and are considered as not existing in this exercise.
+     * Returns the number of all nodes, that includes the nodes which have no adjacent node and are considered as not
+     * existing in this exercise.
      */
     public int numOfAllNodes() {
         return GridGraph.mNumOfRowsInGrid * GridGraph.mNumOfColumnsInGrid;
@@ -199,9 +203,25 @@ public class GridGraph {
         for (int i = 0; i < this.numOfAllNodes(); i++) {
             if (withSingletons || this.nodeHasAdjacentNodes(i)) {
                 if (withSingletons) {
-                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + i + "};");
+                    writer.write(
+                        String.format(
+                            "\\node[node] (%d) at (%d,%d) {%d};",
+                            i,
+                            i % this.numOfColumnsInGrid(),
+                            (this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid(),
+                            i
+                        )
+                    );
                 } else {
-                    writer.write("\\node[node] (" + i + ") at (" + (i % this.numOfColumnsInGrid()) + "," + ((this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid()) + ") {" + this.nodeName(i) + "};");
+                    writer.write(
+                        String.format(
+                            "\\node[node] (%d) at (%d,%d) {%s};",
+                            i,
+                            i % this.numOfColumnsInGrid(),
+                            (this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid(),
+                            this.nodeName(i)
+                        )
+                    );
                 }
                 Main.newLine(writer);
             }
@@ -234,7 +254,8 @@ public class GridGraph {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public void printSCCs(final BufferedWriter writer, final boolean withSingletons, final boolean write) throws IOException {
+    public void printSCCs(final BufferedWriter writer, final boolean withSingletons, final boolean write)
+    throws IOException {
         final int[] sccs = this.findSCCs(writer, write);
         int sccNum = -1;
         int checkedNodes = 0;
@@ -294,11 +315,12 @@ public class GridGraph {
             final BufferedWriter exerciseWriter = optionalExerciseWriter.get();
             if (withText) {
                 exerciseWriter.write(
-                              "Bestimmen Sie eine \\emphasize{topologische Sortierung} unter Verwendung des in " +
-                            "der Vorlesung vorgestellten Algorithmus f\"ur den folgenden Graphen. Im gesamten " +
-                            "Algorithmus werden Knoten in aufsteigender Reihenfolge ihrer Schl\\\"ussel ber\\\"ucksichtigt." +
-                            " Als Ergebnis geben Sie die Liste der Knotenschl\\\"ussel in aufsteigender Reihenfolge der Topologiewerte an."
-                              );
+                    "Bestimmen Sie eine \\emphasize{topologische Sortierung} unter Verwendung des in "
+                    + "der Vorlesung vorgestellten Algorithmus f\"ur den folgenden Graphen. Im gesamten "
+                    + "Algorithmus werden Knoten in aufsteigender Reihenfolge ihrer Schl\\\"ussel ber\\\"ucksichtigt."
+                    + " Als Ergebnis geben Sie die Liste der Knotenschl\\\"ussel in aufsteigender Reihenfolge der "
+                    + "Topologiewerte an."
+                );
                 Main.newLine(exerciseWriter);
             }
             this.printGraph(exerciseWriter, false);
@@ -308,16 +330,16 @@ public class GridGraph {
         Main.newLine(solutionWriter);
         int min = 1;
         int first = 0;
-        for(int index = 0; index < nodeValues.length; ++index){
-            if(nodeValues[index] != null && nodeValues[index] == min){
+        for (int index = 0; index < nodeValues.length; ++index) {
+            if (nodeValues[index] != null && nodeValues[index] == min) {
                 solutionWriter.write(this.nodeName(index) + "("+ nodeValues[index] + ")");
                 first = index;
                 break;
             }
         }
-        while(min <= nodeValues.length){
-            for(int index = 0; index < nodeValues.length; ++index){
-                if(nodeValues[index] != null && nodeValues[index] == min && first != index){
+        while (min <= nodeValues.length) {
+            for (int index = 0; index < nodeValues.length; ++index) {
+                if (nodeValues[index] != null && nodeValues[index] == min && first != index) {
                     solutionWriter.write(", " + this.nodeName(index) + "("+ nodeValues[index] + ")");
                 }
             }
@@ -333,8 +355,8 @@ public class GridGraph {
      * @param to The second node connected to the edge(s) to create.
      * @param type 1, if only an edge from the first node to the second should be inserted;
      *             -1, if only an edge from the second node to the first should be inserted;
-     *             2, if an edge from the first node to the second should and an edge from the second to the first node should be inserted;
-     *             otherwise, no edge is added.
+     *             2, if an edge from the first node to the second should and an edge from the second to the first node
+     *             should be inserted; otherwise, no edge is added.
      */
     void addEdges(final int from, final int to, final int type) {
         switch (type) {
@@ -357,15 +379,16 @@ public class GridGraph {
         }
     }
 
-    int dfsTopologicOrdering(final int start, final int[] colors, int topoNum, final Integer[] topo) throws IOException {
+    int dfsTopologicOrdering(final int start, final int[] colors, int topoNum, final Integer[] topo)
+    throws IOException {
         colors[start] = 1;
         final int[] neighbors = this.getNeighbors(start);
-        for(int index = 0; index < neighbors.length; ++index){
+        for (int index = 0; index < neighbors.length; ++index) {
             //System.out.println("Start: " + (start+1) + ", Neighbor: " + (neighbors[index]+1));
-            if(colors[neighbors[index]]==1){
+            if (colors[neighbors[index]]==1) {
                 throw new IOException("The given graph is cyclic!");
             }
-            if(colors[neighbors[index]] == 0){
+            if (colors[neighbors[index]] == 0) {
                 topoNum = this.dfsTopologicOrdering(neighbors[index], colors, topoNum, topo);
             }
         }
@@ -376,7 +399,16 @@ public class GridGraph {
         return topoNum;
     }
 
-    void dfsWalk(final int from, int[] color, final List<Integer> result, final int ccNum, final int[] cc, final int directions, final int[] S, final int[] lastOfS) {
+    void dfsWalk(
+        final int from,
+        int[] color,
+        final List<Integer> result,
+        final int ccNum,
+        final int[] cc,
+        final int directions,
+        final int[] S,
+        final int[] lastOfS
+    ) {
         if (color == null) {
             color = new int[this.numOfAllNodes()];
         }
@@ -388,7 +420,13 @@ public class GridGraph {
             cc[from] = ccNum;
         }
         for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (color[i] == 0 && ((directions >= 0 && this.mAdjacencyMatrix[from][i]) || (directions <= 0 && this.mAdjacencyMatrix[i][from]))) {
+            if (
+                color[i] == 0
+                && (
+                    (directions >= 0 && this.mAdjacencyMatrix[from][i])
+                    || (directions <= 0 && this.mAdjacencyMatrix[i][from])
+                )
+            ) {
                 this.dfsWalk(i, color, result, ccNum, cc, directions, S, lastOfS);
             }
         }
@@ -414,7 +452,7 @@ public class GridGraph {
         final int[] S = new int[this.numOfAllNodes()];
         final int[] colorA = new int[this.numOfAllNodes()];
         // phase 1
-        if(write) {
+        if (write) {
             Main.newLine(writer);
             writer.write("Phase 1:");
             Main.newLine(writer);
@@ -426,7 +464,7 @@ public class GridGraph {
             if (colorA[w] == 0) {
                 this.dfsWalk(w, colorA, null, 0, null, 1, S, lastOfS);
 
-                if(write && this.nodeHasAdjacentNodes(w)) {
+                if (write && this.nodeHasAdjacentNodes(w)) {
                     this.printS(writer, S, lastOfS);
                     this.printColor(writer, colorA);
                     writer.write("\\medskip");
@@ -435,7 +473,7 @@ public class GridGraph {
             }
         }
         // phase 2
-        if(write) {
+        if (write) {
             writer.write("\\medskip");
             Main.newLine(writer);
             writer.write("Phase 2:");
@@ -455,7 +493,7 @@ public class GridGraph {
                 for (final Integer node : walk) {
                     result[node] = v;
                 }
-                if(write && this.nodeHasAdjacentNodes(v)) {
+                if (write && this.nodeHasAdjacentNodes(v)) {
                     this.printS(writer, S, lastOfS);
                     this.printColor(writer, colorB);
                     this.printScc(writer, result);
@@ -469,8 +507,8 @@ public class GridGraph {
 
     int[] getNeighbors(final int nodeIndex){
         final ArrayList<Integer> result = new ArrayList<Integer>();
-        for(int index = 0; index < this.mAdjacencyMatrix[nodeIndex].length; ++index){
-            if(this.mAdjacencyMatrix[nodeIndex][index] == true){
+        for (int index = 0; index < this.mAdjacencyMatrix[nodeIndex].length; ++index) {
+            if (this.mAdjacencyMatrix[nodeIndex][index] == true) {
                 result.add(index);
             }
         }
@@ -546,8 +584,8 @@ public class GridGraph {
         final int[] color = new int[this.numOfAllNodes()];
         Arrays.fill(color, 0);
         int topoNum = 0;
-        for(int nodeIndex = 0; nodeIndex < this.numOfAllNodes(); ++nodeIndex){
-            if(color[nodeIndex] == 0 && this.nodeHasAdjacentNodes(nodeIndex)){
+        for (int nodeIndex = 0; nodeIndex < this.numOfAllNodes(); ++nodeIndex) {
+            if (color[nodeIndex] == 0 && this.nodeHasAdjacentNodes(nodeIndex)) {
                 //try{
                     topoNum = this.dfsTopologicOrdering(nodeIndex, color, topoNum, result);
                 //}
