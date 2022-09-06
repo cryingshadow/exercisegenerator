@@ -64,17 +64,17 @@ public abstract class Sorting {
             new ArrayList<List<ItemWithTikZInformation<Integer>>>();
         result.add(Sorting.toTikZItems(initialArray));
         final int[] array = ArrayUtils.copy(initialArray);
-        int length = array.length;
-        while (length > 1) {
-            int n = 1;
-            for (int i = 0; i < length - 1; i++) {
+        int unsortedLength = array.length;
+        while (unsortedLength > 1) {
+            int lowestIndexNotSwapped = 1;
+            for (int i = 0; i < unsortedLength - 1; i++) {
                 if (array[i] > array[i + 1]) {
                     ArrayUtils.swap(array, i, i + 1);
                     result.add(Sorting.toTikZItems(array));
-                    n = i + 1;
+                    lowestIndexNotSwapped = i + 1;
                 }
             }
-            length = n;
+            unsortedLength = lowestIndexNotSwapped;
         }
         return result;
     }
@@ -137,9 +137,7 @@ public abstract class Sorting {
         final List<List<ItemWithTikZInformation<Integer>>> result =
             new ArrayList<List<ItemWithTikZInformation<Integer>>>();
         result.add(Sorting.toTikZItems(initialArray));
-        final int length = initialArray.length;
         final int[] array = ArrayUtils.copy(initialArray);
-        System.arraycopy(initialArray, 0, array, 0, length);
         for (int i = 1; i < array.length; i++) {
             final int insert = array[i];
             int j = i;
