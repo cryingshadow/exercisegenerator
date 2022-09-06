@@ -4,8 +4,6 @@ import java.util.*;
 
 /**
  * Represents a node position in a grid layout.
- * @author Thomas Stroeder
- * @version 1.0
  */
 public class NodeGridPosition {
 

@@ -4,8 +4,6 @@ import exercisegenerator.util.*;
 
 /**
  * B-tree with ints as keys.
- * @author Thomas Stroeder
- * @version 1.0.1
  */
 public class IntBTree {
 

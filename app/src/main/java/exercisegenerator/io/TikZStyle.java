@@ -2,8 +2,6 @@ package exercisegenerator.io;
 
 /**
  * Styles for TikZ environments.
- * @author Thomas Stroeder
- * @version 1.0.2
  */
 public enum TikZStyle {
 

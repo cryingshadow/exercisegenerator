@@ -7,8 +7,6 @@ import exercisegenerator.algorithms.*;
 
 /**
  * Class for testing the student mode of DSALExercises.
- * @author Thomas Stroeder
- * @version 1.1.0
  */
 public class DSALExercisesTest {
 

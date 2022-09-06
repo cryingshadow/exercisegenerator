@@ -2,8 +2,6 @@ package exercisegenerator.structures;
 
 /**
  * A node in a red-black-tree with an int value.
- * @author Florian Corzilius, Thomas Stroeder
- * @version 1.1.0
  */
 public class RBNode {
 

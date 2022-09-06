@@ -9,8 +9,6 @@ import exercisegenerator.structures.*;
 
 /**
  * Class offering methods for dynamic programming.
- * @author Florian Corzilius, Thomas Stroeder
- * @version 1.0.1
  */
 public abstract class DynamicProgramming {
 

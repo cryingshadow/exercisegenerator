@@ -4,8 +4,6 @@ import java.io.*;
 
 /**
  * Parser to parse integer labels.
- * @author Thomas Stroeder
- * @version 1.0
  */
 public class IntLabelParser implements LabelParser<Integer> {
 

@@ -2,8 +2,6 @@ package exercisegenerator.util;
 
 /**
  * An exception to be thrown if hashing cannot be executed due to a bad choice of parameters.
- * @author Thomas Stroeder
- * @version 1.0
  */
 public class HashException extends Exception {
 

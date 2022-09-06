@@ -11,8 +11,6 @@ import exercisegenerator.util.*;
 
 /**
  * Class offering methods for graph algorithms.
- * @author Thomas Stroeder
- * @version 1.1.1
  */
 public abstract class GraphAlgorithms {
 

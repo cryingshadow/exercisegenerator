@@ -2,8 +2,6 @@ package exercisegenerator.io;
 
 /**
  * Versions for exercise texts.
- * @author Thomas Stroeder
- * @version 1.0
  */
 public enum TextVersion {
 

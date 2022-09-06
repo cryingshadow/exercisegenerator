@@ -4,8 +4,6 @@ import exercisegenerator.*;
 
 /**
  * Pair used for flow networks. Just overrides the toString method.
- * @author Thomas Stroeder
- * @version 1.0.1
  */
 public class FlowPair extends Pair<Integer, Integer> {
 

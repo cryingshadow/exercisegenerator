@@ -4,8 +4,6 @@ import java.io.*;
 
 /**
  * Parser from Strings to L.
- * @author Thomas Stroeder
- * @version 1.0
  * @param <L> The type of the label to parse a String to.
  */
 public interface LabelParser<L> {

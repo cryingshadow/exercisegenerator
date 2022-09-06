@@ -10,8 +10,6 @@ import exercisegenerator.util.*;
 
 /**
  * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
- * @author Thomas Stroeder
- * @version 1.1.1
  */
 public enum Algorithm {
 

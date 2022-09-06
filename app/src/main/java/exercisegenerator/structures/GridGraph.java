@@ -8,8 +8,6 @@ import exercisegenerator.io.*;
 
 /**
  * Programm for creating planar graphs with node positions according to a grid.
- * @author Florian Corzilius
- * @version 1.0
  */
 public class GridGraph {
 

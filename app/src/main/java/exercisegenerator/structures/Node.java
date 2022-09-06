@@ -5,8 +5,6 @@ import java.util.*;
 
 /**
  * A labeled node.
- * @author Thomas Stroeder
- * @version 1.0
  * @param <L> The type of the label.
  */
 public class Node<L> {

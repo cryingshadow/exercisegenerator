@@ -1,10 +1,5 @@
 package exercisegenerator.io;
 
-/**
- * Print modes for graphs.
- * @author Thomas Stroeder
- * @version 1.0
- */
 public enum GraphPrintMode {
 
     /**

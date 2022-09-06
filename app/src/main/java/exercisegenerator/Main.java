@@ -9,8 +9,6 @@ import exercisegenerator.structures.*;
 
 /**
  * Programm for creating exercises and solutions for algorithmic problems.
- * @author Thomas Stroeder, Florian Corzilius, Stefan Schupp
- * @version {@value #VERSION}
  */
 public class Main {
 
@@ -36,7 +34,7 @@ public class Main {
     private static final String[] HELP;
 
     /**
-     * The version of this program.
+     * The release version of this program.
      */
     private static final String VERSION = "1.2.0";
 

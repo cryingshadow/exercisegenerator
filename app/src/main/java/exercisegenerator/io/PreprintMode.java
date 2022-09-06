@@ -2,8 +2,6 @@ package exercisegenerator.io;
 
 /**
  * Modes for printing solution space.
- * @author Thomas Stroeder
- * @version 1.0
  */
 public enum PreprintMode {
 

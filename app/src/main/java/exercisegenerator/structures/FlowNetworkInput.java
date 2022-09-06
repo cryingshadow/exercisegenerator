@@ -2,8 +2,6 @@ package exercisegenerator.structures;
 
 /**
  * Input object for flow network problems.
- * @author Thomas Stroeder
- * @version 1.0.1
  * @param <N> Node label type.
  * @param <E> Edge label type.
  */

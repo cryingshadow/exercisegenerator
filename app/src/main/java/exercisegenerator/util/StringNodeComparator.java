@@ -6,8 +6,6 @@ import exercisegenerator.structures.*;
 
 /**
  * String node comparator based on String.compareTo.
- * @author Thomas Stroeder
- * @version 1.0
  */
 public class StringNodeComparator implements Comparator<Node<String>> {
 

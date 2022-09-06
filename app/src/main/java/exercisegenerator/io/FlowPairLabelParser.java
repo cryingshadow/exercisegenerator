@@ -6,8 +6,6 @@ import exercisegenerator.structures.*;
 
 /**
  * Parser to parse integer pair labels.
- * @author Thomas Stroeder
- * @version 1.0
  */
 public class FlowPairLabelParser implements LabelParser<FlowPair> {
 

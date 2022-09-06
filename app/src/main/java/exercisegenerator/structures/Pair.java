@@ -6,8 +6,6 @@ import java.util.*;
  * A simple pair extending Map.Entry.
  * @param <X> The type of the first component.
  * @param <Y> The type of the second component.
- * @author Thomas Stroeder
- * @version 1.0
  */
 public class Pair<X, Y> implements Map.Entry<X, Y>, java.io.Serializable {
 

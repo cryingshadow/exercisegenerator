@@ -11,8 +11,6 @@ import exercisegenerator.util.*;
 /**
  * This abstract class provides methods for sorting arrays and producing TikZ output showing intermediate steps of the
  * sorting routines.
- * @author Thomas Stroeder
- * @version 1.1.0
  */
 public abstract class Sorting {
 

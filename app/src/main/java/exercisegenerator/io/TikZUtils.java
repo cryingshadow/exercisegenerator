@@ -11,8 +11,6 @@ import exercisegenerator.structures.*;
 
 /**
  * This abstract class provides methods for creating TikZ output.
- * @author Thomas Stroeder
- * @version 1.1.0
  */
 public abstract class TikZUtils {
 

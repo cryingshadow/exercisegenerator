@@ -7,8 +7,6 @@ import exercisegenerator.io.*;
 
 /**
  * Programm for creating solutions of exercises where elements have to be inserted into or deleted from an AVL-tree.
- * @author Florian Corzilius, Thomas Stroeder
- * @version 1.1.1
  */
 public class IntAVLTree {
 

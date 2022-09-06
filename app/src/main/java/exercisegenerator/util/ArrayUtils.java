@@ -2,8 +2,6 @@ package exercisegenerator.util;
 
 /**
  * This abstract class offers static methods for manipulating arrays.
- * @author Thomas Stroeder
- * @version 1.1.0
  */
 public abstract class ArrayUtils {
 

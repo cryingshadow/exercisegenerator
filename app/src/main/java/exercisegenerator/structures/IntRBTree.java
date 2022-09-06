@@ -6,8 +6,6 @@ import exercisegenerator.*;
 
 /**
  * Programm for creating solutions of exercises where elements have to be inserted into an Red-Black-Tree.
- * @author Florian Corzilius, Thomas Stroeder
- * @version 1.1.0
  */
 public class IntRBTree {
 

@@ -4,8 +4,6 @@ import java.io.*;
 
 /**
  * Parser to parse (= return) String labels.
- * @author cryingshadow
- * @version $Id$
  */
 public class StringLabelParser implements LabelParser<String> {
 

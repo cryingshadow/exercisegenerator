@@ -4,8 +4,6 @@ import exercisegenerator.*;
 
 /**
  * Option flags for the program arguments.
- * @author cryingshadow
- * @version $Id$
  */
 public enum Flag {
 
