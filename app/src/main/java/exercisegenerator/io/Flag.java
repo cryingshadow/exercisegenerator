@@ -37,6 +37,19 @@ public enum Flag {
     DEGREE("-d", "Degree", "Used to specify the degree, e.g., of a B-tree. Not relevant for all algorithms."),
 
     /**
+     * Should the resulting files contain all command definitions (standalone) or should they be part of a bigger
+     * LaTeX document where the commands are defined somewhere else (embedded). If not specified, the default is
+     * standalone.
+     */
+    EXECUTION_MODE(
+        "-x",
+        "Execution mode",
+        "Should the resulting files contain all command definitions (standalone) or should they be part of a bigger "
+        + "LaTeX document where the commands are defined somewhere else (embedded). If not specified, the default is "
+        + "standalone."
+    ),
+
+    /**
      * File to store LaTeX code for the exercise. E.g., for sorting this might be the
      * input array followed by a number of empty arrays. If not set, no exercise will be generated.
      */

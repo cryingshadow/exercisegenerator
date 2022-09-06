@@ -243,6 +243,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "fromhuff",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-i", "01100001100001111101",
@@ -287,6 +288,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "dijkstra",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-p", "solutionSpace",
@@ -366,6 +368,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "tohuff",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-i", "GEIERMEIER",
@@ -459,6 +462,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "fromfloat",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-c", String.valueOf(mantisseLength),
@@ -487,6 +491,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "fromonescompl",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-c", String.valueOf(bitLength),
@@ -514,6 +519,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "fromtwoscompl",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-c", String.valueOf(bitLength),
@@ -534,6 +540,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "hashMultiplicationQuadratic",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-i", "11,0.7,7,3\n3,5,1,4,2,1",
@@ -608,7 +615,13 @@ public class MainTest {
     @Test
     public void insertionsort() throws IOException {
         Main.main(
-            new String[]{"-a", "insertionsort", "-e", MainTest.EX_FILE, "-t", MainTest.SOL_FILE, "-i", "3,5,1,4,2"}
+            new String[]{
+                "-a", "insertionsort",
+                "-x", Main.EMBEDDED,
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-i", "3,5,1,4,2"
+            }
         );
         try (
             BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
@@ -705,6 +718,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "tofloat",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-c", String.valueOf(mantisseLength),
@@ -733,6 +747,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "toonescompl",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-c", String.valueOf(bitLength),
@@ -760,6 +775,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "totwoscompl",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-c", String.valueOf(bitLength),
@@ -780,6 +796,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "fromvigenere",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-i", "URKSAK\nSAKRAL\nAKLRSU"
@@ -820,6 +837,7 @@ public class MainTest {
         Main.main(
             new String[]{
                 "-a", "tovigenere",
+                "-x", Main.EMBEDDED,
                 "-e", MainTest.EX_FILE,
                 "-t", MainTest.SOL_FILE,
                 "-i", "KLAUSUR\nSAKRAL\nAKLRSU"

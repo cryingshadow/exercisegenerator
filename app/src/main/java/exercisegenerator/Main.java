@@ -14,12 +14,16 @@ import exercisegenerator.structures.*;
  */
 public class Main {
 
+    public static final String EMBEDDED;
+
     public static String lineSeparator;
 
     /**
      * Limit for random numbers in student mode.
      */
     public static final int NUMBER_LIMIT;
+
+    public static final String STANDALONE;
 
     /**
      * Text version.
@@ -38,6 +42,8 @@ public class Main {
 
     static {
         NUMBER_LIMIT = 100;
+        EMBEDDED = "embedded";
+        STANDALONE = "standalone";
         TEXT_VERSION = TextVersion.GENERAL;
         HELP = Main.initHelpText();
         Main.lineSeparator = System.lineSeparator();
@@ -248,8 +254,7 @@ public class Main {
     }
 
     private static boolean standalone(final Parameters options) {
-        // TODO create own parameter
-        return !options.containsKey(Flag.SOURCE) && !options.containsKey(Flag.INPUT);
+        return options.getOrDefault(Flag.EXECUTION_MODE, Main.STANDALONE).equals(Main.STANDALONE);
     }
 
 }
