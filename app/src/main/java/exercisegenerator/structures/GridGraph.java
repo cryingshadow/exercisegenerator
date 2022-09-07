@@ -195,8 +195,8 @@ public class GridGraph {
      * @throws IOException If some error occurs during output.
      */
     public void printGraph(final BufferedWriter writer, final boolean withSingletons) throws IOException {
-        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
-        TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         // print the nodes
         writer.write("% The nodes:");
         Main.newLine(writer);
@@ -245,8 +245,8 @@ public class GridGraph {
             }
         }
         // print the edges
-        TikZUtils.printTikzEnd(writer);
-        TikZUtils.printEnd(TikZUtils.CENTER, writer);
+        LaTeXUtils.printTikzEnd(writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
     }
 
     /**

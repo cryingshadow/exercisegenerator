@@ -162,7 +162,7 @@ public class IntAVLTree {
     public void print(final String headline, final BufferedWriter writer) throws IOException  {
         this.printVerticalSpace(writer);
         this.printSamePageBeginning(headline, writer);
-        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
         if (this.root == null) {
             writer.write("\\Tree [.\\phantom{0} ];");
         } else if (this.root.left == null && this.root.right == null ) {
@@ -172,8 +172,8 @@ public class IntAVLTree {
             writer.write(this.root.toString());
         }
         Main.newLine(writer);
-        TikZUtils.printTikzEnd(writer);
-        TikZUtils.printProtectedNewline(writer);
+        LaTeXUtils.printTikzEnd(writer);
+        LaTeXUtils.printProtectedNewline(writer);
         this.printSamePageEnd(writer);
     }
 

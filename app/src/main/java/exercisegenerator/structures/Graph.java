@@ -141,29 +141,29 @@ public class Graph<N, E> {
     ) throws IOException {
         final Map<Node<N>,List<Pair<E,Node<N>>>> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
         if (directed) {
-            TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
+            LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         } else {
-            TikZUtils.printTikzBeginning(TikZStyle.SYM_GRAPH, writer);
+            LaTeXUtils.printTikzBeginning(TikZStyle.SYM_GRAPH, writer);
         }
         if (this.grid == null) {
             final int limit = (int)Math.sqrt(this.adjacencyLists.size());
             final Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
             for (int row = 0; it.hasNext(); row++) {
                 for (int col = 0; col < limit && it.hasNext(); col++) {
-                    TikZUtils.printNode(it.next(), "[node]", "at (" + col + "," + row + ") ", writer);
+                    LaTeXUtils.printNode(it.next(), "[node]", "at (" + col + "," + row + ") ", writer);
                 }
             }
         } else {
             for (final Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
                 final Pair<Integer, Integer> pos = entry.getKey();
-                TikZUtils.printNode(entry.getValue(), "[node]", "at (" + pos.x + "," + pos.y + ") ", writer);
+                LaTeXUtils.printNode(entry.getValue(), "[node]", "at (" + pos.x + "," + pos.y + ") ", writer);
             }
         }
         if (directed) {
             for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
                 final BigInteger from = entry.getKey().id;
                 for (final Pair<E, Node<N>> edge : entry.getValue()) {
-                    TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.id, writer);
+                    LaTeXUtils.printEdge(LaTeXUtils.EDGE_STYLE, from, edge.x, edge.y.id, writer);
                 }
             }
         } else {
@@ -174,13 +174,13 @@ public class Graph<N, E> {
                     final Pair<BigInteger,BigInteger> reverseNodePair =
                         new Pair<BigInteger,BigInteger>(edge.y.id, entry.getKey().id);
                     if (!finishedNodePairs.contains(reverseNodePair)) {
-                        TikZUtils.printEdge(TikZUtils.SYM_EDGE_STYLE, from, edge.x, edge.y.id, writer);
+                        LaTeXUtils.printEdge(LaTeXUtils.SYM_EDGE_STYLE, from, edge.x, edge.y.id, writer);
                         finishedNodePairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id, edge.y.id));
                     }
                 }
             }
         }
-        TikZUtils.printTikzEnd(writer);
+        LaTeXUtils.printTikzEnd(writer);
     }
 
     /**
@@ -198,7 +198,7 @@ public class Graph<N, E> {
         final Set<Pair<Node<N>, Pair<E, Node<N>>>> toHighlight,
         final BufferedWriter writer
     ) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         if (this.grid == null) {
             final int limit = (int)Math.sqrt(this.adjacencyLists.size());
             final Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
@@ -206,7 +206,7 @@ public class Graph<N, E> {
                 final double multipliedRow = Math.round(multiplier * row * 10.0) / 10.0;
                 for (int col = 0; col < limit && it.hasNext(); col++) {
                     final double multipliedCol = Math.round(multiplier * col * 10.0) / 10.0;
-                    TikZUtils.printNode(
+                    LaTeXUtils.printNode(
                         it.next(),
                         "[node]",
                         "at (" + multipliedCol + "," + multipliedRow + ") ",
@@ -219,7 +219,7 @@ public class Graph<N, E> {
                 final Pair<Integer, Integer> pos = entry.getKey();
                 final double multipliedCol = Math.round(multiplier * pos.x * 10.0) / 10.0;
                 final double multipliedRow = Math.round(multiplier * pos.y * 10.0) / 10.0;
-                TikZUtils.printNode(
+                LaTeXUtils.printNode(
                     entry.getValue(),
                     "[node]",
                     "at (" + multipliedCol + "," + multipliedRow + ") ",
@@ -238,21 +238,21 @@ public class Graph<N, E> {
                         && toHighlight.contains(new Pair<Node<N>, Pair<E, Node<N>>>(fromNode, edge))
                     ) {
                         if (printEdgeLabels) {
-                            TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.id, writer);
+                            LaTeXUtils.printEdge(LaTeXUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.id, writer);
                         } else {
-                            TikZUtils.printEdge(TikZUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.id, writer);
+                            LaTeXUtils.printEdge(LaTeXUtils.EDGE_HIGHLIGHT_STYLE, from, null, edge.y.id, writer);
                         }
                     } else {
                         if (printEdgeLabels) {
-                            TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, edge.x, edge.y.id, writer);
+                            LaTeXUtils.printEdge(LaTeXUtils.EDGE_STYLE, from, edge.x, edge.y.id, writer);
                         } else {
-                            TikZUtils.printEdge(TikZUtils.EDGE_STYLE, from, null, edge.y.id, writer);
+                            LaTeXUtils.printEdge(LaTeXUtils.EDGE_STYLE, from, null, edge.y.id, writer);
                         }
                     }
                 }
             }
         }
-        TikZUtils.printTikzEnd(writer);
+        LaTeXUtils.printTikzEnd(writer);
         Main.newLine(writer);
     }
 

@@ -463,10 +463,10 @@ public abstract class Sorting {
         writer.write(additional);
         writer.write(".\\\\[2ex]");
         Main.newLine(writer);
-        TikZUtils.printSolutionSpaceBeginning(options, writer);
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        LaTeXUtils.printSolutionSpaceBeginning(options, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor =
-            TikZUtils.printListAndReturnLeftmostNodesName(
+            LaTeXUtils.printListAndReturnLeftmostNodesName(
                 Sorting.toTikZItems(array),
                 Optional.empty(),
                 Sorting.getMaximumContentLength(array),
@@ -474,15 +474,15 @@ public abstract class Sorting {
             );
         for (int i = 0; i < rows; i++) {
             anchor =
-                TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(
+                LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(
                     array.length,
                     Optional.of(anchor),
                     contentLength,
                     writer
                 );
         }
-        TikZUtils.printTikzEnd(writer);
-        TikZUtils.printSolutionSpaceEnd(options, writer);
+        LaTeXUtils.printTikzEnd(writer);
+        LaTeXUtils.printSolutionSpaceEnd(options, writer);
     }
 
     private static void printSolution(
@@ -490,18 +490,18 @@ public abstract class Sorting {
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor = null;
         for (final List<ItemWithTikZInformation<Integer>> list : solution) {
             anchor =
-                TikZUtils.printListAndReturnLeftmostNodesName(
+                LaTeXUtils.printListAndReturnLeftmostNodesName(
                     list,
                     Optional.ofNullable(anchor),
                     contentLength,
                     writer
                 );
         }
-        TikZUtils.printTikzEnd(writer);
+        LaTeXUtils.printTikzEnd(writer);
         Main.newLine(writer);
     }
 
@@ -512,13 +512,13 @@ public abstract class Sorting {
     ) throws IOException {
         int step = 0;
         for (final List<ItemWithTikZInformation<Integer>> list : solution) {
-            TikZUtils.printSamePageBeginning(step++, TikZUtils.COL_WIDTH, writer);
+            LaTeXUtils.printSamePageBeginning(step++, LaTeXUtils.COL_WIDTH, writer);
             Sorting.printTree(list, writer);
-            TikZUtils.printProtectedNewline(writer);
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            TikZUtils.printListAndReturnLeftmostNodesName(list, Optional.empty(), contentLength, writer);
-            TikZUtils.printTikzEnd(writer);
-            TikZUtils.printSamePageEnd(writer);
+            LaTeXUtils.printProtectedNewline(writer);
+            LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+            LaTeXUtils.printListAndReturnLeftmostNodesName(list, Optional.empty(), contentLength, writer);
+            LaTeXUtils.printTikzEnd(writer);
+            LaTeXUtils.printSamePageEnd(writer);
             Sorting.printVerticalSpaceForStep(step, writer);
         }
     }
@@ -538,7 +538,7 @@ public abstract class Sorting {
         if (to < 0) {
             return;
         }
-        TikZUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
         if (to > 0) {
             writer.write("\\Tree");
             Sorting.printTree(list, 0, to, writer);
@@ -548,7 +548,7 @@ public abstract class Sorting {
             );
         }
         Main.newLine(writer);
-        TikZUtils.printTikzEnd(writer);
+        LaTeXUtils.printTikzEnd(writer);
     }
 
     /**

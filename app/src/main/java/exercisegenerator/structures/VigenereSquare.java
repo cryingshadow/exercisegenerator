@@ -38,7 +38,7 @@ public class VigenereSquare {
             table[i][0] = String.valueOf(i);
             table[i][1] = String.valueOf(this.alphabet.get(i));
         }
-        TikZUtils.printTable(table, color, "1.5em", writer, false, 0);
+        LaTeXUtils.printTable(table, color, "1.5em", writer, false, 0);
     }
 
 }

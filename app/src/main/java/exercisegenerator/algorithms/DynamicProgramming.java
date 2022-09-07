@@ -144,30 +144,30 @@ public abstract class DynamicProgramming {
                 solutionsTmpEx[0][columnNr % tableWidth] = solutions[0][columnNr];
                 if (columnNr > 0 && (columnNr % tableWidth == tableWidth - 1 || columnNr == capacity + 1)) {
                     // we are at the last column of a table (table is filled completely)
-                    TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
+                    LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
                     solWriter.write("{\\Large");
                     Main.newLine(solWriter);
-                    TikZUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
+                    LaTeXUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
                     Main.newLine(solWriter);
                     solWriter.write("}");
                     Main.newLine(solWriter);
-                    TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
+                    LaTeXUtils.printEnd(LaTeXUtils.CENTER, solWriter);
                     Main.newLine(solWriter);
                     switch (mode) {
                         case SOLUTION_SPACE:
-                            TikZUtils.printSolutionSpaceBeginning(options, exWriter);
+                            LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
                             // fall-through
                         case ALWAYS:
-                            TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+                            LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                             exWriter.write("{\\Large");
                             Main.newLine(exWriter);
-                            TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                            LaTeXUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
                             Main.newLine(exWriter);
                             exWriter.write("}");
                             Main.newLine(exWriter);
-                            TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+                            LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
-                                TikZUtils.printSolutionSpaceEnd(options, exWriter);
+                                LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
                             }
                             Main.newLine(exWriter);
                             break;
@@ -191,33 +191,33 @@ public abstract class DynamicProgramming {
             }
             switch (mode) {
                 case SOLUTION_SPACE:
-                    TikZUtils.printSolutionSpaceBeginning(options, exWriter);
+                    LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
                     // fall-through
                 case ALWAYS:
-                    TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+                    LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                     exWriter.write("{\\Large");
                     Main.newLine(exWriter);
-                    TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                    LaTeXUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
                     Main.newLine(exWriter);
                     exWriter.write("}");
                     Main.newLine(exWriter);
-                    TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+                    LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
-                        TikZUtils.printSolutionSpaceEnd(options, exWriter);
+                        LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
                     }
                     Main.newLine(exWriter);
                     break;
                 case NEVER:
                     // do nothing
             }
-            TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
+            LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
             solWriter.write("{\\Large");
             Main.newLine(solWriter);
-            TikZUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
+            LaTeXUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
             Main.newLine(solWriter);
             solWriter.write("}");
             Main.newLine(solWriter);
-            TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
+            LaTeXUtils.printEnd(LaTeXUtils.CENTER, solWriter);
             Main.newLine(solWriter);
         }
         solWriter.write("\\medskip");
@@ -373,30 +373,30 @@ public abstract class DynamicProgramming {
                 solutionsTmpEx[0][columnNr % tableWidth] = solutions[0][columnNr];
                 if (columnNr > 0 && (columnNr % tableWidth == tableWidth - 1 || columnNr == m + 1)) {
                     // we are at the last column of a table (table is filled completely)
-                    TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
+                    LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
                     solWriter.write("{\\Large");
                     Main.newLine(solWriter);
-                    TikZUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
+                    LaTeXUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
                     Main.newLine(solWriter);
                     solWriter.write("}");
                     Main.newLine(solWriter);
-                    TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
+                    LaTeXUtils.printEnd(LaTeXUtils.CENTER, solWriter);
                     Main.newLine(solWriter);
                     switch (mode) {
                         case SOLUTION_SPACE:
-                            TikZUtils.printSolutionSpaceBeginning(options, exWriter);
+                            LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
                             // fall-through
                         case ALWAYS:
-                            TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+                            LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                             exWriter.write("{\\Large");
                             Main.newLine(exWriter);
-                            TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                            LaTeXUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
                             Main.newLine(exWriter);
                             exWriter.write("}");
                             Main.newLine(exWriter);
-                            TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+                            LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
-                                TikZUtils.printSolutionSpaceEnd(options, exWriter);
+                                LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
                             }
                             Main.newLine(exWriter);
                             break;
@@ -420,33 +420,33 @@ public abstract class DynamicProgramming {
             }
             switch (mode) {
                 case SOLUTION_SPACE:
-                    TikZUtils.printSolutionSpaceBeginning(options, exWriter);
+                    LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
                     // fall-through
                 case ALWAYS:
-                    TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
+                    LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                     exWriter.write("{\\Large");
                     Main.newLine(exWriter);
-                    TikZUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                    LaTeXUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
                     Main.newLine(exWriter);
                     exWriter.write("}");
                     Main.newLine(exWriter);
-                    TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
+                    LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
-                        TikZUtils.printSolutionSpaceEnd(options, exWriter);
+                        LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
                     }
                     Main.newLine(exWriter);
                     break;
                 case NEVER:
                     // do nothing
             }
-            TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
+            LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
             solWriter.write("{\\Large");
             Main.newLine(solWriter);
-            TikZUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
+            LaTeXUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
             Main.newLine(solWriter);
             solWriter.write("}");
             Main.newLine(solWriter);
-            TikZUtils.printEnd(TikZUtils.CENTER, solWriter);
+            LaTeXUtils.printEnd(LaTeXUtils.CENTER, solWriter);
             Main.newLine(solWriter);
         }
         solWriter.write("\\medskip");

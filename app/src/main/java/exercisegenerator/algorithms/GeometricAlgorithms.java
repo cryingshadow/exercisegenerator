@@ -59,7 +59,7 @@ public abstract class GeometricAlgorithms {
         int count = GeometricAlgorithms.computeConvexHull(pointSet, solWriter);
         switch (mode) {
             case SOLUTION_SPACE:
-                TikZUtils.printSolutionSpaceBeginning(options, exWriter);
+                LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
                 break;
             case NEVER:
                 count = 1;
@@ -79,7 +79,7 @@ public abstract class GeometricAlgorithms {
             --count;
         }
         if (mode == PreprintMode.SOLUTION_SPACE) {
-            TikZUtils.printSolutionSpaceEnd(options, exWriter);
+            LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
         }
     }
 
@@ -91,7 +91,7 @@ public abstract class GeometricAlgorithms {
     ) throws IOException {
         writer.write("\\resizebox{.45\\textwidth}{!}{");
         Main.newLine(writer);
-        TikZUtils.printTikzBeginning(TikZStyle.POINTSET, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.POINTSET, writer);
         for (int i = 0; i < pointSet.size(); ++i) {
             writer.write("\\node at (" + pointSet.get(i).x + ", " + pointSet.get(i).y + ") {\\textbullet};");
             Main.newLine(writer);
@@ -124,7 +124,7 @@ public abstract class GeometricAlgorithms {
         }
         writer.write(";");
         Main.newLine(writer);
-        TikZUtils.printTikzEnd(writer);
+        LaTeXUtils.printTikzEnd(writer);
         writer.write("}");
     }
 
@@ -136,7 +136,7 @@ public abstract class GeometricAlgorithms {
     ) throws IOException {
         writer.write("\\resizebox{.45\\textwidth}{!}{");
         Main.newLine(writer);
-        TikZUtils.printTikzBeginning(TikZStyle.POINTSET, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.POINTSET, writer);
         Main.newLine(writer);
         for (int i = 0; i < pointSet.size(); ++i) {
             if (reference >= 0) {
@@ -170,7 +170,7 @@ public abstract class GeometricAlgorithms {
                 Main.newLine(writer);
             }
         }
-        TikZUtils.printTikzEnd(writer);
+        LaTeXUtils.printTikzEnd(writer);
         Main.newLine(writer);
         writer.write("}");
     }

@@ -150,26 +150,26 @@ public abstract class Cryptography {
         }
         exerciseWriter.write("schl\\\"usseln Sie den Text");
         Main.newLine(exerciseWriter);
-        TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
-        exerciseWriter.write(TikZUtils.code(inputText));
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
+        exerciseWriter.write(LaTeXUtils.code(inputText));
         Main.newLine(exerciseWriter);
-        TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
         exerciseWriter.write("unter Benutzung des Schl\\\"usselworts");
         Main.newLine(exerciseWriter);
-        TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
-        exerciseWriter.write(TikZUtils.code(keyword));
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
+        exerciseWriter.write(LaTeXUtils.code(keyword));
         Main.newLine(exerciseWriter);
-        TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
         exerciseWriter.write("auf dem Alphabet");
         Main.newLine(exerciseWriter);
-        TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
         square.toLaTeX(exerciseWriter);
-        TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
         exerciseWriter.write("mithilfe der Vigen\\'ere-Verschl\\\"usselung.");
         Main.newLine(exerciseWriter);
         Main.newLine(exerciseWriter);
 
-        solutionWriter.write(TikZUtils.code(result));
+        solutionWriter.write(LaTeXUtils.code(result));
         Main.newLine(solutionWriter);
         Main.newLine(solutionWriter);
     }

@@ -9,10 +9,7 @@ import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.structures.*;
 
-/**
- * This abstract class provides methods for creating TikZ output.
- */
-public abstract class TikZUtils {
+public abstract class LaTeXUtils {
 
     /**
      * The name of the center environment.
@@ -61,6 +58,17 @@ public abstract class TikZUtils {
 
     public static String code(final String text) {
         return String.format("\\code{%s}", text);
+    }
+
+    public static String escapeForLaTeX(final char c) {
+        return LaTeXUtils.escapeForLaTeX(String.valueOf(c));
+    }
+
+    public static String escapeForLaTeX(final String text) {
+        return text.replaceAll("([&\\$%\\{\\}_#])", "\\\\$1")
+            .replaceAll("~", "\\\\textasciitilde")
+            .replaceAll("\\^", "\\\\textasciicircum")
+            .replaceAll("\\\\", "\\\\textbackslash");
     }
 
     /**
@@ -144,7 +152,7 @@ public abstract class TikZUtils {
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        return TikZUtils.printListAndReturnLeftmostNodesName(
+        return LaTeXUtils.printListAndReturnLeftmostNodesName(
             Stream.generate(() -> new ItemWithTikZInformation<>()).limit(length).toList(),
             below,
             contentLength,
@@ -159,7 +167,7 @@ public abstract class TikZUtils {
      * @throws IOException If some I/O error occurs.
      */
     public static void printEmptyArrayWithIndex(final int length, final BufferedWriter writer) throws IOException {
-        TikZUtils.printListAndReturnLeftmostNodesName(
+        LaTeXUtils.printListAndReturnLeftmostNodesName(
             IntStream.range(0, length).mapToObj(i -> new ItemWithTikZInformation<>(i)).toList(),
             Optional.empty(),
             Algorithm.DEFAULT_CONTENT_LENGTH,
@@ -180,7 +188,7 @@ public abstract class TikZUtils {
         final String left,
         final BufferedWriter writer
         ) throws IOException {
-        final String firstName = "n" + TikZUtils.number++;
+        final String firstName = "n" + LaTeXUtils.number++;
         if (left == null) {
             writer.write("\\node[node] (");
             writer.write(firstName);
@@ -195,8 +203,8 @@ public abstract class TikZUtils {
             Main.newLine(writer);
         }
         for (int i = 1; i < length; i++) {
-            writer.write("\\node[node] (n" + TikZUtils.number++);
-            writer.write(") [below=of n" + (TikZUtils.number - 2));
+            writer.write("\\node[node] (n" + LaTeXUtils.number++);
+            writer.write(") [below=of n" + (LaTeXUtils.number - 2));
             writer.write("] {\\phantom{00}};");
             Main.newLine(writer);
         }
@@ -300,7 +308,7 @@ public abstract class TikZUtils {
     ) throws IOException {
         final ItemWithTikZInformation<?> firstItem = list.get(0);
         final String firstName =
-            TikZUtils.printListItemAndReturnNodeName(
+            LaTeXUtils.printListItemAndReturnNodeName(
                 firstItem.optionalContent,
                 below.isEmpty() ?
                     Optional.empty() :
@@ -315,7 +323,7 @@ public abstract class TikZUtils {
         for (int i = 1; i < list.size(); i++) {
             final ItemWithTikZInformation<?> item = list.get(i);
             previousName =
-                TikZUtils.printListItemAndReturnNodeName(
+                LaTeXUtils.printListItemAndReturnNodeName(
                     item.optionalContent,
                     Optional.of(new TikZNodeOrientation(previousName, TikZNodeDirection.RIGHT)),
                     item.marker,
@@ -336,7 +344,7 @@ public abstract class TikZUtils {
     }
 
     public static void printMinipageEnd(final BufferedWriter writer) throws IOException {
-        TikZUtils.printEnd("minipage", writer);
+        LaTeXUtils.printEnd("minipage", writer);
     }
 
     /**
@@ -398,7 +406,7 @@ public abstract class TikZUtils {
             writer.write("Schritt " + step + ": L\\\"osche " + op.x + "\\\\[-2ex]");
         }
         Main.newLine(writer);
-        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
     }
 
     /**
@@ -419,7 +427,7 @@ public abstract class TikZUtils {
         Main.newLine(writer);
         writer.write("Schritt " + step + ":\\\\[-2ex]");
         Main.newLine(writer);
-        TikZUtils.printBeginning(TikZUtils.CENTER, writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
     }
 
     /**
@@ -428,7 +436,7 @@ public abstract class TikZUtils {
      * @throws IOException If some error occurs during output.
      */
     public static void printSamePageEnd(final BufferedWriter writer) throws IOException {
-        TikZUtils.printEnd(TikZUtils.CENTER, writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         writer.write("\\end{minipage}");
         Main.newLine(writer);
     }
@@ -438,20 +446,28 @@ public abstract class TikZUtils {
         if (Main.standalone(options)) {
             return;
         }
-        TikZUtils.printToggleForSolutions(writer);
-        TikZUtils.printVerticalProtectedSpace("-3ex", writer);
-        TikZUtils.printElse(writer);
+        if (Main.embeddedExam(options)) {
+            LaTeXUtils.printToggleForSolutions(writer);
+            LaTeXUtils.printVerticalProtectedSpace("-3ex", writer);
+            LaTeXUtils.printElse(writer);
+        } else {
+            writer.write("\\solutionSpace{");
+            Main.newLine(writer);
+        }
     }
 
     public static void printSolutionSpaceEnd(final Parameters options, final BufferedWriter writer) throws IOException {
         if (Main.standalone(options)) {
             Main.newLine(writer);
             Main.newLine(writer);
-            return;
+        } else  if (Main.embeddedExam(options)) {
+            LaTeXUtils.printVerticalProtectedSpace(writer);
+            LaTeXUtils.printEndIf(writer);
+            Main.newLine(writer);
+        } else {
+            writer.write("}");
+            Main.newLine(writer);
         }
-        TikZUtils.printVerticalProtectedSpace(writer);
-        TikZUtils.printEndIf(writer);
-        Main.newLine(writer);
     }
 
     /**
@@ -554,7 +570,7 @@ public abstract class TikZUtils {
         final String left,
         final BufferedWriter writer
     ) throws IOException {
-        final String firstName = "n" + TikZUtils.number++;
+        final String firstName = "n" + LaTeXUtils.number++;
         if( left == null )
         {
             writer.write("\\node[node");
@@ -587,13 +603,13 @@ public abstract class TikZUtils {
                 writer.write(",fill=black!20");
             }
             writer.write("] (");
-            writer.write("n" + TikZUtils.number++);
+            writer.write("n" + LaTeXUtils.number++);
             writer.write(") [below=");
             if (separate != null && separate[i - 1]) {
                 writer.write("0.1 ");
             }
             writer.write("of ");
-            writer.write("n" + (TikZUtils.number - 2));
+            writer.write("n" + (LaTeXUtils.number - 2));
             final int val = array[i];
             writer.write("] {" + (val < 10 ? "\\phantom{0}" : "") + val);
             writer.write("};");
@@ -603,7 +619,7 @@ public abstract class TikZUtils {
     }
 
     public static void printVerticalProtectedSpace(final BufferedWriter writer) throws IOException {
-        TikZUtils.printVerticalProtectedSpace("1ex", writer);
+        LaTeXUtils.printVerticalProtectedSpace("1ex", writer);
     }
 
     public static void printVerticalProtectedSpace(final String space, final BufferedWriter writer) throws IOException {
@@ -632,7 +648,7 @@ public abstract class TikZUtils {
         final String left,
         final BufferedWriter writer
         ) throws IOException {
-        final String firstName = "n" + TikZUtils.number++;
+        final String firstName = "n" + LaTeXUtils.number++;
         if( left == null )
         {
             writer.write("\\node[node");
@@ -665,13 +681,13 @@ public abstract class TikZUtils {
                 writer.write(",fill=black!20");
             }
             writer.write("] (");
-            writer.write("n" + TikZUtils.number++);
+            writer.write("n" + LaTeXUtils.number++);
             writer.write(") [below=");
             if (separate != null && separate[i - 1]) {
                 writer.write("0.1 ");
             }
             writer.write("of ");
-            writer.write("n" + (TikZUtils.number - 2));
+            writer.write("n" + (LaTeXUtils.number - 2));
             final String val = array[i];
             writer.write("] {" + val);
             writer.write("};");
@@ -681,7 +697,7 @@ public abstract class TikZUtils {
     }
 
     public static void reset() {
-        TikZUtils.number = 0;
+        LaTeXUtils.number = 0;
     }
 
     public static String widthOf(final String text) {
@@ -711,7 +727,7 @@ public abstract class TikZUtils {
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        final int currentNumber = TikZUtils.number++;
+        final int currentNumber = LaTeXUtils.number++;
         final String name = "n" + currentNumber;
         writer.write("\\node[node");
         if (marker) {
@@ -737,11 +753,11 @@ public abstract class TikZUtils {
             final String content = optionalContent.get().toString();
             final int contentLengthDiff = contentLength - content.length();
             if (contentLengthDiff > 0) {
-                TikZUtils.printPhantomSpace(contentLengthDiff, writer);
+                LaTeXUtils.printPhantomSpace(contentLengthDiff, writer);
             }
             writer.write(content);
         } else {
-            TikZUtils.printPhantomSpace(contentLength, writer);
+            LaTeXUtils.printPhantomSpace(contentLength, writer);
         }
         writer.write("};");
         Main.newLine(writer);
@@ -760,7 +776,7 @@ public abstract class TikZUtils {
 
     private static void printPhantomSpace(final int numOfZerosForSpace, final BufferedWriter writer) throws IOException {
         writer.write("\\phantom{");
-        TikZUtils.printZeros(numOfZerosForSpace, writer);
+        LaTeXUtils.printZeros(numOfZerosForSpace, writer);
         writer.write("}");
     }
 

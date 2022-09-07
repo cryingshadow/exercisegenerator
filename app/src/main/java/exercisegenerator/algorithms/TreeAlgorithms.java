@@ -93,16 +93,16 @@ public abstract class TreeAlgorithms {
                     writerSpace.write("\\emphasize{L\\\"oschoperation} sowie jeder \\emphasize{Rotation} an:\\\\\\\\");
                     Main.newLine(writerSpace);
                 }
-                TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
+                LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
                 for (final Pair<Integer, Boolean> op : ops) {
                     if (op.y) {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
                     } else {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
                     }
                     Main.newLine(writerSpace);
                 }
-                TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
+                LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writerSpace);
             } else {
                 final Pair<Integer, Boolean> op = ops.peek();
                 if (tree.isEmpty()) {
@@ -231,11 +231,11 @@ public abstract class TreeAlgorithms {
                     );
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
-                    TikZUtils.printBeginning(TikZUtils.CENTER, writerSpace);
-                    TikZUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
-                    TikZUtils.printBTree(tree, writerSpace);
-                    TikZUtils.printTikzEnd(writerSpace);
-                    TikZUtils.printEnd(TikZUtils.CENTER, writerSpace);
+                    LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writerSpace);
+                    LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
+                    LaTeXUtils.printBTree(tree, writerSpace);
+                    LaTeXUtils.printTikzEnd(writerSpace);
+                    LaTeXUtils.printEnd(LaTeXUtils.CENTER, writerSpace);
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
                     writerSpace.write("\\vspace*{1ex}");
@@ -246,16 +246,16 @@ public abstract class TreeAlgorithms {
                     );
                     Main.newLine(writerSpace);
                 }
-                TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
+                LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
                 for (final Pair<Integer, Boolean> op : ops) {
                     if (op.y) {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
                     } else {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
                     }
                     Main.newLine(writerSpace);
                 }
-                TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
+                LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writerSpace);
             } else {
                 final Pair<Integer, Boolean> op = ops.peek();
                 if (tree.isEmpty()) {
@@ -300,11 +300,11 @@ public abstract class TreeAlgorithms {
                     }
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
-                    TikZUtils.printBeginning(TikZUtils.CENTER, writerSpace);
-                    TikZUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
-                    TikZUtils.printBTree(tree, writerSpace);
-                    TikZUtils.printTikzEnd(writerSpace);
-                    TikZUtils.printEnd(TikZUtils.CENTER, writerSpace);
+                    LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writerSpace);
+                    LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
+                    LaTeXUtils.printBTree(tree, writerSpace);
+                    LaTeXUtils.printTikzEnd(writerSpace);
+                    LaTeXUtils.printEnd(LaTeXUtils.CENTER, writerSpace);
                     Main.newLine(writerSpace);
                 }
             }
@@ -317,11 +317,11 @@ public abstract class TreeAlgorithms {
             } else {
                 tree.remove(operation.x);
             }
-            TikZUtils.printSamePageBeginning(step++, operation, writer);
-            TikZUtils.printTikzBeginning(TikZStyle.BTREE, writer);
-            TikZUtils.printBTree(tree, writer);
-            TikZUtils.printTikzEnd(writer);
-            TikZUtils.printSamePageEnd(writer);
+            LaTeXUtils.printSamePageBeginning(step++, operation, writer);
+            LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writer);
+            LaTeXUtils.printBTree(tree, writer);
+            LaTeXUtils.printTikzEnd(writer);
+            LaTeXUtils.printSamePageEnd(writer);
         }
     }
 
@@ -403,16 +403,16 @@ public abstract class TreeAlgorithms {
                     writerSpace.write("\\\\\\\\");
                     Main.newLine(writerSpace);
                 }
-                TikZUtils.printBeginning(TikZUtils.ENUMERATE, writerSpace);
+                LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
                 for (final Pair<Integer, Boolean> op : ops) {
                     if (op.y) {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
                     } else {
-                        writerSpace.write(TikZUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
                     }
                     Main.newLine(writerSpace);
                 }
-                TikZUtils.printEnd(TikZUtils.ENUMERATE, writerSpace);
+                LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writerSpace);
             } else {
                 final Pair<Integer, Boolean> op = ops.peek();
                 if (tree.isEmpty()) {

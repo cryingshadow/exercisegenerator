@@ -617,18 +617,18 @@ public abstract class Hashing {
         final BufferedWriter writer
     ) throws IOException {
         if (probing) {
-            TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            TikZUtils.printListAndReturnLeftmostNodesName(
+            LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+            LaTeXUtils.printListAndReturnLeftmostNodesName(
                 Hashing.toTikZList(array),
                 Optional.empty(),
                 contentLength,
                 writer
             );
         } else {
-            TikZUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
-            TikZUtils.printVerticalStringArray(Hashing.toVerticalStringArray(array), null, null, null, writer);
+            LaTeXUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
+            LaTeXUtils.printVerticalStringArray(Hashing.toVerticalStringArray(array), null, null, null, writer);
         }
-        TikZUtils.printTikzEnd(writer);
+        LaTeXUtils.printTikzEnd(writer);
     }
 
     private static void printHashingExerciseAndSolution(
@@ -648,27 +648,27 @@ public abstract class Hashing {
         exerciseWriter.write(printOptions.optionsText);
         exerciseWriter.write(":\\\\");
         Main.newLine(exerciseWriter);
-        TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
         exerciseWriter.write(values.stream().map(String::valueOf).collect(Collectors.joining(", ")));
         exerciseWriter.write(".");
         Main.newLine(exerciseWriter);
-        TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
         switch (printOptions.preprintMode) {
             case ALWAYS:
             case SOLUTION_SPACE:
-                TikZUtils.printVerticalProtectedSpace("3ex", exerciseWriter);
+                LaTeXUtils.printVerticalProtectedSpace("3ex", exerciseWriter);
                 if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    TikZUtils.printSolutionSpaceBeginning(options, exerciseWriter);
+                    LaTeXUtils.printSolutionSpaceBeginning(options, exerciseWriter);
                 }
-                TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
+                LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
                 exerciseWriter.write("{\\Large");
                 Main.newLine(exerciseWriter);
                 Hashing.printArray(initialArray, contentLength, printOptions.probing, exerciseWriter);
                 exerciseWriter.write("}");
                 Main.newLine(exerciseWriter);
-                TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
+                LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
                 if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    TikZUtils.printSolutionSpaceEnd(options, exerciseWriter);
+                    LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
                 } else {
                     Main.newLine(exerciseWriter);
                     Main.newLine(exerciseWriter);
@@ -679,7 +679,7 @@ public abstract class Hashing {
                 Main.newLine(exerciseWriter);
         }
 
-        TikZUtils.printBeginning(TikZUtils.CENTER, solutionWriter);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solutionWriter);
         solutionWriter.write(printOptions.parameterText);
         Main.newLine(solutionWriter);
         solutionWriter.write("{\\Large");
@@ -687,7 +687,7 @@ public abstract class Hashing {
         Hashing.printArray(result, contentLength, printOptions.probing, solutionWriter);
         solutionWriter.write("}");
         Main.newLine(solutionWriter);
-        TikZUtils.printEnd(TikZUtils.CENTER, solutionWriter);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, solutionWriter);
         Main.newLine(solutionWriter);
     }
 

@@ -60,7 +60,7 @@ public class BinaryNumbersTest {
 
     @BeforeMethod
     public void prepare() {
-        TikZUtils.reset();
+        LaTeXUtils.reset();
     }
 
     @Test

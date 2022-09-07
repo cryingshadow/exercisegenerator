@@ -172,7 +172,7 @@ public abstract class CodingAlgorithms {
         Main.newLine(exerciseWriter);
         solutionWriter.write("\\textbf{Code:}\\\\");
         Main.newLine(solutionWriter);
-        solutionWriter.write(TikZUtils.code(code));
+        solutionWriter.write(LaTeXUtils.code(code));
         Main.newLine(solutionWriter);
     }
 
@@ -180,18 +180,18 @@ public abstract class CodingAlgorithms {
     throws IOException {
         writer.write("\\textbf{Codebuch:}");
         Main.newLine(writer);
-        TikZUtils.printBeginning("align*", writer);
+        LaTeXUtils.printBeginning("align*", writer);
         for (final Pair<Character, String> assignment : CodingAlgorithms.toSortedList(codeBook)) {
             writer.write(
                 String.format(
                     "\\code{`%s'} &= \\code{\\textquotedbl{}%s\\textquotedbl{}}\\\\",
-                    assignment.x,
-                    assignment.y
+                    LaTeXUtils.escapeForLaTeX(assignment.x),
+                    LaTeXUtils.escapeForLaTeX(assignment.y)
                 )
             );
             Main.newLine(writer);
         }
-        TikZUtils.printEnd("align*", writer);
+        LaTeXUtils.printEnd("align*", writer);
     }
 
     private static void printCodeBookForEncoding(
@@ -206,9 +206,11 @@ public abstract class CodingAlgorithms {
         final int contentLength = codeBook.values().stream().mapToInt(String::length).max().getAsInt();
         for (final Pair<Character, String> assignment : CodingAlgorithms.toSortedList(codeBook)) {
             Algorithm.assignment(
-                String.format("\\code{`%s'}", assignment.x),
+                String.format("\\code{`%s'}", LaTeXUtils.escapeForLaTeX(assignment.x)),
                 Collections.singletonList(
-                    new ItemWithTikZInformation<String>(Optional.of(TikZUtils.code(assignment.y)))
+                    new ItemWithTikZInformation<String>(
+                        Optional.of(LaTeXUtils.code(LaTeXUtils.escapeForLaTeX(assignment.y)))
+                    )
                 ),
                 "\\code{`M'}",
                 contentLength,
@@ -229,18 +231,18 @@ public abstract class CodingAlgorithms {
             "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\"
         );
         Main.newLine(exerciseWriter);
-        TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
-        exerciseWriter.write(TikZUtils.code(targetText));
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
+        exerciseWriter.write(LaTeXUtils.code(targetText));
         Main.newLine(exerciseWriter);
-        TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
-        TikZUtils.printVerticalProtectedSpace(exerciseWriter);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
         CodingAlgorithms.printCodeBookForDecoding(codeBook, exerciseWriter);
-        TikZUtils.printVerticalProtectedSpace("-3ex", exerciseWriter);
+        LaTeXUtils.printVerticalProtectedSpace("-3ex", exerciseWriter);
         exerciseWriter.write("\\textbf{Quelltext:}\\\\[2ex]");
         Main.newLine(exerciseWriter);
         Main.newLine(exerciseWriter);
 
-        solutionWriter.write(TikZUtils.code(result));
+        solutionWriter.write(LaTeXUtils.code(result));
         Main.newLine(solutionWriter);
         Main.newLine(solutionWriter);
     }
@@ -254,22 +256,24 @@ public abstract class CodingAlgorithms {
         final BufferedWriter solutionWriter
     ) throws IOException {
         exerciseWriter.write("Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{");
-        exerciseWriter.write(targetAlphabet.stream().map(String::valueOf).collect(Collectors.joining(",")));
+        exerciseWriter.write(
+            LaTeXUtils.escapeForLaTeX(targetAlphabet.stream().map(String::valueOf).collect(Collectors.joining(",")))
+        );
         exerciseWriter.write("\\}$ und den folgenden Eingabetext:\\\\");
         Main.newLine(exerciseWriter);
-        TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
         exerciseWriter.write(sourceText);
         Main.newLine(exerciseWriter);
-        TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
-        TikZUtils.printVerticalProtectedSpace(exerciseWriter);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
+        LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
         exerciseWriter.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
         Main.newLine(exerciseWriter);
-        TikZUtils.printSolutionSpaceBeginning(options, exerciseWriter);
+        LaTeXUtils.printSolutionSpaceBeginning(options, exerciseWriter);
         CodingAlgorithms.printCodeBookForEncoding(result.x.toCodeBook(), exerciseWriter, solutionWriter);
-        TikZUtils.printVerticalProtectedSpace(exerciseWriter);
-        TikZUtils.printVerticalProtectedSpace(solutionWriter);
+        LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
+        LaTeXUtils.printVerticalProtectedSpace(solutionWriter);
         CodingAlgorithms.printCode(result.y, exerciseWriter, solutionWriter);
-        TikZUtils.printSolutionSpaceEnd(options, exerciseWriter);
+        LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
         Main.newLine(solutionWriter);
     }
 

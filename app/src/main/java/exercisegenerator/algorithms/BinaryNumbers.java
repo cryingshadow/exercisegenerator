@@ -429,8 +429,8 @@ public class BinaryNumbers {
             if (first) {
                 first = false;
             } else {
-                TikZUtils.printVerticalProtectedSpace(input.exerciseWriter);
-                TikZUtils.printVerticalProtectedSpace(input.solutionWriter);
+                LaTeXUtils.printVerticalProtectedSpace(input.exerciseWriter);
+                LaTeXUtils.printVerticalProtectedSpace(input.solutionWriter);
             }
             Algorithm.assignment(
                 toTaskText.apply(solvedTask),
@@ -484,7 +484,7 @@ public class BinaryNumbers {
     ) throws IOException {
         exerciseWriter.write(exerciseText);
         Main.newLine(exerciseWriter);
-        TikZUtils.printSolutionSpaceBeginning(options, exerciseWriter);
+        LaTeXUtils.printSolutionSpaceBeginning(options, exerciseWriter);
     }
 
     private static void binaryEnd(
@@ -492,7 +492,7 @@ public class BinaryNumbers {
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
-        TikZUtils.printSolutionSpaceEnd(options, exerciseWriter);
+        LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
         Main.newLine(solutionWriter);
     }
 
@@ -786,7 +786,7 @@ public class BinaryNumbers {
     }
 
     private static String toBitStringTask(final SolvedBinaryTask solvedTask) {
-        return TikZUtils.code(solvedTask.bitString.toString());
+        return LaTeXUtils.code(solvedTask.bitString.toString());
     }
 
     private static BitString toFloatForNegativeExponent(

@@ -14,6 +14,8 @@ public class Main {
 
     public static final String EMBEDDED;
 
+    public static final String EMBEDDED_EXAM;
+
     public static String lineSeparator;
 
     /**
@@ -41,6 +43,7 @@ public class Main {
     static {
         NUMBER_LIMIT = 100;
         EMBEDDED = "embedded";
+        EMBEDDED_EXAM = "embeddedExam";
         STANDALONE = "standalone";
         TEXT_VERSION = TextVersion.GENERAL;
         HELP = Main.initHelpText();
@@ -58,6 +61,10 @@ public class Main {
                 .map(alg -> alg.name)
                 .toList()
         );
+    }
+
+    public static boolean embeddedExam(final Parameters options) {
+        return Main.EMBEDDED_EXAM.equals(options.get(Flag.EXECUTION_MODE));
     }
 
     /**
@@ -118,8 +125,8 @@ public class Main {
             }
             algorithm.get().algorithm.accept(new AlgorithmInput(exerciseWriter, solutionWriter, options));
             if (standalone) {
-                TikZUtils.printLaTeXEnd(exerciseWriter);
-                TikZUtils.printLaTeXEnd(solutionWriter);
+                LaTeXUtils.printLaTeXEnd(exerciseWriter);
+                LaTeXUtils.printLaTeXEnd(solutionWriter);
             }
         } catch (final Exception e) {
             e.printStackTrace();
@@ -226,11 +233,11 @@ public class Main {
 
     private static void printLaTeXBeginning(final BufferedWriter exerciseWriter, final BufferedWriter solutionWriter)
     throws IOException {
-        TikZUtils.printLaTeXBeginning(exerciseWriter);
+        LaTeXUtils.printLaTeXBeginning(exerciseWriter);
         exerciseWriter.write("{\\large Aufgabe}\\\\[3ex]");
         Main.newLine(exerciseWriter);
         Main.newLine(exerciseWriter);
-        TikZUtils.printLaTeXBeginning(solutionWriter);
+        LaTeXUtils.printLaTeXBeginning(solutionWriter);
         solutionWriter.write("{\\large L\\\"osung}\\\\[3ex]");
         Main.newLine(solutionWriter);
         Main.newLine(solutionWriter);

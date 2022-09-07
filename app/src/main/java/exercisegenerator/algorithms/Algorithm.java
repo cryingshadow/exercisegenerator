@@ -601,19 +601,19 @@ public enum Algorithm {
     ) throws IOException {
         final String leftHandSideText = Algorithm.toLeftHandSideText(leftHandSide);
         final String longestLeftHandSideText = Algorithm.toLeftHandSideText(longestLeftHandSide);
-        TikZUtils.printMinipageBeginning(TikZUtils.widthOf(longestLeftHandSideText), writer);
-        TikZUtils.printFlushRightBeginning(writer);
+        LaTeXUtils.printMinipageBeginning(LaTeXUtils.widthOf(longestLeftHandSideText), writer);
+        LaTeXUtils.printFlushRightBeginning(writer);
         writer.write(leftHandSideText);
         Main.newLine(writer);
-        TikZUtils.printFlushRightEnd(writer);
-        TikZUtils.printMinipageEnd(writer);
-        TikZUtils.printMinipageBeginning(TikZUtils.widthOfComplement(longestLeftHandSideText), writer);
-        TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        LaTeXUtils.printFlushRightEnd(writer);
+        LaTeXUtils.printMinipageEnd(writer);
+        LaTeXUtils.printMinipageBeginning(LaTeXUtils.widthOfComplement(longestLeftHandSideText), writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
     }
 
     private static void assignmentEnd(final BufferedWriter writer) throws IOException {
-        TikZUtils.printTikzEnd(writer);
-        TikZUtils.printMinipageEnd(writer);
+        LaTeXUtils.printTikzEnd(writer);
+        LaTeXUtils.printMinipageEnd(writer);
     }
 
     private static void assignmentExercise(
@@ -624,7 +624,7 @@ public enum Algorithm {
         final BufferedWriter writer
     ) throws IOException {
         Algorithm.assignmentBeginning(task, longestTask, writer);
-        TikZUtils.printEmptyArrayAndReturnLeftmostNodesName(solutionLength, Optional.empty(), contentLength, writer);
+        LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(solutionLength, Optional.empty(), contentLength, writer);
         Algorithm.assignmentEnd(writer);
     }
 
@@ -636,7 +636,7 @@ public enum Algorithm {
         final BufferedWriter writer
     ) throws IOException {
         Algorithm.assignmentBeginning(task, longestTask, writer);
-        TikZUtils.printListAndReturnLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
+        LaTeXUtils.printListAndReturnLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
         Algorithm.assignmentEnd(writer);
     }
 
