@@ -250,6 +250,17 @@ public class BinaryNumbers {
         return -bitString.invert().increment().toUnsignedInt();
     }
 
+    public static String[] generateTestParameters() {
+        final String[] result = new String[6];
+        result[0] = "-c";
+        result[1] = "4";
+        result[2] = "-d";
+        result[3] = "3";
+        result[4] = "-l";
+        result[5] = "3";
+        return result; //TODO
+    }
+
     public static void toFloat(final AlgorithmInput input) throws IOException {
         BinaryNumbers.allBinaryTasks(
             input,

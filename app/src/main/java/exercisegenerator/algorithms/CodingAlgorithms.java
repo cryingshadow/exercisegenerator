@@ -54,6 +54,20 @@ public abstract class CodingAlgorithms {
         return new Pair<HuffmanTree, String>(tree, tree.toEncoder().encode(sourceText));
     }
 
+    public static String[] generateTestParametersFrom() {
+        final String[] result = new String[4];
+        result[0] = "-o";
+        result[1] = "'A':\"0\",'B':\"100\",'C':\"101\",'D':\"110\",'E':\"111\"";
+        result[2] = "-l";
+        result[3] = "5";
+        return result; //TODO
+    }
+
+    public static String[] generateTestParametersTo() {
+        final String[] result = new String[0];
+        return result;
+    }
+
     private static List<Character> generateAlphabet(final int alphabetSize, final Random gen) {
         final List<Character> biggestAlphabet = new ArrayList<Character>();
         for (int i = 32; i < 127; i++) {

@@ -44,26 +44,56 @@ public class MainTest {
         }
     }
 
-    private static final String EMPTY_NODE_MATCH = "\\\\node\\[node\\]";
+    public static final String EX_FILE;
 
-    private static final String EX_FILE;
+    public static final String EX_FILE_NAME;
 
-    private static final String MATCH_MESSAGE_PATTERN = "%s does not match %s";
+    public static final String SOL_FILE;
 
-    private static final String NODE_MATCH = "\\\\node\\[node(,fill=black!20)?\\]";
+    public static final String SOL_FILE_NAME;
 
-    private static final String NUMBER_MATCH = "(-?\\d+)";
+    public static final String TEST_DIR;
 
-    private static final String PHANTOM_MATCH = "(\\\\phantom\\{0+\\})?";
+    private static final String EMPTY_NODE_MATCH;
 
-    private static final String SOL_FILE;
+    private static final String MATCH_MESSAGE_PATTERN;
 
-    private static final String TEST_DIR;
+    private static final String NODE_MATCH;
+
+    private static final String NUMBER_MATCH;
+
+    private static final String PHANTOM_MATCH;
 
     static {
         TEST_DIR = "C:\\Daten\\Test\\exgen";
-        EX_FILE = MainTest.TEST_DIR + "\\ex.tex";
-        SOL_FILE = MainTest.TEST_DIR + "\\sol.tex";
+        EX_FILE_NAME = "ex.tex";
+        SOL_FILE_NAME = "sol.tex";
+        EX_FILE = MainTest.TEST_DIR + "\\" + MainTest.EX_FILE_NAME;
+        SOL_FILE = MainTest.TEST_DIR + "\\" + MainTest.SOL_FILE_NAME;
+        EMPTY_NODE_MATCH = "\\\\node\\[node\\]";
+        MATCH_MESSAGE_PATTERN = "%s does not match %s";
+        NODE_MATCH = "\\\\node\\[node(,fill=black!20)?\\]";
+        NUMBER_MATCH = "(-?\\d+)";
+        PHANTOM_MATCH = "(\\\\phantom\\{0+\\})?";
+    }
+
+    @AfterMethod
+    public static void cleanUp() {
+        final File testDir = new File(MainTest.TEST_DIR);
+        for (final File file : testDir.listFiles()) {
+            file.delete();
+        }
+    }
+
+    @BeforeMethod
+    public static void prepare() {
+        TikZUtils.reset();
+        final File testDir = new File(MainTest.TEST_DIR);
+        if (!testDir.exists()) {
+            if (!testDir.mkdirs()) {
+                throw new IllegalStateException("Cannot init test directory!");
+            }
+        }
     }
 
     private static void assignmentMiddle(final BufferedReader exReader, final BufferedReader solReader)
@@ -223,6 +253,8 @@ public class MainTest {
     private static void checkLaTeXPreamble(final BufferedReader reader) throws IOException {
         Assert.assertEquals(reader.readLine(), "\\documentclass{article}");
         Assert.assertEquals(reader.readLine(), "");
+        Assert.assertEquals(reader.readLine(), "\\usepackage[ngerman]{babel}");
+        Assert.assertEquals(reader.readLine(), "\\usepackage[T1]{fontenc}");
         Assert.assertEquals(reader.readLine(), "\\usepackage[table]{xcolor}");
         Assert.assertEquals(reader.readLine(), "\\usepackage[a4paper,margin=2cm]{geometry}");
         Assert.assertEquals(reader.readLine(), "\\usepackage{tikz}");
@@ -231,6 +263,7 @@ public class MainTest {
             "\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,trees,backgrounds}"
         );
         Assert.assertEquals(reader.readLine(), "\\usepackage{tikz-qtree}");
+        Assert.assertEquals(reader.readLine(), "\\usepackage{calc}");
         Assert.assertEquals(reader.readLine(), "\\usepackage{array}");
         Assert.assertEquals(reader.readLine(), "\\usepackage{amsmath}");
         Assert.assertEquals(reader.readLine(), "\\usepackage{enumerate}");
@@ -242,6 +275,7 @@ public class MainTest {
         Assert.assertEquals(reader.readLine(), "");
         Assert.assertEquals(reader.readLine(), "\\setlength{\\parindent}{0pt}");
         Assert.assertEquals(reader.readLine(), "");
+        Assert.assertEquals(reader.readLine(), "\\newcommand{\\code}[1]{\\textnormal{\\texttt{#1}}}");
         Assert.assertEquals(reader.readLine(), "\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
         Assert.assertEquals(reader.readLine(), "\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{");
         Assert.assertEquals(reader.readLine(), "            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}");
@@ -414,17 +448,6 @@ public class MainTest {
         return Arrays.stream(cases).map(c -> c.number).collect(Collectors.joining(";"));
     }
 
-    @AfterMethod
-    public void cleanUp() {
-        final File exFile = new File(MainTest.EX_FILE);
-        final File solFile = new File(MainTest.SOL_FILE);
-        if (exFile.exists()) {
-            exFile.delete();
-        }
-        if (solFile.exists()) {
-            solFile.delete();
-        }
-    }
 
     @Test
     public void decodeHuffman() throws IOException {
@@ -574,7 +597,6 @@ public class MainTest {
             Assert.assertNull(solReader.readLine());
         }
     }
-
 
     @Test
     public void encodeHuffman() throws IOException {
@@ -923,17 +945,6 @@ public class MainTest {
             Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
 
             MainTest.solutionSpaceEnd(exReader, solReader);
-        }
-    }
-
-    @BeforeMethod
-    public void prepare() {
-        TikZUtils.reset();
-        final File testDir = new File(MainTest.TEST_DIR);
-        if (!testDir.exists()) {
-            if (!testDir.mkdirs()) {
-                throw new IllegalStateException("Cannot init test directory!");
-            }
         }
     }
 

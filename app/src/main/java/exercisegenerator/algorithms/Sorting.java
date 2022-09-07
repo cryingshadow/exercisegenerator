@@ -79,6 +79,13 @@ public abstract class Sorting {
         return result;
     }
 
+    public static String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
     public static void heapsort(final AlgorithmInput input) throws IOException {
         Sorting.sort(
             input,

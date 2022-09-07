@@ -1082,6 +1082,13 @@ public abstract class GraphAlgorithms {
         Main.newLine(solWriter);
     }
 
+    public static String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
     public static void prim(final AlgorithmInput input) throws Exception {
         final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.prim(pair.x, pair.y, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);

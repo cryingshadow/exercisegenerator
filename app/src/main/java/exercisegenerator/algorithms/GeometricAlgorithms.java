@@ -12,6 +12,13 @@ import exercisegenerator.structures.*;
  */
 public abstract class GeometricAlgorithms {
 
+    public static String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
     public static void hull(final AlgorithmInput input) throws Exception {
         final ArrayList<Pair<Double,Double>> pointSet =
             GeometricAlgorithms.parseOrGenerateConvexHullProblem(input.options);

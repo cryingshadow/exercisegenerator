@@ -74,6 +74,13 @@ public abstract class Hashing {
         return result;
     }
 
+    public static String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
     public static void hashDiv(final AlgorithmInput input) throws Exception {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
         final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);

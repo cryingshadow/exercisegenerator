@@ -235,6 +235,10 @@ public abstract class TikZUtils {
         writer.write("\\documentclass{article}");
         Main.newLine(writer);
         Main.newLine(writer);
+        writer.write("\\usepackage[ngerman]{babel}");
+        Main.newLine(writer);
+        writer.write("\\usepackage[T1]{fontenc}");
+        Main.newLine(writer);
         writer.write("\\usepackage[table]{xcolor}");
         Main.newLine(writer);
         writer.write("\\usepackage[a4paper,margin=2cm]{geometry}");
@@ -246,6 +250,8 @@ public abstract class TikZUtils {
         writer.write("trees,backgrounds}");
         Main.newLine(writer);
         writer.write("\\usepackage{tikz-qtree}");
+        Main.newLine(writer);
+        writer.write("\\usepackage{calc}");
         Main.newLine(writer);
         writer.write("\\usepackage{array}");
         Main.newLine(writer);
@@ -259,6 +265,8 @@ public abstract class TikZUtils {
         Main.newLine(writer);
         writer.write("\\setlength{\\parindent}{0pt}");
         Main.newLine(writer);
+        Main.newLine(writer);
+        writer.write("\\newcommand{\\code}[1]{\\textnormal{\\texttt{#1}}}");
         Main.newLine(writer);
         writer.write("\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
         Main.newLine(writer);

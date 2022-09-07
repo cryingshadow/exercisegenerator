@@ -325,6 +325,13 @@ public abstract class TreeAlgorithms {
         }
     }
 
+    public static String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
     public static void rbtree(final AlgorithmInput input) throws IOException {
         TreeAlgorithms.rbtree(
             new IntRBTree(),

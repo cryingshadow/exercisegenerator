@@ -14,6 +14,13 @@ public abstract class Cryptography {
     public static final List<Character> ALPHABET26 =
         IntStream.range(65, 91).mapToObj(c -> Character.valueOf((char)c)).toList();
 
+    public static String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
     public static void vigenereDecode(final AlgorithmInput input) throws IOException {
         Cryptography.vigenere(input, false);
     }
