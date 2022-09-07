@@ -2,6 +2,7 @@ package exercisegenerator;
 
 import java.io.*;
 import java.util.*;
+import java.util.Optional;
 import java.util.stream.*;
 
 import org.testng.*;
@@ -9,6 +10,8 @@ import org.testng.annotations.*;
 
 import exercisegenerator.io.*;
 import exercisegenerator.util.*;
+
+//TODO heapsort with trees, additional complete sorting tests
 
 public class MainTest {
 
@@ -41,7 +44,17 @@ public class MainTest {
         }
     }
 
+    private static final String EMPTY_NODE_MATCH = "\\\\node\\[node\\]";
+
     private static final String EX_FILE;
+
+    private static final String MATCH_MESSAGE_PATTERN = "%s does not match %s";
+
+    private static final String NODE_MATCH = "\\\\node\\[node(,fill=black!20)?\\]";
+
+    private static final String NUMBER_MATCH = "(-?\\d+)";
+
+    private static final String PHANTOM_MATCH = "(\\\\phantom\\{0+\\})?";
 
     private static final String SOL_FILE;
 
@@ -51,19 +64,6 @@ public class MainTest {
         TEST_DIR = "C:\\Daten\\Test\\exgen";
         EX_FILE = MainTest.TEST_DIR + "\\ex.tex";
         SOL_FILE = MainTest.TEST_DIR + "\\sol.tex";
-    }
-
-    private static void assignmentEnd(final BufferedReader exReader, final BufferedReader solReader)
-    throws IOException {
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\fi");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertNull(exReader.readLine());
-
-        Assert.assertEquals(solReader.readLine(), "");
-        Assert.assertNull(solReader.readLine());
     }
 
     private static void assignmentMiddle(final BufferedReader exReader, final BufferedReader solReader)
@@ -77,15 +77,6 @@ public class MainTest {
         Assert.assertEquals(solReader.readLine(), "");
     }
 
-    private static void assignmentStart(final BufferedReader exReader, final BufferedReader solReader)
-    throws IOException {
-        Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\else");
-    }
-
     private static void binaryTest(
         final CheckedFunction<BinaryInput, Integer, IOException> algorithm,
         final BinaryTestCase[] cases,
@@ -93,7 +84,7 @@ public class MainTest {
         final BufferedReader solReader
     ) throws IOException {
         int currentNodeNumber = 0;
-        MainTest.assignmentStart(exReader, solReader);
+        MainTest.solutionSpaceBeginning(exReader, solReader);
         boolean first = true;
         for (final BinaryTestCase test : cases) {
             if (first) {
@@ -104,7 +95,7 @@ public class MainTest {
             currentNodeNumber =
                 algorithm.apply(new BinaryInput(currentNodeNumber, test, exReader, solReader));
         }
-        MainTest.assignmentEnd(exReader, solReader);
+        MainTest.solutionSpaceEnd(exReader, solReader);
     }
 
     private static int checkAssignment(
@@ -160,6 +151,181 @@ public class MainTest {
         return currentNodeNumber;
     }
 
+    private static int checkEmptyNodeRowAndReturnNextNodeNumber(
+        final String firstLine,
+        final BufferedReader reader,
+        final int initialNodeNumber,
+        final Optional<Integer> optionalBelowOf,
+        final int length
+    ) throws IOException {
+        int nodeNumber = initialNodeNumber;
+        if (optionalBelowOf.isPresent()) {
+            final String belowRegex =
+                String.format(
+                    "%s \\(n%d\\) \\[below=of n%d\\] \\{%s\\};",
+                    MainTest.EMPTY_NODE_MATCH,
+                    nodeNumber++,
+                    optionalBelowOf.get(),
+                    MainTest.PHANTOM_MATCH
+                );
+            Assert.assertTrue(
+                firstLine.matches(belowRegex),
+                String.format(MainTest.MATCH_MESSAGE_PATTERN, firstLine, belowRegex)
+            );
+        } else {
+            final String simpleRegex =
+                String.format(
+                    "%s \\(n%d\\) \\{%s\\};",
+                    nodeNumber++,
+                    MainTest.PHANTOM_MATCH,
+                    MainTest.EMPTY_NODE_MATCH
+                );
+            Assert.assertTrue(
+                firstLine.matches(simpleRegex),
+                String.format(MainTest.MATCH_MESSAGE_PATTERN, firstLine, simpleRegex)
+            );
+        }
+        for (int i = 1; i < length; i++) {
+            final String line = reader.readLine();
+            final String rightRegex =
+                String.format(
+                    "%s \\(n%d\\) \\[right=of n%d\\] \\{%s\\};",
+                    MainTest.EMPTY_NODE_MATCH,
+                    nodeNumber,
+                    nodeNumber - 1,
+                    MainTest.PHANTOM_MATCH
+                );
+            Assert.assertTrue(
+                line.matches(rightRegex),
+                String.format(MainTest.MATCH_MESSAGE_PATTERN, line, rightRegex)
+            );
+            nodeNumber++;
+        }
+        return nodeNumber;
+    }
+
+    private static void checkExerciseTitle(final BufferedReader reader) throws IOException {
+        Assert.assertEquals(reader.readLine(), "{\\large Aufgabe}\\\\[3ex]");
+        Assert.assertEquals(reader.readLine(), "");
+    }
+
+    private static void checkLaTeXEpilogue(final BufferedReader reader) throws IOException {
+        Assert.assertEquals(reader.readLine(), "");
+        String nextLine = reader.readLine();
+        while (nextLine != null && nextLine.isBlank()) {
+            nextLine = reader.readLine();
+        }
+        Assert.assertEquals(nextLine, "\\end{document}");
+        Assert.assertEquals(reader.readLine(), "");
+        Assert.assertNull(reader.readLine());
+    }
+
+    private static void checkLaTeXPreamble(final BufferedReader reader) throws IOException {
+        Assert.assertEquals(reader.readLine(), "\\documentclass{article}");
+        Assert.assertEquals(reader.readLine(), "");
+        Assert.assertEquals(reader.readLine(), "\\usepackage[table]{xcolor}");
+        Assert.assertEquals(reader.readLine(), "\\usepackage[a4paper,margin=2cm]{geometry}");
+        Assert.assertEquals(reader.readLine(), "\\usepackage{tikz}");
+        Assert.assertEquals(
+            reader.readLine(),
+            "\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,trees,backgrounds}"
+        );
+        Assert.assertEquals(reader.readLine(), "\\usepackage{tikz-qtree}");
+        Assert.assertEquals(reader.readLine(), "\\usepackage{array}");
+        Assert.assertEquals(reader.readLine(), "\\usepackage{amsmath}");
+        Assert.assertEquals(reader.readLine(), "\\usepackage{enumerate}");
+        Assert.assertEquals(reader.readLine(), "");
+        Assert.assertEquals(
+            reader.readLine(),
+            "\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}"
+        );
+        Assert.assertEquals(reader.readLine(), "");
+        Assert.assertEquals(reader.readLine(), "\\setlength{\\parindent}{0pt}");
+        Assert.assertEquals(reader.readLine(), "");
+        Assert.assertEquals(reader.readLine(), "\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
+        Assert.assertEquals(reader.readLine(), "\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{");
+        Assert.assertEquals(reader.readLine(), "            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}");
+        Assert.assertEquals(reader.readLine(), "");
+        Assert.assertEquals(reader.readLine(), "\\begin{document}");
+        Assert.assertEquals(reader.readLine(), "");
+    }
+
+    private static int checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
+        final BufferedReader reader,
+        final int initialNodeNumber,
+        final Optional<Integer> optionalBelowOf,
+        final int length
+    ) throws IOException {
+        return MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
+            reader.readLine(),
+            reader,
+            initialNodeNumber,
+            optionalBelowOf,
+            length
+        );
+    }
+
+    private static int checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
+        final String firstLine,
+        final BufferedReader reader,
+        final int initialNodeNumber,
+        final Optional<Integer> optionalBelowOf,
+        final int length
+    ) throws IOException {
+        int nodeNumber = initialNodeNumber;
+        if (optionalBelowOf.isPresent()) {
+            final String belowRegex =
+                String.format(
+                    "%s \\(n%d\\) \\[below=of n%d\\] \\{%s%s\\};",
+                    MainTest.NODE_MATCH,
+                    nodeNumber++,
+                    optionalBelowOf.get(),
+                    MainTest.PHANTOM_MATCH,
+                    MainTest.NUMBER_MATCH
+                );
+            Assert.assertTrue(
+                firstLine.matches(belowRegex),
+                String.format(MainTest.MATCH_MESSAGE_PATTERN, firstLine, belowRegex)
+            );
+        } else {
+            final String simpleRegex =
+                String.format(
+                    "%s \\(n%d\\) \\{%s%s\\};",
+                    MainTest.NODE_MATCH,
+                    nodeNumber++,
+                    MainTest.PHANTOM_MATCH,
+                    MainTest.NUMBER_MATCH
+                );
+            Assert.assertTrue(
+                firstLine.matches(simpleRegex),
+                String.format(MainTest.MATCH_MESSAGE_PATTERN, firstLine, simpleRegex)
+            );
+        }
+        for (int i = 1; i < length; i++) {
+            final String line = reader.readLine();
+            final String rightRegex =
+                String.format(
+                    "%s \\(n%d\\) \\[right=(0\\.1 )?of n%d\\] \\{%s%s\\};",
+                    MainTest.NODE_MATCH,
+                    nodeNumber,
+                    nodeNumber - 1,
+                    MainTest.PHANTOM_MATCH,
+                    MainTest.NUMBER_MATCH
+                );
+            Assert.assertTrue(
+                line.matches(rightRegex),
+                String.format(MainTest.MATCH_MESSAGE_PATTERN, line, rightRegex)
+            );
+            nodeNumber++;
+        }
+        return nodeNumber;
+    }
+
+    private static void checkSolutionTitle(final BufferedReader reader) throws IOException {
+        Assert.assertEquals(reader.readLine(), "{\\large L\\\"osung}\\\\[3ex]");
+        Assert.assertEquals(reader.readLine(), "");
+    }
+
     private static void fromBinary(
         final BinaryTestCase[] cases,
         final BufferedReader exReader,
@@ -186,6 +352,28 @@ public class MainTest {
             exReader,
             solReader
         );
+    }
+
+    private static void solutionSpaceBeginning(final BufferedReader exReader, final BufferedReader solReader)
+    throws IOException {
+        Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\else");
+    }
+
+    private static void solutionSpaceEnd(final BufferedReader exReader, final BufferedReader solReader)
+    throws IOException {
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertEquals(exReader.readLine(), "\\fi");
+        Assert.assertEquals(exReader.readLine(), "");
+        Assert.assertNull(exReader.readLine());
+
+        Assert.assertEquals(solReader.readLine(), "");
+        Assert.assertNull(solReader.readLine());
     }
 
     private static void toBinary(
@@ -254,7 +442,10 @@ public class MainTest {
             BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
             BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
         ) {
-            Assert.assertEquals(exReader.readLine(), "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\"
+            );
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
             Assert.assertEquals(exReader.readLine(), "\\code{01100001100001111101}");
             Assert.assertEquals(exReader.readLine(), "\\end{center}");
@@ -303,7 +494,10 @@ public class MainTest {
             Assert.assertEquals(exReader.readLine(), "Betrachten Sie den folgenden Graphen:\\\\[2ex]");
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
             Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-            Assert.assertEquals(exReader.readLine(), "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]"
+            );
             Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) at (0.0,1.0) {A};");
             Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) at (1.0,1.0) {B};");
             Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) at (0.0,0.0) {C};");
@@ -317,7 +511,10 @@ public class MainTest {
             Assert.assertEquals(exReader.readLine(), "");
             Assert.assertEquals(exReader.readLine(), "\\end{center}");
             Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]"
+            );
             Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
             Assert.assertEquals(exReader.readLine(), "");
             Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
@@ -347,21 +544,37 @@ public class MainTest {
             Assert.assertEquals(solReader.readLine(), "\\renewcommand{\\arraystretch}{1.5}");
             Assert.assertEquals(solReader.readLine(), "\\begin{tabular}{|*{4}{C{2cm}|}}");
             Assert.assertEquals(solReader.readLine(), "\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\textbf{Knoten} & \\textbf{A} & \\textbf{C} & \\textbf{D}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\textbf{B} & $\\infty$ & $\\infty$ & \\cellcolor{black!20}12\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\textbf{C} & \\cellcolor{black!20}5 & \\textbf{--} & \\textbf{--}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\textbf{D} & $\\infty$ & \\cellcolor{black!20}9 & \\textbf{--}\\\\\\hline");
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\textbf{Knoten} & \\textbf{A} & \\textbf{C} & \\textbf{D}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\textbf{B} & $\\infty$ & $\\infty$ & \\cellcolor{black!20}12\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\textbf{C} & \\cellcolor{black!20}5 & \\textbf{--} & \\textbf{--}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\textbf{D} & $\\infty$ & \\cellcolor{black!20}9 & \\textbf{--}\\\\\\hline"
+            );
             Assert.assertEquals(solReader.readLine(), "\\end{tabular}");
             Assert.assertEquals(solReader.readLine(), "\\renewcommand{\\arraystretch}{1.0}");
             Assert.assertEquals(solReader.readLine(), "\\end{center}");
             Assert.assertEquals(solReader.readLine(), "");
             Assert.assertEquals(solReader.readLine(), "\\vspace*{1ex}");
             Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertEquals(solReader.readLine(), "Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale Distanz sicher berechnet worden ist.");
+            Assert.assertEquals(
+                solReader.readLine(),
+                "Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale Distanz sicher berechnet worden ist."
+            );
             Assert.assertEquals(solReader.readLine(), "");
             Assert.assertNull(solReader.readLine());
         }
     }
+
 
     @Test
     public void encodeHuffman() throws IOException {
@@ -378,15 +591,21 @@ public class MainTest {
             BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
             BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
         ) {
-            Assert.assertEquals(exReader.readLine(), "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\"
+            );
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
             Assert.assertEquals(exReader.readLine(), "GEIERMEIER");
             Assert.assertEquals(exReader.readLine(), "\\end{center}");
             Assert.assertEquals(exReader.readLine(), "");
             Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
             Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
-            MainTest.assignmentStart(exReader, solReader);
+            Assert.assertEquals(
+                exReader.readLine(),
+                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
+            );
+            MainTest.solutionSpaceBeginning(exReader, solReader);
             Assert.assertEquals(exReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
             Assert.assertEquals(solReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
             final int longestCodeLength = 3;
@@ -445,7 +664,7 @@ public class MainTest {
             Assert.assertEquals(exReader.readLine(), "\\textbf{Code:}\\\\");
             Assert.assertEquals(solReader.readLine(), "\\textbf{Code:}\\\\");
             Assert.assertEquals(solReader.readLine(), "\\code{1001100110110111001101}");
-            MainTest.assignmentEnd(exReader, solReader);
+            MainTest.solutionSpaceEnd(exReader, solReader);
         }
     }
 
@@ -553,7 +772,10 @@ public class MainTest {
         ) {
             final int contentLength = 1;
             int nodeNumber = 0;
-            Assert.assertEquals(exReader.readLine(), "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\"
+            );
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
             Assert.assertEquals(exReader.readLine(), "3, 5, 1, 4, 2, 1.");
             Assert.assertEquals(exReader.readLine(), "\\end{center}");
@@ -640,9 +862,13 @@ public class MainTest {
             final int contentLength = 1;
             int nodeNumber = 0;
             Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Insertionsort.");
-            Assert.assertEquals(exReader.readLine(), "Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]");
-            Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
-            Assert.assertEquals(exReader.readLine(), "\\else");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]"
+            );
+
+            MainTest.solutionSpaceBeginning(exReader, solReader);
+
             Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
             Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
             Assert.assertEquals(exReader.readLine(), Patterns.singleNode(nodeNumber++, "3", contentLength));
@@ -662,8 +888,6 @@ public class MainTest {
                 }
             }
             Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-            Assert.assertEquals(exReader.readLine(), "\\fi");
-            Assert.assertNull(exReader.readLine());
 
             Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
             Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
@@ -697,7 +921,8 @@ public class MainTest {
             Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
             Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
             Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
-            Assert.assertNull(solReader.readLine());
+
+            MainTest.solutionSpaceEnd(exReader, solReader);
         }
     }
 
@@ -709,6 +934,87 @@ public class MainTest {
             if (!testDir.mkdirs()) {
                 throw new IllegalStateException("Cannot init test directory!");
             }
+        }
+    }
+
+    @Test
+    public void quicksortStandalone() throws IOException {
+        Main.main(
+            new String[]{
+                "-a", "quicksort",
+                "-e", MainTest.EX_FILE,
+                "-t", MainTest.SOL_FILE,
+                "-l", "5"
+            }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
+            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+        ) {
+            final int length = 5;
+            int nodeNumber = 0;
+            MainTest.checkLaTeXPreamble(exReader);
+            MainTest.checkExerciseTitle(exReader);
+            Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Quicksort.");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "Geben Sie dazu das Array nach jeder Partition-Operation an und markieren Sie das jeweils verwendete Pivot-Element.\\\\[2ex]"
+            );
+            Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
+            Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
+            int belowOf = nodeNumber;
+            nodeNumber =
+                MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
+                    exReader,
+                    nodeNumber,
+                    Optional.empty(),
+                    length
+                );
+            String nextLine = exReader.readLine();
+            while (nextLine != null && !nextLine.equals("\\end{tikzpicture}")) {
+                final int storeNodeNumber = nodeNumber;
+                nodeNumber =
+                    MainTest.checkEmptyNodeRowAndReturnNextNodeNumber(
+                        nextLine,
+                        exReader,
+                        nodeNumber,
+                        Optional.of(belowOf),
+                        length
+                    );
+                belowOf = storeNodeNumber;
+                nextLine = exReader.readLine();
+            }
+            Assert.assertEquals(nextLine, "\\end{tikzpicture}");
+            MainTest.checkLaTeXEpilogue(exReader);
+
+            MainTest.checkLaTeXPreamble(solReader);
+            MainTest.checkSolutionTitle(solReader);
+            Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
+            Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
+            belowOf = nodeNumber;
+            nodeNumber =
+                MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
+                    solReader,
+                    nodeNumber,
+                    Optional.empty(),
+                    length
+                );
+            nextLine = solReader.readLine();
+            while (nextLine != null && !nextLine.equals("\\end{tikzpicture}")) {
+                final int storeNodeNumber = nodeNumber;
+                nodeNumber =
+                    MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
+                        nextLine,
+                        solReader,
+                        nodeNumber,
+                        Optional.of(belowOf),
+                        length
+                    );
+                belowOf = storeNodeNumber;
+                nextLine = solReader.readLine();
+            }
+            Assert.assertEquals(nextLine, "\\end{tikzpicture}");
+            MainTest.checkLaTeXEpilogue(solReader);
         }
     }
 

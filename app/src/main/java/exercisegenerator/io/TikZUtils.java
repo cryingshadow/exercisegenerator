@@ -138,11 +138,6 @@ public abstract class TikZUtils {
         Main.newLine(writer);
     }
 
-    public static void printElse(final BufferedWriter writer) throws IOException {
-        writer.write("\\else");
-        Main.newLine(writer);
-    }
-
     public static String printEmptyArrayAndReturnLeftmostNodesName(
         final int length,
         final Optional<String> below,
@@ -221,11 +216,6 @@ public abstract class TikZUtils {
         Main.newLine(writer);
     }
 
-    public static void printEndIf(final BufferedWriter writer) throws IOException {
-        writer.write("\\fi");
-        Main.newLine(writer);
-    }
-
     public static void printFlushRightBeginning(final BufferedWriter writer) throws IOException {
         writer.write("\\begin{flushright}");
         Main.newLine(writer);
@@ -290,6 +280,7 @@ public abstract class TikZUtils {
     public static void printLaTeXEnd(final BufferedWriter writer) throws IOException {
         Main.newLine(writer);
         writer.write("\\end{document}");
+        Main.newLine(writer);
         Main.newLine(writer);
     }
 
@@ -434,25 +425,25 @@ public abstract class TikZUtils {
         Main.newLine(writer);
     }
 
-    /**
-     * Prints the beginning of solution space to the specified writer.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printSolutionSpaceBeginning(final BufferedWriter writer) throws IOException {
+    public static void printSolutionSpaceBeginning(final Parameters options, final BufferedWriter writer)
+    throws IOException {
+        if (Main.standalone(options)) {
+            return;
+        }
         TikZUtils.printToggleForSolutions(writer);
         TikZUtils.printVerticalProtectedSpace("-3ex", writer);
         TikZUtils.printElse(writer);
     }
 
-    /**
-     * Prints the end of solution space to the specified writer.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printSolutionSpaceEnd(final BufferedWriter writer) throws IOException {
+    public static void printSolutionSpaceEnd(final Parameters options, final BufferedWriter writer) throws IOException {
+        if (Main.standalone(options)) {
+            Main.newLine(writer);
+            Main.newLine(writer);
+            return;
+        }
         TikZUtils.printVerticalProtectedSpace(writer);
         TikZUtils.printEndIf(writer);
+        Main.newLine(writer);
     }
 
     /**
@@ -533,11 +524,6 @@ public abstract class TikZUtils {
      */
     public static void printTikzEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{tikzpicture}");
-        Main.newLine(writer);
-    }
-
-    public static void printToggleForSolutions(final BufferedWriter writer) throws IOException {
-        writer.write("\\ifprintanswers");
         Main.newLine(writer);
     }
 
@@ -698,6 +684,16 @@ public abstract class TikZUtils {
         return String.format("\\textwidth-\\widthof{%s}", text);
     }
 
+    private static void printElse(final BufferedWriter writer) throws IOException {
+        writer.write("\\else");
+        Main.newLine(writer);
+    }
+
+    private static void printEndIf(final BufferedWriter writer) throws IOException {
+        writer.write("\\fi");
+        Main.newLine(writer);
+    }
+
     private static String printListItemAndReturnNodeName(
         final Optional<?> optionalContent,
         final Optional<TikZNodeOrientation> optionalNodeOrientation,
@@ -758,6 +754,11 @@ public abstract class TikZUtils {
         writer.write("\\phantom{");
         TikZUtils.printZeros(numOfZerosForSpace, writer);
         writer.write("}");
+    }
+
+    private static void printToggleForSolutions(final BufferedWriter writer) throws IOException {
+        writer.write("\\ifprintanswers");
+        Main.newLine(writer);
     }
 
     private static void printZeros(final int numOfZeros, final BufferedWriter writer) throws IOException {

@@ -130,6 +130,10 @@ public class Main {
         writer.write(Main.lineSeparator);
     }
 
+    public static boolean standalone(final Parameters options) {
+        return options.getOrDefault(Flag.EXECUTION_MODE, Main.STANDALONE).equals(Main.STANDALONE);
+    }
+
     private static BufferedWriter getExerciseWriter(final Parameters options) throws IOException {
         return Main.getWriterByFlag(options, Flag.EXERCISE);
     }
@@ -249,10 +253,6 @@ public class Main {
                 }
             }
         }
-    }
-
-    private static boolean standalone(final Parameters options) {
-        return options.getOrDefault(Flag.EXECUTION_MODE, Main.STANDALONE).equals(Main.STANDALONE);
     }
 
 }

@@ -412,7 +412,7 @@ public class BinaryNumbers {
             .findFirst()
             .get();
         final int contentLength = toContentLength.apply(solvedTasks);
-        BinaryNumbers.binaryBeginning(exerciseText, input.exerciseWriter, input.solutionWriter);
+        BinaryNumbers.binaryBeginning(exerciseText, input.options, input.exerciseWriter, input.solutionWriter);
         boolean first = true;
         for (final SolvedBinaryTask solvedTask : solvedTasks) {
             if (first) {
@@ -430,7 +430,7 @@ public class BinaryNumbers {
                 input.solutionWriter
             );
         }
-        BinaryNumbers.binaryEnd(input.exerciseWriter, input.solutionWriter);
+        BinaryNumbers.binaryEnd(input.options, input.exerciseWriter, input.solutionWriter);
     }
 
     private static int appendExponentAndBitsBeforeAndReturnMantissaBitsFromBefore(
@@ -467,19 +467,21 @@ public class BinaryNumbers {
 
     private static void binaryBeginning(
         final String exerciseText,
+        final Parameters options,
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
         exerciseWriter.write(exerciseText);
         Main.newLine(exerciseWriter);
-        TikZUtils.printSolutionSpaceBeginning(exerciseWriter);
+        TikZUtils.printSolutionSpaceBeginning(options, exerciseWriter);
     }
 
-    private static void binaryEnd(final BufferedWriter exerciseWriter, final BufferedWriter solutionWriter)
-    throws IOException {
-        TikZUtils.printVerticalProtectedSpace(exerciseWriter);
-        TikZUtils.printEndIf(exerciseWriter);
-        Main.newLine(exerciseWriter);
+    private static void binaryEnd(
+        final Parameters options,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        TikZUtils.printSolutionSpaceEnd(options, exerciseWriter);
         Main.newLine(solutionWriter);
     }
 

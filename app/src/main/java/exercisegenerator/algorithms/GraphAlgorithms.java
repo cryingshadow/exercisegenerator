@@ -544,6 +544,7 @@ public abstract class GraphAlgorithms {
             pair.y,
             GraphAlgorithms.dijkstra(pair.x, pair.y, new StringNodeComparator()),
             Algorithm.parsePreprintMode(input.options),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -1983,6 +1984,7 @@ public abstract class GraphAlgorithms {
         final Node<N> start,
         final DijkstraTables tables,
         final PreprintMode mode,
+        final Parameters options,
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
@@ -2016,7 +2018,7 @@ public abstract class GraphAlgorithms {
         Main.newLine(exWriter);
         switch (mode) {
             case SOLUTION_SPACE:
-                TikZUtils.printSolutionSpaceBeginning(exWriter);
+                TikZUtils.printSolutionSpaceBeginning(options, exWriter);
                 // fall-through
             case ALWAYS:
                 TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
@@ -2026,13 +2028,16 @@ public abstract class GraphAlgorithms {
                 TikZUtils.printArrayStretch(1.0, exWriter);
                 TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                 if (mode == PreprintMode.SOLUTION_SPACE) {
-                    TikZUtils.printSolutionSpaceEnd(exWriter);
+                    TikZUtils.printSolutionSpaceEnd(options, exWriter);
+                } else {
+                    Main.newLine(exWriter);
+                    Main.newLine(exWriter);
                 }
                 break;
             case NEVER:
-                // do nothing
+                Main.newLine(exWriter);
         }
-        Main.newLine(exWriter);
+
         TikZUtils.printBeginning(TikZUtils.CENTER, solWriter);
         Main.newLine(solWriter);
         TikZUtils.printArrayStretch(1.5, solWriter);

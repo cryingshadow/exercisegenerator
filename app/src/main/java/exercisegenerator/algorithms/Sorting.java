@@ -443,6 +443,7 @@ public abstract class Sorting {
         final int[] array,
         final int rows,
         final int contentLength,
+        final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Sortieren Sie das folgende Array mithilfe von ");
@@ -455,8 +456,7 @@ public abstract class Sorting {
         writer.write(additional);
         writer.write(".\\\\[2ex]");
         Main.newLine(writer);
-        TikZUtils.printToggleForSolutions(writer);
-        TikZUtils.printElse(writer);
+        TikZUtils.printSolutionSpaceBeginning(options, writer);
         TikZUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor =
             TikZUtils.printListAndReturnLeftmostNodesName(
@@ -475,7 +475,7 @@ public abstract class Sorting {
                 );
         }
         TikZUtils.printTikzEnd(writer);
-        TikZUtils.printEndIf(writer);
+        TikZUtils.printSolutionSpaceEnd(options, writer);
     }
 
     private static void printSolution(
@@ -495,6 +495,7 @@ public abstract class Sorting {
                 );
         }
         TikZUtils.printTikzEnd(writer);
+        Main.newLine(writer);
     }
 
     private static void printSolutionWithTrees(
@@ -630,6 +631,7 @@ public abstract class Sorting {
                 array,
                 solution.size() - 1,
                 contentLength,
+                input.options,
                 input.exerciseWriter
             );
         }

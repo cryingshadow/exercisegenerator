@@ -91,6 +91,7 @@ public abstract class Hashing {
                 false,
                 Algorithm.parsePreprintMode(input.options)
             ),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -114,6 +115,7 @@ public abstract class Hashing {
                 true,
                 Algorithm.parsePreprintMode(input.options)
             ),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -161,6 +163,7 @@ public abstract class Hashing {
                 true,
                 Algorithm.parsePreprintMode(input.options)
             ),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -212,6 +215,7 @@ public abstract class Hashing {
                 false,
                 Algorithm.parsePreprintMode(input.options)
             ),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -241,6 +245,7 @@ public abstract class Hashing {
                 true,
                 Algorithm.parsePreprintMode(input.options)
             ),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -291,6 +296,7 @@ public abstract class Hashing {
                 true,
                 Algorithm.parsePreprintMode(input.options)
             ),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -622,7 +628,8 @@ public abstract class Hashing {
         final List<Integer> values,
         final HashList[] initialArray,
         final HashList[] result,
-        final PrintOptions options,
+        final PrintOptions printOptions,
+        final Parameters options,
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
@@ -631,7 +638,7 @@ public abstract class Hashing {
         exerciseWriter.write("F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange ");
         exerciseWriter.write(String.valueOf(capacity));
         exerciseWriter.write(" unter Verwendung der ");
-        exerciseWriter.write(options.optionsText);
+        exerciseWriter.write(printOptions.optionsText);
         exerciseWriter.write(":\\\\");
         Main.newLine(exerciseWriter);
         TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
@@ -639,35 +646,38 @@ public abstract class Hashing {
         exerciseWriter.write(".");
         Main.newLine(exerciseWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
-        switch (options.preprintMode) {
+        switch (printOptions.preprintMode) {
             case ALWAYS:
             case SOLUTION_SPACE:
                 TikZUtils.printVerticalProtectedSpace("3ex", exerciseWriter);
-                if (options.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    TikZUtils.printSolutionSpaceBeginning(exerciseWriter);
+                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
+                    TikZUtils.printSolutionSpaceBeginning(options, exerciseWriter);
                 }
                 TikZUtils.printBeginning(TikZUtils.CENTER, exerciseWriter);
                 exerciseWriter.write("{\\Large");
                 Main.newLine(exerciseWriter);
-                Hashing.printArray(initialArray, contentLength, options.probing, exerciseWriter);
+                Hashing.printArray(initialArray, contentLength, printOptions.probing, exerciseWriter);
                 exerciseWriter.write("}");
                 Main.newLine(exerciseWriter);
                 TikZUtils.printEnd(TikZUtils.CENTER, exerciseWriter);
-                if (options.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    TikZUtils.printSolutionSpaceEnd(exerciseWriter);
+                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
+                    TikZUtils.printSolutionSpaceEnd(options, exerciseWriter);
+                } else {
+                    Main.newLine(exerciseWriter);
+                    Main.newLine(exerciseWriter);
                 }
                 break;
             case NEVER:
                 Main.newLine(exerciseWriter);
+                Main.newLine(exerciseWriter);
         }
-        Main.newLine(exerciseWriter);
 
         TikZUtils.printBeginning(TikZUtils.CENTER, solutionWriter);
-        solutionWriter.write(options.parameterText);
+        solutionWriter.write(printOptions.parameterText);
         Main.newLine(solutionWriter);
         solutionWriter.write("{\\Large");
         Main.newLine(solutionWriter);
-        Hashing.printArray(result, contentLength, options.probing, solutionWriter);
+        Hashing.printArray(result, contentLength, printOptions.probing, solutionWriter);
         solutionWriter.write("}");
         Main.newLine(solutionWriter);
         TikZUtils.printEnd(TikZUtils.CENTER, solutionWriter);

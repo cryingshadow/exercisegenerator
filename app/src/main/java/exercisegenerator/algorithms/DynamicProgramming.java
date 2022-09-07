@@ -20,6 +20,7 @@ public abstract class DynamicProgramming {
             tmpInput.x.y,
             tmpInput.y,
             Algorithm.parsePreprintMode(input.options),
+            input.options,
             input.solutionWriter,
             input.exerciseWriter
         );
@@ -40,6 +41,7 @@ public abstract class DynamicProgramming {
         final Integer[] values,
         final Integer capacity,
         final PreprintMode mode,
+        final Parameters options,
         final BufferedWriter solWriter,
         final BufferedWriter exWriter
     ) throws IOException {
@@ -146,7 +148,7 @@ public abstract class DynamicProgramming {
                     Main.newLine(solWriter);
                     switch (mode) {
                         case SOLUTION_SPACE:
-                            TikZUtils.printSolutionSpaceBeginning(exWriter);
+                            TikZUtils.printSolutionSpaceBeginning(options, exWriter);
                             // fall-through
                         case ALWAYS:
                             TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
@@ -158,7 +160,7 @@ public abstract class DynamicProgramming {
                             Main.newLine(exWriter);
                             TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
-                                TikZUtils.printSolutionSpaceEnd(exWriter);
+                                TikZUtils.printSolutionSpaceEnd(options, exWriter);
                             }
                             Main.newLine(exWriter);
                             break;
@@ -182,7 +184,7 @@ public abstract class DynamicProgramming {
             }
             switch (mode) {
                 case SOLUTION_SPACE:
-                    TikZUtils.printSolutionSpaceBeginning(exWriter);
+                    TikZUtils.printSolutionSpaceBeginning(options, exWriter);
                     // fall-through
                 case ALWAYS:
                     TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
@@ -194,7 +196,7 @@ public abstract class DynamicProgramming {
                     Main.newLine(exWriter);
                     TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
-                        TikZUtils.printSolutionSpaceEnd(exWriter);
+                        TikZUtils.printSolutionSpaceEnd(options, exWriter);
                     }
                     Main.newLine(exWriter);
                     break;
@@ -255,6 +257,7 @@ public abstract class DynamicProgramming {
             tmpInput.x,
             tmpInput.y,
             Algorithm.parsePreprintMode(input.options),
+            input.options,
             input.solutionWriter,
             input.exerciseWriter
         );
@@ -273,6 +276,7 @@ public abstract class DynamicProgramming {
         final String wordA,
         final String wordB,
         final PreprintMode mode,
+        final Parameters options,
         final BufferedWriter solWriter,
         final BufferedWriter exWriter
     ) throws IOException {
@@ -373,7 +377,7 @@ public abstract class DynamicProgramming {
                     Main.newLine(solWriter);
                     switch (mode) {
                         case SOLUTION_SPACE:
-                            TikZUtils.printSolutionSpaceBeginning(exWriter);
+                            TikZUtils.printSolutionSpaceBeginning(options, exWriter);
                             // fall-through
                         case ALWAYS:
                             TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
@@ -385,7 +389,7 @@ public abstract class DynamicProgramming {
                             Main.newLine(exWriter);
                             TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
-                                TikZUtils.printSolutionSpaceEnd(exWriter);
+                                TikZUtils.printSolutionSpaceEnd(options, exWriter);
                             }
                             Main.newLine(exWriter);
                             break;
@@ -409,7 +413,7 @@ public abstract class DynamicProgramming {
             }
             switch (mode) {
                 case SOLUTION_SPACE:
-                    TikZUtils.printSolutionSpaceBeginning(exWriter);
+                    TikZUtils.printSolutionSpaceBeginning(options, exWriter);
                     // fall-through
                 case ALWAYS:
                     TikZUtils.printBeginning(TikZUtils.CENTER, exWriter);
@@ -421,7 +425,7 @@ public abstract class DynamicProgramming {
                     Main.newLine(exWriter);
                     TikZUtils.printEnd(TikZUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
-                        TikZUtils.printSolutionSpaceEnd(exWriter);
+                        TikZUtils.printSolutionSpaceEnd(options, exWriter);
                     }
                     Main.newLine(exWriter);
                     break;

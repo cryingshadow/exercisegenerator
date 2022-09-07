@@ -40,6 +40,7 @@ public abstract class CodingAlgorithms {
             sourceText,
             targetAlphabet,
             result,
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -234,6 +235,7 @@ public abstract class CodingAlgorithms {
         final String sourceText,
         final List<Character> targetAlphabet,
         final Pair<HuffmanTree, String> result,
+        final Parameters options,
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
@@ -248,13 +250,12 @@ public abstract class CodingAlgorithms {
         TikZUtils.printVerticalProtectedSpace(exerciseWriter);
         exerciseWriter.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
         Main.newLine(exerciseWriter);
-        TikZUtils.printSolutionSpaceBeginning(exerciseWriter);
+        TikZUtils.printSolutionSpaceBeginning(options, exerciseWriter);
         CodingAlgorithms.printCodeBookForEncoding(result.x.toCodeBook(), exerciseWriter, solutionWriter);
         TikZUtils.printVerticalProtectedSpace(exerciseWriter);
         TikZUtils.printVerticalProtectedSpace(solutionWriter);
         CodingAlgorithms.printCode(result.y, exerciseWriter, solutionWriter);
-        TikZUtils.printSolutionSpaceEnd(exerciseWriter);
-        Main.newLine(exerciseWriter);
+        TikZUtils.printSolutionSpaceEnd(options, exerciseWriter);
         Main.newLine(solutionWriter);
     }
 

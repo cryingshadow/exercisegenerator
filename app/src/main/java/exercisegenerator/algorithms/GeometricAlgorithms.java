@@ -18,6 +18,7 @@ public abstract class GeometricAlgorithms {
         GeometricAlgorithms.printConvexHull(
             pointSet,
             Algorithm.parsePreprintMode(input.options),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
@@ -34,6 +35,7 @@ public abstract class GeometricAlgorithms {
     public static void printConvexHull(
         final ArrayList<Pair<Double,Double>> pointSet,
         final PreprintMode mode,
+        final Parameters options,
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
@@ -50,7 +52,7 @@ public abstract class GeometricAlgorithms {
         int count = GeometricAlgorithms.computeConvexHull(pointSet, solWriter);
         switch (mode) {
             case SOLUTION_SPACE:
-                TikZUtils.printSolutionSpaceBeginning(exWriter);
+                TikZUtils.printSolutionSpaceBeginning(options, exWriter);
                 break;
             case NEVER:
                 count = 1;
@@ -70,7 +72,7 @@ public abstract class GeometricAlgorithms {
             --count;
         }
         if (mode == PreprintMode.SOLUTION_SPACE) {
-            TikZUtils.printSolutionSpaceEnd(exWriter);
+            TikZUtils.printSolutionSpaceEnd(options, exWriter);
         }
     }
 
