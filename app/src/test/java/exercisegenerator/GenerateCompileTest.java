@@ -10,6 +10,8 @@ import exercisegenerator.algorithms.*;
 
 public class GenerateCompileTest {
 
+    private static final boolean OFF = false;
+
     private static String[] toCLIArguments(final Algorithm alg, final String[] testOptions) {
         final int numOfAddedParameters = 8;
         final String[] result = new String[testOptions.length + numOfAddedParameters];
@@ -27,6 +29,9 @@ public class GenerateCompileTest {
 
     @Test
     public void generateCompile() throws IOException, InterruptedException {
+        if (GenerateCompileTest.OFF) {
+            return;
+        }
         MainTest.prepare();
         final int numberOfRunsForEachAlgorithm = 2;
         for (final Algorithm alg : Algorithm.values()) {
