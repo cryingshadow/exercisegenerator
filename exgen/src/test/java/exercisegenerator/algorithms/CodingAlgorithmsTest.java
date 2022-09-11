@@ -8,6 +8,8 @@ import org.testng.annotations.Test;
 
 import exercisegenerator.structures.*;
 
+// TODO test LaTeX escaping
+
 public class CodingAlgorithmsTest {
 
     @Test
