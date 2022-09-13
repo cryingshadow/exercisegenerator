@@ -44,15 +44,9 @@ public class MainTest {
         }
     }
 
-    public static final String EX_FILE;
-
     public static final String EX_FILE_NAME;
 
-    public static final String SOL_FILE;
-
     public static final String SOL_FILE_NAME;
-
-    public static final String TEST_DIR;
 
     private static final String EMPTY_NODE_MATCH;
 
@@ -64,12 +58,12 @@ public class MainTest {
 
     private static final String PHANTOM_MATCH;
 
+    private static final String TEX_SUFFIX;
+
     static {
-        TEST_DIR = "C:\\Daten\\Test\\exgen";
-        EX_FILE_NAME = "ex.tex";
-        SOL_FILE_NAME = "sol.tex";
-        EX_FILE = MainTest.TEST_DIR + "\\" + MainTest.EX_FILE_NAME;
-        SOL_FILE = MainTest.TEST_DIR + "\\" + MainTest.SOL_FILE_NAME;
+        EX_FILE_NAME = "exercise";
+        SOL_FILE_NAME = "solution";
+        TEX_SUFFIX = "tex";
         EMPTY_NODE_MATCH = "\\\\node\\[node\\]";
         MATCH_MESSAGE_PATTERN = "%s does not match %s";
         NODE_MATCH = "\\\\node\\[node(,fill=black!20)?\\]";
@@ -77,23 +71,9 @@ public class MainTest {
         PHANTOM_MATCH = "(\\\\phantom\\{0+\\})?";
     }
 
-    @AfterMethod
-    public static void cleanUp() {
-        final File testDir = new File(MainTest.TEST_DIR);
-        for (final File file : testDir.listFiles()) {
-            file.delete();
-        }
-    }
-
     @BeforeMethod
     public static void prepare() {
         LaTeXUtils.reset();
-        final File testDir = new File(MainTest.TEST_DIR);
-        if (!testDir.exists()) {
-            if (!testDir.mkdirs()) {
-                throw new IllegalStateException("Cannot init test directory!");
-            }
-        }
     }
 
     private static void assignmentMiddle(final BufferedReader exReader, final BufferedReader solReader)
@@ -448,22 +428,34 @@ public class MainTest {
         return Arrays.stream(cases).map(c -> c.number).collect(Collectors.joining(";"));
     }
 
+    private final List<File> tmpFiles = new LinkedList<File>();
+
+    @AfterMethod
+    public void cleanUp() {
+        for (final File file : this.tmpFiles) {
+            file.delete();
+        }
+        this.tmpFiles.clear();
+    }
+
 
     @Test
     public void decodeHuffman() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         Main.main(
             new String[]{
                 "-a", "fromhuff",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "01100001100001111101",
                 "-o", "'I':\"00\",'K':\"01\",'L':\"100\",'M':\"101\",'N':\"110\",'U':\"111\""
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(
                 exReader.readLine(),
@@ -499,20 +491,22 @@ public class MainTest {
 
     @Test
     public void dijkstra() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         Main.main(
             new String[]{
                 "-a", "dijkstra",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-p", "solutionSpace",
                 "-i", " A , |2, B \n5| , | , |3\n C ,4| , D",
                 "-o", "A"
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), "Betrachten Sie den folgenden Graphen:\\\\[2ex]");
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
@@ -600,18 +594,20 @@ public class MainTest {
 
     @Test
     public void encodeHuffman() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         Main.main(
             new String[]{
                 "-a", "tohuff",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "GEIERMEIER",
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(
                 exReader.readLine(),
@@ -691,7 +687,106 @@ public class MainTest {
     }
 
     @Test
+    public void encodeHuffmanLaTeXEscaping() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
+        Main.main(
+            new String[]{
+                "-a", "tohuff",
+                "-x", Main.EMBEDDED_EXAM,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
+                "-i", "\\&%&^_&%&^",
+            }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
+        ) {
+            Assert.assertEquals(
+                exReader.readLine(),
+                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\"
+            );
+            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "\\textbackslash{}\\&\\%\\&\\textasciicircum{}\\_\\&\\%\\&\\textasciicircum{}"
+            );
+            Assert.assertEquals(exReader.readLine(), "\\end{center}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
+            );
+            MainTest.solutionSpaceBeginning(exReader, solReader);
+            Assert.assertEquals(exReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
+            Assert.assertEquals(solReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
+            final int longestCodeLength = 3;
+            final String longestLeftHandSide = "\\code{`M'}";
+            int currentNodeNumber =
+                MainTest.checkAssignment(
+                    0,
+                    "\\code{`\\%'}",
+                    Collections.singletonList("\\code{00}"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            currentNodeNumber =
+                MainTest.checkAssignment(
+                    currentNodeNumber,
+                    "\\code{`\\&'}",
+                    Collections.singletonList("\\code{11}"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            currentNodeNumber =
+                MainTest.checkAssignment(
+                    currentNodeNumber,
+                    "\\code{`\\textbackslash{}'}",
+                    Collections.singletonList("\\code{100}"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            currentNodeNumber =
+                MainTest.checkAssignment(
+                    currentNodeNumber,
+                    "\\code{`\\textasciicircum{}'}",
+                    Collections.singletonList("\\code{01}"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            currentNodeNumber =
+                MainTest.checkAssignment(
+                    currentNodeNumber,
+                    "\\code{`\\_'}",
+                    Collections.singletonList("\\code{101}"),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    exReader,
+                    solReader
+                );
+            MainTest.assignmentMiddle(exReader, solReader);
+            Assert.assertEquals(exReader.readLine(), "\\textbf{Code:}\\\\");
+            Assert.assertEquals(solReader.readLine(), "\\textbf{Code:}\\\\");
+            Assert.assertEquals(solReader.readLine(), "\\code{1001100110110111001101}");
+            MainTest.solutionSpaceEnd(exReader, solReader);
+        }
+    }
+
+    @Test
     public void fromFloat() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int mantisseLength = 4;
         final int exponentLength = 3;
         final BinaryTestCase[] cases =
@@ -704,16 +799,16 @@ public class MainTest {
             new String[]{
                 "-a", "fromfloat",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(mantisseLength),
                 "-d", String.valueOf(exponentLength),
                 "-i", MainTest.toBitStringInput(cases)
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), Patterns.fromFloat(exponentLength, mantisseLength));
             MainTest.fromBinary(cases, exReader, solReader);
@@ -722,6 +817,8 @@ public class MainTest {
 
     @Test
     public void fromOnesComplement() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int bitLength = 8;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -733,15 +830,15 @@ public class MainTest {
             new String[]{
                 "-a", "fromonescompl",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toBitStringInput(cases)
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), Patterns.fromOnes(bitLength));
             MainTest.fromBinary(cases, exReader, solReader);
@@ -750,6 +847,8 @@ public class MainTest {
 
     @Test
     public void fromTwosComplement() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int bitLength = 5;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -761,15 +860,15 @@ public class MainTest {
             new String[]{
                 "-a", "fromtwoscompl",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toBitStringInput(cases)
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), Patterns.fromTwos(bitLength));
             MainTest.fromBinary(cases, exReader, solReader);
@@ -778,19 +877,21 @@ public class MainTest {
 
     @Test
     public void hashing() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         Main.main(
             new String[]{
                 "-a", "hashMultiplicationQuadratic",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "11,0.7,7,3\n3,5,1,4,2,1",
                 "-p", "solutionSpace"
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             final int contentLength = 1;
             int nodeNumber = 0;
@@ -868,18 +969,20 @@ public class MainTest {
 
     @Test
     public void insertionsort() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         Main.main(
             new String[]{
                 "-a", "insertionsort",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "3,5,1,4,2"
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             final int contentLength = 1;
             int nodeNumber = 0;
@@ -950,17 +1053,19 @@ public class MainTest {
 
     @Test
     public void quicksortStandalone() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         Main.main(
             new String[]{
                 "-a", "quicksort",
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-l", "5"
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             final int length = 5;
             int nodeNumber = 0;
@@ -1031,6 +1136,8 @@ public class MainTest {
 
     @Test
     public void toFloat() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int exponentLength = 3;
         final int mantisseLength = 4;
         final BinaryTestCase[] cases =
@@ -1043,16 +1150,16 @@ public class MainTest {
             new String[]{
                 "-a", "tofloat",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(mantisseLength),
                 "-d", String.valueOf(exponentLength),
                 "-i", MainTest.toNumberInput(cases)
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), Patterns.toFloat(exponentLength, mantisseLength));
             MainTest.toBinary(cases, exReader, solReader);
@@ -1061,6 +1168,8 @@ public class MainTest {
 
     @Test
     public void toOnesComplement() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int bitLength = 4;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -1072,15 +1181,15 @@ public class MainTest {
             new String[]{
                 "-a", "toonescompl",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toNumberInput(cases)
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), Patterns.toOnes(bitLength));
             MainTest.toBinary(cases, exReader, solReader);
@@ -1089,6 +1198,8 @@ public class MainTest {
 
     @Test
     public void toTwosComplement() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int bitLength = 6;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -1100,15 +1211,15 @@ public class MainTest {
             new String[]{
                 "-a", "totwoscompl",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toNumberInput(cases)
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), Patterns.toTwos(bitLength));
             MainTest.toBinary(cases, exReader, solReader);
@@ -1117,18 +1228,20 @@ public class MainTest {
 
     @Test
     public void vigenereDecode() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         Main.main(
             new String[]{
                 "-a", "fromvigenere",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "URKSAK\nSAKRAL\nAKLRSU"
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), "Entschl\\\"usseln Sie den Text");
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
@@ -1158,18 +1271,20 @@ public class MainTest {
 
     @Test
     public void vigenereEncode() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         Main.main(
             new String[]{
                 "-a", "tovigenere",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", MainTest.EX_FILE,
-                "-t", MainTest.SOL_FILE,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "KLAUSUR\nSAKRAL\nAKLRSU"
             }
         );
         try (
-            BufferedReader exReader = new BufferedReader(new FileReader(MainTest.EX_FILE));
-            BufferedReader solReader = new BufferedReader(new FileReader(MainTest.SOL_FILE));
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
         ) {
             Assert.assertEquals(exReader.readLine(), "Verschl\\\"usseln Sie den Text");
             Assert.assertEquals(exReader.readLine(), "\\begin{center}");
@@ -1195,6 +1310,12 @@ public class MainTest {
             Assert.assertEquals(solReader.readLine(), "");
             Assert.assertNull(solReader.readLine());
         }
+    }
+
+    private File createTmpFile(final String prefix, final String suffix) throws IOException {
+        final File result = File.createTempFile(prefix, suffix);
+        this.tmpFiles.add(result);
+        return result;
     }
 
 }

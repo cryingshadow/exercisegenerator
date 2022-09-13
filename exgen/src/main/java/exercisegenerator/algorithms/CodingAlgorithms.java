@@ -172,7 +172,7 @@ public abstract class CodingAlgorithms {
         Main.newLine(exerciseWriter);
         solutionWriter.write("\\textbf{Code:}\\\\");
         Main.newLine(solutionWriter);
-        solutionWriter.write(LaTeXUtils.code(code));
+        solutionWriter.write(LaTeXUtils.code(LaTeXUtils.escapeForLaTeX(code)));
         Main.newLine(solutionWriter);
     }
 
@@ -262,7 +262,7 @@ public abstract class CodingAlgorithms {
         exerciseWriter.write("\\}$ und den folgenden Eingabetext:\\\\");
         Main.newLine(exerciseWriter);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
-        exerciseWriter.write(sourceText);
+        exerciseWriter.write(LaTeXUtils.escapeForLaTeX(sourceText));
         Main.newLine(exerciseWriter);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
         LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
