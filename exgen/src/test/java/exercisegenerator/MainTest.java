@@ -44,11 +44,9 @@ public class MainTest {
         }
     }
 
-    public static final String EX_FILE_NAME;
-
-    public static final String SOL_FILE_NAME;
-
     private static final String EMPTY_NODE_MATCH;
+
+    public static final String EX_FILE_NAME;
 
     private static final String MATCH_MESSAGE_PATTERN;
 
@@ -57,6 +55,8 @@ public class MainTest {
     private static final String NUMBER_MATCH;
 
     private static final String PHANTOM_MATCH;
+
+    public static final String SOL_FILE_NAME;
 
     private static final String TEX_SUFFIX;
 
@@ -69,11 +69,6 @@ public class MainTest {
         NODE_MATCH = "\\\\node\\[node(,fill=black!20)?\\]";
         NUMBER_MATCH = "(-?\\d+)";
         PHANTOM_MATCH = "(\\\\phantom\\{0+\\})?";
-    }
-
-    @BeforeMethod
-    public static void prepare() {
-        LaTeXUtils.reset();
     }
 
     private static void assignmentMiddle(final BufferedReader exReader, final BufferedReader solReader)
@@ -368,6 +363,11 @@ public class MainTest {
         );
     }
 
+    @BeforeMethod
+    public static void prepare() {
+        LaTeXUtils.reset();
+    }
+
     private static void solutionSpaceBeginning(final BufferedReader exReader, final BufferedReader solReader)
     throws IOException {
         Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
@@ -438,6 +438,12 @@ public class MainTest {
         this.tmpFiles.clear();
     }
 
+
+    private File createTmpFile(final String prefix, final String suffix) throws IOException {
+        final File result = File.createTempFile(prefix, suffix);
+        this.tmpFiles.add(result);
+        return result;
+    }
 
     @Test
     public void decodeHuffman() throws IOException {
@@ -1310,12 +1316,6 @@ public class MainTest {
             Assert.assertEquals(solReader.readLine(), "");
             Assert.assertNull(solReader.readLine());
         }
-    }
-
-    private File createTmpFile(final String prefix, final String suffix) throws IOException {
-        final File result = File.createTempFile(prefix, suffix);
-        this.tmpFiles.add(result);
-        return result;
     }
 
 }
