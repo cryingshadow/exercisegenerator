@@ -1,6 +1,7 @@
 package exercisegenerator.algorithms;
 
 import java.io.*;
+import java.math.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -52,74 +53,6 @@ public class BinaryNumbers {
             this.number = number;
             this.exponentLength = exponentLength;
             this.mantissaLength = mantissaLength;
-        }
-    }
-
-    private static class NumberWithLeadingZeros {
-        private final int leadingZeros;
-        private final int number;
-
-        private NumberWithLeadingZeros(final int number, final int leadingZeros) {
-            this.number = number;
-            this.leadingZeros = leadingZeros;
-        }
-
-        public String getAfterComma() {
-            return String.valueOf(this.number).substring(-this.leadingZeros);
-        }
-
-        public int getBeforeComma() {
-            if (this.leadingZeros < 0) {
-                return Integer.parseInt(String.valueOf(this.number).substring(0, -this.leadingZeros));
-            }
-            return 0;
-        }
-
-        @Override
-        public String toString() {
-            if (this.leadingZeros < 0) {
-                final String numberAsString = String.valueOf(this.number);
-                final String beforeComma = numberAsString.substring(0, -this.leadingZeros);
-                final String afterComma = numberAsString.substring(-this.leadingZeros);
-                return beforeComma + "," + afterComma;
-            }
-            return "0," + "0".repeat(this.leadingZeros) + this.number;
-        }
-
-        private NumberWithLeadingZeros add(final NumberWithLeadingZeros other) {
-            final int thisDecimalLength = BinaryNumbers.decimalLength(this.number);
-            final int thisLength = thisDecimalLength + this.leadingZeros;
-            final int otherDecimalLength = BinaryNumbers.decimalLength(other.number);
-            final int otherLength = otherDecimalLength + other.leadingZeros;
-            if (thisLength > otherLength) {
-                final int lengthDifference = thisLength - otherLength;
-                final int otherNumber = other.number * (int)Math.pow(10, lengthDifference);
-                final int nextNumber = this.number + otherNumber;
-                if (
-                    BinaryNumbers.decimalLength(nextNumber)
-                    > Math.max(thisDecimalLength, BinaryNumbers.decimalLength(otherNumber))
-                ) {
-                    return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros) - 1);
-                }
-                return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros));
-            } else if (otherLength > thisLength) {
-                final int lengthDifference = otherLength- thisLength;
-                final int thisNumber = this.number * (int)Math.pow(10, lengthDifference);
-                final int nextNumber = thisNumber + other.number;
-                if (
-                    BinaryNumbers.decimalLength(nextNumber)
-                    > Math.max(BinaryNumbers.decimalLength(thisNumber), otherDecimalLength)
-                ) {
-                    return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros) - 1);
-                }
-                return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros));
-            } else {
-                final int nextNumber = this.number + other.number;
-                if (BinaryNumbers.decimalLength(nextNumber) > Math.max(thisDecimalLength, otherDecimalLength)) {
-                    return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros) - 1);
-                }
-                return new NumberWithLeadingZeros(nextNumber, Math.min(this.leadingZeros, other.leadingZeros));
-            }
         }
     }
 
@@ -197,11 +130,11 @@ public class BinaryNumbers {
                 BinaryNumbers.shiftOneBitLeft(beforeComma, afterComma);
             }
         }
-        final NumberWithLeadingZeros numberAfterComma = BinaryNumbers.toNumberAfterComma(afterComma);
+        final NumberTimesDecimalPower numberAfterComma = BinaryNumbers.toNumberAfterComma(afterComma);
         return String.format(
             "%s%d,%s",
             sign,
-            beforeComma.toUnsignedInt() + numberAfterComma.getBeforeComma(),
+            beforeComma.toUnsignedInt() + numberAfterComma.getBeforeComma().intValueExact(),
             numberAfterComma.getAfterComma()
         );
     }
@@ -308,8 +241,8 @@ public class BinaryNumbers {
             // number is zero
             return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
         }
-        final NumberWithLeadingZeros numAfterComma = BinaryNumbers.parseNumberWithLeadingZeros(parts[1]);
-        if (numAfterComma.number == 0) {
+        final NumberTimesDecimalPower numAfterComma = BinaryNumbers.parseNumberTimesDecimalPower(parts[1]);
+        if (numAfterComma.number.compareTo(BigInteger.ZERO) == 0) {
             // number is zero
             return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
         }
@@ -463,16 +396,16 @@ public class BinaryNumbers {
     }
 
     private static void appendMantissa(
-        final NumberWithLeadingZeros numAfterComma,
+        final NumberTimesDecimalPower numAfterComma,
         final int mantissaBitsLeft,
         final BitString result
     ) {
-        Pair<Bit, NumberWithLeadingZeros> nextBitAndNumberWithLeadingZeros =
-            BinaryNumbers.getNextBitAndNumberWithLeadingZeros(numAfterComma);
+        Pair<Bit, NumberTimesDecimalPower> nextBitAndNumberWithLeadingZeros =
+            BinaryNumbers.getNextBitAndNumberTimesDecimalPower(numAfterComma);
         for (int i = 0; i < mantissaBitsLeft; i++) {
             result.add(nextBitAndNumberWithLeadingZeros.x);
             nextBitAndNumberWithLeadingZeros =
-                BinaryNumbers.getNextBitAndNumberWithLeadingZeros(nextBitAndNumberWithLeadingZeros.y);
+                BinaryNumbers.getNextBitAndNumberTimesDecimalPower(nextBitAndNumberWithLeadingZeros.y);
         }
     }
 
@@ -494,10 +427,6 @@ public class BinaryNumbers {
     ) throws IOException {
         LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
         Main.newLine(solutionWriter);
-    }
-
-    private static int decimalLength(final int positiveNumber) {
-        return String.valueOf(positiveNumber).length();
     }
 
     private static BitString fillUpWithOnes(final BitString result, final int bitsToFill) {
@@ -625,15 +554,6 @@ public class BinaryNumbers {
         return Integer.parseInt(options.get(Flag.DEGREE));
     }
 
-    private static int getIndexOfFirstNonZeroDigit(final String numberAfterComma) {
-        final char[] charArray = numberAfterComma.toCharArray();
-        int result = 0;
-        while (result < charArray.length && charArray[result] == '0') {
-            result++;
-        }
-        return result;
-    }
-
     private static int getMantissaLength(final Parameters options) {
         return Integer.parseInt(options.get(Flag.CAPACITY));
     }
@@ -642,29 +562,14 @@ public class BinaryNumbers {
         return solvedTask.stream().mapToInt(task -> task.number.length()).max().getAsInt();
     }
 
-    private static Pair<Bit, NumberWithLeadingZeros> getNextBitAndNumberWithLeadingZeros(
-        final NumberWithLeadingZeros numberWithLeadingZeros
+    private static Pair<Bit, NumberTimesDecimalPower> getNextBitAndNumberTimesDecimalPower(
+        final NumberTimesDecimalPower numberTimesDecimalPower
     ) {
-        final int doubledNumber = numberWithLeadingZeros.number * 2;
-        final boolean overflow =
-            BinaryNumbers.decimalLength(doubledNumber) > BinaryNumbers.decimalLength(numberWithLeadingZeros.number);
-        if (numberWithLeadingZeros.leadingZeros > 0) {
-            final int nextLeadingZeros =
-                overflow ? numberWithLeadingZeros.leadingZeros - 1 : numberWithLeadingZeros.leadingZeros;
-            return new Pair<Bit, NumberWithLeadingZeros>(
-                Bit.ZERO,
-                new NumberWithLeadingZeros(doubledNumber, nextLeadingZeros)
-            );
+        final NumberTimesDecimalPower doubled = numberTimesDecimalPower.times2();
+        if (doubled.lessThanOne()) {
+            return new Pair<Bit, NumberTimesDecimalPower>(Bit.ZERO, doubled);
         }
-        if (!overflow) {
-            return new Pair<Bit, NumberWithLeadingZeros>(Bit.ZERO, new NumberWithLeadingZeros(doubledNumber, 0));
-        }
-        final int decimalLengthOfNumber = BinaryNumbers.decimalLength(numberWithLeadingZeros.number);
-        final int nextNumber = doubledNumber - (int)Math.pow(10, decimalLengthOfNumber);
-        return new Pair<Bit, NumberWithLeadingZeros>(
-            Bit.ONE,
-            new NumberWithLeadingZeros(nextNumber, decimalLengthOfNumber - BinaryNumbers.decimalLength(nextNumber))
-        );
+        return new Pair<Bit, NumberTimesDecimalPower>(Bit.ONE, doubled.subtractOne());
     }
 
     private static boolean outOfBoundsForFloat(final int numBefore, final int exponentLength) {
@@ -722,10 +627,10 @@ public class BinaryNumbers {
             .toList();
     }
 
-    private static NumberWithLeadingZeros parseNumberWithLeadingZeros(final String numberAfterComma) {
-        return new NumberWithLeadingZeros(
-            Integer.parseInt(numberAfterComma),
-            BinaryNumbers.getIndexOfFirstNonZeroDigit(numberAfterComma)
+    private static NumberTimesDecimalPower parseNumberTimesDecimalPower(final String numberAfterComma) {
+        return new NumberTimesDecimalPower(
+            new BigInteger(numberAfterComma),
+            -numberAfterComma.length()
         );
     }
 
@@ -790,14 +695,14 @@ public class BinaryNumbers {
     }
 
     private static BitString toFloatForNegativeExponent(
-        final NumberWithLeadingZeros numAfterComma,
+        final NumberTimesDecimalPower numAfterComma,
         final int exponentLength,
         final int excess,
         final int mantissaLength,
         final BitString result
     ) {
-        Pair<Bit, NumberWithLeadingZeros> nextBitAndNumberWithLeadingZeros =
-            BinaryNumbers.getNextBitAndNumberWithLeadingZeros(numAfterComma);
+        Pair<Bit, NumberTimesDecimalPower> nextBitAndNumberWithLeadingZeros =
+            BinaryNumbers.getNextBitAndNumberTimesDecimalPower(numAfterComma);
         int exponent = excess - 1;
         while (nextBitAndNumberWithLeadingZeros.x.isZero()) {
             exponent--;
@@ -806,7 +711,7 @@ public class BinaryNumbers {
                 return BinaryNumbers.fillUpWithZeros(result, exponentLength + mantissaLength);
             }
             nextBitAndNumberWithLeadingZeros =
-                BinaryNumbers.getNextBitAndNumberWithLeadingZeros(nextBitAndNumberWithLeadingZeros.y);
+                BinaryNumbers.getNextBitAndNumberTimesDecimalPower(nextBitAndNumberWithLeadingZeros.y);
         }
         final boolean denormalized = exponent < 1;
         if (denormalized) {
@@ -846,7 +751,7 @@ public class BinaryNumbers {
             return BinaryNumbers.fillUpWithZeros(result, mantissaBitsLeft);
         }
         BinaryNumbers.appendMantissa(
-            BinaryNumbers.parseNumberWithLeadingZeros(parts[1]),
+            BinaryNumbers.parseNumberTimesDecimalPower(parts[1]),
             mantissaBitsLeft,
             result
         );
@@ -859,14 +764,17 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static NumberWithLeadingZeros toNumberAfterComma(final BitString afterComma) {
-        NumberWithLeadingZeros result = new NumberWithLeadingZeros(0, 0);
-        int factor = 5;
+    private static NumberTimesDecimalPower toNumberAfterComma(final BitString afterComma) {
+        NumberTimesDecimalPower result = new NumberTimesDecimalPower(BigInteger.ZERO, 0);
+        final BigInteger five = BigInteger.valueOf(5);
+        BigInteger factor = five;
+        int exponent = -1;
         for (final Bit bit : afterComma) {
             if (!bit.isZero()) {
-                result = result.add(new NumberWithLeadingZeros(factor, 0));
+                result = result.add(new NumberTimesDecimalPower(factor, exponent));
             }
-            factor *= 5;
+            factor = factor.multiply(five);
+            exponent--;
         }
         return result;
     }

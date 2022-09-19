@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.concurrent.*;
 
 import org.testng.*;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import exercisegenerator.algorithms.*;
 

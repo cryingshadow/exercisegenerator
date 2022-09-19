@@ -23,6 +23,10 @@ public class BinaryNumbersTest {
         Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("11110000"), 3, 4), "-inf");
         Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("11111111"), 3, 4), "NaN");
         Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("00001000"), 3, 4), "0,125");
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("00000100"), 3, 4), "0,0625");
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("00000010"), 3, 4), "0,03125");
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("00000001"), 3, 4), "0,015625");
+        Assert.assertEquals(BinaryNumbers.fromFloat(BitString.parse("01101111"), 3, 4), "15,5");
     }
 
     @Test
@@ -78,6 +82,8 @@ public class BinaryNumbersTest {
         Assert.assertEquals(BinaryNumbers.toFloat("0,0625", 5, 10).toString(), "0010110000000000");
         Assert.assertEquals(BinaryNumbers.toFloat("0,125", 3, 4).toString(), "00001000");
         Assert.assertEquals(BinaryNumbers.toFloat("0,0625", 3, 4).toString(), "00000100");
+        Assert.assertEquals(BinaryNumbers.toFloat("0,015625", 3, 4).toString(), "00000001");
+        Assert.assertEquals(BinaryNumbers.toFloat("0,01", 3, 4).toString(), "00000000");
     }
 
     @Test
