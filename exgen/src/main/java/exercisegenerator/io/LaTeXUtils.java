@@ -8,6 +8,7 @@ import java.util.stream.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.Node;
 
 public abstract class LaTeXUtils {
 

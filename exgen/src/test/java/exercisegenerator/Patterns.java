@@ -60,14 +60,14 @@ public class Patterns {
 
     public static String fromOnes(final int bitLength) {
         return String.format(
-            "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-bit Einerkomplement an:\\\\[2ex]",
+            "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Einerkomplement an:\\\\[2ex]",
             bitLength
         );
     }
 
     public static String fromTwos(final int bitLength) {
         return String.format(
-            "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-bit Zweierkomplement an:\\\\[2ex]",
+            "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Zweierkomplement an:\\\\[2ex]",
             bitLength
         );
     }
@@ -133,7 +133,7 @@ public class Patterns {
 
     public static String toOnes(final int bitLength) {
         return String.format(
-            "Stellen Sie die folgenden Dezimalzahlen im %d-bit Einerkomplement dar:\\\\[2ex]",
+            "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Einerkomplement dar:\\\\[2ex]",
             bitLength
         );
     }
@@ -144,7 +144,7 @@ public class Patterns {
 
     public static String toTwos(final int bitLength) {
         return String.format(
-            "Stellen Sie die folgenden Dezimalzahlen im %d-bit Zweierkomplement dar:\\\\[2ex]",
+            "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Zweierkomplement dar:\\\\[2ex]",
             bitLength
         );
     }

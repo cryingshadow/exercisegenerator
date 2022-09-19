@@ -136,22 +136,22 @@ public class BinaryNumbers {
     public static final int DEFAULT_BINARY_CONTENT_LENGTH = 1;
 
     public static final String EXERCISE_TEXT_PATTERN_TO_ONES =
-        "Stellen Sie die folgenden Dezimalzahlen im %d-bit Einerkomplement dar:\\\\[2ex]";
+        "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Einerkomplement dar:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_FLOAT =
         "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen die jeweilige rationale Zahl an:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_ONES =
-        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-bit Einerkomplement an:\\\\[2ex]";
+        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Einerkomplement an:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_TWOS =
-        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-bit Zweierkomplement an:\\\\[2ex]";
+        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Zweierkomplement an:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_TO_FLOAT =
         "Geben Sie zu den folgenden rationalen Zahlen die jeweilige 1.%d.%d Gleitkommazahl an:\\\\[2ex]";
 
     private static final String EXERCISE_TEXT_PATTERN_TO_TWOS =
-        "Stellen Sie die folgenden Dezimalzahlen im %d-bit Zweierkomplement dar:\\\\[2ex]";
+        "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Zweierkomplement dar:\\\\[2ex]";
 
     public static void fromFloat(final AlgorithmInput input) throws IOException {
         BinaryNumbers.allBinaryTasks(
