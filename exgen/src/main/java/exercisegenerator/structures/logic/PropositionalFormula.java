@@ -127,13 +127,13 @@ public abstract class PropositionalFormula {
     private static Pair<PropositionalFormula, String> parseVariableOrConstant(final String formula) {
         final int index = PropositionalFormula.findFirstNonWordCharacterIndex(formula);
         final String name = formula.substring(0, index);
-        if ("true".equals(name.toLowerCase())) {
+        if ("1".equals(name) || "true".equals(name.toLowerCase())) {
             return new Pair<PropositionalFormula, String>(
                 True.TRUE,
                 formula.substring(index)
             );
         }
-        if ("false".equals(name.toLowerCase())) {
+        if ("0".equals(name) || "false".equals(name.toLowerCase())) {
             return new Pair<PropositionalFormula, String>(
                 False.FALSE,
                 formula.substring(index)
@@ -177,5 +177,7 @@ public abstract class PropositionalFormula {
 
     @Override
     public abstract String toString();
+
+    public abstract <T> T visit(FormulaVisitor<T> visitor);
 
 }

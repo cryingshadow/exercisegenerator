@@ -44,4 +44,9 @@ public class Negation extends PropositionalFormula {
         return String.format("!%s", this.child.toString());
     }
 
+    @Override
+    public <T> T visit(final FormulaVisitor<T> visitor) {
+        return visitor.onNegation(this.child.visit(visitor));
+    }
+
 }

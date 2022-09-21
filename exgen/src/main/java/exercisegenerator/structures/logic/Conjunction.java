@@ -76,4 +76,9 @@ public class Conjunction extends PropositionalFormula {
         );
     }
 
+    @Override
+    public <T> T visit(final FormulaVisitor<T> visitor) {
+        return visitor.onConjunction(this.children.stream().map(child -> child.visit(visitor)).toList());
+    }
+
 }

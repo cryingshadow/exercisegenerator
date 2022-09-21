@@ -285,6 +285,8 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         writer.write("            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}");
         Main.newLine(writer);
+        writer.write("\\newcommand{\\var}[1]{\\textit{#1}}");
+        Main.newLine(writer);
         Main.newLine(writer);
         writer.write("\\begin{document}");
         Main.newLine(writer);

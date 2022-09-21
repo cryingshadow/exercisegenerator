@@ -34,4 +34,9 @@ public class True extends PropositionalFormula {
         return "TRUE";
     }
 
+    @Override
+    public <T> T visit(final FormulaVisitor<T> visitor) {
+        return visitor.onTrue();
+    }
+
 }

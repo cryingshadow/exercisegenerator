@@ -488,6 +488,17 @@ public enum Algorithm {
         BinaryNumbers::generateTestParameters
     ),
 
+    TO_TRUTH_TABLE(
+        "totruthtable",
+        "Formula to truth table",
+        new String[] {
+            "Compute the truth table for a given propositional formula.",
+            "You can specify the number of variables with the -l flag."
+        },
+        PropositionalLogic::toTruthTable,
+        PropositionalLogic::generateTestParameters
+    ),
+
     TO_TWOS_COMPLEMENT(
         "totwoscompl",
         "Two's Complement (to)",

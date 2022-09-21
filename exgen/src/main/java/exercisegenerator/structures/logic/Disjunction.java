@@ -70,4 +70,9 @@ public class Disjunction extends PropositionalFormula {
         );
     }
 
+    @Override
+    public <T> T visit(final FormulaVisitor<T> visitor) {
+        return visitor.onDisjunction(this.children.stream().map(child -> child.visit(visitor)).toList());
+    }
+
 }

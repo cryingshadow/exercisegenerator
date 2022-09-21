@@ -49,4 +49,9 @@ public class PropositionalVariable extends PropositionalFormula {
         return this.name;
     }
 
+    @Override
+    public <T> T visit(final FormulaVisitor<T> visitor) {
+        return visitor.onVariable(this.name);
+    }
+
 }

@@ -259,6 +259,7 @@ public class MainTest {
         Assert.assertEquals(reader.readLine(), "\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
         Assert.assertEquals(reader.readLine(), "\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{");
         Assert.assertEquals(reader.readLine(), "            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}");
+        Assert.assertEquals(reader.readLine(), "\\newcommand{\\var}[1]{\\textit{#1}}");
         Assert.assertEquals(reader.readLine(), "");
         Assert.assertEquals(reader.readLine(), "\\begin{document}");
         Assert.assertEquals(reader.readLine(), "");
@@ -437,7 +438,6 @@ public class MainTest {
         }
         this.tmpFiles.clear();
     }
-
 
     @Test
     public void decodeHuffman() throws IOException {
@@ -1193,6 +1193,149 @@ public class MainTest {
         ) {
             Assert.assertEquals(exReader.readLine(), Patterns.toOnes(bitLength));
             MainTest.toBinary(cases, exReader, solReader);
+        }
+    }
+
+    @Test
+    public void toTruthTable() throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
+        Main.main(
+            new String[]{
+                "-a", "totruthtable",
+                "-x", Main.EMBEDDED_EXAM,
+                "-e", tmpExFile.getAbsolutePath(),
+                "-t", tmpSolFile.getAbsolutePath(),
+                "-i", "A && B || !A && C\n((D && ((A && !B) || (!A && B))) || (!D && ((A && B) || (!A && !B)))) && ((C && A && B) || (!C && (!A || !B)))"
+            }
+        );
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
+        ) {
+            Assert.assertEquals(
+                exReader.readLine(),
+                "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\[2ex]"
+            );
+            MainTest.solutionSpaceBeginning(exReader, solReader);
+            Assert.assertEquals(
+                exReader.readLine(),
+                "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]"
+            );
+            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{4}{C{2em}|}}");
+            Assert.assertEquals(exReader.readLine(), "\\hline");
+            Assert.assertEquals(exReader.readLine(), "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline");
+            for (int i = 0; i < 8; i++) {
+                Assert.assertEquals(exReader.readLine(), " &  &  & \\\\\\hline");
+            }
+            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]"
+            );
+            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{5}{C{2em}|}}");
+            Assert.assertEquals(exReader.readLine(), "\\hline");
+            Assert.assertEquals(
+                exReader.readLine(),
+                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline"
+            );
+            for (int i = 0; i < 16; i++) {
+                Assert.assertEquals(exReader.readLine(), " &  &  &  & \\\\\\hline");
+            }
+            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
+
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]"
+            );
+            Assert.assertEquals(solReader.readLine(), "\\begin{tabular}{|*{4}{C{2em}|}}");
+            Assert.assertEquals(solReader.readLine(), "\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline");
+            Assert.assertEquals(solReader.readLine(), "\\end{tabular}");
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]"
+            );
+            Assert.assertEquals(solReader.readLine(), "\\begin{tabular}{|*{5}{C{2em}|}}");
+            Assert.assertEquals(solReader.readLine(), "\\hline");
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline"
+            );
+            Assert.assertEquals(
+                solReader.readLine(),
+                "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline"
+            );
+            Assert.assertEquals(solReader.readLine(), "\\end{tabular}");
+            MainTest.solutionSpaceEnd(exReader, solReader);
         }
     }
 
