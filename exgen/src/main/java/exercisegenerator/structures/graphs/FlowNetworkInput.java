@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.graphs;
 
 /**
  * Input object for flow network problems.

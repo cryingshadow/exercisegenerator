@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.graphs;
 
 import java.io.*;
 import java.util.*;

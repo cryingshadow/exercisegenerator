@@ -3,6 +3,7 @@ package exercisegenerator.util;
 import java.util.*;
 
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.graphs.*;
 
 /**
  * String node comparator based on String.compareTo.

@@ -7,6 +7,7 @@ import org.testng.*;
 import org.testng.annotations.Test;
 
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.coding.*;
 
 // TODO test LaTeX escaping
 

@@ -7,6 +7,7 @@ import java.util.stream.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.coding.*;
 
 public abstract class CodingAlgorithms {
 

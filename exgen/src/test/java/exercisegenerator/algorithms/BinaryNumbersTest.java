@@ -5,6 +5,7 @@ import org.testng.annotations.*;
 
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.binary.*;
 
 public class BinaryNumbersTest {
 

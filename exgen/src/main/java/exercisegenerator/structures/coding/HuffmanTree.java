@@ -1,6 +1,8 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.coding;
 
 import java.util.*;
+
+import exercisegenerator.structures.*;
 
 public class HuffmanTree {
 

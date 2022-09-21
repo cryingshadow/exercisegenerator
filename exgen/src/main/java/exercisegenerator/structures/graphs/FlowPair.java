@@ -1,6 +1,7 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.graphs;
 
 import exercisegenerator.*;
+import exercisegenerator.structures.*;
 
 /**
  * Pair used for flow networks. Just overrides the toString method.

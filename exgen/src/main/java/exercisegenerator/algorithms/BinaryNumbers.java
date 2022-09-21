@@ -8,6 +8,7 @@ import java.util.function.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.binary.*;
 import exercisegenerator.util.*;
 
 public class BinaryNumbers {

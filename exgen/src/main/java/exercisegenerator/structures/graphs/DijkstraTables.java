@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.graphs;
 
 public class DijkstraTables {
     public final String[][] exColor;

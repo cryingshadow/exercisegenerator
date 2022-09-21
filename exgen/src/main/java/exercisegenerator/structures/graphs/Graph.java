@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.graphs;
 
 import java.io.*;
 import java.math.*;
@@ -7,6 +7,7 @@ import java.util.Map.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
+import exercisegenerator.structures.*;
 
 /**
  * Directed graph implemented by adjacency lists. It supports arbitrary edge and node labels and multiple edges between

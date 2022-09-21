@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.binary;
 
 public enum Bit {
 

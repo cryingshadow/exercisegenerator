@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.coding;
 
 import java.util.*;
 import java.util.stream.*;

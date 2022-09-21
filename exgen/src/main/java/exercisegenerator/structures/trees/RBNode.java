@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.trees;
 
 /**
  * A node in a red-black-tree with an int value.

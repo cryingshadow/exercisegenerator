@@ -7,6 +7,7 @@ import java.util.function.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.trees.*;
 import exercisegenerator.util.*;
 
 /**

@@ -6,6 +6,7 @@ import java.util.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.trees.*;
 
 public abstract class TreeAlgorithms {
 

@@ -1,6 +1,8 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.graphs;
 
 import java.util.*;
+
+import exercisegenerator.structures.*;
 
 /**
  * Represents a node position in a grid layout.

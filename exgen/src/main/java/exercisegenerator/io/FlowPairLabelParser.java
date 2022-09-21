@@ -3,6 +3,7 @@ package exercisegenerator.io;
 import java.io.*;
 
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.graphs.*;
 
 /**
  * Parser to parse integer pair labels.

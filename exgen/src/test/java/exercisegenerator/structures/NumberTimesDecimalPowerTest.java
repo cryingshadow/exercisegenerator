@@ -5,6 +5,8 @@ import java.math.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.structures.binary.*;
+
 public class NumberTimesDecimalPowerTest {
 
     @Test
