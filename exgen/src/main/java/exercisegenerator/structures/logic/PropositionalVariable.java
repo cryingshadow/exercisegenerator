@@ -11,6 +11,15 @@ public class PropositionalVariable extends PropositionalFormula {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof PropositionalVariable)) {
+            return false;
+        }
+        final PropositionalVariable other = (PropositionalVariable)o;
+        return this.name.equals(other.name);
+    }
+
+    @Override
     public boolean evaluate(final PropositionalInterpretation interpretation) {
         if (!interpretation.containsKey(this.name)) {
             throw new IllegalArgumentException(
@@ -23,6 +32,11 @@ public class PropositionalVariable extends PropositionalFormula {
     @Override
     public List<String> getVariableNames() {
         return Collections.singletonList(this.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.name.hashCode() * 3;
     }
 
     @Override

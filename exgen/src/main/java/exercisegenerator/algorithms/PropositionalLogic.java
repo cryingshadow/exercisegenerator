@@ -7,6 +7,11 @@ import exercisegenerator.structures.logic.*;
 
 public class PropositionalLogic {
 
+    public static PropositionalFormula fromTruthTable(final TruthTable table) {
+        final List<Conjunction> disjuncts = table.getModels().stream().map(PropositionalLogic::toConjunction).toList();
+        return disjuncts.size() == 1 ? disjuncts.get(0) : new Disjunction(disjuncts);
+    }
+
     public static TruthTable toTruthTable(final PropositionalFormula formula) {
         final List<String> variables = formula.getVariableNames();
         final List<PropositionalInterpretation> interpretations =
@@ -24,22 +29,21 @@ public class PropositionalLogic {
         final BigInteger size = BigInteger.TWO.pow(variables.size());
         BigInteger current = BigInteger.ZERO;
         while (current.compareTo(size) < 0) {
-            result.add(PropositionalLogic.toInterpretation(current, variables));
+            result.add(TruthTable.toInterpretation(current, variables));
             current = current.add(BigInteger.ONE);
         }
         return result;
     }
 
-    private static PropositionalInterpretation toInterpretation(
-        final BigInteger current,
-        final List<String> variables
-    ) {
-        final PropositionalInterpretation result = new PropositionalInterpretation();
-        int i = variables.size() - 1;
-        for (final String variable : variables) {
-            result.put(variable, current.testBit(i--));
-        }
-        return result;
+    private static Conjunction toConjunction(final PropositionalInterpretation model) {
+        final List<String> names = new ArrayList<String>(model.keySet());
+        Collections.sort(names);
+        return new Conjunction(
+            names.stream()
+                .map(name -> new PropositionalVariable(name))
+                .map(var -> model.get(var.name) ? var : var.negate())
+                .toList()
+        );
     }
 
 }

@@ -15,6 +15,15 @@ public abstract class PropositionalFormula {
         return PropositionalFormula.parseInfix(parsed.x, parsed.y.strip());
     }
 
+    private static List<? extends PropositionalFormula> combine(
+        final List<? extends PropositionalFormula> children,
+        final PropositionalFormula rightChild
+    ) {
+        final List<PropositionalFormula> result = new LinkedList<PropositionalFormula>(children);
+        result.add(rightChild);
+        return result;
+    }
+
     private static int findClosingParanthesis(final String formula) {
         final char[] chars = formula.toCharArray();
         int open = 1;
@@ -85,23 +94,32 @@ public abstract class PropositionalFormula {
         final PropositionalFormula leftChild,
         final String formula
     ) throws PropositionalFormulaParseException {
-        if (formula.startsWith("&&")) {
+        String remainingFormula = formula;
+        PropositionalFormula leftConjuncts = leftChild;
+        while (remainingFormula.startsWith("&&")) {
+            final PropositionalFormula currentLeftConjuncts = leftConjuncts;
             final Pair<PropositionalFormula, String> parsedConjunction =
                 PropositionalFormula.parse(
-                    formula.substring(2),
+                    remainingFormula.substring(2),
                     rightChild -> rightChild.isConjunction() ?
-                        ((Conjunction)rightChild).prepend(leftChild) :
-                            new Conjunction(leftChild, rightChild)
+                        ((Conjunction)rightChild).prepend(currentLeftConjuncts) :
+                            currentLeftConjuncts.isConjunction() ?
+                                new Conjunction(
+                                    PropositionalFormula.combine(
+                                        ((Conjunction)currentLeftConjuncts).children,
+                                        rightChild
+                                    )
+                                ) :
+                                    new Conjunction(currentLeftConjuncts, rightChild)
                 );
-            final String remainingFormula = parsedConjunction.y.strip();
-            if (remainingFormula.isEmpty()) {
-                return parsedConjunction.x;
-            }
-            if (remainingFormula.startsWith("||")) {
-                return PropositionalFormula.parseDisjunction(parsedConjunction.x, remainingFormula.substring(2));
-            }
-        } else if (formula.startsWith("||")) {
-            return PropositionalFormula.parseDisjunction(leftChild, formula.substring(2));
+            leftConjuncts = parsedConjunction.x;
+            remainingFormula = parsedConjunction.y.strip();
+        }
+        if (remainingFormula.isEmpty()) {
+            return leftConjuncts;
+        }
+        if (remainingFormula.startsWith("||")) {
+            return PropositionalFormula.parseDisjunction(leftConjuncts, remainingFormula.substring(2));
         }
         throw new PropositionalFormulaParseException();
     }
@@ -127,9 +145,15 @@ public abstract class PropositionalFormula {
         );
     }
 
+    @Override
+    public abstract boolean equals(Object o);
+
     public abstract boolean evaluate(PropositionalInterpretation interpretation);
 
     public abstract List<String> getVariableNames();
+
+    @Override
+    public abstract int hashCode();
 
     public boolean isConjunction() {
         return false;
@@ -146,5 +170,12 @@ public abstract class PropositionalFormula {
     public boolean isVariable() {
         return false;
     }
+
+    public PropositionalFormula negate() {
+        return new Negation(this);
+    }
+
+    @Override
+    public abstract String toString();
 
 }

@@ -5,14 +5,23 @@ import java.util.stream.*;
 
 public class Conjunction extends PropositionalFormula {
 
-    public final List<PropositionalFormula> children;
+    public final List<? extends PropositionalFormula> children;
 
-    public Conjunction(final List<PropositionalFormula> children) {
+    public Conjunction(final List<? extends PropositionalFormula> children) {
         this.children = children;
     }
 
     public Conjunction(final PropositionalFormula... children) {
         this(Arrays.asList(children));
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Conjunction)) {
+            return false;
+        }
+        final Conjunction other = (Conjunction)o;
+        return this.children.equals(other.children);
     }
 
     @Override
@@ -38,13 +47,24 @@ public class Conjunction extends PropositionalFormula {
     }
 
     @Override
+    public int hashCode() {
+        return this.children.hashCode() * 29;
+    }
+
+    @Override
     public boolean isConjunction() {
         return true;
     }
 
     public Conjunction prepend(final PropositionalFormula firstChild) {
-        final LinkedList<PropositionalFormula> newChildren = new LinkedList<PropositionalFormula>(this.children);
-        newChildren.addFirst(firstChild);
+        final LinkedList<PropositionalFormula> newChildren;
+        if (firstChild.isConjunction()) {
+            newChildren = new LinkedList<PropositionalFormula>(((Conjunction)firstChild).children);
+            newChildren.addAll(this.children);
+        } else {
+            newChildren = new LinkedList<PropositionalFormula>(this.children);
+            newChildren.addFirst(firstChild);
+        }
         return new Conjunction(newChildren);
     }
 

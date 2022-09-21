@@ -5,14 +5,23 @@ import java.util.stream.*;
 
 public class Disjunction extends PropositionalFormula {
 
-    public final List<PropositionalFormula> children;
+    public final List<? extends PropositionalFormula> children;
 
-    public Disjunction(final List<PropositionalFormula> children) {
+    public Disjunction(final List<? extends PropositionalFormula> children) {
         this.children = children;
     }
 
     public Disjunction(final PropositionalFormula... children) {
         this(Arrays.asList(children));
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Disjunction)) {
+            return false;
+        }
+        final Disjunction other = (Disjunction)o;
+        return this.children.equals(other.children);
     }
 
     @Override
@@ -35,6 +44,11 @@ public class Disjunction extends PropositionalFormula {
         final List<String> result = new ArrayList<String>(variables);
         Collections.sort(result);
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.children.hashCode() * 31;
     }
 
     @Override

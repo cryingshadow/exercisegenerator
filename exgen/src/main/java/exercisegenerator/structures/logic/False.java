@@ -7,7 +7,11 @@ public class False extends PropositionalFormula {
     public static final False FALSE = new False();
 
     private False() {
+    }
 
+    @Override
+    public boolean equals(final Object o) {
+        return this == o;
     }
 
     @Override
@@ -18,6 +22,11 @@ public class False extends PropositionalFormula {
     @Override
     public List<String> getVariableNames() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 
     @Override
