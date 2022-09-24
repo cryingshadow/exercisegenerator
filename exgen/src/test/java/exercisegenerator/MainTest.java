@@ -9,6 +9,7 @@ import org.testng.*;
 import org.testng.annotations.*;
 
 import exercisegenerator.io.*;
+import exercisegenerator.structures.graphs.Node;
 import exercisegenerator.util.*;
 
 //TODO heapsort with trees, additional complete sorting tests
@@ -921,6 +922,7 @@ public class MainTest {
     @BeforeMethod
     public void prepare() {
         LaTeXUtils.reset();
+        Node.resetIDs();
     }
 
     @Test
