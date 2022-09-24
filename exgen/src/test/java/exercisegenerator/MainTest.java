@@ -48,11 +48,11 @@ public class MainTest {
 
     public static final String SOL_FILE_NAME;
 
-    private static final List<String> ASSIGNMENT_MIDDLE = List.of("", "\\vspace*{1ex}", "");
-
     private static final String EMPTY_NODE_MATCH;
 
     private static final String MATCH_MESSAGE_PATTERN;
+
+    private static final List<String> MIDDLE_SPACE = List.of("", "\\vspace*{1ex}", "");
 
     private static final String NODE_MATCH;
 
@@ -103,8 +103,8 @@ public class MainTest {
             if (first) {
                 first = false;
             } else {
-                exText.addAll(MainTest.ASSIGNMENT_MIDDLE);
-                solText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+                exText.addAll(MainTest.MIDDLE_SPACE);
+                solText.addAll(MainTest.MIDDLE_SPACE);
             }
             currentNodeNumber =
                 algorithm.apply(new BinaryInput(currentNodeNumber, test, exText, solText));
@@ -609,10 +609,10 @@ public class MainTest {
                 exText,
                 solText
             );
-        exText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+        exText.addAll(MainTest.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
         exText.addAll(MainTest.SOLUTION_SPACE_END);
-        solText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+        solText.addAll(MainTest.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{1001100110110111001101}");
         this.harness(
@@ -696,10 +696,10 @@ public class MainTest {
                 exText,
                 solText
             );
-        exText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+        exText.addAll(MainTest.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
         exText.addAll(MainTest.SOLUTION_SPACE_END);
-        solText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+        solText.addAll(MainTest.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{1001100110110111001101}");
         this.harness(
@@ -1044,14 +1044,17 @@ public class MainTest {
     @Test
     public void toTruthTable() throws IOException {
         final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
         exText.add(
-            "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\[2ex]"
+            "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\"
         );
         exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
             List.of(
                 "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
-                "\\begin{tabular}{|*{4}{C{2em}|}}",
+                "\\begin{center}",
+                "{\\Large",
+                "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
                 "\\hline",
                 "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline"
             )
@@ -1062,8 +1065,17 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "\\end{tabular}",
+                "}",
+                "\\end{center}"
+            )
+        );
+        exText.addAll(MainTest.MIDDLE_SPACE);
+        exText.addAll(
+            List.of(
                 "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
-                "\\begin{tabular}{|*{5}{C{2em}|}}",
+                "\\begin{center}",
+                "{\\Large",
+                "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
                 "\\hline",
                 "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline"
             )
@@ -1071,53 +1083,73 @@ public class MainTest {
         for (int i = 0; i < 16; i++) {
             exText.add(" &  &  &  & \\\\\\hline");
         }
-        exText.add("\\end{tabular}");
+        exText.addAll(
+            List.of(
+                "\\end{tabular}",
+                "}",
+                "\\end{center}"
+            )
+        );
         exText.addAll(MainTest.SOLUTION_SPACE_END);
+
+        solText.addAll(
+            List.of(
+                "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
+                "\\begin{center}",
+                "{\\Large",
+                "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
+                "\\hline",
+                "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline",
+                "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                "\\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
+                "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                "\\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
+                "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
+                "\\end{tabular}",
+                "}",
+                "\\end{center}"
+            )
+        );
+        solText.addAll(MainTest.MIDDLE_SPACE);
+        solText.addAll(
+            List.of(
+                "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
+                "\\begin{center}",
+                "{\\Large",
+                "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
+                "\\hline",
+                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline",
+                "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline",
+                "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
+                "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                "\\end{tabular}",
+                "}",
+                "\\end{center}"
+            )
+        );
         this.harness(
             new String[] {
                 "-a", "totruthtable",
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "A && B || !A && C\n((D && ((A && !B) || (!A && B))) || (!D && ((A && B) || (!A && !B)))) && ((C && A && B) || (!C && (!A || !B)))"
             },
-            MainTest.simpleComparison(
-                exText,
-                List.of(
-                    "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
-                    "\\begin{tabular}{|*{4}{C{2em}|}}",
-                    "\\hline",
-                    "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline",
-                    "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                    "\\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
-                    "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                    "\\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
-                    "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
-                    "\\end{tabular}",
-                    "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
-                    "\\begin{tabular}{|*{5}{C{2em}|}}",
-                    "\\hline",
-                    "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline",
-                    "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline",
-                    "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                    "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                    "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                    "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                    "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                    "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                    "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                    "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                    "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
-                    "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                    "\\end{tabular}"
-                )
-            )
+            MainTest.simpleComparison(exText, solText)
         );
     }
 

@@ -147,7 +147,14 @@ public abstract class DynamicProgramming {
                     LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
                     solWriter.write("{\\Large");
                     Main.newLine(solWriter);
-                    LaTeXUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
+                    LaTeXUtils.printTable(
+                        solutionsTmp,
+                        Optional.empty(),
+                        LaTeXUtils.defaultColumnDefinition("1.2cm"),
+                        true,
+                        0,
+                        solWriter
+                    );
                     Main.newLine(solWriter);
                     solWriter.write("}");
                     Main.newLine(solWriter);
@@ -161,7 +168,14 @@ public abstract class DynamicProgramming {
                             LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                             exWriter.write("{\\Large");
                             Main.newLine(exWriter);
-                            LaTeXUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                            LaTeXUtils.printTable(
+                                solutionsTmpEx,
+                                Optional.empty(),
+                                LaTeXUtils.defaultColumnDefinition("1.2cm"),
+                                true,
+                                0,
+                                exWriter
+                            );
                             Main.newLine(exWriter);
                             exWriter.write("}");
                             Main.newLine(exWriter);
@@ -197,7 +211,14 @@ public abstract class DynamicProgramming {
                     LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                     exWriter.write("{\\Large");
                     Main.newLine(exWriter);
-                    LaTeXUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                    LaTeXUtils.printTable(
+                        solutionsTmpEx,
+                        Optional.empty(),
+                        LaTeXUtils.defaultColumnDefinition("1.2cm"),
+                        true,
+                        0,
+                        exWriter
+                    );
                     Main.newLine(exWriter);
                     exWriter.write("}");
                     Main.newLine(exWriter);
@@ -213,7 +234,14 @@ public abstract class DynamicProgramming {
             LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
             solWriter.write("{\\Large");
             Main.newLine(solWriter);
-            LaTeXUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
+            LaTeXUtils.printTable(
+                solutions,
+                Optional.empty(),
+                LaTeXUtils.defaultColumnDefinition("1.2cm"),
+                true,
+                0,
+                solWriter
+            );
             Main.newLine(solWriter);
             solWriter.write("}");
             Main.newLine(solWriter);
@@ -333,14 +361,12 @@ public abstract class DynamicProgramming {
                 solutions[row + 1][column + 1] = "$\\nwarrow$ " + solutions[row + 1][column + 1];
                 column--;
                 row--;
+            } else if (C[row][column-1] >= C[row-1][column]) {
+                solutions[row + 1][column + 1] = "$\\leftarrow$ " + solutions[row + 1][column + 1];
+                column--;
             } else {
-                if (C[row][column-1] >= C[row-1][column]) {
-                    solutions[row + 1][column + 1] = "$\\leftarrow$ " + solutions[row + 1][column + 1];
-                    column--;
-                } else {
-                    solutions[row + 1][column + 1] = "$\\uparrow$ " + solutions[row + 1][column + 1];
-                    row--;
-                }
+                solutions[row + 1][column + 1] = "$\\uparrow$ " + solutions[row + 1][column + 1];
+                row--;
             }
         }
         // create output
@@ -376,7 +402,14 @@ public abstract class DynamicProgramming {
                     LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
                     solWriter.write("{\\Large");
                     Main.newLine(solWriter);
-                    LaTeXUtils.printTable(solutionsTmp, null, "1.2cm", solWriter, true, 0);
+                    LaTeXUtils.printTable(
+                        solutionsTmp,
+                        Optional.empty(),
+                        LaTeXUtils.defaultColumnDefinition("1.2cm"),
+                        true,
+                        0,
+                        solWriter
+                    );
                     Main.newLine(solWriter);
                     solWriter.write("}");
                     Main.newLine(solWriter);
@@ -390,7 +423,14 @@ public abstract class DynamicProgramming {
                             LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                             exWriter.write("{\\Large");
                             Main.newLine(exWriter);
-                            LaTeXUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                            LaTeXUtils.printTable(
+                                solutionsTmpEx,
+                                Optional.empty(),
+                                LaTeXUtils.defaultColumnDefinition("1.2cm"),
+                                true,
+                                0,
+                                exWriter
+                            );
                             Main.newLine(exWriter);
                             exWriter.write("}");
                             Main.newLine(exWriter);
@@ -426,7 +466,14 @@ public abstract class DynamicProgramming {
                     LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                     exWriter.write("{\\Large");
                     Main.newLine(exWriter);
-                    LaTeXUtils.printTable(solutionsTmpEx, null, "1.2cm", exWriter, true, 0);
+                    LaTeXUtils.printTable(
+                        solutionsTmpEx,
+                        Optional.empty(),
+                        LaTeXUtils.defaultColumnDefinition("1.2cm"),
+                        true,
+                        0,
+                        exWriter
+                    );
                     Main.newLine(exWriter);
                     exWriter.write("}");
                     Main.newLine(exWriter);
@@ -442,7 +489,14 @@ public abstract class DynamicProgramming {
             LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
             solWriter.write("{\\Large");
             Main.newLine(solWriter);
-            LaTeXUtils.printTable(solutions, null, "1.2cm", solWriter, true, 0);
+            LaTeXUtils.printTable(
+                solutions,
+                Optional.empty(),
+                LaTeXUtils.defaultColumnDefinition("1.2cm"),
+                true,
+                0,
+                solWriter
+            );
             Main.newLine(solWriter);
             solWriter.write("}");
             Main.newLine(solWriter);

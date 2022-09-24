@@ -33,12 +33,11 @@ public class VigenereSquare {
 
     public void toLaTeX(final BufferedWriter writer) throws IOException {
         final String[][] table = new String[this.size][2];
-        final String[][] color = new String[this.size][2];
         for (int i = 0; i < this.size; i++) {
             table[i][0] = String.valueOf(i);
             table[i][1] = String.valueOf(this.alphabet.get(i));
         }
-        LaTeXUtils.printTable(table, color, "1.5em", writer, false, 0);
+        LaTeXUtils.printTable(table, Optional.empty(), LaTeXUtils.defaultColumnDefinition("1.5em"), false, 0, writer);
     }
 
 }

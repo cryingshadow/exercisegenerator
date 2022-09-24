@@ -161,15 +161,22 @@ public class PropositionalLogic {
         final BufferedWriter solWriter = input.solutionWriter;
         final int size = formulas.size();
         if (size == 1) {
-            exWriter.write("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\[2ex]");
+            exWriter.write("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\");
         } else {
             exWriter.write(
-                "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\[2ex]"
+                "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\"
             );
         }
         Main.newLine(exWriter);
         LaTeXUtils.printSolutionSpaceBeginning(input.options, exWriter);
+        boolean first = true;
         for (int i = 0; i < size; i++) {
+            if (first) {
+                first = false;
+            } else {
+                LaTeXUtils.printVerticalProtectedSpace(exWriter);
+                LaTeXUtils.printVerticalProtectedSpace(solWriter);
+           }
             final PropositionalFormula formula = formulas.get(i);
             final TruthTable table = truthTables.get(i);
             PropositionalLogic.printFormula(formula, exWriter);
@@ -185,7 +192,6 @@ public class PropositionalLogic {
     throws IOException {
         final Map<PropositionalInterpretation, Boolean> values = table.getAllInterpretationsAndValues();
         final String[][] tableForLaTeX = new String[table.variables.size() + 1][values.size() + 1];
-        final String[][] color = new String[table.variables.size() + 1][values.size() + 1];
         int column = 0;
         for (final String name : table.variables) {
             tableForLaTeX[column++][0] = String.format("\\var{%s}", name);
@@ -203,7 +209,20 @@ public class PropositionalLogic {
                 row++;
             }
         }
-        LaTeXUtils.printTable(tableForLaTeX, color, "2em", writer, false, 0);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        writer.write("{\\Large");
+        Main.newLine(writer);
+        LaTeXUtils.printTable(
+            tableForLaTeX,
+            Optional.empty(),
+            cols -> String.format("|*{%d}{C{1em}|}C{4em}|", cols - 1),
+            false,
+            0,
+            writer
+        );
+        writer.write("}");
+        Main.newLine(writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
     }
 
     private static Conjunction toConjunction(final PropositionalInterpretation model) {

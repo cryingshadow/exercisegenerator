@@ -2,7 +2,7 @@ package exercisegenerator.algorithms;
 
 import java.io.*;
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.Map.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
@@ -764,12 +764,10 @@ public abstract class GraphAlgorithms {
                         } else {
                             currentSolution[i+1][j+1] = "false";
                         }
+                    } else if (!warshall) {
+                        currentSolution[i+1][j+1] = "" + weights[i][j];
                     } else {
-                        if (!warshall) {
-                            currentSolution[i+1][j+1] = "" + weights[i][j];
-                        } else {
-                            currentSolution[i+1][j+1] = "true";
-                        }
+                        currentSolution[i+1][j+1] = "true";
                     }
                 }
             }
@@ -1151,12 +1149,10 @@ public abstract class GraphAlgorithms {
                 if (q.contains(node)) {
                     if (key.get(node) == null) {
                         solTable[i][iteration] = "$\\infty$";
+                    } else if (minNode == node) {
+                        solTable[i][iteration] = "\\underline{" + key.get(node) + "}";
                     } else {
-                        if (minNode == node) {
-                            solTable[i][iteration] = "\\underline{" + key.get(node) + "}";
-                        } else {
-                            solTable[i][iteration] = "" + key.get(node);
-                        }
+                        solTable[i][iteration] = "" + key.get(node);
                     }
                 } else {
                     solTable[i][iteration] = "";
@@ -1204,14 +1200,28 @@ public abstract class GraphAlgorithms {
         Main.newLine(exWriter);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
         LaTeXUtils.printArrayStretch(1.5, exWriter);
-        LaTeXUtils.printTable(exTable, null, "2.0cm", exWriter, false, 10);
+        LaTeXUtils.printTable(
+            exTable,
+            Optional.empty(),
+            LaTeXUtils.defaultColumnDefinition("2.0cm"),
+            false,
+            10,
+            exWriter
+        );
         LaTeXUtils.printArrayStretch(1, exWriter);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
         exWriter.write("Minimaler Spannbaum:");
         Main.newLine(exWriter);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
         LaTeXUtils.printArrayStretch(1.5, solWriter);
-        LaTeXUtils.printTable(solTable, null, "2.0cm", solWriter, false, 10);
+        LaTeXUtils.printTable(
+            solTable,
+            Optional.empty(),
+            LaTeXUtils.defaultColumnDefinition("2.0cm"),
+            false,
+            10,
+            solWriter
+        );
         LaTeXUtils.printArrayStretch(1, solWriter);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, solWriter);
         // print the spanning tree
@@ -1444,16 +1454,14 @@ public abstract class GraphAlgorithms {
             final Integer distanceToNode = distances[toNodeIndex];
             if (distanceToNode == null) {
                 solTable[columnIndex][toNodeIndex] = "$\\infty$";
+            } else if (used.contains(toNodeIndex)) {
+                solTable[columnIndex][toNodeIndex] = "\\textbf{--}";
             } else {
-                if (used.contains(toNodeIndex)) {
-                    solTable[columnIndex][toNodeIndex] = "\\textbf{--}";
-                } else {
-                    if (currentMinimumDistance == null || currentMinimumDistance > distanceToNode) {
-                        currentMinimumDistance = distanceToNode;
-                        indexOfNodeWithMinimumDistance = toNodeIndex;
-                    }
-                    solTable[columnIndex][toNodeIndex] = String.valueOf(distanceToNode);
+                if (currentMinimumDistance == null || currentMinimumDistance > distanceToNode) {
+                    currentMinimumDistance = distanceToNode;
+                    indexOfNodeWithMinimumDistance = toNodeIndex;
                 }
+                solTable[columnIndex][toNodeIndex] = String.valueOf(distanceToNode);
             }
             exTable[columnIndex][toNodeIndex] = "";
         }
@@ -2032,7 +2040,14 @@ public abstract class GraphAlgorithms {
                 LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
                 Main.newLine(exWriter);
                 LaTeXUtils.printArrayStretch(1.5, exWriter);
-                LaTeXUtils.printTable(tables.exTable, tables.exColor, "2cm", exWriter, false, 10);
+                LaTeXUtils.printTable(
+                    tables.exTable,
+                    Optional.of(tables.exColor),
+                    LaTeXUtils.defaultColumnDefinition("2cm"),
+                    false,
+                    10,
+                    exWriter
+                );
                 LaTeXUtils.printArrayStretch(1.0, exWriter);
                 LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                 if (mode == PreprintMode.SOLUTION_SPACE) {
@@ -2049,7 +2064,14 @@ public abstract class GraphAlgorithms {
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solWriter);
         Main.newLine(solWriter);
         LaTeXUtils.printArrayStretch(1.5, solWriter);
-        LaTeXUtils.printTable(tables.solTable, tables.solColor, "2cm", solWriter, false, 10);
+        LaTeXUtils.printTable(
+            tables.solTable,
+            Optional.of(tables.solColor),
+            LaTeXUtils.defaultColumnDefinition("2cm"),
+            false,
+            10,
+            solWriter
+        );
         LaTeXUtils.printArrayStretch(1.0, solWriter);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, solWriter);
         Main.newLine(solWriter);
@@ -2086,14 +2108,28 @@ public abstract class GraphAlgorithms {
         final int breakAtColumn
     ) throws IOException {
         if (count < tableCount) {
-            LaTeXUtils.printTable(table, color, "1cm", writer, transpose, breakAtColumn);
+            LaTeXUtils.printTable(
+                table,
+                Optional.of(color),
+                LaTeXUtils.defaultColumnDefinition("1cm"),
+                transpose,
+                breakAtColumn,
+                writer
+            );
             writer.write("\\hspace{2em}");
             Main.newLine(writer);
             return count + 1;
         }
         writer.write("\\\\[2ex]");
         Main.newLine(writer);
-        LaTeXUtils.printTable(table, color, "1cm", writer, transpose, breakAtColumn);
+        LaTeXUtils.printTable(
+            table,
+            Optional.of(color),
+            LaTeXUtils.defaultColumnDefinition("1cm"),
+            transpose,
+            breakAtColumn,
+            writer
+        );
         writer.write("\\hspace{2em}");
         Main.newLine(writer);
         return 1;

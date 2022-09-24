@@ -3,6 +3,7 @@ package exercisegenerator.io;
 import java.io.*;
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import exercisegenerator.*;
@@ -60,6 +61,10 @@ public abstract class LaTeXUtils {
 
     public static String code(final String text) {
         return String.format("\\code{%s}", text);
+    }
+
+    public static Function<Integer, String> defaultColumnDefinition(final String width) {
+        return cols -> String.format("|*{%d}{C{%s}|}", cols, width);
     }
 
     public static String escapeForLaTeX(final char c) {
@@ -475,30 +480,22 @@ public abstract class LaTeXUtils {
         }
     }
 
-    /**
-     * Prints a table by centering each column.
-     * @param table A two-dimensional table of Strings.
-     * @param color Color settings for each cell. Null means no color. The array must not be null.
-     * @param width The column width.
-     * @param writer The writer to send the output to.
-     * @param transpose Transpose the table?
-     * @param breakAtColumn Insert line breaks after this number of columns. Ignored if 0.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printTable(
         final String[][] table,
-        final String[][] color,
-        final String width,
-        final BufferedWriter writer,
+        final Optional<String[][]> optionalColor,
+        final Function<Integer, String> columnDefinition,
         final boolean transpose,
-        final int breakAtColumn
+        final int breakAtColumn,
+        final BufferedWriter writer
     ) throws IOException {
         final int allCols = (transpose ? table[0].length : table.length);
         int remainingCols = allCols;
         do {
             final int cols = remainingCols > breakAtColumn && breakAtColumn > 0 ? breakAtColumn : remainingCols;
             final int rows = (transpose ? table.length : table[0].length);
-            writer.write("\\begin{tabular}{|*{" + cols + "}{C{" + width + "}|}}");
+            writer.write("\\begin{tabular}{");
+            writer.write(columnDefinition.apply(cols));
+            writer.write("}");
             Main.newLine(writer);
             writer.write("\\hline");
             Main.newLine(writer);
@@ -511,16 +508,17 @@ public abstract class LaTeXUtils {
                     } else {
                         writer.write(" & ");
                     }
-                    if (transpose) {
-                        if (color != null && color[row][col] != null) {
-                            writer.write("\\cellcolor{" + color[row][col] + "}");
+                    final int transCol = transpose ? row : col;
+                    final int transRow = transpose ? col : row;
+                    if (optionalColor.isPresent()) {
+                        final String color = optionalColor.get()[transCol][transRow];
+                        if (color != null) {
+                            writer.write(String.format("\\cellcolor{%s}", color));
                         }
-                        writer.write(table[row][col] == null ? "" : table[row][col]);
-                    } else {
-                        if (color != null && color[col][row] != null) {
-                            writer.write("\\cellcolor{" + color[col][row] + "}");
-                        }
-                        writer.write(table[col][row] == null ? "" : table[col][row]);
+                    }
+                    final String content = table[transCol][transRow];
+                    if (content != null) {
+                        writer.write(content);
                     }
                 }
                 writer.write("\\\\\\hline");
