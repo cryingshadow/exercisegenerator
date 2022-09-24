@@ -5,14 +5,24 @@ import java.util.stream.*;
 
 public class Disjunction extends PropositionalFormula {
 
-    public final List<? extends PropositionalFormula> children;
-
-    public Disjunction(final List<? extends PropositionalFormula> children) {
-        this.children = children;
+    public static PropositionalFormula createDisjunction(final List<? extends PropositionalFormula> children) {
+        if (children.isEmpty()) {
+            return False.FALSE;
+        }
+        if (children.size() == 1) {
+            return children.get(0);
+        }
+        return new Disjunction(children);
     }
 
-    public Disjunction(final PropositionalFormula... children) {
-        this(Arrays.asList(children));
+    public static PropositionalFormula createDisjunction(final PropositionalFormula... children) {
+        return Disjunction.createDisjunction(Arrays.asList(children));
+    }
+
+    public final List<? extends PropositionalFormula> children;
+
+    private Disjunction(final List<? extends PropositionalFormula> children) {
+        this.children = children;
     }
 
     @Override

@@ -3,6 +3,7 @@ package exercisegenerator.structures.logic;
 import java.util.*;
 import java.util.function.*;
 
+import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
 public abstract class PropositionalFormula {
@@ -87,7 +88,7 @@ public abstract class PropositionalFormula {
         if (secondDisjunct.isDisjunction()) {
             return ((Disjunction)secondDisjunct).prepend(firstDisjunct);
         }
-        return new Disjunction(firstDisjunct, secondDisjunct);
+        return Disjunction.createDisjunction(firstDisjunct, secondDisjunct);
     }
 
     private static PropositionalFormula parseInfix(
@@ -104,13 +105,13 @@ public abstract class PropositionalFormula {
                     rightChild -> rightChild.isConjunction() ?
                         ((Conjunction)rightChild).prepend(currentLeftConjuncts) :
                             currentLeftConjuncts.isConjunction() ?
-                                new Conjunction(
+                                Conjunction.createConjunction(
                                     PropositionalFormula.combine(
                                         ((Conjunction)currentLeftConjuncts).children,
                                         rightChild
                                     )
                                 ) :
-                                    new Conjunction(currentLeftConjuncts, rightChild)
+                                    Conjunction.createConjunction(currentLeftConjuncts, rightChild)
                 );
             leftConjuncts = parsedConjunction.x;
             remainingFormula = parsedConjunction.y.strip();
@@ -156,6 +157,10 @@ public abstract class PropositionalFormula {
     public abstract int hashCode();
 
     public boolean isConjunction() {
+        return false;
+    }
+
+    public boolean isConstant() {
         return false;
     }
 

@@ -30,6 +30,11 @@ public class False extends PropositionalFormula {
     }
 
     @Override
+    public boolean isConstant() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "FALSE";
     }

@@ -72,6 +72,10 @@ public class Patterns {
         );
     }
 
+    public static List<String> middleSpace(final String space) {
+        return List.of("", String.format("\\vspace*{%s}", space), "");
+    }
+
     public static String phantom(final int length) {
         return String.format("\\phantom{%s}", "0".repeat(length));
     }

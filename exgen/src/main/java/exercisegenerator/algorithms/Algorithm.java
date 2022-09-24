@@ -137,6 +137,17 @@ public enum Algorithm {
         BinaryNumbers::generateTestParameters
     ),
 
+    FROM_TRUTH_TABLE(
+        "fromtruthtable",
+        "Truth table to formula",
+        new String[] {
+            "Compute a formula matching the specified truth table.",
+            "You can specify the number of variables with the -l flag."
+        },
+        PropositionalLogic::fromTruthTable,
+        PropositionalLogic::generateTestParameters
+    ),
+
     FROM_TWOS_COMPLEMENT(
         "fromtwoscompl",
         "Two's Complement (from)",

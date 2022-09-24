@@ -24,6 +24,10 @@ public class Node<L> {
         return res;
     }
 
+    public static void resetIDs() {
+        Node.nextID = BigInteger.ONE;
+    }
+
     /**
      * The unique ID of this node.
      */
@@ -50,9 +54,6 @@ public class Node<L> {
         this.id = Node.getNewID();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(final Object o) {
         if (o instanceof Node) {

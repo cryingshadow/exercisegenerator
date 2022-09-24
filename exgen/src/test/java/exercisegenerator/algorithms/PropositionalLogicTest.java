@@ -5,6 +5,7 @@ import java.util.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.io.*;
 import exercisegenerator.structures.logic.*;
 
 public class PropositionalLogicTest {

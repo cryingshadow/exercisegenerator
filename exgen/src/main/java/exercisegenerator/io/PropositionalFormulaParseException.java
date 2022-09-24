@@ -1,4 +1,4 @@
-package exercisegenerator.structures.logic;
+package exercisegenerator.io;
 
 public class PropositionalFormulaParseException extends Exception {
 

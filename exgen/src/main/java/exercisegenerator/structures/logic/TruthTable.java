@@ -3,6 +3,8 @@ package exercisegenerator.structures.logic;
 import java.math.*;
 import java.util.*;
 
+import exercisegenerator.io.*;
+
 public class TruthTable {
 
     public static List<PropositionalInterpretation> computeAllInterpretations(final List<String> variables) {
@@ -14,6 +16,29 @@ public class TruthTable {
             current = current.add(BigInteger.ONE);
         }
         return result;
+    }
+
+    public static TruthTable parse(final String line) throws TruthTableParseException {
+        final String[] parts = line.strip().split(";");
+        if (parts.length != 2) {
+            throw new TruthTableParseException();
+        }
+        final List<String> variables =
+            parts[0].isBlank() ?
+                Collections.emptyList() :
+                    Arrays.stream(parts[0].split(",")).map(String::strip).toList();
+        final boolean[] truthValues = new boolean[(int)Math.pow(2, variables.size())];
+        final char[] bits = parts[1].strip().toCharArray();
+        if (bits.length != truthValues.length) {
+            throw new TruthTableParseException();
+        }
+        for (int i = 0; i < truthValues.length; i++) {
+            if (bits[i] != '0' && bits[i] != '1') {
+                throw new TruthTableParseException();
+            }
+            truthValues[i] = bits[i] == '1';
+        }
+        return new TruthTable(variables, truthValues);
     }
 
     public static PropositionalInterpretation toInterpretation(

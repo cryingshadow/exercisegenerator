@@ -30,6 +30,11 @@ public class True extends PropositionalFormula {
     }
 
     @Override
+    public boolean isConstant() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "TRUE";
     }
