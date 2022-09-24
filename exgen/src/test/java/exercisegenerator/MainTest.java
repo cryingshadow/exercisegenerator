@@ -17,20 +17,20 @@ public class MainTest {
 
     private static class BinaryInput {
         private final int currentNodeNumber;
-        private final BufferedReader exReader;
-        private final BufferedReader solReader;
+        private final List<String> exText;
+        private final List<String> solText;
         private final BinaryTestCase test;
 
         private BinaryInput(
             final int currentNodeNumber,
             final BinaryTestCase test,
-            final BufferedReader exReader,
-            final BufferedReader solReader
+            final List<String> exText,
+            final List<String> solText
         ) {
             this.currentNodeNumber = currentNodeNumber;
             this.test = test;
-            this.exReader = exReader;
-            this.solReader = solReader;
+            this.exText = exText;
+            this.solText = solText;
         }
     }
 
@@ -48,6 +48,8 @@ public class MainTest {
 
     public static final String SOL_FILE_NAME;
 
+    private static final List<String> ASSIGNMENT_MIDDLE = List.of("", "\\vspace*{1ex}", "");
+
     private static final String EMPTY_NODE_MATCH;
 
     private static final String MATCH_MESSAGE_PATTERN;
@@ -57,6 +59,23 @@ public class MainTest {
     private static final String NUMBER_MATCH;
 
     private static final String PHANTOM_MATCH;
+
+    private static final List<String> SOLUTION_SPACE_BEGINNING =
+        List.of(
+            "\\ifprintanswers",
+            "",
+            "\\vspace*{-3ex}",
+            "",
+            "\\else"
+        );
+
+    private static final List<String> SOLUTION_SPACE_END =
+        List.of(
+            "",
+            "\\vspace*{1ex}",
+            "",
+            "\\fi"
+        );
 
     private static final String TEX_SUFFIX;
 
@@ -71,41 +90,26 @@ public class MainTest {
         PHANTOM_MATCH = "(\\\\phantom\\{0+\\})?";
     }
 
-    @BeforeMethod
-    public static void prepare() {
-        LaTeXUtils.reset();
-    }
-
-    private static void assignmentMiddle(final BufferedReader exReader, final BufferedReader solReader)
-    throws IOException {
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-        Assert.assertEquals(exReader.readLine(), "");
-
-        Assert.assertEquals(solReader.readLine(), "");
-        Assert.assertEquals(solReader.readLine(), "\\vspace*{1ex}");
-        Assert.assertEquals(solReader.readLine(), "");
-    }
-
     private static void binaryTest(
         final CheckedFunction<BinaryInput, Integer, IOException> algorithm,
         final BinaryTestCase[] cases,
-        final BufferedReader exReader,
-        final BufferedReader solReader
+        final List<String> exText,
+        final List<String> solText
     ) throws IOException {
         int currentNodeNumber = 0;
-        MainTest.solutionSpaceBeginning(exReader, solReader);
+        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
         boolean first = true;
         for (final BinaryTestCase test : cases) {
             if (first) {
                 first = false;
             } else {
-                MainTest.assignmentMiddle(exReader, solReader);
+                exText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+                solText.addAll(MainTest.ASSIGNMENT_MIDDLE);
             }
             currentNodeNumber =
-                algorithm.apply(new BinaryInput(currentNodeNumber, test, exReader, solReader));
+                algorithm.apply(new BinaryInput(currentNodeNumber, test, exText, solText));
         }
-        MainTest.solutionSpaceEnd(exReader, solReader);
+        exText.addAll(MainTest.SOLUTION_SPACE_END);
     }
 
     private static int checkAssignment(
@@ -114,50 +118,38 @@ public class MainTest {
         final List<String> rightHandSide,
         final int contentLength,
         final String longestLeftHandSide,
-        final BufferedReader exReader,
-        final BufferedReader solReader
-    ) throws IOException {
-        Assert.assertEquals(exReader.readLine(), Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide));
-        Assert.assertEquals(exReader.readLine(), "\\begin{flushright}");
-        Assert.assertEquals(exReader.readLine(), Patterns.forAssignmentLeftHandSide(leftHandSide));
-        Assert.assertEquals(exReader.readLine(), "\\end{flushright}");
-        Assert.assertEquals(exReader.readLine(), "\\end{minipage}");
-        Assert.assertEquals(exReader.readLine(), Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide));
-        Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-        Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-        Assert.assertEquals(exReader.readLine(), Patterns.singleEmptyNode(currentNodeNumber++, contentLength));
+        final List<String> exText,
+        final List<String> solText
+    ) {
+        exText.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide));
+        exText.add("\\begin{flushright}");
+        exText.add(Patterns.forAssignmentLeftHandSide(leftHandSide));
+        exText.add("\\end{flushright}");
+        exText.add("\\end{minipage}");
+        exText.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide));
+        exText.add("\\begin{tikzpicture}");
+        exText.add(Patterns.ARRAY_STYLE);
+        exText.add(Patterns.singleEmptyNode(currentNodeNumber++, contentLength));
         for (int i = 1; i < rightHandSide.size(); i++) {
-            Assert.assertEquals(
-                exReader.readLine(),
-                Patterns.rightEmptyNodeToPredecessor(currentNodeNumber++, contentLength)
-            );
+            exText.add(Patterns.rightEmptyNodeToPredecessor(currentNodeNumber++, contentLength));
         }
-        Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-        Assert.assertEquals(exReader.readLine(), "\\end{minipage}");
+        exText.add("\\end{tikzpicture}");
+        exText.add("\\end{minipage}");
 
-        Assert.assertEquals(solReader.readLine(), Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide));
-        Assert.assertEquals(solReader.readLine(), "\\begin{flushright}");
-        Assert.assertEquals(solReader.readLine(), Patterns.forAssignmentLeftHandSide(leftHandSide));
-        Assert.assertEquals(solReader.readLine(), "\\end{flushright}");
-        Assert.assertEquals(solReader.readLine(), "\\end{minipage}");
-        Assert.assertEquals(
-            solReader.readLine(),
-            Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide)
-        );
-        Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
-        Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-        Assert.assertEquals(
-            solReader.readLine(),
-            Patterns.singleNode(currentNodeNumber++, rightHandSide.get(0), contentLength)
-        );
+        solText.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide));
+        solText.add("\\begin{flushright}");
+        solText.add(Patterns.forAssignmentLeftHandSide(leftHandSide));
+        solText.add("\\end{flushright}");
+        solText.add("\\end{minipage}");
+        solText.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide));
+        solText.add("\\begin{tikzpicture}");
+        solText.add(Patterns.ARRAY_STYLE);
+        solText.add(Patterns.singleNode(currentNodeNumber++, rightHandSide.get(0), contentLength));
         for (int i = 1; i < rightHandSide.size(); i++) {
-            Assert.assertEquals(
-                solReader.readLine(),
-                Patterns.rightNodeToPredecessor(currentNodeNumber++, rightHandSide.get(i))
-            );
+            solText.add(Patterns.rightNodeToPredecessor(currentNodeNumber++, rightHandSide.get(i)));
         }
-        Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
-        Assert.assertEquals(solReader.readLine(), "\\end{minipage}");
+        solText.add("\\end{tikzpicture}");
+        solText.add("\\end{minipage}");
         return currentNodeNumber;
     }
 
@@ -226,8 +218,6 @@ public class MainTest {
             nextLine = reader.readLine();
         }
         Assert.assertEquals(nextLine, "\\end{document}");
-        Assert.assertEquals(reader.readLine(), "");
-        Assert.assertNull(reader.readLine());
     }
 
     private static void checkLaTeXPreamble(final BufferedReader reader) throws IOException {
@@ -341,11 +331,13 @@ public class MainTest {
         Assert.assertEquals(reader.readLine(), "");
     }
 
-    private static void fromBinary(
+    private static CheckedBiConsumer<BufferedReader, BufferedReader, IOException> fromBinary(
         final BinaryTestCase[] cases,
-        final BufferedReader exReader,
-        final BufferedReader solReader
+        final String taskDescription
     ) throws IOException {
+        final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
+        exText.add(taskDescription);
         final String longestNumber =
             "-" +
             Arrays.stream(cases)
@@ -360,42 +352,37 @@ public class MainTest {
                 Collections.singletonList(input.test.number),
                 Arrays.stream(cases).mapToInt(test -> String.valueOf(test.number).length()).max().getAsInt(),
                 longestNumber,
-                input.exReader,
-                input.solReader
+                input.exText,
+                input.solText
             ),
             cases,
-            exReader,
-            solReader
+            exText,
+            solText
         );
+        return MainTest.simpleComparison(exText, solText);
     }
 
-    private static void solutionSpaceBeginning(final BufferedReader exReader, final BufferedReader solReader)
-    throws IOException {
-        Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\else");
+    private static CheckedBiConsumer<BufferedReader, BufferedReader, IOException> simpleComparison(
+        final List<String> exText,
+        final List<String> solText
+    ) {
+        return (exReader, solReader) -> {
+            for (final String line : exText) {
+                Assert.assertEquals(exReader.readLine(), line);
+            }
+            for (final String line : solText) {
+                Assert.assertEquals(solReader.readLine(), line);
+            }
+        };
     }
 
-    private static void solutionSpaceEnd(final BufferedReader exReader, final BufferedReader solReader)
-    throws IOException {
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertEquals(exReader.readLine(), "\\fi");
-        Assert.assertEquals(exReader.readLine(), "");
-        Assert.assertNull(exReader.readLine());
-
-        Assert.assertEquals(solReader.readLine(), "");
-        Assert.assertNull(solReader.readLine());
-    }
-
-    private static void toBinary(
+    private static CheckedBiConsumer<BufferedReader, BufferedReader, IOException> toBinary(
         final BinaryTestCase[] cases,
-        final BufferedReader exReader,
-        final BufferedReader solReader
+        final String taskDescription
     ) throws IOException {
+        final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
+        exText.add(taskDescription);
         final String longestNumber =
             "-" +
             Arrays.stream(cases)
@@ -410,13 +397,14 @@ public class MainTest {
                 Patterns.toRightHandSide(input.test.binaryNumber),
                 1,
                 longestNumber,
-                input.exReader,
-                input.solReader
+                input.exText,
+                input.solText
             ),
             cases,
-            exReader,
-            solReader
+            exText,
+            solText
         );
+        return MainTest.simpleComparison(exText, solText);
     }
 
     private static String toBitStringInput(final BinaryTestCase[] cases) {
@@ -441,352 +429,291 @@ public class MainTest {
 
     @Test
     public void decodeHuffman() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "fromhuff",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "01100001100001111101",
                 "-o", "'I':\"00\",'K':\"01\",'L':\"100\",'M':\"101\",'N':\"110\",'U':\"111\""
-            }
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\",
+                    "\\begin{center}",
+                    "\\code{01100001100001111101}",
+                    "\\end{center}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\textbf{Codebuch:}",
+                    "\\begin{align*}",
+                    "\\code{`I'} &= \\code{\\textquotedbl{}00\\textquotedbl{}}\\\\",
+                    "\\code{`K'} &= \\code{\\textquotedbl{}01\\textquotedbl{}}\\\\",
+                    "\\code{`L'} &= \\code{\\textquotedbl{}100\\textquotedbl{}}\\\\",
+                    "\\code{`M'} &= \\code{\\textquotedbl{}101\\textquotedbl{}}\\\\",
+                    "\\code{`N'} &= \\code{\\textquotedbl{}110\\textquotedbl{}}\\\\",
+                    "\\code{`U'} &= \\code{\\textquotedbl{}111\\textquotedbl{}}\\\\",
+                    "\\end{align*}",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\textbf{Quelltext:}\\\\[2ex]"
+                ),
+                List.of("\\code{KLINIKUM}")
+            )
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(
-                exReader.readLine(),
-                "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "\\code{01100001100001111101}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\textbf{Codebuch:}");
-            Assert.assertEquals(exReader.readLine(), "\\begin{align*}");
-            Assert.assertEquals(exReader.readLine(), "\\code{`I'} &= \\code{\\textquotedbl{}00\\textquotedbl{}}\\\\");
-            Assert.assertEquals(exReader.readLine(), "\\code{`K'} &= \\code{\\textquotedbl{}01\\textquotedbl{}}\\\\");
-            Assert.assertEquals(exReader.readLine(), "\\code{`L'} &= \\code{\\textquotedbl{}100\\textquotedbl{}}\\\\");
-            Assert.assertEquals(exReader.readLine(), "\\code{`M'} &= \\code{\\textquotedbl{}101\\textquotedbl{}}\\\\");
-            Assert.assertEquals(exReader.readLine(), "\\code{`N'} &= \\code{\\textquotedbl{}110\\textquotedbl{}}\\\\");
-            Assert.assertEquals(exReader.readLine(), "\\code{`U'} &= \\code{\\textquotedbl{}111\\textquotedbl{}}\\\\");
-            Assert.assertEquals(exReader.readLine(), "\\end{align*}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\textbf{Quelltext:}\\\\[2ex]");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertNull(exReader.readLine());
-
-            Assert.assertEquals(solReader.readLine(), "\\code{KLINIKUM}");
-            Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertNull(solReader.readLine());
-        }
     }
 
     @Test
     public void dijkstra() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "dijkstra",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-p", "solutionSpace",
                 "-i", " A , |2, B \n5| , | , |3\n C ,4| , D",
                 "-o", "A"
-            }
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Betrachten Sie den folgenden Graphen:\\\\[2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
+                    "\\node[node] (n1) at (0.0,1.0) {A};",
+                    "\\node[node] (n2) at (1.0,1.0) {B};",
+                    "\\node[node] (n3) at (0.0,0.0) {C};",
+                    "\\node[node] (n4) at (1.0,0.0) {D};",
+                    "\\draw[p, bend right = 10] (n1) to node[auto, swap] {5} (n3);",
+                    "\\draw[p, bend right = 10] (n2) to node[auto, swap] {2} (n1);",
+                    "\\draw[p, bend right = 10] (n3) to node[auto, swap] {4} (n4);",
+                    "\\draw[p, bend right = 10] (n4) to node[auto, swap] {3} (n2);",
+                    "\\end{tikzpicture}",
+                    "",
+                    "",
+                    "\\end{center}",
+                    "",
+                    "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]",
+                    "\\ifprintanswers",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\else",
+                    "\\begin{center}",
+                    "",
+                    "\\renewcommand{\\arraystretch}{1.5}",
+                    "\\begin{tabular}{|*{4}{C{2cm}|}}",
+                    "\\hline",
+                    "\\textbf{Knoten} & \\textbf{A} &  & \\\\\\hline",
+                    "\\textbf{B} &  &  & \\\\\\hline",
+                    "\\textbf{C} &  &  & \\\\\\hline",
+                    "\\textbf{D} &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\renewcommand{\\arraystretch}{1.0}",
+                    "\\end{center}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\fi"
+                ),
+                List.of(
+                    "\\begin{center}",
+                    "",
+                    "\\renewcommand{\\arraystretch}{1.5}",
+                    "\\begin{tabular}{|*{4}{C{2cm}|}}",
+                    "\\hline",
+                    "\\textbf{Knoten} & \\textbf{A} & \\textbf{C} & \\textbf{D}\\\\\\hline",
+                    "\\textbf{B} & $\\infty$ & $\\infty$ & \\cellcolor{black!20}12\\\\\\hline",
+                    "\\textbf{C} & \\cellcolor{black!20}5 & \\textbf{--} & \\textbf{--}\\\\\\hline",
+                    "\\textbf{D} & $\\infty$ & \\cellcolor{black!20}9 & \\textbf{--}\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\renewcommand{\\arraystretch}{1.0}",
+                    "\\end{center}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale Distanz sicher berechnet worden ist."
+                )
+            )
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), "Betrachten Sie den folgenden Graphen:\\\\[2ex]");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n1) at (0.0,1.0) {A};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n2) at (1.0,1.0) {B};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n3) at (0.0,0.0) {C};");
-            Assert.assertEquals(exReader.readLine(), "\\node[node] (n4) at (1.0,0.0) {D};");
-            Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n1) to node[auto, swap] {5} (n3);");
-            Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n2) to node[auto, swap] {2} (n1);");
-            Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n3) to node[auto, swap] {4} (n4);");
-            Assert.assertEquals(exReader.readLine(), "\\draw[p, bend right = 10] (n4) to node[auto, swap] {3} (n2);");
-            Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\else");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\renewcommand{\\arraystretch}{1.5}");
-            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{4}{C{2cm}|}}");
-            Assert.assertEquals(exReader.readLine(), "\\hline");
-            Assert.assertEquals(exReader.readLine(), "\\textbf{Knoten} & \\textbf{A} &  & \\\\\\hline");
-            Assert.assertEquals(exReader.readLine(), "\\textbf{B} &  &  & \\\\\\hline");
-            Assert.assertEquals(exReader.readLine(), "\\textbf{C} &  &  & \\\\\\hline");
-            Assert.assertEquals(exReader.readLine(), "\\textbf{D} &  &  & \\\\\\hline");
-            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
-            Assert.assertEquals(exReader.readLine(), "\\renewcommand{\\arraystretch}{1.0}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\fi");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertNull(exReader.readLine());
-
-            Assert.assertEquals(solReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertEquals(solReader.readLine(), "\\renewcommand{\\arraystretch}{1.5}");
-            Assert.assertEquals(solReader.readLine(), "\\begin{tabular}{|*{4}{C{2cm}|}}");
-            Assert.assertEquals(solReader.readLine(), "\\hline");
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\textbf{Knoten} & \\textbf{A} & \\textbf{C} & \\textbf{D}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\textbf{B} & $\\infty$ & $\\infty$ & \\cellcolor{black!20}12\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\textbf{C} & \\cellcolor{black!20}5 & \\textbf{--} & \\textbf{--}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\textbf{D} & $\\infty$ & \\cellcolor{black!20}9 & \\textbf{--}\\\\\\hline"
-            );
-            Assert.assertEquals(solReader.readLine(), "\\end{tabular}");
-            Assert.assertEquals(solReader.readLine(), "\\renewcommand{\\arraystretch}{1.0}");
-            Assert.assertEquals(solReader.readLine(), "\\end{center}");
-            Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertEquals(solReader.readLine(), "\\vspace*{1ex}");
-            Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertEquals(
-                solReader.readLine(),
-                "Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale Distanz sicher berechnet worden ist."
-            );
-            Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertNull(solReader.readLine());
-        }
     }
 
     @Test
     public void encodeHuffman() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        final int longestCodeLength = 3;
+        final String longestLeftHandSide = "\\code{`M'}";
+        final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "\\begin{center}",
+                "GEIERMEIER",
+                "\\end{center}",
+                "",
+                "\\vspace*{1ex}",
+                "",
+                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
+            )
+        );
+        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.add("\\textbf{Codebuch:}\\\\[2ex]");
+        solText.add("\\textbf{Codebuch:}\\\\[2ex]");
+        int currentNodeNumber =
+            MainTest.checkAssignment(
+                0,
+                "\\code{`E'}",
+                Collections.singletonList("\\code{11}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`G'}",
+                Collections.singletonList("\\code{100}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`I'}",
+                Collections.singletonList("\\code{00}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`M'}",
+                Collections.singletonList("\\code{101}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`R'}",
+                Collections.singletonList("\\code{01}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        exText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+        exText.add("\\textbf{Code:}\\\\");
+        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        solText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+        solText.add("\\textbf{Code:}\\\\");
+        solText.add("\\code{1001100110110111001101}");
+        this.harness(
+            new String[] {
                 "-a", "tohuff",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "GEIERMEIER",
-            }
+            },
+            MainTest.simpleComparison(exText, solText)
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(
-                exReader.readLine(),
-                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "GEIERMEIER");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
-            );
-            MainTest.solutionSpaceBeginning(exReader, solReader);
-            Assert.assertEquals(exReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
-            Assert.assertEquals(solReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
-            final int longestCodeLength = 3;
-            final String longestLeftHandSide = "\\code{`M'}";
-            int currentNodeNumber =
-                MainTest.checkAssignment(
-                    0,
-                    "\\code{`E'}",
-                    Collections.singletonList("\\code{11}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            currentNodeNumber =
-                MainTest.checkAssignment(
-                    currentNodeNumber,
-                    "\\code{`G'}",
-                    Collections.singletonList("\\code{100}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            currentNodeNumber =
-                MainTest.checkAssignment(
-                    currentNodeNumber,
-                    "\\code{`I'}",
-                    Collections.singletonList("\\code{00}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            currentNodeNumber =
-                MainTest.checkAssignment(
-                    currentNodeNumber,
-                    "\\code{`M'}",
-                    Collections.singletonList("\\code{101}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            currentNodeNumber =
-                MainTest.checkAssignment(
-                    currentNodeNumber,
-                    "\\code{`R'}",
-                    Collections.singletonList("\\code{01}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            MainTest.assignmentMiddle(exReader, solReader);
-            Assert.assertEquals(exReader.readLine(), "\\textbf{Code:}\\\\");
-            Assert.assertEquals(solReader.readLine(), "\\textbf{Code:}\\\\");
-            Assert.assertEquals(solReader.readLine(), "\\code{1001100110110111001101}");
-            MainTest.solutionSpaceEnd(exReader, solReader);
-        }
     }
 
     @Test
     public void encodeHuffmanLaTeXEscaping() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        final int longestCodeLength = 3;
+        final String longestLeftHandSide = "\\code{`M'}";
+        final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "\\begin{center}",
+                "\\textbackslash{}\\&\\%\\&\\textasciicircum{}\\_\\&\\%\\&\\textasciicircum{}",
+                "\\end{center}",
+                "",
+                "\\vspace*{1ex}",
+                "",
+                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
+            )
+        );
+        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.add("\\textbf{Codebuch:}\\\\[2ex]");
+        solText.add("\\textbf{Codebuch:}\\\\[2ex]");
+        int currentNodeNumber =
+            MainTest.checkAssignment(
+                0,
+                "\\code{`\\%'}",
+                Collections.singletonList("\\code{00}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`\\&'}",
+                Collections.singletonList("\\code{11}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`\\textbackslash{}'}",
+                Collections.singletonList("\\code{100}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`\\textasciicircum{}'}",
+                Collections.singletonList("\\code{01}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`\\_'}",
+                Collections.singletonList("\\code{101}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        exText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+        exText.add("\\textbf{Code:}\\\\");
+        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        solText.addAll(MainTest.ASSIGNMENT_MIDDLE);
+        solText.add("\\textbf{Code:}\\\\");
+        solText.add("\\code{1001100110110111001101}");
+        this.harness(
+            new String[] {
                 "-a", "tohuff",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "\\&%&^_&%&^",
-            }
+            },
+            MainTest.simpleComparison(exText, solText)
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(
-                exReader.readLine(),
-                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "\\textbackslash{}\\&\\%\\&\\textasciicircum{}\\_\\&\\%\\&\\textasciicircum{}"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
-            );
-            MainTest.solutionSpaceBeginning(exReader, solReader);
-            Assert.assertEquals(exReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
-            Assert.assertEquals(solReader.readLine(), "\\textbf{Codebuch:}\\\\[2ex]");
-            final int longestCodeLength = 3;
-            final String longestLeftHandSide = "\\code{`M'}";
-            int currentNodeNumber =
-                MainTest.checkAssignment(
-                    0,
-                    "\\code{`\\%'}",
-                    Collections.singletonList("\\code{00}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            currentNodeNumber =
-                MainTest.checkAssignment(
-                    currentNodeNumber,
-                    "\\code{`\\&'}",
-                    Collections.singletonList("\\code{11}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            currentNodeNumber =
-                MainTest.checkAssignment(
-                    currentNodeNumber,
-                    "\\code{`\\textbackslash{}'}",
-                    Collections.singletonList("\\code{100}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            currentNodeNumber =
-                MainTest.checkAssignment(
-                    currentNodeNumber,
-                    "\\code{`\\textasciicircum{}'}",
-                    Collections.singletonList("\\code{01}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            currentNodeNumber =
-                MainTest.checkAssignment(
-                    currentNodeNumber,
-                    "\\code{`\\_'}",
-                    Collections.singletonList("\\code{101}"),
-                    longestCodeLength,
-                    longestLeftHandSide,
-                    exReader,
-                    solReader
-                );
-            MainTest.assignmentMiddle(exReader, solReader);
-            Assert.assertEquals(exReader.readLine(), "\\textbf{Code:}\\\\");
-            Assert.assertEquals(solReader.readLine(), "\\textbf{Code:}\\\\");
-            Assert.assertEquals(solReader.readLine(), "\\code{1001100110110111001101}");
-            MainTest.solutionSpaceEnd(exReader, solReader);
-        }
     }
 
     @Test
     public void fromFloat() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int mantisseLength = 4;
         final int exponentLength = 3;
         final BinaryTestCase[] cases =
@@ -795,30 +722,20 @@ public class MainTest {
                 new BinaryTestCase("1,375", new int[] {0,0,1,1,0,1,1,0}),
                 new BinaryTestCase("-7,0", new int[] {1,1,0,1,1,1,0,0})
             };
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "fromfloat",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(mantisseLength),
                 "-d", String.valueOf(exponentLength),
                 "-i", MainTest.toBitStringInput(cases)
-            }
+            },
+            MainTest.fromBinary(cases, Patterns.fromFloat(exponentLength, mantisseLength))
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), Patterns.fromFloat(exponentLength, mantisseLength));
-            MainTest.fromBinary(cases, exReader, solReader);
-        }
     }
 
     @Test
     public void fromOnesComplement() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int bitLength = 8;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -826,29 +743,19 @@ public class MainTest {
                 new BinaryTestCase("5", new int[] {0,0,0,0,0,1,0,1}),
                 new BinaryTestCase("-111", new int[] {1,0,0,1,0,0,0,0})
             };
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "fromonescompl",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toBitStringInput(cases)
-            }
+            },
+            MainTest.fromBinary(cases, Patterns.fromOnes(bitLength))
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), Patterns.fromOnes(bitLength));
-            MainTest.fromBinary(cases, exReader, solReader);
-        }
     }
 
     @Test
     public void fromTwosComplement() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int bitLength = 5;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -856,288 +763,244 @@ public class MainTest {
                 new BinaryTestCase("1", new int[] {0,0,0,0,1}),
                 new BinaryTestCase("-13", new int[] {1,0,0,1,1})
             };
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "fromtwoscompl",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toBitStringInput(cases)
-            }
+            },
+            MainTest.fromBinary(cases, Patterns.fromTwos(bitLength))
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), Patterns.fromTwos(bitLength));
-            MainTest.fromBinary(cases, exReader, solReader);
-        }
     }
 
     @Test
     public void hashing() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        final int contentLength = 1;
+        int nodeNumber = 0;
+        final List<String> exText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\",
+                "\\begin{center}",
+                "3, 5, 1, 4, 2, 1.",
+                "\\end{center}",
+                "",
+                "\\vspace*{3ex}",
+                ""
+            )
+        );
+        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(
+            List.of(
+                "\\begin{center}",
+                "{\\Large",
+                "\\begin{tikzpicture}",
+                Patterns.ARRAY_STYLE,
+                Patterns.singleEmptyNode(nodeNumber++, contentLength)
+            )
+        );
+        for (int i = 1; i < 11; i++) {
+            exText.add(Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength));
+        }
+        exText.addAll(
+            List.of(
+                "\\end{tikzpicture}",
+                "}",
+                "\\end{center}"
+            )
+        );
+        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        this.harness(
+            new String[] {
                 "-a", "hashMultiplicationQuadratic",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "11,0.7,7,3\n3,5,1,4,2,1",
                 "-p", "solutionSpace"
-            }
+            },
+            MainTest.simpleComparison(
+                exText,
+                List.of(
+                    "\\begin{center}",
+                    "m = 11, c = 0,70, $c_1$ = 7, $c_2$ = 3:\\\\[2ex]",
+                    "{\\Large",
+                    "\\begin{tikzpicture}",
+                    Patterns.ARRAY_STYLE,
+                    Patterns.singleEmptyNode(nodeNumber++, contentLength),
+                    Patterns.rightNodeToPredecessor(nodeNumber++, "3"),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
+                    Patterns.rightNodeToPredecessor(nodeNumber++, "2"),
+                    Patterns.rightNodeToPredecessor(nodeNumber++, "5"),
+                    Patterns.rightNodeToPredecessor(nodeNumber++, "1"),
+                    Patterns.rightNodeToPredecessor(nodeNumber++, "1"),
+                    Patterns.rightNodeToPredecessor(nodeNumber++, "4"),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
+                    "\\end{tikzpicture}",
+                    "}",
+                    "\\end{center}"
+                )
+            )
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            final int contentLength = 1;
-            int nodeNumber = 0;
-            Assert.assertEquals(
-                exReader.readLine(),
-                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "3, 5, 1, 4, 2, 1.");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{3ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\ifprintanswers");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{-3ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\else");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "{\\Large");
-            Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-            Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-            Assert.assertEquals(exReader.readLine(), Patterns.singleEmptyNode(nodeNumber++, contentLength));
-            for (int i = 1; i < 11; i++) {
-                Assert.assertEquals(
-                    exReader.readLine(),
-                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
-                );
-            }
-            Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-            Assert.assertEquals(exReader.readLine(), "}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\vspace*{1ex}");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertEquals(exReader.readLine(), "\\fi");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertNull(exReader.readLine());
-
-            Assert.assertEquals(solReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(solReader.readLine(), "m = 11, c = 0,70, $c_1$ = 7, $c_2$ = 3:\\\\[2ex]");
-            Assert.assertEquals(solReader.readLine(), "{\\Large");
-            Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
-            Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-            Assert.assertEquals(solReader.readLine(), Patterns.singleEmptyNode(nodeNumber++, contentLength));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
-            Assert.assertEquals(
-                solReader.readLine(),
-                Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
-            );
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
-            Assert.assertEquals(
-                solReader.readLine(),
-                Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
-            );
-            Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
-            Assert.assertEquals(solReader.readLine(), "}");
-            Assert.assertEquals(solReader.readLine(), "\\end{center}");
-            Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertNull(solReader.readLine());
-        }
     }
 
     @Test
     public void insertionsort() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        final int contentLength = 1;
+        int nodeNumber = 0;
+        final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
+        exText.add("Sortieren Sie das folgende Array mithilfe von Insertionsort.");
+        exText.add("Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]");
+        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(
+            List.of(
+                "\\begin{tikzpicture}",
+                Patterns.ARRAY_STYLE,
+                Patterns.singleNode(nodeNumber++, "3", contentLength),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "5"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "1"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "4"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "2")
+            )
+        );
+        int belowOf = 0;
+        for (int i = 0; i < 4; i++) {
+            exText.add(Patterns.belowEmptyNode(nodeNumber++, belowOf, contentLength));
+            belowOf = nodeNumber - 1;
+            for (int j = 0; j < 4; j++) {
+                exText.add(Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength));
+            }
+        }
+        exText.add("\\end{tikzpicture}");
+        exText.addAll(MainTest.SOLUTION_SPACE_END);
+
+        solText.add("\\begin{tikzpicture}");
+        solText.add(Patterns.ARRAY_STYLE);
+        belowOf = nodeNumber;
+        solText.add(Patterns.singleNode(nodeNumber++, "3", contentLength));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf, 3, contentLength));
+        belowOf = nodeNumber - 1;
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
+        belowOf = nodeNumber - 1;
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
+        belowOf = nodeNumber - 1;
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+        solText.add("\\end{tikzpicture}");
+        this.harness(
+            new String[] {
                 "-a", "insertionsort",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "3,5,1,4,2"
-            }
+            },
+            MainTest.simpleComparison(exText, solText)
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            final int contentLength = 1;
-            int nodeNumber = 0;
-            Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Insertionsort.");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]"
-            );
+    }
 
-            MainTest.solutionSpaceBeginning(exReader, solReader);
-
-            Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-            Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-            Assert.assertEquals(exReader.readLine(), Patterns.singleNode(nodeNumber++, "3", contentLength));
-            Assert.assertEquals(exReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
-            Assert.assertEquals(exReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
-            Assert.assertEquals(exReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
-            Assert.assertEquals(exReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
-            int belowOf = 0;
-            for (int i = 0; i < 4; i++) {
-                Assert.assertEquals(exReader.readLine(), Patterns.belowEmptyNode(nodeNumber++, belowOf, contentLength));
-                belowOf = nodeNumber - 1;
-                for (int j = 0; j < 4; j++) {
-                    Assert.assertEquals(
-                        exReader.readLine(),
-                        Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength)
-                    );
-                }
-            }
-            Assert.assertEquals(exReader.readLine(), "\\end{tikzpicture}");
-
-            Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
-            Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-            belowOf = nodeNumber;
-            Assert.assertEquals(solReader.readLine(), Patterns.singleNode(nodeNumber++, "3", contentLength));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
-            Assert.assertEquals(solReader.readLine(), Patterns.belowNode(nodeNumber++, belowOf, 3, contentLength));
-            belowOf = nodeNumber - 1;
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
-            Assert.assertEquals(solReader.readLine(), Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
-            belowOf = nodeNumber - 1;
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
-            Assert.assertEquals(solReader.readLine(), Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
-            belowOf = nodeNumber - 1;
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
-            Assert.assertEquals(solReader.readLine(), Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
-            Assert.assertEquals(solReader.readLine(), Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
-            Assert.assertEquals(solReader.readLine(), "\\end{tikzpicture}");
-
-            MainTest.solutionSpaceEnd(exReader, solReader);
-        }
+    @BeforeMethod
+    public void prepare() {
+        LaTeXUtils.reset();
     }
 
     @Test
     public void quicksortStandalone() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "quicksort",
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-l", "5"
-            }
-        );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            final int length = 5;
-            int nodeNumber = 0;
-            MainTest.checkLaTeXPreamble(exReader);
-            MainTest.checkExerciseTitle(exReader);
-            Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Quicksort.");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "Geben Sie dazu das Array nach jeder Partition-Operation an und markieren Sie das jeweils verwendete Pivot-Element.\\\\[2ex]"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
-            Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
-            int belowOf = nodeNumber;
-            nodeNumber =
-                MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
-                    exReader,
-                    nodeNumber,
-                    Optional.empty(),
-                    length
+            },
+            (exReader, solReader) -> {
+                final int length = 5;
+                int nodeNumber = 0;
+                MainTest.checkLaTeXPreamble(exReader);
+                MainTest.checkExerciseTitle(exReader);
+                Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Quicksort.");
+                Assert.assertEquals(
+                    exReader.readLine(),
+                    "Geben Sie dazu das Array nach jeder Partition-Operation an und markieren Sie das jeweils verwendete Pivot-Element.\\\\[2ex]"
                 );
-            String nextLine = exReader.readLine();
-            while (nextLine != null && !nextLine.equals("\\end{tikzpicture}")) {
-                final int storeNodeNumber = nodeNumber;
-                nodeNumber =
-                    MainTest.checkEmptyNodeRowAndReturnNextNodeNumber(
-                        nextLine,
-                        exReader,
-                        nodeNumber,
-                        Optional.of(belowOf),
-                        length
-                    );
-                belowOf = storeNodeNumber;
-                nextLine = exReader.readLine();
-            }
-            Assert.assertEquals(nextLine, "\\end{tikzpicture}");
-            MainTest.checkLaTeXEpilogue(exReader);
-
-            MainTest.checkLaTeXPreamble(solReader);
-            MainTest.checkSolutionTitle(solReader);
-            Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
-            Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
-            belowOf = nodeNumber;
-            nodeNumber =
-                MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
-                    solReader,
-                    nodeNumber,
-                    Optional.empty(),
-                    length
-                );
-            nextLine = solReader.readLine();
-            while (nextLine != null && !nextLine.equals("\\end{tikzpicture}")) {
-                final int storeNodeNumber = nodeNumber;
+                Assert.assertEquals(exReader.readLine(), "\\begin{tikzpicture}");
+                Assert.assertEquals(exReader.readLine(), Patterns.ARRAY_STYLE);
+                int belowOf = nodeNumber;
                 nodeNumber =
                     MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
-                        nextLine,
-                        solReader,
+                        exReader,
                         nodeNumber,
-                        Optional.of(belowOf),
+                        Optional.empty(),
                         length
                     );
-                belowOf = storeNodeNumber;
+                String nextLine = exReader.readLine();
+                while (nextLine != null && !nextLine.equals("\\end{tikzpicture}")) {
+                    final int storeNodeNumber = nodeNumber;
+                    nodeNumber =
+                        MainTest.checkEmptyNodeRowAndReturnNextNodeNumber(
+                            nextLine,
+                            exReader,
+                            nodeNumber,
+                            Optional.of(belowOf),
+                            length
+                        );
+                    belowOf = storeNodeNumber;
+                    nextLine = exReader.readLine();
+                }
+                Assert.assertEquals(nextLine, "\\end{tikzpicture}");
+                MainTest.checkLaTeXEpilogue(exReader);
+
+                MainTest.checkLaTeXPreamble(solReader);
+                MainTest.checkSolutionTitle(solReader);
+                Assert.assertEquals(solReader.readLine(), "\\begin{tikzpicture}");
+                Assert.assertEquals(solReader.readLine(), Patterns.ARRAY_STYLE);
+                belowOf = nodeNumber;
+                nodeNumber =
+                    MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
+                        solReader,
+                        nodeNumber,
+                        Optional.empty(),
+                        length
+                    );
                 nextLine = solReader.readLine();
+                while (nextLine != null && !nextLine.equals("\\end{tikzpicture}")) {
+                    final int storeNodeNumber = nodeNumber;
+                    nodeNumber =
+                        MainTest.checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
+                            nextLine,
+                            solReader,
+                            nodeNumber,
+                            Optional.of(belowOf),
+                            length
+                        );
+                    belowOf = storeNodeNumber;
+                    nextLine = solReader.readLine();
+                }
+                Assert.assertEquals(nextLine, "\\end{tikzpicture}");
+                MainTest.checkLaTeXEpilogue(solReader);
             }
-            Assert.assertEquals(nextLine, "\\end{tikzpicture}");
-            MainTest.checkLaTeXEpilogue(solReader);
-        }
+        );
     }
 
     @Test
     public void toFloat() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int exponentLength = 3;
         final int mantisseLength = 4;
         final BinaryTestCase[] cases =
@@ -1146,30 +1009,20 @@ public class MainTest {
                 new BinaryTestCase("1,4", new int[] {0,0,1,1,0,1,1,0}),
                 new BinaryTestCase("-7,18", new int[] {1,1,0,1,1,1,0,0})
             };
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "tofloat",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(mantisseLength),
                 "-d", String.valueOf(exponentLength),
                 "-i", MainTest.toNumberInput(cases)
-            }
+            },
+            MainTest.toBinary(cases, Patterns.toFloat(exponentLength, mantisseLength))
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), Patterns.toFloat(exponentLength, mantisseLength));
-            MainTest.toBinary(cases, exReader, solReader);
-        }
     }
 
     @Test
     public void toOnesComplement() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int bitLength = 4;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -1177,172 +1030,99 @@ public class MainTest {
                 new BinaryTestCase("-1", new int[] {1,1,1,0}),
                 new BinaryTestCase("-2", new int[] {1,1,0,1})
             };
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "toonescompl",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toNumberInput(cases)
-            }
+            },
+            MainTest.toBinary(cases, Patterns.toOnes(bitLength))
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), Patterns.toOnes(bitLength));
-            MainTest.toBinary(cases, exReader, solReader);
-        }
     }
 
     @Test
     public void toTruthTable() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        final List<String> exText = new LinkedList<String>();
+        exText.add(
+            "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\[2ex]"
+        );
+        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(
+            List.of(
+                "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
+                "\\begin{tabular}{|*{4}{C{2em}|}}",
+                "\\hline",
+                "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline"
+            )
+        );
+        for (int i = 0; i < 8; i++) {
+            exText.add(" &  &  & \\\\\\hline");
+        }
+        exText.addAll(
+            List.of(
+                "\\end{tabular}",
+                "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
+                "\\begin{tabular}{|*{5}{C{2em}|}}",
+                "\\hline",
+                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline"
+            )
+        );
+        for (int i = 0; i < 16; i++) {
+            exText.add(" &  &  &  & \\\\\\hline");
+        }
+        exText.add("\\end{tabular}");
+        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        this.harness(
+            new String[] {
                 "-a", "totruthtable",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "A && B || !A && C\n((D && ((A && !B) || (!A && B))) || (!D && ((A && B) || (!A && !B)))) && ((C && A && B) || (!C && (!A || !B)))"
-            }
+            },
+            MainTest.simpleComparison(
+                exText,
+                List.of(
+                    "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
+                    "\\begin{tabular}{|*{4}{C{2em}|}}",
+                    "\\hline",
+                    "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
+                    "\\begin{tabular}{|*{5}{C{2em}|}}",
+                    "\\hline",
+                    "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\end{tabular}"
+                )
+            )
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(
-                exReader.readLine(),
-                "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\[2ex]"
-            );
-            MainTest.solutionSpaceBeginning(exReader, solReader);
-            Assert.assertEquals(
-                exReader.readLine(),
-                "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{4}{C{2em}|}}");
-            Assert.assertEquals(exReader.readLine(), "\\hline");
-            Assert.assertEquals(exReader.readLine(), "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline");
-            for (int i = 0; i < 8; i++) {
-                Assert.assertEquals(exReader.readLine(), " &  &  & \\\\\\hline");
-            }
-            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]"
-            );
-            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{5}{C{2em}|}}");
-            Assert.assertEquals(exReader.readLine(), "\\hline");
-            Assert.assertEquals(
-                exReader.readLine(),
-                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline"
-            );
-            for (int i = 0; i < 16; i++) {
-                Assert.assertEquals(exReader.readLine(), " &  &  &  & \\\\\\hline");
-            }
-            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
-
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]"
-            );
-            Assert.assertEquals(solReader.readLine(), "\\begin{tabular}{|*{4}{C{2em}|}}");
-            Assert.assertEquals(solReader.readLine(), "\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline");
-            Assert.assertEquals(solReader.readLine(), "\\end{tabular}");
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]"
-            );
-            Assert.assertEquals(solReader.readLine(), "\\begin{tabular}{|*{5}{C{2em}|}}");
-            Assert.assertEquals(solReader.readLine(), "\\hline");
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline"
-            );
-            Assert.assertEquals(
-                solReader.readLine(),
-                "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline"
-            );
-            Assert.assertEquals(solReader.readLine(), "\\end{tabular}");
-            MainTest.solutionSpaceEnd(exReader, solReader);
-        }
     }
 
     @Test
     public void toTwosComplement() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
         final int bitLength = 6;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
@@ -1350,115 +1130,110 @@ public class MainTest {
                 new BinaryTestCase("1", new int[] {0,0,0,0,0,1}),
                 new BinaryTestCase("-29", new int[] {1,0,0,0,1,1})
             };
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "totwoscompl",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toNumberInput(cases)
-            }
+            },
+            MainTest.toBinary(cases, Patterns.toTwos(bitLength))
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), Patterns.toTwos(bitLength));
-            MainTest.toBinary(cases, exReader, solReader);
-        }
     }
 
     @Test
     public void vigenereDecode() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
-            new String[]{
+        this.harness(
+            new String[] {
                 "-a", "fromvigenere",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "URKSAK\nSAKRAL\nAKLRSU"
-            }
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Entschl\\\"usseln Sie den Text",
+                    "\\begin{center}",
+                    "\\code{URKSAK}",
+                    "\\end{center}",
+                    "unter Benutzung des Schl\\\"usselworts",
+                    "\\begin{center}",
+                    "\\code{SAKRAL}",
+                    "\\end{center}",
+                    "auf dem Alphabet",
+                    "\\begin{center}",
+                    "\\begin{tabular}{|*{6}{C{1.5em}|}}",
+                    "\\hline",
+                    "0 & 1 & 2 & 3 & 4 & 5\\\\\\hline",
+                    "A & K & L & R & S & U\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{center}",
+                    "mithilfe der Vigen\\'ere-Verschl\\\"usselung."
+                ),
+                List.of("\\code{KRAKAU}")
+            )
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), "Entschl\\\"usseln Sie den Text");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "\\code{URKSAK}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "unter Benutzung des Schl\\\"usselworts");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "\\code{SAKRAL}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "auf dem Alphabet");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{6}{C{1.5em}|}}");
-            Assert.assertEquals(exReader.readLine(), "\\hline");
-            Assert.assertEquals(exReader.readLine(), "0 & 1 & 2 & 3 & 4 & 5\\\\\\hline");
-            Assert.assertEquals(exReader.readLine(), "A & K & L & R & S & U\\\\\\hline");
-            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "mithilfe der Vigen\\'ere-Verschl\\\"usselung.");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertNull(exReader.readLine());
-
-            Assert.assertEquals(solReader.readLine(), "\\code{KRAKAU}");
-            Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertNull(solReader.readLine());
-        }
     }
 
     @Test
     public void vigenereEncode() throws IOException {
-        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
-        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
-        Main.main(
+        this.harness(
             new String[]{
                 "-a", "tovigenere",
                 "-x", Main.EMBEDDED_EXAM,
-                "-e", tmpExFile.getAbsolutePath(),
-                "-t", tmpSolFile.getAbsolutePath(),
                 "-i", "KLAUSUR\nSAKRAL\nAKLRSU"
-            }
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Verschl\\\"usseln Sie den Text",
+                    "\\begin{center}",
+                    "\\code{KLAUSUR}",
+                    "\\end{center}",
+                    "unter Benutzung des Schl\\\"usselworts",
+                    "\\begin{center}",
+                    "\\code{SAKRAL}",
+                    "\\end{center}",
+                    "auf dem Alphabet",
+                    "\\begin{center}",
+                    "\\begin{tabular}{|*{6}{C{1.5em}|}}",
+                    "\\hline",
+                    "0 & 1 & 2 & 3 & 4 & 5\\\\\\hline",
+                    "A & K & L & R & S & U\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{center}",
+                    "mithilfe der Vigen\\'ere-Verschl\\\"usselung."
+                ),
+                List.of("\\code{ULKLSKK}")
+            )
         );
-        try (
-            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
-            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
-        ) {
-            Assert.assertEquals(exReader.readLine(), "Verschl\\\"usseln Sie den Text");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "\\code{KLAUSUR}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "unter Benutzung des Schl\\\"usselworts");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "\\code{SAKRAL}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "auf dem Alphabet");
-            Assert.assertEquals(exReader.readLine(), "\\begin{center}");
-            Assert.assertEquals(exReader.readLine(), "\\begin{tabular}{|*{6}{C{1.5em}|}}");
-            Assert.assertEquals(exReader.readLine(), "\\hline");
-            Assert.assertEquals(exReader.readLine(), "0 & 1 & 2 & 3 & 4 & 5\\\\\\hline");
-            Assert.assertEquals(exReader.readLine(), "A & K & L & R & S & U\\\\\\hline");
-            Assert.assertEquals(exReader.readLine(), "\\end{tabular}");
-            Assert.assertEquals(exReader.readLine(), "\\end{center}");
-            Assert.assertEquals(exReader.readLine(), "mithilfe der Vigen\\'ere-Verschl\\\"usselung.");
-            Assert.assertEquals(exReader.readLine(), "");
-            Assert.assertNull(exReader.readLine());
-
-            Assert.assertEquals(solReader.readLine(), "\\code{ULKLSKK}");
-            Assert.assertEquals(solReader.readLine(), "");
-            Assert.assertNull(solReader.readLine());
-        }
     }
 
     private File createTmpFile(final String prefix, final String suffix) throws IOException {
         final File result = File.createTempFile(prefix, suffix);
         this.tmpFiles.add(result);
         return result;
+    }
+
+    private void harness(final String[] args, final CheckedBiConsumer<BufferedReader, BufferedReader, IOException> test)
+    throws IOException {
+        final File tmpExFile = this.createTmpFile(MainTest.EX_FILE_NAME, MainTest.TEX_SUFFIX);
+        final File tmpSolFile = this.createTmpFile(MainTest.SOL_FILE_NAME, MainTest.TEX_SUFFIX);
+        final String[] mainArgs = new String[args.length + 4];
+        System.arraycopy(args, 0, mainArgs, 0, args.length);
+        mainArgs[args.length] = "-e";
+        mainArgs[args.length + 1] = tmpExFile.getAbsolutePath();
+        mainArgs[args.length + 2] = "-t";
+        mainArgs[args.length + 3] = tmpSolFile.getAbsolutePath();
+        Main.main(mainArgs);
+        try (
+            BufferedReader exReader = new BufferedReader(new FileReader(tmpExFile));
+            BufferedReader solReader = new BufferedReader(new FileReader(tmpSolFile));
+        ) {
+            test.accept(exReader, solReader);
+            Assert.assertEquals(exReader.readLine(), "");
+            Assert.assertNull(exReader.readLine());
+            Assert.assertEquals(solReader.readLine(), "");
+            Assert.assertNull(solReader.readLine());
+        }
     }
 
 }
