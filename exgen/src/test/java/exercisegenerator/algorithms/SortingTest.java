@@ -1,9 +1,11 @@
 package exercisegenerator.algorithms;
 
 import java.util.*;
+import java.util.Optional;
+import java.util.stream.*;
 
 import org.testng.*;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import exercisegenerator.io.*;
 
@@ -14,6 +16,15 @@ public class SortingTest {
             .map(array ->
                 Arrays.stream(array)
                     .mapToObj(i -> new ItemWithTikZInformation<Integer>(Optional.of(i)))
+                    .toList()
+            ).toList();
+    }
+
+    private static List<List<ItemWithTikZInformation<Integer>>> toItemsLists(final int[][] arrays, final boolean[][] markers) {
+        return IntStream.range(0, arrays.length)
+            .mapToObj(
+                i -> IntStream.range(0, arrays[i].length)
+                    .mapToObj(j -> new ItemWithTikZInformation<Integer>(Optional.of(arrays[i][j]), markers[i][j], false))
                     .toList()
             ).toList();
     }
@@ -198,6 +209,14 @@ public class SortingTest {
                     {4,5,7,1,8,3},
                     {4,5,7,1,3,8},
                     {1,3,4,5,7,8}
+                },
+                new boolean[][] {
+                    {false, false, false, false, false, false},
+                    {true, true, false, false, false, false},
+                    {true, true, true, false, false, false},
+                    {false, false, false, true, true, false},
+                    {false, false, false, true, true, true},
+                    {true, true, true, true, true, true}
                 }
             );
         Assert.assertEquals(Sorting.mergesort(array, false), expected);
@@ -241,17 +260,17 @@ public class SortingTest {
                     new ItemWithTikZInformation<Integer>(Optional.of(3))
                 ),
                 Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                    new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
                     new ItemWithTikZInformation<Integer>(Optional.of(4), true),
                     new ItemWithTikZInformation<Integer>(Optional.of(8), true),
                     new ItemWithTikZInformation<Integer>(Optional.of(1)),
                     new ItemWithTikZInformation<Integer>(Optional.of(3))
                 ),
                 Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                    new ItemWithTikZInformation<Integer>(Optional.of(4), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
                     new ItemWithTikZInformation<Integer>(Optional.of(8), true),
                     new ItemWithTikZInformation<Integer>(Optional.of(1)),
                     new ItemWithTikZInformation<Integer>(Optional.of(3))
@@ -276,25 +295,25 @@ public class SortingTest {
                     new ItemWithTikZInformation<Integer>(Optional.of(4)),
                     new ItemWithTikZInformation<Integer>(Optional.of(5)),
                     new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8)),
+                    new ItemWithTikZInformation<Integer>(Optional.of(1), true, true),
+                    new ItemWithTikZInformation<Integer>(Optional.of(8), true, false),
                     new ItemWithTikZInformation<Integer>(Optional.of(3), true)
                 ),
                 Arrays.asList(
                     new ItemWithTikZInformation<Integer>(Optional.of(4)),
                     new ItemWithTikZInformation<Integer>(Optional.of(5)),
                     new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    new ItemWithTikZInformation<Integer>(Optional.of(1), true, true),
+                    new ItemWithTikZInformation<Integer>(Optional.of(3), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(8), true, false)
                 ),
                 Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    new ItemWithTikZInformation<Integer>(Optional.of(1), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(3), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(4), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
+                    new ItemWithTikZInformation<Integer>(Optional.of(8), true, false)
                 )
             );
         Assert.assertEquals(Sorting.mergesort(array, true), expected);

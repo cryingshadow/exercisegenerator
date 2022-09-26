@@ -72,4 +72,15 @@ public class ItemWithTikZInformation<T> {
             + (this.marker ? 7 : 0);
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+            "%s[%s]%s%s",
+            this.optionalIndex.isPresent() ? this.optionalIndex.get() + ":" : "",
+            this.optionalContent.isPresent() ? this.optionalContent.get().toString() : "",
+            this.separateBefore ? "s" : "",
+            this.marker ? "m" : ""
+        );
+    }
+
 }

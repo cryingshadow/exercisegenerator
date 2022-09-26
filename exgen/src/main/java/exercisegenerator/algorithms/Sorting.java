@@ -176,9 +176,11 @@ public abstract class Sorting {
             new ArrayList<List<ItemWithTikZInformation<Integer>>>();
         final int[] array = ArrayUtils.copy(initialArray);
         final boolean[] separate = new boolean[array.length - 1];
+        final boolean[] mark = new boolean[array.length];
         Arrays.fill(separate, false);
-        result.add(Sorting.toTikZItems(initialArray, separate));
-        Sorting.mergesort(array, 0, array.length - 1, separate, printSplitting, result);
+        Arrays.fill(mark, false);
+        result.add(Sorting.toTikZItems(initialArray, separate, mark));
+        Sorting.mergesort(array, 0, array.length - 1, separate, mark, printSplitting, result);
         return result;
     }
 
@@ -336,6 +338,7 @@ public abstract class Sorting {
         final int start,
         final int end,
         final boolean[] separate,
+        final boolean[] mark,
         final boolean printSplitting,
         final List<List<ItemWithTikZInformation<Integer>>> result
     ) {
@@ -347,11 +350,13 @@ public abstract class Sorting {
             separate[middle] = true;
             result.add(Sorting.toTikZItems(array, separate));
         }
-        Sorting.mergesort(array, start, middle, separate, printSplitting, result);
-        Sorting.mergesort(array, middle + 1, end, separate, printSplitting, result);
+        Sorting.mergesort(array, start, middle, separate, mark, printSplitting, result);
+        Sorting.mergesort(array, middle + 1, end, separate, mark, printSplitting, result);
         Sorting.merge(array, start, middle, end);
         separate[middle] = false;
-        result.add(Sorting.toTikZItems(array, separate));
+        Arrays.fill(mark, false);
+        Arrays.fill(mark, start, end + 1, true);
+        result.add(Sorting.toTikZItems(array, separate, mark));
     }
 
     private static int[] parseArray(final BufferedReader reader, final Parameters options)
