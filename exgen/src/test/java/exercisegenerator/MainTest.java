@@ -369,11 +369,13 @@ public class MainTest {
         final List<String> solText
     ) {
         return (exReader, solReader) -> {
+            int i = 1;
             for (final String line : exText) {
-                Assert.assertEquals(exReader.readLine(), line);
+                Assert.assertEquals(exReader.readLine(), line, String.format("error at line %d", i++));
             }
+            i = 1;
             for (final String line : solText) {
-                Assert.assertEquals(solReader.readLine(), line);
+                Assert.assertEquals(solReader.readLine(), line, String.format("error at line %d", i++));
             }
         };
     }
@@ -420,6 +422,41 @@ public class MainTest {
     }
 
     private final List<File> tmpFiles = new LinkedList<File>();
+
+    @Test
+    public void bstree() throws IOException {
+        final List<String> exText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "Betrachten Sie den folgenden \\emphasize{Bin\\\"ar-Suchbaum}:\\\\[2ex]",
+                "",
+                ""//TODO
+            )
+        );
+        exText.addAll(MainTest.MIDDLE_SPACE);
+        exText.addAll(
+            List.of(
+                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-} und \\emphasize{Ersetzungs-}Operation an:\\\\[2ex]",
+                "\\begin{enumerate}",
+                "\\item 2 einf\\\"ugen\\\\",
+                "\\item 5 l\\\"oschen\\\\",
+                "\\end{enumerate}"
+            )
+        );
+        this.harness(
+            new String[] {
+                "-a", Algorithm.BSTREE.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "3,1,5,4,7,6,8;2,~5"
+            },
+            MainTest.simpleComparison(
+                exText,
+                List.of(
+//                    ""
+                )
+            )
+        );
+    }
 
     @AfterMethod
     public void cleanUp() {

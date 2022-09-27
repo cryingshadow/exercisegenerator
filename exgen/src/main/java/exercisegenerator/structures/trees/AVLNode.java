@@ -76,9 +76,6 @@ public class AVLNode {
             + 5 * (this.right == null ? 0 : this.right.hashCode());
     }
 
-    /**
-     * @return The height of this node in the corresponding tree.
-     */
     public int height() {
         final int leftHeight = this.left == null ? -1 : this.left.height();
         final int rightHeight = this.right == null ? -1 : this.right.height();

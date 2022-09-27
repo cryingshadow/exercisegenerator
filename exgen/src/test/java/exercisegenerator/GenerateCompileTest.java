@@ -70,8 +70,16 @@ public class GenerateCompileTest {
                 final Process processSolution = GenerateCompileTest.buildAndStartProcess(solFileName, testDir);
                 processExercise.waitFor(30, TimeUnit.SECONDS);
                 processSolution.waitFor(30, TimeUnit.SECONDS);
-                Assert.assertEquals(processExercise.exitValue(), 0, alg.name + " yields non-compiling exercise!");
-                Assert.assertEquals(processSolution.exitValue(), 0, alg.name + " yields non-compiling solution!");
+                Assert.assertEquals(
+                    processExercise.exitValue(),
+                    0,
+                    String.format("%s yields non-compiling exercise! See: %s", alg.name, testDir.getAbsolutePath())
+                );
+                Assert.assertEquals(
+                    processSolution.exitValue(),
+                    0,
+                    String.format("%s yields non-compiling solution! See: %s", alg.name, testDir.getAbsolutePath())
+                );
                 GenerateCompileTest.cleanUp(testDir);
             }
         }

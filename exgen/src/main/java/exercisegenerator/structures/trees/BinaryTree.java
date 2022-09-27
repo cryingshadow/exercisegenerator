@@ -5,7 +5,7 @@ import java.util.stream.*;
 
 import exercisegenerator.structures.*;
 
-public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
+public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO rotations can destroy strict order
 
     public static <T extends Comparable<T>> BinaryTree<T> create() {
         return new BinaryTree<T>(Optional.empty());
@@ -15,9 +15,21 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         return BinaryTree.<T>create().addAll(values);
     }
 
+    public static <T extends Comparable<T>> BinaryTree<T> create(final Deque<Pair<T, Boolean>> construction) {
+        BinaryTree<T> tree = BinaryTree.create();
+        for (final Pair<T, Boolean> operation : construction) {
+            if (operation.y) {
+                tree = tree.add(operation.x);
+            } else {
+                tree = tree.remove(operation.x);
+            }
+        }
+        return tree;
+    }
+
     @SafeVarargs
     public static <T extends Comparable<T>> BinaryTree<T> create(final T... values) {
-        return BinaryTree.create(Arrays.asList(values));
+        return BinaryTree.create(List.of(values));
     }
 
     public final Optional<BinaryTreeNode<T>> root;
@@ -89,6 +101,14 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
 
     public Optional<T> getMin() {
         return this.stream().findFirst();
+    }
+
+    public String getName() {
+        return "Bin\\\"ar-Suchbaum";
+    }
+
+    public String getOperations() {
+        return "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-} und \\emphasize{Ersetzungs-}Operation";
     }
 
     public List<T> getValues() {

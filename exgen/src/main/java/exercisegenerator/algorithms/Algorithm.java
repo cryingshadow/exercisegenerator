@@ -21,11 +21,22 @@ public enum Algorithm {
     AVLTREE(
         "avltree",
         "AVL-Baum",
-        new String[]{
+        new String[] {
             "Insertion and deletion of keys in an AVL-Tree.",
             "The flag -l specifies how many operations should be performed on the AVL-Tree for generated instances."
         },
         TreeAlgorithms::avltree,
+        TreeAlgorithms::generateTestParameters
+    ),
+
+    BSTREE(
+        "bstree",
+        "Binary Search Tree",
+        new String[] {
+            "Insertion and deletion in a binary search tree.",
+            "The flag -l specifies how many operations should be performed on the tree for generated instances."
+        },
+        TreeAlgorithms::bstree,
         TreeAlgorithms::generateTestParameters
     ),
 
@@ -35,7 +46,7 @@ public enum Algorithm {
     BTREE(
         "btree",
         IntBTree.NAME_OF_BTREE_WITH_DEGREE_2,
-        new String[]{
+        new String[] {
             "Insertion and deletion of keys in a B-tree. The flag -d can be used to set the degree of the B-Tree "
             + "(an integer greater than 1, if not specified, the degree defaults to 2).",
             "The flag -l specifies how many operations should be performed on the B-Tree for generated instances."
@@ -50,7 +61,7 @@ public enum Algorithm {
     BUBBLESORT(
         "bubblesort",
         "Bubblesort",
-        new String[]{
+        new String[] {
             "Perform Bubblesort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
@@ -64,7 +75,7 @@ public enum Algorithm {
     DIJKSTRA(
         "dijkstra",
         "Dijkstra Algorithmus",
-        new String[]{
+        new String[] {
             "Dijkstra's algorithm to find the shortest paths from a single source to all other nodes.",
             "The flag -l specifies how many elements will be added to the hash table for generated instances."
         },
@@ -78,7 +89,7 @@ public enum Algorithm {
     FLOYD(
         "floyd",
         "Floyd Algorithmus",
-        new String[]{
+        new String[] {
             "Floyd's algorithm to find all shortest paths to all other nodes.",
             "The flag -l specifies how many nodes will be added to the graph for generated instances."
         },
@@ -92,7 +103,7 @@ public enum Algorithm {
     FORD_FULKERSON(
         "fordfulkerson",
         "Ford-Fulkerson",
-        new String[]{
+        new String[] {
             "Perform Ford-Fulkerson (Edmonds-Karp) on a flow network.",
             "The flag -l specifies how many nodes will be added to the flow network in addition to source "
             + "and sink (for generated instances). Thus, the number of nodes in the network is l + 2."
@@ -176,7 +187,7 @@ public enum Algorithm {
     HASH_DIV(
         "hashDivision",
         "Hashing",
-        new String[]{
+        new String[] {
             "Use the division method in combination with linking for hashing into integer arrays.",
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap)"
@@ -191,7 +202,7 @@ public enum Algorithm {
     HASH_DIV_LIN(
         "hashDivisionLinear",
         "Hashing",
-        new String[]{
+        new String[] {
             "Use the division method in combination with linear probing for hashing into integer arrays.",
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap)"
@@ -206,7 +217,7 @@ public enum Algorithm {
     HASH_DIV_QUAD(
         "hashDivisionQuadratic",
         "Hashing",
-        new String[]{
+        new String[] {
             "Use the division method in combination with quadratic probing for hashing into integer arrays.",
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"
@@ -221,7 +232,7 @@ public enum Algorithm {
     HASH_MULT(
         "hashMultiplication",
         "Hashing",
-        new String[]{
+        new String[] {
             "Use the multiplication method in combination with linking for hashing into integer arrays.",
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap), c (constant between 0 and 1 for the "
@@ -237,7 +248,7 @@ public enum Algorithm {
     HASH_MULT_LIN(
         "hashMultiplicationLinear",
         "Hashing",
-        new String[]{
+        new String[] {
             "Use the multiplication method in combination with linear probing for hashing into integer arrays.",
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap), c (constant between 0 and 1 for the "
@@ -253,7 +264,7 @@ public enum Algorithm {
     HASH_MULT_QUAD(
         "hashMultiplicationQuadratic",
         "Hashing",
-        new String[]{
+        new String[] {
             "Use the multiplication method in combination with quadratic probing for hashing into integer arrays.",
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap), c (constant between 0 and 1 for the "
@@ -269,7 +280,7 @@ public enum Algorithm {
     HEAPSORT(
         "heapsort",
         "Heapsort",
-        new String[]{
+        new String[] {
             "Perform Heapsort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
@@ -283,7 +294,7 @@ public enum Algorithm {
     HEAPSORT_TREE(
         "heapsortWithTrees",
         "Heapsort",
-        new String[]{
+        new String[] {
             "Perform Heapsort on an array of integers. Additionally output the heap interpretation of each array "
             + "in the solution as trees.",
             "The flag -l specifies the length of the array to sort for generated instances."
@@ -298,7 +309,7 @@ public enum Algorithm {
     HULL(
         "hull",
         "Convex Hull",
-        new String[]{
+        new String[] {
             "Calculate the convex hull of a given pointset according to Grahams' Scan.",
             "The flag -l specifies the number of points in the pointset for generated instances."
         },
@@ -312,7 +323,7 @@ public enum Algorithm {
     INSERTIONSORT(
         "insertionsort",
         "Insertionsort",
-        new String[]{
+        new String[] {
             "Perform Insertionsort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
@@ -327,7 +338,7 @@ public enum Algorithm {
     KNAPSACK(
         "knapsack",
         "Knapsack Problem Solved With Dynamic programming",
-        new String[]{
+        new String[] {
             "Knapsack problem solved with dynamic programming.",
             "The flag -l specifies how many items can be chosen to put into the bag for generated instances."
         },
@@ -341,7 +352,7 @@ public enum Algorithm {
     LCS(
         "lcs",
         "LCS Problem Solved With Dynamic programming",
-        new String[]{
+        new String[] {
             "LCS problem solved with dynamic programming." // TODO
         },
         DynamicProgramming::lcs,
@@ -355,7 +366,7 @@ public enum Algorithm {
     MERGESORT(
         "mergesort",
         "Mergesort",
-        new String[]{
+        new String[] {
             "Perform Mergesort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
@@ -369,7 +380,7 @@ public enum Algorithm {
     MERGESORT_SPLIT(
         "mergesortWithSplitting",
         "Mergesort",
-        new String[]{
+        new String[] {
             "Perform Mergesort on an array of integers. Additionally output the split operations in the solution, "
             + "although they do not change the array content.",
             "The flag -l specifies the length of the array to sort for generated instances."
@@ -384,7 +395,7 @@ public enum Algorithm {
     PRIM(
         "prim",
         "Prim Algorithmus",
-        new String[]{
+        new String[] {
             "Prim's algorithm to find the minimum spanning tree.",
             "The flag -l specifies how many nodes will be added to the graph for generated instances."
         },
@@ -398,7 +409,7 @@ public enum Algorithm {
     QUICKSORT(
         "quicksort",
         "Quicksort",
-        new String[]{
+        new String[] {
             "Perform Quicksort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
@@ -412,7 +423,7 @@ public enum Algorithm {
     RBTREE(
         "rbtree",
         "Rot-Schwarz-Baum",
-        new String[]{
+        new String[] {
             "Insertion and deletion of keys in a Red-Black-Tree.",
             "The flag -l specifies how many operations should be performed on the Red-Black-Tree for generated "
             + "instances."
@@ -427,7 +438,7 @@ public enum Algorithm {
     SCC(
         "scc",
         "Starke Zusammenhangskomponenten",
-        new String[]{
+        new String[] {
             "Detection of strongly connected components." // TODO
         },
         GraphAlgorithms::scc,
@@ -440,7 +451,7 @@ public enum Algorithm {
     SELECTIONSORT(
         "selectionsort",
         "Selectionsort",
-        new String[]{
+        new String[] {
             "Perform Selectionsort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
@@ -454,7 +465,7 @@ public enum Algorithm {
     SHARIR(
         "sharir",
         "Starke Zusammenhangskomponenten finden mit Sharir's Algorithmus",
-        new String[]{
+        new String[] {
             "Detection of strongly connected components using Sharir's algorithm." // TODO
         },
         GraphAlgorithms::sharir,
@@ -538,7 +549,7 @@ public enum Algorithm {
     TOPOLOGICSORT(
         "topologicSort",
         "Topologisches Sortieren",
-        new String[]{
+        new String[] {
             "Perform topological sort." // TODO
         },
         GraphAlgorithms::topologicsort,
@@ -551,7 +562,7 @@ public enum Algorithm {
     WARSHALL(
         "warshall",
         "Warshall Algorithmus",
-        new String[]{
+        new String[] {
             "Warshall's algorithm to find the transitive hull.",
             "The flag -l specifies how many nodes will be added to the graph for generated instances."
         },
