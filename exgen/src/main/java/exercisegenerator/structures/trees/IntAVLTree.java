@@ -72,9 +72,6 @@ public class IntAVLTree {
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(final Object o) {
         if (!(o instanceof IntAVLTree)) {
@@ -117,9 +114,6 @@ public class IntAVLTree {
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return this.root == null ? 73 : this.root.hashCode() + 57;
@@ -136,9 +130,6 @@ public class IntAVLTree {
         return this.root.isBalanced();
     }
 
-    /**
-     * @return True if the tree is empty. False otherwise.
-     */
     public boolean isEmpty() {
         return this.root == null;
     }
@@ -211,9 +202,6 @@ public class IntAVLTree {
         this.stepCounter = 0;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return this.root == null ? "empty" : this.root.toString();

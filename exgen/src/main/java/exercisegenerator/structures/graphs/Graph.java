@@ -20,19 +20,19 @@ public class Graph<N, E> {
     /**
      * The adjacency lists of the nodes in the graph.
      */
-    private final Map<Node<N>, List<Pair<E, Node<N>>>> adjacencyLists;
+    private final Map<LabeledNode<N>, List<Pair<E, LabeledNode<N>>>> adjacencyLists;
 
     /**
      * If this graph is in grid form, this map stores the grid position of each node (column, row).
      * Otherwise, it is null.
      */
-    private Map<Pair<Integer, Integer>, Node<N>> grid;
+    private Map<Pair<Integer, Integer>, LabeledNode<N>> grid;
 
     /**
      * Creates an empty graph.
      */
     public Graph() {
-        this.adjacencyLists = new LinkedHashMap<Node<N>, List<Pair<E, Node<N>>>>();
+        this.adjacencyLists = new LinkedHashMap<LabeledNode<N>, List<Pair<E, LabeledNode<N>>>>();
         this.grid = null;
     }
 
@@ -44,14 +44,14 @@ public class Graph<N, E> {
      * @param label The edge label.
      * @param to The to node.
      */
-    public void addEdge(final Node<N> from, final E label, final Node<N> to) {
+    public void addEdge(final LabeledNode<N> from, final E label, final LabeledNode<N> to) {
         if (from == null || to == null) {
             throw new NullPointerException();
         }
         this.grid = null;
         this.addNode(from);
         this.addNode(to);
-        this.adjacencyLists.get(from).add(new Pair<E, Node<N>>(label, to));
+        this.adjacencyLists.get(from).add(new Pair<E, LabeledNode<N>>(label, to));
     }
 
     /**
@@ -59,9 +59,9 @@ public class Graph<N, E> {
      * @param node The node to add.
      * @return True if the node has been added, false if it was already contained in this graph.
      */
-    public boolean addNode(final Node<N> node) {
+    public boolean addNode(final LabeledNode<N> node) {
         if (!this.adjacencyLists.containsKey(node)) {
-            this.adjacencyLists.put(node, new ArrayList<Pair<E, Node<N>>>());
+            this.adjacencyLists.put(node, new ArrayList<Pair<E, LabeledNode<N>>>());
             return true;
         }
         return false;
@@ -72,12 +72,12 @@ public class Graph<N, E> {
      * @return The adjacency list of the specified node or null if the node does not exist in the graph. Changes to the
      *         list are not reflected in the graph, but changes to the edges (and nodes) are.
      */
-    public List<Pair<E, Node<N>>> getAdjacencyList(final Node<N> node) {
-        final List<Pair<E, Node<N>>> list = this.adjacencyLists.get(node);
+    public List<Pair<E, LabeledNode<N>>> getAdjacencyList(final LabeledNode<N> node) {
+        final List<Pair<E, LabeledNode<N>>> list = this.adjacencyLists.get(node);
         if (list == null) {
             return null;
         }
-        return new ArrayList<Pair<E, Node<N>>>(list);
+        return new ArrayList<Pair<E, LabeledNode<N>>>(list);
     }
 
     /**
@@ -85,11 +85,11 @@ public class Graph<N, E> {
      * @param to Some other node.
      * @return A set of all edges from the first to the second node in this graph.
      */
-    public Set<Pair<E, Node<N>>> getEdges(final Node<N> from, final Node<N> to) {
-        final Set<Pair<E, Node<N>>> res = new LinkedHashSet<Pair<E, Node<N>>>();
-        final List<Pair<E, Node<N>>> list = this.adjacencyLists.get(from);
+    public Set<Pair<E, LabeledNode<N>>> getEdges(final LabeledNode<N> from, final LabeledNode<N> to) {
+        final Set<Pair<E, LabeledNode<N>>> res = new LinkedHashSet<Pair<E, LabeledNode<N>>>();
+        final List<Pair<E, LabeledNode<N>>> list = this.adjacencyLists.get(from);
         if (list != null) {
-            for (final Pair<E, Node<N>> edge : list) {
+            for (final Pair<E, LabeledNode<N>> edge : list) {
                 if (to.equals(edge.y)) {
                     res.add(edge);
                 }
@@ -101,7 +101,7 @@ public class Graph<N, E> {
     /**
      * @return The grid structure for this graph (null if this graph has no grid layout).
      */
-    public Map<Pair<Integer, Integer>, Node<N>> getGrid() {
+    public Map<Pair<Integer, Integer>, LabeledNode<N>> getGrid() {
         return this.grid;
     }
 
@@ -109,17 +109,17 @@ public class Graph<N, E> {
      * @return The set of nodes contained in this graph. Changes to the set are not reflected within the graph, but
      *         changes to the nodes are.
      */
-    public Set<Node<N>> getNodes() {
-        return new LinkedHashSet<Node<N>>(this.adjacencyLists.keySet());
+    public Set<LabeledNode<N>> getNodes() {
+        return new LinkedHashSet<LabeledNode<N>>(this.adjacencyLists.keySet());
     }
 
     /**
      * @param label Some label.
      * @return The set of nodes contained in this graph having the specified label.
      */
-    public Set<Node<N>> getNodesWithLabel(final N label) {
-        final Set<Node<N>> res = new LinkedHashSet<Node<N>>();
-        for (final Node<N> node : this.adjacencyLists.keySet()) {
+    public Set<LabeledNode<N>> getNodesWithLabel(final N label) {
+        final Set<LabeledNode<N>> res = new LinkedHashSet<LabeledNode<N>>();
+        for (final LabeledNode<N> node : this.adjacencyLists.keySet()) {
             if (node.label.isPresent() && label.equals(node.label.get())) {
                 res.add(node);
             }
@@ -137,10 +137,10 @@ public class Graph<N, E> {
      */
     public void printTikZ(
         final BufferedWriter writer,
-        final Map<Node<N>,List<Pair<E,Node<N>>>> adListsParam,
+        final Map<LabeledNode<N>,List<Pair<E,LabeledNode<N>>>> adListsParam,
         final boolean directed
     ) throws IOException {
-        final Map<Node<N>,List<Pair<E,Node<N>>>> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
+        final Map<LabeledNode<N>,List<Pair<E,LabeledNode<N>>>> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
         if (directed) {
             LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         } else {
@@ -148,30 +148,30 @@ public class Graph<N, E> {
         }
         if (this.grid == null) {
             final int limit = (int)Math.sqrt(this.adjacencyLists.size());
-            final Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
+            final Iterator<LabeledNode<N>> it = this.adjacencyLists.keySet().iterator();
             for (int row = 0; it.hasNext(); row++) {
                 for (int col = 0; col < limit && it.hasNext(); col++) {
                     LaTeXUtils.printNode(it.next(), "[node]", "at (" + col + "," + row + ") ", writer);
                 }
             }
         } else {
-            for (final Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
+            for (final Entry<Pair<Integer, Integer>, LabeledNode<N>> entry : this.grid.entrySet()) {
                 final Pair<Integer, Integer> pos = entry.getKey();
                 LaTeXUtils.printNode(entry.getValue(), "[node]", "at (" + pos.x + "," + pos.y + ") ", writer);
             }
         }
         if (directed) {
-            for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
+            for (final Entry<LabeledNode<N>, List<Pair<E, LabeledNode<N>>>> entry : adLists.entrySet()) {
                 final BigInteger from = entry.getKey().id;
-                for (final Pair<E, Node<N>> edge : entry.getValue()) {
+                for (final Pair<E, LabeledNode<N>> edge : entry.getValue()) {
                     LaTeXUtils.printEdge(LaTeXUtils.EDGE_STYLE, from, edge.x, edge.y.id, writer);
                 }
             }
         } else {
             final List<Pair<BigInteger,BigInteger>> finishedNodePairs = new ArrayList<Pair<BigInteger,BigInteger>>();
-            for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : adLists.entrySet()) {
+            for (final Entry<LabeledNode<N>, List<Pair<E, LabeledNode<N>>>> entry : adLists.entrySet()) {
                 final BigInteger from = entry.getKey().id;
-                for (final Pair<E, Node<N>> edge : entry.getValue()) {
+                for (final Pair<E, LabeledNode<N>> edge : entry.getValue()) {
                     final Pair<BigInteger,BigInteger> reverseNodePair =
                         new Pair<BigInteger,BigInteger>(edge.y.id, entry.getKey().id);
                     if (!finishedNodePairs.contains(reverseNodePair)) {
@@ -196,13 +196,13 @@ public class Graph<N, E> {
     public void printTikZ(
         final GraphPrintMode printMode,
         final double multiplier,
-        final Set<Pair<Node<N>, Pair<E, Node<N>>>> toHighlight,
+        final Set<Pair<LabeledNode<N>, Pair<E, LabeledNode<N>>>> toHighlight,
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         if (this.grid == null) {
             final int limit = (int)Math.sqrt(this.adjacencyLists.size());
-            final Iterator<Node<N>> it = this.adjacencyLists.keySet().iterator();
+            final Iterator<LabeledNode<N>> it = this.adjacencyLists.keySet().iterator();
             for (int row = 0; it.hasNext(); row++) {
                 final double multipliedRow = Math.round(multiplier * row * 10.0) / 10.0;
                 for (int col = 0; col < limit && it.hasNext(); col++) {
@@ -216,7 +216,7 @@ public class Graph<N, E> {
                 }
             }
         } else {
-            for (final Entry<Pair<Integer, Integer>, Node<N>> entry : this.grid.entrySet()) {
+            for (final Entry<Pair<Integer, Integer>, LabeledNode<N>> entry : this.grid.entrySet()) {
                 final Pair<Integer, Integer> pos = entry.getKey();
                 final double multipliedCol = Math.round(multiplier * pos.x * 10.0) / 10.0;
                 final double multipliedRow = Math.round(multiplier * pos.y * 10.0) / 10.0;
@@ -230,13 +230,13 @@ public class Graph<N, E> {
         }
         if (printMode != GraphPrintMode.NO_EDGES) {
             final boolean printEdgeLabels = printMode == GraphPrintMode.ALL;
-            for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
-                final Node<N> fromNode = entry.getKey();
+            for (final Entry<LabeledNode<N>, List<Pair<E, LabeledNode<N>>>> entry : this.adjacencyLists.entrySet()) {
+                final LabeledNode<N> fromNode = entry.getKey();
                 final BigInteger from = fromNode.id;
-                for (final Pair<E, Node<N>> edge : entry.getValue()) {
+                for (final Pair<E, LabeledNode<N>> edge : entry.getValue()) {
                     if (
                         toHighlight != null
-                        && toHighlight.contains(new Pair<Node<N>, Pair<E, Node<N>>>(fromNode, edge))
+                        && toHighlight.contains(new Pair<LabeledNode<N>, Pair<E, LabeledNode<N>>>(fromNode, edge))
                     ) {
                         if (printEdgeLabels) {
                             LaTeXUtils.printEdge(LaTeXUtils.EDGE_HIGHLIGHT_STYLE, from, edge.x, edge.y.id, writer);
@@ -283,7 +283,7 @@ public class Graph<N, E> {
         final LabelParser<E> edgeParser
     ) throws IOException {
         String line = reader.readLine();
-        final Map<Pair<Integer, Integer>, Node<N>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<N>>();
+        final Map<Pair<Integer, Integer>, LabeledNode<N>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<N>>();
         final Map<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>> edges =
             new LinkedHashMap<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>>();
         int maxRow = 0;
@@ -304,7 +304,7 @@ public class Graph<N, E> {
                         if (!"".equals(label)) {
                             newGrid.put(
                                 new Pair<Integer, Integer>(i / 2, row),
-                                new Node<N>(Optional.of(nodeParser.parse(label)))
+                                new LabeledNode<N>(Optional.of(nodeParser.parse(label)))
                             );
                         }
                     } else {
@@ -379,16 +379,16 @@ public class Graph<N, E> {
         // everything is alright - build the graph
         this.adjacencyLists.clear();
         // mirror the positions vertically as TikZ positions are mirrored that way compared to the input format
-        final Map<Pair<Integer, Integer>, Node<N>> mirroredGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<N>>();
+        final Map<Pair<Integer, Integer>, LabeledNode<N>> mirroredGrid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<N>>();
         for (final Pair<Integer, Integer> pos : nodes) {
-            final Node<N> node = newGrid.get(pos);
-            this.adjacencyLists.put(node, new ArrayList<Pair<E, Node<N>>>());
+            final LabeledNode<N> node = newGrid.get(pos);
+            this.adjacencyLists.put(node, new ArrayList<Pair<E, LabeledNode<N>>>());
             mirroredGrid.put(new Pair<Integer, Integer>(pos.x, maxRow - pos.y), node);
         }
         for (final Entry<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>> edge : edges.entrySet()) {
-            final List<Pair<E, Node<N>>> list = this.adjacencyLists.get(newGrid.get(edge.getKey()));
+            final List<Pair<E, LabeledNode<N>>> list = this.adjacencyLists.get(newGrid.get(edge.getKey()));
             for (final Pair<E, Pair<Integer, Integer>> pair : edge.getValue()) {
-                list.add(new Pair<E, Node<N>>(pair.x, newGrid.get(pair.y)));
+                list.add(new Pair<E, LabeledNode<N>>(pair.x, newGrid.get(pair.y)));
             }
         }
         this.grid = mirroredGrid;
@@ -397,7 +397,7 @@ public class Graph<N, E> {
     /**
      * @param newGrid The grid layout to set.
      */
-    public void setGrid(final Map<Pair<Integer, Integer>, Node<N>> newGrid) {
+    public void setGrid(final Map<Pair<Integer, Integer>, LabeledNode<N>> newGrid) {
         this.grid = newGrid;
     }
 
@@ -414,16 +414,16 @@ public class Graph<N, E> {
         final Object[] labels = new Object[size];
         final Map<BigInteger, Integer> toArray = new LinkedHashMap<BigInteger, Integer>();
         int id = 0;
-        for (final Node<N> node : this.adjacencyLists.keySet()) {
+        for (final LabeledNode<N> node : this.adjacencyLists.keySet()) {
             final BigInteger nodeID = node.id;
             toArray.put(nodeID, id);
             ids[id] = nodeID;
             labels[id++] = node.label.orElse(null);
         }
-        for (final Entry<Node<N>, List<Pair<E, Node<N>>>> entry : this.adjacencyLists.entrySet()) {
+        for (final Entry<LabeledNode<N>, List<Pair<E, LabeledNode<N>>>> entry : this.adjacencyLists.entrySet()) {
             final int from = toArray.get(entry.getKey()); //FIXME probably wrong type
             final Set<Integer> tos = new LinkedHashSet<Integer>();
-            for (final Pair<E, Node<N>> edge : entry.getValue()) {
+            for (final Pair<E, LabeledNode<N>> edge : entry.getValue()) {
                 final int to = toArray.get(edge.y); //FIXME probably wrong type
                 if (tos.contains(to)) {
                     throw new IllegalStateException(

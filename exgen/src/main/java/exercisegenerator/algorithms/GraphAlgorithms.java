@@ -58,9 +58,9 @@ public abstract class GraphAlgorithms {
             throw new IllegalArgumentException("Number of nodes must not be negative!");
         }
         final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
-        final Map<Pair<Integer, Integer>, Node<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
-        final Node<String> source = new Node<String>(Optional.of("s"));
-        final Map<Node<String>, NodeGridPosition> positions = new LinkedHashMap<Node<String>, NodeGridPosition>();
+        final Map<Pair<Integer, Integer>, LabeledNode<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
+        final LabeledNode<String> source = new LabeledNode<String>(Optional.of("s"));
+        final Map<LabeledNode<String>, NodeGridPosition> positions = new LinkedHashMap<LabeledNode<String>, NodeGridPosition>();
         final Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
         GraphAlgorithms.addNode(
             source,
@@ -70,7 +70,7 @@ public abstract class GraphAlgorithms {
             positions
         );
         if (numOfNodes == 0) {
-            final Node<String> sink = new Node<String>(Optional.of("t"));
+            final LabeledNode<String> sink = new LabeledNode<String>(Optional.of("t"));
             GraphAlgorithms.addNode(
                 sink,
                 graph,
@@ -261,7 +261,7 @@ public abstract class GraphAlgorithms {
             minYPos = Math.min(minYPos, curMinYPos);
             for (int yPos = curMinYPos; yPos <= curMaxYPos; yPos++) {
                 // at least one edge from previous level
-                final Node<String> node = new Node<String>(Optional.of(GraphAlgorithms.toStringLabel(letter++)));
+                final LabeledNode<String> node = new LabeledNode<String>(Optional.of(GraphAlgorithms.toStringLabel(letter++)));
                 final boolean hasDiagonals = (xPos + yPos) % 2 == 0;
                 final Pair<Integer, Integer> pos = new Pair<Integer, Integer>(xPos, yPos);
                 GraphAlgorithms.addNode(
@@ -272,8 +272,8 @@ public abstract class GraphAlgorithms {
                     positions
                 );
                 if (hasDiagonals) {
-                    final List<Node<String>> existing = new ArrayList<Node<String>>();
-                    Node<String> prevNode = grid.get(new Pair<Integer, Integer>(prevXPos, yPos - 1));
+                    final List<LabeledNode<String>> existing = new ArrayList<LabeledNode<String>>();
+                    LabeledNode<String> prevNode = grid.get(new Pair<Integer, Integer>(prevXPos, yPos - 1));
                     if (prevNode != null) {
                         existing.add(prevNode);
                     }
@@ -300,7 +300,7 @@ public abstract class GraphAlgorithms {
                         ),
                         node
                     );
-                    for (final Node<String> otherNode : existing) {
+                    for (final LabeledNode<String> otherNode : existing) {
                         if (gen.nextBoolean()) {
                             graph.addEdge(
                                 otherNode,
@@ -329,7 +329,7 @@ public abstract class GraphAlgorithms {
                 }
                 if (yPos > curMinYPos) {
                     // north-south edges
-                    final Node<String> north = grid.get(new Pair<Integer, Integer>(xPos, yPos - 1));
+                    final LabeledNode<String> north = grid.get(new Pair<Integer, Integer>(xPos, yPos - 1));
                     if (gen.nextBoolean()) {
                         graph.addEdge(
                             north,
@@ -348,11 +348,11 @@ public abstract class GraphAlgorithms {
             }
             // at least one edge for each node on previous level to current level
             outer: for (int prevYPos = prevMinYPos; prevYPos <= prevMaxYPos; prevYPos++) {
-                final Node<String> prevNode = grid.get(new Pair<Integer, Integer>(prevXPos, prevYPos));
+                final LabeledNode<String> prevNode = grid.get(new Pair<Integer, Integer>(prevXPos, prevYPos));
                 final boolean prevDiagonals = (prevXPos + prevYPos) % 2 == 0;
                 if (prevDiagonals) {
-                    final List<Node<String>> existing = new ArrayList<Node<String>>();
-                    Node<String> nextNode = grid.get(new Pair<Integer, Integer>(xPos, prevYPos - 1));
+                    final List<LabeledNode<String>> existing = new ArrayList<LabeledNode<String>>();
+                    LabeledNode<String> nextNode = grid.get(new Pair<Integer, Integer>(xPos, prevYPos - 1));
                     if (nextNode != null) {
                         existing.add(nextNode);
                     }
@@ -364,7 +364,7 @@ public abstract class GraphAlgorithms {
                     if (nextNode != null) {
                         existing.add(nextNode);
                     }
-                    for (final Node<String> otherNode : existing) {
+                    for (final LabeledNode<String> otherNode : existing) {
                         if (!graph.getEdges(prevNode, otherNode).isEmpty()) {
                             continue outer;
                         }
@@ -377,7 +377,7 @@ public abstract class GraphAlgorithms {
                         nextNode
                     );
                 } else {
-                    final Node<String> nextNode = grid.get(new Pair<Integer, Integer>(xPos, prevYPos));
+                    final LabeledNode<String> nextNode = grid.get(new Pair<Integer, Integer>(xPos, prevYPos));
                     if (graph.getEdges(prevNode, nextNode).isEmpty()) {
                         graph.addEdge(
                             prevNode,
@@ -390,7 +390,7 @@ public abstract class GraphAlgorithms {
             remainingNodes -= nodesAtXPos;
             xPos++;
         }
-        final Node<String> sink = new Node<String>(Optional.of("t"));
+        final LabeledNode<String> sink = new LabeledNode<String>(Optional.of("t"));
         int yPos = curMinYPos + ((curMaxYPos - curMinYPos) / 2);
         if ((xPos + yPos) % 2 != 0) {
             yPos++;
@@ -402,8 +402,8 @@ public abstract class GraphAlgorithms {
             grid,
             positions
         );
-        final List<Node<String>> existing = new ArrayList<Node<String>>();
-        Node<String> prevNode = grid.get(new Pair<Integer, Integer>(xPos - 1, yPos - 1));
+        final List<LabeledNode<String>> existing = new ArrayList<LabeledNode<String>>();
+        LabeledNode<String> prevNode = grid.get(new Pair<Integer, Integer>(xPos - 1, yPos - 1));
         if (prevNode != null) {
             existing.add(prevNode);
         }
@@ -415,7 +415,7 @@ public abstract class GraphAlgorithms {
         if (prevNode != null) {
             existing.add(prevNode);
         }
-        for (final Node<String> otherNode : existing) {
+        for (final LabeledNode<String> otherNode : existing) {
             graph.addEdge(
                 otherNode,
                 new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_SOURCE_SINK_ROOT)),
@@ -427,8 +427,8 @@ public abstract class GraphAlgorithms {
         if (minYPos % 2 != 0) {
             xAdd++;
         }
-        final Map<Pair<Integer, Integer>, Node<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
-        for (final Entry<Pair<Integer, Integer>, Node<String>> entry : grid.entrySet()) {
+        final Map<Pair<Integer, Integer>, LabeledNode<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
+        for (final Entry<Pair<Integer, Integer>, LabeledNode<String>> entry : grid.entrySet()) {
             final Pair<Integer, Integer> key = entry.getKey();
             newGrid.put(new Pair<Integer, Integer>(key.x + xAdd, key.y - minYPos), entry.getValue());
         }
@@ -452,14 +452,14 @@ public abstract class GraphAlgorithms {
             throw new IllegalArgumentException("Number of nodes must not be negative!");
         }
         final Graph<String, Integer> graph = new Graph<String, Integer>();
-        final Map<Pair<Integer, Integer>, Node<String>> grid =
-            new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
+        final Map<Pair<Integer, Integer>, LabeledNode<String>> grid =
+            new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
         if (numOfNodes == 0) {
             graph.setGrid(grid);
             return graph;
         }
-        final Map<Node<String>, NodeGridPosition> positions = new LinkedHashMap<Node<String>, NodeGridPosition>();
-        final Node<String> start = new Node<String>(Optional.of("A"));
+        final Map<LabeledNode<String>, NodeGridPosition> positions = new LinkedHashMap<LabeledNode<String>, NodeGridPosition>();
+        final LabeledNode<String> start = new LabeledNode<String>(Optional.of("A"));
         final Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
         final boolean startDiagonal = gen.nextBoolean();
         GraphAlgorithms.addNode(
@@ -469,13 +469,13 @@ public abstract class GraphAlgorithms {
             grid,
             positions
         );
-        final List<Node<String>> nodesWithFreeNeighbors = new ArrayList<Node<String>>();
+        final List<LabeledNode<String>> nodesWithFreeNeighbors = new ArrayList<LabeledNode<String>>();
         nodesWithFreeNeighbors.add(start);
         for (int letter = 1; letter < numOfNodes; letter++) {
-            final Node<String> nextNode = nodesWithFreeNeighbors.get(gen.nextInt(nodesWithFreeNeighbors.size()));
+            final LabeledNode<String> nextNode = nodesWithFreeNeighbors.get(gen.nextInt(nodesWithFreeNeighbors.size()));
             final NodeGridPosition nextPos = positions.get(nextNode);
             final Pair<Pair<Integer, Integer>, Boolean> toAddPos = nextPos.randomFreePosition(gen);
-            final Node<String> toAddNode = new Node<String>(Optional.of(GraphAlgorithms.toStringLabel(letter)));
+            final LabeledNode<String> toAddNode = new LabeledNode<String>(Optional.of(GraphAlgorithms.toStringLabel(letter)));
             final NodeGridPosition gridPos = GraphAlgorithms.addNode(toAddNode, graph, toAddPos, grid, positions);
             final int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
             graph.addEdge(nextNode, value, toAddNode);
@@ -483,23 +483,23 @@ public abstract class GraphAlgorithms {
                 graph.addEdge(toAddNode, value, nextNode);
             }
             final List<Pair<Pair<Integer, Integer>, Boolean>> existing = gridPos.getExistingPositions();
-            final List<Pair<Node<String>, Node<String>>> freeNodePairs = new ArrayList<Pair<Node<String>, Node<String>>>();
+            final List<Pair<LabeledNode<String>, LabeledNode<String>>> freeNodePairs = new ArrayList<Pair<LabeledNode<String>, LabeledNode<String>>>();
             for (final Pair<Pair<Integer, Integer>, Boolean> other : existing) {
-                final Node<String> otherNode = grid.get(other.x);
+                final LabeledNode<String> otherNode = grid.get(other.x);
                 if (otherNode.equals(nextNode)) {
                     if (!undirected) {
-                        freeNodePairs.add(new Pair<Node<String>, Node<String>>(toAddNode, otherNode));
+                        freeNodePairs.add(new Pair<LabeledNode<String>, LabeledNode<String>>(toAddNode, otherNode));
                     }
                 } else {
-                    freeNodePairs.add(new Pair<Node<String>, Node<String>>(toAddNode, otherNode));
+                    freeNodePairs.add(new Pair<LabeledNode<String>, LabeledNode<String>>(toAddNode, otherNode));
                     if (!undirected) {
-                        freeNodePairs.add(new Pair<Node<String>, Node<String>>(otherNode, toAddNode));
+                        freeNodePairs.add(new Pair<LabeledNode<String>, LabeledNode<String>>(otherNode, toAddNode));
                     }
                 }
             }
             for (int numEdges = GraphAlgorithms.randomNumOfEdges(gen, freeNodePairs.size()); numEdges > 0; numEdges--) {
                 final int pairIndex = gen.nextInt(freeNodePairs.size());
-                final Pair<Node<String>, Node<String>> pair = freeNodePairs.remove(pairIndex);
+                final Pair<LabeledNode<String>, LabeledNode<String>> pair = freeNodePairs.remove(pairIndex);
                 final int nextValue = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
                 graph.addEdge(pair.x, nextValue, pair.y);
                 if (undirected) {
@@ -507,7 +507,7 @@ public abstract class GraphAlgorithms {
                 }
             }
             for (final Pair<Pair<Integer, Integer>, Boolean> neighborPos : existing) {
-                final Node<String> neighborNode = grid.get(neighborPos.x);
+                final LabeledNode<String> neighborNode = grid.get(neighborPos.x);
                 if (!positions.get(neighborNode).hasFreePosition()) {
                     nodesWithFreeNeighbors.remove(neighborNode);
                 }
@@ -529,8 +529,8 @@ public abstract class GraphAlgorithms {
         ) {
             minX--;
         }
-        final Map<Pair<Integer, Integer>, Node<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, Node<String>>();
-        for (final Entry<Pair<Integer, Integer>, Node<String>> entry : grid.entrySet()) {
+        final Map<Pair<Integer, Integer>, LabeledNode<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
+        for (final Entry<Pair<Integer, Integer>, LabeledNode<String>> entry : grid.entrySet()) {
             final Pair<Integer, Integer> key = entry.getKey();
             newGrid.put(new Pair<Integer, Integer>(key.x - minX, key.y - minY), entry.getValue());
         }
@@ -539,7 +539,7 @@ public abstract class GraphAlgorithms {
     }
 
     public static void dijkstra(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, LabeledNode<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.printDijkstra(
             pair.x,
             pair.y,
@@ -553,10 +553,10 @@ public abstract class GraphAlgorithms {
 
     public static <N> DijkstraTables dijkstra(
         final Graph<N, Integer> graph,
-        final Node<N> start,
-        final Comparator<Node<N>> comp
+        final LabeledNode<N> start,
+        final Comparator<LabeledNode<N>> comp
     ) {
-        final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
+        final List<LabeledNode<N>> nodes = new ArrayList<LabeledNode<N>>(graph.getNodes());
         if (comp != null) {
             Collections.sort(nodes, comp);
         }
@@ -566,7 +566,7 @@ public abstract class GraphAlgorithms {
         final String[][] exColor;
         final String[][] solColor;
         final Integer[] distances = new Integer[size];
-        final Map<Node<N>, Integer> nodeIds = new LinkedHashMap<Node<N>, Integer>();
+        final Map<LabeledNode<N>, Integer> nodeIds = new LinkedHashMap<LabeledNode<N>, Integer>();
         final Set<Integer> used = new LinkedHashSet<Integer>();
         exTable = new String[size][size];
         solTable = new String[size][size];
@@ -577,7 +577,7 @@ public abstract class GraphAlgorithms {
         int currentNodeId = 0;
         for (int columnIndex = 1; columnIndex < size; columnIndex++) {
             used.add(currentNodeId);
-            final Node<N> currentNode = nodes.get(currentNodeId);
+            final LabeledNode<N> currentNode = nodes.get(currentNodeId);
             GraphAlgorithms.setColumnHeadForDijkstra(exTable, solTable, columnIndex, currentNode);
             GraphAlgorithms.improveDistancesForNode(currentNode, currentNodeId, graph, nodeIds, distances);
             final Optional<Integer> nodeIndexWithMinimumDistance =
@@ -617,7 +617,7 @@ public abstract class GraphAlgorithms {
     }
 
     public static void floyd(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, LabeledNode<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.floyd(pair.x, false, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
     }
 
@@ -634,13 +634,13 @@ public abstract class GraphAlgorithms {
     public static <N> void floyd(
         final Graph<N, Integer> graph,
         final boolean warshall,
-        final Comparator<Node<N>> comp,
+        final Comparator<LabeledNode<N>> comp,
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
         final int tableCount = 1; // TODO had a choice for 2 when not in student mode
         final int tableMaxWidth = 10; // TODO rename, current name does not reflect usage; had a choice for 0 when not in student mode
-        final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
+        final List<LabeledNode<N>> nodes = new ArrayList<LabeledNode<N>>(graph.getNodes());
         final int size = nodes.size();
         final ArrayList<String[][]> exercises = new ArrayList<String[][]>();
         final ArrayList<String[][]> solutions = new ArrayList<String[][]>();
@@ -654,9 +654,9 @@ public abstract class GraphAlgorithms {
         final Integer[][] weights = new Integer[size][size];
         boolean[][] changed = new boolean[size][size];
         // initialize ids
-        final Map<Node<N>, Integer> ids = new LinkedHashMap<Node<N>, Integer>();
+        final Map<LabeledNode<N>, Integer> ids = new LinkedHashMap<LabeledNode<N>, Integer>();
         for (int current = 0 ; current < size; ++current) {
-            final Node<N> currentNode = nodes.get(current);
+            final LabeledNode<N> currentNode = nodes.get(current);
             ids.put(currentNode, current);
         }
         firstExercise[0][0] = "";
@@ -664,7 +664,7 @@ public abstract class GraphAlgorithms {
         currentSolution[0][0] = "";
         // initialize weights
         for (int current = 0 ; current < size; ++current) {
-            final Node<N> currentNode = nodes.get(current);
+            final LabeledNode<N> currentNode = nodes.get(current);
             // set labels
             final String currentLabel = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
             firstExercise[0][current+1] = currentLabel;
@@ -684,7 +684,7 @@ public abstract class GraphAlgorithms {
                 }
                 weights[current][i] = null;
             }
-            for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
+            for (final Pair<Integer, LabeledNode<N>> edge : graph.getAdjacencyList(currentNode)) {
                 weights[current][ids.get(edge.y)] = edge.x;
                 if (!warshall) {
                     firstExercise[current+1][ids.get(edge.y)+1] = edge.x.toString();
@@ -720,7 +720,7 @@ public abstract class GraphAlgorithms {
         curSolColor = new String[size+1][size+1];
         currentSolution[0][0] = "";
         for (int current = 0 ; current < size; ++current) {
-            final Node<N> currentNode = nodes.get(current);
+            final LabeledNode<N> currentNode = nodes.get(current);
             // set labels
             final String currentLabel = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
             currentSolution[0][current+1] = currentLabel;
@@ -780,7 +780,7 @@ public abstract class GraphAlgorithms {
             curSolColor = new String[size+1][size+1];
             currentSolution[0][0] = "";
             for (int current = 0 ; current < size; ++current) {
-                final Node<N> currentNode = nodes.get(current);
+                final LabeledNode<N> currentNode = nodes.get(current);
                 // set labels
                 final String currentLabel = currentNode.label.isEmpty() ? "" : currentNode.label.get().toString();
                 currentSolution[0][current+1] = currentLabel;
@@ -884,8 +884,8 @@ public abstract class GraphAlgorithms {
      */
     public static <N> void fordFulkerson(
         final Graph<N, FlowPair> graph,
-        final Node<N> source,
-        final Node<N> sink,
+        final LabeledNode<N> source,
+        final LabeledNode<N> sink,
         final double multiplier,
         final boolean twocolumns,
         final PreprintMode mode,
@@ -943,7 +943,7 @@ public abstract class GraphAlgorithms {
         }
         while (true) {
             final Graph<N, Integer> residualGraph = GraphAlgorithms.computeResidualGraph(graph);
-            final List<Node<N>> path = GraphAlgorithms.selectAugmentingPath(residualGraph, source, sink);
+            final List<LabeledNode<N>> path = GraphAlgorithms.selectAugmentingPath(residualGraph, source, sink);
             switch (mode) {
                 case ALWAYS:
                 case SOLUTION_SPACE:
@@ -967,7 +967,7 @@ public abstract class GraphAlgorithms {
             solWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
             solWriter.write(":\\\\[2ex]");
             Main.newLine(solWriter);
-            final Set<Pair<Node<N>, Pair<Integer, Node<N>>>> toHighlightResidual;
+            final Set<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>> toHighlightResidual;
             switch (Main.TEXT_VERSION) {
                 case ABRAHAM:
                     toHighlightResidual = GraphAlgorithms.toEdges(residualGraph, path);
@@ -1002,7 +1002,7 @@ public abstract class GraphAlgorithms {
             if (path == null) {
                 break;
             }
-            final Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> toHighlightFlow = GraphAlgorithms.addFlow(graph, path);
+            final Set<Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>> toHighlightFlow = GraphAlgorithms.addFlow(graph, path);
             switch (mode) {
                 case ALWAYS:
                 case SOLUTION_SPACE:
@@ -1038,9 +1038,9 @@ public abstract class GraphAlgorithms {
             Main.newLine(solWriter);
         }
         int flow = 0;
-        final List<Pair<FlowPair, Node<N>>> list = graph.getAdjacencyList(source);
+        final List<Pair<FlowPair, LabeledNode<N>>> list = graph.getAdjacencyList(source);
         if (list != null) {
-            for (final Pair<FlowPair, Node<N>> edge : list) {
+            for (final Pair<FlowPair, LabeledNode<N>> edge : list) {
                 flow += edge.x.x;
             }
         }
@@ -1089,7 +1089,7 @@ public abstract class GraphAlgorithms {
     }
 
     public static void prim(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, LabeledNode<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.prim(pair.x, pair.y, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
     }
 
@@ -1104,35 +1104,35 @@ public abstract class GraphAlgorithms {
      */
     public static <N> void prim(
         final Graph<N, Integer> graph,
-        final Node<N> start,
-        final Comparator<Node<N>> comp,
+        final LabeledNode<N> start,
+        final Comparator<LabeledNode<N>> comp,
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
-        final List<Node<N>> nodes = new ArrayList<Node<N>>(graph.getNodes());
+        final List<LabeledNode<N>> nodes = new ArrayList<LabeledNode<N>>(graph.getNodes());
         final String[][] exTable = new String[nodes.size()+1][nodes.size()+1];
         final String[][] solTable = new String[nodes.size()+1][nodes.size()+1];
         exTable[0][0] = "\\#Iteration";
         solTable[0][0] = "\\#Iteration";
-        final Map<Node<N>, Integer> key = new LinkedHashMap<Node<N>, Integer>();
-        final Map<Node<N>, List<Pair<Integer, Node<N>>>> parent =
-            new LinkedHashMap<Node<N>, List<Pair<Integer, Node<N>>>>();
+        final Map<LabeledNode<N>, Integer> key = new LinkedHashMap<LabeledNode<N>, Integer>();
+        final Map<LabeledNode<N>, List<Pair<Integer, LabeledNode<N>>>> parent =
+            new LinkedHashMap<LabeledNode<N>, List<Pair<Integer, LabeledNode<N>>>>();
         int i = 1;
-        for (final Node<N> node : nodes) {
+        for (final LabeledNode<N> node : nodes) {
             key.put(node, null);
             final String label = node.label.isEmpty() ? "" : node.label.get().toString();
             exTable[i][0] = label;
             solTable[i][0] = label;
             i++;
         }
-        final List<Node<N>> q = new ArrayList<Node<N>>(graph.getNodes());
+        final List<LabeledNode<N>> q = new ArrayList<LabeledNode<N>>(graph.getNodes());
         key.put(start, 0);
         int iteration = 1;
         // actual algorithm
         while (!q.isEmpty()) {
             // extract the minimum from q
-            Node<N> minNode = null;
-            for (final Node<N> node : q) {
+            LabeledNode<N> minNode = null;
+            for (final LabeledNode<N> node : q) {
                 if (
                     minNode == null
                     || key.get(minNode) == null
@@ -1145,7 +1145,7 @@ public abstract class GraphAlgorithms {
             exTable[0][iteration] = "" + iteration;
             solTable[0][iteration] = "" + iteration;
             i = 1;
-            for (final Node<N> node : nodes) {
+            for (final LabeledNode<N> node : nodes) {
                 if (q.contains(node)) {
                     if (key.get(node) == null) {
                         solTable[i][iteration] = "$\\infty$";
@@ -1160,10 +1160,10 @@ public abstract class GraphAlgorithms {
                 i++;
             }
             // update the minimums successors remaining in q
-            for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(minNode)) {
+            for (final Pair<Integer, LabeledNode<N>> edge : graph.getAdjacencyList(minNode)) {
                 if (q.contains(edge.y) && (key.get(edge.y) == null || edge.x < key.get(edge.y))) {
-                    final List<Pair<Integer, Node<N>>> adList = new ArrayList<Pair<Integer, Node<N>>>();
-                    adList.add(new Pair<Integer, Node<N>>(edge.x, minNode));
+                    final List<Pair<Integer, LabeledNode<N>>> adList = new ArrayList<Pair<Integer, LabeledNode<N>>>();
+                    adList.add(new Pair<Integer, LabeledNode<N>>(edge.x, minNode));
                     parent.put(edge.y, adList);
                     key.put(edge.y, edge.x);
                 }
@@ -1283,7 +1283,7 @@ public abstract class GraphAlgorithms {
     }
 
     public static void warshall(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, Node<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, LabeledNode<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.floyd(pair.x, true, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
     }
 
@@ -1295,32 +1295,32 @@ public abstract class GraphAlgorithms {
      * @return The set of edges whose flow has been modified.
      * @throws IOException If some error occurs during output.
      */
-    private static <N> Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> addFlow(final Graph<N, FlowPair> graph, final List<Node<N>> path)
+    private static <N> Set<Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>> addFlow(final Graph<N, FlowPair> graph, final List<LabeledNode<N>> path)
     throws IOException {
         final Integer min = GraphAlgorithms.computeMinEdge(graph, path);
-        final Iterator<Node<N>> it = path.iterator();
-        Node<N> from;
-        Node<N> to = it.next();
-        final Set<Pair<Node<N>, Pair<FlowPair, Node<N>>>> toHighlight =
-            new LinkedHashSet<Pair<Node<N>, Pair<FlowPair, Node<N>>>>();
+        final Iterator<LabeledNode<N>> it = path.iterator();
+        LabeledNode<N> from;
+        LabeledNode<N> to = it.next();
+        final Set<Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>> toHighlight =
+            new LinkedHashSet<Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>>();
         while (it.hasNext()) {
             from = to;
             to = it.next();
             int flow = min;
-            for (final Pair<FlowPair, Node<N>> edge : graph.getEdges(from, to)) {
+            for (final Pair<FlowPair, LabeledNode<N>> edge : graph.getEdges(from, to)) {
                 final int added = Math.min(flow, edge.x.y - edge.x.x);
                 if (added > 0) {
                     flow -= added;
                     edge.x.x += added;
-                    toHighlight.add(new Pair<Node<N>, Pair<FlowPair, Node<N>>>(from, edge));
+                    toHighlight.add(new Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>(from, edge));
                 }
             }
-            for (final Pair<FlowPair, Node<N>> edge : graph.getEdges(to, from)) {
+            for (final Pair<FlowPair, LabeledNode<N>> edge : graph.getEdges(to, from)) {
                 final int added = Math.min(flow, edge.x.x);
                 if (added > 0) {
                     flow -= added;
                     edge.x.x -= added;
-                    toHighlight.add(new Pair<Node<N>, Pair<FlowPair, Node<N>>>(to, edge));
+                    toHighlight.add(new Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>(to, edge));
                 }
             }
             if (flow > 0) {
@@ -1340,11 +1340,11 @@ public abstract class GraphAlgorithms {
      * @return The grid layout position of the added node.
      */
     private static NodeGridPosition addNode(
-        final Node<String> node,
+        final LabeledNode<String> node,
         final Graph<String, ?> graph,
         final Pair<Pair<Integer, Integer>, Boolean> pos,
-        final Map<Pair<Integer, Integer>, Node<String>> grid,
-        final Map<Node<String>, NodeGridPosition> positions
+        final Map<Pair<Integer, Integer>, LabeledNode<String>> grid,
+        final Map<LabeledNode<String>, NodeGridPosition> positions
     ) {
         graph.addNode(node);
         grid.put(pos.x, node);
@@ -1353,7 +1353,7 @@ public abstract class GraphAlgorithms {
         final NodeGridPosition gridPos = new NodeGridPosition(pos.x.x, pos.x.y, pos.y);
         positions.put(node, gridPos);
         Pair<Integer, Integer> nextPos = new Pair<Integer, Integer>(x, y - 1);
-        Node<String> nextNode = grid.get(nextPos);
+        LabeledNode<String> nextNode = grid.get(nextPos);
         if (nextNode != null) {
             final NodeGridPosition nextGridPos = positions.get(nextNode);
             gridPos.north = nextGridPos;
@@ -1418,19 +1418,19 @@ public abstract class GraphAlgorithms {
      * @param path A path in the specified flow network from source to sink.
      * @return The minimal remaining edge value along the path (i.e., the maximal flow along the path).
      */
-    private static <N> Integer computeMinEdge(final Graph<N, FlowPair> graph, final List<Node<N>> path) {
+    private static <N> Integer computeMinEdge(final Graph<N, FlowPair> graph, final List<LabeledNode<N>> path) {
         Integer min = null;
-        final Iterator<Node<N>> it = path.iterator();
-        Node<N> from;
-        Node<N> to = it.next();
+        final Iterator<LabeledNode<N>> it = path.iterator();
+        LabeledNode<N> from;
+        LabeledNode<N> to = it.next();
         while (it.hasNext()) {
             from = to;
             to = it.next();
             int flow = 0;
-            for (final Pair<FlowPair, Node<N>> edge : graph.getEdges(from, to)) {
+            for (final Pair<FlowPair, LabeledNode<N>> edge : graph.getEdges(from, to)) {
                 flow += edge.x.y - edge.x.x;
             }
-            for (final Pair<FlowPair, Node<N>> edge : graph.getEdges(to, from)) {
+            for (final Pair<FlowPair, LabeledNode<N>> edge : graph.getEdges(to, from)) {
                 flow += edge.x.x;
             }
             if (min == null || min > flow) {
@@ -1479,17 +1479,17 @@ public abstract class GraphAlgorithms {
      */
     private static <N> Graph<N, Integer> computeResidualGraph(final Graph<N, FlowPair> graph) throws IOException {
         final Graph<N, Integer> res = new Graph<N, Integer>();
-        for (final Node<N> node : graph.getNodes()) {
+        for (final LabeledNode<N> node : graph.getNodes()) {
             res.addNode(node);
-            final List<Pair<FlowPair, Node<N>>> list = graph.getAdjacencyList(node);
+            final List<Pair<FlowPair, LabeledNode<N>>> list = graph.getAdjacencyList(node);
             if (list == null) {
                 continue;
             }
-            for (final Pair<FlowPair, Node<N>> edge : list) {
-                final Node<N> target = edge.y;
+            for (final Pair<FlowPair, LabeledNode<N>> edge : list) {
+                final LabeledNode<N> target = edge.y;
                 final Integer back = edge.x.x;
                 if (back > 0) {
-                    final Set<Pair<Integer, Node<N>>> backEdges = res.getEdges(target, node);
+                    final Set<Pair<Integer, LabeledNode<N>>> backEdges = res.getEdges(target, node);
                     if (backEdges.isEmpty()) {
                         res.addEdge(target, back, node);
                     } else {
@@ -1498,7 +1498,7 @@ public abstract class GraphAlgorithms {
                 }
                 final Integer forth = edge.x.y - back;
                 if (forth > 0) {
-                    final Set<Pair<Integer, Node<N>>> forthEdges = res.getEdges(node, target);
+                    final Set<Pair<Integer, LabeledNode<N>>> forthEdges = res.getEdges(node, target);
                     if (forthEdges.isEmpty()) {
                         res.addEdge(node, forth, target);
                     } else {
@@ -1550,14 +1550,14 @@ public abstract class GraphAlgorithms {
     private static <N> void fillRowHeadingsAndIdsForDijkstra(
         final String[][] exTable,
         final String[][] solTable,
-        final List<Node<N>> nodes,
-        final Map<Node<N>, Integer> nodeIds,
-        final Node<N> start
+        final List<LabeledNode<N>> nodes,
+        final Map<LabeledNode<N>, Integer> nodeIds,
+        final LabeledNode<N> start
     ) {
         int rowIndex = 1;
         solTable[0][0] = Main.TEXT_VERSION == TextVersion.ABRAHAM ? "\\texttt{v}" : "\\textbf{Knoten}";
         exTable[0][0] = solTable[0][0];
-        for (final Node<N> node : nodes) {
+        for (final LabeledNode<N> node : nodes) {
             if (!node.equals(start)) {
                 solTable[0][rowIndex] = GraphAlgorithms.toRowHeading(node.label);
                 exTable[0][rowIndex] = solTable[0][rowIndex];
@@ -1584,7 +1584,7 @@ public abstract class GraphAlgorithms {
         return res;
     }
 
-    private static Pair<Graph<String, Integer>, Node<String>> generateGraph(final Parameters options) {
+    private static Pair<Graph<String, Integer>, LabeledNode<String>> generateGraph(final Parameters options) {
         final String alg = options.get(Flag.ALGORITHM);
         final Random gen = new Random();
         final int numOfNodes;
@@ -1599,7 +1599,7 @@ public abstract class GraphAlgorithms {
                 numOfNodes,
                 GraphAlgorithms.UNDIRECTED_GRAPH_ALGORITHMS.contains(alg)
             );
-        return new Pair<Graph<String, Integer>, Node<String>>(
+        return new Pair<Graph<String, Integer>, LabeledNode<String>>(
             graph,
             GraphAlgorithms.parseOrGenerateStartNode(graph, options)
         );
@@ -1793,13 +1793,13 @@ public abstract class GraphAlgorithms {
     }
 
     private static <N> void improveDistancesForNode(
-        final Node<N> currentNode,
+        final LabeledNode<N> currentNode,
         final int currentNodeId,
         final Graph<N, Integer> graph,
-        final Map<Node<N>, Integer> nodeIds,
+        final Map<LabeledNode<N>, Integer> nodeIds,
         final Integer[] distances
     ) {
-        for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(currentNode)) {
+        for (final Pair<Integer, LabeledNode<N>> edge : graph.getAdjacencyList(currentNode)) {
             final Integer toNodeId = nodeIds.get(edge.y);
             if (
                 toNodeId != null
@@ -1841,13 +1841,13 @@ public abstract class GraphAlgorithms {
     ) throws IOException {
         final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
         graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
-        Node<String> source = null;
-        Node<String> sink = null;
+        LabeledNode<String> source = null;
+        LabeledNode<String> sink = null;
         double multiplier = 1.0;
         boolean twocolumns = false;
         if (options.containsKey(Flag.OPERATIONS)) {
             try (BufferedReader operationsReader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
-                Set<Node<String>> nodes = graph.getNodesWithLabel(operationsReader.readLine().trim());
+                Set<LabeledNode<String>> nodes = graph.getNodesWithLabel(operationsReader.readLine().trim());
                 if (!nodes.isEmpty()) {
                     source = nodes.iterator().next();
                 }
@@ -1877,13 +1877,13 @@ public abstract class GraphAlgorithms {
         return res;
     }
 
-    private static Pair<Graph<String, Integer>, Node<String>> parseGraph(
+    private static Pair<Graph<String, Integer>, LabeledNode<String>> parseGraph(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
         final Graph<String, Integer> graph = new Graph<String, Integer>();
         graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
-        return new Pair<Graph<String, Integer>, Node<String>>(
+        return new Pair<Graph<String, Integer>, LabeledNode<String>>(
             graph,
             GraphAlgorithms.parseOrGenerateStartNode(graph, options)
         );
@@ -1939,9 +1939,9 @@ public abstract class GraphAlgorithms {
         ).getResult(options);
     }
 
-    private static Pair<Graph<String, Integer>, Node<String>> parseOrGenerateGraph(final Parameters options)
+    private static Pair<Graph<String, Integer>, LabeledNode<String>> parseOrGenerateGraph(final Parameters options)
     throws IOException {
-        return new ParserAndGenerator<Pair<Graph<String, Integer>, Node<String>>>(
+        return new ParserAndGenerator<Pair<Graph<String, Integer>, LabeledNode<String>>>(
             GraphAlgorithms::parseGraph,
             GraphAlgorithms::generateGraph
         ).getResult(options);
@@ -1954,8 +1954,8 @@ public abstract class GraphAlgorithms {
         ).getResult(options);
     }
 
-    private static Node<String> parseOrGenerateStartNode(final Graph<String, Integer> graph, final Parameters options) {
-        Node<String> node = null;
+    private static LabeledNode<String> parseOrGenerateStartNode(final Graph<String, Integer> graph, final Parameters options) {
+        LabeledNode<String> node = null;
         if (options.containsKey(Flag.OPERATIONS)) {
             final String operations = options.get(Flag.OPERATIONS);
             try (
@@ -1964,7 +1964,7 @@ public abstract class GraphAlgorithms {
                         options.containsKey(Flag.INPUT) ? new StringReader(operations) : new FileReader(operations)
                     )
             ) {
-                final Set<Node<String>> nodes = graph.getNodesWithLabel(operationsReader.readLine().trim());
+                final Set<LabeledNode<String>> nodes = graph.getNodesWithLabel(operationsReader.readLine().trim());
                 if (!nodes.isEmpty()) {
                     node = nodes.iterator().next();
                 }
@@ -1977,7 +1977,7 @@ public abstract class GraphAlgorithms {
             && !options.containsKey(Flag.INPUT)
             && GraphAlgorithms.GRAPH_ALGORITHMS_WITH_START_NODE.contains(options.get(Flag.ALGORITHM))
         ) {
-            final Set<Node<String>> nodes = graph.getNodesWithLabel("A");
+            final Set<LabeledNode<String>> nodes = graph.getNodesWithLabel("A");
             if (!nodes.isEmpty()) {
                 node = nodes.iterator().next();
             }
@@ -1997,7 +1997,7 @@ public abstract class GraphAlgorithms {
      */
     private static <N> void printDijkstra(
         final Graph<N, Integer> graph,
-        final Node<N> start,
+        final LabeledNode<N> start,
         final DijkstraTables tables,
         final PreprintMode mode,
         final Parameters options,
@@ -2180,24 +2180,24 @@ public abstract class GraphAlgorithms {
      * @return A path from source to sink with a remaining capacity greater than 0. If no such path exists, null is
      *         returned.
      */
-    private static <N> List<Node<N>> selectAugmentingPath(final Graph<N, Integer> graph, final Node<N> source, final Node<N> sink) {
-        List<Node<N>> path = new ArrayList<Node<N>>();
-        final Deque<List<Node<N>>> queue = new ArrayDeque<List<Node<N>>>();
+    private static <N> List<LabeledNode<N>> selectAugmentingPath(final Graph<N, Integer> graph, final LabeledNode<N> source, final LabeledNode<N> sink) {
+        List<LabeledNode<N>> path = new ArrayList<LabeledNode<N>>();
+        final Deque<List<LabeledNode<N>>> queue = new ArrayDeque<List<LabeledNode<N>>>();
         path.add(source);
         queue.add(path);
-        final Set<Node<N>> visited = new LinkedHashSet<Node<N>>();
+        final Set<LabeledNode<N>> visited = new LinkedHashSet<LabeledNode<N>>();
         visited.add(source);
         while (!queue.isEmpty()) {
             path = queue.poll();
-            final List<Pair<Integer, Node<N>>> list = graph.getAdjacencyList(path.get(path.size() - 1));
+            final List<Pair<Integer, LabeledNode<N>>> list = graph.getAdjacencyList(path.get(path.size() - 1));
             if (list == null) {
                 continue;
             }
-            for (final Pair<Integer, Node<N>> edge : list) {
+            for (final Pair<Integer, LabeledNode<N>> edge : list) {
                 if (visited.contains(edge.y)) {
                     continue;
                 }
-                final List<Node<N>> newPath = new ArrayList<Node<N>>(path);
+                final List<LabeledNode<N>> newPath = new ArrayList<LabeledNode<N>>(path);
                 newPath.add(edge.y);
                 if (sink.equals(edge.y)) {
                     return newPath;
@@ -2213,7 +2213,7 @@ public abstract class GraphAlgorithms {
         final String[][] exTable,
         final String[][] solTable,
         final int columnIndex,
-        final Node<N> currentNode
+        final LabeledNode<N> currentNode
     ) {
         exTable[columnIndex][0] = "";
         solTable[columnIndex][0] = GraphAlgorithms.toColumnHeading(currentNode.label);
@@ -2228,18 +2228,18 @@ public abstract class GraphAlgorithms {
      * @param path A path through this residual graph.
      * @return The set of all edges used by the specified path in the specified graph.
      */
-    private static <N> Set<Pair<Node<N>, Pair<Integer, Node<N>>>> toEdges(final Graph<N, Integer> graph, final List<Node<N>> path) {
+    private static <N> Set<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>> toEdges(final Graph<N, Integer> graph, final List<LabeledNode<N>> path) {
         if (path == null) {
             return null;
         }
-        final Set<Pair<Node<N>, Pair<Integer, Node<N>>>> res = new LinkedHashSet<Pair<Node<N>, Pair<Integer, Node<N>>>>();
-        final Iterator<Node<N>> it = path.iterator();
-        Node<N> cur = it.next();
+        final Set<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>> res = new LinkedHashSet<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>>();
+        final Iterator<LabeledNode<N>> it = path.iterator();
+        LabeledNode<N> cur = it.next();
         while (it.hasNext()) {
-            final Node<N> next = it.next();
-            for (final Pair<Integer, Node<N>> edge : graph.getAdjacencyList(cur)) {
+            final LabeledNode<N> next = it.next();
+            for (final Pair<Integer, LabeledNode<N>> edge : graph.getAdjacencyList(cur)) {
                 if (edge.y.equals(next)) {
-                    res.add(new Pair<Node<N>, Pair<Integer, Node<N>>>(cur, edge));
+                    res.add(new Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>(cur, edge));
                     break;
                 }
             }

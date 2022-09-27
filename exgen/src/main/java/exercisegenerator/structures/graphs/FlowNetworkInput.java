@@ -20,12 +20,12 @@ public class FlowNetworkInput<N, E> {
     /**
      * The sink of the flow network.
      */
-    public Node<N> sink;
+    public LabeledNode<N> sink;
 
     /**
      * The source of the flow network.
      */
-    public Node<N> source;
+    public LabeledNode<N> source;
 
     /**
      * Should residual graphs and flow networks be displayed in two columns?

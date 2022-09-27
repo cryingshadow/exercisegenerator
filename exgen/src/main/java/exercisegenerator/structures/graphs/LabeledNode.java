@@ -3,11 +3,7 @@ package exercisegenerator.structures.graphs;
 import java.math.*;
 import java.util.*;
 
-/**
- * A labeled node.
- * @param <L> The type of the label.
- */
-public class Node<L> {
+public class LabeledNode<L> {
 
     /**
      * Used to generate unique IDs (not synchronized).
@@ -19,13 +15,13 @@ public class Node<L> {
      * @return A fresh unique ID.
      */
     public static BigInteger getNewID() {
-        final BigInteger res = Node.nextID;
-        Node.nextID = Node.nextID.add(BigInteger.ONE);
+        final BigInteger res = LabeledNode.nextID;
+        LabeledNode.nextID = LabeledNode.nextID.add(BigInteger.ONE);
         return res;
     }
 
     public static void resetIDs() {
-        Node.nextID = BigInteger.ONE;
+        LabeledNode.nextID = BigInteger.ONE;
     }
 
     /**
@@ -41,7 +37,7 @@ public class Node<L> {
     /**
      * Creates a node without a label.
      */
-    public Node() {
+    public LabeledNode() {
         this(Optional.empty());
     }
 
@@ -49,15 +45,15 @@ public class Node<L> {
      * Creates a node with the specified label.
      * @param l The label of this node.
      */
-    public Node(final Optional<L> label) {
+    public LabeledNode(final Optional<L> label) {
         this.label = label;
-        this.id = Node.getNewID();
+        this.id = LabeledNode.getNewID();
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (o instanceof Node) {
-            return this.id.equals(((Node<?>)o).id);
+        if (o instanceof LabeledNode) {
+            return this.id.equals(((LabeledNode<?>)o).id);
         }
         return false;
     }

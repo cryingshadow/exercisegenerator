@@ -9,7 +9,7 @@ import java.util.stream.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.structures.*;
-import exercisegenerator.structures.graphs.Node;
+import exercisegenerator.structures.graphs.LabeledNode;
 import exercisegenerator.structures.trees.*;
 
 public abstract class LaTeXUtils {
@@ -366,7 +366,7 @@ public abstract class LaTeXUtils {
      * @throws IOException If some error occurs during output.
      */
     public static <N> void printNode (
-        final Node<N> node,
+        final LabeledNode<N> node,
         final String style,
         final String position,
         final BufferedWriter writer
