@@ -8,6 +8,7 @@ import java.util.stream.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.LabeledNode;
 import exercisegenerator.util.*;
@@ -432,7 +433,7 @@ public class MainTest {
     public void decodeHuffman() throws IOException {
         this.harness(
             new String[] {
-                "-a", "fromhuff",
+                "-a", Algorithm.FROM_HUFFMAN.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "01100001100001111101",
                 "-o", "'I':\"00\",'K':\"01\",'L':\"100\",'M':\"101\",'N':\"110\",'U':\"111\""
@@ -469,7 +470,7 @@ public class MainTest {
     public void dijkstra() throws IOException {
         this.harness(
             new String[] {
-                "-a", "dijkstra",
+                "-a", Algorithm.DIJKSTRA.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-p", "solutionSpace",
                 "-i", " A , |2, B \n5| , | , |3\n C ,4| , D",
@@ -618,7 +619,7 @@ public class MainTest {
         solText.add("\\code{1001100110110111001101}");
         this.harness(
             new String[] {
-                "-a", "tohuff",
+                "-a", Algorithm.TO_HUFFMAN.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "GEIERMEIER",
             },
@@ -705,7 +706,7 @@ public class MainTest {
         solText.add("\\code{1001100110110111001101}");
         this.harness(
             new String[] {
-                "-a", "tohuff",
+                "-a", Algorithm.TO_HUFFMAN.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "\\&%&^_&%&^",
             },
@@ -725,7 +726,7 @@ public class MainTest {
             };
         this.harness(
             new String[] {
-                "-a", "fromfloat",
+                "-a", Algorithm.FROM_FLOAT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(mantisseLength),
                 "-d", String.valueOf(exponentLength),
@@ -746,7 +747,7 @@ public class MainTest {
             };
         this.harness(
             new String[] {
-                "-a", "fromonescompl",
+                "-a", Algorithm.FROM_ONES_COMPLEMENT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toBitStringInput(cases)
@@ -833,7 +834,7 @@ public class MainTest {
         );
         this.harness(
             new String[] {
-                "-a", "fromtruthtable",
+                "-a", Algorithm.FROM_TRUTH_TABLE.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "A,B,C,D;1000010001000010\nA,B,C;00110101"
             },
@@ -870,7 +871,7 @@ public class MainTest {
         );
         this.harness(
             new String[] {
-                "-a", "fromtruthtable",
+                "-a", Algorithm.FROM_TRUTH_TABLE.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", ";1"
             },
@@ -889,7 +890,7 @@ public class MainTest {
             };
         this.harness(
             new String[] {
-                "-a", "fromtwoscompl",
+                "-a", Algorithm.FROM_TWOS_COMPLEMENT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toBitStringInput(cases)
@@ -937,7 +938,7 @@ public class MainTest {
         exText.addAll(MainTest.SOLUTION_SPACE_END);
         this.harness(
             new String[] {
-                "-a", "hashMultiplicationQuadratic",
+                "-a", Algorithm.HASH_MULT_QUAD.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "11,0.7,7,3\n3,5,1,4,2,1",
                 "-p", "solutionSpace"
@@ -1034,7 +1035,7 @@ public class MainTest {
         solText.add("\\end{tikzpicture}");
         this.harness(
             new String[] {
-                "-a", "insertionsort",
+                "-a", Algorithm.INSERTIONSORT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "3,5,1,4,2"
             },
@@ -1052,7 +1053,7 @@ public class MainTest {
     public void quicksortStandalone() throws IOException {
         this.harness(
             new String[] {
-                "-a", "quicksort",
+                "-a", Algorithm.QUICKSORT.name,
                 "-l", "5"
             },
             (exReader, solReader) -> {
@@ -1136,7 +1137,7 @@ public class MainTest {
             };
         this.harness(
             new String[] {
-                "-a", "tofloat",
+                "-a", Algorithm.TO_FLOAT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(mantisseLength),
                 "-d", String.valueOf(exponentLength),
@@ -1157,7 +1158,7 @@ public class MainTest {
             };
         this.harness(
             new String[] {
-                "-a", "toonescompl",
+                "-a", Algorithm.TO_ONES_COMPLEMENT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toNumberInput(cases)
@@ -1270,7 +1271,7 @@ public class MainTest {
         );
         this.harness(
             new String[] {
-                "-a", "totruthtable",
+                "-a", Algorithm.TO_TRUTH_TABLE.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "A && B || !A && C\n((D && ((A && !B) || (!A && B))) || (!D && ((A && B) || (!A && !B)))) && ((C && A && B) || (!C && (!A || !B)))"
             },
@@ -1289,7 +1290,7 @@ public class MainTest {
             };
         this.harness(
             new String[] {
-                "-a", "totwoscompl",
+                "-a", Algorithm.TO_TWOS_COMPLEMENT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toNumberInput(cases)
@@ -1302,7 +1303,7 @@ public class MainTest {
     public void vigenereDecode() throws IOException {
         this.harness(
             new String[] {
-                "-a", "fromvigenere",
+                "-a", Algorithm.FROM_VIGENERE.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "URKSAK\nSAKRAL\nAKLRSU"
             },
@@ -1335,7 +1336,7 @@ public class MainTest {
     public void vigenereEncode() throws IOException {
         this.harness(
             new String[]{
-                "-a", "tovigenere",
+                "-a", Algorithm.TO_VIGENERE.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "KLAUSUR\nSAKRAL\nAKLRSU"
             },
