@@ -166,6 +166,22 @@ public abstract class TreeAlgorithms {
         }
     }
 
+    public static <T extends Comparable<T>> List<Pair<BinaryTree<T>, BinaryTreeStep>> bstree(
+        final BinaryTree<T> tree,
+        final Deque<Pair<T, Boolean>> operations
+    ) {
+        final LinkedList<Pair<BinaryTree<T>, BinaryTreeStep>> result =
+            new LinkedList<Pair<BinaryTree<T>, BinaryTreeStep>>();
+        BinaryTree<T> currentTree = tree;
+        for (final Pair<T, Boolean> operation : operations) {
+            result.addAll(
+                operation.y ? currentTree.addWithSteps(operation.x) : currentTree.removeWithSteps(operation.x)
+            );
+            currentTree = result.getLast().x;
+        }
+        return result;
+    }
+
     public static void btree(final AlgorithmInput input) throws NumberFormatException, IOException {
         TreeAlgorithms.btree(
             new IntBTree(
