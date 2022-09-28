@@ -430,7 +430,15 @@ public class MainTest {
             List.of(
                 "Betrachten Sie den folgenden \\emphasize{Bin\\\"ar-Suchbaum}:\\\\[2ex]",
                 "",
-                ""//TODO
+                "\\begin{minipage}[t]{0.5\\columnwidth}",
+                "\\begin{center}",
+                "\\begin{tikzpicture}",
+                "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                "\\Tree [.3 1 [.5 4 [.7 6 8]]]",
+                "\\end{tikzpicture}",
+                "~\\\\*\\vspace*{1ex}",
+                "\\end{center}",
+                "\\end{minipage}"
             )
         );
         exText.addAll(MainTest.MIDDLE_SPACE);

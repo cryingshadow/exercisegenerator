@@ -108,6 +108,13 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             && this.rightChild.equals(other.rightChild);
     }
 
+    public int getHeight() {
+        return 1 + Math.max(
+            this.leftChild.isEmpty() ? 0 : this.leftChild.get().getHeight(),
+            this.rightChild.isEmpty() ? 0 : this.rightChild.get().getHeight()
+        );
+    }
+
     @Override
     public int hashCode() {
         return this.value.hashCode() * 5

@@ -664,10 +664,56 @@ public abstract class TreeAlgorithms {
         return deque;
     }
 
-    private static void printTree(final String headline, final BinaryTree<Integer> tree, final BufferedWriter writer)
+    private static void printSamePageBeginning(final int height, final String headline, final BufferedWriter writer)
     throws IOException {
-        //TODO
+        if (height == 0) {
+            writer.write("\\begin{minipage}[t]{0.2\\columnwidth}");
+        } else if (height < 10) {
+            writer.write("\\begin{minipage}[t]{0.");
+            writer.write(String.valueOf(height + 1));
+            writer.write("\\columnwidth}");
+        }
+        if (headline != null && !headline.isBlank()) {
+            writer.write(headline);
+            writer.write("\\\\[-2ex]");
+        }
         Main.newLine(writer);
+        writer.write("\\begin{center}");
+        Main.newLine(writer);
+    }
+
+    private static void printSamePageEnd(final int height, final BufferedWriter writer) throws IOException {
+        writer.write("\\end{center}");
+        Main.newLine(writer);
+        if (height < 10) {
+            writer.write("\\end{minipage}");
+            Main.newLine(writer);
+        }
+    }
+
+    private static int printTreeAndReturnStepCounter(
+        final int stepCounter,
+        final String headline,
+        final BinaryTree<Integer> tree,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int height = tree.getHeight();
+        final int newStepCounter = TreeAlgorithms.printVerticalSpaceAndReturnStepCounter(stepCounter, height, writer);
+        TreeAlgorithms.printSamePageBeginning(height, headline, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        if (tree.root.isEmpty()) {
+            writer.write("\\Tree [.\\phantom{0} ];");
+        } else if (height == 1) {
+            writer.write("\\Tree [." + tree.root.get().value + " ];");
+        } else {
+            writer.write("\\Tree");
+            writer.write(TreeAlgorithms.toTikZ(tree.root.get()));
+        }
+        Main.newLine(writer);
+        LaTeXUtils.printTikzEnd(writer);
+        LaTeXUtils.printProtectedNewline(writer);
+        TreeAlgorithms.printSamePageEnd(height, writer);
+        return newStepCounter;
     }
 
     private static void printTreeExercise(
@@ -689,7 +735,7 @@ public abstract class TreeAlgorithms {
                 writer.write("}:\\\\[2ex]");
                 Main.newLine(writer);
                 Main.newLine(writer);
-                TreeAlgorithms.printTree("", tree, writer);
+                TreeAlgorithms.printTreeAndReturnStepCounter(0, "", tree, writer);
                 LaTeXUtils.printVerticalProtectedSpace(writer);
                 writer.write("F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und ");
                 writer.write("geben Sie die entstehenden B\\\"aume nach jeder ");
@@ -747,7 +793,7 @@ public abstract class TreeAlgorithms {
                 }
                 Main.newLine(writer);
                 Main.newLine(writer);
-                TreeAlgorithms.printTree("", tree, writer);
+                TreeAlgorithms.printTreeAndReturnStepCounter(0, "", tree, writer);
             }
         }
         Main.newLine(writer);
@@ -759,6 +805,49 @@ public abstract class TreeAlgorithms {
     ) throws IOException {
         // TODO Auto-generated method stub
         Main.newLine(writer);
+    }
+
+    private static int printVerticalSpaceAndReturnStepCounter(
+        final int stepCounter,
+        final int height,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int newStepCounter = height + 1;
+        if (newStepCounter >= 10) {
+            Main.newLine(writer);
+            writer.write("~\\\\");
+            Main.newLine(writer);
+            Main.newLine(writer);
+            if (height == 0) {
+                return 2;
+            } else {
+                return height + 1;
+            }
+        }
+        return newStepCounter;
+    }
+
+    private static String toTikZ(final BinaryTreeNode<Integer> node) {
+        final StringBuilder result = new StringBuilder();
+        if (node.leftChild.isEmpty() && node.rightChild.isEmpty()) {
+            result.append(" ");
+            result.append(node.value);
+        } else {
+            result.append(" [.");
+            result.append(node.value);
+            if (node.leftChild.isPresent()) {
+                result.append(TreeAlgorithms.toTikZ(node.leftChild.get()));
+            } else {
+                result.append(" \\edge[draw=none];\\node[draw=none]{};");
+            }
+            if (node.rightChild.isPresent()) {
+                result.append(TreeAlgorithms.toTikZ(node.rightChild.get()));
+            } else {
+                result.append(" \\edge[draw=none];\\node[draw=none]{};");
+            }
+            result.append("]");
+        }
+        return result.toString();
     }
 
 }

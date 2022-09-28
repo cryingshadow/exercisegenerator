@@ -95,6 +95,10 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
         return this.root.equals(((BinaryTree<?>)o).root);
     }
 
+    public int getHeight() {
+        return this.root.isEmpty() ? 0 : this.root.get().getHeight();
+    }
+
     public Optional<T> getMax() {
         return this.stream().reduce((x,y) -> y);
     }
