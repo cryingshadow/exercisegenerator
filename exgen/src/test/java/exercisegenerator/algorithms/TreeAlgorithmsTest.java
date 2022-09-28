@@ -17,6 +17,9 @@ public class TreeAlgorithmsTest {
         final List<String> expectedStructures
     ) {
         final List<Pair<BinaryTree<Integer>, BinaryTreeStep>> result = TreeAlgorithms.bstree(tree, operations);
+        for (final Pair<BinaryTree<Integer>, BinaryTreeStep> pair : result) {
+            Assert.assertTrue(BinaryTreeTest.isWellFormed(pair.x));
+        }
         Assert.assertEquals(result.stream().map(Pair::toString).toList(), expectedStructures);
     }
 

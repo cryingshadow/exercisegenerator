@@ -11,10 +11,6 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
         return new BinaryTree<T>(Optional.empty());
     }
 
-    public static <T extends Comparable<T>> BinaryTree<T> create(final Collection<? extends T> values) {
-        return BinaryTree.<T>create().addAll(values);
-    }
-
     public static <T extends Comparable<T>> BinaryTree<T> create(final Deque<Pair<T, Boolean>> construction) {
         BinaryTree<T> tree = BinaryTree.create();
         for (final Pair<T, Boolean> operation : construction) {
@@ -29,10 +25,16 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
 
     @SafeVarargs
     public static <T extends Comparable<T>> BinaryTree<T> create(final T... values) {
-        return BinaryTree.create(List.of(values));
+
+        return BinaryTree.create(
+            Arrays.asList(values)
+                .stream()
+                .map(value -> new Pair<T, Boolean>(value, true))
+                .collect(Collectors.toCollection(ArrayDeque::new))
+        );
     }
 
-    public final Optional<BinaryTreeNode<T>> root;
+    Optional<BinaryTreeNode<T>> root;
 
     private BinaryTree(final BinaryTreeNode<T> root) {
         this(Optional.of(root));
@@ -43,37 +45,23 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
     }
 
     public BinaryTree<T> add(final T value) {
-        return this.addAll(Collections.singleton(value));
-    }
-
-    public BinaryTree<T> addAll(final Collection<? extends T> values) {
-        final List<Pair<BinaryTree<T>, BinaryTreeStep>> trees = this.addAllWithSteps(values);
-        return trees.get(trees.size() - 1).x;
-    }
-
-    public List<Pair<BinaryTree<T>, BinaryTreeStep>> addAllWithSteps(final Collection<? extends T> values) {
-        if (values.isEmpty()) {
-            return Collections.emptyList();
+        final BinaryTreeSteps<T> steps = this.addWithSteps(value);
+        if (steps.isEmpty()) {
+            return this.copy();
         }
+        return steps.get(steps.size() - 1).x;
+    }
+
+    public BinaryTreeSteps<T> addWithSteps(final T value) {
         if (this.isEmpty()) {
-            final LinkedList<T> list = new LinkedList<T>(values);
-            final List<Pair<BinaryTree<T>, BinaryTreeStep>> result =
-                new ArrayList<Pair<BinaryTree<T>, BinaryTreeStep>>();
-            final BinaryTree<T> tree = new BinaryTree<T>(new BinaryTreeNode<T>(list.poll()));
-            result.add(new Pair<BinaryTree<T>, BinaryTreeStep>(tree, BinaryTreeStep.ADD));
-            result.addAll(tree.addAllWithSteps(list));
-            return result;
+            return new BinaryTreeSteps<T>(new BinaryTree<T>(new BinaryTreeNode<T>(value)), BinaryTreeStep.ADD);
         }
         return this.root
             .get()
-            .addAllWithSteps(values)
+            .addWithStepsAndEmptyParent(value)
             .stream()
-            .map(pair -> new Pair<BinaryTree<T>, BinaryTreeStep>(new BinaryTree<T>(pair.x), pair.y))
-            .toList();
-    }
-
-    public List<Pair<BinaryTree<T>, BinaryTreeStep>> addWithSteps(final T value) {
-        return this.addAllWithSteps(Collections.singleton(value));
+            .map(pair -> new BinaryTreeAndStep<T>(new BinaryTree<T>(pair.x), pair.y))
+            .collect(Collectors.toCollection(BinaryTreeSteps::new));
     }
 
     public boolean contains(final T value) {
@@ -85,6 +73,10 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
             return values.isEmpty();
         }
         return this.root.get().containsAll(values);
+    }
+
+    public BinaryTree<T> copy() {
+        return new BinaryTree<>(this.root.isEmpty() ? Optional.empty() : Optional.of(this.root.get().copyWithEmptyParent()));
     }
 
     @Override
@@ -134,35 +126,20 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
     }
 
     public BinaryTree<T> remove(final T value) {
-        return this.removeAll(Collections.singleton(value));
+        final BinaryTreeSteps<T> steps = this.removeWithSteps(value);
+        return steps.get(steps.size() - 1).x;
     }
 
-    public BinaryTree<T> removeAll(final Collection<? extends T> values) {
-        final List<Pair<BinaryTree<T>, BinaryTreeStep>> trees = this.removeAllWithSteps(values);
-        return trees.get(trees.size() - 1).x;
-    }
-
-    public List<Pair<BinaryTree<T>, BinaryTreeStep>> removeAllWithSteps(final Collection<? extends T> values) {
+    public BinaryTreeSteps<T> removeWithSteps(final T value) {
         if (this.isEmpty()) {
-            return Collections.emptyList();
+            return new BinaryTreeSteps<T>();
         }
         return this.root
             .get()
-            .removeAllWithSteps(values)
+            .removeWithStepsAndEmptyParent(value)
             .stream()
-            .map(pair -> new Pair<BinaryTree<T>, BinaryTreeStep>(new BinaryTree<T>(pair.x), pair.y))
-            .toList();
-    }
-
-    public List<Pair<BinaryTree<T>, BinaryTreeStep>> removeWithSteps(final T value) {
-        return this.removeAllWithSteps(Collections.singleton(value));
-    }
-
-    public BinaryTree<T> retainAll(final Collection<? extends T> values) {
-        if (this.isEmpty()) {
-            return this;
-        }
-        return new BinaryTree<T>(this.root.get().retainAll(values));
+            .map(pair -> new BinaryTreeAndStep<T>(new BinaryTree<T>(pair.x), pair.y))
+            .collect(Collectors.toCollection(BinaryTreeSteps::new));
     }
 
     public int size() {
@@ -182,6 +159,16 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
     @Override
     public String toString() {
         return this.root.isEmpty() ? "" : this.root.get().toString();
+    }
+
+    public String toTikZ() {
+        if (this.root.isEmpty()) {
+            return "\\Tree [.\\phantom{0} ];";
+        } else if (this.getHeight() == 1) {
+            return String.format("\\Tree [.%s];", this.root.get().value);
+        } else {
+            return "\\Tree" + this.root.get().toTikZ();
+        }
     }
 
     public void visit(final BinaryTreeVisitor<T> visitor) {

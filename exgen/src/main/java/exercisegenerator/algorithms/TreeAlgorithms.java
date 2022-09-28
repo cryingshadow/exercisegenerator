@@ -701,14 +701,7 @@ public abstract class TreeAlgorithms {
         final int newStepCounter = TreeAlgorithms.printVerticalSpaceAndReturnStepCounter(stepCounter, height, writer);
         TreeAlgorithms.printSamePageBeginning(height, headline, writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
-        if (tree.root.isEmpty()) {
-            writer.write("\\Tree [.\\phantom{0} ];");
-        } else if (height == 1) {
-            writer.write("\\Tree [." + tree.root.get().value + " ];");
-        } else {
-            writer.write("\\Tree");
-            writer.write(TreeAlgorithms.toTikZ(tree.root.get()));
-        }
+        writer.write(tree.toTikZ());
         Main.newLine(writer);
         LaTeXUtils.printTikzEnd(writer);
         LaTeXUtils.printProtectedNewline(writer);
@@ -733,7 +726,6 @@ public abstract class TreeAlgorithms {
                 writer.write("Betrachten Sie den folgenden \\emphasize{");
                 writer.write(tree.getName());
                 writer.write("}:\\\\[2ex]");
-                Main.newLine(writer);
                 Main.newLine(writer);
                 TreeAlgorithms.printTreeAndReturnStepCounter(0, "", tree, writer);
                 LaTeXUtils.printVerticalProtectedSpace(writer);
@@ -825,29 +817,6 @@ public abstract class TreeAlgorithms {
             }
         }
         return newStepCounter;
-    }
-
-    private static String toTikZ(final BinaryTreeNode<Integer> node) {
-        final StringBuilder result = new StringBuilder();
-        if (node.leftChild.isEmpty() && node.rightChild.isEmpty()) {
-            result.append(" ");
-            result.append(node.value);
-        } else {
-            result.append(" [.");
-            result.append(node.value);
-            if (node.leftChild.isPresent()) {
-                result.append(TreeAlgorithms.toTikZ(node.leftChild.get()));
-            } else {
-                result.append(" \\edge[draw=none];\\node[draw=none]{};");
-            }
-            if (node.rightChild.isPresent()) {
-                result.append(TreeAlgorithms.toTikZ(node.rightChild.get()));
-            } else {
-                result.append(" \\edge[draw=none];\\node[draw=none]{};");
-            }
-            result.append("]");
-        }
-        return result.toString();
     }
 
 }

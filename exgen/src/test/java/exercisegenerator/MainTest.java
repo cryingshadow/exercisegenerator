@@ -429,7 +429,6 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "Betrachten Sie den folgenden \\emphasize{Bin\\\"ar-Suchbaum}:\\\\[2ex]",
-                "",
                 "\\begin{minipage}[t]{0.5\\columnwidth}",
                 "\\begin{center}",
                 "\\begin{tikzpicture}",
