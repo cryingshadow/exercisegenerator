@@ -54,7 +54,10 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
 
     public BinaryTreeSteps<T> addWithSteps(final T value) {
         if (this.isEmpty()) {
-            return new BinaryTreeSteps<T>(new BinaryTree<T>(new BinaryTreeNode<T>(value)), BinaryTreeStep.ADD);
+            return new BinaryTreeSteps<T>(
+                new BinaryTree<T>(new BinaryTreeNode<T>(value)),
+                new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value)
+            );
         }
         return this.root
             .get()
@@ -165,7 +168,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
         if (this.root.isEmpty()) {
             return "\\Tree [.\\phantom{0} ];";
         } else if (this.getHeight() == 1) {
-            return String.format("\\Tree [.%s];", this.root.get().value);
+            return String.format("\\Tree [.%s ];", this.root.get().value);
         } else {
             return "\\Tree" + this.root.get().toTikZ();
         }

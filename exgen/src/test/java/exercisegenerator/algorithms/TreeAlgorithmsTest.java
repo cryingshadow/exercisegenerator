@@ -16,11 +16,11 @@ public class TreeAlgorithmsTest {
         final Deque<Pair<Integer, Boolean>> operations,
         final List<String> expectedStructures
     ) {
-        final List<Pair<BinaryTree<Integer>, BinaryTreeStep>> result = TreeAlgorithms.bstree(tree, operations);
-        for (final Pair<BinaryTree<Integer>, BinaryTreeStep> pair : result) {
-            Assert.assertTrue(BinaryTreeTest.isWellFormed(pair.x));
+        final BinaryTreeSteps<Integer> steps = TreeAlgorithms.bstree(tree, operations);
+        for (final BinaryTreeAndStep<Integer> step : steps) {
+            Assert.assertTrue(BinaryTreeTest.isWellFormed(step.x));
         }
-        Assert.assertEquals(result.stream().map(Pair::toString).toList(), expectedStructures);
+        Assert.assertEquals(steps.stream().map(Pair::toString).toList(), expectedStructures);
     }
 
     @DataProvider
@@ -29,7 +29,7 @@ public class TreeAlgorithmsTest {
             {
                 BinaryTree.create(),
                 new ArrayDeque<Pair<Integer, Boolean>>(Arrays.asList(new Pair<Integer, Boolean>(1, true))),
-                Collections.singletonList("((,1,),ADD)")
+                Collections.singletonList("((,1,),ADD1)")
             },
             {
                 BinaryTree.create(),
@@ -45,13 +45,13 @@ public class TreeAlgorithmsTest {
                     )
                 ),
                 Arrays.asList(
-                    "((,5,),ADD)",
-                    "(((,3,),5,),ADD)",
-                    "(((,3,),5,(,7,)),ADD)",
-                    "((((,2,),3,),5,(,7,)),ADD)",
-                    "((((,2,),3,(,4,)),5,(,7,)),ADD)",
-                    "((((,2,),3,(,4,)),5,((,6,),7,)),ADD)",
-                    "((((,2,),3,(,4,)),5,((,6,),7,(,8,))),ADD)"
+                    "((,5,),ADD5)",
+                    "(((,3,),5,),ADD3)",
+                    "(((,3,),5,(,7,)),ADD7)",
+                    "((((,2,),3,),5,(,7,)),ADD2)",
+                    "((((,2,),3,(,4,)),5,(,7,)),ADD4)",
+                    "((((,2,),3,(,4,)),5,((,6,),7,)),ADD6)",
+                    "((((,2,),3,(,4,)),5,((,6,),7,(,8,))),ADD8)"
                 )
             },
             {
@@ -62,7 +62,7 @@ public class TreeAlgorithmsTest {
                     )
                 ),
                 Arrays.asList(
-                    "(((,3,(,4,)),5,((,6,),7,(,8,))),REMOVE)"
+                    "(((,3,(,4,)),5,((,6,),7,(,8,))),REMOVE2)"
                 )
             },
             {
@@ -74,10 +74,10 @@ public class TreeAlgorithmsTest {
                     )
                 ),
                 Arrays.asList(
-                    "((((,2,),3,(,4,)),5,((,6,),7,)),REMOVE)",
-                    "((((,2,),3,(,4,)),5,((,6,),8,)),REPLACE)",
-                    "((((,2,),3,(,4,)),5,(,8,)),REMOVE)",
-                    "((((,2,),3,(,4,)),6,(,8,)),REPLACE)"
+                    "((((,2,),3,(,4,)),5,((,6,),7,)),REMOVE8)",
+                    "((((,2,),3,(,4,)),5,((,6,),8,)),REPLACE7)",
+                    "((((,2,),3,(,4,)),5,(,8,)),REMOVE6)",
+                    "((((,2,),3,(,4,)),6,(,8,)),REPLACE5)"
                 )
             }
         };

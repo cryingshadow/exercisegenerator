@@ -8,6 +8,13 @@ public class Patterns {
     public static final String ARRAY_STYLE =
         "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Huge}},node distance=0.25 and 0]";
 
+    public static final List<String> MIDDLE_SPACE = List.of("", "\\vspace*{1ex}", "");
+
+    public static final List<String> SOLUTION_SPACE_BEGINNING =
+        List.of("\\ifprintanswers", "", "\\vspace*{-3ex}", "", "\\else");
+
+    public static final List<String> SOLUTION_SPACE_END = List.of("", "\\vspace*{1ex}", "", "\\fi");
+
     public static String beginMinipageForAssignmentLeftHandSide(final String longestLeftHandSide) {
         return String.format(
             "\\begin{minipage}{\\widthof{%s}}",

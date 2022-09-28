@@ -54,13 +54,13 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         if (this.value.compareTo(value) < 0) {
             if (this.rightChild.isEmpty()) {
                 final BinaryTreeNode<T> resultingNode = this.setRightChildAndEmptyParent(new BinaryTreeNode<T>(value));
-                return new BinaryTreeNodeSteps<T>(resultingNode, BinaryTreeStep.ADD);
+                return new BinaryTreeNodeSteps<T>(resultingNode, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
             }
             return this.asRightChildren(this.rightChild.get().addWithStepsAndEmptyParent(value));
         }
         if (this.leftChild.isEmpty()) {
             final BinaryTreeNode<T> resultingNode = this.setLeftChildAndEmptyParent(new BinaryTreeNode<T>(value));
-            return new BinaryTreeNodeSteps<T>(resultingNode, BinaryTreeStep.ADD);
+            return new BinaryTreeNodeSteps<T>(resultingNode, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
         }
         return this.asLeftChildren(this.leftChild.get().addWithStepsAndEmptyParent(value));
     }
@@ -118,12 +118,21 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         if (comparison == 0) {
             if (this.leftChild.isEmpty()) {
                 if (this.rightChild.isEmpty()) {
-                    return new BinaryTreeNodeSteps<T>(Optional.empty(), BinaryTreeStep.REMOVE);
+                    return new BinaryTreeNodeSteps<T>(
+                        Optional.empty(),
+                        new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                    );
                 }
-                return new BinaryTreeNodeSteps<T>(this.rightChild.get().copyWithEmptyParent(), BinaryTreeStep.REMOVE);
+                return new BinaryTreeNodeSteps<T>(
+                    this.rightChild.get().copyWithEmptyParent(),
+                    new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                );
             }
             if (this.rightChild.isEmpty()) {
-                return new BinaryTreeNodeSteps<T>(this.leftChild.get().copyWithEmptyParent(), BinaryTreeStep.REMOVE);
+                return new BinaryTreeNodeSteps<T>(
+                    this.leftChild.get().copyWithEmptyParent(),
+                    new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                );
             }
             final BinaryTreeNodeSteps<T> result = new BinaryTreeNodeSteps<T>();
             final T min = this.rightChild.get().getMin();
@@ -138,7 +147,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
                         BinaryTreeNode.copyWithEmptyParent(this.leftChild),
                         minRightChild
                     ),
-                    BinaryTreeStep.REPLACE
+                    new BinaryTreeStep<T>(BinaryTreeStepType.REPLACE, value)
                 )
             );
             return result;
@@ -226,7 +235,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             } else {
                 result.append(" \\edge[draw=none];\\node[draw=none]{};");
             }
-            result.append("]");
+            result.append(" ]");
         }
         return result.toString();
     }

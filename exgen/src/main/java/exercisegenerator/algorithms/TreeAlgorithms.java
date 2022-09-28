@@ -173,18 +173,17 @@ public abstract class TreeAlgorithms {
                 TreeAlgorithms::generateConstructionAndOperations
             ).getResult(input.options);
         final BinaryTree<Integer> tree = BinaryTree.create(constructionAndOperations.x);
-        final List<Pair<BinaryTree<Integer>, BinaryTreeStep>> steps =
+        final BinaryTreeSteps<Integer> steps =
             TreeAlgorithms.bstree(tree, constructionAndOperations.y);
         TreeAlgorithms.printTreeExercise(tree, constructionAndOperations.y, input.exerciseWriter);
         TreeAlgorithms.printTreeSolution(steps, input.solutionWriter);
     }
 
-    public static <T extends Comparable<T>> List<Pair<BinaryTree<T>, BinaryTreeStep>> bstree(
+    public static <T extends Comparable<T>> BinaryTreeSteps<T> bstree(
         final BinaryTree<T> tree,
         final Deque<Pair<T, Boolean>> operations
     ) {
-        final LinkedList<Pair<BinaryTree<T>, BinaryTreeStep>> result =
-            new LinkedList<Pair<BinaryTree<T>, BinaryTreeStep>>();
+        final BinaryTreeSteps<T> result = new BinaryTreeSteps<T>();
         BinaryTree<T> currentTree = tree;
         for (final Pair<T, Boolean> operation : operations) {
             result.addAll(
@@ -545,7 +544,7 @@ public abstract class TreeAlgorithms {
 
     private static Deque<Pair<Integer, Boolean>> generateOperations(final Parameters options) {
         final Random gen = new Random();
-        final int length = gen.nextInt(20);
+        final int length = gen.nextInt(20) + 1;
         final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
         final List<Integer> in = new ArrayList<Integer>();
         for (int i = 0; i < length; i++) {
@@ -673,11 +672,12 @@ public abstract class TreeAlgorithms {
             writer.write(String.valueOf(height + 1));
             writer.write("\\columnwidth}");
         }
+        Main.newLine(writer);
         if (headline != null && !headline.isBlank()) {
             writer.write(headline);
             writer.write("\\\\[-2ex]");
+            Main.newLine(writer);
         }
-        Main.newLine(writer);
         writer.write("\\begin{center}");
         Main.newLine(writer);
     }
@@ -691,10 +691,10 @@ public abstract class TreeAlgorithms {
         }
     }
 
-    private static int printTreeAndReturnStepCounter(
+    private static <T extends Comparable<T>> int printTreeAndReturnStepCounter(
         final int stepCounter,
         final String headline,
-        final BinaryTree<Integer> tree,
+        final BinaryTree<T> tree,
         final BufferedWriter writer
     ) throws IOException {
         final int height = tree.getHeight();
@@ -791,11 +791,14 @@ public abstract class TreeAlgorithms {
         Main.newLine(writer);
     }
 
-    private static void printTreeSolution(
-        final List<Pair<BinaryTree<Integer>, BinaryTreeStep>> steps,
+    private static <T extends Comparable<T>> void printTreeSolution(
+        final BinaryTreeSteps<T> steps,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
+        int stepCounter = 0;
+        for (final BinaryTreeAndStep<T> step : steps) {
+            stepCounter = TreeAlgorithms.printTreeAndReturnStepCounter(stepCounter, step.y.toLaTeX(), step.x, writer);
+        }
         Main.newLine(writer);
     }
 

@@ -46,38 +46,19 @@ public class MainTest {
         }
     }
 
-    public static final String EX_FILE_NAME;
+    static final String EX_FILE_NAME;
 
-    public static final String SOL_FILE_NAME;
+    static final String SOL_FILE_NAME;
 
     private static final String EMPTY_NODE_MATCH;
 
     private static final String MATCH_MESSAGE_PATTERN;
-
-    private static final List<String> MIDDLE_SPACE = List.of("", "\\vspace*{1ex}", "");
 
     private static final String NODE_MATCH;
 
     private static final String NUMBER_MATCH;
 
     private static final String PHANTOM_MATCH;
-
-    private static final List<String> SOLUTION_SPACE_BEGINNING =
-        List.of(
-            "\\ifprintanswers",
-            "",
-            "\\vspace*{-3ex}",
-            "",
-            "\\else"
-        );
-
-    private static final List<String> SOLUTION_SPACE_END =
-        List.of(
-            "",
-            "\\vspace*{1ex}",
-            "",
-            "\\fi"
-        );
 
     private static final String TEX_SUFFIX;
 
@@ -99,19 +80,19 @@ public class MainTest {
         final List<String> solText
     ) throws IOException {
         int currentNodeNumber = 0;
-        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         boolean first = true;
         for (final BinaryTestCase test : cases) {
             if (first) {
                 first = false;
             } else {
-                exText.addAll(MainTest.MIDDLE_SPACE);
-                solText.addAll(MainTest.MIDDLE_SPACE);
+                exText.addAll(Patterns.MIDDLE_SPACE);
+                solText.addAll(Patterns.MIDDLE_SPACE);
             }
             currentNodeNumber =
                 algorithm.apply(new BinaryInput(currentNodeNumber, test, exText, solText));
         }
-        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
     }
 
     private static int checkAssignment(
@@ -433,14 +414,14 @@ public class MainTest {
                 "\\begin{center}",
                 "\\begin{tikzpicture}",
                 "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
-                "\\Tree [.3 1 [.5 4 [.7 6 8]]]",
+                "\\Tree [.3 1 [.5 4 [.7 6 8 ] ] ]",
                 "\\end{tikzpicture}",
                 "~\\\\*\\vspace*{1ex}",
                 "\\end{center}",
                 "\\end{minipage}"
             )
         );
-        exText.addAll(MainTest.MIDDLE_SPACE);
+        exText.addAll(Patterns.MIDDLE_SPACE);
         exText.addAll(
             List.of(
                 "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-} und \\emphasize{Ersetzungs-}Operation an:\\\\[2ex]",
@@ -459,7 +440,36 @@ public class MainTest {
             MainTest.simpleComparison(
                 exText,
                 List.of(
-//                    ""
+                    "\\begin{minipage}[t]{0.5\\columnwidth}",
+                    "f\\\"uge 2 ein\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] [.5 4 [.7 6 8 ] ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "\\begin{minipage}[t]{0.5\\columnwidth}",
+                    "entferne 6\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] [.5 4 [.7 \\edge[draw=none];\\node[draw=none]{}; 8 ] ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "\\begin{minipage}[t]{0.5\\columnwidth}",
+                    "ersetze 5\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] [.6 4 [.7 \\edge[draw=none];\\node[draw=none]{}; 8 ] ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}"
                 )
             )
         );
@@ -602,7 +612,7 @@ public class MainTest {
                 "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
             )
         );
-        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.add("\\textbf{Codebuch:}\\\\[2ex]");
         solText.add("\\textbf{Codebuch:}\\\\[2ex]");
         int currentNodeNumber =
@@ -655,10 +665,10 @@ public class MainTest {
                 exText,
                 solText
             );
-        exText.addAll(MainTest.MIDDLE_SPACE);
+        exText.addAll(Patterns.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
-        exText.addAll(MainTest.SOLUTION_SPACE_END);
-        solText.addAll(MainTest.MIDDLE_SPACE);
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
+        solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{1001100110110111001101}");
         this.harness(
@@ -689,7 +699,7 @@ public class MainTest {
                 "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
             )
         );
-        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.add("\\textbf{Codebuch:}\\\\[2ex]");
         solText.add("\\textbf{Codebuch:}\\\\[2ex]");
         int currentNodeNumber =
@@ -742,10 +752,10 @@ public class MainTest {
                 exText,
                 solText
             );
-        exText.addAll(MainTest.MIDDLE_SPACE);
+        exText.addAll(Patterns.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
-        exText.addAll(MainTest.SOLUTION_SPACE_END);
-        solText.addAll(MainTest.MIDDLE_SPACE);
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
+        solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{1001100110110111001101}");
         this.harness(
@@ -847,11 +857,11 @@ public class MainTest {
                 "\\end{center}"
             );
         exText.add("Geben Sie zu den folgenden Wahrheitstabellen jeweils eine aussagenlogische Formel an:\\\\");
-        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(firstTable);
         exText.addAll(Patterns.middleSpace("4cm"));
         exText.addAll(secondTable);
-        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
 
         solText.addAll(firstTable);
         solText.addAll(
@@ -864,7 +874,7 @@ public class MainTest {
                 "\\end{align*}"
             )
         );
-        solText.addAll(MainTest.MIDDLE_SPACE);
+        solText.addAll(Patterns.MIDDLE_SPACE);
         solText.addAll(secondTable);
         solText.addAll(
             List.of(
@@ -901,9 +911,9 @@ public class MainTest {
                 "\\end{center}"
             );
         exText.add("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\");
-        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(table);
-        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
 
         solText.addAll(table);
         solText.addAll(
@@ -959,7 +969,7 @@ public class MainTest {
                 ""
             )
         );
-        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
             List.of(
                 "\\begin{center}",
@@ -979,7 +989,7 @@ public class MainTest {
                 "\\end{center}"
             )
         );
-        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
         this.harness(
             new String[] {
                 "-a", Algorithm.HASH_MULT_QUAD.name,
@@ -1022,7 +1032,7 @@ public class MainTest {
         final List<String> solText = new LinkedList<String>();
         exText.add("Sortieren Sie das folgende Array mithilfe von Insertionsort.");
         exText.add("Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]");
-        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
             List.of(
                 "\\begin{tikzpicture}",
@@ -1043,7 +1053,7 @@ public class MainTest {
             }
         }
         exText.add("\\end{tikzpicture}");
-        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
 
         solText.add("\\begin{tikzpicture}");
         solText.add(Patterns.ARRAY_STYLE);
@@ -1218,7 +1228,7 @@ public class MainTest {
         exText.add(
             "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\"
         );
-        exText.addAll(MainTest.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
             List.of(
                 "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
@@ -1239,7 +1249,7 @@ public class MainTest {
                 "\\end{center}"
             )
         );
-        exText.addAll(MainTest.MIDDLE_SPACE);
+        exText.addAll(Patterns.MIDDLE_SPACE);
         exText.addAll(
             List.of(
                 "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
@@ -1260,7 +1270,7 @@ public class MainTest {
                 "\\end{center}"
             )
         );
-        exText.addAll(MainTest.SOLUTION_SPACE_END);
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
 
         solText.addAll(
             List.of(
@@ -1283,7 +1293,7 @@ public class MainTest {
                 "\\end{center}"
             )
         );
-        solText.addAll(MainTest.MIDDLE_SPACE);
+        solText.addAll(Patterns.MIDDLE_SPACE);
         solText.addAll(
             List.of(
                 "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
