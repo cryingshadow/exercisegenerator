@@ -10,6 +10,16 @@ import exercisegenerator.io.*;
  */
 public class IntAVLTree {
 
+    private static int heightToSteps(final int height) {
+        if (height < 2) {
+            return 3;
+        }
+        if (height < 4) {
+            return 5;
+        }
+        return height;
+    }
+
     /**
      * The root of the AVL-tree.
      */
@@ -367,17 +377,18 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      */
     private void printSamePageBeginning(final String headline, final BufferedWriter writer) throws IOException {
-        if (this.getHeight() <= 0) {
-            writer.write("\\begin{minipage}[t]{0.2 \\columnwidth}");
+        if (this.getHeight() <= 1) {
+            writer.write("\\begin{minipage}[t]{4cm}");
+        } else if (this.getHeight() < 4) {
+            writer.write("\\begin{minipage}[t]{7cm}");
+        } else {
             Main.newLine(writer);
-        } else if (this.getHeight() < 9) {
-            writer.write("\\begin{minipage}[t]{0." + (this.getHeight() + 1) + " \\columnwidth}");
-            Main.newLine(writer);
-        }
-        if (headline != null && !"".equals(headline)) {
-            writer.write(headline + "\\\\[-2ex]");
         }
         Main.newLine(writer);
+        if (headline != null && !"".equals(headline)) {
+            writer.write(headline + "\\\\[-2ex]");
+            Main.newLine(writer);
+        }
         writer.write("\\begin{center}");
         Main.newLine(writer);
     }
@@ -390,7 +401,7 @@ public class IntAVLTree {
     private void printSamePageEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{center}");
         Main.newLine(writer);
-        if (this.getHeight() < 9 ) {
+        if (this.getHeight() < 4) {
             writer.write("\\end{minipage}");
             Main.newLine(writer);
         }
@@ -403,17 +414,13 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      */
     private void printVerticalSpace(final BufferedWriter writer) throws IOException {
-        this.stepCounter += this.getHeight() + 1;
-        if (this.stepCounter >= 10) {
+        this.stepCounter += IntAVLTree.heightToSteps(this.getHeight());
+        if (this.stepCounter >= 12) {
             Main.newLine(writer);
             writer.write("~\\\\");
             Main.newLine(writer);
             Main.newLine(writer);
-            if (this.getHeight() <= 0) {
-                this.stepCounter = 2;
-            } else {
-                this.stepCounter = this.getHeight() + 1;
-            }
+            this.stepCounter = IntAVLTree.heightToSteps(this.getHeight());
         }
     }
 

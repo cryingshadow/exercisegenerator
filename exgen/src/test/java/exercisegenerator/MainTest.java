@@ -410,7 +410,7 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "Betrachten Sie den folgenden \\emphasize{Bin\\\"ar-Suchbaum}:\\\\[2ex]",
-                "\\begin{minipage}[t]{0.5\\columnwidth}",
+                "\\begin{minipage}[t]{7cm}",
                 "\\begin{center}",
                 "\\begin{tikzpicture}",
                 "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -440,7 +440,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 exText,
                 List.of(
-                    "\\begin{minipage}[t]{0.5\\columnwidth}",
+                    "\\begin{minipage}[t]{7cm}",
                     "f\\\"uge 2 ein\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
@@ -450,7 +450,7 @@ public class MainTest {
                     "~\\\\*\\vspace*{1ex}",
                     "\\end{center}",
                     "\\end{minipage}",
-                    "\\begin{minipage}[t]{0.5\\columnwidth}",
+                    "\\begin{minipage}[t]{7cm}",
                     "entferne 6\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
@@ -460,7 +460,10 @@ public class MainTest {
                     "~\\\\*\\vspace*{1ex}",
                     "\\end{center}",
                     "\\end{minipage}",
-                    "\\begin{minipage}[t]{0.5\\columnwidth}",
+                    "",
+                    "~\\\\",
+                    "",
+                    "\\begin{minipage}[t]{7cm}",
                     "ersetze 5\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",

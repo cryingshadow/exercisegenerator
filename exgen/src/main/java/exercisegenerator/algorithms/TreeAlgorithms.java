@@ -585,6 +585,16 @@ public abstract class TreeAlgorithms {
         return deque;
     }
 
+    private static int heightToSteps(final int height) {
+        if (height < 3) {
+            return 3;
+        }
+        if (height < 5) {
+            return 5;
+        }
+        return height;
+    }
+
     private static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> parseConstructionAndOperations(
         final BufferedReader reader,
         final Parameters options
@@ -602,11 +612,14 @@ public abstract class TreeAlgorithms {
     private static Deque<Pair<Integer, Boolean>> parseOperations(final String[] operations) {
         final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
         for (final String num : operations) {
-            final String trimmed = num.trim();
-            if (trimmed.startsWith("~")) {
-                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed.substring(1)), false));
+            if (num.isBlank()) {
+                continue;
+            }
+            final String stripped = num.strip();
+            if (stripped.startsWith("~")) {
+                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(stripped.substring(1)), false));
             } else {
-                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed), true));
+                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(stripped), true));
             }
         }
         return deque;
@@ -628,16 +641,7 @@ public abstract class TreeAlgorithms {
             e.printStackTrace();
             return new ArrayDeque<Pair<Integer, Boolean>>();
         }
-        final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
-        for (final String num : nums) {
-            final String trimmed = num.trim();
-            if (trimmed.startsWith("~")) {
-                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed.substring(1)), false));
-            } else {
-                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed), true));
-            }
-        }
-        return deque;
+        return TreeAlgorithms.parseOperations(nums);
     }
 
     private static Deque<Pair<Integer, Boolean>> parseOrGenerateTreeValues(final Parameters options)
@@ -651,26 +655,17 @@ public abstract class TreeAlgorithms {
     private static Deque<Pair<Integer, Boolean>> parseTreeValues(final BufferedReader reader, final Parameters options)
     throws IOException {
         final String[] nums = reader.readLine().split(",");
-        final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
-        for (final String num : nums) {
-            final String trimmed = num.trim();
-            if (trimmed.startsWith("~")) {
-                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed.substring(1)), false));
-            } else {
-                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(trimmed), true));
-            }
-        }
-        return deque;
+        return TreeAlgorithms.parseOperations(nums);
     }
 
     private static void printSamePageBeginning(final int height, final String headline, final BufferedWriter writer)
     throws IOException {
-        if (height == 0) {
-            writer.write("\\begin{minipage}[t]{0.2\\columnwidth}");
-        } else if (height < 10) {
-            writer.write("\\begin{minipage}[t]{0.");
-            writer.write(String.valueOf(height + 1));
-            writer.write("\\columnwidth}");
+        if (height < 3) {
+            writer.write("\\begin{minipage}[t]{4cm}");
+        } else if (height < 5) {
+            writer.write("\\begin{minipage}[t]{7cm}");
+        } else {
+            Main.newLine(writer);
         }
         Main.newLine(writer);
         if (headline != null && !headline.isBlank()) {
@@ -685,7 +680,7 @@ public abstract class TreeAlgorithms {
     private static void printSamePageEnd(final int height, final BufferedWriter writer) throws IOException {
         writer.write("\\end{center}");
         Main.newLine(writer);
-        if (height < 10) {
+        if (height < 5) {
             writer.write("\\end{minipage}");
             Main.newLine(writer);
         }
@@ -807,17 +802,14 @@ public abstract class TreeAlgorithms {
         final int height,
         final BufferedWriter writer
     ) throws IOException {
-        final int newStepCounter = height + 1;
-        if (newStepCounter >= 10) {
+        final int steps = TreeAlgorithms.heightToSteps(height);
+        final int newStepCounter = stepCounter + steps;
+        if (newStepCounter >= 12) {
             Main.newLine(writer);
             writer.write("~\\\\");
             Main.newLine(writer);
             Main.newLine(writer);
-            if (height == 0) {
-                return 2;
-            } else {
-                return height + 1;
-            }
+            return steps;
         }
         return newStepCounter;
     }
