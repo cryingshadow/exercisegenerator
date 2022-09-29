@@ -112,6 +112,17 @@ public enum Algorithm {
         GraphAlgorithms::generateTestParameters
     ),
 
+    FROM_ASCII(
+        "fromascii",
+        "ASCII (from)",
+        new String[] {
+            "Transform ASCII character to their binary representation.",
+            "You can specify the number of tasks with the -l flag."
+        },
+        BinaryNumbers::fromASCII,
+        BinaryNumbers::generateTestParameters
+    ),
+
     FROM_FLOAT(
         "fromfloat",
         "Float (from)",
@@ -470,6 +481,17 @@ public enum Algorithm {
         },
         GraphAlgorithms::sharir,
         GraphAlgorithms::generateTestParameters
+    ),
+
+    TO_ASCII(
+        "toascii",
+        "ASCII (to)",
+        new String[] {
+            "Transform the binary ASCII representation to the corresponding character.",
+            "You can specify the number of tasks with the -l flag."
+        },
+        BinaryNumbers::toASCII,
+        BinaryNumbers::generateTestParameters
     ),
 
     TO_FLOAT(

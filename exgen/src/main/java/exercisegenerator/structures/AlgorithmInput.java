@@ -22,4 +22,8 @@ public class AlgorithmInput {
         this.options = options;
     }
 
+    public AlgorithmInput setOptions(final Parameters options) {
+        return new AlgorithmInput(this.exerciseWriter, this.solutionWriter, options);
+    }
+
 }

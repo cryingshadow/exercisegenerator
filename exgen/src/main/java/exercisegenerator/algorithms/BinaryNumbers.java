@@ -13,15 +13,15 @@ import exercisegenerator.util.*;
 
 public class BinaryNumbers {
 
-    private static abstract class BinaryTask {}
+    private static class ASCIIBitStringTask extends BinaryTask {
+        private final String character;
 
-    private static class BitStringComplementTask extends BinaryTask {
-        private final BitString bitString;
-
-        private BitStringComplementTask(final BitString bitString) {
-            this.bitString = bitString;
+        private ASCIIBitStringTask(final String character) {
+            this.character = character;
         }
     }
+
+    private static abstract class BinaryTask {}
 
     private static class BitStringFloatTask extends BinaryTask {
         private final BitString bitString;
@@ -32,6 +32,14 @@ public class BinaryNumbers {
             this.bitString = bitString;
             this.exponentLength = exponentLength;
             this.mantissaLength = mantissaLength;
+        }
+    }
+
+    private static class BitStringValueTask extends BinaryTask {
+        private final BitString bitString;
+
+        private BitStringValueTask(final BitString bitString) {
+            this.bitString = bitString;
         }
     }
 
@@ -59,10 +67,10 @@ public class BinaryNumbers {
 
     private static class SolvedBinaryTask {
         private final BitString bitString;
-        private final String number;
+        private final String value;
 
-        private SolvedBinaryTask(final String number, final BitString bitString) {
-            this.number = number;
+        private SolvedBinaryTask(final String value, final BitString bitString) {
+            this.value = value;
             this.bitString = bitString;
         }
     }
@@ -70,22 +78,47 @@ public class BinaryNumbers {
     public static final int DEFAULT_BINARY_CONTENT_LENGTH = 1;
 
     public static final String EXERCISE_TEXT_PATTERN_TO_ONES =
-        "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Einerkomplement dar:\\\\[2ex]";
+        "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Einerkomplement dar";
+
+    private static final String EXERCISE_TEXT_FROM_ASCII =
+        "Geben Sie zu den folgenden ASCII Zeichen das jeweilige Bitmuster an";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_FLOAT =
-        "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen die jeweilige rationale Zahl an:\\\\[2ex]";
+        "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen die jeweilige rationale Zahl an";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_ONES =
-        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Einerkomplement an:\\\\[2ex]";
+        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Einerkomplement an";
 
     private static final String EXERCISE_TEXT_PATTERN_FROM_TWOS =
-        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Zweierkomplement an:\\\\[2ex]";
+        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Zweierkomplement an";
 
     private static final String EXERCISE_TEXT_PATTERN_TO_FLOAT =
-        "Geben Sie zu den folgenden rationalen Zahlen die jeweilige 1.%d.%d Gleitkommazahl an:\\\\[2ex]";
+        "Geben Sie zu den folgenden rationalen Zahlen die jeweilige 1.%d.%d Gleitkommazahl an";
 
     private static final String EXERCISE_TEXT_PATTERN_TO_TWOS =
-        "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Zweierkomplement dar:\\\\[2ex]";
+        "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Zweierkomplement dar";
+
+    private static final String EXERCISE_TEXT_TO_ASCII =
+        "Geben Sie zu den folgenden Bitmustern das jeweilige ASCII Zeichen an";
+
+    public static void fromASCII(final AlgorithmInput input) throws IOException {
+        BinaryNumbers.allBinaryTasks(
+            input,
+            BinaryNumbers.EXERCISE_TEXT_FROM_ASCII,
+            task -> new SolvedBinaryTask(
+                task.character,
+                BinaryNumbers.fromASCII(task.character.charAt(0))
+            ),
+            BinaryNumbers::parseOrGenerateASCIIBitStringTasks,
+            BinaryNumbers::toValueTask,
+            BinaryNumbers::toBitStringSolution,
+            solvedTask -> 1
+        );
+    }
+
+    public static BitString fromASCII(final char character) {
+        return BinaryNumbers.toTwosComplement(character, 8);
+    }
 
     public static void fromFloat(final AlgorithmInput input) throws IOException {
         BinaryNumbers.allBinaryTasks(
@@ -101,7 +134,7 @@ public class BinaryNumbers {
             ),
             BinaryNumbers::parseOrGenerateBitStringFloatTasks,
             BinaryNumbers::toBitStringTask,
-            BinaryNumbers::toNumberSolution,
+            BinaryNumbers::toValueSolution,
             BinaryNumbers::getMaximumContentLength
         );
     }
@@ -148,9 +181,9 @@ public class BinaryNumbers {
                 String.valueOf(BinaryNumbers.fromOnesComplement(task.bitString)),
                 task.bitString
             ),
-            BinaryNumbers::parseOrGenerateBitStringComplementTasks,
+            BinaryNumbers::parseOrGenerateBitStringValueTasks,
             BinaryNumbers::toBitStringTask,
-            BinaryNumbers::toNumberSolution,
+            BinaryNumbers::toValueSolution,
             BinaryNumbers::getMaximumContentLength
         );
     }
@@ -170,9 +203,9 @@ public class BinaryNumbers {
                 String.valueOf(BinaryNumbers.fromTwosComplement(task.bitString)),
                 task.bitString
             ),
-            BinaryNumbers::parseOrGenerateBitStringComplementTasks,
+            BinaryNumbers::parseOrGenerateBitStringValueTasks,
             BinaryNumbers::toBitStringTask,
-            BinaryNumbers::toNumberSolution,
+            BinaryNumbers::toValueSolution,
             BinaryNumbers::getMaximumContentLength
         );
     }
@@ -195,6 +228,28 @@ public class BinaryNumbers {
         return result; //TODO
     }
 
+    public static void toASCII(final AlgorithmInput input) throws IOException {
+        BinaryNumbers.allBinaryTasks(
+            input,
+            BinaryNumbers.EXERCISE_TEXT_TO_ASCII,
+            task -> new SolvedBinaryTask(
+                String.valueOf(BinaryNumbers.toASCII(task.bitString)),
+                task.bitString
+            ),
+            BinaryNumbers::parseOrGenerateBitStringASCIITasks,
+            BinaryNumbers::toBitStringTask,
+            BinaryNumbers::toValueSolution,
+            solvedTask -> 1
+        );
+    }
+
+    public static char toASCII(final BitString bitString) {
+        if (bitString.size() != 8) {
+            throw new IllegalArgumentException("Bit string must have length 8!");
+        }
+        return (char)BinaryNumbers.fromTwosComplement(bitString);
+    }
+
     public static void toFloat(final AlgorithmInput input) throws IOException {
         BinaryNumbers.allBinaryTasks(
             input,
@@ -208,7 +263,7 @@ public class BinaryNumbers {
                 BinaryNumbers.toFloat(task.number, task.exponentLength, task.mantissaLength)
             ),
             BinaryNumbers::parseOrGenerateNumberFloatTasks,
-            BinaryNumbers::toNumberTask,
+            BinaryNumbers::toValueTask,
             BinaryNumbers::toBitStringSolution,
             solvedTasks -> 1
         );
@@ -259,7 +314,7 @@ public class BinaryNumbers {
                 BinaryNumbers.toOnesComplement(task.number, task.bitLength)
             ),
             BinaryNumbers::parseOrGenerateNumberComplementTasks,
-            BinaryNumbers::toNumberTask,
+            BinaryNumbers::toValueTask,
             BinaryNumbers::toBitStringSolution,
             solvedTasks -> 1
         );
@@ -287,7 +342,7 @@ public class BinaryNumbers {
                 BinaryNumbers.toTwosComplement(task.number, task.bitLength)
             ),
             BinaryNumbers::parseOrGenerateNumberComplementTasks,
-            BinaryNumbers::toNumberTask,
+            BinaryNumbers::toValueTask,
             BinaryNumbers::toBitStringSolution,
             numbers -> 1
         );
@@ -417,6 +472,7 @@ public class BinaryNumbers {
         final BufferedWriter solutionWriter
     ) throws IOException {
         exerciseWriter.write(exerciseText);
+        exerciseWriter.write(":\\\\[2ex]");
         Main.newLine(exerciseWriter);
         LaTeXUtils.printSolutionSpaceBeginning(options, exerciseWriter);
     }
@@ -442,21 +498,54 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static BitString generateBitString(final Random gen, final int bitLength) {
-        final BitString result = new BitString();
-        for (int i = 0; i < bitLength; i++) {
-            result.add(Bit.fromBoolean(gen.nextBoolean()));
+    private static String generateASCII(final Random gen) {
+        return String.valueOf((char)(gen.nextInt(95) + 32));
+    }
+
+    private static List<ASCIIBitStringTask> generateASCIIBitStringTasks(final Parameters options) {
+        final Random gen = new Random();
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final List<ASCIIBitStringTask> result = new ArrayList<ASCIIBitStringTask>(numOfTasks);
+        for (int i = 0; i < numOfTasks; i++) {
+            result.add(new ASCIIBitStringTask(BinaryNumbers.generateASCII(gen)));
         }
         return result;
     }
 
-    private static List<BitStringComplementTask> generateBitStringComplementTasks(final Parameters options) {
+    private static BitString generateBitString(final Random gen, final int bitLength) {
+        return BinaryNumbers.generateBitString(gen, bitLength, BigInteger.ZERO, BigInteger.TWO.pow(bitLength));
+    }
+
+    private static BitString generateBitString(
+        final Random gen,
+        final int bitLength,
+        final BigInteger from,
+        final BigInteger to
+    ) {
+        final BitString result = new BitString();
+        for (int i = 0; i < bitLength; i++) {
+            result.add(Bit.fromBoolean(gen.nextBoolean()));
+        }
+        final BigInteger value = result.toNonNegativeBigInteger();
+        if (value.compareTo(from) < 0 || value.compareTo(to) > 0) {
+            final BigInteger range = to.subtract(from).add(BigInteger.ONE);
+            final BigInteger newValue = value.mod(range).add(from);
+            return BitString.create(newValue, bitLength);
+        }
+        return result;
+    }
+
+    private static List<BitStringValueTask> generateBitStringASCIITasks(final Parameters options) {
         final Random gen = new Random();
         final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
-        final int bitLength = BinaryNumbers.getBitLength(options);
-        final List<BitStringComplementTask> result = new ArrayList<BitStringComplementTask>(numOfTasks);
+        final int bitLength = 8;
+        final List<BitStringValueTask> result = new ArrayList<BitStringValueTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
-            result.add(new BitStringComplementTask(BinaryNumbers.generateBitString(gen, bitLength)));
+            result.add(
+                new BitStringValueTask(
+                    BinaryNumbers.generateBitString(gen, bitLength, BigInteger.valueOf(32), BigInteger.valueOf(126))
+                )
+            );
         }
         return result;
     }
@@ -475,6 +564,17 @@ public class BinaryNumbers {
                     mantissaLength
                 )
             );
+        }
+        return result;
+    }
+
+    private static List<BitStringValueTask> generateBitStringValueTasks(final Parameters options) {
+        final Random gen = new Random();
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int bitLength = BinaryNumbers.getBitLength(options);
+        final List<BitStringValueTask> result = new ArrayList<BitStringValueTask>(numOfTasks);
+        for (int i = 0; i < numOfTasks; i++) {
+            result.add(new BitStringValueTask(BinaryNumbers.generateBitString(gen, bitLength)));
         }
         return result;
     }
@@ -560,7 +660,7 @@ public class BinaryNumbers {
     }
 
     private static int getMaximumContentLength(final List<SolvedBinaryTask> solvedTask) {
-        return solvedTask.stream().mapToInt(task -> task.number.length()).max().getAsInt();
+        return solvedTask.stream().mapToInt(task -> task.value.length()).max().getAsInt();
     }
 
     private static Pair<Bit, NumberTimesDecimalPower> getNextBitAndNumberTimesDecimalPower(
@@ -587,12 +687,12 @@ public class BinaryNumbers {
         return number > power - 1 || number < -power;
     }
 
-    private static List<BitStringComplementTask> parseBitStringComplementTasks(
+    private static List<ASCIIBitStringTask> parseASCIIBitStringTasks(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
         return Arrays.stream(reader.readLine().split(";"))
-            .map(bitstring -> new BitStringComplementTask(BitString.parse(bitstring)))
+            .map(character -> new ASCIIBitStringTask(character))
             .toList();
     }
 
@@ -604,6 +704,15 @@ public class BinaryNumbers {
         final int mantissaLength = BinaryNumbers.getMantissaLength(options);
         return Arrays.stream(reader.readLine().split(";"))
             .map(bitstring -> new BitStringFloatTask(BitString.parse(bitstring), exponentLength, mantissaLength))
+            .toList();
+    }
+
+    private static List<BitStringValueTask> parseBitStringValueTasks(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        return Arrays.stream(reader.readLine().split(";"))
+            .map(bitstring -> new BitStringValueTask(BitString.parse(bitstring)))
             .toList();
     }
 
@@ -635,12 +744,21 @@ public class BinaryNumbers {
         );
     }
 
-    private static List<BitStringComplementTask> parseOrGenerateBitStringComplementTasks(
+    private static List<ASCIIBitStringTask> parseOrGenerateASCIIBitStringTasks(
         final Parameters options
     ) throws IOException {
-        return new ParserAndGenerator<List<BitStringComplementTask>>(
-            BinaryNumbers::parseBitStringComplementTasks,
-            BinaryNumbers::generateBitStringComplementTasks
+        return new ParserAndGenerator<List<ASCIIBitStringTask>>(
+            BinaryNumbers::parseASCIIBitStringTasks,
+            BinaryNumbers::generateASCIIBitStringTasks
+        ).getResult(options);
+    }
+
+    private static List<BitStringValueTask> parseOrGenerateBitStringASCIITasks(
+        final Parameters options
+    ) throws IOException {
+        return new ParserAndGenerator<List<BitStringValueTask>>(
+            BinaryNumbers::parseBitStringValueTasks,
+            BinaryNumbers::generateBitStringASCIITasks
         ).getResult(options);
     }
 
@@ -650,6 +768,15 @@ public class BinaryNumbers {
         return new ParserAndGenerator<List<BitStringFloatTask>>(
             BinaryNumbers::parseBitStringFloatTasks,
             BinaryNumbers::generateBitStringFloatTasks
+        ).getResult(options);
+    }
+
+    private static List<BitStringValueTask> parseOrGenerateBitStringValueTasks(
+        final Parameters options
+    ) throws IOException {
+        return new ParserAndGenerator<List<BitStringValueTask>>(
+            BinaryNumbers::parseBitStringValueTasks,
+            BinaryNumbers::generateBitStringValueTasks
         ).getResult(options);
     }
 
@@ -780,12 +907,14 @@ public class BinaryNumbers {
         return result;
     }
 
-    private static List<ItemWithTikZInformation<String>> toNumberSolution(final SolvedBinaryTask solvedTask) {
-        return Collections.singletonList(new ItemWithTikZInformation<>(Optional.of(solvedTask.number)));
+    private static List<ItemWithTikZInformation<String>> toValueSolution(final SolvedBinaryTask solvedTask) {
+        return Collections.singletonList(
+            new ItemWithTikZInformation<>(Optional.of(LaTeXUtils.escapeForLaTeX(solvedTask.value)))
+        );
     }
 
-    private static String toNumberTask(final SolvedBinaryTask solvedTask) {
-        return solvedTask.number;
+    private static String toValueTask(final SolvedBinaryTask solvedTask) {
+        return LaTeXUtils.escapeForLaTeX(solvedTask.value);
     }
 
 }

@@ -1,5 +1,6 @@
 package exercisegenerator.structures.binary;
 
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -7,11 +8,23 @@ public class BitString extends LinkedList<Bit> {
 
     private static final long serialVersionUID = -3160588348086277796L;
 
+    public static BitString create(final BigInteger value, final int bitLength) {
+        return BitString.parse(BitString.toBitLength(value.toString(2), bitLength));
+    }
+
     public static BitString parse(final String bitString) {
         return
             bitString.chars()
                 .mapToObj(c -> c == '0' ? Bit.ZERO : Bit.ONE)
                 .collect(Collectors.toCollection(BitString::new));
+    }
+
+    private static String toBitLength(final String bits, final int bitLength) {
+        final int length = bits.length();
+        if (length > bitLength) {
+            return bits.substring(length - bitLength);
+        }
+        return "0".repeat(bitLength - length) + bits;
     }
 
     public BitString() {
@@ -63,6 +76,10 @@ public class BitString extends LinkedList<Bit> {
 
     public BitString subString(final int fromIndex, final int toIndexExclusive) {
         return new BitString(this.subList(fromIndex, toIndexExclusive));
+    }
+
+    public BigInteger toNonNegativeBigInteger() {
+        return new BigInteger(this.toString(), 2);
     }
 
     @Override

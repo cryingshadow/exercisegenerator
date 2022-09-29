@@ -37,12 +37,12 @@ public class MainTest {
     }
 
     private static class BinaryTestCase {
-        private final int[] binaryNumber;
-        private final String number;
+        private final String bitString;
+        private final String value;
 
-        private BinaryTestCase(final String number, final int[] binaryNumber) {
-            this.number = number;
-            this.binaryNumber = binaryNumber;
+        private BinaryTestCase(final String value, final String bitString) {
+            this.value = value;
+            this.bitString = bitString;
         }
     }
 
@@ -324,16 +324,16 @@ public class MainTest {
         final String longestNumber =
             "-" +
             Arrays.stream(cases)
-            .map(c -> Patterns.toCode(c.binaryNumber))
+            .map(c -> Patterns.toCode(c.bitString))
             .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length()))
             .findFirst()
             .get();
         MainTest.binaryTest(
             input -> MainTest.checkAssignment(
                 input.currentNodeNumber,
-                Patterns.toCode(input.test.binaryNumber),
-                Collections.singletonList(input.test.number),
-                Arrays.stream(cases).mapToInt(test -> String.valueOf(test.number).length()).max().getAsInt(),
+                Patterns.toCode(input.test.bitString),
+                Collections.singletonList(input.test.value),
+                Arrays.stream(cases).mapToInt(test -> String.valueOf(test.value).length()).max().getAsInt(),
                 longestNumber,
                 input.exText,
                 input.solText
@@ -371,15 +371,15 @@ public class MainTest {
         final String longestNumber =
             "-" +
             Arrays.stream(cases)
-            .map(c -> c.number)
+            .map(c -> c.value)
             .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length()))
             .findFirst()
             .get();
         MainTest.binaryTest(
             input -> MainTest.checkAssignment(
                 input.currentNodeNumber,
-                input.test.number,
-                Patterns.toRightHandSide(input.test.binaryNumber),
+                input.test.value,
+                Patterns.toRightHandSide(input.test.bitString),
                 1,
                 longestNumber,
                 input.exText,
@@ -394,12 +394,16 @@ public class MainTest {
 
     private static String toBitStringInput(final BinaryTestCase[] cases) {
         return Arrays.stream(cases)
-            .map(c -> Arrays.stream(c.binaryNumber).mapToObj(n -> String.valueOf(n)).collect(Collectors.joining()))
-            .collect(Collectors.joining(";"));
+            .map(
+                testCase -> testCase.bitString
+                    .chars()
+                    .mapToObj(c -> String.valueOf((char)c))
+                    .collect(Collectors.joining())
+            ).collect(Collectors.joining(";"));
     }
 
-    private static String toNumberInput(final BinaryTestCase[] cases) {
-        return Arrays.stream(cases).map(c -> c.number).collect(Collectors.joining(";"));
+    private static String toValueInput(final BinaryTestCase[] cases) {
+        return Arrays.stream(cases).map(c -> c.value).collect(Collectors.joining(";"));
     }
 
     private final List<File> tmpFiles = new LinkedList<File>();
@@ -772,14 +776,32 @@ public class MainTest {
     }
 
     @Test
+    public void fromASCII() throws IOException {
+        final BinaryTestCase[] cases =
+            new BinaryTestCase[] {
+                new BinaryTestCase("D", "01000100"),
+                new BinaryTestCase("e", "01100101"),
+                new BinaryTestCase("?", "00111111")
+            };
+        this.harness(
+            new String[] {
+                "-a", Algorithm.FROM_ASCII.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", MainTest.toValueInput(cases)
+            },
+            MainTest.toBinary(cases, Patterns.FROM_ASCII)
+        );
+    }
+
+    @Test
     public void fromFloat() throws IOException {
         final int mantisseLength = 4;
         final int exponentLength = 3;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
-                new BinaryTestCase("-3,5", new int[] {1,1,0,0,1,1,0,0}),
-                new BinaryTestCase("1,375", new int[] {0,0,1,1,0,1,1,0}),
-                new BinaryTestCase("-7,0", new int[] {1,1,0,1,1,1,0,0})
+                new BinaryTestCase("-3,5", "11001100"),
+                new BinaryTestCase("1,375", "00110110"),
+                new BinaryTestCase("-7,0", "11011100")
             };
         this.harness(
             new String[] {
@@ -798,9 +820,9 @@ public class MainTest {
         final int bitLength = 8;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
-                new BinaryTestCase("-3", new int[] {1,1,1,1,1,1,0,0}),
-                new BinaryTestCase("5", new int[] {0,0,0,0,0,1,0,1}),
-                new BinaryTestCase("-111", new int[] {1,0,0,1,0,0,0,0})
+                new BinaryTestCase("-3", "11111100"),
+                new BinaryTestCase("5", "00000101"),
+                new BinaryTestCase("-111", "10010000")
             };
         this.harness(
             new String[] {
@@ -941,9 +963,9 @@ public class MainTest {
         final int bitLength = 5;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
-                new BinaryTestCase("-3", new int[] {1,1,1,0,1}),
-                new BinaryTestCase("1", new int[] {0,0,0,0,1}),
-                new BinaryTestCase("-13", new int[] {1,0,0,1,1})
+                new BinaryTestCase("-3", "11101"),
+                new BinaryTestCase("1", "00001"),
+                new BinaryTestCase("-13", "10011")
             };
         this.harness(
             new String[] {
@@ -1183,14 +1205,32 @@ public class MainTest {
     }
 
     @Test
+    public void toASCII() throws IOException {
+        final BinaryTestCase[] cases =
+            new BinaryTestCase[] {
+                new BinaryTestCase("B", "01000010"),
+                new BinaryTestCase("c", "01100011"),
+                new BinaryTestCase("!", "00100001")
+            };
+        this.harness(
+            new String[] {
+                "-a", Algorithm.TO_ASCII.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", MainTest.toBitStringInput(cases)
+            },
+            MainTest.fromBinary(cases, Patterns.TO_ASCII)
+        );
+    }
+
+    @Test
     public void toFloat() throws IOException {
         final int exponentLength = 3;
         final int mantisseLength = 4;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
-                new BinaryTestCase("-3,5", new int[] {1,1,0,0,1,1,0,0}),
-                new BinaryTestCase("1,4", new int[] {0,0,1,1,0,1,1,0}),
-                new BinaryTestCase("-7,18", new int[] {1,1,0,1,1,1,0,0})
+                new BinaryTestCase("-3,5", "11001100"),
+                new BinaryTestCase("1,4", "00110110"),
+                new BinaryTestCase("-7,18", "11011100")
             };
         this.harness(
             new String[] {
@@ -1198,7 +1238,7 @@ public class MainTest {
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(mantisseLength),
                 "-d", String.valueOf(exponentLength),
-                "-i", MainTest.toNumberInput(cases)
+                "-i", MainTest.toValueInput(cases)
             },
             MainTest.toBinary(cases, Patterns.toFloat(exponentLength, mantisseLength))
         );
@@ -1209,16 +1249,16 @@ public class MainTest {
         final int bitLength = 4;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
-                new BinaryTestCase("3", new int[] {0,0,1,1}),
-                new BinaryTestCase("-1", new int[] {1,1,1,0}),
-                new BinaryTestCase("-2", new int[] {1,1,0,1})
+                new BinaryTestCase("3", "0011"),
+                new BinaryTestCase("-1", "1110"),
+                new BinaryTestCase("-2", "1101")
             };
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_ONES_COMPLEMENT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(bitLength),
-                "-i", MainTest.toNumberInput(cases)
+                "-i", MainTest.toValueInput(cases)
             },
             MainTest.toBinary(cases, Patterns.toOnes(bitLength))
         );
@@ -1341,16 +1381,16 @@ public class MainTest {
         final int bitLength = 6;
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
-                new BinaryTestCase("-3", new int[] {1,1,1,1,0,1}),
-                new BinaryTestCase("1", new int[] {0,0,0,0,0,1}),
-                new BinaryTestCase("-29", new int[] {1,0,0,0,1,1})
+                new BinaryTestCase("-3", "111101"),
+                new BinaryTestCase("1", "000001"),
+                new BinaryTestCase("-29", "100011")
             };
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_TWOS_COMPLEMENT.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-c", String.valueOf(bitLength),
-                "-i", MainTest.toNumberInput(cases)
+                "-i", MainTest.toValueInput(cases)
             },
             MainTest.toBinary(cases, Patterns.toTwos(bitLength))
         );

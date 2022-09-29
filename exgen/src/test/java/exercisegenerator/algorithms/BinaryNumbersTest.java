@@ -8,6 +8,28 @@ import exercisegenerator.structures.binary.*;
 
 public class BinaryNumbersTest {
 
+    @DataProvider
+    public Object[][] ASCIIData() {
+        return new Object[][] {
+            {'A', "01000001"},
+            {'a', "01100001"},
+            {'Z', "01011010"},
+            {'z', "01111010"},
+            {'0', "00110000"},
+            {'9', "00111001"},
+            {' ', "00100000"},
+            {'~', "01111110"}
+        };
+    }
+
+    @Test(dataProvider="ASCIIData")
+    public void fromASCII(
+        final char character,
+        final String expected
+    ) {
+        Assert.assertEquals(BinaryNumbers.fromASCII(character).toString(), expected);
+    }
+
     @Test(dataProvider="fromFloatData")
     public void fromFloat(
         final String bits,
@@ -61,33 +83,22 @@ public class BinaryNumbersTest {
         };
     }
 
-    @Test(dataProvider="fromTwosData")
-    public void fromTwosComplement(final String bits, final int expected) {
+    @Test(dataProvider="twosData")
+    public void fromTwosComplement(final int expected, final int bitLength, final String bits) {
         Assert.assertEquals(BinaryNumbers.fromTwosComplement(BitString.parse(bits)), expected);
-    }
-
-    @DataProvider
-    public Object[][] fromTwosData() {
-        return new Object[][] {
-            {"0011", 3},
-            {"0100", 4},
-            {"00", 0},
-            {"000000000", 0},
-            {"00000000001", 1},
-            {"0111", 7},
-            {"1011", -5},
-            {"1001", -7},
-            {"1111100", -4},
-            {"111", -1},
-            {"1000", -8},
-            {"1", -1},
-            {"0", 0}
-        };
     }
 
     @BeforeMethod
     public void prepare() {
         LaTeXUtils.reset();
+    }
+
+    @Test(dataProvider="ASCIIData")
+    public void toASCII(
+        final char expected,
+        final String bits
+    ) {
+        Assert.assertEquals(BinaryNumbers.toASCII(BitString.parse(bits)), expected);
     }
 
     @Test(dataProvider="toFloatData")
@@ -153,7 +164,7 @@ public class BinaryNumbersTest {
         };
     }
 
-    @Test(dataProvider="toTwosData")
+    @Test(dataProvider="twosData")
     public void toTwosComplement(final int number, final int bitLength, final String expected) {
         Assert.assertEquals(BinaryNumbers.toTwosComplement(number, bitLength).toString(), expected);
     }
@@ -164,7 +175,18 @@ public class BinaryNumbersTest {
     }
 
     @DataProvider
-    public Object[][] toTwosData() {
+    public Object[][] toTwosErrorData() {
+        return new Object[][] {
+            {7, 3},
+            {8, 4},
+            {-9, 4},
+            {128, 8},
+            {-129, 8}
+        };
+    }
+
+    @DataProvider
+    public Object[][] twosData() {
         return new Object[][] {
             {3, 4, "0011"},
             {4, 4, "0100"},
@@ -176,18 +198,9 @@ public class BinaryNumbersTest {
             {-7, 4, "1001"},
             {-4, 7, "1111100"},
             {-1, 3, "111"},
-            {-8, 4, "1000"}
-        };
-    }
-
-    @DataProvider
-    public Object[][] toTwosErrorData() {
-        return new Object[][] {
-            {7, 3},
-            {8, 4},
-            {-9, 4},
-            {128, 8},
-            {-129, 8}
+            {-8, 4, "1000"},
+            {-1, 1, "1"},
+            {0, 1, "0"}
         };
     }
 

@@ -8,12 +8,18 @@ public class Patterns {
     public static final String ARRAY_STYLE =
         "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Huge}},node distance=0.25 and 0]";
 
+    public static final String FROM_ASCII =
+        "Geben Sie zu den folgenden ASCII Zeichen das jeweilige Bitmuster an:\\\\[2ex]";
+
     public static final List<String> MIDDLE_SPACE = List.of("", "\\vspace*{1ex}", "");
 
     public static final List<String> SOLUTION_SPACE_BEGINNING =
         List.of("\\ifprintanswers", "", "\\vspace*{-3ex}", "", "\\else");
 
     public static final List<String> SOLUTION_SPACE_END = List.of("", "\\vspace*{1ex}", "", "\\fi");
+
+    public static final String TO_ASCII =
+        "Geben Sie zu den folgenden Bitmustern das jeweilige ASCII Zeichen an:\\\\[2ex]";
 
     public static String beginMinipageForAssignmentLeftHandSide(final String longestLeftHandSide) {
         return String.format(
@@ -149,8 +155,8 @@ public class Patterns {
         );
     }
 
-    public static List<String> toRightHandSide(final int[] binaryNumber) {
-        return Arrays.stream(binaryNumber).mapToObj(String::valueOf).toList();
+    public static List<String> toRightHandSide(final String bitString) {
+        return bitString.chars().mapToObj(c -> String.valueOf((char)c)).toList();
     }
 
     public static String toTwos(final int bitLength) {
