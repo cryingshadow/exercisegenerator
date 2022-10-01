@@ -140,7 +140,8 @@ public class Graph<N, E> {
         final Map<LabeledNode<N>,List<Pair<E,LabeledNode<N>>>> adListsParam,
         final boolean directed
     ) throws IOException {
-        final Map<LabeledNode<N>,List<Pair<E,LabeledNode<N>>>> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
+        final Map<LabeledNode<N>,List<Pair<E,LabeledNode<N>>>> adLists =
+            adListsParam == null ? this.adjacencyLists : adListsParam;
         if (directed) {
             LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         } else {
@@ -283,7 +284,8 @@ public class Graph<N, E> {
         final LabelParser<E> edgeParser
     ) throws IOException {
         String line = reader.readLine();
-        final Map<Pair<Integer, Integer>, LabeledNode<N>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<N>>();
+        final Map<Pair<Integer, Integer>, LabeledNode<N>> newGrid =
+            new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<N>>();
         final Map<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>> edges =
             new LinkedHashMap<Pair<Integer, Integer>, List<Pair<E, Pair<Integer, Integer>>>>();
         int maxRow = 0;
@@ -379,7 +381,8 @@ public class Graph<N, E> {
         // everything is alright - build the graph
         this.adjacencyLists.clear();
         // mirror the positions vertically as TikZ positions are mirrored that way compared to the input format
-        final Map<Pair<Integer, Integer>, LabeledNode<N>> mirroredGrid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<N>>();
+        final Map<Pair<Integer, Integer>, LabeledNode<N>> mirroredGrid =
+            new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<N>>();
         for (final Pair<Integer, Integer> pos : nodes) {
             final LabeledNode<N> node = newGrid.get(pos);
             this.adjacencyLists.put(node, new ArrayList<Pair<E, LabeledNode<N>>>());
@@ -399,44 +402,6 @@ public class Graph<N, E> {
      */
     public void setGrid(final Map<Pair<Integer, Integer>, LabeledNode<N>> newGrid) {
         this.grid = newGrid;
-    }
-
-    /**
-     * @return This graph in adjacency matrix representation. This is given by three arrays, the first being the
-     *         adjacency matrix, the second being the map from node indices in the matrix to the general IDs of the
-     *         corresponding nodes, and the third being such a map for the node labels. If this graph contains multiple
-     *         edges between the same nodes in the same direction, an IllegalStateException is thrown.
-     */
-    public Pair<Object[][], Pair<BigInteger[], Object[]>> toAdjacencyMatrix() {
-        final int size = this.adjacencyLists.size();
-        final Object[][] matrix = new Object[size][size];
-        final BigInteger[] ids = new BigInteger[size];
-        final Object[] labels = new Object[size];
-        final Map<BigInteger, Integer> toArray = new LinkedHashMap<BigInteger, Integer>();
-        int id = 0;
-        for (final LabeledNode<N> node : this.adjacencyLists.keySet()) {
-            final BigInteger nodeID = node.id;
-            toArray.put(nodeID, id);
-            ids[id] = nodeID;
-            labels[id++] = node.label.orElse(null);
-        }
-        for (final Entry<LabeledNode<N>, List<Pair<E, LabeledNode<N>>>> entry : this.adjacencyLists.entrySet()) {
-            final int from = toArray.get(entry.getKey()); //FIXME probably wrong type
-            final Set<Integer> tos = new LinkedHashSet<Integer>();
-            for (final Pair<E, LabeledNode<N>> edge : entry.getValue()) {
-                final int to = toArray.get(edge.y); //FIXME probably wrong type
-                if (tos.contains(to)) {
-                    throw new IllegalStateException(
-                        "Graph with multiple edges between the same nodes in the same direction cannot be converted "
-                        + "to matrix representation."
-                    );
-                }
-                tos.add(to);
-                matrix[from][to] = edge.x;
-            }
-        }
-        return
-            new Pair<Object[][], Pair<BigInteger[], Object[]>>(matrix, new Pair<BigInteger[], Object[]>(ids, labels));
     }
 
     /**

@@ -58,9 +58,11 @@ public abstract class GraphAlgorithms {
             throw new IllegalArgumentException("Number of nodes must not be negative!");
         }
         final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
-        final Map<Pair<Integer, Integer>, LabeledNode<String>> grid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
+        final Map<Pair<Integer, Integer>, LabeledNode<String>> grid =
+            new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
         final LabeledNode<String> source = new LabeledNode<String>(Optional.of("s"));
-        final Map<LabeledNode<String>, NodeGridPosition> positions = new LinkedHashMap<LabeledNode<String>, NodeGridPosition>();
+        final Map<LabeledNode<String>, NodeGridPosition> positions =
+            new LinkedHashMap<LabeledNode<String>, NodeGridPosition>();
         final Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
         GraphAlgorithms.addNode(
             source,
@@ -261,7 +263,8 @@ public abstract class GraphAlgorithms {
             minYPos = Math.min(minYPos, curMinYPos);
             for (int yPos = curMinYPos; yPos <= curMaxYPos; yPos++) {
                 // at least one edge from previous level
-                final LabeledNode<String> node = new LabeledNode<String>(Optional.of(GraphAlgorithms.toStringLabel(letter++)));
+                final LabeledNode<String> node =
+                    new LabeledNode<String>(Optional.of(GraphAlgorithms.toStringLabel(letter++)));
                 final boolean hasDiagonals = (xPos + yPos) % 2 == 0;
                 final Pair<Integer, Integer> pos = new Pair<Integer, Integer>(xPos, yPos);
                 GraphAlgorithms.addNode(
@@ -427,7 +430,8 @@ public abstract class GraphAlgorithms {
         if (minYPos % 2 != 0) {
             xAdd++;
         }
-        final Map<Pair<Integer, Integer>, LabeledNode<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
+        final Map<Pair<Integer, Integer>, LabeledNode<String>> newGrid =
+            new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
         for (final Entry<Pair<Integer, Integer>, LabeledNode<String>> entry : grid.entrySet()) {
             final Pair<Integer, Integer> key = entry.getKey();
             newGrid.put(new Pair<Integer, Integer>(key.x + xAdd, key.y - minYPos), entry.getValue());
@@ -458,7 +462,8 @@ public abstract class GraphAlgorithms {
             graph.setGrid(grid);
             return graph;
         }
-        final Map<LabeledNode<String>, NodeGridPosition> positions = new LinkedHashMap<LabeledNode<String>, NodeGridPosition>();
+        final Map<LabeledNode<String>, NodeGridPosition> positions =
+            new LinkedHashMap<LabeledNode<String>, NodeGridPosition>();
         final LabeledNode<String> start = new LabeledNode<String>(Optional.of("A"));
         final Pair<Integer, Integer> startPos = new Pair<Integer, Integer>(0, 0);
         final boolean startDiagonal = gen.nextBoolean();
@@ -475,7 +480,8 @@ public abstract class GraphAlgorithms {
             final LabeledNode<String> nextNode = nodesWithFreeNeighbors.get(gen.nextInt(nodesWithFreeNeighbors.size()));
             final NodeGridPosition nextPos = positions.get(nextNode);
             final Pair<Pair<Integer, Integer>, Boolean> toAddPos = nextPos.randomFreePosition(gen);
-            final LabeledNode<String> toAddNode = new LabeledNode<String>(Optional.of(GraphAlgorithms.toStringLabel(letter)));
+            final LabeledNode<String> toAddNode =
+                new LabeledNode<String>(Optional.of(GraphAlgorithms.toStringLabel(letter)));
             final NodeGridPosition gridPos = GraphAlgorithms.addNode(toAddNode, graph, toAddPos, grid, positions);
             final int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
             graph.addEdge(nextNode, value, toAddNode);
@@ -483,7 +489,8 @@ public abstract class GraphAlgorithms {
                 graph.addEdge(toAddNode, value, nextNode);
             }
             final List<Pair<Pair<Integer, Integer>, Boolean>> existing = gridPos.getExistingPositions();
-            final List<Pair<LabeledNode<String>, LabeledNode<String>>> freeNodePairs = new ArrayList<Pair<LabeledNode<String>, LabeledNode<String>>>();
+            final List<Pair<LabeledNode<String>, LabeledNode<String>>> freeNodePairs =
+                new ArrayList<Pair<LabeledNode<String>, LabeledNode<String>>>();
             for (final Pair<Pair<Integer, Integer>, Boolean> other : existing) {
                 final LabeledNode<String> otherNode = grid.get(other.x);
                 if (otherNode.equals(nextNode)) {
@@ -529,7 +536,8 @@ public abstract class GraphAlgorithms {
         ) {
             minX--;
         }
-        final Map<Pair<Integer, Integer>, LabeledNode<String>> newGrid = new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
+        final Map<Pair<Integer, Integer>, LabeledNode<String>> newGrid =
+            new LinkedHashMap<Pair<Integer, Integer>, LabeledNode<String>>();
         for (final Entry<Pair<Integer, Integer>, LabeledNode<String>> entry : grid.entrySet()) {
             final Pair<Integer, Integer> key = entry.getKey();
             newGrid.put(new Pair<Integer, Integer>(key.x - minX, key.y - minY), entry.getValue());
@@ -539,7 +547,8 @@ public abstract class GraphAlgorithms {
     }
 
     public static void dijkstra(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, LabeledNode<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, LabeledNode<String>> pair =
+            GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.printDijkstra(
             pair.x,
             pair.y,
@@ -617,7 +626,8 @@ public abstract class GraphAlgorithms {
     }
 
     public static void floyd(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, LabeledNode<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, LabeledNode<String>> pair =
+            GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.floyd(pair.x, false, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
     }
 
@@ -910,7 +920,9 @@ public abstract class GraphAlgorithms {
         switch (mode) {
             case ALWAYS:
             case SOLUTION_SPACE:
-                exWriter.write(" Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl ");
+                exWriter.write(
+                    " Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl "
+                );
                 exWriter.write("solcher Schritte \\\"ubereinstimmen.");
                 break;
             case NEVER:
@@ -918,7 +930,11 @@ public abstract class GraphAlgorithms {
         }
         Main.newLine(exWriter);
         int step = 0;
-        LaTeXUtils.printSamePageBeginning(step++, twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH, solWriter);
+        LaTeXUtils.printSamePageBeginning(
+            step++,
+            twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
+            solWriter
+        );
         solWriter.write("Initiales Flussnetzwerk:\\\\[2ex]");
         graph.printTikZ(GraphPrintMode.ALL, multiplier, null, solWriter);
         LaTeXUtils.printSamePageEnd(solWriter);
@@ -1002,7 +1018,8 @@ public abstract class GraphAlgorithms {
             if (path == null) {
                 break;
             }
-            final Set<Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>> toHighlightFlow = GraphAlgorithms.addFlow(graph, path);
+            final Set<Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>> toHighlightFlow =
+                GraphAlgorithms.addFlow(graph, path);
             switch (mode) {
                 case ALWAYS:
                 case SOLUTION_SPACE:
@@ -1089,7 +1106,8 @@ public abstract class GraphAlgorithms {
     }
 
     public static void prim(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, LabeledNode<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, LabeledNode<String>> pair =
+            GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.prim(pair.x, pair.y, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
     }
 
@@ -1283,7 +1301,8 @@ public abstract class GraphAlgorithms {
     }
 
     public static void warshall(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, LabeledNode<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, LabeledNode<String>> pair =
+            GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.floyd(pair.x, true, new StringNodeComparator(), input.exerciseWriter, input.solutionWriter);
     }
 
@@ -1295,8 +1314,10 @@ public abstract class GraphAlgorithms {
      * @return The set of edges whose flow has been modified.
      * @throws IOException If some error occurs during output.
      */
-    private static <N> Set<Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>> addFlow(final Graph<N, FlowPair> graph, final List<LabeledNode<N>> path)
-    throws IOException {
+    private static <N> Set<Pair<LabeledNode<N>, Pair<FlowPair, LabeledNode<N>>>> addFlow(
+        final Graph<N, FlowPair> graph,
+        final List<LabeledNode<N>> path
+    ) throws IOException {
         final Integer min = GraphAlgorithms.computeMinEdge(graph, path);
         final Iterator<LabeledNode<N>> it = path.iterator();
         LabeledNode<N> from;
@@ -1954,7 +1975,10 @@ public abstract class GraphAlgorithms {
         ).getResult(options);
     }
 
-    private static LabeledNode<String> parseOrGenerateStartNode(final Graph<String, Integer> graph, final Parameters options) {
+    private static LabeledNode<String> parseOrGenerateStartNode(
+        final Graph<String, Integer> graph,
+        final Parameters options
+    ) {
         LabeledNode<String> node = null;
         if (options.containsKey(Flag.OPERATIONS)) {
             final String operations = options.get(Flag.OPERATIONS);
@@ -2180,7 +2204,11 @@ public abstract class GraphAlgorithms {
      * @return A path from source to sink with a remaining capacity greater than 0. If no such path exists, null is
      *         returned.
      */
-    private static <N> List<LabeledNode<N>> selectAugmentingPath(final Graph<N, Integer> graph, final LabeledNode<N> source, final LabeledNode<N> sink) {
+    private static <N> List<LabeledNode<N>> selectAugmentingPath(
+        final Graph<N, Integer> graph,
+        final LabeledNode<N> source,
+        final LabeledNode<N> sink
+    ) {
         List<LabeledNode<N>> path = new ArrayList<LabeledNode<N>>();
         final Deque<List<LabeledNode<N>>> queue = new ArrayDeque<List<LabeledNode<N>>>();
         path.add(source);
@@ -2228,11 +2256,15 @@ public abstract class GraphAlgorithms {
      * @param path A path through this residual graph.
      * @return The set of all edges used by the specified path in the specified graph.
      */
-    private static <N> Set<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>> toEdges(final Graph<N, Integer> graph, final List<LabeledNode<N>> path) {
+    private static <N> Set<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>> toEdges(
+        final Graph<N, Integer> graph,
+        final List<LabeledNode<N>> path
+    ) {
         if (path == null) {
             return null;
         }
-        final Set<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>> res = new LinkedHashSet<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>>();
+        final Set<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>> res =
+            new LinkedHashSet<Pair<LabeledNode<N>, Pair<Integer, LabeledNode<N>>>>();
         final Iterator<LabeledNode<N>> it = path.iterator();
         LabeledNode<N> cur = it.next();
         while (it.hasNext()) {
