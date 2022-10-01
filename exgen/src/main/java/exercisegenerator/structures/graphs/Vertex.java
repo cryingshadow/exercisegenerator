@@ -32,6 +32,10 @@ public class Vertex<L> {
         this(Optional.empty());
     }
 
+    public Vertex(final L label) {
+        this(Optional.of(label));
+    }
+
     public Vertex(final Optional<L> label) {
         this.label = label;
         this.id = Vertex.getNewID();

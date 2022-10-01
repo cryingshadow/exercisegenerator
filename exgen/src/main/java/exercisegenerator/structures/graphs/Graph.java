@@ -17,6 +17,16 @@ import exercisegenerator.structures.*;
  */
 public class Graph<V, E> {
 
+    public static<V, E> Graph<V, E> create(
+        final AdjacencyLists<V, E> adjacencyLists,
+        final Map<GridCoordinates, Vertex<V>> grid
+    ) {
+        final Graph<V, E> result = new Graph<V, E>();
+        result.adjacencyLists = new AdjacencyLists<V, E>(adjacencyLists);
+        result.setGrid(grid);
+        return result;
+    }
+
     /**
      * Creates a graph where the vertices are positioned according to a grid. The graph is generated from the specified
      * reader according to the following format:
@@ -158,28 +168,18 @@ public class Graph<V, E> {
         return result;
     }
 
-    public static<V, E> Graph<V, E> create(final Map<Vertex<V>, List<Edge<E, V>>> adjacencyLists) {
+    public static<V, E> Graph<V, E> create(final Map<Vertex<V>, ? extends List<Edge<E, V>>> adjacencyLists) {
         final Graph<V, E> result = new Graph<V, E>();
-        result.adjacencyLists = new LinkedHashMap<Vertex<V>, List<Edge<E, V>>>(adjacencyLists);
+        result.adjacencyLists = new AdjacencyLists<V, E>(adjacencyLists);
         return result;
     }
 
-    public static<V, E> Graph<V, E> create(
-        final Map<Vertex<V>, List<Edge<E, V>>> adjacencyLists,
-        final Map<GridCoordinates, Vertex<V>> grid
-    ) {
-        final Graph<V, E> result = new Graph<V, E>();
-        result.adjacencyLists = new LinkedHashMap<Vertex<V>, List<Edge<E, V>>>(adjacencyLists);
-        result.setGrid(grid);
-        return result;
-    }
-
-    private Map<Vertex<V>, List<Edge<E, V>>> adjacencyLists;
+    private AdjacencyLists<V, E> adjacencyLists;
 
     private Optional<Map<GridCoordinates, Vertex<V>>> grid;
 
     public Graph() {
-        this.adjacencyLists = new LinkedHashMap<Vertex<V>, List<Edge<E, V>>>();
+        this.adjacencyLists = new AdjacencyLists<V, E>();
         this.grid = Optional.empty();
     }
 
@@ -267,10 +267,10 @@ public class Graph<V, E> {
      */
     public void printTikZ(
         final BufferedWriter writer,
-        final Map<Vertex<V>, List<Edge<E, V>>> adListsParam,
+        final AdjacencyLists<V, E> adListsParam,
         final boolean directed
     ) throws IOException {
-        final Map<Vertex<V>, List<Edge<E, V>>> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
+        final AdjacencyLists<V, E> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
         if (directed) {
             LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
         } else {

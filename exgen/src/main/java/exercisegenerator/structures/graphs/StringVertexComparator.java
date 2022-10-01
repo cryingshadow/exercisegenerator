@@ -1,9 +1,8 @@
-package exercisegenerator.util;
+package exercisegenerator.structures.graphs;
 
 import java.util.*;
 
 import exercisegenerator.structures.*;
-import exercisegenerator.structures.graphs.*;
 
 /**
  * String node comparator based on String.compareTo.

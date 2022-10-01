@@ -8,7 +8,6 @@ import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
-import exercisegenerator.util.*;
 
 /**
  * Class offering methods for graph algorithms.
@@ -1165,8 +1164,7 @@ public abstract class GraphAlgorithms {
         exTable[0][0] = "\\#Iteration";
         solTable[0][0] = "\\#Iteration";
         final Map<Vertex<V>, Integer> key = new LinkedHashMap<Vertex<V>, Integer>();
-        final Map<Vertex<V>, List<Edge<Integer, V>>> parent =
-            new LinkedHashMap<Vertex<V>, List<Edge<Integer, V>>>();
+        final AdjacencyLists<V, Integer> parent = new AdjacencyLists<V, Integer>();
         int i = 1;
         for (final Vertex<V> vertex : vertices) {
             key.put(vertex, null);
