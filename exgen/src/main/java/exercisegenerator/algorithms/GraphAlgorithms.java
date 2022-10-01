@@ -1917,8 +1917,7 @@ public abstract class GraphAlgorithms {
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
-        final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
-        graph.setGraphFromInput(reader, new StringLabelParser(), new FlowPairLabelParser());
+        final Graph<String, FlowPair> graph = Graph.create(reader, new StringLabelParser(), new FlowPairLabelParser());
         Vertex<String> source = null;
         Vertex<String> sink = null;
         double multiplier = 1.0;
@@ -1959,8 +1958,7 @@ public abstract class GraphAlgorithms {
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
-        final Graph<String, Integer> graph = new Graph<String, Integer>();
-        graph.setGraphFromInput(reader, new StringLabelParser(), new IntLabelParser());
+        final Graph<String, Integer> graph = Graph.create(reader, new StringLabelParser(), new IntLabelParser());
         return new Pair<Graph<String, Integer>, Vertex<String>>(
             graph,
             GraphAlgorithms.parseOrGenerateStartVertex(graph, options)

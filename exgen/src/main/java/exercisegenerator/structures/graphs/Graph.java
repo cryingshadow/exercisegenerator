@@ -17,7 +17,164 @@ import exercisegenerator.structures.*;
  */
 public class Graph<V, E> {
 
-    private final Map<Vertex<V>, List<Edge<E, V>>> adjacencyLists;
+    /**
+     * Creates a graph where the vertices are positioned according to a grid. The graph is generated from the specified
+     * reader according to the following format:
+     * Each even line (counting starts at 0) is of the form:
+     * <vertex label>,<from edge label>|<to edge label>,<vertex label>,<from edge label>|<to edge label>,...,<vertex label>
+     * Each odd line is of the form:
+     * <vertical from edge label>|<vertical to edge label>,<diagonal from edge label>|<diagonal to edge label>,...
+     * The diagonal edges follow the pattern:
+     * \/\/...
+     * /\/\...
+     * ...
+     * So the first (upper left) diagonal edge is descending.
+     * An empty label text corresponds to a non-existing vertex or edge. If there is an edge where at least one of its
+     * adjacent vertices does not exist, an IOException is thrown.
+     * @param reader The reader from which to read the input.
+     * @param vertexParser Parser for vertex labels.
+     * @param edgeParser Parser for edge labels.
+     * @throws IOException If some error occurs during input, the input does not comply to the expected format, or if
+     *                     we have an edge adjacent to a non-existing vertex.
+     */
+    public static <V, E> Graph<V, E> create(
+        final BufferedReader reader,
+        final LabelParser<V> vertexParser,
+        final LabelParser<E> edgeParser
+    ) throws IOException {
+        final Graph<V, E> result = new Graph<V, E>();
+        String line = reader.readLine();
+        final Map<GridCoordinates, Vertex<V>> newGrid =
+            new LinkedHashMap<GridCoordinates, Vertex<V>>();
+        final Map<GridCoordinates, List<Pair<E, GridCoordinates>>> edges =
+            new LinkedHashMap<GridCoordinates, List<Pair<E, GridCoordinates>>>();
+        int maxRow = 0;
+        for (int num = 0; line != null; num++) {
+            line.trim();
+            if ("".equals(line)) {
+                break;
+            }
+            final String[] commaSeparated = line.split(",");
+            final int row = num / 2;
+            maxRow = Math.max(maxRow, row);
+            if (num % 2 == 0) {
+                // even line
+                for (int i = 0; i < commaSeparated.length; i++) {
+                    if (i % 2 == 0) {
+                        // vertex label
+                        final String label = commaSeparated[i].trim();
+                        if (!"".equals(label)) {
+                            newGrid.put(
+                                new GridCoordinates(i / 2, row),
+                                new Vertex<V>(Optional.of(vertexParser.parse(label)))
+                            );
+                        }
+                    } else {
+                        // edge labels
+                        final String[] edgeLabels = commaSeparated[i].split("\\|");
+                        if (edgeLabels.length != 2) {
+                            throw new IOException("Edge labels do not match expected format (" + i + "," + num + ")!");
+                        }
+                        result.addEdges(
+                            edges,
+                            edgeLabels,
+                            edgeParser,
+                            new GridCoordinates(i / 2, row),
+                            new GridCoordinates((i / 2) + 1, row)
+                        );
+                    }
+                }
+            } else {
+                // odd line
+                for (int i = 0; i < commaSeparated.length; i++) {
+                    final String[] edgeLabels = commaSeparated[i].split("\\|");
+                    if (edgeLabels.length != 2) {
+                        throw new IOException("Edge labels do not match expected format (" + i + "," + num + ")!");
+                    }
+                    if (i % 2 == 0) {
+                        // vertical edges
+                        result.addEdges(
+                            edges,
+                            edgeLabels,
+                            edgeParser,
+                            new GridCoordinates(i / 2, row),
+                            new GridCoordinates(i / 2, row + 1)
+                        );
+                    } else {
+                        // diagonal edges
+                        if ((num % 4) + (i % 4) == 4) {
+                            // ascending diagonal
+                            result.addEdges(
+                                edges,
+                                edgeLabels,
+                                edgeParser,
+                                new GridCoordinates(i / 2, row + 1),
+                                new GridCoordinates((i / 2) + 1, row)
+                            );
+                        } else {
+                            // descending diagonal
+                            result.addEdges(
+                                edges,
+                                edgeLabels,
+                                edgeParser,
+                                new GridCoordinates(i / 2, row),
+                                new GridCoordinates((i / 2) + 1, row + 1)
+                            );
+                        }
+                    }
+                }
+            }
+            line = reader.readLine();
+        }
+        // now check whether we have edges to non-existing vertices
+        final Set<GridCoordinates> vertices = newGrid.keySet();
+        if (!vertices.containsAll(edges.keySet())) {
+            throw new IOException("Edge from non-existent vertex detected!");
+        }
+        for (final List<Pair<E, GridCoordinates>> list : edges.values()) {
+            for (final Pair<E, GridCoordinates> pair : list) {
+                if (!vertices.contains(pair.y)) {
+                    throw new IOException("Edge to non-existent vertex detected!");
+                }
+            }
+        }
+        // everything is alright - build the graph
+        result.adjacencyLists.clear();
+        // mirror the positions vertically as TikZ positions are mirrored that way compared to the input format
+        final Map<GridCoordinates, Vertex<V>> mirroredGrid =
+            new LinkedHashMap<GridCoordinates, Vertex<V>>();
+        for (final GridCoordinates pos : vertices) {
+            final Vertex<V> vertex = newGrid.get(pos);
+            result.adjacencyLists.put(vertex, new ArrayList<Edge<E, V>>());
+            mirroredGrid.put(new GridCoordinates(pos.x, maxRow - pos.y), vertex);
+        }
+        for (final Entry<GridCoordinates, List<Pair<E, GridCoordinates>>> edge : edges.entrySet()) {
+            final List<Edge<E, V>> list = result.adjacencyLists.get(newGrid.get(edge.getKey()));
+            for (final Pair<E, GridCoordinates> pair : edge.getValue()) {
+                list.add(new Edge<E, V>(pair.x, newGrid.get(pair.y)));
+            }
+        }
+        result.grid = Optional.of(mirroredGrid);
+        return result;
+    }
+
+    public static<V, E> Graph<V, E> create(final Map<Vertex<V>, List<Edge<E, V>>> adjacencyLists) {
+        final Graph<V, E> result = new Graph<V, E>();
+        result.adjacencyLists = new LinkedHashMap<Vertex<V>, List<Edge<E, V>>>(adjacencyLists);
+        return result;
+    }
+
+    public static<V, E> Graph<V, E> create(
+        final Map<Vertex<V>, List<Edge<E, V>>> adjacencyLists,
+        final Map<GridCoordinates, Vertex<V>> grid
+    ) {
+        final Graph<V, E> result = new Graph<V, E>();
+        result.adjacencyLists = new LinkedHashMap<Vertex<V>, List<Edge<E, V>>>(adjacencyLists);
+        result.setGrid(grid);
+        return result;
+    }
+
+    private Map<Vertex<V>, List<Edge<E, V>>> adjacencyLists;
 
     private Optional<Map<GridCoordinates, Vertex<V>>> grid;
 
@@ -228,145 +385,6 @@ public class Graph<V, E> {
         }
         LaTeXUtils.printTikzEnd(writer);
         Main.newLine(writer);
-    }
-
-    /**
-     * Creates a graph where the vertices are positioned according to a grid. The graph is generated from the specified
-     * reader according to the following format:
-     * Each even line (counting starts at 0) is of the form:
-     * <vertex label>,<from edge label>|<to edge label>,<vertex label>,<from edge label>|<to edge label>,...,<vertex label>
-     * Each odd line is of the form:
-     * <vertical from edge label>|<vertical to edge label>,<diagonal from edge label>|<diagonal to edge label>,...
-     * The diagonal edges follow the pattern:
-     * \/\/...
-     * /\/\...
-     * ...
-     * So the first (upper left) diagonal edge is descending.
-     * An empty label text corresponds to a non-existing vertex or edge. If there is an edge where at least one of its
-     * adjacent vertices does not exist, an IOException is thrown.
-     * @param reader The reader from which to read the input.
-     * @param vertexParser Parser for vertex labels.
-     * @param edgeParser Parser for edge labels.
-     * @throws IOException If some error occurs during input, the input does not comply to the expected format, or if
-     *                     we have an edge adjacent to a non-existing vertex.
-     */
-    public void setGraphFromInput(
-        final BufferedReader reader,
-        final LabelParser<V> vertexParser,
-        final LabelParser<E> edgeParser
-    ) throws IOException {
-        String line = reader.readLine();
-        final Map<GridCoordinates, Vertex<V>> newGrid =
-            new LinkedHashMap<GridCoordinates, Vertex<V>>();
-        final Map<GridCoordinates, List<Pair<E, GridCoordinates>>> edges =
-            new LinkedHashMap<GridCoordinates, List<Pair<E, GridCoordinates>>>();
-        int maxRow = 0;
-        for (int num = 0; line != null; num++) {
-            line.trim();
-            if ("".equals(line)) {
-                break;
-            }
-            final String[] commaSeparated = line.split(",");
-            final int row = num / 2;
-            maxRow = Math.max(maxRow, row);
-            if (num % 2 == 0) {
-                // even line
-                for (int i = 0; i < commaSeparated.length; i++) {
-                    if (i % 2 == 0) {
-                        // vertex label
-                        final String label = commaSeparated[i].trim();
-                        if (!"".equals(label)) {
-                            newGrid.put(
-                                new GridCoordinates(i / 2, row),
-                                new Vertex<V>(Optional.of(vertexParser.parse(label)))
-                            );
-                        }
-                    } else {
-                        // edge labels
-                        final String[] edgeLabels = commaSeparated[i].split("\\|");
-                        if (edgeLabels.length != 2) {
-                            throw new IOException("Edge labels do not match expected format (" + i + "," + num + ")!");
-                        }
-                        this.addEdges(
-                            edges,
-                            edgeLabels,
-                            edgeParser,
-                            new GridCoordinates(i / 2, row),
-                            new GridCoordinates((i / 2) + 1, row)
-                        );
-                    }
-                }
-            } else {
-                // odd line
-                for (int i = 0; i < commaSeparated.length; i++) {
-                    final String[] edgeLabels = commaSeparated[i].split("\\|");
-                    if (edgeLabels.length != 2) {
-                        throw new IOException("Edge labels do not match expected format (" + i + "," + num + ")!");
-                    }
-                    if (i % 2 == 0) {
-                        // vertical edges
-                        this.addEdges(
-                            edges,
-                            edgeLabels,
-                            edgeParser,
-                            new GridCoordinates(i / 2, row),
-                            new GridCoordinates(i / 2, row + 1)
-                        );
-                    } else {
-                        // diagonal edges
-                        if ((num % 4) + (i % 4) == 4) {
-                            // ascending diagonal
-                            this.addEdges(
-                                edges,
-                                edgeLabels,
-                                edgeParser,
-                                new GridCoordinates(i / 2, row + 1),
-                                new GridCoordinates((i / 2) + 1, row)
-                            );
-                        } else {
-                            // descending diagonal
-                            this.addEdges(
-                                edges,
-                                edgeLabels,
-                                edgeParser,
-                                new GridCoordinates(i / 2, row),
-                                new GridCoordinates((i / 2) + 1, row + 1)
-                            );
-                        }
-                    }
-                }
-            }
-            line = reader.readLine();
-        }
-        // now check whether we have edges to non-existing vertices
-        final Set<GridCoordinates> vertices = newGrid.keySet();
-        if (!vertices.containsAll(edges.keySet())) {
-            throw new IOException("Edge from non-existent vertex detected!");
-        }
-        for (final List<Pair<E, GridCoordinates>> list : edges.values()) {
-            for (final Pair<E, GridCoordinates> pair : list) {
-                if (!vertices.contains(pair.y)) {
-                    throw new IOException("Edge to non-existent vertex detected!");
-                }
-            }
-        }
-        // everything is alright - build the graph
-        this.adjacencyLists.clear();
-        // mirror the positions vertically as TikZ positions are mirrored that way compared to the input format
-        final Map<GridCoordinates, Vertex<V>> mirroredGrid =
-            new LinkedHashMap<GridCoordinates, Vertex<V>>();
-        for (final GridCoordinates pos : vertices) {
-            final Vertex<V> vertex = newGrid.get(pos);
-            this.adjacencyLists.put(vertex, new ArrayList<Edge<E, V>>());
-            mirroredGrid.put(new GridCoordinates(pos.x, maxRow - pos.y), vertex);
-        }
-        for (final Entry<GridCoordinates, List<Pair<E, GridCoordinates>>> edge : edges.entrySet()) {
-            final List<Edge<E, V>> list = this.adjacencyLists.get(newGrid.get(edge.getKey()));
-            for (final Pair<E, GridCoordinates> pair : edge.getValue()) {
-                list.add(new Edge<E, V>(pair.x, newGrid.get(pair.y)));
-            }
-        }
-        this.grid = Optional.of(mirroredGrid);
     }
 
     public void setGrid(final Map<GridCoordinates, Vertex<V>> newGrid) {
