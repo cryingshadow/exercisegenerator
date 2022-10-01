@@ -196,9 +196,7 @@ public class Graph<V, E> {
             throw new NullPointerException();
         }
         this.grid = Optional.empty();
-        this.addVertex(from);
-        this.addVertex(to);
-        this.adjacencyLists.get(from).add(new Edge<E, V>(label, to));
+        this.adjacencyLists.addEdge(from, label, to);
     }
 
     /**
