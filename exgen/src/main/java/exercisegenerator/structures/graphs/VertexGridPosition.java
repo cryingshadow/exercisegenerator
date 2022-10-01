@@ -5,14 +5,14 @@ import java.util.*;
 import exercisegenerator.structures.*;
 
 /**
- * Represents a node position in a grid layout.
+ * Represents a vertex position in a grid layout.
  */
-public class NodeGridPosition {
+public class VertexGridPosition {
 
     /**
      * The position east of the current one.
      */
-    public NodeGridPosition east;
+    public VertexGridPosition east;
 
     /**
      * Does this position allow diagonal edges?
@@ -22,37 +22,37 @@ public class NodeGridPosition {
     /**
      * The position north of the current one.
      */
-    public NodeGridPosition north;
+    public VertexGridPosition north;
 
     /**
      * The position northeast of the current one.
      */
-    public NodeGridPosition northeast;
+    public VertexGridPosition northeast;
 
     /**
      * The position northwest of the current one.
      */
-    public NodeGridPosition northwest;
+    public VertexGridPosition northwest;
 
     /**
      * The position south of the current one.
      */
-    public NodeGridPosition south;
+    public VertexGridPosition south;
 
     /**
      * The position southeast of the current one.
      */
-    public NodeGridPosition southeast;
+    public VertexGridPosition southeast;
 
     /**
      * The position southwest of the current one.
      */
-    public NodeGridPosition southwest;
+    public VertexGridPosition southwest;
 
     /**
      * The position west of the current one.
      */
-    public NodeGridPosition west;
+    public VertexGridPosition west;
 
     /**
      * The x coordinate of this position.
@@ -69,7 +69,7 @@ public class NodeGridPosition {
      * @param yPos The y coordinate of this position.
      * @param withDiagonals Does this position allow diagonal edges?
      */
-    public NodeGridPosition(final int xPos, final int yPos, final boolean withDiagonals) {
+    public VertexGridPosition(final int xPos, final int yPos, final boolean withDiagonals) {
         this.x = xPos;
         this.y = yPos;
         this.hasDiagonals = withDiagonals;
@@ -78,36 +78,36 @@ public class NodeGridPosition {
     /**
      * @return A list of all existing positions next to the current one.
      */
-    public List<Pair<Pair<Integer, Integer>, Boolean>> getExistingPositions() {
-        final List<Pair<Pair<Integer, Integer>, Boolean>> res = new ArrayList<Pair<Pair<Integer, Integer>, Boolean>>();
+    public List<Pair<GridCoordinates, Boolean>> getExistingPositions() {
+        final List<Pair<GridCoordinates, Boolean>> res = new ArrayList<Pair<GridCoordinates, Boolean>>();
         if (this.north != null) {
             res.add(
-                new Pair<Pair<Integer, Integer>, Boolean>(
-                    new Pair<Integer, Integer>(this.x, this.y - 1),
+                new Pair<GridCoordinates, Boolean>(
+                    new GridCoordinates(this.x, this.y - 1),
                     !this.hasDiagonals
                 )
             );
         }
         if (this.east != null) {
             res.add(
-                new Pair<Pair<Integer, Integer>, Boolean>(
-                    new Pair<Integer, Integer>(this.x + 1, this.y),
+                new Pair<GridCoordinates, Boolean>(
+                    new GridCoordinates(this.x + 1, this.y),
                     !this.hasDiagonals
                 )
             );
         }
         if (this.south != null) {
             res.add(
-                new Pair<Pair<Integer, Integer>, Boolean>(
-                    new Pair<Integer, Integer>(this.x, this.y + 1),
+                new Pair<GridCoordinates, Boolean>(
+                    new GridCoordinates(this.x, this.y + 1),
                     !this.hasDiagonals
                 )
             );
         }
         if (this.west != null) {
             res.add(
-                new Pair<Pair<Integer, Integer>, Boolean>(
-                    new Pair<Integer, Integer>(this.x - 1, this.y),
+                new Pair<GridCoordinates, Boolean>(
+                    new GridCoordinates(this.x - 1, this.y),
                     !this.hasDiagonals
                 )
             );
@@ -115,22 +115,22 @@ public class NodeGridPosition {
         if (this.hasDiagonals) {
             if (this.northeast != null) {
                 res.add(
-                    new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(this.x + 1, this.y - 1), true)
+                    new Pair<GridCoordinates, Boolean>(new GridCoordinates(this.x + 1, this.y - 1), true)
                 );
             }
             if (this.southeast != null) {
                 res.add(
-                    new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(this.x + 1, this.y + 1), true)
+                    new Pair<GridCoordinates, Boolean>(new GridCoordinates(this.x + 1, this.y + 1), true)
                 );
             }
             if (this.southwest != null) {
                 res.add(
-                    new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(this.x - 1, this.y + 1), true)
+                    new Pair<GridCoordinates, Boolean>(new GridCoordinates(this.x - 1, this.y + 1), true)
                 );
             }
             if (this.northwest != null) {
                 res.add(
-                    new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(this.x - 1, this.y - 1), true)
+                    new Pair<GridCoordinates, Boolean>(new GridCoordinates(this.x - 1, this.y - 1), true)
                 );
             }
         }
@@ -140,36 +140,36 @@ public class NodeGridPosition {
     /**
      * @return A list of all free positions next to the current one.
      */
-    public List<Pair<Pair<Integer, Integer>, Boolean>> getFreePositions() {
-        final List<Pair<Pair<Integer, Integer>, Boolean>> res = new ArrayList<Pair<Pair<Integer, Integer>, Boolean>>();
+    public List<Pair<GridCoordinates, Boolean>> getFreePositions() {
+        final List<Pair<GridCoordinates, Boolean>> res = new ArrayList<Pair<GridCoordinates, Boolean>>();
         if (this.north == null) {
             res.add(
-                new Pair<Pair<Integer, Integer>, Boolean>(
-                    new Pair<Integer, Integer>(this.x, this.y - 1),
+                new Pair<GridCoordinates, Boolean>(
+                    new GridCoordinates(this.x, this.y - 1),
                     !this.hasDiagonals
                 )
             );
         }
         if (this.east == null) {
             res.add(
-                new Pair<Pair<Integer, Integer>, Boolean>(
-                    new Pair<Integer, Integer>(this.x + 1, this.y),
+                new Pair<GridCoordinates, Boolean>(
+                    new GridCoordinates(this.x + 1, this.y),
                     !this.hasDiagonals
                 )
             );
         }
         if (this.south == null) {
             res.add(
-                new Pair<Pair<Integer, Integer>, Boolean>(
-                    new Pair<Integer, Integer>(this.x, this.y + 1),
+                new Pair<GridCoordinates, Boolean>(
+                    new GridCoordinates(this.x, this.y + 1),
                     !this.hasDiagonals
                 )
             );
         }
         if (this.west == null) {
             res.add(
-                new Pair<Pair<Integer, Integer>, Boolean>(
-                    new Pair<Integer, Integer>(this.x - 1, this.y),
+                new Pair<GridCoordinates, Boolean>(
+                    new GridCoordinates(this.x - 1, this.y),
                     !this.hasDiagonals
                 )
             );
@@ -177,22 +177,22 @@ public class NodeGridPosition {
         if (this.hasDiagonals) {
             if (this.northeast == null) {
                 res.add(
-                    new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(this.x + 1, this.y - 1), true)
+                    new Pair<GridCoordinates, Boolean>(new GridCoordinates(this.x + 1, this.y - 1), true)
                 );
             }
             if (this.southeast == null) {
                 res.add(
-                    new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(this.x + 1, this.y + 1), true)
+                    new Pair<GridCoordinates, Boolean>(new GridCoordinates(this.x + 1, this.y + 1), true)
                 );
             }
             if (this.southwest == null) {
                 res.add(
-                    new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(this.x - 1, this.y + 1), true)
+                    new Pair<GridCoordinates, Boolean>(new GridCoordinates(this.x - 1, this.y + 1), true)
                 );
             }
             if (this.northwest == null) {
                 res.add(
-                    new Pair<Pair<Integer, Integer>, Boolean>(new Pair<Integer, Integer>(this.x - 1, this.y - 1), true)
+                    new Pair<GridCoordinates, Boolean>(new GridCoordinates(this.x - 1, this.y - 1), true)
                 );
             }
         }
@@ -223,8 +223,8 @@ public class NodeGridPosition {
      * @param gen A random number generator.
      * @return A random free position next to the current position.
      */
-    public Pair<Pair<Integer, Integer>, Boolean> randomFreePosition(final Random gen) {
-        final List<Pair<Pair<Integer, Integer>, Boolean>> res = this.getFreePositions();
+    public Pair<GridCoordinates, Boolean> randomFreePosition(final Random gen) {
+        final List<Pair<GridCoordinates, Boolean>> res = this.getFreePositions();
         return res.get(gen.nextInt(res.size()));
     }
 

@@ -3,7 +3,7 @@ package exercisegenerator.structures.graphs;
 import java.math.*;
 import java.util.*;
 
-public class LabeledNode<L> {
+public class Vertex<L> {
 
     /**
      * Used to generate unique IDs (not synchronized).
@@ -15,45 +15,32 @@ public class LabeledNode<L> {
      * @return A fresh unique ID.
      */
     public static BigInteger getNewID() {
-        final BigInteger res = LabeledNode.nextID;
-        LabeledNode.nextID = LabeledNode.nextID.add(BigInteger.ONE);
+        final BigInteger res = Vertex.nextID;
+        Vertex.nextID = Vertex.nextID.add(BigInteger.ONE);
         return res;
     }
 
     public static void resetIDs() {
-        LabeledNode.nextID = BigInteger.ONE;
+        Vertex.nextID = BigInteger.ONE;
     }
 
-    /**
-     * The unique ID of this node.
-     */
     public final BigInteger id;
 
-    /**
-     * The label of this node.
-     */
     public final Optional<L> label;
 
-    /**
-     * Creates a node without a label.
-     */
-    public LabeledNode() {
+    public Vertex() {
         this(Optional.empty());
     }
 
-    /**
-     * Creates a node with the specified label.
-     * @param l The label of this node.
-     */
-    public LabeledNode(final Optional<L> label) {
+    public Vertex(final Optional<L> label) {
         this.label = label;
-        this.id = LabeledNode.getNewID();
+        this.id = Vertex.getNewID();
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (o instanceof LabeledNode) {
-            return this.id.equals(((LabeledNode<?>)o).id);
+        if (o instanceof Vertex) {
+            return this.id.equals(((Vertex<?>)o).id);
         }
         return false;
     }
@@ -66,7 +53,7 @@ public class LabeledNode<L> {
     @Override
     public String toString() {
         return String.format(
-            "Node %s%s",
+            "Vertex %s%s",
             this.id.toString(),
             this.label.isEmpty() ? "" : ": " + this.label.get().toString()
         );

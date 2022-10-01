@@ -7,7 +7,7 @@ import exercisegenerator.*;
 import exercisegenerator.io.*;
 
 /**
- * Programm for creating planar graphs with node positions according to a grid.
+ * Programm for creating planar graphs with vertex positions according to a grid.
  */
 public class GridGraph {
 
@@ -17,8 +17,8 @@ public class GridGraph {
     private static int mNumOfColumnsInGrid = 7;
 
     /**
-     * The number of adjacent nodes to store in the sparse version of the adjacency matrix for the nodes it considers.
-     * This sparse version is used to create the graph this exercise considers.
+     * The number of adjacent vertices to store in the sparse version of the adjacency matrix for the vertices it
+     * considers. This sparse version is used to create the graph this exercise considers.
      */
     private static int mNumOfNeighborsInSparseAdjacencyMatrix = 6;
 
@@ -34,44 +34,44 @@ public class GridGraph {
      * Creates an SCC exercise with the graph as given in the sparse version of the adjacency matrix.
      */
     public GridGraph() {
-        final int numOfNodes = GridGraph.mNumOfRowsInGrid * GridGraph.mNumOfColumnsInGrid;
-        this.mAdjacencyMatrix = new boolean[numOfNodes][numOfNodes];
+        final int numOfVertices = GridGraph.mNumOfRowsInGrid * GridGraph.mNumOfColumnsInGrid;
+        this.mAdjacencyMatrix = new boolean[numOfVertices][numOfVertices];
     }
 
     /**
-     * Creates the graph with node positioned according to a grid and the given sparse version of the adjacency matrix
-     * of the graph to create.
+     * Creates the graph with vertices positioned according to a grid and the given sparse version of the adjacency
+     * matrix of the graph to create.
      * @param sparseAdjacencyMatrix The sparse version of the adjacency matrix of the graph to create.
      */
     public void createGraph(final int[][] sparseAdjacencyMatrix) {
-        for (int i = 0; i < this.numOfNodesInSparseAdjacencyMatrix(); i++) {
-            final int nodeNum = 2*i;
+        for (int i = 0; i < this.numOfVerticesInSparseAdjacencyMatrix(); i++) {
+            final int vertexNum = 2 * i;
             // north
-            if (nodeNum > this.numOfColumnsInGrid()) {
-                this.addEdges(nodeNum, nodeNum-this.numOfColumnsInGrid(), sparseAdjacencyMatrix[i][0]);
+            if (vertexNum > this.numOfColumnsInGrid()) {
+                this.addEdges(vertexNum, vertexNum - this.numOfColumnsInGrid(), sparseAdjacencyMatrix[i][0]);
             }
             // east
-            if (nodeNum % this.numOfColumnsInGrid() < this.numOfColumnsInGrid() - 1) {
-                this.addEdges(nodeNum, nodeNum+1, sparseAdjacencyMatrix[i][1]);
+            if (vertexNum % this.numOfColumnsInGrid() < this.numOfColumnsInGrid() - 1) {
+                this.addEdges(vertexNum, vertexNum + 1, sparseAdjacencyMatrix[i][1]);
             }
             // south
-            if (nodeNum + this.numOfColumnsInGrid() < this.numOfAllNodes() - 1) {
-                this.addEdges(nodeNum, nodeNum+this.numOfColumnsInGrid(), sparseAdjacencyMatrix[i][2]);
+            if (vertexNum + this.numOfColumnsInGrid() < this.numOfAllVertices() - 1) {
+                this.addEdges(vertexNum, vertexNum + this.numOfColumnsInGrid(), sparseAdjacencyMatrix[i][2]);
             }
             // south-west
             if (
-                nodeNum + this.numOfColumnsInGrid() < this.numOfAllNodes() - 1
-                && nodeNum % this.numOfColumnsInGrid() > 0
+                vertexNum + this.numOfColumnsInGrid() < this.numOfAllVertices() - 1
+                && vertexNum % this.numOfColumnsInGrid() > 0
             ) {
-                this.addEdges(nodeNum, nodeNum+this.numOfColumnsInGrid()-1, sparseAdjacencyMatrix[i][3]);
+                this.addEdges(vertexNum, vertexNum + this.numOfColumnsInGrid() - 1, sparseAdjacencyMatrix[i][3]);
             }
             // west
-            if (nodeNum % this.numOfColumnsInGrid() > 0) {
-                this.addEdges(nodeNum, nodeNum-1, sparseAdjacencyMatrix[i][4]);
+            if (vertexNum % this.numOfColumnsInGrid() > 0) {
+                this.addEdges(vertexNum, vertexNum - 1, sparseAdjacencyMatrix[i][4]);
             }
             // north-west
-            if (nodeNum > this.numOfColumnsInGrid() && nodeNum % this.numOfColumnsInGrid() > 0) {
-                this.addEdges(nodeNum, nodeNum-this.numOfColumnsInGrid()-1, sparseAdjacencyMatrix[i][5]);
+            if (vertexNum > this.numOfColumnsInGrid() && vertexNum % this.numOfColumnsInGrid() > 0) {
+                this.addEdges(vertexNum, vertexNum - this.numOfColumnsInGrid() - 1, sparseAdjacencyMatrix[i][5]);
             }
         }
     }
@@ -134,42 +134,11 @@ public class GridGraph {
         }
     }
 
-    public boolean nodeHasAdjacentNodes(final int nodeNumber) {
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (this.mAdjacencyMatrix[nodeNumber][i]) {
-                return true;
-            }
-        }
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (this.mAdjacencyMatrix[i][nodeNumber]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public String nodeName(final int n) {
-        if (n < 0) {
-            return "0";
-        }
-        int c = 1;
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (i == n) {
-                break;
-            }
-            if (this.nodeHasAdjacentNodes(i)) {
-                c++;
-            }
-
-        }
-        return "" + c;
-    }
-
     /**
-     * Returns the number of all nodes, that includes the nodes which have no adjacent node and are considered as not
-     * existing in this exercise.
+     * Returns the number of all vertices, that includes the vertices which have no adjacent vertex and are considered
+     * as not existing in this exercise.
      */
-    public int numOfAllNodes() {
+    public int numOfAllVertices() {
         return GridGraph.mNumOfRowsInGrid * GridGraph.mNumOfColumnsInGrid;
     }
 
@@ -181,12 +150,12 @@ public class GridGraph {
         return GridGraph.mNumOfNeighborsInSparseAdjacencyMatrix;
     }
 
-    public int numOfNodesInSparseAdjacencyMatrix() {
-        return (GridGraph.mNumOfRowsInGrid * GridGraph.mNumOfColumnsInGrid + 1) / 2;
-    }
-
     public int numOfRowsInGrid() {
         return GridGraph.mNumOfRowsInGrid;
+    }
+
+    public int numOfVerticesInSparseAdjacencyMatrix() {
+        return (GridGraph.mNumOfRowsInGrid * GridGraph.mNumOfColumnsInGrid + 1) / 2;
     }
 
     /**
@@ -197,18 +166,18 @@ public class GridGraph {
     public void printGraph(final BufferedWriter writer, final boolean withSingletons) throws IOException {
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
-        // print the nodes
-        writer.write("% The nodes:");
+        // print the vertices
+        writer.write("% The vertices:");
         Main.newLine(writer);
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (withSingletons || this.nodeHasAdjacentNodes(i)) {
+        for (int i = 0; i < this.numOfAllVertices(); i++) {
+            if (withSingletons || this.vertexHasAdjacentVertices(i)) {
                 if (withSingletons) {
                     writer.write(
                         String.format(
                             "\\node[node] (%d) at (%d,%d) {%d};",
                             i,
                             i % this.numOfColumnsInGrid(),
-                            (this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid(),
+                            (this.numOfAllVertices()-1-i) / this.numOfColumnsInGrid(),
                             i
                         )
                     );
@@ -218,8 +187,8 @@ public class GridGraph {
                             "\\node[node] (%d) at (%d,%d) {%s};",
                             i,
                             i % this.numOfColumnsInGrid(),
-                            (this.numOfAllNodes()-1-i) / this.numOfColumnsInGrid(),
-                            this.nodeName(i)
+                            (this.numOfAllVertices()-1-i) / this.numOfColumnsInGrid(),
+                            this.vertexName(i)
                         )
                     );
                 }
@@ -258,7 +227,7 @@ public class GridGraph {
     throws IOException {
         final int[] sccs = this.findSCCs(writer, write);
         int sccNum = -1;
-        int checkedNodes = 0;
+        int checkedVertices = 0;
         int i = 0;
         boolean newScc = true;
         writer.write("Der gegebene Graph hat folgende starken Zusammenhangskomponenten:");
@@ -268,20 +237,20 @@ public class GridGraph {
         Main.newLine(writer);
         writer.write("    \\begin{array}{l}");
         Main.newLine(writer);
-        while (checkedNodes < this.numOfAllNodes()) {
+        while (checkedVertices < this.numOfAllVertices()) {
             if (sccs[i] == sccNum) {
-                if (withSingletons || this.nodeHasAdjacentNodes(i)) {
+                if (withSingletons || this.vertexHasAdjacentVertices(i)) {
                     if (newScc) {
-                        writer.write("        \\{ " + this.nodeName(i));
+                        writer.write("        \\{ " + this.vertexName(i));
                     } else {
-                        writer.write(",\\ " + this.nodeName(i));
+                        writer.write(",\\ " + this.vertexName(i));
                     }
                     newScc = false;
                 }
-                checkedNodes++;
+                checkedVertices++;
             }
             i++;
-            if (i == this.numOfAllNodes() || checkedNodes == this.numOfAllNodes()) {
+            if (i == this.numOfAllVertices() || checkedVertices == this.numOfAllVertices()) {
                 if (!newScc) {
                     writer.write("\\}");
                     writer.write("\\\\");
@@ -310,7 +279,7 @@ public class GridGraph {
         final boolean withSingletons,
         final boolean withText
     ) throws IOException {
-        final Integer[] nodeValues = this.topologicSort();
+        final Integer[] vertexValues = this.topologicSort();
         if (optionalExerciseWriter.isPresent()) {
             final BufferedWriter exerciseWriter = optionalExerciseWriter.get();
             if (withText) {
@@ -330,17 +299,17 @@ public class GridGraph {
         Main.newLine(solutionWriter);
         int min = 1;
         int first = 0;
-        for (int index = 0; index < nodeValues.length; ++index) {
-            if (nodeValues[index] != null && nodeValues[index] == min) {
-                solutionWriter.write(this.nodeName(index) + "("+ nodeValues[index] + ")");
+        for (int index = 0; index < vertexValues.length; ++index) {
+            if (vertexValues[index] != null && vertexValues[index] == min) {
+                solutionWriter.write(this.vertexName(index) + "("+ vertexValues[index] + ")");
                 first = index;
                 break;
             }
         }
-        while (min <= nodeValues.length) {
-            for (int index = 0; index < nodeValues.length; ++index) {
-                if (nodeValues[index] != null && nodeValues[index] == min && first != index) {
-                    solutionWriter.write(", " + this.nodeName(index) + "("+ nodeValues[index] + ")");
+        while (min <= vertexValues.length) {
+            for (int index = 0; index < vertexValues.length; ++index) {
+                if (vertexValues[index] != null && vertexValues[index] == min && first != index) {
+                    solutionWriter.write(", " + this.vertexName(index) + "("+ vertexValues[index] + ")");
                 }
             }
             ++min;
@@ -349,13 +318,45 @@ public class GridGraph {
         Main.newLine(solutionWriter);
     }
 
+    public boolean vertexHasAdjacentVertices(final int vertexNumber) {
+        for (int i = 0; i < this.numOfAllVertices(); i++) {
+            if (this.mAdjacencyMatrix[vertexNumber][i]) {
+                return true;
+            }
+        }
+        for (int i = 0; i < this.numOfAllVertices(); i++) {
+            if (this.mAdjacencyMatrix[i][vertexNumber]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String vertexName(final int n) {
+        if (n < 0) {
+            return "0";
+        }
+        int c = 1;
+        for (int i = 0; i < this.numOfAllVertices(); i++) {
+            if (i == n) {
+                break;
+            }
+            if (this.vertexHasAdjacentVertices(i)) {
+                c++;
+            }
+
+        }
+        return "" + c;
+    }
+
     /**
-     * Adds the entries into the adjacency matrix if the graph of this exercise, between the nodes of the given numbers.
-     * @param from The first node connected to the edge(s) to create.
-     * @param to The second node connected to the edge(s) to create.
-     * @param type 1, if only an edge from the first node to the second should be inserted;
-     *             -1, if only an edge from the second node to the first should be inserted;
-     *             2, if an edge from the first node to the second should and an edge from the second to the first node
+     * Adds the entries into the adjacency matrix if the graph of this exercise, between the vertices of the given
+     * numbers.
+     * @param from The first vertex connected to the edge(s) to create.
+     * @param to The second vertex connected to the edge(s) to create.
+     * @param type 1, if only an edge from the first vertex to the second should be inserted;
+     *             -1, if only an edge from the second vertex to the first should be inserted;
+     *             2, if an edge from the first vertex to the second and an edge from the second to the first vertex
      *             should be inserted; otherwise, no edge is added.
      */
     void addEdges(final int from, final int to, final int type) {
@@ -385,14 +386,14 @@ public class GridGraph {
         final int[] neighbors = this.getNeighbors(start);
         for (int index = 0; index < neighbors.length; ++index) {
             //System.out.println("Start: " + (start+1) + ", Neighbor: " + (neighbors[index]+1));
-            if (colors[neighbors[index]]==1) {
+            if (colors[neighbors[index]] == 1) {
                 throw new IOException("The given graph is cyclic!");
             }
             if (colors[neighbors[index]] == 0) {
                 topoNum = this.dfsTopologicOrdering(neighbors[index], colors, topoNum, topo);
             }
         }
-        topoNum +=1;
+        topoNum += 1;
         topo[start] = topoNum;
         //System.out.println("Set topo of " + (start+1) + " to " + topoNum);
         colors[start] = 2;
@@ -410,7 +411,7 @@ public class GridGraph {
         final int[] lastOfS
     ) {
         if (color == null) {
-            color = new int[this.numOfAllNodes()];
+            color = new int[this.numOfAllVertices()];
         }
         color[from] = 1;
         if (result != null) {
@@ -419,7 +420,7 @@ public class GridGraph {
         if (cc != null) {
             cc[from] = ccNum;
         }
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
+        for (int i = 0; i < this.numOfAllVertices(); i++) {
             if (
                 color[i] == 0
                 && (
@@ -438,19 +439,19 @@ public class GridGraph {
     }
 
     int[] findSCCs(final BufferedWriter writer, final boolean write) throws IOException {
-        final int[] result = new int[this.numOfAllNodes()];
-        for (int w = 0; w < this.numOfAllNodes(); w++) {
+        final int[] result = new int[this.numOfAllVertices()];
+        for (int w = 0; w < this.numOfAllVertices(); w++) {
             result[w] = -1;
         }
 
         // get the connected components
-        final int[] color = new int[this.numOfAllNodes()];
+        final int[] color = new int[this.numOfAllVertices()];
 
         // split all connected components into strongly connected components
         final int[] lastOfS = new int[1]; // Array storing only one int, as it is not possible to call primitive types in java by reference..
         lastOfS[0] = -1;
-        final int[] S = new int[this.numOfAllNodes()];
-        final int[] colorA = new int[this.numOfAllNodes()];
+        final int[] S = new int[this.numOfAllVertices()];
+        final int[] colorA = new int[this.numOfAllVertices()];
         // phase 1
         if (write) {
             Main.newLine(writer);
@@ -460,11 +461,11 @@ public class GridGraph {
             writer.write("\\medskip");
             Main.newLine(writer);
         }
-        for (int w = 0; w < this.numOfAllNodes(); w++) {
+        for (int w = 0; w < this.numOfAllVertices(); w++) {
             if (colorA[w] == 0) {
                 this.dfsWalk(w, colorA, null, 0, null, 1, S, lastOfS);
 
-                if (write && this.nodeHasAdjacentNodes(w)) {
+                if (write && this.vertexHasAdjacentVertices(w)) {
                     this.printS(writer, S, lastOfS);
                     this.printColor(writer, colorA);
                     writer.write("\\medskip");
@@ -482,7 +483,7 @@ public class GridGraph {
             writer.write("\\medskip");
             Main.newLine(writer);
         }
-        final int[] colorB = new int[this.numOfAllNodes()];
+        final int[] colorB = new int[this.numOfAllVertices()];
         while (lastOfS[0] > 0) {
             final Integer v = S[lastOfS[0]];
             lastOfS[0]--;
@@ -490,10 +491,10 @@ public class GridGraph {
             if (colorB[v] == 0) {
                 final List<Integer> walk = new ArrayList<Integer>();
                 this.dfsWalk(v, colorB, walk, 0, null, -1, null, null);
-                for (final Integer node : walk) {
-                    result[node] = v;
+                for (final Integer vertex : walk) {
+                    result[vertex] = v;
                 }
-                if (write && this.nodeHasAdjacentNodes(v)) {
+                if (write && this.vertexHasAdjacentVertices(v)) {
                     this.printS(writer, S, lastOfS);
                     this.printColor(writer, colorB);
                     this.printScc(writer, result);
@@ -505,10 +506,10 @@ public class GridGraph {
         return result;
     }
 
-    int[] getNeighbors(final int nodeIndex){
+    int[] getNeighbors(final int vertexIndex){
         final ArrayList<Integer> result = new ArrayList<Integer>();
-        for (int index = 0; index < this.mAdjacencyMatrix[nodeIndex].length; ++index) {
-            if (this.mAdjacencyMatrix[nodeIndex][index] == true) {
+        for (int index = 0; index < this.mAdjacencyMatrix[vertexIndex].length; ++index) {
+            if (this.mAdjacencyMatrix[vertexIndex][index] == true) {
                 result.add(index);
             }
         }
@@ -523,14 +524,14 @@ public class GridGraph {
     void printColor(final BufferedWriter writer, final int[] color) throws IOException {
         boolean firstWritten = false;
         writer.write("color: ");
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (this.nodeHasAdjacentNodes(i)) {
+        for (int i = 0; i < this.numOfAllVertices(); i++) {
+            if (this.vertexHasAdjacentVertices(i)) {
                 if (firstWritten) {
                     writer.write(", ");
                 } else {
                     firstWritten = true;
                 }
-                writer.write("(" + this.nodeName(i) + ", ");
+                writer.write("(" + this.vertexName(i) + ", ");
                 if (color[i] == 0) {
                     writer.write("w)");
                 } else if (color[i] == 1) {
@@ -548,13 +549,13 @@ public class GridGraph {
         boolean firstWritten = false;
         writer.write("S: ");
         for (int i = 0; i <= lastOfS[0]; i++) {
-            if (this.nodeHasAdjacentNodes(S[i])) {
+            if (this.vertexHasAdjacentVertices(S[i])) {
                 if (firstWritten) {
                     writer.write(", ");
                 } else {
                     firstWritten = true;
                 }
-                writer.write("" + this.nodeName(S[i]));
+                writer.write("" + this.vertexName(S[i]));
             }
         }
         Main.newLine(writer);
@@ -564,14 +565,14 @@ public class GridGraph {
     void printScc(final BufferedWriter writer, final int[] scc) throws IOException {
         boolean firstWritten = false;
         writer.write("scc: ");
-        for (int i = 0; i < this.numOfAllNodes(); i++) {
-            if (this.nodeHasAdjacentNodes(i)) {
+        for (int i = 0; i < this.numOfAllVertices(); i++) {
+            if (this.vertexHasAdjacentVertices(i)) {
                 if (firstWritten) {
                     writer.write(", ");
                 } else {
                     firstWritten = true;
                 }
-                writer.write("(" + this.nodeName(i) + ", " + this.nodeName(scc[i]) + ")");
+                writer.write("(" + this.vertexName(i) + ", " + this.vertexName(scc[i]) + ")");
             }
         }
         Main.newLine(writer);
@@ -579,15 +580,15 @@ public class GridGraph {
     }
 
     Integer[] topologicSort() throws IOException {
-        final Integer[] result = new Integer[this.numOfAllNodes()];
+        final Integer[] result = new Integer[this.numOfAllVertices()];
         Arrays.fill(result, null);
-        final int[] color = new int[this.numOfAllNodes()];
+        final int[] color = new int[this.numOfAllVertices()];
         Arrays.fill(color, 0);
         int topoNum = 0;
-        for (int nodeIndex = 0; nodeIndex < this.numOfAllNodes(); ++nodeIndex) {
-            if (color[nodeIndex] == 0 && this.nodeHasAdjacentNodes(nodeIndex)) {
+        for (int vertexIndex = 0; vertexIndex < this.numOfAllVertices(); ++vertexIndex) {
+            if (color[vertexIndex] == 0 && this.vertexHasAdjacentVertices(vertexIndex)) {
                 //try{
-                    topoNum = this.dfsTopologicOrdering(nodeIndex, color, topoNum, result);
+                    topoNum = this.dfsTopologicOrdering(vertexIndex, color, topoNum, result);
                 //}
                 //catch ( IOException e ){
                 //    System.out.println("Found cycle!");
