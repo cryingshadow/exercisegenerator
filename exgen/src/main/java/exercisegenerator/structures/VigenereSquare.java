@@ -37,7 +37,7 @@ public class VigenereSquare {
             table[i][0] = String.valueOf(i);
             table[i][1] = String.valueOf(this.alphabet.get(i));
         }
-        LaTeXUtils.printTable(table, Optional.empty(), LaTeXUtils.defaultColumnDefinition("1.5em"), false, 0, writer);
+        LaTeXUtils.printTable(table, Optional.empty(), LaTeXUtils.defaultColumnDefinition("1.5em"), false, 13, writer);
     }
 
 }
