@@ -333,7 +333,15 @@ public class MainTest {
                 input.currentNodeNumber,
                 Patterns.toCode(input.test.bitString),
                 Collections.singletonList(input.test.value),
-                Arrays.stream(cases).mapToInt(test -> String.valueOf(test.value).length()).max().getAsInt(),
+                Arrays.stream(cases)
+                    .mapToInt(
+                        test -> test.value
+                            .replaceAll("''", "\"")
+                            .replaceAll("\\\\[^\\\\\\{]+\\{\\}", "M")
+                            .replaceAll("\\\\.", "M")
+                            .length()
+                    ).max()
+                    .getAsInt(),
                 longestNumber,
                 input.exText,
                 input.solText
@@ -407,6 +415,59 @@ public class MainTest {
     }
 
     private final List<File> tmpFiles = new LinkedList<File>();
+
+    @Test
+    public void breadthFirstSearch() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.BFS.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "!A\n"
+                    + " A ,1| , B , | , C \n"
+                    + "1|1, | ,1| , | , |1\n"
+                    + " D , |1, E ,1| , F \n"
+                    + " |1, | ,1| , | ,1|1\n"
+                    + " G , |1, H ,1| , I \n"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Betrachten Sie den folgenden Graphen:\\\\[2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
+                    "\\node[node] (n1) at (0.0,2.0) {A};",
+                    "\\node[node] (n2) at (1.0,2.0) {B};",
+                    "\\node[node] (n3) at (2.0,2.0) {C};",
+                    "\\node[node] (n4) at (0.0,1.0) {D};",
+                    "\\node[node] (n5) at (1.0,1.0) {E};",
+                    "\\node[node] (n6) at (2.0,1.0) {F};",
+                    "\\node[node] (n7) at (0.0,0.0) {G};",
+                    "\\node[node] (n8) at (1.0,0.0) {H};",
+                    "\\node[node] (n9) at (2.0,0.0) {I};",
+                    "\\draw[p, bend right = 10] (n1) to node[auto, swap] {} (n2);",
+                    "\\draw[p, bend right = 10] (n1) to node[auto, swap] {} (n4);",
+                    "\\draw[p, bend right = 10] (n2) to node[auto, swap] {} (n5);",
+                    "\\draw[p, bend right = 10] (n4) to node[auto, swap] {} (n1);",
+                    "\\draw[p, bend right = 10] (n5) to node[auto, swap] {} (n4);",
+                    "\\draw[p, bend right = 10] (n5) to node[auto, swap] {} (n6);",
+                    "\\draw[p, bend right = 10] (n5) to node[auto, swap] {} (n8);",
+                    "\\draw[p, bend right = 10] (n6) to node[auto, swap] {} (n3);",
+                    "\\draw[p, bend right = 10] (n6) to node[auto, swap] {} (n9);",
+                    "\\draw[p, bend right = 10] (n7) to node[auto, swap] {} (n4);",
+                    "\\draw[p, bend right = 10] (n8) to node[auto, swap] {} (n7);",
+                    "\\draw[p, bend right = 10] (n8) to node[auto, swap] {} (n9);",
+                    "\\draw[p, bend right = 10] (n9) to node[auto, swap] {} (n6);",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "",
+                    "F\\\"uhren Sie eine \\emphasize{Breitensuche} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Breitensuche gefunden werden."
+                ),
+                List.of(
+                    "A, B, D, E, F, H, C, I, G"
+                )
+            )
+        );
+    }
 
     @Test
     public void bstree() throws IOException {
@@ -1262,7 +1323,19 @@ public class MainTest {
             new BinaryTestCase[] {
                 new BinaryTestCase("B", "01000010"),
                 new BinaryTestCase("c", "01100011"),
-                new BinaryTestCase("!", "00100001")
+                new BinaryTestCase("!", "00100001"),
+                new BinaryTestCase("''", "00100010"),
+                new BinaryTestCase("\\textvisiblespace{}", "00100000"),
+                new BinaryTestCase("\\&", "00100110"),
+                new BinaryTestCase("\\%", "00100101"),
+                new BinaryTestCase("\\$", "00100100"),
+                new BinaryTestCase("\\_", "01011111"),
+                new BinaryTestCase("\\{", "01111011"),
+                new BinaryTestCase("\\}", "01111101"),
+                new BinaryTestCase("\\textbackslash{}", "01011100"),
+                new BinaryTestCase("\\textasciicircum{}", "01011110"),
+                new BinaryTestCase("\\textasciitilde{}", "01111110"),
+                new BinaryTestCase("\\#", "00100011")
             };
         this.harness(
             new String[] {

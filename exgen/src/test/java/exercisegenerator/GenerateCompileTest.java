@@ -1,12 +1,14 @@
 package exercisegenerator;
 
 import java.io.*;
+import java.util.*;
 import java.util.concurrent.*;
 
 import org.testng.*;
 import org.testng.annotations.*;
 
 import exercisegenerator.algorithms.*;
+import exercisegenerator.structures.*;
 
 public class GenerateCompileTest {
 
@@ -56,32 +58,40 @@ public class GenerateCompileTest {
         final File locateTmp = File.createTempFile("locate", "tmp");
         final File testDir = new File(locateTmp.getParentFile().getAbsolutePath(), "gencomp");
         testDir.mkdir();
-        final String exFileName = "exercise.tex";
-        final String solFileName = "solution.tex";
-        final File exFile = new File(testDir, exFileName);
-        final File solFile = new File(testDir, solFileName);
+        final String exName = "exercise";
+        final String solName = "solution";
+        final String suffix = ".tex";
         for (final Algorithm alg : Algorithm.values()) {
             if (!alg.enabled) {
                 continue;
             }
+            final List<Pair<Process, String>> processes = new LinkedList<Pair<Process, String>>();
             for (int i = 0; i < numberOfRunsForEachAlgorithm; i++) {
+                final String exFileName = String.join("", exName, alg.name, String.valueOf(i), suffix);
+                final String solFileName = String.join("", solName, alg.name, String.valueOf(i), suffix);
+                final File exFile = new File(testDir, exFileName);
+                final File solFile = new File(testDir, solFileName);
                 Main.main(GenerateCompileTest.toCLIArguments(alg, alg.generateTestParameters.get(), exFile, solFile));
                 final Process processExercise = GenerateCompileTest.buildAndStartProcess(exFileName, testDir);
                 final Process processSolution = GenerateCompileTest.buildAndStartProcess(solFileName, testDir);
-                processExercise.waitFor(30, TimeUnit.SECONDS);
-                processSolution.waitFor(30, TimeUnit.SECONDS);
-                Assert.assertEquals(
-                    processExercise.exitValue(),
-                    0,
-                    String.format("%s yields non-compiling exercise! See: %s", alg.name, testDir.getAbsolutePath())
+                processes.add(
+                    new Pair<Process, String>(
+                        processExercise,
+                        String.format("%s yields non-compiling exercise! See: %s", alg.name, testDir.getAbsolutePath())
+                    )
                 );
-                Assert.assertEquals(
-                    processSolution.exitValue(),
-                    0,
-                    String.format("%s yields non-compiling solution! See: %s", alg.name, testDir.getAbsolutePath())
+                processes.add(
+                    new Pair<Process, String>(
+                        processSolution,
+                        String.format("%s yields non-compiling solution! See: %s", alg.name, testDir.getAbsolutePath())
+                    )
                 );
-                GenerateCompileTest.cleanUp(testDir);
             }
+            for (final Pair<Process, String> pair : processes) {
+                pair.x.waitFor(30, TimeUnit.SECONDS);
+                Assert.assertEquals(pair.x.exitValue(), 0, pair.y);
+            }
+            GenerateCompileTest.cleanUp(testDir);
         }
         testDir.delete();
         locateTmp.delete();

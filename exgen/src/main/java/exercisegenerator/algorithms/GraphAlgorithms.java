@@ -15,6 +15,9 @@ import exercisegenerator.structures.graphs.*;
  */
 public abstract class GraphAlgorithms {
 
+    private static final String BREADTH_FIRST_SEARCH_PATTERN =
+        "F\\\"uhren Sie eine \\emphasize{Breitensuche} auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Breitensuche gefunden werden.";
+
     /**
      * The default value being probably close to the edge values.
      */
@@ -51,6 +54,21 @@ public abstract class GraphAlgorithms {
      * The set of those graph algorithms working on undirected graphs.
      */
     private static final Set<String> UNDIRECTED_GRAPH_ALGORITHMS = GraphAlgorithms.initUndirectedGraphAlgorithms();
+
+    public static void breadthFirstSearch(final AlgorithmInput input) throws IOException {
+        final Pair<Graph<String, Integer>, Vertex<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final List<String> result = GraphAlgorithms.breadthFirstSearch(pair.x, pair.y, new StringVertexComparator());
+        GraphAlgorithms.printGraphExercise(
+            pair.x,
+            String.format(GraphAlgorithms.BREADTH_FIRST_SEARCH_PATTERN, pair.y.label.get()),
+            GraphPrintMode.NO_EDGE_LABELS,
+            input.exerciseWriter
+        );
+        Main.newLine(input.exerciseWriter);
+        input.solutionWriter.write(result.stream().collect(Collectors.joining(", ")));
+        Main.newLine(input.solutionWriter);
+        Main.newLine(input.solutionWriter);
+    }
 
     public static <V, E> List<V> breadthFirstSearch(
         final Graph<V, E> graph,

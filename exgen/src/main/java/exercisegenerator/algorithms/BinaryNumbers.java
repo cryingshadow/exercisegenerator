@@ -909,12 +909,14 @@ public class BinaryNumbers {
 
     private static List<ItemWithTikZInformation<String>> toValueSolution(final SolvedBinaryTask solvedTask) {
         return Collections.singletonList(
-            new ItemWithTikZInformation<>(Optional.of(LaTeXUtils.escapeForLaTeX(solvedTask.value)))
+            new ItemWithTikZInformation<String>(
+                Optional.of(LaTeXUtils.escapeForLaTeX(solvedTask.value).replaceAll(" ", "\\\\textvisiblespace{}"))
+            )
         );
     }
 
     private static String toValueTask(final SolvedBinaryTask solvedTask) {
-        return LaTeXUtils.escapeForLaTeX(solvedTask.value);
+        return LaTeXUtils.escapeForLaTeX(solvedTask.value).replaceAll(" ", "\\\\textvisiblespace{}");
     }
 
 }

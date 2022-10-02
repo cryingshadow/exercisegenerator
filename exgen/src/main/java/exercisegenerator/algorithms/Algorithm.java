@@ -29,6 +29,16 @@ public enum Algorithm {
         TreeAlgorithms::generateTestParameters
     ),
 
+    BFS(
+        "bfs",
+        "Breadth-First-Search",
+        new String[] {
+            "Breadth first search from a start vertex."
+        },
+        GraphAlgorithms::breadthFirstSearch,
+        GraphAlgorithms::generateTestParameters
+    ),
+
     BSTREE(
         "bstree",
         "Binary Search Tree",
