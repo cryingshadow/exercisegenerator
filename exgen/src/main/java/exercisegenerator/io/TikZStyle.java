@@ -8,12 +8,12 @@ public enum TikZStyle {
     /**
      * Array style.
      */
-    ARRAY("[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Huge}},node distance=0.25 and 0]"),
+    ARRAY("[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Large}},node distance=0.25 and 0]"),
 
     /**
      * Borderless Array style (for String-Arrays).
      */
-    BORDERLESS("[node/.style={draw=none,thick,inner sep=5pt, text width = 10cm}, node distance=0.25 and 0]"),
+    BORDERLESS("[node/.style={draw=none,thick,inner sep=5pt, text width = 10cm,font={\\Large}}, node distance=0.25 and 0]"),
 
     /**
      * B-tree style.

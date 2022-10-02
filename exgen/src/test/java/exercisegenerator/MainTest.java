@@ -1292,7 +1292,6 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "\\begin{center}",
-                "{\\Large",
                 "\\begin{tikzpicture}",
                 Patterns.ARRAY_STYLE,
                 Patterns.singleEmptyNode(nodeNumber++, contentLength)
@@ -1304,7 +1303,6 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "\\end{tikzpicture}",
-                "}",
                 "\\end{center}"
             )
         );
@@ -1321,7 +1319,6 @@ public class MainTest {
                 List.of(
                     "\\begin{center}",
                     "m = 11, c = 0,70, $c_1$ = 7, $c_2$ = 3:\\\\[2ex]",
-                    "{\\Large",
                     "\\begin{tikzpicture}",
                     Patterns.ARRAY_STYLE,
                     Patterns.singleEmptyNode(nodeNumber++, contentLength),
@@ -1336,7 +1333,6 @@ public class MainTest {
                     Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
                     Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
                     "\\end{tikzpicture}",
-                    "}",
                     "\\end{center}"
                 )
             )

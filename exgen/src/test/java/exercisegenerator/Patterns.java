@@ -6,7 +6,7 @@ import java.util.stream.*;
 public class Patterns {
 
     public static final String ARRAY_STYLE =
-        "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Huge}},node distance=0.25 and 0]";
+        "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Large}},node distance=0.25 and 0]";
 
     public static final String FROM_ASCII =
         "Geben Sie zu den folgenden ASCII Zeichen das jeweilige Bitmuster an:\\\\[2ex]";

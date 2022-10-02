@@ -661,11 +661,7 @@ public abstract class Hashing {
                     LaTeXUtils.printSolutionSpaceBeginning(options, exerciseWriter);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
-                exerciseWriter.write("{\\Large");
-                Main.newLine(exerciseWriter);
                 Hashing.printArray(initialArray, contentLength, printOptions.probing, exerciseWriter);
-                exerciseWriter.write("}");
-                Main.newLine(exerciseWriter);
                 LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
                 if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
                     LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
@@ -682,11 +678,7 @@ public abstract class Hashing {
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solutionWriter);
         solutionWriter.write(printOptions.parameterText);
         Main.newLine(solutionWriter);
-        solutionWriter.write("{\\Large");
-        Main.newLine(solutionWriter);
         Hashing.printArray(result, contentLength, printOptions.probing, solutionWriter);
-        solutionWriter.write("}");
-        Main.newLine(solutionWriter);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, solutionWriter);
         Main.newLine(solutionWriter);
     }
