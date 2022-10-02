@@ -3,6 +3,7 @@ package exercisegenerator.algorithms;
 import java.io.*;
 import java.util.*;
 import java.util.Map.*;
+import java.util.stream.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
@@ -23,6 +24,12 @@ public abstract class GraphAlgorithms {
      * The default value being probably close to the edge values adjacent to source/sink vertices.
      */
     private static final int DEFAULT_SOURCE_SINK_ROOT = 7;
+
+    private static final String DEPTH_FIRST_SEARCH_PATTERN =
+        "F\\\"uhren Sie eine \\emphasize{Tiefensuche} auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Tiefensuche gefunden werden.";
+
+    private static final String DIJKSTRA_PATTERN =
+        "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus.";
 
     /**
      * The phrase "each residual graph".
@@ -569,6 +576,21 @@ public abstract class GraphAlgorithms {
         return graph;
     }
 
+    public static void depthFirstSearch(final AlgorithmInput input) throws IOException {
+        final Pair<Graph<String, Integer>, Vertex<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final List<String> result = GraphAlgorithms.depthFirstSearch(pair.x, pair.y, new StringVertexComparator());
+        GraphAlgorithms.printGraphExercise(
+            pair.x,
+            String.format(GraphAlgorithms.DEPTH_FIRST_SEARCH_PATTERN, pair.y.label.get()),
+            GraphPrintMode.NO_EDGE_LABELS,
+            input.exerciseWriter
+        );
+        Main.newLine(input.exerciseWriter);
+        input.solutionWriter.write(result.stream().collect(Collectors.joining(", ")));
+        Main.newLine(input.solutionWriter);
+        Main.newLine(input.solutionWriter);
+    }
+
     public static <V, E> List<V> depthFirstSearch(
         final Graph<V, E> graph,
         final Vertex<V> start,
@@ -578,8 +600,7 @@ public abstract class GraphAlgorithms {
     }
 
     public static void dijkstra(final AlgorithmInput input) throws Exception {
-        final Pair<Graph<String, Integer>, Vertex<String>> pair =
-            GraphAlgorithms.parseOrGenerateGraph(input.options);
+        final Pair<Graph<String, Integer>, Vertex<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.printDijkstra(
             pair.x,
             pair.y,
@@ -1677,7 +1698,7 @@ public abstract class GraphAlgorithms {
             );
         return new Pair<Graph<String, Integer>, Vertex<String>>(
             graph,
-            GraphAlgorithms.parseOrGenerateStartVertex(graph, options)
+            GraphAlgorithms.generateStartVertex(graph, options)
         );
     }
 
@@ -1760,6 +1781,14 @@ public abstract class GraphAlgorithms {
             }
         }
         return sparseAdjacencyMatrix;
+    }
+
+    private static Vertex<String> generateStartVertex(final Graph<String, Integer> graph, final Parameters options) {
+        final Set<Vertex<String>> vertices = graph.getVerticesWithLabel("A");
+        if (!vertices.isEmpty()) {
+            return vertices.iterator().next();
+        }
+        return graph.getVertices().iterator().next();
     }
 
     private static void gridGraph(final AlgorithmInput input, final String name) throws IOException {
@@ -2031,7 +2060,7 @@ public abstract class GraphAlgorithms {
     private static Vertex<String> parseOrGenerateStartVertex(
         final Graph<String, Integer> graph,
         final Parameters options
-    ) {
+    ) throws IOException {
         Vertex<String> vertex = null;
         if (options.containsKey(Flag.OPERATIONS)) {
             final String operations = options.get(Flag.OPERATIONS);
@@ -2045,19 +2074,30 @@ public abstract class GraphAlgorithms {
                 if (!vertices.isEmpty()) {
                     vertex = vertices.iterator().next();
                 }
-            } catch (final IOException e) {
-                e.printStackTrace();
-                System.exit(1);
+            }
+        } else if (options.containsAtLeastOne(Flag.INPUT, Flag.SOURCE)) {
+            final String label =
+                new ParserAndGenerator<String>(
+                    (reader, params) -> {
+                        final String line = reader.readLine();
+                        if (line.startsWith("!")) {
+                            return line.substring(1);
+                        }
+                        return null;
+                    },
+                    (params) -> null
+                ).getResult(options);
+            if (label != null) {
+                final Set<Vertex<String>> vertices = graph.getVerticesWithLabel(label);
+                if (!vertices.isEmpty()) {
+                    vertex = vertices.iterator().next();
+                }
             }
         } else if (
-            !options.containsKey(Flag.SOURCE)
-            && !options.containsKey(Flag.INPUT)
+            !options.containsAtLeastOne(Flag.SOURCE, Flag.INPUT)
             && GraphAlgorithms.GRAPH_ALGORITHMS_WITH_START_VERTEX.contains(options.get(Flag.ALGORITHM))
         ) {
-            final Set<Vertex<String>> vertices = graph.getVerticesWithLabel("A");
-            if (!vertices.isEmpty()) {
-                vertex = vertices.iterator().next();
-            }
+            return GraphAlgorithms.generateStartVertex(graph, options);
         }
         return vertex;
     }
@@ -2081,28 +2121,23 @@ public abstract class GraphAlgorithms {
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
-        exWriter.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
-        Main.newLine(exWriter);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
-        graph.printTikZ(GraphPrintMode.ALL, 1, null, exWriter);
-        Main.newLine(exWriter);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
-        Main.newLine(exWriter);
-        exWriter.write("F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem ");
-        exWriter.write("\\emphasize{Startknoten ");
-        exWriter.write(start.label.isEmpty() ? "" : start.label.get().toString());
-        exWriter.write("} aus.");
+        GraphAlgorithms.printGraphExercise(
+            graph,
+            String.format(GraphAlgorithms.DIJKSTRA_PATTERN,  start.label.get().toString()),
+            GraphPrintMode.ALL,
+            exWriter
+        );
         switch (mode) {
             case ALWAYS:
             case SOLUTION_SPACE:
                 switch (Main.TEXT_VERSION) {
                     case ABRAHAM:
-                        exWriter.write(" F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
+                        exWriter.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
                         exWriter.write("\\texttt{v} und \\texttt{key} \\emphasize{nach jeder Iteration} der ");
                         exWriter.write("\\texttt{while}-Schleife eintragen:\\\\[2ex]");
                         break;
                     default:
-                        exWriter.write(" F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+                        exWriter.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
                 }
                 break;
             case NEVER:
@@ -2159,6 +2194,22 @@ public abstract class GraphAlgorithms {
         solWriter.write(" Distanz sicher berechnet worden ist.");
         Main.newLine(solWriter);
         Main.newLine(solWriter);
+    }
+
+    private static <V> void printGraphExercise(
+        final Graph<V, Integer> graph,
+        final String task,
+        final GraphPrintMode mode,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
+        Main.newLine(writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        graph.printTikZ(mode, 1, null, writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        Main.newLine(writer);
+        writer.write(task);
+        Main.newLine(writer);
     }
 
     /**

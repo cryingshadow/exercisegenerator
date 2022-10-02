@@ -54,6 +54,9 @@ public class Graph<V, E> {
     ) throws IOException {
         final Graph<V, E> result = new Graph<V, E>();
         String line = reader.readLine();
+        if (line.startsWith("!")) {
+            line = reader.readLine();
+        }
         final Map<GridCoordinates, Vertex<V>> newGrid =
             new LinkedHashMap<GridCoordinates, Vertex<V>>();
         final Map<GridCoordinates, List<Pair<E, GridCoordinates>>> edges =
@@ -382,7 +385,6 @@ public class Graph<V, E> {
             }
         }
         LaTeXUtils.printTikzEnd(writer);
-        Main.newLine(writer);
     }
 
     public void setGrid(final Map<GridCoordinates, Vertex<V>> newGrid) {

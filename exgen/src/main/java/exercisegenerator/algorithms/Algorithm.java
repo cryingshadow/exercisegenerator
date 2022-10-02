@@ -69,6 +69,16 @@ public enum Algorithm {
         Sorting::generateTestParameters
     ),
 
+    DFS(
+        "dfs",
+        "Depth-First-Search",
+        new String[] {
+            "Depth first search from a start vertex."
+        },
+        GraphAlgorithms::depthFirstSearch,
+        GraphAlgorithms::generateTestParameters
+    ),
+
     /**
      * Dijkstra's algorithm to find shortest paths from a single source.
      */
@@ -76,8 +86,8 @@ public enum Algorithm {
         "dijkstra",
         "Dijkstra Algorithmus",
         new String[] {
-            "Dijkstra's algorithm to find the shortest paths from a single source to all other nodes.",
-            "The flag -l specifies how many elements will be added to the hash table for generated instances."
+            "Dijkstra's algorithm to find the shortest paths from a single source to all other vertices.",
+            "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
         GraphAlgorithms::dijkstra,
         GraphAlgorithms::generateTestParameters
@@ -90,8 +100,8 @@ public enum Algorithm {
         "floyd",
         "Floyd Algorithmus",
         new String[] {
-            "Floyd's algorithm to find all shortest paths to all other nodes.",
-            "The flag -l specifies how many nodes will be added to the graph for generated instances."
+            "Floyd's algorithm to find all shortest paths to all other vertices.",
+            "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
         GraphAlgorithms::floyd,
         GraphAlgorithms::generateTestParameters
@@ -105,8 +115,8 @@ public enum Algorithm {
         "Ford-Fulkerson",
         new String[] {
             "Perform Ford-Fulkerson (Edmonds-Karp) on a flow network.",
-            "The flag -l specifies how many nodes will be added to the flow network in addition to source "
-            + "and sink (for generated instances). Thus, the number of nodes in the network is l + 2."
+            "The flag -l specifies how many vertices will be added to the flow network in addition to source "
+            + "and sink (for generated instances). Thus, the number of vertices in the network is l + 2."
         },
         GraphAlgorithms::fordFulkerson,
         GraphAlgorithms::generateTestParameters
@@ -408,7 +418,7 @@ public enum Algorithm {
         "Prim Algorithmus",
         new String[] {
             "Prim's algorithm to find the minimum spanning tree.",
-            "The flag -l specifies how many nodes will be added to the graph for generated instances."
+            "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
         GraphAlgorithms::prim,
         GraphAlgorithms::generateTestParameters
@@ -586,7 +596,7 @@ public enum Algorithm {
         "Warshall Algorithmus",
         new String[] {
             "Warshall's algorithm to find the transitive hull.",
-            "The flag -l specifies how many nodes will be added to the graph for generated instances."
+            "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
         GraphAlgorithms::warshall,
         GraphAlgorithms::generateTestParameters

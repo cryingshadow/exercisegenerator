@@ -14,4 +14,13 @@ public class Parameters extends LinkedHashMap<Flag, String> {
         super(map);
     }
 
+    public boolean containsAtLeastOne(final Flag... flags) {
+        for (final Flag flag : flags) {
+            if (this.containsKey(flag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

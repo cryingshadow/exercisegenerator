@@ -29,8 +29,8 @@ public class GraphAlgorithmsTest {
         adjacencyLists2.addEdge(a, 0, d);
         final AdjacencyLists<String, Integer> adjacencyLists3 = new AdjacencyLists<String, Integer>();
         adjacencyLists3.addEdge(a, 0, b);
-        adjacencyLists3.addEdge(a, 0, c);
         adjacencyLists3.addEdge(a, 0, d);
+        adjacencyLists3.addEdge(a, 0, c);
         adjacencyLists3.addEdge(b, 0, e);
         adjacencyLists3.addEdge(b, 0, f);
         adjacencyLists3.addEdge(c, 0, g);
@@ -88,8 +88,8 @@ public class GraphAlgorithmsTest {
         adjacencyLists2.addEdge(a, 0, d);
         final AdjacencyLists<String, Integer> adjacencyLists3 = new AdjacencyLists<String, Integer>();
         adjacencyLists3.addEdge(a, 0, b);
-        adjacencyLists3.addEdge(a, 0, c);
         adjacencyLists3.addEdge(a, 0, d);
+        adjacencyLists3.addEdge(a, 0, c);
         adjacencyLists3.addEdge(b, 0, e);
         adjacencyLists3.addEdge(b, 0, f);
         adjacencyLists3.addEdge(c, 0, g);

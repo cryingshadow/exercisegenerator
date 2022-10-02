@@ -528,6 +528,59 @@ public class MainTest {
     }
 
     @Test
+    public void depthFirstSearch() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.DFS.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "!A\n"
+                    + " A ,1| , B , | , C \n"
+                    + "1|1, | ,1| , | , |1\n"
+                    + " D , |1, E ,1| , F \n"
+                    + " |1, | ,1| , | ,1|1\n"
+                    + " G , |1, H ,1| , I \n"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Betrachten Sie den folgenden Graphen:\\\\[2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
+                    "\\node[node] (n1) at (0.0,2.0) {A};",
+                    "\\node[node] (n2) at (1.0,2.0) {B};",
+                    "\\node[node] (n3) at (2.0,2.0) {C};",
+                    "\\node[node] (n4) at (0.0,1.0) {D};",
+                    "\\node[node] (n5) at (1.0,1.0) {E};",
+                    "\\node[node] (n6) at (2.0,1.0) {F};",
+                    "\\node[node] (n7) at (0.0,0.0) {G};",
+                    "\\node[node] (n8) at (1.0,0.0) {H};",
+                    "\\node[node] (n9) at (2.0,0.0) {I};",
+                    "\\draw[p, bend right = 10] (n1) to node[auto, swap] {} (n2);",
+                    "\\draw[p, bend right = 10] (n1) to node[auto, swap] {} (n4);",
+                    "\\draw[p, bend right = 10] (n2) to node[auto, swap] {} (n5);",
+                    "\\draw[p, bend right = 10] (n4) to node[auto, swap] {} (n1);",
+                    "\\draw[p, bend right = 10] (n5) to node[auto, swap] {} (n4);",
+                    "\\draw[p, bend right = 10] (n5) to node[auto, swap] {} (n6);",
+                    "\\draw[p, bend right = 10] (n5) to node[auto, swap] {} (n8);",
+                    "\\draw[p, bend right = 10] (n6) to node[auto, swap] {} (n3);",
+                    "\\draw[p, bend right = 10] (n6) to node[auto, swap] {} (n9);",
+                    "\\draw[p, bend right = 10] (n7) to node[auto, swap] {} (n4);",
+                    "\\draw[p, bend right = 10] (n8) to node[auto, swap] {} (n7);",
+                    "\\draw[p, bend right = 10] (n8) to node[auto, swap] {} (n9);",
+                    "\\draw[p, bend right = 10] (n9) to node[auto, swap] {} (n6);",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "",
+                    "F\\\"uhren Sie eine \\emphasize{Tiefensuche} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Tiefensuche gefunden werden."
+                ),
+                List.of(
+                    "A, B, E, D, F, C, I, H, G"
+                )
+            )
+        );
+    }
+
+    @Test
     public void dijkstra() throws IOException {
         this.harness(
             new String[] {
@@ -552,11 +605,10 @@ public class MainTest {
                     "\\draw[p, bend right = 10] (n3) to node[auto, swap] {4} (n4);",
                     "\\draw[p, bend right = 10] (n4) to node[auto, swap] {3} (n2);",
                     "\\end{tikzpicture}",
-                    "",
-                    "",
                     "\\end{center}",
                     "",
-                    "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]",
+                    "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus.",
+                    "F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]",
                     "\\ifprintanswers",
                     "",
                     "\\vspace*{-3ex}",
