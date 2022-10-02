@@ -14,7 +14,7 @@ public class HuffmanEncoder {
     public String encode(final String sourceText) {
         return sourceText.chars()
             .mapToObj(c -> this.codeBook.get(Character.valueOf((char)c)))
-            .collect(Collectors.joining());
+            .collect(Collectors.joining(" "));
     }
 
 }

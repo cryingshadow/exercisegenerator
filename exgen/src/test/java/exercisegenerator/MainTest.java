@@ -204,38 +204,41 @@ public class MainTest {
     }
 
     private static void checkLaTeXPreamble(final BufferedReader reader) throws IOException {
-        Assert.assertEquals(reader.readLine(), "\\documentclass{article}");
-        Assert.assertEquals(reader.readLine(), "");
-        Assert.assertEquals(reader.readLine(), "\\usepackage[ngerman]{babel}");
-        Assert.assertEquals(reader.readLine(), "\\usepackage[T1]{fontenc}");
-        Assert.assertEquals(reader.readLine(), "\\usepackage[table]{xcolor}");
-        Assert.assertEquals(reader.readLine(), "\\usepackage[a4paper,margin=2cm]{geometry}");
-        Assert.assertEquals(reader.readLine(), "\\usepackage{tikz}");
-        Assert.assertEquals(
-            reader.readLine(),
-            "\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,trees,backgrounds}"
-        );
-        Assert.assertEquals(reader.readLine(), "\\usepackage{tikz-qtree}");
-        Assert.assertEquals(reader.readLine(), "\\usepackage{calc}");
-        Assert.assertEquals(reader.readLine(), "\\usepackage{array}");
-        Assert.assertEquals(reader.readLine(), "\\usepackage{amsmath}");
-        Assert.assertEquals(reader.readLine(), "\\usepackage{enumerate}");
-        Assert.assertEquals(reader.readLine(), "");
-        Assert.assertEquals(
-            reader.readLine(),
-            "\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}"
-        );
-        Assert.assertEquals(reader.readLine(), "");
-        Assert.assertEquals(reader.readLine(), "\\setlength{\\parindent}{0pt}");
-        Assert.assertEquals(reader.readLine(), "");
-        Assert.assertEquals(reader.readLine(), "\\newcommand{\\code}[1]{\\textnormal{\\texttt{#1}}}");
-        Assert.assertEquals(reader.readLine(), "\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
-        Assert.assertEquals(reader.readLine(), "\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{");
-        Assert.assertEquals(reader.readLine(), "            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}");
-        Assert.assertEquals(reader.readLine(), "\\newcommand{\\var}[1]{\\textit{#1}}");
-        Assert.assertEquals(reader.readLine(), "");
-        Assert.assertEquals(reader.readLine(), "\\begin{document}");
-        Assert.assertEquals(reader.readLine(), "");
+        final List<String> preamble =
+            List.of(
+                "\\documentclass{article}",
+                "",
+                "\\usepackage[ngerman]{babel}",
+                "\\usepackage[T1]{fontenc}",
+                "\\usepackage[table]{xcolor}",
+                "\\usepackage[a4paper,margin=2cm]{geometry}",
+                "\\usepackage{tikz}",
+                "\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,trees,backgrounds}",
+                "\\usepackage{tikz-qtree}",
+                "\\usepackage{calc}",
+                "\\usepackage{array}",
+                "\\usepackage{amsmath}",
+                "\\usepackage{enumerate}",
+                "\\usepackage{seqsplit}",
+                "\\usepackage{multicol}",
+                "",
+                "\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}",
+                "",
+                "\\setlength{\\parindent}{0pt}",
+                "",
+                "\\newcommand{\\code}[1]{\\textnormal{\\texttt{#1}}}",
+                "\\newcommand{\\codeseq}[1]{{\\ttfamily\\seqsplit{#1}}}",
+                "\\newcommand{\\emphasize}[1]{\\textbf{#1}}",
+                "\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{",
+                "            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}",
+                "\\newcommand{\\var}[1]{\\textit{#1}}",
+                "",
+                "\\begin{document}",
+                ""
+            );
+        for (final String line : preamble) {
+            Assert.assertEquals(reader.readLine(), line);
+        }
     }
 
     private static int checkNodeRowWithRandomNumbersAndReturnNextNodeNumber(
@@ -562,10 +565,8 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\",
-                    "\\begin{center}",
-                    "\\code{01100001100001111101}",
-                    "\\end{center}",
+                    "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\[2ex]",
+                    "\\codeseq{01100001100001111101}",
                     "",
                     "\\vspace*{1ex}",
                     "",
@@ -584,6 +585,50 @@ public class MainTest {
                     "\\textbf{Quelltext:}\\\\[2ex]"
                 ),
                 List.of("\\code{KLINIKUM}")
+            )
+        );
+    }
+
+    @Test
+    public void decodeHuffmanLongComma() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.FROM_HUFFMAN.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "100111110000000110001110101000001110111101101111010010111010011100111010100001011010111110101011110101111111101101010010001000010010110",
+                "-o", "' ':\"101\",',':\"01110\",'A':\"11101\",'B':\"01111\",'C':\"10000\",'E':\"1111\",'G':\"10001\",'H':\"10010\",'I':\"000\",'K':\"10011\",'L':\"11100\",'N':\"001\",'R':\"0110\",'S':\"010\",'T':\"110\""
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\[2ex]",
+                    "\\codeseq{100111110000000110001110101000001110111101101111010010111010011100111010100001011010111110101011110101111111101101010010001000010010110}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\textbf{Codebuch:}",
+                    "\\begin{align*}",
+                    "\\code{` '} &= \\code{\\textquotedbl{}101\\textquotedbl{}}\\\\",
+                    "\\code{`,'} &= \\code{\\textquotedbl{}01110\\textquotedbl{}}\\\\",
+                    "\\code{`A'} &= \\code{\\textquotedbl{}11101\\textquotedbl{}}\\\\",
+                    "\\code{`B'} &= \\code{\\textquotedbl{}01111\\textquotedbl{}}\\\\",
+                    "\\code{`C'} &= \\code{\\textquotedbl{}10000\\textquotedbl{}}\\\\",
+                    "\\code{`E'} &= \\code{\\textquotedbl{}1111\\textquotedbl{}}\\\\",
+                    "\\code{`G'} &= \\code{\\textquotedbl{}10001\\textquotedbl{}}\\\\",
+                    "\\code{`H'} &= \\code{\\textquotedbl{}10010\\textquotedbl{}}\\\\",
+                    "\\code{`I'} &= \\code{\\textquotedbl{}000\\textquotedbl{}}\\\\",
+                    "\\code{`K'} &= \\code{\\textquotedbl{}10011\\textquotedbl{}}\\\\",
+                    "\\code{`L'} &= \\code{\\textquotedbl{}11100\\textquotedbl{}}\\\\",
+                    "\\code{`N'} &= \\code{\\textquotedbl{}001\\textquotedbl{}}\\\\",
+                    "\\code{`R'} &= \\code{\\textquotedbl{}0110\\textquotedbl{}}\\\\",
+                    "\\code{`S'} &= \\code{\\textquotedbl{}010\\textquotedbl{}}\\\\",
+                    "\\code{`T'} &= \\code{\\textquotedbl{}110\\textquotedbl{}}\\\\",
+                    "\\end{align*}",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\textbf{Quelltext:}\\\\[2ex]"
+                ),
+                List.of("\\code{KLINGT INTERESSANT, IST ES ABER NICHT}")
             )
         );
     }
@@ -805,7 +850,7 @@ public class MainTest {
         exText.addAll(Patterns.SOLUTION_SPACE_END);
         solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
-        solText.add("\\code{1001100110110111001101}");
+        solText.add("\\code{100} \\code{11} \\code{00} \\code{11} \\code{01} \\code{101} \\code{11} \\code{00} \\code{11} \\code{01}");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
@@ -892,12 +937,133 @@ public class MainTest {
         exText.addAll(Patterns.SOLUTION_SPACE_END);
         solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
-        solText.add("\\code{1001100110110111001101}");
+        solText.add("\\code{100} \\code{11} \\code{00} \\code{11} \\code{01} \\code{101} \\code{11} \\code{00} \\code{11} \\code{01}");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "\\&%&^_&%&^",
+            },
+            MainTest.simpleComparison(exText, solText)
+        );
+    }
+
+    @Test
+    public void encodeHuffmanLong() throws IOException {
+        final int longestCodeLength = 5;
+        final String longestLeftHandSide = "\\code{`M'}";
+        final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "\\begin{center}",
+                "RHABARBERBARBARABARBARBARENBARTBARBIER",
+                "\\end{center}",
+                "",
+                "\\vspace*{1ex}",
+                "",
+                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
+            )
+        );
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
+        exText.add("\\textbf{Codebuch:}\\\\[2ex]");
+        exText.add("\\begin{multicols}{2}");
+        solText.add("\\textbf{Codebuch:}\\\\[2ex]");
+        solText.add("\\begin{multicols}{2}");
+        int currentNodeNumber =
+            MainTest.checkAssignment(
+                0,
+                "\\code{`A'}",
+                Collections.singletonList("\\code{01}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`B'}",
+                Collections.singletonList("\\code{10}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`E'}",
+                Collections.singletonList("\\code{000}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`H'}",
+                Collections.singletonList("\\code{00100}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`I'}",
+                Collections.singletonList("\\code{00101}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`N'}",
+                Collections.singletonList("\\code{00110}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`R'}",
+                Collections.singletonList("\\code{11}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        currentNodeNumber =
+            MainTest.checkAssignment(
+                currentNodeNumber,
+                "\\code{`T'}",
+                Collections.singletonList("\\code{00111}"),
+                longestCodeLength,
+                longestLeftHandSide,
+                exText,
+                solText
+            );
+        exText.add("\\end{multicols}");
+        solText.add("\\end{multicols}");
+        exText.addAll(Patterns.MIDDLE_SPACE);
+        exText.add("\\textbf{Code:}\\\\");
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
+        solText.addAll(Patterns.MIDDLE_SPACE);
+        solText.add("\\textbf{Code:}\\\\");
+        solText.add("\\code{11} \\code{00100} \\code{01} \\code{10} \\code{01} \\code{11} \\code{10} \\code{000} \\code{11} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{01} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{000} \\code{00110} \\code{10} \\code{01} \\code{11} \\code{00111} \\code{10} \\code{01} \\code{11} \\code{10} \\code{00101} \\code{000} \\code{11}");
+        this.harness(
+            new String[] {
+                "-a", Algorithm.TO_HUFFMAN.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "RHABARBERBARBARABARBARBARENBARTBARBIER",
             },
             MainTest.simpleComparison(exText, solText)
         );

@@ -2,6 +2,7 @@ package exercisegenerator.algorithms;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 import java.util.stream.*;
 
 import exercisegenerator.*;
@@ -108,15 +109,17 @@ public abstract class CodingAlgorithms {
     }
 
     private static Map<Character, String> parseCodeBook(final Parameters options) {
-        return Arrays.stream(options.get(Flag.OPERATIONS).split(","))
-            .map(entry -> {
-                final String[] assignment = entry.split(":");
-                if (assignment.length != 2 || !assignment[0].matches("'.'") || !assignment[1].matches("\".+\"")) {
-                    throw new IllegalArgumentException(CodingAlgorithms.CODE_BOOK_FORMAT_ERROR_MESSAGE);
-                }
+        final String input = options.get(Flag.OPERATIONS);
+        final Pattern pattern = Pattern.compile("'.':\"[^\"]+\"");
+        if (!input.matches("'.':\"[^\"]+\"(,'.':\"[^\"]+\")*")) {
+            throw new IllegalArgumentException(CodingAlgorithms.CODE_BOOK_FORMAT_ERROR_MESSAGE);
+        }
+        return pattern.matcher(input).results()
+            .map(match -> {
+                final String assignment = input.substring(match.start(), match.end());
                 return new Pair<Character, String>(
-                    assignment[0].charAt(1),
-                    assignment[1].substring(1, assignment[1].length() - 1)
+                    assignment.charAt(1),
+                    assignment.substring(5, assignment.length() - 1)
                 );
             }).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
@@ -173,7 +176,11 @@ public abstract class CodingAlgorithms {
         Main.newLine(exerciseWriter);
         solutionWriter.write("\\textbf{Code:}\\\\");
         Main.newLine(solutionWriter);
-        solutionWriter.write(LaTeXUtils.code(LaTeXUtils.escapeForLaTeX(code)));
+        solutionWriter.write(
+            Arrays.stream(LaTeXUtils.escapeForLaTeX(code).split(" "))
+                .map(LaTeXUtils::code)
+                .collect(Collectors.joining(" "))
+        );
         Main.newLine(solutionWriter);
     }
 
@@ -200,10 +207,15 @@ public abstract class CodingAlgorithms {
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
+        final boolean big = codeBook.size() > 7;
         exerciseWriter.write("\\textbf{Codebuch:}\\\\[2ex]");
         Main.newLine(exerciseWriter);
         solutionWriter.write("\\textbf{Codebuch:}\\\\[2ex]");
         Main.newLine(solutionWriter);
+        if (big) {
+            LaTeXUtils.beginMulticols(2, exerciseWriter);
+            LaTeXUtils.beginMulticols(2, solutionWriter);
+        }
         final int contentLength = codeBook.values().stream().mapToInt(String::length).max().getAsInt();
         for (final Pair<Character, String> assignment : CodingAlgorithms.toSortedList(codeBook)) {
             Algorithm.assignment(
@@ -219,6 +231,10 @@ public abstract class CodingAlgorithms {
                 solutionWriter
             );
         }
+        if (big) {
+            LaTeXUtils.endMulticols(exerciseWriter);
+            LaTeXUtils.endMulticols(solutionWriter);
+        }
     }
 
     private static void printExerciseAndSolutionForHuffmanDecoding(
@@ -229,13 +245,11 @@ public abstract class CodingAlgorithms {
         final BufferedWriter solutionWriter
     ) throws IOException {
         exerciseWriter.write(
-            "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\"
+            "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\[2ex]"
         );
         Main.newLine(exerciseWriter);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
-        exerciseWriter.write(LaTeXUtils.code(targetText));
+        exerciseWriter.write(LaTeXUtils.codeseq(LaTeXUtils.escapeForLaTeX(targetText)));
         Main.newLine(exerciseWriter);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
         LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
         CodingAlgorithms.printCodeBookForDecoding(codeBook, exerciseWriter);
         LaTeXUtils.printVerticalProtectedSpace("-3ex", exerciseWriter);

@@ -59,12 +59,26 @@ public abstract class LaTeXUtils {
      */
     private static int number = 0;
 
+    public static void beginMulticols(final int cols, final BufferedWriter writer) throws IOException {
+        writer.write(String.format("\\begin{multicols}{%d}", cols));
+        Main.newLine(writer);
+    }
+
     public static String code(final String text) {
         return String.format("\\code{%s}", text);
     }
 
+    public static String codeseq(final String text) {
+        return String.format("\\codeseq{%s}", text);
+    }
+
     public static Function<Integer, String> defaultColumnDefinition(final String width) {
         return cols -> String.format("|*{%d}{C{%s}|}", cols, width);
+    }
+
+    public static void endMulticols(final BufferedWriter writer) throws IOException {
+        writer.write("\\end{multicols}");
+        Main.newLine(writer);
     }
 
     public static String escapeForLaTeX(final char c) {
@@ -277,6 +291,10 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         writer.write("\\usepackage{enumerate}");
         Main.newLine(writer);
+        writer.write("\\usepackage{seqsplit}");
+        Main.newLine(writer);
+        writer.write("\\usepackage{multicol}");
+        Main.newLine(writer);
         Main.newLine(writer);
         writer.write("\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}");
         Main.newLine(writer);
@@ -285,6 +303,8 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         Main.newLine(writer);
         writer.write("\\newcommand{\\code}[1]{\\textnormal{\\texttt{#1}}}");
+        Main.newLine(writer);
+        writer.write("\\newcommand{\\codeseq}[1]{{\\ttfamily\\seqsplit{#1}}}");
         Main.newLine(writer);
         writer.write("\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
         Main.newLine(writer);
