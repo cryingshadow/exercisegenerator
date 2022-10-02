@@ -15,52 +15,43 @@ import exercisegenerator.structures.graphs.*;
  */
 public abstract class GraphAlgorithms {
 
-    private static final String BREADTH_FIRST_SEARCH_PATTERN =
-        "F\\\"uhren Sie eine \\emphasize{Breitensuche} auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Breitensuche gefunden werden.";
-
     /**
      * The default value being probably close to the edge values.
      */
-    private static final int DEFAULT_EDGE_ROOT = 3;
+    private static final int DEFAULT_EDGE_ROOT;
 
     /**
      * The default value being probably close to the edge values adjacent to source/sink vertices.
      */
-    private static final int DEFAULT_SOURCE_SINK_ROOT = 7;
+    private static final int DEFAULT_SOURCE_SINK_ROOT;
 
-    private static final String DEPTH_FIRST_SEARCH_PATTERN =
-        "F\\\"uhren Sie eine \\emphasize{Tiefensuche} auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Tiefensuche gefunden werden.";
+    private static final String DIJKSTRA_PATTERN;
 
-    private static final String DIJKSTRA_PATTERN =
-        "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus.";
+    private static final String EACH_RESIDUAL_GRAPH;
 
-    /**
-     * The phrase "each residual graph".
-     */
-    private static final String EACH_RESIDUAL_GRAPH = "\\emphasize{jedes Restnetzwerk (auch das initiale)}";
+    private static final Set<String> GRAPH_ALGORITHMS_WITH_START_VERTEX;
 
-    /**
-     * The set of those graph algorithms needing a start vertex.
-     */
-    private static final Set<String> GRAPH_ALGORITHMS_WITH_START_VERTEX =
-        GraphAlgorithms.initGraphAlgorithmsWithStartVertex();
+    private static final String RESIDUAL_GRAPH_NAME;
 
-    /**
-     * The name of a residual graph.
-     */
-    private static final String RESIDUAL_GRAPH = "Restnetzwerk";
+    private static final Set<String> UNDIRECTED_GRAPH_ALGORITHMS;
 
-    /**
-     * The set of those graph algorithms working on undirected graphs.
-     */
-    private static final Set<String> UNDIRECTED_GRAPH_ALGORITHMS = GraphAlgorithms.initUndirectedGraphAlgorithms();
+    static {
+        DEFAULT_EDGE_ROOT = 3;
+        DEFAULT_SOURCE_SINK_ROOT = 7;
+        DIJKSTRA_PATTERN =
+            "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus.";
+        EACH_RESIDUAL_GRAPH = "\\emphasize{jedes Restnetzwerk (auch das initiale)}";
+        GRAPH_ALGORITHMS_WITH_START_VERTEX = GraphAlgorithms.initGraphAlgorithmsWithStartVertex();
+        RESIDUAL_GRAPH_NAME = "Restnetzwerk";
+        UNDIRECTED_GRAPH_ALGORITHMS = GraphAlgorithms.initUndirectedGraphAlgorithms();
+    }
 
     public static void breadthFirstSearch(final AlgorithmInput input) throws IOException {
         final Pair<Graph<String, Integer>, Vertex<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
         final List<String> result = GraphAlgorithms.breadthFirstSearch(pair.x, pair.y, new StringVertexComparator());
         GraphAlgorithms.printGraphExercise(
             pair.x,
-            String.format(GraphAlgorithms.BREADTH_FIRST_SEARCH_PATTERN, pair.y.label.get()),
+            GraphAlgorithms.breadthFirstSearchTask(pair.y.label.get()),
             GraphPrintMode.NO_EDGE_LABELS,
             input.exerciseWriter
         );
@@ -599,7 +590,7 @@ public abstract class GraphAlgorithms {
         final List<String> result = GraphAlgorithms.depthFirstSearch(pair.x, pair.y, new StringVertexComparator());
         GraphAlgorithms.printGraphExercise(
             pair.x,
-            String.format(GraphAlgorithms.DEPTH_FIRST_SEARCH_PATTERN, pair.y.label.get()),
+            GraphAlgorithms.depthFirstSearchTask(pair.y.label.get()),
             GraphPrintMode.NO_EDGE_LABELS,
             input.exerciseWriter
         );
@@ -639,6 +630,8 @@ public abstract class GraphAlgorithms {
         if (comp != null) {
             Collections.sort(vertices, comp);
         }
+        vertices.remove(start);
+        vertices.add(0, start);
         final int size = vertices.size();
         final String[][] exTable;
         final String[][] solTable;
@@ -1038,7 +1031,7 @@ public abstract class GraphAlgorithms {
                         twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
                         exWriter
                     );
-                    exWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
+                    exWriter.write(GraphAlgorithms.RESIDUAL_GRAPH_NAME);
                     exWriter.write(":\\\\[2ex]");
                     Main.newLine(exWriter);
                     break;
@@ -1050,7 +1043,7 @@ public abstract class GraphAlgorithms {
                 twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
                 solWriter
             );
-            solWriter.write(GraphAlgorithms.RESIDUAL_GRAPH);
+            solWriter.write(GraphAlgorithms.RESIDUAL_GRAPH_NAME);
             solWriter.write(":\\\\[2ex]");
             Main.newLine(solWriter);
             final Set<Pair<Vertex<V>, Edge<Integer, V>>> toHighlightResidual;
@@ -1503,6 +1496,10 @@ public abstract class GraphAlgorithms {
         return gridPos;
     }
 
+    private static String breadthFirstSearchTask(final String start) {
+        return GraphAlgorithms.searchTask("Breitensuche", start);
+    }
+
     /**
      * @param graph A flow network.
      * @param path A path in the specified flow network from source to sink.
@@ -1626,6 +1623,10 @@ public abstract class GraphAlgorithms {
             result.addAll(GraphAlgorithms.depthFirstSearch(graph, nextVertex, comparator, used));
         }
         return result;
+    }
+
+    private static String depthFirstSearchTask(final String start) {
+        return GraphAlgorithms.searchTask("Tiefensuche", start);
     }
 
     /**
@@ -2162,6 +2163,7 @@ public abstract class GraphAlgorithms {
                 // do nothing
         }
         Main.newLine(exWriter);
+        final String columnWidth = "16mm";
         switch (mode) {
             case SOLUTION_SPACE:
                 LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
@@ -2173,7 +2175,7 @@ public abstract class GraphAlgorithms {
                 LaTeXUtils.printTable(
                     tables.exTable,
                     Optional.of(tables.exColor),
-                    LaTeXUtils.defaultColumnDefinition("2cm"),
+                    LaTeXUtils.defaultColumnDefinition(columnWidth),
                     false,
                     10,
                     exWriter
@@ -2197,7 +2199,7 @@ public abstract class GraphAlgorithms {
         LaTeXUtils.printTable(
             tables.solTable,
             Optional.of(tables.solColor),
-            LaTeXUtils.defaultColumnDefinition("2cm"),
+            LaTeXUtils.defaultColumnDefinition(columnWidth),
             false,
             10,
             solWriter
@@ -2317,6 +2319,15 @@ public abstract class GraphAlgorithms {
             }
         }
         return res;
+    }
+
+    private static String searchTask(final String search, final String start) {
+        return String.format(
+            "F\\\"uhren Sie eine \\emphasize{%s} auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die %s gefunden werden. Nehmen Sie an, dass der Algorithmus die Kanten in der alphabetischen Reihenfolge ihrer Zielknoten durchl\\\"auft.",
+            search,
+            start,
+            search
+        );
     }
 
     /**

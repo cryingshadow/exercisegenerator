@@ -460,7 +460,7 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{center}",
                     "",
-                    "F\\\"uhren Sie eine \\emphasize{Breitensuche} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Breitensuche gefunden werden."
+                    "F\\\"uhren Sie eine \\emphasize{Breitensuche} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Breitensuche gefunden werden. Nehmen Sie an, dass der Algorithmus die Kanten in der alphabetischen Reihenfolge ihrer Zielknoten durchl\\\"auft."
                 ),
                 List.of(
                     "A, B, D, E, F, H, C, I, G"
@@ -632,7 +632,7 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{center}",
                     "",
-                    "F\\\"uhren Sie eine \\emphasize{Tiefensuche} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Tiefensuche gefunden werden."
+                    "F\\\"uhren Sie eine \\emphasize{Tiefensuche} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Tiefensuche gefunden werden. Nehmen Sie an, dass der Algorithmus die Kanten in der alphabetischen Reihenfolge ihrer Zielknoten durchl\\\"auft."
                 ),
                 List.of(
                     "A, B, E, D, F, C, I, H, G"
@@ -643,14 +643,7 @@ public class MainTest {
 
     @Test
     public void dijkstra() throws IOException {
-        this.harness(
-            new String[] {
-                "-a", Algorithm.DIJKSTRA.name,
-                "-x", Main.EMBEDDED_EXAM,
-                "-p", "solutionSpace",
-                "-i", " A , |2, B \n5| , | , |3\n C ,4| , D",
-                "-o", "A"
-            },
+        final CheckedBiConsumer<BufferedReader, BufferedReader, IOException> test =
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie den folgenden Graphen:\\\\[2ex]",
@@ -678,7 +671,7 @@ public class MainTest {
                     "\\begin{center}",
                     "",
                     "\\renewcommand{\\arraystretch}{1.5}",
-                    "\\begin{tabular}{|*{4}{C{2cm}|}}",
+                    "\\begin{tabular}{|*{4}{C{16mm}|}}",
                     "\\hline",
                     "\\textbf{Knoten} & \\textbf{A} &  & \\\\\\hline",
                     "\\textbf{B} &  &  & \\\\\\hline",
@@ -696,7 +689,7 @@ public class MainTest {
                     "\\begin{center}",
                     "",
                     "\\renewcommand{\\arraystretch}{1.5}",
-                    "\\begin{tabular}{|*{4}{C{2cm}|}}",
+                    "\\begin{tabular}{|*{4}{C{16mm}|}}",
                     "\\hline",
                     "\\textbf{Knoten} & \\textbf{A} & \\textbf{C} & \\textbf{D}\\\\\\hline",
                     "\\textbf{B} & $\\infty$ & $\\infty$ & \\cellcolor{black!20}12\\\\\\hline",
@@ -710,7 +703,29 @@ public class MainTest {
                     "",
                     "Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale Distanz sicher berechnet worden ist."
                 )
-            )
+            );
+        this.harness(
+            new String[] {
+                "-a", Algorithm.DIJKSTRA.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-p", "solutionSpace",
+                "-i", " A , |2, B \n5| , | , |3\n C ,4| , D",
+                "-o", "A"
+            },
+            test
+        );
+        this.prepare();
+        this.harness(
+            new String[] {
+                "-a", Algorithm.DIJKSTRA.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-p", "solutionSpace",
+                "-i", "!A\n"
+                    + " A , |2, B \n"
+                    + "5| , | , |3\n"
+                    + " C ,4| , D "
+            },
+            test
         );
     }
 

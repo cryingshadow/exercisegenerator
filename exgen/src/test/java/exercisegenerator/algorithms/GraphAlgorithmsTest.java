@@ -109,4 +109,84 @@ public class GraphAlgorithmsTest {
         };
     }
 
+    @Test(dataProvider="dijkstraData")
+    public void dijkstra(
+        final Graph<String, Integer> graph,
+        final Vertex<String> start,
+        final DijkstraTables expected
+    ) {
+        Assert.assertEquals(GraphAlgorithms.dijkstra(graph, start, new StringVertexComparator()), expected);
+    }
+
+    @DataProvider
+    public Object[][] dijkstraData() {
+        final Vertex<String> a = new Vertex<String>("A");
+        final Vertex<String> b = new Vertex<String>("B");
+        final Vertex<String> c = new Vertex<String>("C");
+        final Vertex<String> d = new Vertex<String>("D");
+        final Vertex<String> e = new Vertex<String>("E");
+        final Vertex<String> f = new Vertex<String>("F");
+        final Vertex<String> g = new Vertex<String>("G");
+        final AdjacencyLists<String, Integer> adjacencyLists1 = new AdjacencyLists<String, Integer>();
+        adjacencyLists1.addEdge(a, 1, b);
+        adjacencyLists1.addEdge(a, 7, d);
+        adjacencyLists1.addEdge(b, 6, c);
+        adjacencyLists1.addEdge(b, 1, e);
+        adjacencyLists1.addEdge(c, 1, b);
+        adjacencyLists1.addEdge(c, 1, f);
+        adjacencyLists1.addEdge(d, 1, a);
+        adjacencyLists1.addEdge(d, 5, g);
+        adjacencyLists1.addEdge(e, 2, b);
+        adjacencyLists1.addEdge(e, 3, d);
+        adjacencyLists1.addEdge(e, 4, f);
+        adjacencyLists1.addEdge(e, 9, g);
+        adjacencyLists1.addEdge(f, 1, c);
+        adjacencyLists1.addEdge(g, 1, d);
+        return new Object[][] {
+            {
+                Graph.create(adjacencyLists1),
+                e,
+                new DijkstraTables(
+                    new String[][] {
+                        {"\\textbf{Knoten}", "\\textbf{E}", "", "", "", "", ""},
+                        {"\\textbf{A}", "", "", "", "", "", ""},
+                        {"\\textbf{B}", "", "", "", "", "", ""},
+                        {"\\textbf{C}", "", "", "", "", "", ""},
+                        {"\\textbf{D}", "", "", "", "", "", ""},
+                        {"\\textbf{F}", "", "", "", "", "", ""},
+                        {"\\textbf{G}", "", "", "", "", "", ""}
+                    },
+                    new String[][] {
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null}
+                    },
+                    new String[][] {
+                        {"\\textbf{Knoten}", "\\textbf{E}", "\\textbf{B}", "\\textbf{D}", "\\textbf{A}", "\\textbf{F}", "\\textbf{C}"},
+                        {"\\textbf{A}", "$\\infty$",    "$\\infty$",            "4", "\\textbf{--}", "\\textbf{--}", "\\textbf{--}"},
+                        {"\\textbf{B}",         "2", "\\textbf{--}", "\\textbf{--}", "\\textbf{--}", "\\textbf{--}", "\\textbf{--}"},
+                        {"\\textbf{C}", "$\\infty$",            "8",            "8",            "8",            "5", "\\textbf{--}"},
+                        {"\\textbf{D}",         "3",            "3", "\\textbf{--}", "\\textbf{--}", "\\textbf{--}", "\\textbf{--}"},
+                        {"\\textbf{F}",         "4",            "4",            "4",            "4", "\\textbf{--}", "\\textbf{--}"},
+                        {"\\textbf{G}",         "9",            "9",            "8",            "8",            "8",            "8"}
+                    },
+                    new String[][] {
+                        {null,       null,       null,       null,       null,       null,       null},
+                        {null,       null,       null, "black!20",       null,       null,       null},
+                        {null, "black!20",       null,       null,       null,       null,       null},
+                        {null,       null,       null,       null,       null, "black!20",       null},
+                        {null,       null, "black!20",       null,       null,       null,       null},
+                        {null,       null,       null,       null, "black!20",       null,       null},
+                        {null,       null,       null,       null,       null,       null, "black!20"}
+                    },
+                    true
+                )
+            }
+        };
+    }
+
 }

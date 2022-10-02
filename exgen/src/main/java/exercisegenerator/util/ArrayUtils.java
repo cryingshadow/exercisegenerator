@@ -1,5 +1,7 @@
 package exercisegenerator.util;
 
+import java.lang.reflect.*;
+
 /**
  * This abstract class offers static methods for manipulating arrays.
  */
@@ -40,20 +42,59 @@ public abstract class ArrayUtils {
         return result;
     }
 
-    /**
-     * Swaps the array elements at indices a and b if both indices are greater than or equal to 0. If one of the
-     * indices is negative, this method does nothing. If otherwise one of the indices is bigger than the array length
-     * minus one, an ArrayOutOfBoundsException is thrown.
-     * @param array The array.
-     * @param a The first index.
-     * @param b The second index.
-     */
+    public static <T> T[] copy(final T[] array) {
+        final int length = array.length;
+        @SuppressWarnings("unchecked")
+        final T[] result = (T[])Array.newInstance(array.getClass().getComponentType(), length);
+        System.arraycopy(array, 0, result, 0, length);
+        return result;
+    }
+
     public static void swap(final int[] array, final int a, final int b) {
         if (a >= 0 && b >= 0) {
             final int store = array[a];
             array[a] = array[b];
             array[b] = store;
         }
+    }
+
+    public static <T> void swap(final T[] array, final int a, final int b) {
+        if (a >= 0 && b >= 0) {
+            final T store = array[a];
+            array[a] = array[b];
+            array[b] = store;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[][] transpose(final T[][] table, final boolean transpose) {
+        if (table == null) {
+            return null;
+        }
+        if (table.length == 0) {
+            return ArrayUtils.copy(table);
+        }
+        if (transpose) {
+            final int size = table[0].length;
+            for (int i = 0; i < table.length; i++) {
+                if (table[i].length != size) {
+                    throw new IllegalArgumentException("Cannot transpose a table with differing lengths!");
+                }
+            }
+            final T[][] result = (T[][])Array.newInstance(table.getClass().getComponentType(), size);
+            for (int i = 0; i < size; i++) {
+                result[i] = (T[])Array.newInstance(table[0].getClass().getComponentType(), table.length);
+                for (int j = 0; j < table.length; j++) {
+                    result[i][j] = table[j][i];
+                }
+            }
+            return result;
+        }
+        final T[][] result = (T[][])Array.newInstance(table.getClass().getComponentType(), table.length);
+        for (int i = 0; i < table.length; i++) {
+            result[i] = ArrayUtils.copy(table[i]);
+        }
+        return result;
     }
 
 }
