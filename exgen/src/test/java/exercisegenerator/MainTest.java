@@ -555,6 +555,25 @@ public class MainTest {
     }
 
     @Test
+    public void decodeHamming() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.FROM_HAMMING.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "100110110101111",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Dekodieren Sie den folgenden \\emphasize{Hamming-Code}:\\\\[2ex]",
+                    "\\codeseq{100110110101111}"
+                ),
+                List.of("\\codeseq{00010101111}")
+            )
+        );
+
+    }
+
+    @Test
     public void decodeHuffman() throws IOException {
         this.harness(
             new String[] {
@@ -565,7 +584,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\[2ex]",
+                    "Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen Codebuch:\\\\[2ex]",
                     "\\codeseq{01100001100001111101}",
                     "",
                     "\\vspace*{1ex}",
@@ -600,7 +619,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\[2ex]",
+                    "Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen Codebuch:\\\\[2ex]",
                     "\\codeseq{100111110000000110001110101000001110111101101111010010111010011100111010100001011010111110101011110101111111101101010010001000010010110}",
                     "",
                     "\\vspace*{1ex}",
@@ -775,6 +794,25 @@ public class MainTest {
     }
 
     @Test
+    public void encodeHamming() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.TO_HAMMING.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "0101",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Geben Sie den \\emphasize{Hamming-Code} f\\\"ur die folgende bin\\\"are Nachricht an:\\\\[2ex]",
+                    "\\codeseq{0101}"
+                ),
+                List.of("\\codeseq{0100101}")
+            )
+        );
+
+    }
+
+    @Test
     public void encodeHuffman() throws IOException {
         final int longestCodeLength = 3;
         final String longestLeftHandSide = "\\code{`M'}";
@@ -782,7 +820,7 @@ public class MainTest {
         final List<String> solText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
                 "\\begin{center}",
                 "GEIERMEIER",
                 "\\end{center}",
@@ -869,7 +907,7 @@ public class MainTest {
         final List<String> solText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
                 "\\begin{center}",
                 "\\textbackslash{}\\&\\%\\&\\textasciicircum{}\\_\\&\\%\\&\\textasciicircum{}",
                 "\\end{center}",
@@ -956,7 +994,7 @@ public class MainTest {
         final List<String> solText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
                 "\\begin{center}",
                 "RHABARBERBARBARABARBARBARENBARTBARBIER",
                 "\\end{center}",

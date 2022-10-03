@@ -99,29 +99,29 @@ public class CodingAlgorithmsTest {
     @DataProvider
     public Object[][] encodeHammingData() {
         return new Object[][] {
-            {"0000", 7, "0000000"},
-            {"1000", 7, "1110000"},
-            {"0100", 7, "1001100"},
-            {"1100", 7, "0111100"},
-            {"0010", 7, "0101010"},
-            {"1010", 7, "1011010"},
-            {"0110", 7, "1100110"},
-            {"1110", 7, "0010110"},
-            {"0001", 7, "1101001"},
-            {"1001", 7, "0011001"},
-            {"0101", 7, "0100101"},
-            {"1101", 7, "1010101"},
-            {"0011", 7, "1000011"},
-            {"1011", 7, "0110011"},
-            {"0111", 7, "0001111"},
-            {"1111", 7, "1111111"},
-            {"00010101111", 15, "100100110101111"}
+            {"0000", "0000000"},
+            {"1000", "1110000"},
+            {"0100","1001100"},
+            {"1100","0111100"},
+            {"0010","0101010"},
+            {"1010","1011010"},
+            {"0110","1100110"},
+            {"1110","0010110"},
+            {"0001","1101001"},
+            {"1001","0011001"},
+            {"0101","0100101"},
+            {"1101","1010101"},
+            {"0011","1000011"},
+            {"1011","0110011"},
+            {"0111","0001111"},
+            {"1111","1111111"},
+            {"00010101111", "100100110101111"}
         };
     }
 
     @Test(dataProvider="encodeHammingData")
-    public void encodeHammingTest(final String message, final int codeLength, final String expected) throws IOException {
-        Assert.assertEquals(CodingAlgorithms.encodeHamming(BitString.parse(message), codeLength).toString(), expected);
+    public void encodeHammingTest(final String message, final String expected) throws IOException {
+        Assert.assertEquals(CodingAlgorithms.encodeHamming(BitString.parse(message)).toString(), expected);
     }
 
     @Test

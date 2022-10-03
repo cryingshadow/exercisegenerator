@@ -1,8 +1,11 @@
 package exercisegenerator.structures.binary;
 
+import java.io.*;
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
+
+import exercisegenerator.io.*;
 
 public class BitString extends LinkedList<Bit> {
 
@@ -10,6 +13,10 @@ public class BitString extends LinkedList<Bit> {
 
     public static BitString create(final BigInteger value, final int bitLength) {
         return BitString.parse(BitString.toBitLength(value.toString(2), bitLength));
+    }
+
+    public static BitString parse(final BufferedReader reader, final Parameters options) throws IOException {
+        return BitString.parse(reader.readLine());
     }
 
     public static BitString parse(final String bitString) {

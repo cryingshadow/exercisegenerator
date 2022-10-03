@@ -19,6 +19,21 @@ public abstract class CodingAlgorithms {
     private static final String CODE_BOOK_FORMAT_ERROR_MESSAGE =
         "The specified code book does not match the expected format (entries of the form 'S':\"C\" for a symbol S and a code C, separated by commas)!";
 
+    public static void decodeHamming(final AlgorithmInput input) throws IOException {
+        final BitString code =
+            new ParserAndGenerator<BitString>(
+                BitString::parse,
+                CodingAlgorithms::generateHammingCode
+            ).getResult(input.options);
+        final BitString message = CodingAlgorithms.decodeHamming(code);
+        CodingAlgorithms.printHammingDecodingExerciseAndSolution(
+            code,
+            message,
+            input.exerciseWriter,
+            input.solutionWriter
+        );
+    }
+
     public static BitString decodeHamming(final BitString message) {
         final int codeLength = message.size();
         if (!CodingAlgorithms.isPositiveIntegerPowerOfTwo(codeLength + 1)) {
@@ -56,11 +71,20 @@ public abstract class CodingAlgorithms {
         return tree.decode(targetText);
     }
 
-    public static BitString encodeHamming(final BitString message, final int codeLength) {
-        if (!CodingAlgorithms.isPositiveIntegerPowerOfTwo(codeLength + 1)) {
-            throw new IllegalArgumentException("Code length must be one less than a power of two!");
-        }
-        final int numOfParityBits = codeLength - message.size();
+    public static void encodeHamming(final AlgorithmInput input) throws IOException {
+        final BitString message =
+            new ParserAndGenerator<BitString>(
+                BitString::parse,
+                CodingAlgorithms::generateHammingMessage
+            ).getResult(input.options);
+        final BitString code = CodingAlgorithms.encodeHamming(message);
+        CodingAlgorithms.printHammingEncodingExerciseAndSolution(message, code, input.exerciseWriter, input.solutionWriter);
+    }
+
+    public static BitString encodeHamming(final BitString message) {
+        final int messageLength = message.size();
+        final int codeLength = CodingAlgorithms.findNextPowerOfTwo(messageLength) - 1;
+        final int numOfParityBits = codeLength - messageLength;
         if (BigInteger.TWO.pow(numOfParityBits).intValue() - 1 != codeLength) {
             throw new IllegalArgumentException("Message length does not match code length!");
         }
@@ -119,6 +143,14 @@ public abstract class CodingAlgorithms {
         return result;
     }
 
+    private static int findNextPowerOfTwo(final int number) {
+        int result = 4;
+        while (result <= number) {
+            result = result * 2;
+        }
+        return result;
+    }
+
     private static List<Character> generateAlphabet(final int alphabetSize, final Random gen) {
         final List<Character> biggestAlphabet = new ArrayList<Character>();
         for (int i = 32; i < 127; i++) {
@@ -132,6 +164,32 @@ public abstract class CodingAlgorithms {
             result.add(biggestAlphabet.remove(gen.nextInt(biggestAlphabet.size())));
         }
         return result;
+    }
+
+    private static BitString generateHammingCode(final Parameters options) {
+        final int length = Integer.parseInt(options.getOrDefault(Flag.LENGTH, "7"));
+        final int messageLength = CodingAlgorithms.hammingCodeLengthToMessageLength(length);
+        final BitString message = CodingAlgorithms.generateHammingMessage(messageLength);
+        final BitString result = CodingAlgorithms.encodeHamming(message);
+        final Random gen = new Random();
+        if (gen.nextBoolean()) {
+            result.invertBit(gen.nextInt(result.size()));
+        }
+        return result;
+    }
+
+    private static BitString generateHammingMessage(final int length) {
+        final Random gen = new Random();
+        final BitString result = new BitString();
+        for (int i = 0; i < length; i++) {
+            result.add(Bit.fromBoolean(gen.nextBoolean()));
+        }
+        return result;
+    }
+
+    private static BitString generateHammingMessage(final Parameters options) {
+        final int length = Integer.parseInt(options.getOrDefault(Flag.LENGTH, "4"));
+        return CodingAlgorithms.generateHammingMessage(length);
     }
 
     private static String generateSourceText(final Parameters options) {
@@ -155,6 +213,14 @@ public abstract class CodingAlgorithms {
             result.append(samples.get(gen.nextInt(samples.size())));
         }
         return result.toString();
+    }
+
+    private static int hammingCodeLengthToMessageLength(final int codeLength) {
+        final int powerOfTwo = codeLength + 1;
+        if (!CodingAlgorithms.isPositiveIntegerPowerOfTwo(powerOfTwo)) {
+            throw new IllegalArgumentException("Code length must be one less than a power of two!");
+        }
+        return codeLength - CodingAlgorithms.log2(powerOfTwo);
     }
 
     private static void invertParityBits(final int index, final BitString code, final int numOfParityBits) {
@@ -344,7 +410,7 @@ public abstract class CodingAlgorithms {
         final BufferedWriter solutionWriter
     ) throws IOException {
         exerciseWriter.write(
-            "Erzeugen Sie den Quelltext aus dem nachfolgenden Huffman Code mit dem angegebenen Codebuch:\\\\[2ex]"
+            "Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen Codebuch:\\\\[2ex]"
         );
         Main.newLine(exerciseWriter);
         exerciseWriter.write(LaTeXUtils.codeseq(LaTeXUtils.escapeForLaTeX(targetText)));
@@ -369,7 +435,7 @@ public abstract class CodingAlgorithms {
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
-        exerciseWriter.write("Erzeugen Sie den Huffman Code f\\\"ur das Zielalphabet $\\{");
+        exerciseWriter.write("Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{");
         exerciseWriter.write(
             LaTeXUtils.escapeForLaTeX(targetAlphabet.stream().map(String::valueOf).collect(Collectors.joining(",")))
         );
@@ -388,6 +454,40 @@ public abstract class CodingAlgorithms {
         LaTeXUtils.printVerticalProtectedSpace(solutionWriter);
         CodingAlgorithms.printCode(result.y, exerciseWriter, solutionWriter);
         LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
+        Main.newLine(solutionWriter);
+    }
+
+    private static void printHammingDecodingExerciseAndSolution(
+        final BitString code,
+        final BitString message,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        exerciseWriter.write("Dekodieren Sie den folgenden \\emphasize{Hamming-Code}:\\\\[2ex]");
+        Main.newLine(exerciseWriter);
+        exerciseWriter.write(LaTeXUtils.codeseq(code.toString()));
+        Main.newLine(exerciseWriter);
+        Main.newLine(exerciseWriter);
+        solutionWriter.write(LaTeXUtils.codeseq(message.toString()));
+        Main.newLine(solutionWriter);
+        Main.newLine(solutionWriter);
+    }
+
+    private static void printHammingEncodingExerciseAndSolution(
+        final BitString message,
+        final BitString code,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
+        exerciseWriter.write(
+            "Geben Sie den \\emphasize{Hamming-Code} f\\\"ur die folgende bin\\\"are Nachricht an:\\\\[2ex]"
+        );
+        Main.newLine(exerciseWriter);
+        exerciseWriter.write(LaTeXUtils.codeseq(message.toString()));
+        Main.newLine(exerciseWriter);
+        Main.newLine(exerciseWriter);
+        solutionWriter.write(LaTeXUtils.codeseq(code.toString()));
+        Main.newLine(solutionWriter);
         Main.newLine(solutionWriter);
     }
 

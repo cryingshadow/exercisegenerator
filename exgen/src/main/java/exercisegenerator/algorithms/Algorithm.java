@@ -156,6 +156,17 @@ public enum Algorithm {
         BinaryNumbers::generateTestParameters
     ),
 
+    FROM_HAMMING(
+        "fromhamming",
+        "Decode a Hamming code",
+        new String[] {
+            "Decode a Hamming code possibly fixing 1-bit errors.",
+            "You can specify the length of the generated code with the -l flag."
+        },
+        CodingAlgorithms::decodeHamming,
+        CodingAlgorithms::generateTestParametersTo
+    ),
+
     FROM_HUFFMAN(
         "fromhuff",
         "Huffman decoding",
@@ -525,6 +536,17 @@ public enum Algorithm {
         },
         BinaryNumbers::toFloat,
         BinaryNumbers::generateTestParameters
+    ),
+
+    TO_HAMMING(
+        "tohamming",
+        "Encode Hamming code",
+        new String[] {
+            "Encode a binary message to the corresponding Hamming code.",
+            "You can specify the length of the generated message with the -l flag."
+        },
+        CodingAlgorithms::encodeHamming,
+        CodingAlgorithms::generateTestParametersTo
     ),
 
     TO_HUFFMAN(
