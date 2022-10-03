@@ -4,12 +4,56 @@ import java.io.*;
 import java.util.*;
 
 import org.testng.*;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.binary.*;
 import exercisegenerator.structures.coding.*;
 
 public class CodingAlgorithmsTest {
+
+    @DataProvider
+    public Object[][] decodeHammingData() {
+        return new Object[][] {
+            {"0000000", "0000"},
+            {"1000000", "0000"},
+            {"0100000", "0000"},
+            {"0010000", "0000"},
+            {"0001000", "0000"},
+            {"0000100", "0000"},
+            {"0000010", "0000"},
+            {"0000001", "0000"},
+            {"1110000", "1000"},
+            {"1001100", "0100"},
+            {"0111100", "1100"},
+            {"0101010", "0010"},
+            {"1011010", "1010"},
+            {"1100110", "0110"},
+            {"0010110", "1110"},
+            {"1101001", "0001"},
+            {"0011001", "1001"},
+            {"0100101", "0101"},
+            {"1100101", "0101"},
+            {"0000101", "0101"},
+            {"0110101", "0101"},
+            {"0101101", "0101"},
+            {"0100001", "0101"},
+            {"0100111", "0101"},
+            {"0100100", "0101"},
+            {"1010101", "1101"},
+            {"1000011", "0011"},
+            {"0110011", "1011"},
+            {"0001111", "0111"},
+            {"1111111", "1111"},
+            {"100100110101111", "00010101111"},
+            {"100110110101111", "00010101111"}
+        };
+    }
+
+    @Test(dataProvider="decodeHammingData")
+    public void decodeHammingTest(final String message, final String expected) throws IOException {
+        Assert.assertEquals(CodingAlgorithms.decodeHamming(BitString.parse(message)).toString(), expected);
+    }
 
     @Test
     public void decodeHuffmanTest() {
@@ -50,6 +94,34 @@ public class CodingAlgorithmsTest {
                 tree
             );
         Assert.assertEquals(result, "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern.");
+    }
+
+    @DataProvider
+    public Object[][] encodeHammingData() {
+        return new Object[][] {
+            {"0000", 7, "0000000"},
+            {"1000", 7, "1110000"},
+            {"0100", 7, "1001100"},
+            {"1100", 7, "0111100"},
+            {"0010", 7, "0101010"},
+            {"1010", 7, "1011010"},
+            {"0110", 7, "1100110"},
+            {"1110", 7, "0010110"},
+            {"0001", 7, "1101001"},
+            {"1001", 7, "0011001"},
+            {"0101", 7, "0100101"},
+            {"1101", 7, "1010101"},
+            {"0011", 7, "1000011"},
+            {"1011", 7, "0110011"},
+            {"0111", 7, "0001111"},
+            {"1111", 7, "1111111"},
+            {"00010101111", 15, "100100110101111"}
+        };
+    }
+
+    @Test(dataProvider="encodeHammingData")
+    public void encodeHammingTest(final String message, final int codeLength, final String expected) throws IOException {
+        Assert.assertEquals(CodingAlgorithms.encodeHamming(BitString.parse(message), codeLength).toString(), expected);
     }
 
     @Test

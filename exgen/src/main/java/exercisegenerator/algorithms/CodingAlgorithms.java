@@ -1,6 +1,7 @@
 package exercisegenerator.algorithms;
 
 import java.io.*;
+import java.math.*;
 import java.util.*;
 import java.util.regex.*;
 import java.util.stream.*;
@@ -8,6 +9,7 @@ import java.util.stream.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.binary.*;
 import exercisegenerator.structures.coding.*;
 
 public abstract class CodingAlgorithms {
@@ -16,6 +18,26 @@ public abstract class CodingAlgorithms {
 
     private static final String CODE_BOOK_FORMAT_ERROR_MESSAGE =
         "The specified code book does not match the expected format (entries of the form 'S':\"C\" for a symbol S and a code C, separated by commas)!";
+
+    public static BitString decodeHamming(final BitString message) {
+        final int codeLength = message.size();
+        if (!CodingAlgorithms.isPositiveIntegerPowerOfTwo(codeLength + 1)) {
+            throw new IllegalArgumentException("Code length must be one less than a power of two!");
+        }
+        final int numOfParityBits = CodingAlgorithms.log2(codeLength + 1);
+        final BitString error = new BitString();
+        for (int i = 0; i < numOfParityBits; i++) {
+            error.addFirst(Bit.fromBoolean(CodingAlgorithms.oddOnes(message, i, numOfParityBits)));
+        }
+        final BitString result = new BitString(message);
+        if (!error.isZero()) {
+            result.invertBit(error.toUnsignedInt() - 1);
+        }
+        for (int i = numOfParityBits - 1; i >= 0; i--) {
+            result.remove(BigInteger.TWO.pow(i).intValue() - 1);
+        }
+        return result;
+    }
 
     public static void decodeHuffman(final AlgorithmInput input) throws IOException {
         final Map<Character, String> codeBook = CodingAlgorithms.parseCodeBook(input.options);
@@ -32,6 +54,33 @@ public abstract class CodingAlgorithms {
 
     public static String decodeHuffman(final String targetText, final HuffmanTree tree) {
         return tree.decode(targetText);
+    }
+
+    public static BitString encodeHamming(final BitString message, final int codeLength) {
+        if (!CodingAlgorithms.isPositiveIntegerPowerOfTwo(codeLength + 1)) {
+            throw new IllegalArgumentException("Code length must be one less than a power of two!");
+        }
+        final int numOfParityBits = codeLength - message.size();
+        if (BigInteger.TWO.pow(numOfParityBits).intValue() - 1 != codeLength) {
+            throw new IllegalArgumentException("Message length does not match code length!");
+        }
+        final BitString result = new BitString();
+        int index = 1;
+        final Iterator<Bit> data = message.iterator();
+        while (data.hasNext()) {
+            if (CodingAlgorithms.isPositiveIntegerPowerOfTwo(index)) {
+                result.add(Bit.ZERO);
+            } else {
+                result.add(data.next());
+            }
+            index++;
+        }
+        for (int i = 3; i <= codeLength; i++) {
+            if (!result.get(i - 1).isZero()) {
+                CodingAlgorithms.invertParityBits(i, result, numOfParityBits);
+            }
+        }
+        return result;
     }
 
     public static void encodeHuffman(final AlgorithmInput input) throws IOException {
@@ -106,6 +155,56 @@ public abstract class CodingAlgorithms {
             result.append(samples.get(gen.nextInt(samples.size())));
         }
         return result.toString();
+    }
+
+    private static void invertParityBits(final int index, final BitString code, final int numOfParityBits) {
+        final BitString indexBits = CodingAlgorithms.toIndexBits(index, numOfParityBits);
+        int bitIndex = 0;
+        for (final Bit bit : indexBits) {
+            if (!bit.isZero()) {
+                code.invertBit(BigInteger.TWO.pow(bitIndex).intValue() - 1);
+            }
+            bitIndex++;
+        }
+    }
+
+    private static boolean isPositiveIntegerPowerOfTwo(final int number) {
+        if (number < 1) {
+            return false;
+        }
+        int current = number;
+        while (current > 1) {
+            if (current % 2 != 0) {
+                return false;
+            }
+            current = current / 2;
+        }
+        return true;
+    }
+
+    private static int log2(final int number) {
+        int current = number;
+        int result = 0;
+        while (current > 1) {
+            current = current / 2;
+            result++;
+        }
+        return result;
+    }
+
+    private static boolean oddOnes(final BitString message, final int parityBit, final int numOfParityBits) {
+        boolean result = false;
+        int index = 1;
+        for (final Bit bit : message) {
+            if (!bit.isZero()) {
+                final BitString indexBits = CodingAlgorithms.toIndexBits(index, numOfParityBits);
+                if (!indexBits.get(parityBit).isZero()) {
+                    result = !result;
+                }
+            }
+            index++;
+        }
+        return result;
     }
 
     private static Map<Character, String> parseCodeBook(final Parameters options) {
@@ -290,6 +389,10 @@ public abstract class CodingAlgorithms {
         CodingAlgorithms.printCode(result.y, exerciseWriter, solutionWriter);
         LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
         Main.newLine(solutionWriter);
+    }
+
+    private static BitString toIndexBits(final int index, final int numOfParityBits) {
+        return BitString.create(BigInteger.valueOf(index), numOfParityBits).reverse();
     }
 
     private static List<Pair<Character, String>> toSortedList(final Map<Character, String> codeBook) {

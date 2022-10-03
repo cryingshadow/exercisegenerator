@@ -66,8 +66,21 @@ public class BitString extends LinkedList<Bit> {
         return this.stream().map(b -> b.invert()).collect(Collectors.toCollection(BitString::new));
     }
 
+    public void invertBit(final int index) {
+        final Bit bit = this.get(index);
+        this.set(index, bit.invert());
+    }
+
     public boolean isZero() {
         return this.toUnsignedInt() == 0;
+    }
+
+    public BitString reverse() {
+        final BitString result = new BitString();
+        for (final Bit bit : this) {
+            result.addFirst(bit);
+        }
+        return result;
     }
 
     public BitString subString(final int fromIndex) {
