@@ -2222,7 +2222,7 @@ public abstract class GraphAlgorithms {
         final GraphPrintMode mode,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Betrachten Sie den folgenden Graphen:\\\\[2ex]");
+        writer.write("Betrachten Sie den folgenden Graphen:\\\\");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         graph.printTikZ(mode, 1, null, writer);

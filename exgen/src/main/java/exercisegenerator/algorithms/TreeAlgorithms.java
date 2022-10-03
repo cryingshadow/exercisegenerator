@@ -81,7 +81,7 @@ public abstract class TreeAlgorithms {
                     writerSpace.write("\\emphasize{Rotation} an:\\\\\\\\");
                     Main.newLine(writerSpace);
                 } else {
-                    writerSpace.write("Betrachten Sie den folgenden \\emphasize{AVL-Baum}:\\\\[2ex]");
+                    writerSpace.write("Betrachten Sie den folgenden \\emphasize{AVL-Baum}:\\\\");
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
                     tree.print("", writerSpace);
@@ -121,12 +121,12 @@ public abstract class TreeAlgorithms {
                         writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
                         writerSpace.write(" in den folgenden \\emphasize{AVL-Baum} ein und geben Sie die entstehenden");
                         writerSpace.write(" B\\\"aume nach jeder \\emphasize{Einf\\\"ugeoperation} sowie jeder ");
-                        writerSpace.write("\\emphasize{Rotation} an:\\\\[2ex]");
+                        writerSpace.write("\\emphasize{Rotation} an:\\\\");
                     } else {
                         writerSpace.write("L\\\"oschen Sie den Wert " + op.x);
                         writerSpace.write(" aus dem folgenden \\emphasize{AVL-Baum} und geben Sie die entstehenden ");
                         writerSpace.write("B\\\"aume nach jeder \\emphasize{L\\\"oschoperation} sowie jeder ");
-                        writerSpace.write("\\emphasize{Rotation} an:\\\\[2ex]");
+                        writerSpace.write("\\emphasize{Rotation} an:\\\\");
                     }
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
@@ -720,7 +720,7 @@ public abstract class TreeAlgorithms {
             } else {
                 writer.write("Betrachten Sie den folgenden \\emphasize{");
                 writer.write(tree.getName());
-                writer.write("}:\\\\[2ex]");
+                writer.write("}:\\\\");
                 Main.newLine(writer);
                 TreeAlgorithms.printTreeAndReturnStepCounter(0, "", tree, writer);
                 LaTeXUtils.printVerticalProtectedSpace(writer);
@@ -756,7 +756,7 @@ public abstract class TreeAlgorithms {
                     writer.write(tree.getName());
                     writer.write("} ein und geben Sie die entstehenden B\\\"aume nach jeder ");
                     writer.write(tree.getOperations());
-                    writer.write(" an.\\\\[2ex]");
+                    writer.write(" an.\\\\");
                 } else {
                     throw new IllegalArgumentException("Deleting a value from an empty tree makes no sense!");
                 }
@@ -768,7 +768,7 @@ public abstract class TreeAlgorithms {
                     writer.write(tree.getName());
                     writer.write("} ein und geben Sie die entstehenden B\\\"aume nach jeder ");
                     writer.write(tree.getOperations());
-                    writer.write(" an:\\\\[2ex]");
+                    writer.write(" an:\\\\");
                 } else {
                     writer.write("L\\\"oschen Sie den Wert ");
                     writer.write(String.valueOf(op.x));
@@ -776,7 +776,7 @@ public abstract class TreeAlgorithms {
                     writer.write(tree.getName());
                     writer.write("} und geben Sie die entstehenden B\\\"aume nach jeder ");
                     writer.write(tree.getOperations());
-                    writer.write(" an:\\\\[2ex]");
+                    writer.write(" an:\\\\");
                 }
                 Main.newLine(writer);
                 Main.newLine(writer);

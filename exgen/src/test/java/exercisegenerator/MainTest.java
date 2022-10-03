@@ -434,7 +434,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\[2ex]",
+                    "Betrachten Sie den folgenden Graphen:\\\\",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -477,7 +477,7 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "Betrachten Sie den folgenden \\emphasize{Bin\\\"ar-Suchbaum}:\\\\[2ex]",
+                "Betrachten Sie den folgenden \\emphasize{Bin\\\"ar-Suchbaum}:\\\\",
                 "\\begin{minipage}[t]{7cm}",
                 "\\begin{center}",
                 "\\begin{tikzpicture}",
@@ -648,7 +648,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\[2ex]",
+                    "Betrachten Sie den folgenden Graphen:\\\\",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -691,7 +691,7 @@ public class MainTest {
         final CheckedBiConsumer<BufferedReader, BufferedReader, IOException> test =
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\[2ex]",
+                    "Betrachten Sie den folgenden Graphen:\\\\",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
