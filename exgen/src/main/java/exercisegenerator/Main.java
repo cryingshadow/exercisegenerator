@@ -38,7 +38,7 @@ public class Main {
     /**
      * The release version of this program.
      */
-    private static final String VERSION = "1.2.0";
+    private static final String VERSION = "2.0.0";
 
     static {
         NUMBER_LIMIT = 100;
