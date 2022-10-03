@@ -1005,9 +1005,9 @@ public class MainTest {
             )
         );
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
-        exText.add("\\textbf{Codebuch:}\\\\[2ex]");
+        exText.add("\\textbf{Codebuch:}");
         exText.add("\\begin{multicols}{2}");
-        solText.add("\\textbf{Codebuch:}\\\\[2ex]");
+        solText.add("\\textbf{Codebuch:}");
         solText.add("\\begin{multicols}{2}");
         int currentNodeNumber =
             MainTest.checkAssignment(

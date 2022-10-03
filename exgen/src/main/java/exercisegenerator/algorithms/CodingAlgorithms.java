@@ -373,13 +373,18 @@ public abstract class CodingAlgorithms {
         final BufferedWriter solutionWriter
     ) throws IOException {
         final boolean big = codeBook.size() > 7;
-        exerciseWriter.write("\\textbf{Codebuch:}\\\\[2ex]");
-        Main.newLine(exerciseWriter);
-        solutionWriter.write("\\textbf{Codebuch:}\\\\[2ex]");
-        Main.newLine(solutionWriter);
+        exerciseWriter.write("\\textbf{Codebuch:}");
+        solutionWriter.write("\\textbf{Codebuch:}");
         if (big) {
+            Main.newLine(exerciseWriter);
+            Main.newLine(solutionWriter);
             LaTeXUtils.beginMulticols(2, exerciseWriter);
             LaTeXUtils.beginMulticols(2, solutionWriter);
+        } else {
+            exerciseWriter.write("\\\\[2ex]");
+            solutionWriter.write("\\\\[2ex]");
+            Main.newLine(exerciseWriter);
+            Main.newLine(solutionWriter);
         }
         final int contentLength = codeBook.values().stream().mapToInt(String::length).max().getAsInt();
         for (final Pair<Character, String> assignment : CodingAlgorithms.toSortedList(codeBook)) {
