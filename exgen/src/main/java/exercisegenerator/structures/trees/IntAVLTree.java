@@ -1,6 +1,7 @@
 package exercisegenerator.structures.trees;
 
 import java.io.*;
+import java.util.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
@@ -45,7 +46,7 @@ public class IntAVLTree {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public void add(final int val, final BufferedWriter writer) throws IOException {
+    public void add(final int val, final Optional<BufferedWriter> optionalWriter) throws IOException {
         AVLNode current = this.root;
         AVLNode parent = null;
         while (current != null) {
@@ -64,21 +65,15 @@ public class IntAVLTree {
         if (parent == null) {
             // tree is empty => new root
             this.root = node;
-            if (writer != null) {
-                this.print("f\\\"uge " + val + " ein", writer);
-            }
+            this.print("f\\\"uge " + val + " ein", optionalWriter);
         } else if (node.value < parent.value) {
             parent.left = node;
-            if (writer != null) {
-                this.print("f\\\"uge " + val + " ein", writer);
-            }
-            this.balance(parent, true, writer);
+            this.print("f\\\"uge " + val + " ein", optionalWriter);
+            this.balance(parent, true, optionalWriter);
         } else {
             parent.right = node;
-            if (writer != null) {
-                this.print("f\\\"uge " + val + " ein", writer);
-            }
-            this.balance(parent, true, writer);
+            this.print("f\\\"uge " + val + " ein", optionalWriter);
+            this.balance(parent, true, optionalWriter);
         }
     }
 
@@ -98,7 +93,7 @@ public class IntAVLTree {
      * @param val The key to find.
      * @return The highest node with the given key in this AVL-tree or null if the given key does not occur.
      */
-    public AVLNode find(final int val) {
+    public Optional<AVLNode> find(final int val) {
         AVLNode currentNode = this.root;
         while (currentNode != null) {
             if (val < currentNode.value) {
@@ -107,10 +102,10 @@ public class IntAVLTree {
                 currentNode = currentNode.right;
             } else {
                 // val == currentNode.value
-                return currentNode;
+                return Optional.of(currentNode);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -160,7 +155,11 @@ public class IntAVLTree {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public void print(final String headline, final BufferedWriter writer) throws IOException  {
+    public void print(final String headline, final Optional<BufferedWriter> optionalWriter) throws IOException  {
+        if (optionalWriter.isEmpty()) {
+            return;
+        }
+        final BufferedWriter writer = optionalWriter.get();
         this.printVerticalSpace(writer);
         this.printSamePageBeginning(headline, writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
@@ -185,22 +184,18 @@ public class IntAVLTree {
      * @param writer The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    public void remove(final AVLNode node, final BufferedWriter writer) throws IOException {
+    public void remove(final AVLNode node, final Optional<BufferedWriter> optionalWriter) throws IOException {
         final int value = node.value;
         if (this.root.left == null && this.root.right == null ) {
             assert (node == this.root) : "Tried to remove a node which does not exist in this AVL-tree!";
             this.root = null;
-            if (writer != null) {
-                this.print("entferne " + value, writer);
-            }
+            this.print("entferne " + value, optionalWriter);
         } else {
             final AVLNode tmp = this.delete(node);
-            if (writer != null) {
-                this.print("entferne " + value, writer);
-            }
+            this.print("entferne " + value, optionalWriter);
             // Balance the tree
             if (tmp != null) {
-                this.balance(tmp, false, writer);
+                this.balance(tmp, false, optionalWriter);
             }
         }
     }
@@ -227,22 +222,26 @@ public class IntAVLTree {
      * @param afterInsertion A flag indicating whether the balancing is applied after an insertion. In this case, this
      *                       method only needs to balance at most once in order to obtain a balanced tree. Otherwise,
      *                       balancing needs to continue up to the root.
-     * @param writer The writer to send the output to.
+     * @param optionalWriter The writer to send the output to.
      * @throws IOException If some error occurs during output.
      */
-    private void balance(final AVLNode node, final boolean afterInsertion, final BufferedWriter writer) throws IOException {
+    private void balance(
+        final AVLNode node,
+        final boolean afterInsertion,
+        final Optional<BufferedWriter> optionalWriter
+    ) throws IOException {
         AVLNode currentNode = node;
         while (currentNode != null) {
             if (currentNode.left == null && currentNode.right != null) {
                 if (currentNode.right.height() > 0) {
-                    currentNode = this.balanceRightToLeft(currentNode, writer);
+                    currentNode = this.balanceRightToLeft(currentNode, optionalWriter);
                     if (afterInsertion) {
                         return;
                     }
                 }
             } else if (currentNode.right == null && currentNode.left != null) {
                 if (currentNode.left.height() > 0) {
-                    currentNode = this.balanceLeftToRight(currentNode, writer);
+                    currentNode = this.balanceLeftToRight(currentNode, optionalWriter);
                     if (afterInsertion) {
                         return;
                     }
@@ -251,13 +250,13 @@ public class IntAVLTree {
                 final int diff = currentNode.left.height() - currentNode.right.height();
                 if (diff > 1) {
                     // left subtree is too high
-                    currentNode = this.balanceLeftToRight(currentNode, writer);
+                    currentNode = this.balanceLeftToRight(currentNode, optionalWriter);
                     if (afterInsertion) {
                         return;
                     }
                 } else if (diff < -1) {
                     // right subtree is too high
-                    currentNode = this.balanceRightToLeft(currentNode, writer);
+                    currentNode = this.balanceRightToLeft(currentNode, optionalWriter);
                     if (afterInsertion) {
                         return;
                     }
@@ -275,16 +274,17 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      * @return The node at the original position of the specified node after balancing.
      */
-    private AVLNode balanceLeftToRight(final AVLNode node, final BufferedWriter writer) throws IOException {
+    private AVLNode balanceLeftToRight(final AVLNode node, final Optional<BufferedWriter> optionalWriter)
+    throws IOException {
         // left subtree of node has at least height 1 (right might have a height of -1)
         final AVLNode l = node.left;
         if (l.right == null || (l.left != null && l.right.height() <= l.left.height())) {
             // left subtree of l is at least as high as the right subtree of l
-            return this.rightRotate(node, writer);
+            return this.rightRotate(node, optionalWriter);
         } else {
             // right subtree of l is higher
-            this.leftRotate(l, writer);
-            return this.rightRotate(node, writer);
+            this.leftRotate(l, optionalWriter);
+            return this.rightRotate(node, optionalWriter);
         }
     }
 
@@ -296,16 +296,17 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      * @return The node at the original position of the specified node after balancing.
      */
-    private AVLNode balanceRightToLeft(final AVLNode node, final BufferedWriter writer) throws IOException {
+    private AVLNode balanceRightToLeft(final AVLNode node, final Optional<BufferedWriter> optionalWriter)
+    throws IOException {
         // right subtree of node has at least height 1 (left might have a height of -1)
         final AVLNode r = node.right;
         if (r.left == null || (r.right != null && r.left.height() <= r.right.height())) {
             // right subtree of r is at least as high as the left subtree of r
-            return this.leftRotate(node, writer);
+            return this.leftRotate(node, optionalWriter);
         } else {
             // left subtree of r is higher
-            this.rightRotate(r, writer);
-            return this.leftRotate(node, writer);
+            this.rightRotate(r, optionalWriter);
+            return this.leftRotate(node, optionalWriter);
         }
     }
 
@@ -342,7 +343,7 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      * @return The node at the original position of the specified node after rotation.
      */
-    private AVLNode leftRotate(final AVLNode node, final BufferedWriter writer) throws IOException {
+    private AVLNode leftRotate(final AVLNode node, final Optional<BufferedWriter> optionalWriter) throws IOException {
         final AVLNode r = node.right;
         // move left subtree of r to be the new right subtree of node
         node.right = r.left;
@@ -364,9 +365,7 @@ public class IntAVLTree {
         // link node
         r.left = node;
         node.father = r;
-        if (writer != null) {
-            this.print("rotiere " + node.value + " nach links", writer);
-        }
+        this.print("rotiere " + node.value + " nach links", optionalWriter);
         return r;
     }
 
@@ -457,7 +456,7 @@ public class IntAVLTree {
      * @throws IOException If some error occurs during output.
      * @return The node at the original position of the specified node after rotation.
      */
-    private AVLNode rightRotate(final AVLNode node, final BufferedWriter writer) throws IOException {
+    private AVLNode rightRotate(final AVLNode node, final Optional<BufferedWriter> optionalWriter) throws IOException {
         final AVLNode l = node.left;
         // move right subtree of l to be the new left subtree of node
         node.left = l.right;
@@ -479,9 +478,7 @@ public class IntAVLTree {
         // link node
         l.right = node;
         node.father = l;
-        if (writer != null) {
-            this.print("rotiere " + node.value + " nach rechts", writer);
-        }
+        this.print("rotiere " + node.value + " nach rechts", optionalWriter);
         return l;
     }
 

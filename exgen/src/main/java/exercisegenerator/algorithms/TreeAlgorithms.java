@@ -21,59 +21,37 @@ public abstract class TreeAlgorithms {
     private static final boolean USE_ASSERTIONS = true;
 
     public static void avltree(final AlgorithmInput input) throws IOException {
+        final Pair<IntAVLTree, Deque<Pair<Integer, Boolean>>> treeAndTasks =
+            new ParserAndGenerator<Pair<IntAVLTree, Deque<Pair<Integer, Boolean>>>>(
+                TreeAlgorithms::parseAVLTreeAndTasks,
+                TreeAlgorithms::generateAVLTreeAndTasks
+            ).getResult(input.options);
         TreeAlgorithms.avltree(
-            new IntAVLTree(),
-            TreeAlgorithms.parseOrGenerateTreeValues(input.options),
-            TreeAlgorithms.parseOrGenerateOperations(input.options),
+            treeAndTasks.x,
+            treeAndTasks.y,
             input.solutionWriter,
             Algorithm.getOptionalSpaceWriter(input)
         );
     }
 
-    /**
-     * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified AVL-tree and
-     * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
-     * @param tree The AVL-tree.
-     * @param ops The operations.
-     * @param construction The operations used to construct the start structure.
-     * @param writer The writer for the solution.
-     * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code>
-     *                    operations). May be null if this tree should not be displayed separately.
-     * @throws IOException If some error occurs during output.
-     */
     public static void avltree(
         final IntAVLTree tree,
-        final Deque<Pair<Integer, Boolean>> ops,
-        final Deque<Pair<Integer, Boolean>> construction,
-        final BufferedWriter writer,
+        final Deque<Pair<Integer, Boolean>> tasks,
+        final BufferedWriter solutionWriter,
         final Optional<BufferedWriter> optionalWriterSpace
     ) throws IOException {
         if (TreeAlgorithms.USE_ASSERTIONS) {
             TreeAlgorithms.check(tree);
         }
-        if (ops.isEmpty()) {
+        if (tasks.isEmpty()) {
             return;
-        }
-        while (!construction.isEmpty()) {
-            final Pair<Integer, Boolean> operation = construction.poll();
-            if (operation.y) {
-                tree.add(operation.x, null);
-            } else {
-                final AVLNode toRemove = tree.find(operation.x);
-                if (toRemove != null) {
-                    tree.remove(toRemove, null);
-                }
-            }
-            if (TreeAlgorithms.USE_ASSERTIONS) {
-                TreeAlgorithms.check(tree);
-            }
         }
         if (TreeAlgorithms.DEBUG_OUTPUT) {
             System.out.println(tree.root == null ? "-1" : tree.root.printHeights());
         }
         if (optionalWriterSpace.isPresent()) {
             final BufferedWriter writerSpace = optionalWriterSpace.get();
-            if (ops.size() > 1) {
+            if (tasks.size() > 1) {
                 if (tree.isEmpty()) {
                     writerSpace.write("F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren ");
                     writerSpace.write("\\emphasize{AVL-Baum} aus und geben Sie die entstehenden B\\\"aume nach jeder ");
@@ -84,7 +62,7 @@ public abstract class TreeAlgorithms {
                     writerSpace.write("Betrachten Sie den folgenden \\emphasize{AVL-Baum}:\\\\");
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
-                    tree.print("", writerSpace);
+                    tree.print("", optionalWriterSpace);
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
                     writerSpace.write("\\vspace*{1ex}");
@@ -95,20 +73,20 @@ public abstract class TreeAlgorithms {
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
-                for (final Pair<Integer, Boolean> op : ops) {
-                    if (op.y) {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
+                for (final Pair<Integer, Boolean> task : tasks) {
+                    if (task.y) {
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " einf\\\"ugen\\\\");
                     } else {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " l\\\"oschen\\\\");
                     }
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writerSpace);
             } else {
-                final Pair<Integer, Boolean> op = ops.peek();
+                final Pair<Integer, Boolean> task = tasks.peek();
                 if (tree.isEmpty()) {
-                    if (op.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
+                    if (task.y) {
+                        writerSpace.write("F\\\"ugen Sie den Wert " + task.x);
                         writerSpace.write(" in einen leeren \\emphasize{AVL-Baum} ein und geben Sie die entstehenden ");
                         writerSpace.write("B\\\"aume nach jeder \\emphasize{Einf\\\"ugeoperation} sowie jeder ");
                         writerSpace.write("\\emphasize{Rotation} an.");
@@ -117,43 +95,43 @@ public abstract class TreeAlgorithms {
                         return;
                     }
                 } else {
-                    if (op.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
+                    if (task.y) {
+                        writerSpace.write("F\\\"ugen Sie den Wert " + task.x);
                         writerSpace.write(" in den folgenden \\emphasize{AVL-Baum} ein und geben Sie die entstehenden");
                         writerSpace.write(" B\\\"aume nach jeder \\emphasize{Einf\\\"ugeoperation} sowie jeder ");
                         writerSpace.write("\\emphasize{Rotation} an:\\\\");
                     } else {
-                        writerSpace.write("L\\\"oschen Sie den Wert " + op.x);
+                        writerSpace.write("L\\\"oschen Sie den Wert " + task.x);
                         writerSpace.write(" aus dem folgenden \\emphasize{AVL-Baum} und geben Sie die entstehenden ");
                         writerSpace.write("B\\\"aume nach jeder \\emphasize{L\\\"oschoperation} sowie jeder ");
                         writerSpace.write("\\emphasize{Rotation} an:\\\\");
                     }
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
-                    tree.print("", writerSpace);
+                    tree.print("", optionalWriterSpace);
                     Main.newLine(writerSpace);
                 }
             }
         }
         tree.resetStepCounter();
-        while (!ops.isEmpty()) {
-            final Pair<Integer, Boolean> operation = ops.poll();
-            if (operation.y) {
+        while (!tasks.isEmpty()) {
+            final Pair<Integer, Boolean> task = tasks.poll();
+            if (task.y) {
                 if (TreeAlgorithms.DEBUG_OUTPUT) {
-                    System.out.println("insert " + operation.x + " in:");
+                    System.out.println("insert " + task.x + " in:");
                     System.out.println(tree.toString());
                 }
-                tree.add(operation.x, writer);
+                tree.add(task.x, Optional.of(solutionWriter));
             } else {
                 if (TreeAlgorithms.DEBUG_OUTPUT) {
-                    System.out.println("remove " + operation.x + " in:");
+                    System.out.println("remove " + task.x + " in:");
                     System.out.println(tree.toString());
                 }
-                final AVLNode toRemove = tree.find(operation.x);
-                if (toRemove != null) {
-                    tree.remove(toRemove, writer);
+                final Optional<AVLNode> toRemove = tree.find(task.x);
+                if (toRemove.isPresent()) {
+                    tree.remove(toRemove.get(), Optional.of(solutionWriter));
                 } else {
-                    tree.print(operation.x + " kommt nicht vor", writer);
+                    tree.print(task.x + " kommt nicht vor", Optional.of(solutionWriter));
                 }
             }
             if (TreeAlgorithms.USE_ASSERTIONS) {
@@ -167,27 +145,27 @@ public abstract class TreeAlgorithms {
     }
 
     public static void bstree(final AlgorithmInput input) throws IOException {
-        final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndOperations =
+        final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =
             new ParserAndGenerator<Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>>(
-                TreeAlgorithms::parseConstructionAndOperations,
-                TreeAlgorithms::generateConstructionAndOperations
+                TreeAlgorithms::parseConstructionAndTasks,
+                TreeAlgorithms::generateConstructionAndTasks
             ).getResult(input.options);
-        final BinaryTree<Integer> tree = BinaryTree.create(constructionAndOperations.x);
+        final BinaryTree<Integer> tree = BinaryTree.create(constructionAndTasks.x);
         final BinaryTreeSteps<Integer> steps =
-            TreeAlgorithms.bstree(tree, constructionAndOperations.y);
-        TreeAlgorithms.printTreeExercise(tree, constructionAndOperations.y, input.exerciseWriter);
+            TreeAlgorithms.bstree(tree, constructionAndTasks.y);
+        TreeAlgorithms.printTreeExercise(tree, constructionAndTasks.y, input.exerciseWriter);
         TreeAlgorithms.printTreeSolution(steps, input.solutionWriter);
     }
 
     public static <T extends Comparable<T>> BinaryTreeSteps<T> bstree(
         final BinaryTree<T> tree,
-        final Deque<Pair<T, Boolean>> operations
+        final Deque<Pair<T, Boolean>> tasks
     ) {
         final BinaryTreeSteps<T> result = new BinaryTreeSteps<T>();
         BinaryTree<T> currentTree = tree;
-        for (final Pair<T, Boolean> operation : operations) {
+        for (final Pair<T, Boolean> task : tasks) {
             result.addAll(
-                operation.y ? currentTree.addWithSteps(operation.x) : currentTree.removeWithSteps(operation.x)
+                task.y ? currentTree.addWithSteps(task.x) : currentTree.removeWithSteps(task.x)
             );
             currentTree = result.getLast().x;
         }
@@ -199,8 +177,8 @@ public abstract class TreeAlgorithms {
             new IntBTree(
                 input.options.containsKey(Flag.DEGREE) ? Integer.parseInt(input.options.get(Flag.DEGREE)) : 2
             ),
-            TreeAlgorithms.parseOrGenerateTreeValues(input.options),
-            TreeAlgorithms.parseOrGenerateOperations(input.options),
+            TreeAlgorithms.parseOrGenerateTasks(input.options),
+            TreeAlgorithms.parseOrGenerateConstruction("", input.options),
             input.solutionWriter,
             Algorithm.getOptionalSpaceWriter(input)
         );
@@ -210,7 +188,7 @@ public abstract class TreeAlgorithms {
      * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified B-tree and
      * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
      * @param tree The B-tree.
-     * @param ops The operations.
+     * @param tasks The operations.
      * @param construction The operations used to construct the start structure.
      * @param writer The writer for the solution.
      * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code>
@@ -219,12 +197,12 @@ public abstract class TreeAlgorithms {
      */
     public static void btree(
         final IntBTree tree,
-        final Deque<Pair<Integer, Boolean>> ops,
+        final Deque<Pair<Integer, Boolean>> tasks,
         final Deque<Pair<Integer, Boolean>> construction,
         final BufferedWriter writer,
         final Optional<BufferedWriter> optionalWriterSpace
     ) throws IOException {
-        if (ops.isEmpty()) {
+        if (tasks.isEmpty()) {
             return;
         }
         while (!construction.isEmpty()) {
@@ -238,7 +216,7 @@ public abstract class TreeAlgorithms {
         if (optionalWriterSpace.isPresent()) {
             final BufferedWriter writerSpace = optionalWriterSpace.get();
             final int degree = tree.getDegree();
-            if (ops.size() > 1) {
+            if (tasks.size() > 1) {
                 if (tree.isEmpty()) {
                     writerSpace.write(
                         "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren \\emphasize{"
@@ -276,22 +254,22 @@ public abstract class TreeAlgorithms {
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
-                for (final Pair<Integer, Boolean> op : ops) {
-                    if (op.y) {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
+                for (final Pair<Integer, Boolean> task : tasks) {
+                    if (task.y) {
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " einf\\\"ugen\\\\");
                     } else {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " l\\\"oschen\\\\");
                     }
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writerSpace);
             } else {
-                final Pair<Integer, Boolean> op = ops.peek();
+                final Pair<Integer, Boolean> task = tasks.peek();
                 if (tree.isEmpty()) {
-                    if (op.y) {
+                    if (task.y) {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
-                            + op.x
+                            + task.x
                             + " in einen leeren \\emphasize{"
                             + (
                                 degree == 2 ?
@@ -304,10 +282,10 @@ public abstract class TreeAlgorithms {
                         return;
                     }
                 } else {
-                    if (op.y) {
+                    if (task.y) {
                         writerSpace.write(
                             "F\\\"ugen Sie den Wert "
-                            + op.x
+                            + task.x
                             + " in den folgenden \\emphasize{"
                             + (
                                 degree == 2 ?
@@ -318,7 +296,7 @@ public abstract class TreeAlgorithms {
                     } else {
                         writerSpace.write(
                             "L\\\"oschen Sie den Wert "
-                            + op.x
+                            + task.x
                             + " aus dem folgenden \\emphasize{"
                             + (
                                 degree == 2 ?
@@ -339,14 +317,14 @@ public abstract class TreeAlgorithms {
             }
         }
         int step = 1;
-        while (!ops.isEmpty()) {
-            final Pair<Integer, Boolean> operation = ops.poll();
-            if (operation.y) {
-                tree.add(operation.x);
+        while (!tasks.isEmpty()) {
+            final Pair<Integer, Boolean> task = tasks.poll();
+            if (task.y) {
+                tree.add(task.x);
             } else {
-                tree.remove(operation.x);
+                tree.remove(task.x);
             }
-            LaTeXUtils.printSamePageBeginning(step++, operation, writer);
+            LaTeXUtils.printSamePageBeginning(step++, task, writer);
             LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writer);
             LaTeXUtils.printBTree(tree, writer);
             LaTeXUtils.printTikzEnd(writer);
@@ -364,8 +342,8 @@ public abstract class TreeAlgorithms {
     public static void rbtree(final AlgorithmInput input) throws IOException {
         TreeAlgorithms.rbtree(
             new IntRBTree(),
-            TreeAlgorithms.parseOrGenerateTreeValues(input.options),
-            TreeAlgorithms.parseOrGenerateOperations(input.options),
+            TreeAlgorithms.parseOrGenerateTasks(input.options),
+            TreeAlgorithms.parseOrGenerateConstruction("", input.options),
             input.solutionWriter,
             Algorithm.getOptionalSpaceWriter(input)
         );
@@ -375,7 +353,7 @@ public abstract class TreeAlgorithms {
      * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified RB-tree and
      * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
      * @param tree The RB-tree.
-     * @param ops The operations.
+     * @param tasks The operations.
      * @param construction The operations used to construct the start structure.
      * @param writer The writer for the solution.
      * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code>
@@ -384,12 +362,12 @@ public abstract class TreeAlgorithms {
      */
     public static void rbtree(
         final IntRBTree tree,
-        final Deque<Pair<Integer, Boolean>> ops,
+        final Deque<Pair<Integer, Boolean>> tasks,
         final Deque<Pair<Integer, Boolean>> construction,
         final BufferedWriter writer,
         final Optional<BufferedWriter> optionalWriterSpace
     ) throws IOException {
-        if (ops.isEmpty()) {
+        if (tasks.isEmpty()) {
             return;
         }
         while (!construction.isEmpty()) {
@@ -406,7 +384,7 @@ public abstract class TreeAlgorithms {
         final String note = "Beachten Sie, dass rote Knoten rund und schwarze Knoten eckig dargestellt werden.";
         if (optionalWriterSpace.isPresent()) {
             final BufferedWriter writerSpace = optionalWriterSpace.get();
-            if (ops.size() > 1) {
+            if (tasks.size() > 1) {
                 if (tree.isEmpty()) {
                     writerSpace.write("F\\\"uhren Sie die folgenden Operationen beginnend mit einem anfangs leeren ");
                     writerSpace.write("\\emphasize{Rot-Schwarz-Baum} aus und geben Sie die entstehenden B\\\"aume ");
@@ -433,20 +411,20 @@ public abstract class TreeAlgorithms {
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
-                for (final Pair<Integer, Boolean> op : ops) {
-                    if (op.y) {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " einf\\\"ugen\\\\");
+                for (final Pair<Integer, Boolean> task : tasks) {
+                    if (task.y) {
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " einf\\\"ugen\\\\");
                     } else {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + op.x + " l\\\"oschen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " l\\\"oschen\\\\");
                     }
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writerSpace);
             } else {
-                final Pair<Integer, Boolean> op = ops.peek();
+                final Pair<Integer, Boolean> task = tasks.peek();
                 if (tree.isEmpty()) {
-                    if (op.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
+                    if (task.y) {
+                        writerSpace.write("F\\\"ugen Sie den Wert " + task.x);
                         writerSpace.write(" in einen leeren \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
                         Main.newLine(writerSpace);
@@ -466,8 +444,8 @@ public abstract class TreeAlgorithms {
                         throw new IllegalArgumentException("Deletion from an empty tree makes no sense!");
                     }
                 } else {
-                    if (op.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + op.x);
+                    if (task.y) {
+                        writerSpace.write("F\\\"ugen Sie den Wert " + task.x);
                         writerSpace.write(" in den folgenden \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
                         Main.newLine(writerSpace);
@@ -484,7 +462,7 @@ public abstract class TreeAlgorithms {
                         writerSpace.write(note);
                         writerSpace.write("\\\\[2ex]");
                     } else {
-                        writerSpace.write("L\\\"oschen Sie den Wert " + op.x);
+                        writerSpace.write("L\\\"oschen Sie den Wert " + task.x);
                         writerSpace.write(" aus dem folgenden \\emphasize{Rot-Schwarz-Baum} und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
                         Main.newLine(writerSpace);
@@ -509,16 +487,16 @@ public abstract class TreeAlgorithms {
             }
         }
         tree.resetStepCounter();
-        while (!ops.isEmpty()) {
-            final Pair<Integer, Boolean> operation = ops.poll();
-            if (operation.y) {
-                tree.rbInsert(operation.x, writer, true);
+        while (!tasks.isEmpty()) {
+            final Pair<Integer, Boolean> task = tasks.poll();
+            if (task.y) {
+                tree.rbInsert(task.x, writer, true);
             } else {
-                final RBNode toRemove = tree.find(operation.x);
+                final RBNode toRemove = tree.find(task.x);
                 if (toRemove != null) {
                     tree.remove(toRemove, writer, true);
                 } else {
-                    tree.print(operation.x + " kommt nicht vor", writer);
+                    tree.print(task.x + " kommt nicht vor", writer);
                 }
             }
         }
@@ -533,16 +511,31 @@ public abstract class TreeAlgorithms {
         assert (tree.isBalanced()) : "AVL tree is not balanced!";
     }
 
-    private static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> generateConstructionAndOperations(
-        final Parameters options
-    ) {
-        return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
-            TreeAlgorithms.generateTreeValues(options),
-            TreeAlgorithms.generateOperations(options)
+    private static IntAVLTree constructTree(final Deque<Pair<Integer, Boolean>> construction) throws IOException {
+        final IntAVLTree tree = new IntAVLTree();
+        while (!construction.isEmpty()) {
+            final Pair<Integer, Boolean> operation = construction.poll();
+            if (operation.y) {
+                tree.add(operation.x, Optional.empty());
+            } else {
+                final Optional<AVLNode> toRemove = tree.find(operation.x);
+                if (toRemove.isPresent()) {
+                    tree.remove(toRemove.get(), Optional.empty());
+                }
+            }
+        }
+        return tree;
+    }
+
+    private static Pair<IntAVLTree, Deque<Pair<Integer, Boolean>>> generateAVLTreeAndTasks(final Parameters options)
+    throws IOException {
+        return new Pair<IntAVLTree, Deque<Pair<Integer, Boolean>>>(
+            TreeAlgorithms.constructTree(TreeAlgorithms.generateConstruction(options)),
+            TreeAlgorithms.generateTasks(options)
         );
     }
 
-    private static Deque<Pair<Integer, Boolean>> generateOperations(final Parameters options) {
+    private static Deque<Pair<Integer, Boolean>> generateConstruction(final Parameters options) {
         final Random gen = new Random();
         final int length = gen.nextInt(20) + 1;
         final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
@@ -559,7 +552,16 @@ public abstract class TreeAlgorithms {
         return deque;
     }
 
-    private static Deque<Pair<Integer, Boolean>> generateTreeValues(final Parameters options) {
+    private static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> generateConstructionAndTasks(
+        final Parameters options
+    ) {
+        return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
+            TreeAlgorithms.generateTasks(options),
+            TreeAlgorithms.generateConstruction(options)
+        );
+    }
+
+    private static Deque<Pair<Integer, Boolean>> generateTasks(final Parameters options) {
         final int length;
         final Random gen = new Random();
         if (options.containsKey(Flag.LENGTH)) {
@@ -595,13 +597,24 @@ public abstract class TreeAlgorithms {
         return height;
     }
 
-    private static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> parseConstructionAndOperations(
+    private static Pair<IntAVLTree, Deque<Pair<Integer, Boolean>>> parseAVLTreeAndTasks(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        final String line = reader.readLine();
+        return new Pair<IntAVLTree, Deque<Pair<Integer, Boolean>>>(
+            TreeAlgorithms.constructTree(TreeAlgorithms.parseOrGenerateConstruction(line, options)),
+            TreeAlgorithms.parseTasks(line, options)
+        );
+    }
+
+    private static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> parseConstructionAndTasks(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
         final String[] parts = reader.readLine().split(";");
         if (parts.length != 2) {
-            throw new IllegalArgumentException("Input must contain exactly two parts: construction and operations!");
+            throw new IllegalArgumentException("Input must contain exactly two parts: construction and tasks!");
         }
         return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
             TreeAlgorithms.parseOperations(parts[0].split(",")),
@@ -625,16 +638,18 @@ public abstract class TreeAlgorithms {
         return deque;
     }
 
-    /**
-     * @param options The program arguments.
-     * @return The operations specified in the operation file or null if no such file is specified in the program
-     *         arguments.
-     */
-    private static Deque<Pair<Integer, Boolean>> parseOrGenerateOperations(final Parameters options) {
-        if (!options.containsKey(Flag.OPERATIONS)) {
-            return TreeAlgorithms.generateOperations(options);
+    private static Deque<Pair<Integer, Boolean>> parseOrGenerateConstruction(
+        final String line,
+        final Parameters options
+    ) {
+        final String[] parts = line.split(";");
+        if (parts.length == 2) {
+            return TreeAlgorithms.parseOperations(parts[0].split(","));
         }
-        String[] nums = null;
+        if (!options.containsKey(Flag.OPERATIONS)) {
+            return TreeAlgorithms.generateConstruction(options);
+        }
+        final String[] nums;
         try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
             nums = reader.readLine().split(",");
         } catch (final IOException e) {
@@ -644,18 +659,29 @@ public abstract class TreeAlgorithms {
         return TreeAlgorithms.parseOperations(nums);
     }
 
-    private static Deque<Pair<Integer, Boolean>> parseOrGenerateTreeValues(final Parameters options)
+    private static Deque<Pair<Integer, Boolean>> parseOrGenerateTasks(final Parameters options)
     throws IOException {
         return new ParserAndGenerator<Deque<Pair<Integer, Boolean>>>(
-            TreeAlgorithms::parseTreeValues,
-            TreeAlgorithms::generateTreeValues
+            TreeAlgorithms::parseTasks,
+            TreeAlgorithms::generateTasks
         ).getResult(options);
     }
 
-    private static Deque<Pair<Integer, Boolean>> parseTreeValues(final BufferedReader reader, final Parameters options)
+    private static Deque<Pair<Integer, Boolean>> parseTasks(final BufferedReader reader, final Parameters options)
     throws IOException {
         final String[] nums = reader.readLine().split(",");
         return TreeAlgorithms.parseOperations(nums);
+    }
+
+    private static Deque<Pair<Integer, Boolean>> parseTasks(final String line, final Parameters options) {
+        final String[] parts = line.split(";");
+        if (parts.length > 2) {
+            throw new IllegalArgumentException("Input should include at most 2 parts!");
+        }
+        if (parts.length == 1) {
+            return TreeAlgorithms.parseOperations(parts[0].split(","));
+        }
+        return TreeAlgorithms.parseOperations(parts[1].split(","));
     }
 
     private static void printSamePageBeginning(final int height, final String headline, final BufferedWriter writer)
@@ -706,10 +732,10 @@ public abstract class TreeAlgorithms {
 
     private static void printTreeExercise(
         final BinaryTree<Integer> tree,
-        final Deque<Pair<Integer, Boolean>> operations,
+        final Deque<Pair<Integer, Boolean>> tasks,
         final BufferedWriter writer
     ) throws IOException {
-        if (operations.size() > 1) {
+        if (tasks.size() > 1) {
             if (tree.isEmpty()) {
                 writer.write("F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren \\emphasize{");
                 writer.write(tree.getName());
@@ -731,23 +757,23 @@ public abstract class TreeAlgorithms {
                 Main.newLine(writer);
             }
             LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
-            for (final Pair<Integer, Boolean> operation : operations) {
-                if (operation.y) {
+            for (final Pair<Integer, Boolean> task : tasks) {
+                if (task.y) {
                     writer.write(LaTeXUtils.ITEM);
                     writer.write(" ");
-                    writer.write(String.valueOf(operation.x));
+                    writer.write(String.valueOf(task.x));
                     writer.write(" einf\\\"ugen\\\\");
                 } else {
                     writer.write(LaTeXUtils.ITEM);
                     writer.write(" ");
-                    writer.write(String.valueOf(operation.x));
+                    writer.write(String.valueOf(task.x));
                     writer.write(" l\\\"oschen\\\\");
                 }
                 Main.newLine(writer);
             }
             LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writer);
         } else {
-            final Pair<Integer, Boolean> op = operations.peek();
+            final Pair<Integer, Boolean> op = tasks.peek();
             if (tree.isEmpty()) {
                 if (op.y) {
                     writer.write("F\\\"ugen Sie den Wert ");

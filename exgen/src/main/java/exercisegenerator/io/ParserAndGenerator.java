@@ -1,19 +1,18 @@
 package exercisegenerator.io;
 
 import java.io.*;
-import java.util.function.*;
 
 import exercisegenerator.util.*;
 
 public class ParserAndGenerator<T> {
 
-    private final Function<Parameters, T> generator;
+    private final CheckedFunction<Parameters, T, IOException> generator;
 
     private final CheckedBiFunction<BufferedReader, Parameters, T, IOException> parser;
 
     public ParserAndGenerator(
         final CheckedBiFunction<BufferedReader, Parameters, T, IOException> parser,
-        final Function<Parameters, T> generator
+        final CheckedFunction<Parameters, T, IOException> generator
     ) {
         this.parser = parser;
         this.generator = generator;
