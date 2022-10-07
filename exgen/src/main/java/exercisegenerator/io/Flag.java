@@ -57,7 +57,7 @@ public enum Flag {
      * Input directly specified as a String. Must not be specified together with -s, but one of them must be
      * specified.
      */
-    INPUT("-i", "Input", "TODO"),
+    INPUT("-i", "Input", "Specify the input for an algorithm from the command line."),
 
     /**
      * Length used for several purposes. Its use depends on the algorithm.
@@ -71,17 +71,25 @@ public enum Flag {
     /**
      * File containing operations used to construct a start structure.
      */
-    OPERATIONS("-o", "Operations for start structure", "TODO"),
+    OPERATIONS(
+        "-o",
+        "Operations for start structure",
+        "Specify special operations for the algorithm (e.g., construction operations for a binary tree)."
+    ),
 
     /**
      * Preprint mode (should preprints be given always, never, or just not in solution sheets?).
      */
-    PREPRINT_MODE("-p", "Preprint mode", "TODO"),
+    PREPRINT_MODE(
+        "-p",
+        "Preprint mode",
+        "Sets the preprint mode for some algorithms (print the exercise with or without a skeleton for the solution)."
+    ),
 
     /**
      * Source file containing the input. Must not be specified together with -i, but one of them must be specified.
      */
-    SOURCE("-s", "Source file", "TODO"),
+    SOURCE("-s", "Source file", "Specify the input for an algorithm in the given file."),
 
     /**
      * Target file to store the LaTeX code in. If not specified, the solution is sent to the standard output.
