@@ -15,10 +15,16 @@ application {
     mainClass = 'exercisegenerator.Main'
 }
 
+java {
+    sourceCompatibility = "1.17"
+    targetCompatibility = "1.17"
+}
+
 jar {
     manifest {
         attributes 'Main-Class': 'exercisegenerator.Main'
     }
+    targetCompatibility = "1.17"
     baseName = 'exercisegenerator'
 }
 
