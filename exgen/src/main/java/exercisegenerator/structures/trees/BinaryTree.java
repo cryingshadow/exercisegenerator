@@ -5,7 +5,7 @@ import java.util.stream.*;
 
 import exercisegenerator.structures.*;
 
-public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO rotations can destroy strict order
+public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
 
     public static <T extends Comparable<T>> BinaryTree<T> create() {
         return new BinaryTree<T>(Optional.empty());
@@ -79,7 +79,9 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> { //TODO
     }
 
     public BinaryTree<T> copy() {
-        return new BinaryTree<>(this.root.isEmpty() ? Optional.empty() : Optional.of(this.root.get().copyWithEmptyParent()));
+        return new BinaryTree<T>(
+            this.root.isEmpty() ? Optional.empty() : Optional.of(this.root.get().copyWithEmptyParent())
+        );
     }
 
     @Override
