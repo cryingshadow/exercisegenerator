@@ -17,9 +17,6 @@ public class TreeAlgorithmsTest {
         final List<String> expectedStructures
     ) {
         final BinaryTreeSteps<Integer> steps = TreeAlgorithms.bstree(tree, operations);
-        for (final BinaryTreeAndStep<Integer> step : steps) {
-            Assert.assertTrue(BinaryTreeTest.isWellFormed(step.x));
-        }
         Assert.assertEquals(steps.stream().map(Pair::toString).toList(), expectedStructures);
     }
 
@@ -27,12 +24,12 @@ public class TreeAlgorithmsTest {
     public Object[][] data() {
         return new Object[][] {
             {
-                BinaryTree.create(),
+                TreeAlgorithms.binaryTreeFactory.create(),
                 new ArrayDeque<Pair<Integer, Boolean>>(Arrays.asList(new Pair<Integer, Boolean>(1, true))),
                 Collections.singletonList("((,1,),ADD1)")
             },
             {
-                BinaryTree.create(),
+                TreeAlgorithms.binaryTreeFactory.create(),
                 new ArrayDeque<Pair<Integer, Boolean>>(
                     Arrays.asList(
                         new Pair<Integer, Boolean>(5, true),
@@ -55,7 +52,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                BinaryTree.create(5,3,7,2,4,6,8),
+                TreeAlgorithms.binaryTreeFactory.create(5,3,7,2,4,6,8),
                 new ArrayDeque<Pair<Integer, Boolean>>(
                     Arrays.asList(
                         new Pair<Integer, Boolean>(2, false)
@@ -66,7 +63,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                BinaryTree.create(5,3,7,2,4,6,8),
+                TreeAlgorithms.binaryTreeFactory.create(5,3,7,2,4,6,8),
                 new ArrayDeque<Pair<Integer, Boolean>>(
                     Arrays.asList(
                         new Pair<Integer, Boolean>(7, false),

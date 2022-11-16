@@ -5,64 +5,52 @@ import java.util.stream.*;
 
 public class BinaryTreeNode<T extends Comparable<T>> {
 
-    private static <T extends Comparable<T>> Optional<BinaryTreeNode<T>> copyWithEmptyParent(
-        final Optional<BinaryTreeNode<T>> node
-    ) {
-        return node.isEmpty() ? Optional.empty() : Optional.of(node.get().copyWithEmptyParent());
+    final Optional<? extends BinaryTreeNode<T>> leftChild;
+
+    final Optional<? extends BinaryTreeNode<T>> rightChild;
+
+    final T value;
+    
+    final BinaryTreeNodeFactory<T> nodeFactory;
+
+    BinaryTreeNode(final T value, final BinaryTreeNodeFactory<T> nodeFactory) {
+        this(value, Optional.empty(), Optional.empty(), nodeFactory);
     }
 
-    Optional<BinaryTreeNode<T>> leftChild;
-
-    Optional<BinaryTreeNode<T>> parent;
-
-    Optional<BinaryTreeNode<T>> rightChild;
-
-    T value;
-
-    public BinaryTreeNode(final T value) {
-        this(value, Optional.empty(), Optional.empty(), Optional.empty());
-    }
-
-    public BinaryTreeNode(
+    BinaryTreeNode(
         final T value,
-        final BinaryTreeNode<T> parent,
         final BinaryTreeNode<T> leftChild,
-        final BinaryTreeNode<T> rightChild
+        final BinaryTreeNode<T> rightChild,
+        final BinaryTreeNodeFactory<T> nodeFactory
     ) {
-        this(value, Optional.of(parent), Optional.of(leftChild), Optional.of(rightChild));
+        this(value, Optional.of(leftChild), Optional.of(rightChild), nodeFactory);
     }
 
-    public BinaryTreeNode(
+    BinaryTreeNode(
         final T value,
-        final Optional<BinaryTreeNode<T>> parent,
-        final Optional<BinaryTreeNode<T>> leftChild,
-        final Optional<BinaryTreeNode<T>> rightChild
+        final Optional<? extends BinaryTreeNode<T>> leftChild,
+        final Optional<? extends BinaryTreeNode<T>> rightChild,
+        final BinaryTreeNodeFactory<T> nodeFactory
     ) {
         this.value = value;
-        this.parent = parent;
         this.leftChild = leftChild;
         this.rightChild = rightChild;
-        if (leftChild.isPresent()) {
-            this.leftChild.get().setParent(this);
-        }
-        if (rightChild.isPresent()) {
-            this.rightChild.get().setParent(this);
-        }
+        this.nodeFactory = nodeFactory;
     }
 
-    public BinaryTreeNodeSteps<T> addWithStepsAndEmptyParent(final T value) {
+    public BinaryTreeNodeSteps<T> addWithSteps(final T value) {
         if (this.value.compareTo(value) < 0) {
             if (this.rightChild.isEmpty()) {
-                final BinaryTreeNode<T> resultingNode = this.setRightChildAndEmptyParent(new BinaryTreeNode<T>(value));
+                final BinaryTreeNode<T> resultingNode = this.setRightChild(this.nodeFactory.create(value));
                 return new BinaryTreeNodeSteps<T>(resultingNode, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
             }
-            return this.asRightChildren(this.rightChild.get().addWithStepsAndEmptyParent(value));
+            return this.asRightChildren(this.rightChild.get().addWithSteps(value));
         }
         if (this.leftChild.isEmpty()) {
-            final BinaryTreeNode<T> resultingNode = this.setLeftChildAndEmptyParent(new BinaryTreeNode<T>(value));
+            final BinaryTreeNode<T> resultingNode = this.setLeftChild(this.nodeFactory.create(value));
             return new BinaryTreeNodeSteps<T>(resultingNode, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
         }
-        return this.asLeftChildren(this.leftChild.get().addWithStepsAndEmptyParent(value));
+        return this.asLeftChildren(this.leftChild.get().addWithSteps(value));
     }
 
     public boolean containsAll(final Collection<? extends T> values) {
@@ -74,16 +62,6 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         final LinkedList<? extends T> right = this.getRight(cWithoutValue);
         return (left.isEmpty() || this.leftChild.isPresent() && this.leftChild.get().containsAll(left))
             && (right.isEmpty() || this.rightChild.isPresent() && this.rightChild.get().containsAll(right));
-    }
-
-    public BinaryTreeNode<T> copyWithEmptyParent() {
-        return
-            new BinaryTreeNode<T>(
-                this.value,
-                Optional.empty(),
-                this.leftChild.isEmpty() ? Optional.empty() : Optional.of(this.leftChild.get().copyWithEmptyParent()),
-                this.rightChild.isEmpty() ? Optional.empty() : Optional.of(this.rightChild.get().copyWithEmptyParent())
-            );
     }
 
     @Override
@@ -124,13 +102,13 @@ public class BinaryTreeNode<T extends Comparable<T>> {
                     );
                 }
                 return new BinaryTreeNodeSteps<T>(
-                    this.rightChild.get().copyWithEmptyParent(),
+                    this.rightChild.get(),
                     new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
                 );
             }
             if (this.rightChild.isEmpty()) {
                 return new BinaryTreeNodeSteps<T>(
-                    this.leftChild.get().copyWithEmptyParent(),
+                    this.leftChild.get(),
                     new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
                 );
             }
@@ -141,12 +119,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             result.addAll(this.asRightChildren(minSteps));
             result.add(
                 new BinaryTreeNodeAndStep<T>(
-                    new BinaryTreeNode<T>(
-                        min,
-                        Optional.empty(),
-                        BinaryTreeNode.copyWithEmptyParent(this.leftChild),
-                        minRightChild
-                    ),
+                    this.nodeFactory.create(min, this.leftChild, minRightChild),
                     new BinaryTreeStep<T>(BinaryTreeStepType.REPLACE, value)
                 )
             );
@@ -164,34 +137,24 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return this.asLeftChildren(this.leftChild.get().removeWithStepsAndEmptyParent(value));
     }
 
-    public BinaryTreeNode<T> setLeftChildAndEmptyParent(final BinaryTreeNode<T> leftChild) {
-        return this.setLeftChildAndEmptyParent(Optional.of(leftChild));
+    public BinaryTreeNode<T> setLeftChild(final BinaryTreeNode<T> leftChild) {
+        return this.setLeftChild(Optional.of(leftChild));
     }
 
-    public BinaryTreeNode<T> setLeftChildAndEmptyParent(final Optional<BinaryTreeNode<T>> leftChild) {
-        final BinaryTreeNode<T> result = this.copyWithEmptyParent();
-        result.leftChild = BinaryTreeNode.copyWithEmptyParent(leftChild);
-        if (result.leftChild.isPresent()) {
-            result.leftChild.get().parent = Optional.of(result);
-        }
-        return result;
+    public BinaryTreeNode<T> setLeftChild(final Optional<BinaryTreeNode<T>> leftChild) {
+        return this.nodeFactory.create(this.value, leftChild, this.rightChild);
     }
 
-    public BinaryTreeNode<T> setRightChildAndEmptyParent(final BinaryTreeNode<T> rightChild) {
-        return this.setRightChildAndEmptyParent(Optional.of(rightChild));
+    public BinaryTreeNode<T> setRightChild(final BinaryTreeNode<T> rightChild) {
+        return this.setRightChild(Optional.of(rightChild));
     }
 
-    public BinaryTreeNode<T> setRightChildAndEmptyParent(final Optional<BinaryTreeNode<T>> rightChild) {
-        final BinaryTreeNode<T> result = this.copyWithEmptyParent();
-        result.rightChild = BinaryTreeNode.copyWithEmptyParent(rightChild);
-        if (result.rightChild.isPresent()) {
-            result.rightChild.get().parent = Optional.of(result);
-        }
-        return result;
+    public BinaryTreeNode<T> setRightChild(final Optional<BinaryTreeNode<T>> rightChild) {
+        return this.nodeFactory.create(this.value, this.leftChild, rightChild);
     }
 
     public BinaryTreeNode<T> setValue(final T value) {
-        return new BinaryTreeNode<T>(value, this.parent, this.leftChild, this.rightChild);
+        return this.nodeFactory.create(value, this.leftChild, this.rightChild);
     }
 
     public int size() {
@@ -261,7 +224,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
 
     private BinaryTreeNodeSteps<T> asLeftChildren(final BinaryTreeNodeSteps<T> steps) {
         return steps.stream()
-            .map(pair -> new BinaryTreeNodeAndStep<T>(Optional.of(this.setLeftChildAndEmptyParent(pair.x)), pair.y))
+            .map(pair -> new BinaryTreeNodeAndStep<T>(Optional.of(this.setLeftChild(pair.x)), pair.y))
             .collect(Collectors.toCollection(BinaryTreeNodeSteps::new));
     }
 
@@ -269,7 +232,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return steps.stream()
             .map(
                 pair -> new BinaryTreeNodeAndStep<T>(
-                    Optional.of(this.setRightChildAndEmptyParent(pair.x)),
+                    Optional.of(this.setRightChild(pair.x)),
                     pair.y
                 )
             ).collect(Collectors.toCollection(BinaryTreeNodeSteps::new));
@@ -281,7 +244,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private T getMin() {
+    T getMin() {
         return this.stream().findFirst().get();
     }
 
@@ -289,11 +252,6 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return values.stream()
             .filter(x -> x.compareTo(this.value) > 0)
             .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    private BinaryTreeNode<T> setParent(final BinaryTreeNode<T> parent) {
-        this.parent = Optional.of(parent);
-        return this;
     }
 
 }

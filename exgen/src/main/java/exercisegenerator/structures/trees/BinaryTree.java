@@ -3,51 +3,25 @@ package exercisegenerator.structures.trees;
 import java.util.*;
 import java.util.stream.*;
 
-import exercisegenerator.structures.*;
-
 public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
 
-    public static <T extends Comparable<T>> BinaryTree<T> create() {
-        return new BinaryTree<T>(Optional.empty());
+    final Optional<? extends BinaryTreeNode<T>> root;
+    
+    final BinaryTreeNodeFactory<T> nodeFactory;
+
+    private BinaryTree(final BinaryTreeNode<T> root, final BinaryTreeNodeFactory<T> nodeFactory) {
+        this(Optional.of(root), nodeFactory);
     }
 
-    public static <T extends Comparable<T>> BinaryTree<T> create(final Deque<Pair<T, Boolean>> construction) {
-        BinaryTree<T> tree = BinaryTree.create();
-        for (final Pair<T, Boolean> operation : construction) {
-            if (operation.y) {
-                tree = tree.add(operation.x);
-            } else {
-                tree = tree.remove(operation.x);
-            }
-        }
-        return tree;
-    }
-
-    @SafeVarargs
-    public static <T extends Comparable<T>> BinaryTree<T> create(final T... values) {
-
-        return BinaryTree.create(
-            Arrays.asList(values)
-                .stream()
-                .map(value -> new Pair<T, Boolean>(value, true))
-                .collect(Collectors.toCollection(ArrayDeque::new))
-        );
-    }
-
-    Optional<BinaryTreeNode<T>> root;
-
-    private BinaryTree(final BinaryTreeNode<T> root) {
-        this(Optional.of(root));
-    }
-
-    private BinaryTree(final Optional<BinaryTreeNode<T>> root) {
+    BinaryTree(final Optional<? extends BinaryTreeNode<T>> root, final BinaryTreeNodeFactory<T> nodeFactory) {
         this.root = root;
+        this.nodeFactory = nodeFactory;
     }
 
     public BinaryTree<T> add(final T value) {
         final BinaryTreeSteps<T> steps = this.addWithSteps(value);
         if (steps.isEmpty()) {
-            return this.copy();
+            return this;
         }
         return steps.get(steps.size() - 1).x;
     }
@@ -55,15 +29,15 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
     public BinaryTreeSteps<T> addWithSteps(final T value) {
         if (this.isEmpty()) {
             return new BinaryTreeSteps<T>(
-                new BinaryTree<T>(new BinaryTreeNode<T>(value)),
+                new BinaryTree<T>(this.nodeFactory.create(value), this.nodeFactory),
                 new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value)
             );
         }
         return this.root
             .get()
-            .addWithStepsAndEmptyParent(value)
+            .addWithSteps(value)
             .stream()
-            .map(pair -> new BinaryTreeAndStep<T>(new BinaryTree<T>(pair.x), pair.y))
+            .map(pair -> new BinaryTreeAndStep<T>(new BinaryTree<T>(pair.x, this.nodeFactory), pair.y))
             .collect(Collectors.toCollection(BinaryTreeSteps::new));
     }
 
@@ -76,12 +50,6 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
             return values.isEmpty();
         }
         return this.root.get().containsAll(values);
-    }
-
-    public BinaryTree<T> copy() {
-        return new BinaryTree<T>(
-            this.root.isEmpty() ? Optional.empty() : Optional.of(this.root.get().copyWithEmptyParent())
-        );
     }
 
     @Override
@@ -143,7 +111,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
             .get()
             .removeWithStepsAndEmptyParent(value)
             .stream()
-            .map(pair -> new BinaryTreeAndStep<T>(new BinaryTree<T>(pair.x), pair.y))
+            .map(pair -> new BinaryTreeAndStep<T>(new BinaryTree<T>(pair.x, this.nodeFactory), pair.y))
             .collect(Collectors.toCollection(BinaryTreeSteps::new));
     }
 

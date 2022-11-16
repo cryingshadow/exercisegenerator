@@ -144,13 +144,15 @@ public abstract class TreeAlgorithms {
         }
     }
 
+    static final BinaryTreeFactory<Integer> binaryTreeFactory = new BinaryTreeFactory<Integer>();
+    
     public static void bstree(final AlgorithmInput input) throws IOException {
         final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =
             new ParserAndGenerator<Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>>(
                 TreeAlgorithms::parseConstructionAndTasks,
                 TreeAlgorithms::generateConstructionAndTasks
             ).getResult(input.options);
-        final BinaryTree<Integer> tree = BinaryTree.create(constructionAndTasks.x);
+        final BinaryTree<Integer> tree = binaryTreeFactory.create(constructionAndTasks.x);
         final BinaryTreeSteps<Integer> steps =
             TreeAlgorithms.bstree(tree, constructionAndTasks.y);
         TreeAlgorithms.printTreeExercise(tree, constructionAndTasks.y, input.exerciseWriter);
