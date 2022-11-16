@@ -8,4 +8,8 @@ public class AVLTree<T extends Comparable<T>> extends BinaryTree<T> {
         super(root, treeFactory);
     }
     
+    public int hashCode() {
+        return super.hashCode() + 1;
+    }
+    
 }

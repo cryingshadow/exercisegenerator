@@ -70,8 +70,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             return false;
         }
         @SuppressWarnings("unchecked")
-        final
-        BinaryTreeNode<T> other = (BinaryTreeNode<T>)o;
+        final BinaryTreeNode<T> other = (BinaryTreeNode<T>)o;
         return this.value.equals(other.value)
             && this.leftChild.equals(other.leftChild)
             && this.rightChild.equals(other.rightChild);
