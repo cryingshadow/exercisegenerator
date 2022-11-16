@@ -144,7 +144,8 @@ public abstract class TreeAlgorithms {
         }
     }
 
-    static final BinaryTreeFactory<Integer> binaryTreeFactory = new BinaryTreeFactory<Integer>();
+    static final BinaryTreeFactory<Integer> binaryTreeFactory =
+        new BinaryTreeFactory<Integer>(new BinaryTreeNodeFactory<Integer>());
     
     public static void bstree(final AlgorithmInput input) throws IOException {
         final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =

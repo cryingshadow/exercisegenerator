@@ -8,8 +8,14 @@ import exercisegenerator.structures.*;
 
 public class BinaryTreeFactory<T extends Comparable<T>> {
     
+    private final BinaryTreeNodeFactory<T> nodeFactory;
+    
+    public BinaryTreeFactory(BinaryTreeNodeFactory<T> nodeFactory) {
+        this.nodeFactory = nodeFactory;
+    }
+    
     public BinaryTree<T> create() {
-        return new BinaryTree<T>(Optional.empty(), new BinaryTreeNodeFactory<T>());
+        return new BinaryTree<T>(Optional.empty(), this);
     }
     
     @SuppressWarnings("unchecked")
@@ -43,6 +49,18 @@ public class BinaryTreeFactory<T extends Comparable<T>> {
     @SuppressWarnings("unchecked")
     public BinaryTree<T> create(final T... values) {
         return this.create(BinaryTreeFactory.toConstruction(values));
+    }
+
+    public BinaryTree<T> create(Optional<? extends BinaryTreeNode<T>> root) {
+        return new BinaryTree<T>(root, this);
+    }
+
+    public BinaryTree<T> create(BinaryTreeNode<T> root) {
+        return this.create(Optional.of(root));
+    }
+
+    public BinaryTree<T> create(T rootValue) {
+        return this.create(this.nodeFactory.create(rootValue));
     }
 
 }

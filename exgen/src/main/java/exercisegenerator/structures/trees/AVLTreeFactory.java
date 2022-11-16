@@ -6,9 +6,13 @@ import exercisegenerator.structures.*;
 
 public class AVLTreeFactory<T extends Comparable<T>> extends BinaryTreeFactory<T> {
 
+    public AVLTreeFactory(AVLTreeNodeFactory<T> nodeFactory) {
+        super(nodeFactory);
+    }
+
     @Override
     public BinaryTree<T> create() {
-        return new AVLTree<T>(Optional.empty(), new AVLTreeNodeFactory<T>());
+        return new AVLTree<T>(Optional.empty(), this);
     }
     
     @Override

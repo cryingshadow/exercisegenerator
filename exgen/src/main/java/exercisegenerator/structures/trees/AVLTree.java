@@ -4,8 +4,8 @@ import java.util.*;
 
 public class AVLTree<T extends Comparable<T>> extends BinaryTree<T> {
 
-    AVLTree(Optional<AVLTreeNode<T>> root, AVLTreeNodeFactory<T> nodeFactory) {
-        super(root, nodeFactory);
+    AVLTree(Optional<AVLTreeNode<T>> root, AVLTreeFactory<T> treeFactory) {
+        super(root, treeFactory);
     }
     
 }
