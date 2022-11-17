@@ -144,8 +144,11 @@ public abstract class TreeAlgorithms {
         }
     }
 
-    static final BinaryTreeFactory<Integer> binaryTreeFactory =
+    static final BinaryTreeFactory<Integer> BINARY_TREE_FACTORY =
         new BinaryTreeFactory<Integer>(new BinaryTreeNodeFactory<Integer>());
+    
+    static final BinaryTreeFactory<Integer> AVL_TREE_FACTORY =
+        new AVLTreeFactory<Integer>(new AVLTreeNodeFactory<Integer>());
     
     public static void bstree(final AlgorithmInput input) throws IOException {
         final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =
@@ -153,7 +156,7 @@ public abstract class TreeAlgorithms {
                 TreeAlgorithms::parseConstructionAndTasks,
                 TreeAlgorithms::generateConstructionAndTasks
             ).getResult(input.options);
-        final BinaryTree<Integer> tree = binaryTreeFactory.create(constructionAndTasks.x);
+        final BinaryTree<Integer> tree = BINARY_TREE_FACTORY.create(constructionAndTasks.x);
         final BinaryTreeSteps<Integer> steps =
             TreeAlgorithms.bstree(tree, constructionAndTasks.y);
         TreeAlgorithms.printTreeExercise(tree, constructionAndTasks.y, input.exerciseWriter);

@@ -24,12 +24,12 @@ public class TreeAlgorithmsTest {
     public Object[][] data() {
         return new Object[][] {
             {
-                TreeAlgorithms.binaryTreeFactory.create(),
+                TreeAlgorithms.BINARY_TREE_FACTORY.create(),
                 new ArrayDeque<Pair<Integer, Boolean>>(Arrays.asList(new Pair<Integer, Boolean>(1, true))),
                 Collections.singletonList("((,1,),ADD1)")
             },
             {
-                TreeAlgorithms.binaryTreeFactory.create(),
+                TreeAlgorithms.BINARY_TREE_FACTORY.create(),
                 new ArrayDeque<Pair<Integer, Boolean>>(
                     Arrays.asList(
                         new Pair<Integer, Boolean>(5, true),
@@ -52,7 +52,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.binaryTreeFactory.create(5,3,7,2,4,6,8),
+                TreeAlgorithms.BINARY_TREE_FACTORY.create(5,3,7,2,4,6,8),
                 new ArrayDeque<Pair<Integer, Boolean>>(
                     Arrays.asList(
                         new Pair<Integer, Boolean>(2, false)
@@ -63,7 +63,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.binaryTreeFactory.create(5,3,7,2,4,6,8),
+                TreeAlgorithms.BINARY_TREE_FACTORY.create(5,3,7,2,4,6,8),
                 new ArrayDeque<Pair<Integer, Boolean>>(
                     Arrays.asList(
                         new Pair<Integer, Boolean>(7, false),

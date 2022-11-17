@@ -44,13 +44,23 @@ public class BinaryTreeNode<T extends Comparable<T>> {
                 final BinaryTreeNode<T> resultingNode = this.setRightChild(this.nodeFactory.create(value));
                 return new BinaryTreeNodeSteps<T>(resultingNode, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
             }
-            return this.asRightChildren(this.rightChild.get().addWithSteps(value));
+            BinaryTreeNodeSteps<T> result = this.rightChild.get().addWithSteps(value);
+            Optional<BinaryTreeNode<T>> lastNode = result.getLast().x;
+            result.addAll(lastNode.isEmpty() ? Collections.emptyList() : lastNode.get().balanceWithSteps());
+            return this.asRightChildren(result);
         }
         if (this.leftChild.isEmpty()) {
             final BinaryTreeNode<T> resultingNode = this.setLeftChild(this.nodeFactory.create(value));
             return new BinaryTreeNodeSteps<T>(resultingNode, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
         }
-        return this.asLeftChildren(this.leftChild.get().addWithSteps(value));
+        BinaryTreeNodeSteps<T> result = this.leftChild.get().addWithSteps(value);
+        Optional<BinaryTreeNode<T>> lastNode = result.getLast().x;
+        result.addAll(lastNode.isEmpty() ? Collections.emptyList() : lastNode.get().balanceWithSteps());
+        return this.asLeftChildren(result);
+    }
+
+    public BinaryTreeNodeSteps<T> balanceWithSteps() {
+        return new BinaryTreeNodeSteps<T>();
     }
 
     public boolean containsAll(final Collection<? extends T> values) {
@@ -76,11 +86,12 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             && this.rightChild.equals(other.rightChild);
     }
 
+    static <T extends Comparable<T>> int height(Optional<? extends BinaryTreeNode<T>> node) {
+        return node.isEmpty() ? 0 : node.get().getHeight();
+    }
+    
     public int getHeight() {
-        return 1 + Math.max(
-            this.leftChild.isEmpty() ? 0 : this.leftChild.get().getHeight(),
-            this.rightChild.isEmpty() ? 0 : this.rightChild.get().getHeight()
-        );
+        return Math.max(BinaryTreeNode.height(this.leftChild), BinaryTreeNode.height(this.rightChild)) + 1;
     }
 
     @Override
@@ -140,7 +151,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return this.setLeftChild(Optional.of(leftChild));
     }
 
-    public BinaryTreeNode<T> setLeftChild(final Optional<BinaryTreeNode<T>> leftChild) {
+    public BinaryTreeNode<T> setLeftChild(final Optional<? extends BinaryTreeNode<T>> leftChild) {
         return this.nodeFactory.create(this.value, leftChild, this.rightChild);
     }
 
@@ -148,7 +159,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return this.setRightChild(Optional.of(rightChild));
     }
 
-    public BinaryTreeNode<T> setRightChild(final Optional<BinaryTreeNode<T>> rightChild) {
+    public BinaryTreeNode<T> setRightChild(final Optional<? extends BinaryTreeNode<T>> rightChild) {
         return this.nodeFactory.create(this.value, this.leftChild, rightChild);
     }
 
