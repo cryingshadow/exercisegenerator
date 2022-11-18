@@ -420,6 +420,80 @@ public class MainTest {
     private final List<File> tmpFiles = new LinkedList<File>();
 
     @Test
+    public void avltree() throws IOException {
+        final List<String> exText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "Betrachten Sie den folgenden \\emphasize{AVL-Baum}:\\\\",
+                "\\begin{minipage}[t]{7cm}",
+                "\\begin{center}",
+                "\\begin{tikzpicture}",
+                "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                "\\Tree [.5 [.3 1 4 ] [.7 6 8 ] ]",
+                "\\end{tikzpicture}",
+                "~\\\\*\\vspace*{1ex}",
+                "\\end{center}",
+                "\\end{minipage}"
+            )
+        );
+        exText.addAll(Patterns.MIDDLE_SPACE);
+        exText.addAll(
+            List.of(
+                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation an:\\\\[2ex]",
+                "\\begin{enumerate}",
+                "\\item 2 einf\\\"ugen\\\\",
+                "\\item 5 l\\\"oschen\\\\",
+                "\\end{enumerate}"
+            )
+        );
+        this.harness(
+            new String[] {
+                "-a", Algorithm.AVLTREE.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "3,1,5,4,7,6,8;2,~5"
+            },
+            MainTest.simpleComparison(
+                exText,
+                List.of(
+                    "\\begin{minipage}[t]{7cm}",
+                    "f\\\"uge 2 ein\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.5 [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] 4 ] [.7 6 8 ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "\\begin{minipage}[t]{7cm}",
+                    "entferne 6\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.5 [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] 4 ] [.7 \\edge[draw=none];\\node[draw=none]{}; 8 ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "",
+                    "~\\\\",
+                    "",
+                    "\\begin{minipage}[t]{7cm}",
+                    "ersetze 5\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.6 [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] 4 ] [.7 \\edge[draw=none];\\node[draw=none]{}; 8 ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}"
+                )
+            )
+        );
+    }
+
+    @Test
     public void breadthFirstSearch() throws IOException {
         this.harness(
             new String[] {

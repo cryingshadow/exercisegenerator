@@ -126,7 +126,7 @@ public class TreeAlgorithmsTest {
         final Deque<Pair<Integer, Boolean>> operations,
         final List<String> expectedStructures
     ) {
-        final BinaryTreeSteps<Integer> steps = TreeAlgorithms.avltree2(tree, operations);
+        final BinaryTreeSteps<Integer> steps = TreeAlgorithms.avltree(tree, operations);
         Assert.assertEquals(steps.stream().map(Pair::toString).toList(), expectedStructures);
     }
 
