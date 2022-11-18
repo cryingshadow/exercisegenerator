@@ -116,6 +116,29 @@ public class TreeAlgorithmsTest {
                     "(((((,3,),4,),5,(,6,)),7,(,8,)),ROTATE_LEFT4)",
                     "((((,3,),4,),5,((,6,),7,(,8,))),ROTATE_RIGHT7)"
                 )
+            },
+            {
+                TreeAlgorithms.AVL_TREE_FACTORY.create(7,6,5,4,3,2),
+                new ArrayDeque<Pair<Integer, Boolean>>(
+                    Arrays.asList(
+                        new Pair<Integer, Boolean>(1, true)
+                    )
+                ),
+                Arrays.asList(
+                    "(((((,1,),2,),3,),4,((,5,),6,(,7,))),ADD1)",
+                    "((((,1,),2,(,3,)),4,((,5,),6,(,7,))),ROTATE_RIGHT3)"
+                )
+            },
+            {
+                TreeAlgorithms.AVL_TREE_FACTORY.create(9),
+                new ArrayDeque<Pair<Integer, Boolean>>(
+                    Arrays.asList(
+                        new Pair<Integer, Boolean>(9, false)
+                    )
+                ),
+                Arrays.asList(
+                    "(,REMOVE9)"
+                )
             }
         };
     }

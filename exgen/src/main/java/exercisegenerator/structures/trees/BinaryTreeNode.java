@@ -5,13 +5,13 @@ import java.util.stream.*;
 
 public class BinaryTreeNode<T extends Comparable<T>> {
 
-    static <T extends Comparable<T>> void addBalanceSteps(final BinaryTreeNodeSteps<T> steps) {
-        final Optional<BinaryTreeNode<T>> lastNode = steps.getLast().x;
-        steps.addAll(lastNode.isEmpty() ? Collections.emptyList() : lastNode.get().balanceWithSteps());
-    }
-
     static <T extends Comparable<T>> int height(final Optional<? extends BinaryTreeNode<T>> node) {
         return node.isEmpty() ? 0 : node.get().getHeight();
+    }
+
+    private static <T extends Comparable<T>> void addBalanceSteps(final BinaryTreeNodeSteps<T> steps) {
+        final Optional<BinaryTreeNode<T>> lastNode = steps.getLast().x;
+        steps.addAll(lastNode.isEmpty() ? Collections.emptyList() : lastNode.get().balanceWithSteps());
     }
 
     final Optional<? extends BinaryTreeNode<T>> leftChild;
@@ -110,33 +110,24 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         if (comparison == 0) {
             if (this.leftChild.isEmpty()) {
                 if (this.rightChild.isEmpty()) {
-                    result.add(
-                        new BinaryTreeNodeAndStep<T>(
+                    return
+                        new BinaryTreeNodeSteps<T>(
                             Optional.empty(),
                             new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
-                        )
-                    );
-                    BinaryTreeNode.addBalanceSteps(result);
-                    return result;
+                        );
                 }
-                result.add(
-                    new BinaryTreeNodeAndStep<T>(
+                return
+                    new BinaryTreeNodeSteps<T>(
                         this.rightChild.get(),
                         new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
-                    )
-                );
-                BinaryTreeNode.addBalanceSteps(result);
-                return result;
+                    );
             }
             if (this.rightChild.isEmpty()) {
-                result.add(
-                    new BinaryTreeNodeAndStep<T>(
+                return
+                    new BinaryTreeNodeSteps<T>(
                         this.leftChild.get(),
                         new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
-                    )
-                );
-                BinaryTreeNode.addBalanceSteps(result);
-                return result;
+                    );
             }
             final T min = this.rightChild.get().getMin();
             final BinaryTreeNodeSteps<T> minSteps = this.rightChild.get().removeWithSteps(min);
