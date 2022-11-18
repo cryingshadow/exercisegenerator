@@ -10,6 +10,12 @@ import exercisegenerator.structures.trees.*;
 
 public abstract class TreeAlgorithms {
 
+    static final BinaryTreeFactory<Integer> AVL_TREE_FACTORY =
+        new AVLTreeFactory<Integer>(new AVLTreeNodeFactory<Integer>());
+
+    static final BinaryTreeFactory<Integer> BINARY_TREE_FACTORY =
+        new BinaryTreeFactory<Integer>(new BinaryTreeNodeFactory<Integer>());
+
     /**
      * Flag to enable debug output.
      */
@@ -144,19 +150,28 @@ public abstract class TreeAlgorithms {
         }
     }
 
-    static final BinaryTreeFactory<Integer> BINARY_TREE_FACTORY =
-        new BinaryTreeFactory<Integer>(new BinaryTreeNodeFactory<Integer>());
-    
-    static final BinaryTreeFactory<Integer> AVL_TREE_FACTORY =
-        new AVLTreeFactory<Integer>(new AVLTreeNodeFactory<Integer>());
-    
+    public static <T extends Comparable<T>> BinaryTreeSteps<T> avltree2(
+        final AVLTree<T> tree,
+        final Deque<Pair<T, Boolean>> tasks
+    ) {
+        final BinaryTreeSteps<T> result = new BinaryTreeSteps<T>();
+        AVLTree<T> currentTree = tree;
+        for (final Pair<T, Boolean> task : tasks) {
+            result.addAll(
+                task.y ? currentTree.addWithSteps(task.x) : currentTree.removeWithSteps(task.x)
+            );
+            currentTree = (AVLTree<T>)result.getLast().x;
+        }
+        return result;
+    }
+
     public static void bstree(final AlgorithmInput input) throws IOException {
         final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =
             new ParserAndGenerator<Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>>(
                 TreeAlgorithms::parseConstructionAndTasks,
                 TreeAlgorithms::generateConstructionAndTasks
             ).getResult(input.options);
-        final BinaryTree<Integer> tree = BINARY_TREE_FACTORY.create(constructionAndTasks.x);
+        final BinaryTree<Integer> tree = TreeAlgorithms.BINARY_TREE_FACTORY.create(constructionAndTasks.x);
         final BinaryTreeSteps<Integer> steps =
             TreeAlgorithms.bstree(tree, constructionAndTasks.y);
         TreeAlgorithms.printTreeExercise(tree, constructionAndTasks.y, input.exerciseWriter);

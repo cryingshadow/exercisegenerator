@@ -5,17 +5,22 @@ import java.util.stream.*;
 
 public class BinaryTreeNode<T extends Comparable<T>> {
 
+    static <T extends Comparable<T>> void addBalanceSteps(final BinaryTreeNodeSteps<T> steps) {
+        final Optional<BinaryTreeNode<T>> lastNode = steps.getLast().x;
+        steps.addAll(lastNode.isEmpty() ? Collections.emptyList() : lastNode.get().balanceWithSteps());
+    }
+
+    static <T extends Comparable<T>> int height(final Optional<? extends BinaryTreeNode<T>> node) {
+        return node.isEmpty() ? 0 : node.get().getHeight();
+    }
+
     final Optional<? extends BinaryTreeNode<T>> leftChild;
+
+    final BinaryTreeNodeFactory<T> nodeFactory;
 
     final Optional<? extends BinaryTreeNode<T>> rightChild;
 
     final T value;
-    
-    final BinaryTreeNodeFactory<T> nodeFactory;
-
-    BinaryTreeNode(final T value, final BinaryTreeNodeFactory<T> nodeFactory) {
-        this(value, Optional.empty(), Optional.empty(), nodeFactory);
-    }
 
     BinaryTreeNode(
         final T value,
@@ -24,6 +29,10 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         final BinaryTreeNodeFactory<T> nodeFactory
     ) {
         this(value, Optional.of(leftChild), Optional.of(rightChild), nodeFactory);
+    }
+
+    BinaryTreeNode(final T value, final BinaryTreeNodeFactory<T> nodeFactory) {
+        this(value, Optional.empty(), Optional.empty(), nodeFactory);
     }
 
     BinaryTreeNode(
@@ -44,19 +53,17 @@ public class BinaryTreeNode<T extends Comparable<T>> {
                 final BinaryTreeNode<T> resultingNode = this.setRightChild(this.nodeFactory.create(value));
                 return new BinaryTreeNodeSteps<T>(resultingNode, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
             }
-            BinaryTreeNodeSteps<T> result = this.rightChild.get().addWithSteps(value);
-            Optional<BinaryTreeNode<T>> lastNode = result.getLast().x;
-            result.addAll(lastNode.isEmpty() ? Collections.emptyList() : lastNode.get().balanceWithSteps());
-            return this.asRightChildren(result);
+            final BinaryTreeNodeSteps<T> result = this.asRightChildren(this.rightChild.get().addWithSteps(value));
+            BinaryTreeNode.addBalanceSteps(result);
+            return result;
         }
         if (this.leftChild.isEmpty()) {
             final BinaryTreeNode<T> resultingNode = this.setLeftChild(this.nodeFactory.create(value));
             return new BinaryTreeNodeSteps<T>(resultingNode, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
         }
-        BinaryTreeNodeSteps<T> result = this.leftChild.get().addWithSteps(value);
-        Optional<BinaryTreeNode<T>> lastNode = result.getLast().x;
-        result.addAll(lastNode.isEmpty() ? Collections.emptyList() : lastNode.get().balanceWithSteps());
-        return this.asLeftChildren(result);
+        final BinaryTreeNodeSteps<T> result = this.asLeftChildren(this.leftChild.get().addWithSteps(value));
+        BinaryTreeNode.addBalanceSteps(result);
+        return result;
     }
 
     public BinaryTreeNodeSteps<T> balanceWithSteps() {
@@ -86,10 +93,6 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             && this.rightChild.equals(other.rightChild);
     }
 
-    static <T extends Comparable<T>> int height(Optional<? extends BinaryTreeNode<T>> node) {
-        return node.isEmpty() ? 0 : node.get().getHeight();
-    }
-    
     public int getHeight() {
         return Math.max(BinaryTreeNode.height(this.leftChild), BinaryTreeNode.height(this.rightChild)) + 1;
     }
@@ -101,30 +104,42 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             + this.rightChild.hashCode() * 2;
     }
 
-    public BinaryTreeNodeSteps<T> removeWithStepsAndEmptyParent(final T value) {
+    public BinaryTreeNodeSteps<T> removeWithSteps(final T value) {
+        final BinaryTreeNodeSteps<T> result = new BinaryTreeNodeSteps<T>();
         final int comparison = this.value.compareTo(value);
         if (comparison == 0) {
             if (this.leftChild.isEmpty()) {
                 if (this.rightChild.isEmpty()) {
-                    return new BinaryTreeNodeSteps<T>(
-                        Optional.empty(),
-                        new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                    result.add(
+                        new BinaryTreeNodeAndStep<T>(
+                            Optional.empty(),
+                            new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                        )
                     );
+                    BinaryTreeNode.addBalanceSteps(result);
+                    return result;
                 }
-                return new BinaryTreeNodeSteps<T>(
-                    this.rightChild.get(),
-                    new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                result.add(
+                    new BinaryTreeNodeAndStep<T>(
+                        this.rightChild.get(),
+                        new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                    )
                 );
+                BinaryTreeNode.addBalanceSteps(result);
+                return result;
             }
             if (this.rightChild.isEmpty()) {
-                return new BinaryTreeNodeSteps<T>(
-                    this.leftChild.get(),
-                    new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                result.add(
+                    new BinaryTreeNodeAndStep<T>(
+                        this.leftChild.get(),
+                        new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
+                    )
                 );
+                BinaryTreeNode.addBalanceSteps(result);
+                return result;
             }
-            final BinaryTreeNodeSteps<T> result = new BinaryTreeNodeSteps<T>();
             final T min = this.rightChild.get().getMin();
-            final BinaryTreeNodeSteps<T> minSteps = this.rightChild.get().removeWithStepsAndEmptyParent(min);
+            final BinaryTreeNodeSteps<T> minSteps = this.rightChild.get().removeWithSteps(min);
             final Optional<BinaryTreeNode<T>> minRightChild = minSteps.get(minSteps.size() - 1).x;
             result.addAll(this.asRightChildren(minSteps));
             result.add(
@@ -133,18 +148,23 @@ public class BinaryTreeNode<T extends Comparable<T>> {
                     new BinaryTreeStep<T>(BinaryTreeStepType.REPLACE, value)
                 )
             );
+            BinaryTreeNode.addBalanceSteps(result);
             return result;
         }
         if (comparison < 0) {
             if (this.rightChild.isEmpty()) {
                 return new BinaryTreeNodeSteps<T>();
             }
-            return this.asRightChildren(this.rightChild.get().removeWithStepsAndEmptyParent(value));
+            result.addAll(this.asRightChildren(this.rightChild.get().removeWithSteps(value)));
+            BinaryTreeNode.addBalanceSteps(result);
+            return result;
         }
         if (this.leftChild.isEmpty()) {
             return new BinaryTreeNodeSteps<T>();
         }
-        return this.asLeftChildren(this.leftChild.get().removeWithStepsAndEmptyParent(value));
+        result.addAll(this.asLeftChildren(this.leftChild.get().removeWithSteps(value)));
+        BinaryTreeNode.addBalanceSteps(result);
+        return result;
     }
 
     public BinaryTreeNode<T> setLeftChild(final BinaryTreeNode<T> leftChild) {
@@ -232,30 +252,32 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         visitor.onBackFromRight(this.value);
     }
 
-    private BinaryTreeNodeSteps<T> asLeftChildren(final BinaryTreeNodeSteps<T> steps) {
-        return steps.stream()
+    BinaryTreeNodeSteps<T> asLeftChildren(final BinaryTreeNodeSteps<T> steps) {
+        final BinaryTreeNodeSteps<T> result =
+            steps
+            .stream()
             .map(pair -> new BinaryTreeNodeAndStep<T>(Optional.of(this.setLeftChild(pair.x)), pair.y))
             .collect(Collectors.toCollection(BinaryTreeNodeSteps::new));
+        return result;
     }
 
-    private BinaryTreeNodeSteps<T> asRightChildren(final BinaryTreeNodeSteps<T> steps) {
-        return steps.stream()
-            .map(
-                pair -> new BinaryTreeNodeAndStep<T>(
-                    Optional.of(this.setRightChild(pair.x)),
-                    pair.y
-                )
-            ).collect(Collectors.toCollection(BinaryTreeNodeSteps::new));
+    BinaryTreeNodeSteps<T> asRightChildren(final BinaryTreeNodeSteps<T> steps) {
+        final BinaryTreeNodeSteps<T> result =
+            steps
+            .stream()
+            .map(pair -> new BinaryTreeNodeAndStep<T>(Optional.of(this.setRightChild(pair.x)), pair.y))
+            .collect(Collectors.toCollection(BinaryTreeNodeSteps::new));
+        return result;
+    }
+
+    T getMin() {
+        return this.stream().findFirst().get();
     }
 
     private LinkedList<? extends T> getLeft(final Collection<? extends T> values) {
         return values.stream()
             .filter(x -> x.compareTo(this.value) <= 0)
             .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    T getMin() {
-        return this.stream().findFirst().get();
     }
 
     private LinkedList<? extends T> getRight(final Collection<? extends T> values) {

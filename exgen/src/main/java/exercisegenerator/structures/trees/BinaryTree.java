@@ -105,7 +105,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         }
         return this.root
             .get()
-            .removeWithStepsAndEmptyParent(value)
+            .removeWithSteps(value)
             .stream()
             .map(pair -> new BinaryTreeAndStep<T>(this.treeFactory.create(pair.x), pair.y))
             .collect(Collectors.toCollection(BinaryTreeSteps::new));

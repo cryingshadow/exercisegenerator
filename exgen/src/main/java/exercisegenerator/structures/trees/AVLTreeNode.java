@@ -5,38 +5,25 @@ import java.util.*;
 public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
 
     final int height;
-    
-    AVLTreeNode(T value, AVLTreeNodeFactory<T> nodeFactory) {
+
+    AVLTreeNode(final T value, final AVLTreeNodeFactory<T> nodeFactory) {
         super(value, nodeFactory);
         this.height = 1;
     }
 
     AVLTreeNode(
-        T value,
-        Optional<? extends BinaryTreeNode<T>> leftChild,
-        Optional<? extends BinaryTreeNode<T>> rightChild,
-        AVLTreeNodeFactory<T> nodeFactory
+        final T value,
+        final Optional<? extends BinaryTreeNode<T>> leftChild,
+        final Optional<? extends BinaryTreeNode<T>> rightChild,
+        final AVLTreeNodeFactory<T> nodeFactory
     ) {
         super(value, leftChild, rightChild, nodeFactory);
         this.height = Math.max(BinaryTreeNode.height(leftChild), BinaryTreeNode.height(rightChild)) + 1;
     }
 
-    int leftHeight() {
-        return AVLTreeNode.height(this.leftChild);
-    }
-    
-    int rightHeight() {
-        return AVLTreeNode.height(this.rightChild);
-    }
-    
-    @Override
-    public int getHeight() {
-        return this.height;
-    }
-    
     @Override
     public BinaryTreeNodeSteps<T> balanceWithSteps() {
-        int diff = this.leftHeight() - this.rightHeight();
+        final int diff = this.leftHeight() - this.rightHeight();
         if (diff < -1) {
             return this.balanceRightToLeft();
         } else if (diff > 1) {
@@ -46,8 +33,22 @@ public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
         }
     }
 
+    @Override
+    public int getHeight() {
+        return this.height;
+    }
+
+    int leftHeight() {
+        return BinaryTreeNode.height(this.leftChild);
+    }
+
+    int rightHeight() {
+        return BinaryTreeNode.height(this.rightChild);
+    }
+
     private BinaryTreeNodeSteps<T> balanceLeftToRight() {
         @SuppressWarnings("unchecked")
+        final
         AVLTreeNode<T> left = (AVLTreeNode<T>)this.leftChild.get();
         if (
             left.rightChild.isEmpty() ||
@@ -55,8 +56,22 @@ public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
         ) {
             return this.rotateRight();
         }
-        BinaryTreeNodeSteps<T> result = left.rotateLeft();
-        result.addAll(((AVLTreeNode<T>)this.setLeftChild(result.getLast().x)).rotateRight());
+        final BinaryTreeNodeSteps<T> result = this.asLeftChildren(left.rotateLeft());
+        result.addAll(((AVLTreeNode<T>)result.getLast().x.get()).rotateRight());
+        return result;
+    }
+
+    private BinaryTreeNodeSteps<T> balanceRightToLeft() {
+        @SuppressWarnings("unchecked")
+        final AVLTreeNode<T> right = (AVLTreeNode<T>)this.rightChild.get();
+        if (
+            right.leftChild.isEmpty() ||
+            (right.rightChild.isPresent() && right.leftChild.get().getHeight() <= right.rightChild.get().getHeight())
+        ) {
+            return this.rotateLeft();
+        }
+        final BinaryTreeNodeSteps<T> result = this.asRightChildren(right.rotateRight());
+        result.addAll(((AVLTreeNode<T>)result.getLast().x.get()).rotateLeft());
         return result;
     }
 
@@ -74,18 +89,4 @@ public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
         );
     }
 
-    private BinaryTreeNodeSteps<T> balanceRightToLeft() {
-        @SuppressWarnings("unchecked")
-        AVLTreeNode<T> right = (AVLTreeNode<T>)this.rightChild.get();
-        if (
-            right.leftChild.isEmpty() ||
-            (right.rightChild.isPresent() && right.leftChild.get().getHeight() <= right.rightChild.get().getHeight())
-        ) {
-            return this.rotateLeft();
-        }
-        BinaryTreeNodeSteps<T> result = right.rotateRight();
-        result.addAll(((AVLTreeNode<T>)this.setRightChild(result.getLast().x)).rotateLeft());
-        return result;
-    }
-    
 }
