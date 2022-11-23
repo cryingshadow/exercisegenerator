@@ -52,6 +52,7 @@ public abstract class GraphAlgorithms {
         GraphAlgorithms.printGraphExercise(
             pair.x,
             GraphAlgorithms.breadthFirstSearchTask(pair.y.label.get()),
+            GraphAlgorithms.parseDistanceFactor(input.options),
             GraphPrintMode.NO_EDGE_LABELS,
             input.exerciseWriter
         );
@@ -591,6 +592,7 @@ public abstract class GraphAlgorithms {
         GraphAlgorithms.printGraphExercise(
             pair.x,
             GraphAlgorithms.depthFirstSearchTask(pair.y.label.get()),
+            GraphAlgorithms.parseDistanceFactor(input.options),
             GraphPrintMode.NO_EDGE_LABELS,
             input.exerciseWriter
         );
@@ -1959,6 +1961,10 @@ public abstract class GraphAlgorithms {
         return res;
     }
 
+    private static double parseDistanceFactor(final Parameters options) {
+        return Double.parseDouble(options.getOrDefault(Flag.DEGREE, "1.0"));
+    }
+
     private static FlowNetworkInput<String, FlowPair> parseFlowNetwork(
         final BufferedReader reader,
         final Parameters options
@@ -2143,6 +2149,7 @@ public abstract class GraphAlgorithms {
         GraphAlgorithms.printGraphExercise(
             graph,
             String.format(GraphAlgorithms.DIJKSTRA_PATTERN,  start.label.get().toString()),
+            GraphAlgorithms.parseDistanceFactor(options),
             GraphPrintMode.ALL,
             exWriter
         );
@@ -2219,13 +2226,14 @@ public abstract class GraphAlgorithms {
     private static <V> void printGraphExercise(
         final Graph<V, Integer> graph,
         final String task,
+        final double distanceFactor,
         final GraphPrintMode mode,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Betrachten Sie den folgenden Graphen:\\\\");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        graph.printTikZ(mode, 1, null, writer);
+        graph.printTikZ(mode, distanceFactor, null, writer);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         Main.newLine(writer);
         writer.write(task);
