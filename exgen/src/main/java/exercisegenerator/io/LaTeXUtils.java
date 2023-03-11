@@ -64,6 +64,10 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
     }
 
+    public static String bold(final String text) {
+        return String.format("\\textbf{%s}", text);
+    }
+
     public static String code(final String text) {
         return String.format("\\code{%s}", text);
     }
@@ -74,6 +78,10 @@ public abstract class LaTeXUtils {
 
     public static Function<Integer, String> defaultColumnDefinition(final String width) {
         return cols -> String.format("|*{%d}{C{%s}|}", cols, width);
+    }
+
+    public static String displayMath(final String content) {
+        return String.format("\\[%s\\]", content);
     }
 
     public static void endMulticols(final BufferedWriter writer) throws IOException {
@@ -93,6 +101,14 @@ public abstract class LaTeXUtils {
             .replaceAll("\\\\textbackslash", "\\\\textbackslash{}")
             .replaceAll("([^\\\\])\"", "$1''")
             .replaceAll("^\"", "''");
+    }
+
+    public static String mathematicalSet(final Collection<?> elements) {
+        return LaTeXUtils.mathematicalSet(elements.stream());
+    }
+
+    public static String mathematicalSet(final Stream<?> elements) {
+        return String.format("\\{%s\\}", elements.map(x -> x.toString()).collect(Collectors.joining(",")));
     }
 
     /**

@@ -676,22 +676,6 @@ public enum Algorithm {
         return input.options.containsKey(Flag.EXERCISE) ? Optional.of(input.exerciseWriter) : Optional.empty();
     }
 
-    public static PreprintMode parsePreprintMode(final Parameters options) throws Exception {
-        if (options.containsKey(Flag.PREPRINT_MODE)) {
-            switch (options.get(Flag.PREPRINT_MODE)) {
-                case "always":
-                    return PreprintMode.ALWAYS;
-                case "solutionSpace":
-                    return PreprintMode.SOLUTION_SPACE;
-                case "never":
-                    return PreprintMode.NEVER;
-                default:
-                    throw new Exception("Unknown preprint mode!");
-            }
-        }
-        return PreprintMode.ALWAYS;
-    }
-
     private static void assignmentBeginning(
         final String leftHandSide,
         final String longestLeftHandSide,

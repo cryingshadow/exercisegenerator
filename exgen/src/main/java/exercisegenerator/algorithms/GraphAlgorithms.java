@@ -610,13 +610,13 @@ public abstract class GraphAlgorithms {
         return GraphAlgorithms.depthFirstSearch(graph, start, comparator, new LinkedHashSet<Vertex<V>>());
     }
 
-    public static void dijkstra(final AlgorithmInput input) throws Exception {
+    public static void dijkstra(final AlgorithmInput input) throws IOException {
         final Pair<Graph<String, Integer>, Vertex<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
         GraphAlgorithms.printDijkstra(
             pair.x,
             pair.y,
             GraphAlgorithms.dijkstra(pair.x, pair.y, new StringVertexComparator()),
-            Algorithm.parsePreprintMode(input.options),
+            PreprintMode.parsePreprintMode(input.options),
             input.options,
             input.exerciseWriter,
             input.solutionWriter
@@ -930,7 +930,7 @@ public abstract class GraphAlgorithms {
         LaTeXUtils.printArrayStretch(1.0, solWriter);
     }
 
-    public static void fordFulkerson(final AlgorithmInput input) throws Exception {
+    public static void fordFulkerson(final AlgorithmInput input) throws IOException {
         final FlowNetworkInput<String, FlowPair> flow = GraphAlgorithms.parseOrGenerateFlowNetwork(input.options);
         GraphAlgorithms.fordFulkerson(
             flow.graph,
@@ -938,7 +938,7 @@ public abstract class GraphAlgorithms {
             flow.sink,
             flow.multiplier,
             flow.twocolumns,
-            Algorithm.parsePreprintMode(input.options),
+            PreprintMode.parsePreprintMode(input.options),
             input.exerciseWriter,
             input.solutionWriter
         );

@@ -1524,6 +1524,81 @@ public class MainTest {
         );
     }
 
+    @Test
+    public void knapsack() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.KNAPSACK.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-p", PreprintMode.SOLUTION_SPACE.text,
+                "-i", "4,3,3;3,2,2;7"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Gegeben sei ein Rucksack mit \\emphasize{maximaler Tragkraft} 7 sowie 3 "
+                    + "\\emphasize{Gegenst\\\"ande}. ",
+                    "Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $c_i$ haben. ",
+                    "Bestimmen Sie mit Hilfe des Algorithmus zum L\\\"osen des Rucksackproblems mittels dynamischer "
+                    + "Programmierung den maximalen Gesamtwert der Gegenst\\\"ande, die der Rucksack tragen kann (das "
+                    + "Gesamtgewicht der mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des "
+                    + "Rucksacks). ",
+                    "Die \\emphasize{Gewichte} seien dabei $w_{1} = 4$, $w_{2} = 3$ und $w_{3} = 3$. ",
+                    "Die \\emphasize{Werte} seien $c_{1} = 3$, $c_{2} = 2$ und $c_{3} = 2$. ",
+                    "Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} an und beschreiben Sie anhand "
+                    + "der Tabelle, wie man die mitzunehmenden Gegenst\\\"ande bestimmen kann, um den maximalen Wert "
+                    + "zu erreichen.",
+                    "",
+                    "\\ifprintanswers",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\else",
+                    "\\begin{center}",
+                    "{\\Large",
+                    "\\begin{tabular}{|C{1.2cm}|*{8}{C{1.2cm}C{5mm}|}}",
+                    "\\hline",
+                    "\\textbf{Gegenstand/Kapazit\\\"at} & \\textbf{0} &  & \\textbf{1} &  & \\textbf{2} &  & \\textbf{3} &  & \\textbf{4} &  & \\textbf{5} &  & \\textbf{6} &  & \\textbf{7} & \\\\\\hline",
+                    "\\textbf{0} &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "\\textbf{1} &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "\\textbf{2} &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "\\textbf{3} &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "",
+                    "}",
+                    "\\end{center}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\fi",
+                    ""
+                ),
+                List.of(
+                    "Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:",
+                    "",
+                    "\\begin{center}",
+                    "{\\Large",
+                    "\\begin{tabular}{|C{1.2cm}|*{8}{C{1.2cm}C{5mm}|}}",
+                    "\\hline",
+                    "\\textbf{Gegenstand/Kapazit\\\"at} & \\textbf{0} &  & \\textbf{1} &  & \\textbf{2} &  & \\textbf{3} &  & \\textbf{4} &  & \\textbf{5} &  & \\textbf{6} &  & \\textbf{7} & \\\\\\hline",
+                    "\\textbf{0} & 0 &  & 0 &  & 0 &  & 0 &  & 0 &  & 0 &  & 0 &  & 0 & \\\\\\hline",
+                    "\\textbf{1} & 0 & $\\uparrow$ & 0 & $\\leftarrow$ & 0 & $\\leftarrow$ & 0 & $\\leftarrow$ & 3 & $\\leftarrow$ & 3 &  & 3 &  & 3 & \\\\\\hline",
+                    "\\textbf{2} & 0 &  & 0 &  & 0 &  & 2 &  & 3 & $\\uparrow$ & 3 & $\\leftarrow$ & 3 & $\\leftarrow$ & 5 & $\\leftarrow$\\\\\\hline",
+                    "\\textbf{3} & 0 &  & 0 &  & 0 &  & 2 &  & 3 &  & 3 &  & 4 &  & 5 & $\\uparrow$\\\\\\hline",
+                    "\\end{tabular}",
+                    "",
+                    "}",
+                    "\\end{center}",
+                    "",
+                    "Damit ergibt sich der maximale Wert 5 f\\\"ur den Fall, dass die folgenden Gegenst\\\"ande mitgenommen werden:",
+                    "",
+                    "\\[\\{1,2\\}\\]",
+                    "",
+                    "Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die Zeile f\\\"ur den $i$-ten Gegenstand einen Pfeil nach links enth\\\"alt, dann wird der $i$-te Gegenstand mitgenommen (ein Pfeil nach links in der Zeile f\\\"ur den 0-ten Gegenstand hat keine Bedeutung)."
+                )
+            )
+        );
+    }
+
     @BeforeMethod
     public void prepare() {
         LaTeXUtils.reset();

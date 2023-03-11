@@ -81,7 +81,7 @@ public abstract class Hashing {
         return result; //TODO
     }
 
-    public static void hashDiv(final AlgorithmInput input) throws Exception {
+    public static void hashDiv(final AlgorithmInput input) throws IOException, HashException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
         final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         final HashList[] result = Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.empty());
@@ -96,7 +96,7 @@ public abstract class Hashing {
                 .concat(Hashing.toAdditionalHint(initialHashTable.length)),
                 Hashing.toParameterString(initialHashTable.length),
                 false,
-                Algorithm.parsePreprintMode(input.options)
+                PreprintMode.parsePreprintMode(input.options)
             ),
             input.options,
             input.exerciseWriter,
@@ -104,7 +104,7 @@ public abstract class Hashing {
         );
     }
 
-    public static void hashDivLin(final AlgorithmInput input) throws Exception {
+    public static void hashDivLin(final AlgorithmInput input) throws IOException, HashException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
         final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         final HashList[] result =
@@ -120,7 +120,7 @@ public abstract class Hashing {
                 .concat(Hashing.toAdditionalHint(initialHashTable.length, initialHashTable.length)),
                 Hashing.toParameterString(initialHashTable.length),
                 true,
-                Algorithm.parsePreprintMode(input.options)
+                PreprintMode.parsePreprintMode(input.options)
             ),
             input.options,
             input.exerciseWriter,
@@ -128,7 +128,7 @@ public abstract class Hashing {
         );
     }
 
-    public static void hashDivQuad(final AlgorithmInput input) throws Exception {
+    public static void hashDivQuad(final AlgorithmInput input) throws IOException, HashException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
         final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         final HashResultWithProbingFactors resultWithProbingFactors =
@@ -168,7 +168,7 @@ public abstract class Hashing {
                     resultWithProbingFactors.quadraticProbingFactor
                 ),
                 true,
-                Algorithm.parsePreprintMode(input.options)
+                PreprintMode.parsePreprintMode(input.options)
             ),
             input.options,
             input.exerciseWriter,
@@ -203,7 +203,7 @@ public abstract class Hashing {
         );
     }
 
-    public static void hashMult(final AlgorithmInput input) throws Exception {
+    public static void hashMult(final AlgorithmInput input) throws IOException, HashException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
         final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         final double factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
@@ -220,7 +220,7 @@ public abstract class Hashing {
                 .concat(Hashing.toAdditionalHint(initialHashTable.length, factor)),
                 Hashing.toParameterString(initialHashTable.length, factor),
                 false,
-                Algorithm.parsePreprintMode(input.options)
+                PreprintMode.parsePreprintMode(input.options)
             ),
             input.options,
             input.exerciseWriter,
@@ -228,7 +228,7 @@ public abstract class Hashing {
         );
     }
 
-    public static void hashMultLin(final AlgorithmInput input) throws Exception {
+    public static void hashMultLin(final AlgorithmInput input) throws IOException, HashException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
         final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         final double factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
@@ -250,7 +250,7 @@ public abstract class Hashing {
                 .concat(Hashing.toAdditionalHint(initialHashTable.length, factor, initialHashTable.length)),
                 Hashing.toParameterString(initialHashTable.length, factor),
                 true,
-                Algorithm.parsePreprintMode(input.options)
+                PreprintMode.parsePreprintMode(input.options)
             ),
             input.options,
             input.exerciseWriter,
@@ -258,7 +258,7 @@ public abstract class Hashing {
         );
     }
 
-    public static void hashMultQuad(final AlgorithmInput input) throws Exception {
+    public static void hashMultQuad(final AlgorithmInput input) throws IOException, HashException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
         final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         final double factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
@@ -301,7 +301,7 @@ public abstract class Hashing {
                     resultWithProbingFactors.quadraticProbingFactor
                 ),
                 true,
-                Algorithm.parsePreprintMode(input.options)
+                PreprintMode.parsePreprintMode(input.options)
             ),
             input.options,
             input.exerciseWriter,

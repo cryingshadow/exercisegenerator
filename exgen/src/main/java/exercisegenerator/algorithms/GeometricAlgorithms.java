@@ -19,12 +19,12 @@ public abstract class GeometricAlgorithms {
         return result; //TODO
     }
 
-    public static void hull(final AlgorithmInput input) throws Exception {
+    public static void hull(final AlgorithmInput input) throws IOException {
         final ArrayList<Pair<Double,Double>> pointSet =
             GeometricAlgorithms.parseOrGenerateConvexHullProblem(input.options);
         GeometricAlgorithms.printConvexHull(
             pointSet,
-            Algorithm.parsePreprintMode(input.options),
+            PreprintMode.parsePreprintMode(input.options),
             input.options,
             input.exerciseWriter,
             input.solutionWriter

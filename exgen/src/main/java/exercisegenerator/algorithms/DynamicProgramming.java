@@ -12,6 +12,8 @@ import exercisegenerator.structures.*;
  */
 public abstract class DynamicProgramming {
 
+    private static final Random RANDOM = new Random();
+
     public static String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -20,17 +22,10 @@ public abstract class DynamicProgramming {
     }
 
     public static void knapsack(final AlgorithmInput input) throws Exception {
-        final Pair<Pair<Integer[],Integer[]>,Integer> tmpInput =
-            DynamicProgramming.parseOrGenerateKnapsackProblem(input.options);
-        DynamicProgramming.knapsack(
-            tmpInput.x.x,
-            tmpInput.x.y,
-            tmpInput.y,
-            Algorithm.parsePreprintMode(input.options),
-            input.options,
-            input.solutionWriter,
-            input.exerciseWriter
-        );
+        final KnapsackProblem problem = DynamicProgramming.parseOrGenerateKnapsackProblem(input.options);
+        final int[][] table = DynamicProgramming.knapsack(problem);
+        DynamicProgramming.printKnapsackExercise(problem, table, input.options, input.exerciseWriter);
+        DynamicProgramming.printKnapsackSolution(problem, table, input.options, input.solutionWriter);
     }
 
     /**
@@ -286,12 +281,29 @@ public abstract class DynamicProgramming {
         Main.newLine(solWriter);
     }
 
-    public static void lcs(final AlgorithmInput input) throws Exception {
+    public static int[][] knapsack(final KnapsackProblem problem) {
+        final int[][] result = new int[problem.weights.length + 1][problem.capacity + 1];
+        for (int item = 0; item < problem.weights.length; item++) {
+            for (int remainingCapacity = 1; remainingCapacity <= problem.capacity; remainingCapacity++) {
+                final int weight = problem.weights[item];
+                final int valueOut = result[item][remainingCapacity];
+                if (weight > remainingCapacity) {
+                    result[item + 1][remainingCapacity] = valueOut;
+                } else {
+                    final int valueIn = result[item][remainingCapacity - weight] + problem.values[item];
+                    result[item + 1][remainingCapacity] = Math.max(valueOut, valueIn);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static void lcs(final AlgorithmInput input) throws IOException {
         final Pair<String,String> tmpInput = DynamicProgramming.parseOrGenerateLCSProblem(input.options);
         DynamicProgramming.lcs(
             tmpInput.x,
             tmpInput.y,
-            Algorithm.parsePreprintMode(input.options),
+            PreprintMode.parsePreprintMode(input.options),
             input.options,
             input.solutionWriter,
             input.exerciseWriter
@@ -538,98 +550,93 @@ public abstract class DynamicProgramming {
         Main.newLine(solWriter);
     }
 
-    private static Pair<Pair<Integer[], Integer[]>, Integer> generateKnapsackProblem(final Parameters options) {
-        Integer[] weights = null;
-        Integer[] values = null;
-        Integer capacity = 0;
-        int length;
-        final Random gen = new Random();
-        if (options.containsKey(Flag.LENGTH)) {
-            length = Integer.parseInt(options.get(Flag.LENGTH));
-            if (length <= 0) {
-                length = gen.nextInt(4) + 3;
+    private static void fillKnapsackSolutionTable(
+        final String[][] tableWithArrows,
+        final int[][] solution,
+        final int[] weights
+    ) {
+        for (int i = 0; i < solution.length; i++) {
+            for (int j = 0; j < solution[i].length; j++) {
+                tableWithArrows[i + 1][2 * j + 1] = String.valueOf(solution[i][j]);
             }
-        } else {
-            length = gen.nextInt(4) + 3;
         }
-        Integer sumOfWeights = 0;
-        weights = new Integer[length];
+        int i = solution.length - 1;
+        int j = solution[0].length - 1;
+        while (i > 0) {
+            final int valueAbove = i == 0 ? 0 : solution[i - 1][j];
+            if (solution[i][j] > valueAbove) {
+                for (int k = 0; k < weights[i - 1]; k++) {
+                    tableWithArrows[i + 1][2 * j + 2] = "$\\leftarrow$";
+                    j--;
+                }
+            }
+            tableWithArrows[i + 1][2 * j + 2] = "$\\uparrow$";
+            i--;
+        }
+        while (j > 0) {
+            tableWithArrows[0][2 * j + 2] = "$\\leftarrow$";
+            j--;
+        }
+    }
+
+    private static KnapsackProblem generateKnapsackProblem(final Parameters options) {
+        final int numberOfItems = DynamicProgramming.parseOrGenerateNumberOfItems(options);
+        int sumOfWeights = 0;
+        final int[] weights = new int[numberOfItems];
         for (int i = 0; i < weights.length; i++) {
-            weights[i] = 1 + gen.nextInt(11);
+            weights[i] = 1 + DynamicProgramming.RANDOM.nextInt(11);
             sumOfWeights += weights[i];
         }
-        values = new Integer[length];
+        final int[] values = new int[numberOfItems];
         for (int i = 0; i < values.length; i++) {
-            values[i] = 1 + gen.nextInt(11);
+            values[i] = 1 + DynamicProgramming.RANDOM.nextInt(11);
         }
-        final Integer p = 35 + gen.nextInt(30);
-        capacity = (sumOfWeights*p)/100;
-        return
-            new Pair<Pair<Integer[],Integer[]>,Integer>(
-                new Pair<Integer[],Integer[]>(weights, values),
-                capacity
-            );
+        final int p = 35 + DynamicProgramming.RANDOM.nextInt(30);
+        final int capacity = (sumOfWeights * p) / 100;
+        return new KnapsackProblem(weights, values, capacity);
     }
 
     private static Pair<String, String> generateLCSProblem(final Parameters options) {
         throw new UnsupportedOperationException("Not yet implemented!");
     }
 
-    private static Pair<Pair<Integer[], Integer[]>, Integer> parseKnapsackProblem(
+    private static List<Integer> knapsackItems(final KnapsackProblem problem, final int[][] solution) {
+        final List<Integer> result = new LinkedList<Integer>();
+        int i = solution.length - 1;
+        int j = solution[0].length - 1;
+        while (i > 0) {
+            final int valueAbove = i == 0 ? 0 : solution[i - 1][j];
+            if (solution[i][j] > valueAbove) {
+                result.add(i);
+                j -= problem.weights[i - 1];
+            }
+            i--;
+        }
+        Collections.sort(result);
+        return result;
+    }
+
+    private static String knapsackTableColumnDefinition(final int cols) {
+        return String.format("|C{1.2cm}|*{%d}{C{1.2cm}C{5mm}|}", cols / 2);
+    }
+
+    private static KnapsackProblem parseKnapsackProblem(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
-        Integer[] weights = null;
-        Integer[] values = null;
-        Integer capacity = 0;
         final String errorMessage =
-            "You need to provide two lines of numbers, each number separated only by a ','!"
-            + " The first lines represents the weights of the items and the second line represents"
-            + " the values of the items. Note, that there must be supplied the same number of"
-            + " weights and values and at least one.";
-        String line = null;
-        int rowNum = 0;
-        final int numOfElements = -1;
-        Integer sumOfWeights = 0;
-        while ((line = reader.readLine()) != null) {
-            final String[] numbers = line.split(",");
-            // FIXME numOfElements is never changed!
-            if (numOfElements == 0 || (numOfElements > 0 && numOfElements != numbers.length)) {
-                System.out.println(errorMessage);
-                return null;
-            }
-            if (rowNum == 0) {
-                weights = new Integer[numbers.length];
-            } else if (rowNum == 1) {
-                values = new Integer[numbers.length];
-            } else {
-                System.out.println(errorMessage);
-                return null;
-            }
-            for (int i = 0; i < numbers.length; i++) {
-                final int number = Integer.parseInt(numbers[i].trim());
-                if (rowNum == 0) {
-                    weights[i] = number;
-                    sumOfWeights += number;
-                } else {
-                    values[i] = number;
-                }
-            }
-            rowNum++;
+            "You need to provide the same number of weights and values together with a capacity. The three parts need "
+            + " to be separated by ';' while the numbers within the parts are separated by ','!";
+        final String line = reader.readLine();
+        final String[] parts = line.strip().split(";");
+        if (parts.length != 3) {
+            throw new IOException(errorMessage);
         }
-        if (options.containsKey(Flag.CAPACITY)) {
-            capacity = Integer.parseInt(options.get(Flag.CAPACITY));
-            if (capacity <= 0) {
-                capacity = sumOfWeights/2;
-            }
-        } else {
-            capacity = sumOfWeights/2;
-        }
-        return
-            new Pair<Pair<Integer[],Integer[]>,Integer>(
-                new Pair<Integer[],Integer[]>(weights, values),
-                capacity
-            );
+        return new KnapsackProblem(
+            DynamicProgramming.toIntArray(parts[0]),
+            DynamicProgramming.toIntArray(parts[1]),
+            Integer.parseInt(parts[2])
+        );
     }
 
     private static Pair<String, String> parseLCSProblem(final BufferedReader reader, final Parameters options) throws IOException {
@@ -660,9 +667,9 @@ public abstract class DynamicProgramming {
         return new Pair<String,String>(wordA, wordB);
     }
 
-    private static Pair<Pair<Integer[], Integer[]>, Integer> parseOrGenerateKnapsackProblem(final Parameters options)
+    private static KnapsackProblem parseOrGenerateKnapsackProblem(final Parameters options)
     throws IOException {
-        return new ParserAndGenerator<Pair<Pair<Integer[], Integer[]>, Integer>>(
+        return new ParserAndGenerator<KnapsackProblem>(
             DynamicProgramming::parseKnapsackProblem,
             DynamicProgramming::generateKnapsackProblem
         ).getResult(options);
@@ -673,6 +680,151 @@ public abstract class DynamicProgramming {
             DynamicProgramming::parseLCSProblem,
             DynamicProgramming::generateLCSProblem
         ).getResult(options);
+    }
+
+    private static int parseOrGenerateNumberOfItems(final Parameters options) {
+        if (options.containsKey(Flag.LENGTH)) {
+            final int result = Integer.parseInt(options.get(Flag.LENGTH));
+            if (result > 0) {
+                return result;
+            }
+        }
+        return DynamicProgramming.RANDOM.nextInt(4) + 3;
+    }
+
+    private static void printKnapsackExercise(
+        final KnapsackProblem problem,
+        final int[][] solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws Exception {
+        final int numberOfItems = problem.weights.length;
+        writer.write(
+            String.format(
+                "Gegeben sei ein Rucksack mit \\emphasize{maximaler Tragkraft} %d sowie %d \\emphasize{Gegenst\\\"ande}. ",
+                problem.capacity,
+                numberOfItems
+            )
+        );
+        Main.newLine(writer);
+        writer.write("Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $c_i$ haben. ");
+        Main.newLine(writer);
+        writer.write("Bestimmen Sie mit Hilfe des Algorithmus zum L\\\"osen ");
+        writer.write("des Rucksackproblems mittels dynamischer Programmierung den maximalen ");
+        writer.write("Gesamtwert der Gegenst\\\"ande, die der Rucksack tragen kann (das Gesamtgewicht der ");
+        writer.write("mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des Rucksacks). ");
+        Main.newLine(writer);
+        writer.write("Die \\emphasize{Gewichte} seien dabei $w_{1} = " + problem.weights[0] + "$");
+        for (int i = 1; i < numberOfItems - 1; i++) {
+            writer.write(", $w_{" + (i + 1) + "} = " + problem.weights[i] + "$");
+        }
+        writer.write(" und $w_{" + numberOfItems + "} = " + problem.weights[numberOfItems - 1]);
+        writer.write("$. ");
+        Main.newLine(writer);
+        writer.write("Die \\emphasize{Werte} seien $c_{1} = " + problem.values[0] + "$");
+        for (int i = 1; i < numberOfItems - 1; i++) {
+            writer.write(", $c_{" + (i + 1) + "} = " + problem.values[i] + "$");
+        }
+        writer.write(" und $c_{" + numberOfItems + "} = " + problem.values[numberOfItems - 1] + "$. ");
+        Main.newLine(writer);
+        writer.write("Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} an ");
+        writer.write("und beschreiben Sie anhand der Tabelle, wie man die mitzunehmenden Gegenst\\\"ande ");
+        writer.write("bestimmen kann, um den maximalen Wert zu erreichen.");
+        Main.newLine(writer);
+        Main.newLine(writer);
+        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        switch (mode) {
+        case SOLUTION_SPACE:
+            LaTeXUtils.printSolutionSpaceBeginning(options, writer);
+            // fall-through
+        case ALWAYS:
+            LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+            writer.write("{\\Large");
+            Main.newLine(writer);
+            LaTeXUtils.printTable(
+                DynamicProgramming.toKnapsackSolutionTable(solution, Optional.empty()),
+                Optional.empty(),
+                DynamicProgramming::knapsackTableColumnDefinition,
+                true,
+                0,
+                writer
+            );
+            Main.newLine(writer);
+            writer.write("}");
+            Main.newLine(writer);
+            LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+            if (mode == PreprintMode.SOLUTION_SPACE) {
+                LaTeXUtils.printSolutionSpaceEnd(options, writer);
+            }
+            Main.newLine(writer);
+            break;
+        default:
+            //do nothing
+        }
+    }
+
+    private static void printKnapsackSolution(
+        final KnapsackProblem problem,
+        final int[][] solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
+        Main.newLine(writer);
+        Main.newLine(writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        writer.write("{\\Large");
+        Main.newLine(writer);
+        LaTeXUtils.printTable(
+            DynamicProgramming.toKnapsackSolutionTable(solution, Optional.of(problem.weights)),
+            Optional.empty(),
+            DynamicProgramming::knapsackTableColumnDefinition,
+            true,
+            0,
+            writer
+        );
+        Main.newLine(writer);
+        writer.write("}");
+        Main.newLine(writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        Main.newLine(writer);
+        writer.write("Damit ergibt sich der maximale Wert ");
+        writer.write(String.valueOf(solution[solution.length - 1][solution[0].length - 1]));
+        writer.write(" f\\\"ur den Fall, dass die folgenden Gegenst\\\"ande mitgenommen werden:");
+        Main.newLine(writer);
+        Main.newLine(writer);
+        writer.write(
+            LaTeXUtils.displayMath(LaTeXUtils.mathematicalSet(DynamicProgramming.knapsackItems(problem, solution)))
+        );
+        Main.newLine(writer);
+        Main.newLine(writer);
+        writer.write("Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die Zeile f\\\"ur den $i$-ten ");
+        writer.write("Gegenstand einen Pfeil nach links enth\\\"alt, dann wird der $i$-te Gegenstand mitgenommen ");
+        writer.write("(ein Pfeil nach links in der Zeile f\\\"ur den 0-ten Gegenstand hat keine Bedeutung).");
+        Main.newLine(writer);
+        Main.newLine(writer);
+    }
+
+    private static int[] toIntArray(final String line) {
+        return Arrays.stream(line.split(",")).mapToInt(Integer::parseInt).toArray();
+    }
+
+    private static String[][] toKnapsackSolutionTable(
+        final int[][] solution,
+        final Optional<int[]> optionalWeightsForFilling
+    ) {
+        final String[][] tableWithArrows = new String[solution.length + 1][2 * solution[0].length + 1];
+        tableWithArrows[0][0] = LaTeXUtils.bold("Gegenstand/Kapazit\\\"at");
+        for (int i = 0; i < solution.length; i++) {
+            tableWithArrows[i + 1][0] = LaTeXUtils.bold(String.valueOf(i));
+        }
+        for (int i = 0; i < solution[0].length; i++) {
+            tableWithArrows[0][2 * i + 1] = LaTeXUtils.bold(String.valueOf(i));
+        }
+        if (optionalWeightsForFilling.isPresent()) {
+            DynamicProgramming.fillKnapsackSolutionTable(tableWithArrows, solution, optionalWeightsForFilling.get());
+        }
+        return tableWithArrows;
     }
 
 }
