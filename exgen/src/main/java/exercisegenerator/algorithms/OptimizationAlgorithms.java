@@ -6,11 +6,13 @@ import java.util.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.optimization.*;
+import exercisegenerator.util.*;
 
 /**
  * Class offering methods for dynamic programming.
  */
-public abstract class DynamicProgramming {
+public abstract class OptimizationAlgorithms {
 
     private static final Random RANDOM = new Random();
 
@@ -22,10 +24,10 @@ public abstract class DynamicProgramming {
     }
 
     public static void knapsack(final AlgorithmInput input) throws Exception {
-        final KnapsackProblem problem = DynamicProgramming.parseOrGenerateKnapsackProblem(input.options);
-        final int[][] table = DynamicProgramming.knapsack(problem);
-        DynamicProgramming.printKnapsackExercise(problem, table, input.options, input.exerciseWriter);
-        DynamicProgramming.printKnapsackSolution(problem, table, input.options, input.solutionWriter);
+        final KnapsackProblem problem = OptimizationAlgorithms.parseOrGenerateKnapsackProblem(input.options);
+        final int[][] table = OptimizationAlgorithms.knapsack(problem);
+        OptimizationAlgorithms.printKnapsackExercise(problem, table, input.options, input.exerciseWriter);
+        OptimizationAlgorithms.printKnapsackSolution(problem, table, input.options, input.solutionWriter);
     }
 
     /**
@@ -299,8 +301,8 @@ public abstract class DynamicProgramming {
     }
 
     public static void lcs(final AlgorithmInput input) throws IOException {
-        final Pair<String,String> tmpInput = DynamicProgramming.parseOrGenerateLCSProblem(input.options);
-        DynamicProgramming.lcs(
+        final Pair<String,String> tmpInput = OptimizationAlgorithms.parseOrGenerateLCSProblem(input.options);
+        OptimizationAlgorithms.lcs(
             tmpInput.x,
             tmpInput.y,
             PreprintMode.parsePreprintMode(input.options),
@@ -550,6 +552,19 @@ public abstract class DynamicProgramming {
         Main.newLine(solWriter);
     }
 
+    public static SimplexSolution simplex(final SimplexProblem problem) {
+        final List<SimplexTableau> tableaus = new LinkedList<SimplexTableau>();
+        SimplexTableau tableau = OptimizationAlgorithms.simplexInitializeTableau(problem);
+        tableaus.add(tableau);
+        SimplexAnswer answer = OptimizationAlgorithms.simplexComputeAnswer(tableau);
+        while (answer == SimplexAnswer.INCOMPLETE) {
+            tableau = OptimizationAlgorithms.simplexStep(tableau);
+            tableaus.add(tableau);
+            answer = OptimizationAlgorithms.simplexComputeAnswer(tableau);
+        }
+        return new SimplexSolution(tableaus, answer);
+    }
+
     private static void fillKnapsackSolutionTable(
         final String[][] tableWithArrows,
         final int[][] solution,
@@ -580,18 +595,18 @@ public abstract class DynamicProgramming {
     }
 
     private static KnapsackProblem generateKnapsackProblem(final Parameters options) {
-        final int numberOfItems = DynamicProgramming.parseOrGenerateNumberOfItems(options);
+        final int numberOfItems = OptimizationAlgorithms.parseOrGenerateNumberOfItems(options);
         int sumOfWeights = 0;
         final int[] weights = new int[numberOfItems];
         for (int i = 0; i < weights.length; i++) {
-            weights[i] = 1 + DynamicProgramming.RANDOM.nextInt(11);
+            weights[i] = 1 + OptimizationAlgorithms.RANDOM.nextInt(11);
             sumOfWeights += weights[i];
         }
         final int[] values = new int[numberOfItems];
         for (int i = 0; i < values.length; i++) {
-            values[i] = 1 + DynamicProgramming.RANDOM.nextInt(11);
+            values[i] = 1 + OptimizationAlgorithms.RANDOM.nextInt(11);
         }
-        final int p = 35 + DynamicProgramming.RANDOM.nextInt(30);
+        final int p = 35 + OptimizationAlgorithms.RANDOM.nextInt(30);
         final int capacity = (sumOfWeights * p) / 100;
         return new KnapsackProblem(weights, values, capacity);
     }
@@ -633,8 +648,8 @@ public abstract class DynamicProgramming {
             throw new IOException(errorMessage);
         }
         return new KnapsackProblem(
-            DynamicProgramming.toIntArray(parts[0]),
-            DynamicProgramming.toIntArray(parts[1]),
+            OptimizationAlgorithms.toIntArray(parts[0]),
+            OptimizationAlgorithms.toIntArray(parts[1]),
             Integer.parseInt(parts[2])
         );
     }
@@ -670,15 +685,15 @@ public abstract class DynamicProgramming {
     private static KnapsackProblem parseOrGenerateKnapsackProblem(final Parameters options)
     throws IOException {
         return new ParserAndGenerator<KnapsackProblem>(
-            DynamicProgramming::parseKnapsackProblem,
-            DynamicProgramming::generateKnapsackProblem
+            OptimizationAlgorithms::parseKnapsackProblem,
+            OptimizationAlgorithms::generateKnapsackProblem
         ).getResult(options);
     }
 
     private static Pair<String, String> parseOrGenerateLCSProblem(final Parameters options) throws IOException {
         return new ParserAndGenerator<Pair<String, String>>(
-            DynamicProgramming::parseLCSProblem,
-            DynamicProgramming::generateLCSProblem
+            OptimizationAlgorithms::parseLCSProblem,
+            OptimizationAlgorithms::generateLCSProblem
         ).getResult(options);
     }
 
@@ -689,7 +704,7 @@ public abstract class DynamicProgramming {
                 return result;
             }
         }
-        return DynamicProgramming.RANDOM.nextInt(4) + 3;
+        return OptimizationAlgorithms.RANDOM.nextInt(4) + 3;
     }
 
     private static void printKnapsackExercise(
@@ -742,9 +757,9 @@ public abstract class DynamicProgramming {
             writer.write("{\\Large");
             Main.newLine(writer);
             LaTeXUtils.printTable(
-                DynamicProgramming.toKnapsackSolutionTable(solution, Optional.empty()),
+                OptimizationAlgorithms.toKnapsackSolutionTable(solution, Optional.empty()),
                 Optional.empty(),
-                DynamicProgramming::knapsackTableColumnDefinition,
+                OptimizationAlgorithms::knapsackTableColumnDefinition,
                 true,
                 0,
                 writer
@@ -776,9 +791,9 @@ public abstract class DynamicProgramming {
         writer.write("{\\Large");
         Main.newLine(writer);
         LaTeXUtils.printTable(
-            DynamicProgramming.toKnapsackSolutionTable(solution, Optional.of(problem.weights)),
+            OptimizationAlgorithms.toKnapsackSolutionTable(solution, Optional.of(problem.weights)),
             Optional.empty(),
-            DynamicProgramming::knapsackTableColumnDefinition,
+            OptimizationAlgorithms::knapsackTableColumnDefinition,
             true,
             0,
             writer
@@ -794,7 +809,7 @@ public abstract class DynamicProgramming {
         Main.newLine(writer);
         Main.newLine(writer);
         writer.write(
-            LaTeXUtils.displayMath(LaTeXUtils.mathematicalSet(DynamicProgramming.knapsackItems(problem, solution)))
+            LaTeXUtils.displayMath(LaTeXUtils.mathematicalSet(OptimizationAlgorithms.knapsackItems(problem, solution)))
         );
         Main.newLine(writer);
         Main.newLine(writer);
@@ -803,6 +818,257 @@ public abstract class DynamicProgramming {
         writer.write("(ein Pfeil nach links in der Zeile f\\\"ur den 0-ten Gegenstand hat keine Bedeutung).");
         Main.newLine(writer);
         Main.newLine(writer);
+    }
+
+    private static void simplexBaseSwap(
+        final int pivotRow,
+        final int pivotColumn,
+        final double[][] matrix,
+        final int[] basicVariables,
+        final double[] target
+    ) {
+        final double pivotElement = matrix[pivotRow][pivotColumn];
+        if (pivotElement != 1.0) {
+            for (int col = 0; col < matrix[pivotRow].length; col++) {
+                matrix[pivotRow][col] /= pivotElement;
+            }
+        }
+        for (int row = 0; row < matrix.length - 2; row++) {
+            if (row != pivotRow && Double.compare(matrix[row][pivotColumn], 0.0) != 0) {
+                final double factor = matrix[row][pivotColumn];
+                for (int col = 0; col < matrix[row].length; col++) {
+                    matrix[row][col] -= factor * matrix[pivotRow][col];
+                }
+            }
+        }
+        basicVariables[pivotRow] = pivotColumn;
+        for (int col = 0; col < matrix[basicVariables.length].length; col++) {
+            double sum = 0;
+            for (int row = 0; row < basicVariables.length; row++) {
+                sum += matrix[row][col] * OptimizationAlgorithms.simplexTargetValue(target, basicVariables[row]);
+            }
+            matrix[basicVariables.length][col] = sum;
+            if (col < target.length) {
+                matrix[basicVariables.length + 1][col] = target[col] - sum;
+            } else if (col < matrix[basicVariables.length].length - 1) {
+                matrix[basicVariables.length + 1][col] = -sum;
+            } else {
+                matrix[basicVariables.length + 1][col] = 0;
+            }
+        }
+    }
+
+    private static SimplexAnswer simplexComputeAnswer(final SimplexTableau tableau) {
+        final double[][] matrix = tableau.problem.matrix;
+        if (OptimizationAlgorithms.simplexHasNegativeLimit(matrix)) {
+            if (OptimizationAlgorithms.simplexHasNegativeLimitWithNonNegativeRow(matrix)) {
+                return SimplexAnswer.UNSOLVABLE;
+            } else {
+                return SimplexAnswer.INCOMPLETE;
+            }
+        }
+        if (OptimizationAlgorithms.simplexPivotColumnExists(matrix)) {
+            if (OptimizationAlgorithms.simplexPivotRowExists(tableau.quotients)) {
+                return SimplexAnswer.INCOMPLETE;
+            } else {
+                return SimplexAnswer.UNBOUNDED;
+            }
+        }
+        return SimplexAnswer.SOLVED;
+    }
+
+    private static Double[] simplexComputeQuotients(final double[][] matrix, final int pivotColumn) {
+        if (pivotColumn < 0) {
+            return null;
+        }
+        final Double[] quotients = new Double[matrix.length - 2];
+        for (int row = 0; row < quotients.length; row++) {
+            if (matrix[row][pivotColumn] > 0) {
+                quotients[row] = matrix[row][matrix[row].length - 1] / matrix[row][pivotColumn];
+            } else {
+                quotients[row] = null;
+            }
+        }
+        return quotients;
+    }
+
+    private static int simplexFirstRowWithNegativeLimit(final double[][] matrix) {
+        for (int row = 0; row < matrix.length - 2; row++) {
+            if (matrix[row][matrix[row].length - 1] < 0) {
+                return row;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean simplexHasNegativeLimit(final double[][] matrix) {
+        for (int i = 0; i < matrix.length - 2; i++) {
+            if (matrix[i][matrix[i].length - 1] < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean simplexHasNegativeLimitWithNonNegativeRow(final double[][] matrix) {
+        for (int i = 0; i < matrix.length - 2; i++) {
+            if (matrix[i][matrix[i].length - 1] < 0) {
+                boolean notFound = true;
+                for (int j = 0; j < matrix.length - 1; j++) {
+                    if (matrix[i][j] < 0) {
+                        notFound = false;
+                        break;
+                    }
+                }
+                if (notFound) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static double[][] simplexInitializeMatrix(final double[][] initialMatrix, final double[] target) {
+        final int initialColumnLength = initialMatrix.length;
+        final double[][] newMatrix = new double[initialColumnLength + 2][initialMatrix[0].length + initialColumnLength];
+        for (int row = 0; row < initialColumnLength; row++) {
+            final int initialRowLength = initialMatrix[row].length - 1;
+            for (int col = 0; col < initialRowLength; col++) {
+                newMatrix[row][col] = initialMatrix[row][col];
+            }
+            final int newRowLength = newMatrix[row].length - 1;
+            for (int col = initialRowLength; col < newRowLength; col++) {
+                if (col - initialRowLength == row) {
+                    newMatrix[row][col] = 1;
+                } else {
+                    newMatrix[row][col] = 0;
+                }
+            }
+            newMatrix[row][newRowLength] = initialMatrix[row][initialRowLength];
+        }
+        for (int col = 0; col < newMatrix[initialColumnLength].length; col++) {
+            newMatrix[initialColumnLength][col] = 0;
+        }
+        final int targetLength = target.length;
+        for (int col = 0; col < targetLength; col++) {
+            newMatrix[initialColumnLength + 1][col] = target[col];
+        }
+        for (int col = targetLength; col < newMatrix[initialColumnLength + 1].length; col++) {
+            newMatrix[initialColumnLength + 1][col] = 0;
+        }
+        return newMatrix;
+    }
+
+    private static SimplexTableau simplexInitializeTableau(final SimplexProblem problem) {
+        final double[][] initialMatrix = problem.matrix;
+        final int initialColumnLength = initialMatrix.length;
+        final double[][] newMatrix = OptimizationAlgorithms.simplexInitializeMatrix(initialMatrix, problem.target);
+        final int[] basicVariables = new int[initialColumnLength];
+        for (int i = 0; i < initialColumnLength; i++) {
+            basicVariables[i] = i + problem.target.length;
+        }
+        final int pivotColumn = OptimizationAlgorithms.simplexSelectPivotColumn(newMatrix);
+        final Double[] quotients = OptimizationAlgorithms.simplexComputeQuotients(newMatrix, pivotColumn);
+        return new SimplexTableau(
+            new SimplexProblem(problem.target, newMatrix),
+            basicVariables,
+            quotients,
+            OptimizationAlgorithms.simplexSelectPivotRow(quotients),
+            pivotColumn
+        );
+    }
+
+    private static boolean simplexPivotColumnExists(final double[][] matrix) {
+        for (int col = 0; col < matrix[matrix.length - 1].length - 1; col++) {
+            if (matrix[matrix.length - 1][col] > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean simplexPivotRowExists(final Double[] quotients) {
+        if (quotients == null) {
+            return false;
+        }
+        for (final Double quotient : quotients) {
+            if (quotient != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int simplexSelectPivotColumn(final double[][] matrix) {
+        return OptimizationAlgorithms.simplexHasNegativeLimit(matrix) ?
+            OptimizationAlgorithms.simplexSelectPivotColumnPhaseOne(matrix) :
+                OptimizationAlgorithms.simplexSelectPivotColumnPhaseTwo(matrix);
+    }
+
+    private static int simplexSelectPivotColumnPhaseOne(final double[][] matrix) {
+        for (int row = 0; row < matrix.length - 2; row++) {
+            if (matrix[row][matrix[row].length - 1] < 0) {
+                double min = 0;
+                int pivotColumn = -1;
+                for (int col = 0; col < matrix[row].length - 1; col++) {
+                    if (matrix[row][col] < min) {
+                        min = matrix[row][col];
+                        pivotColumn = col;
+                    }
+                }
+                return pivotColumn;
+            }
+        }
+        return -1;
+    }
+
+    private static int simplexSelectPivotColumnPhaseTwo(final double[][] matrix) {
+        double max = 0;
+        int pivotColumn = -1;
+        for (int col = 0; col < matrix[matrix.length - 1].length - 1; col++) {
+            if (matrix[matrix.length - 1][col] > max) {
+                max = matrix[matrix.length - 1][col];
+                pivotColumn = col;
+            }
+        }
+        return pivotColumn;
+    }
+
+    private static int simplexSelectPivotRow(final Double[] quotients) {
+        if (quotients == null) {
+            return -1;
+        }
+        Double min = null;
+        int pivotRow = -1;
+        for (int row = 0; row < quotients.length; row++) {
+            if (quotients[row] != null && (min == null || quotients[row] < min)) {
+                min = quotients[row];
+                pivotRow = row;
+            }
+        }
+        return pivotRow;
+    }
+
+    private static SimplexTableau simplexStep(final SimplexTableau tableau) {
+        final double[] target = tableau.problem.target;
+        final double[][] matrix = ArrayUtils.copy(tableau.problem.matrix);
+        final int[] basicVariables = ArrayUtils.copy(tableau.basicVariables);
+        final int pivotRow =
+            tableau.pivotRow < 0 ? OptimizationAlgorithms.simplexFirstRowWithNegativeLimit(matrix) : tableau.pivotRow;
+        OptimizationAlgorithms.simplexBaseSwap(pivotRow, tableau.pivotColumn, matrix, basicVariables, target);
+        final int pivotColumn = OptimizationAlgorithms.simplexSelectPivotColumn(matrix);
+        final Double[] quotients = OptimizationAlgorithms.simplexComputeQuotients(matrix, pivotColumn);
+        return new SimplexTableau(
+            new SimplexProblem(target, matrix),
+            basicVariables,
+            quotients,
+            OptimizationAlgorithms.simplexSelectPivotRow(quotients),
+            pivotColumn
+        );
+    }
+
+    private static double simplexTargetValue(final double[] target, final int index) {
+        return index < target.length ? target[index] : 0;
     }
 
     private static int[] toIntArray(final String line) {
@@ -822,7 +1088,7 @@ public abstract class DynamicProgramming {
             tableWithArrows[0][2 * i + 1] = LaTeXUtils.bold(String.valueOf(i));
         }
         if (optionalWeightsForFilling.isPresent()) {
-            DynamicProgramming.fillKnapsackSolutionTable(tableWithArrows, solution, optionalWeightsForFilling.get());
+            OptimizationAlgorithms.fillKnapsackSolutionTable(tableWithArrows, solution, optionalWeightsForFilling.get());
         }
         return tableWithArrows;
     }

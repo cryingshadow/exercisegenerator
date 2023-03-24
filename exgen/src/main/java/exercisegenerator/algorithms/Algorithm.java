@@ -384,8 +384,8 @@ public enum Algorithm {
             "Knapsack problem solved with dynamic programming.",
             "The flag -l specifies how many items can be chosen to put into the bag for generated instances."
         },
-        DynamicProgramming::knapsack,
-        DynamicProgramming::generateTestParameters
+        OptimizationAlgorithms::knapsack,
+        OptimizationAlgorithms::generateTestParameters
     ),
 
     /**
@@ -397,8 +397,8 @@ public enum Algorithm {
         new String[] {
             "LCS problem solved with dynamic programming." // TODO
         },
-        DynamicProgramming::lcs,
-        DynamicProgramming::generateTestParameters,
+        OptimizationAlgorithms::lcs,
+        OptimizationAlgorithms::generateTestParameters,
         false
     ),
 

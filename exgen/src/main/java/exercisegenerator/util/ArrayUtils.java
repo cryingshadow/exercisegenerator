@@ -1,6 +1,7 @@
 package exercisegenerator.util;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * This abstract class offers static methods for manipulating arrays.
@@ -33,6 +34,17 @@ public abstract class ArrayUtils {
         } else {
             return ArrayUtils.binarySearch(array, key, from, index);
         }
+    }
+
+    public static double[] copy(final double[] array) {
+        final int length = array.length;
+        final double[] result = new double[length];
+        System.arraycopy(array, 0, result, 0, length);
+        return result;
+    }
+
+    public static double[][] copy(final double[][] array) {
+        return Arrays.stream(array).map(double[]::clone).toArray(double[][]::new);
     }
 
     public static int[] copy(final int[] array) {

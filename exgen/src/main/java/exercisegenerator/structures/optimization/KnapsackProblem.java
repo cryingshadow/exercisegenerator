@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.optimization;
 
 public class KnapsackProblem {
 
