@@ -206,6 +206,94 @@ public class OptimizationAlgorithmsTest {
                     ),
                     SimplexAnswer.SOLVED
                 )
+            },
+            {
+                new SimplexProblem(
+                    target2,
+                    new double[][] {
+                        {-2,1,1},
+                        {1,-2,1}
+                    }
+                ),
+                new SimplexSolution(
+                    List.of(
+                        new SimplexTableau(
+                            new SimplexProblem(
+                                target2,
+                                new double[][] {
+                                    {-2, 1,1,0,1},
+                                    { 1,-2,0,1,1},
+                                    { 0, 0,0,0,0},
+                                    { 1, 1,0,0,0}
+                                }
+                            ),
+                            new int[] {2,3},
+                            new Double[] {null,1.0},
+                            1,
+                            0
+                        ),
+                        new SimplexTableau(
+                            new SimplexProblem(
+                                target2,
+                                new double[][] {
+                                    {0,-3,1, 2,3},
+                                    {1,-2,0, 1,1},
+                                    {1,-2,0, 1,1},
+                                    {0, 3,0,-1,0}
+                                }
+                            ),
+                            new int[] {2,0},
+                            new Double[] {null,null},
+                            -1,
+                            1
+                        )
+                    ),
+                    SimplexAnswer.UNBOUNDED
+                )
+            },
+            {
+                new SimplexProblem(
+                    target2,
+                    new double[][] {
+                        {1,-1,-1},
+                        {-1,2,-1}
+                    }
+                ),
+                new SimplexSolution(
+                    List.of(
+                        new SimplexTableau(
+                            new SimplexProblem(
+                                target2,
+                                new double[][] {
+                                    { 1,-1,1,0,-1},
+                                    {-1, 2,0,1,-1},
+                                    { 0, 0,0,0,0},
+                                    { 1, 1,0,0,0}
+                                }
+                            ),
+                            new int[] {2,3},
+                            new Double[] {null,null},
+                            -1,
+                            1
+                        ),
+                        new SimplexTableau(
+                            new SimplexProblem(
+                                target2,
+                                new double[][] {
+                                    {-1,1,-1,0,1},
+                                    { 1,0, 2,1,-3},
+                                    {-1,1,-1,0,1},
+                                    { 2,0, 1,0,0}
+                                }
+                            ),
+                            new int[] {1,3},
+                            null,
+                            -1,
+                            -1
+                        )
+                    ),
+                    SimplexAnswer.UNSOLVABLE
+                )
             }
         };
     }

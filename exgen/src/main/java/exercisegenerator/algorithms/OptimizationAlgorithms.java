@@ -883,7 +883,7 @@ public abstract class OptimizationAlgorithms {
         }
         final Double[] quotients = new Double[matrix.length - 2];
         for (int row = 0; row < quotients.length; row++) {
-            if (matrix[row][pivotColumn] > 0) {
+            if (matrix[row][pivotColumn] > 0 && Double.compare(matrix[row][matrix[row].length - 1], 0) >= 0) {
                 quotients[row] = matrix[row][matrix[row].length - 1] / matrix[row][pivotColumn];
             } else {
                 quotients[row] = null;
