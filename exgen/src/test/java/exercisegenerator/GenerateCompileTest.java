@@ -14,6 +14,8 @@ public class GenerateCompileTest {
 
     private static final boolean OFF = false;
 
+    private static final Algorithm ONLY = null;
+
     private static Process buildAndStartProcess(final String fileName, final File testDir) throws IOException {
         return new ProcessBuilder(
             "pdflatex",
@@ -62,7 +64,7 @@ public class GenerateCompileTest {
         final String solName = "solution";
         final String suffix = ".tex";
         for (final Algorithm alg : Algorithm.values()) {
-            if (!alg.enabled) {
+            if (!alg.enabled || (GenerateCompileTest.ONLY != null && alg != GenerateCompileTest.ONLY)) {
                 continue;
             }
             final List<Pair<Process, String>> processes = new LinkedList<Pair<Process, String>>();

@@ -474,7 +474,7 @@ public class BinaryNumbers {
         exerciseWriter.write(exerciseText);
         exerciseWriter.write(":\\\\[2ex]");
         Main.newLine(exerciseWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(options, exerciseWriter);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exerciseWriter);
     }
 
     private static void binaryEnd(
@@ -482,7 +482,7 @@ public class BinaryNumbers {
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
-        LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exerciseWriter);
         Main.newLine(solutionWriter);
     }
 

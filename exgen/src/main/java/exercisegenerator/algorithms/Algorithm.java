@@ -514,6 +514,17 @@ public enum Algorithm {
         GraphAlgorithms::generateTestParameters
     ),
 
+    SIMPLEX(
+        "simplex",
+        "Primal simplex algorithm",
+        new String[] {
+            "Simplex algorithm to solve linear programs in standard maximum form.",
+            "The flag -l specifies how many decision variables are used (minimum is 2)."
+        },
+        OptimizationAlgorithms::simplex,
+        OptimizationAlgorithms::generateTestParameters
+    ),
+
     TO_ASCII(
         "toascii",
         "ASCII (to)",

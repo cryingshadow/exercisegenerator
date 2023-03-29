@@ -311,6 +311,8 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         writer.write("\\usepackage{multicol}");
         Main.newLine(writer);
+        writer.write("\\usepackage[output-decimal-marker={,}]{siunitx}");
+        Main.newLine(writer);
         Main.newLine(writer);
         writer.write("\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}");
         Main.newLine(writer);
@@ -463,14 +465,19 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
     }
 
-    public static void printSolutionSpaceBeginning(final Parameters options, final BufferedWriter writer)
-    throws IOException {
+    public static void printSolutionSpaceBeginning(
+        final Optional<String> protectedSpace,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
         if (Main.standalone(options)) {
             return;
         }
         if (Main.embeddedExam(options)) {
             LaTeXUtils.printToggleForSolutions(writer);
-            LaTeXUtils.printVerticalProtectedSpace("-3ex", writer);
+            if (protectedSpace.isPresent()) {
+                LaTeXUtils.printVerticalProtectedSpace(protectedSpace.get(), writer);
+            }
             LaTeXUtils.printElse(writer);
         } else {
             writer.write("\\solutionSpace{");
@@ -478,12 +485,18 @@ public abstract class LaTeXUtils {
         }
     }
 
-    public static void printSolutionSpaceEnd(final Parameters options, final BufferedWriter writer) throws IOException {
+    public static void printSolutionSpaceEnd(
+        final Optional<String> protectedSpace,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
         if (Main.standalone(options)) {
             Main.newLine(writer);
             Main.newLine(writer);
         } else  if (Main.embeddedExam(options)) {
-            LaTeXUtils.printVerticalProtectedSpace(writer);
+            if (protectedSpace.isPresent()) {
+                LaTeXUtils.printVerticalProtectedSpace(protectedSpace.get(), writer);
+            }
             LaTeXUtils.printEndIf(writer);
             Main.newLine(writer);
         } else {

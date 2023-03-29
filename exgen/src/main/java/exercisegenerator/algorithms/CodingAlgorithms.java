@@ -453,12 +453,12 @@ public abstract class CodingAlgorithms {
         LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
         exerciseWriter.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
         Main.newLine(exerciseWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(options, exerciseWriter);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exerciseWriter);
         CodingAlgorithms.printCodeBookForEncoding(result.x.toCodeBook(), exerciseWriter, solutionWriter);
         LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
         LaTeXUtils.printVerticalProtectedSpace(solutionWriter);
         CodingAlgorithms.printCode(result.y, exerciseWriter, solutionWriter);
-        LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exerciseWriter);
         Main.newLine(solutionWriter);
     }
 

@@ -2173,7 +2173,7 @@ public abstract class GraphAlgorithms {
         final String columnWidth = "16mm";
         switch (mode) {
             case SOLUTION_SPACE:
-                LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
+                LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
                 // fall-through
             case ALWAYS:
                 LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
@@ -2190,7 +2190,7 @@ public abstract class GraphAlgorithms {
                 LaTeXUtils.printArrayStretch(1.0, exWriter);
                 LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                 if (mode == PreprintMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
+                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
                 } else {
                     Main.newLine(exWriter);
                     Main.newLine(exWriter);

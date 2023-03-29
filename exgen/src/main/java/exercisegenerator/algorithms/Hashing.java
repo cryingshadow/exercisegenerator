@@ -658,13 +658,13 @@ public abstract class Hashing {
             case SOLUTION_SPACE:
                 LaTeXUtils.printVerticalProtectedSpace("3ex", exerciseWriter);
                 if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceBeginning(options, exerciseWriter);
+                    LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exerciseWriter);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
                 Hashing.printArray(initialArray, contentLength, printOptions.probing, exerciseWriter);
                 LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
                 if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceEnd(options, exerciseWriter);
+                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exerciseWriter);
                 } else {
                     Main.newLine(exerciseWriter);
                     Main.newLine(exerciseWriter);

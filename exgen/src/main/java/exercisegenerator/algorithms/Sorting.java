@@ -468,7 +468,7 @@ public abstract class Sorting {
         writer.write(additional);
         writer.write(".\\\\[2ex]");
         Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceBeginning(options, writer);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor =
             LaTeXUtils.printListAndReturnLeftmostNodesName(
@@ -487,7 +487,7 @@ public abstract class Sorting {
                 );
         }
         LaTeXUtils.printTikzEnd(writer);
-        LaTeXUtils.printSolutionSpaceEnd(options, writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
     private static void printSolution(

@@ -59,7 +59,7 @@ public abstract class GeometricAlgorithms {
         int count = GeometricAlgorithms.computeConvexHull(pointSet, solWriter);
         switch (mode) {
             case SOLUTION_SPACE:
-                LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
+                LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
                 break;
             case NEVER:
                 count = 1;
@@ -79,7 +79,7 @@ public abstract class GeometricAlgorithms {
             --count;
         }
         if (mode == PreprintMode.SOLUTION_SPACE) {
-            LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
+            LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
         }
     }
 

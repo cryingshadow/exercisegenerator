@@ -1,6 +1,7 @@
 package exercisegenerator.algorithms;
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 
 import exercisegenerator.*;
@@ -14,7 +15,10 @@ import exercisegenerator.util.*;
  */
 public abstract class OptimizationAlgorithms {
 
+    private static final DecimalFormat DECIMAL_FORMAT =
+        new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
     private static final Random RANDOM = new Random();
+    private static final Object VARIABLE_NAME = "x";
 
     public static String[] generateTestParameters() {
         final String[] result = new String[2];
@@ -159,7 +163,7 @@ public abstract class OptimizationAlgorithms {
                     Main.newLine(solWriter);
                     switch (mode) {
                         case SOLUTION_SPACE:
-                            LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
+                            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
                             // fall-through
                         case ALWAYS:
                             LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
@@ -178,7 +182,7 @@ public abstract class OptimizationAlgorithms {
                             Main.newLine(exWriter);
                             LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
-                                LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
+                                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
                             }
                             Main.newLine(exWriter);
                             break;
@@ -202,7 +206,7 @@ public abstract class OptimizationAlgorithms {
             }
             switch (mode) {
                 case SOLUTION_SPACE:
-                    LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
+                    LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
                     // fall-through
                 case ALWAYS:
                     LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
@@ -221,7 +225,7 @@ public abstract class OptimizationAlgorithms {
                     Main.newLine(exWriter);
                     LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
-                        LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
+                        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
                     }
                     Main.newLine(exWriter);
                     break;
@@ -431,7 +435,7 @@ public abstract class OptimizationAlgorithms {
                     Main.newLine(solWriter);
                     switch (mode) {
                         case SOLUTION_SPACE:
-                            LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
+                            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
                             // fall-through
                         case ALWAYS:
                             LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
@@ -450,7 +454,7 @@ public abstract class OptimizationAlgorithms {
                             Main.newLine(exWriter);
                             LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                             if (mode == PreprintMode.SOLUTION_SPACE) {
-                                LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
+                                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
                             }
                             Main.newLine(exWriter);
                             break;
@@ -474,7 +478,7 @@ public abstract class OptimizationAlgorithms {
             }
             switch (mode) {
                 case SOLUTION_SPACE:
-                    LaTeXUtils.printSolutionSpaceBeginning(options, exWriter);
+                    LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
                     // fall-through
                 case ALWAYS:
                     LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
@@ -493,7 +497,7 @@ public abstract class OptimizationAlgorithms {
                     Main.newLine(exWriter);
                     LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
                     if (mode == PreprintMode.SOLUTION_SPACE) {
-                        LaTeXUtils.printSolutionSpaceEnd(options, exWriter);
+                        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
                     }
                     Main.newLine(exWriter);
                     break;
@@ -552,6 +556,13 @@ public abstract class OptimizationAlgorithms {
         Main.newLine(solWriter);
     }
 
+    public static void simplex(final AlgorithmInput input) throws Exception {
+        final SimplexProblem problem = OptimizationAlgorithms.parseOrGenerateSimplexProblem(input.options);
+        final SimplexSolution solution = OptimizationAlgorithms.simplex(problem);
+        OptimizationAlgorithms.printSimplexExercise(problem, solution, input.options, input.exerciseWriter);
+        OptimizationAlgorithms.printSimplexSolution(problem, solution, input.options, input.solutionWriter);
+    }
+
     public static SimplexSolution simplex(final SimplexProblem problem) {
         final List<SimplexTableau> tableaus = new LinkedList<SimplexTableau>();
         SimplexTableau tableau = OptimizationAlgorithms.simplexInitializeTableau(problem);
@@ -594,6 +605,22 @@ public abstract class OptimizationAlgorithms {
         }
     }
 
+    private static double generateCoefficient(final int oneToChanceForNegative) {
+        return OptimizationAlgorithms.RANDOM.nextInt(11)
+            * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1);
+    }
+
+    private static double[][] generateInequalities(final int numberOfInequalities, final int numberOfVariables) {
+        final double[][] matrix = new double[numberOfInequalities][numberOfVariables + 1];
+        for (int row = 0; row < numberOfInequalities; row++) {
+            for (int col = 0; col < numberOfVariables; col++) {
+                matrix[row][col] = OptimizationAlgorithms.generateCoefficient(4);
+            }
+            matrix[row][numberOfVariables] = OptimizationAlgorithms.generateCoefficient(8);
+        }
+        return matrix;
+    }
+
     private static KnapsackProblem generateKnapsackProblem(final Parameters options) {
         final int numberOfItems = OptimizationAlgorithms.parseOrGenerateNumberOfItems(options);
         int sumOfWeights = 0;
@@ -613,6 +640,31 @@ public abstract class OptimizationAlgorithms {
 
     private static Pair<String, String> generateLCSProblem(final Parameters options) {
         throw new UnsupportedOperationException("Not yet implemented!");
+    }
+
+    private static double generateNonZeroCoefficient(final int oneToChanceForNegative) {
+        return (OptimizationAlgorithms.RANDOM.nextInt(10) + 1)
+            * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1);
+    }
+
+    private static int generateNumberOfInequalities() {
+        return OptimizationAlgorithms.RANDOM.nextInt(5) + 2;
+    }
+
+    private static SimplexProblem generateSimplexProblem(final Parameters options) {
+        final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
+        final int numberOfInequalities = OptimizationAlgorithms.generateNumberOfInequalities();
+        final double[] target = OptimizationAlgorithms.generateTargetFunction(numberOfVariables);
+        final double[][] matrix = OptimizationAlgorithms.generateInequalities(numberOfInequalities, numberOfVariables);
+        return new SimplexProblem(target, matrix);
+    }
+
+    private static double[] generateTargetFunction(final int numberOfVariables) {
+        final double[] target = new double[numberOfVariables];
+        for (int i = 0; i < numberOfVariables; i++) {
+            target[i] = OptimizationAlgorithms.generateNonZeroCoefficient(4);
+        }
+        return target;
     }
 
     private static List<Integer> knapsackItems(final KnapsackProblem problem, final int[][] solution) {
@@ -707,6 +759,56 @@ public abstract class OptimizationAlgorithms {
         return OptimizationAlgorithms.RANDOM.nextInt(4) + 3;
     }
 
+    private static int parseOrGenerateNumberOfVariables(final Parameters options) {
+        if (options.containsKey(Flag.LENGTH)) {
+            final int result = Integer.parseInt(options.get(Flag.LENGTH));
+            if (result > 1) {
+                return result;
+            } else {
+                return 2;
+            }
+        }
+        return OptimizationAlgorithms.RANDOM.nextInt(3) + 2;
+    }
+
+    private static SimplexProblem parseOrGenerateSimplexProblem(final Parameters options) throws IOException {
+        return new ParserAndGenerator<SimplexProblem>(
+            OptimizationAlgorithms::parseSimplexProblem,
+            OptimizationAlgorithms::generateSimplexProblem
+        ).getResult(options);
+    }
+
+    private static SimplexProblem parseSimplexProblem(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        final String line = reader.readLine();
+        final String[] rows = line.split(";");
+        final double[] target = OptimizationAlgorithms.parseTargetFunction(rows[0]);
+        final double[][] matrix = new double[rows.length - 1][target.length + 1];
+        for (int row = 0; row < matrix.length; row++) {
+            final String[] numbers = rows[row + 1].split(",");
+            if (numbers.length != matrix[row].length) {
+                throw new IOException(
+                    "The rows of the matrix must have exactly one more entry than the target function!"
+                );
+            }
+            for (int col = 0; col < numbers.length; col++) {
+                matrix[row][col] = Double.parseDouble(numbers[col]);
+            }
+        }
+        return new SimplexProblem(target, matrix);
+    }
+
+    private static double[] parseTargetFunction(final String line) {
+        final String[] numbers = line.split(",");
+        final double[] target = new double[numbers.length];
+        for (int i = 0; i < target.length; i++) {
+            target[i] = Double.parseDouble(numbers[i]);
+        }
+        return target;
+    }
+
     private static void printKnapsackExercise(
         final KnapsackProblem problem,
         final int[][] solution,
@@ -750,7 +852,7 @@ public abstract class OptimizationAlgorithms {
         final PreprintMode mode = PreprintMode.parsePreprintMode(options);
         switch (mode) {
         case SOLUTION_SPACE:
-            LaTeXUtils.printSolutionSpaceBeginning(options, writer);
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
             // fall-through
         case ALWAYS:
             LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
@@ -769,7 +871,7 @@ public abstract class OptimizationAlgorithms {
             Main.newLine(writer);
             LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
             if (mode == PreprintMode.SOLUTION_SPACE) {
-                LaTeXUtils.printSolutionSpaceEnd(options, writer);
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
             }
             Main.newLine(writer);
             break;
@@ -816,6 +918,198 @@ public abstract class OptimizationAlgorithms {
         writer.write("Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die Zeile f\\\"ur den $i$-ten ");
         writer.write("Gegenstand einen Pfeil nach links enth\\\"alt, dann wird der $i$-te Gegenstand mitgenommen ");
         writer.write("(ein Pfeil nach links in der Zeile f\\\"ur den 0-ten Gegenstand hat keine Bedeutung).");
+        Main.newLine(writer);
+        Main.newLine(writer);
+    }
+
+    private static void printSimplexExercise(
+        final SimplexProblem problem,
+        final SimplexSolution solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\");
+        Main.newLine(writer);
+        OptimizationAlgorithms.printSimplexProblem(problem, writer);
+        writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
+        writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale Belegung ");
+        writer.write(String.format("f\\\"ur die Variablen $%s_{1}", OptimizationAlgorithms.VARIABLE_NAME));
+        for (int index = 1; index < problem.target.length; index++) {
+            writer.write(String.format(", %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, index + 1));
+        }
+        writer.write("$ an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.");
+        Main.newLine(writer);
+        Main.newLine(writer);
+        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        switch (mode) {
+        case SOLUTION_SPACE:
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+            // fall-through
+        case ALWAYS:
+            writer.write("{\\renewcommand{\\arraystretch}{1.5}");
+            Main.newLine(writer);
+            for (final SimplexTableau tableau : solution.tableaus) {
+                Main.newLine(writer);
+                LaTeXUtils.printTable(
+                    OptimizationAlgorithms.toSimplexTableau(tableau, false),
+                    Optional.empty(),
+                    OptimizationAlgorithms::simplexTableColumnDefinition,
+                    true,
+                    0,
+                    writer
+                );
+            }
+            Main.newLine(writer);
+            writer.write("\\renewcommand{\\arraystretch}{1}}");
+            Main.newLine(writer);
+            LaTeXUtils.printVerticalProtectedSpace(writer);
+            writer.write("Ergebnis:");
+            Main.newLine(writer);
+            if (mode == PreprintMode.SOLUTION_SPACE) {
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
+            }
+            Main.newLine(writer);
+            break;
+        default:
+            //do nothing
+        }
+    }
+
+    private static void printSimplexProblem(final SimplexProblem problem, final BufferedWriter writer)
+    throws IOException {
+        writer.write("Maximiere $z(\\mathbf{x}) = ");
+        int firstNonZeroIndex = 0;
+        for (final double coefficient : problem.target) {
+            if (Double.compare(coefficient, 0) != 0) {
+                break;
+            }
+            firstNonZeroIndex++;
+        }
+        if (firstNonZeroIndex == problem.target.length) {
+            writer.write("0");
+        } else {
+            writer.write(
+                OptimizationAlgorithms.toCoefficientWithVariable(
+                    true,
+                    false,
+                    true,
+                    firstNonZeroIndex + 1,
+                    problem.target[firstNonZeroIndex]
+                )
+            );
+            for (int index = firstNonZeroIndex + 1; index < problem.target.length; index++) {
+                writer.write(
+                    OptimizationAlgorithms.toCoefficientWithVariable(
+                        false,
+                        false,
+                        false,
+                        index + 1,
+                        problem.target[index]
+                    )
+                );
+            }
+        }
+        writer.write("$\\\\");
+        Main.newLine(writer);
+        writer.write("unter den folgenden Nebenbedingungen:\\\\");
+        Main.newLine(writer);
+        writer.write("$\\begin{array}{*{");
+        writer.write(String.valueOf(problem.matrix[0].length * 2 - 1));
+        writer.write("}c}");
+        Main.newLine(writer);
+        for (int row = 0; row < problem.matrix.length; row++) {
+            boolean firstNonZero = true;
+            for (int col = 0; col < problem.target.length; col++) {
+                final double coefficient = problem.matrix[row][col];
+                if (firstNonZero && Double.compare(coefficient, 0) != 0) {
+                    writer.write(
+                        OptimizationAlgorithms.toCoefficientWithVariable(col == 0, true, true, col + 1, coefficient)
+                    );
+                    firstNonZero = false;
+                } else {
+                    writer.write(
+                        OptimizationAlgorithms.toCoefficientWithVariable(
+                            col == 0,
+                            true,
+                            firstNonZero,
+                            col + 1,
+                            coefficient
+                        )
+                    );
+                }
+            }
+            writer.write(" & \\leq & ");
+            writer.write(OptimizationAlgorithms.toCoefficient(problem.matrix[row][problem.target.length]));
+            writer.write("\\\\");
+            Main.newLine(writer);
+        }
+        writer.write("\\end{array}$\\\\");
+        Main.newLine(writer);
+        writer.write(String.format("$%s_{1}", OptimizationAlgorithms.VARIABLE_NAME));
+        for (int index = 1; index < problem.target.length; index++) {
+            writer.write(String.format(", %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, index + 1));
+        }
+        writer.write(" \\geq 0$\\\\[2ex]");
+        Main.newLine(writer);
+    }
+
+    private static void printSimplexSolution(
+        final SimplexProblem problem,
+        final SimplexSolution solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("{\\renewcommand{\\arraystretch}{1.5}");
+        Main.newLine(writer);
+        for (final SimplexTableau tableau : solution.tableaus) {
+            Main.newLine(writer);
+            LaTeXUtils.printTable(
+                OptimizationAlgorithms.toSimplexTableau(tableau, true),
+                Optional.empty(),
+                OptimizationAlgorithms::simplexTableColumnDefinition,
+                true,
+                0,
+                writer
+            );
+        }
+        Main.newLine(writer);
+        writer.write("\\renewcommand{\\arraystretch}{1}}");
+        Main.newLine(writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("Ergebnis: ");
+        switch (solution.answer) {
+        case UNBOUNDED:
+            writer.write("unbeschr\\\"ankt, da wir eine Pivot-Spalte mit nicht-positiven Koeffizienten haben");
+            break;
+        case UNSOLVABLE:
+            writer.write(
+                "unl\\\"osbar, da wir eine Pivot-Zeile mit negativem Limit, aber nicht-negativen Koeffizienten haben"
+            );
+            break;
+        default:
+            final SimplexTableau lastTableau = solution.tableaus.get(solution.tableaus.size() - 1);
+            writer.write(
+                String.format(
+                    "$%s_{1}^* = %s",
+                    OptimizationAlgorithms.VARIABLE_NAME,
+                    OptimizationAlgorithms.toCoefficient(OptimizationAlgorithms.simplexGetCurrentValue(0, lastTableau))
+                )
+            );
+            for (int i = 1; i < lastTableau.problem.target.length; i++) {
+                writer.write(
+                    String.format(
+                        ", %s_{%d}^* = %s",
+                        OptimizationAlgorithms.VARIABLE_NAME,
+                        i + 1,
+                        OptimizationAlgorithms.toCoefficient(
+                            OptimizationAlgorithms.simplexGetCurrentValue(i, lastTableau)
+                        )
+                    )
+                );
+            }
+            writer.write("$");
+            break;
+        }
         Main.newLine(writer);
         Main.newLine(writer);
     }
@@ -899,6 +1193,20 @@ public abstract class OptimizationAlgorithms {
             }
         }
         return -1;
+    }
+
+    private static double simplexGetCurrentValue(final int variableIndex, final SimplexTableau tableau) {
+        int index = -1;
+        for (int i = 0; i < tableau.basicVariables.length; i++) {
+            if (tableau.basicVariables[i] == variableIndex) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) {
+            return 0;
+        }
+        return tableau.problem.matrix[index][tableau.problem.matrix[index].length - 1];
     }
 
     private static boolean simplexHasNegativeLimit(final double[][] matrix) {
@@ -1067,8 +1375,148 @@ public abstract class OptimizationAlgorithms {
         );
     }
 
+    private static String simplexTableColumnDefinition(final int cols) {
+        return String.format("|*{%d}{C{9mm}|}", cols);
+    }
+
     private static double simplexTargetValue(final double[] target, final int index) {
         return index < target.length ? target[index] : 0;
+    }
+
+    private static String toCoefficient(final Double coefficient) {
+        if (coefficient % 1 == 0) {
+            return String.valueOf(coefficient.intValue());
+        }
+        return OptimizationAlgorithms.toFloatNumber(coefficient);
+    }
+
+    private static String toCoefficientWithVariable(
+        final boolean first,
+        final boolean matrix,
+        final boolean firstNonZero,
+        final int variableIndex,
+        final Double coefficient
+    ) {
+        if (coefficient % 1 == 0) {
+            final int value = coefficient.intValue();
+            if (value == 0) {
+                if (matrix && !first) {
+                    return " &  & ";
+                }
+                return "";
+            }
+            if (value == 1) {
+                if (first) {
+                    return String.format("%s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+                }
+                if (matrix) {
+                    if (firstNonZero) {
+                        return String.format(" &  & %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+                    }
+                    return String.format(" & + & %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+                }
+                return String.format(" + %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+            }
+            if (value == -1) {
+                if (first) {
+                    return String.format("-%s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+                }
+                if (matrix) {
+                    if (firstNonZero) {
+                        return String.format(" &  & -%s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+                    }
+                    return String.format(" & - & %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+                }
+                return String.format(" - %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+            }
+            if (first) {
+                return String.format("%d%s_{%d}", value, OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+            }
+            if (value < 0) {
+                if (matrix) {
+                    if (firstNonZero) {
+                        return String.format(
+                            " &  & %d%s_{%d}",
+                            value,
+                            OptimizationAlgorithms.VARIABLE_NAME,
+                            variableIndex
+                        );
+                    }
+                    return String.format(
+                        " & - & %d%s_{%d}",
+                        -value,
+                        OptimizationAlgorithms.VARIABLE_NAME,
+                        variableIndex
+                    );
+                }
+                return String.format(" - %d%s_{%d}", -value, OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+            }
+            if (matrix) {
+                if (firstNonZero) {
+                    return String.format(" &  & %d%s_{%d}", value, OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+                }
+                return String.format(" & + & %d%s_{%d}", value, OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+            }
+            return String.format(" + %d%s_{%d}", value, OptimizationAlgorithms.VARIABLE_NAME, variableIndex);
+        }
+        if (first) {
+            return String.format(
+                "%s%s_{%d}",
+                OptimizationAlgorithms.toFloatNumber(coefficient),
+                OptimizationAlgorithms.VARIABLE_NAME,
+                variableIndex
+            );
+        }
+        if (coefficient < 0) {
+            if (matrix) {
+                if (firstNonZero) {
+                    return String.format(
+                        " &  & %s%s_{%d}",
+                        OptimizationAlgorithms.toFloatNumber(coefficient),
+                        OptimizationAlgorithms.VARIABLE_NAME,
+                        variableIndex
+                    );
+                }
+                return String.format(
+                    " & - & %s%s_{%d}",
+                    OptimizationAlgorithms.toFloatNumber(-coefficient),
+                    OptimizationAlgorithms.VARIABLE_NAME,
+                    variableIndex
+                );
+            }
+            return String.format(
+                " - %s%s_{%d}",
+                OptimizationAlgorithms.toFloatNumber(-coefficient),
+                OptimizationAlgorithms.VARIABLE_NAME,
+                variableIndex
+            );
+        }
+        if (matrix) {
+            if (firstNonZero) {
+                return String.format(
+                    " &  & %s%s_{%d}",
+                    OptimizationAlgorithms.toFloatNumber(coefficient),
+                    OptimizationAlgorithms.VARIABLE_NAME,
+                    variableIndex
+                );
+            }
+            return String.format(
+                " & + & %s%s_{%d}",
+                OptimizationAlgorithms.toFloatNumber(coefficient),
+                OptimizationAlgorithms.VARIABLE_NAME,
+                variableIndex
+            );
+        }
+        return String.format(
+            " + %s%s_{%d}",
+            OptimizationAlgorithms.toFloatNumber(coefficient),
+            OptimizationAlgorithms.VARIABLE_NAME,
+            variableIndex
+        );
+    }
+
+    private static String toFloatNumber(final double number) {
+        return String.format("\\num{%s}", OptimizationAlgorithms.DECIMAL_FORMAT.format(number));
     }
 
     private static int[] toIntArray(final String line) {
@@ -1091,6 +1539,60 @@ public abstract class OptimizationAlgorithms {
             OptimizationAlgorithms.fillKnapsackSolutionTable(tableWithArrows, solution, optionalWeightsForFilling.get());
         }
         return tableWithArrows;
+    }
+
+    private static String[][] toSimplexTableau(final SimplexTableau tableau, final boolean fill) {
+        final String[][] result = new String[tableau.problem.matrix.length + 2][tableau.problem.matrix[0].length + 3];
+        result[0][0] = "";
+        result[0][1] = "$c_j$";
+        result[0][result[0].length - 2] = "";
+        result[0][result[0].length - 1] = "";
+        result[1][0] = "$c_i^B\\downarrow$";
+        result[1][1] = "$B$";
+        result[1][result[0].length - 2] = "$b_i$";
+        result[1][result[0].length - 1] = "$q_i$";
+        result[result.length - 2][0] = "";
+        result[result.length - 1][0] = "";
+        result[result.length - 2][1] = "$z_j$";
+        result[result.length - 1][1] = "{\\scriptsize $c_j - z_j$}";
+        result[result.length - 2][result[0].length - 1] = "";
+        result[result.length - 1][result[0].length - 1] = "";
+        for (int index = 1; index < result[0].length - 3; index++) {
+            result[1][index + 1] = String.format("$%s_{%d}$", OptimizationAlgorithms.VARIABLE_NAME, index);
+        }
+        for (int col = 0; col < tableau.problem.target.length; col++) {
+            result[0][col + 2] = fill ? OptimizationAlgorithms.toCoefficient(tableau.problem.target[col]) : "";
+        }
+        for (int col = tableau.problem.target.length + 2; col < result[0].length - 2; col++) {
+            result[0][col] = fill ? "0" : "";
+        }
+        for (int row = 0; row < tableau.problem.matrix.length; row++) {
+            for (int col = 0; col < tableau.problem.matrix[row].length; col++) {
+                result[row + 2][col + 2] =
+                    fill ? OptimizationAlgorithms.toCoefficient(tableau.problem.matrix[row][col]) : "";
+            }
+        }
+        for (int i = 0; i < tableau.basicVariables.length; i++) {
+            if (fill) {
+                final int variableIndex = tableau.basicVariables[i];
+                result[i + 2][0] =
+                    variableIndex < tableau.problem.target.length ?
+                        OptimizationAlgorithms.toCoefficient(tableau.problem.target[variableIndex]) :
+                            "0";
+                result[i + 2][1] = String.format("$%s_{%d}$", OptimizationAlgorithms.VARIABLE_NAME, variableIndex + 1);
+            } else {
+                result[i + 2][0] = "";
+                result[i + 2][1] = "";
+            }
+            if (tableau.quotients == null || tableau.quotients[i] == null) {
+                result[i + 2][result[i + 2].length - 1] = "";
+            } else {
+                result[i + 2][result[i + 2].length - 1] =
+                    fill ? OptimizationAlgorithms.toCoefficient(tableau.quotients[i]) : "";
+            }
+        }
+        result[result.length - 1][result[0].length - 2] = "";
+        return result;
     }
 
 }

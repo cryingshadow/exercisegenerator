@@ -271,7 +271,7 @@ public class PropositionalLogic {
             );
         }
         Main.newLine(exWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(input.options, exWriter);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), input.options, exWriter);
         boolean first = true;
         for (int i = 0; i < size; i++) {
             if (first) {
@@ -286,7 +286,7 @@ public class PropositionalLogic {
             PropositionalLogic.printTruthTable(table, false, false, solWriter);
             PropositionalLogic.printDNFFormula(formula, solWriter);
         }
-        LaTeXUtils.printSolutionSpaceEnd(input.options, exWriter);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), input.options, exWriter);
         Main.newLine(solWriter);
     }
 
@@ -306,7 +306,7 @@ public class PropositionalLogic {
             );
         }
         Main.newLine(exWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(input.options, exWriter);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), input.options, exWriter);
         boolean first = true;
         for (int i = 0; i < size; i++) {
             if (first) {
@@ -322,7 +322,7 @@ public class PropositionalLogic {
             PropositionalLogic.printGeneralFormula(formula, solWriter);
             PropositionalLogic.printTruthTable(table, false, true, solWriter);
         }
-        LaTeXUtils.printSolutionSpaceEnd(input.options, exWriter);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), input.options, exWriter);
         Main.newLine(solWriter);
     }
 
