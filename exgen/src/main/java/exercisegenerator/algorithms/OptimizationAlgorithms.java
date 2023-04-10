@@ -4,6 +4,8 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
+import org.apache.commons.math3.fraction.*;
+
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
@@ -19,6 +21,17 @@ public abstract class OptimizationAlgorithms {
         new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
     private static final Random RANDOM = new Random();
     private static final Object VARIABLE_NAME = "x";
+
+    public static List<LinearSystemOfEquations> gaussJordan(final LinearSystemOfEquations problem) {
+        final List<LinearSystemOfEquations> solution = new LinkedList<LinearSystemOfEquations>();
+        solution.add(problem);
+        LinearSystemOfEquations current = problem;
+        while (!OptimizationAlgorithms.isSolved(current)) {
+            current = OptimizationAlgorithms.gaussJordanStep(current);
+            solution.add(current);
+        }
+        return solution;
+    }
 
     public static String[] generateTestParameters() {
         final String[] result = new String[2];
@@ -576,6 +589,10 @@ public abstract class OptimizationAlgorithms {
         return new SimplexSolution(tableaus, answer);
     }
 
+    private static int computeMinimumDimension(final LinearSystemOfEquations system) {
+        return Math.min(system.numberOfRows, system.numberOfColumns - 1);
+    }
+
     private static void fillKnapsackSolutionTable(
         final String[][] tableWithArrows,
         final int[][] solution,
@@ -603,6 +620,38 @@ public abstract class OptimizationAlgorithms {
             tableWithArrows[0][2 * j + 2] = "$\\leftarrow$";
             j--;
         }
+    }
+
+    private static LinearSystemOfEquations gaussJordanStep(final LinearSystemOfEquations system) {
+        final int minDimension = OptimizationAlgorithms.computeMinimumDimension(system);
+        for (int col = 0; col < minDimension; col++) {
+            if (system.matrix[col][col].compareTo(Fraction.ONE) != 0) {
+                if (system.matrix[col][col].compareTo(Fraction.ZERO) != 0) {
+                    return system.multiplyRow(col, system.matrix[col][col].reciprocal());
+                }
+                for (int row = col + 1; row < system.numberOfRows; row++) {
+                    if (system.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                        return system.swapRows(col, row);
+                    }
+                }
+                for (int secondCol = col + 1; secondCol < system.numberOfColumns - 1; secondCol++) {
+                    for (int row = col; row < system.numberOfRows; row++) {
+                        if (system.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                            return system.swapColumns(col, secondCol);
+                        }
+                    }
+                }
+                throw new IllegalStateException("Solved system should not be solved further!");
+            }
+            for (int row = 0; row < minDimension; row++) {
+                if (row != col) {
+                    if (system.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                        return system.addRow(row, col, system.matrix[row][col].negate());
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException("Solved system should not be solved further!");
     }
 
     private static double generateCoefficient(final int oneToChanceForNegative) {
@@ -667,6 +716,58 @@ public abstract class OptimizationAlgorithms {
         return target;
     }
 
+    private static boolean isIdentityMatrix(final Fraction[][] matrix, final int from, final int to) {
+        for (int row = from; row < to; row++) {
+            for (int col = from; col < to; col++) {
+                if (row == col) {
+                    if (matrix[row][col].compareTo(Fraction.ONE) != 0) {
+                        return false;
+                    }
+                } else if (matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isSolved(final LinearSystemOfEquations system) {
+        final int minDimension = OptimizationAlgorithms.computeMinimumDimension(system);
+        int rank = 0;
+        while (rank < minDimension) {
+            if (system.matrix[rank][rank].compareTo(Fraction.ONE) == 0) {
+                rank++;
+            } else if (system.matrix[rank][rank].compareTo(Fraction.ZERO) == 0) {
+                break;
+            } else {
+                return false;
+            }
+        }
+        return OptimizationAlgorithms.isIdentityMatrix(system.matrix, 0, rank)
+            && OptimizationAlgorithms.isZeroMatrixFrom(
+                system.matrix,
+                rank,
+                system.numberOfRows,
+                system.numberOfColumns - 1
+            );
+    }
+
+    private static boolean isZeroMatrixFrom(
+        final Fraction[][] matrix,
+        final int from,
+        final int numberOfRows,
+        final int numberOfColumns
+    ) {
+        for (int row = from; row < numberOfRows; row++) {
+            for (int col = from; col < numberOfColumns; col++) {
+                if (matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private static List<Integer> knapsackItems(final KnapsackProblem problem, final int[][] solution) {
         final List<Integer> result = new LinkedList<Integer>();
         int i = solution.length - 1;
@@ -706,7 +807,8 @@ public abstract class OptimizationAlgorithms {
         );
     }
 
-    private static Pair<String, String> parseLCSProblem(final BufferedReader reader, final Parameters options) throws IOException {
+    private static Pair<String, String> parseLCSProblem(final BufferedReader reader, final Parameters options)
+    throws IOException {
         String wordA = null;
         String wordB = null;
         final String errorMessage = "You need to provide two lines each carrying exactly one non-empty word.";
@@ -1536,7 +1638,11 @@ public abstract class OptimizationAlgorithms {
             tableWithArrows[0][2 * i + 1] = LaTeXUtils.bold(String.valueOf(i));
         }
         if (optionalWeightsForFilling.isPresent()) {
-            OptimizationAlgorithms.fillKnapsackSolutionTable(tableWithArrows, solution, optionalWeightsForFilling.get());
+            OptimizationAlgorithms.fillKnapsackSolutionTable(
+                tableWithArrows,
+                solution,
+                optionalWeightsForFilling.get()
+            );
         }
         return tableWithArrows;
     }

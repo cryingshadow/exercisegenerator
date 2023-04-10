@@ -2,12 +2,102 @@ package exercisegenerator.algorithms;
 
 import java.util.*;
 
+import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
 import exercisegenerator.structures.optimization.*;
 
 public class OptimizationAlgorithmsTest {
+
+    @DataProvider
+    public Object[][] gaussJordanData() {
+        final LinearSystemOfEquations problem1 =
+            new LinearSystemOfEquations(
+                new int[][] {
+                    {3,5,4,2},
+                    {2,1,-1,1},
+                    {7,1,1,2}
+                }
+            );
+        return new Object[][] {
+            {
+                problem1,
+                List.of(
+                    problem1,
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(5,3),new Fraction(4,3),new Fraction(2,3)},
+                            {new Fraction(2),new Fraction(1),new Fraction(-1),new Fraction(1)},
+                            {new Fraction(7),new Fraction(1),new Fraction(1),new Fraction(2)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(5,3),new Fraction(4,3),new Fraction(2,3)},
+                            {new Fraction(0),new Fraction(-7,3),new Fraction(-11,3),new Fraction(-1,3)},
+                            {new Fraction(7),new Fraction(1),new Fraction(1),new Fraction(2)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(5,3),new Fraction(4,3),new Fraction(2,3)},
+                            {new Fraction(0),new Fraction(-7,3),new Fraction(-11,3),new Fraction(-1,3)},
+                            {new Fraction(0),new Fraction(-32,3),new Fraction(-25,3),new Fraction(-8,3)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(5,3),new Fraction(4,3),new Fraction(2,3)},
+                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
+                            {new Fraction(0),new Fraction(-32,3),new Fraction(-25,3),new Fraction(-8,3)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-9,7),new Fraction(3,7)},
+                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
+                            {new Fraction(0),new Fraction(-32,3),new Fraction(-25,3),new Fraction(-8,3)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-9,7),new Fraction(3,7)},
+                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
+                            {new Fraction(0),new Fraction(0),new Fraction(59,7),new Fraction(-8,7)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-9,7),new Fraction(3,7)},
+                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-8,59)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(105,413)},
+                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-8,59)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(105,413)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(147,413)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-8,59)}
+                        }
+                    )
+                )
+            }
+        };
+    }
+
+    @Test(dataProvider="gaussJordanData")
+    public void gaussJordanTest(final LinearSystemOfEquations problem, final List<LinearSystemOfEquations> expected) {
+        final List<LinearSystemOfEquations> result = OptimizationAlgorithms.gaussJordan(problem);
+        Assert.assertEquals(result, expected);
+    }
 
     @DataProvider
     public Object[][] knapsackData() {
