@@ -2,12 +2,14 @@ package exercisegenerator.structures.optimization;
 
 import java.util.*;
 
+import org.apache.commons.math3.fraction.*;
+
 public class SimplexProblem {
 
-    public final double[][] matrix;
-    public final double[] target;
+    public final Fraction[][] matrix;
+    public final Fraction[] target;
 
-    public SimplexProblem(final double[] target, final double[][] matrix) {
+    public SimplexProblem(final Fraction[] target, final Fraction[][] matrix) {
         this.target = target;
         this.matrix = matrix;
     }

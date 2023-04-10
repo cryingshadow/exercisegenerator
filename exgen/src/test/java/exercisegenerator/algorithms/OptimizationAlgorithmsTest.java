@@ -142,18 +142,18 @@ public class OptimizationAlgorithmsTest {
 
     @DataProvider
     public Object[][] simplexData() {
-        final double[] target1 = new double[] {2, 3};
-        final double[] target2 = new double[] {1, 1};
+        final Fraction[] target1 = new Fraction[] {new Fraction(2), new Fraction(3)};
+        final Fraction[] target2 = new Fraction[] {new Fraction(1), new Fraction(1)};
         return new Object[][] {
             {
                 new SimplexProblem(
                     target1,
-                    new double[][] {
-                        {1,0,3.6},
-                        {1,2,5},
-                        {1,1,4},
-                        {2,1,7.5},
-                        {0,1,2}
+                    new Fraction[][] {
+                        {new Fraction(1),new Fraction(0),new Fraction(18,5)},
+                        {new Fraction(1),new Fraction(2),new Fraction(5)},
+                        {new Fraction(1),new Fraction(1),new Fraction(4)},
+                        {new Fraction(2),new Fraction(1),new Fraction(15,2)},
+                        {new Fraction(0),new Fraction(1),new Fraction(2)}
                     }
                 ),
                 new SimplexSolution(
@@ -161,68 +161,68 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new double[][] {
-                                    {1,0,1,0,0,0,0,3.6},
-                                    {1,2,0,1,0,0,0,5},
-                                    {1,1,0,0,1,0,0,4},
-                                    {2,1,0,0,0,1,0,7.5},
-                                    {0,1,0,0,0,0,1,2},
-                                    {0,0,0,0,0,0,0,0},
-                                    {2,3,0,0,0,0,0,0}
+                                new Fraction[][] {
+                                    {new Fraction(1),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(18,5)},
+                                    {new Fraction(1),new Fraction(2),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(5)},
+                                    {new Fraction(1),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(4)},
+                                    {new Fraction(2),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(15,2)},
+                                    {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(2)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0)},
+                                    {new Fraction(2),new Fraction(3),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,3,4,5,6},
-                            new Double[] {null,2.5,4.0,7.5,2.0},
+                            new Fraction[] {null,new Fraction(5,2),new Fraction(4),new Fraction(15,2),new Fraction(2)},
                             4,
                             1
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new double[][] {
-                                    {1,0,1,0,0,0,0,3.6},
-                                    {1,0,0,1,0,0,-2,1},
-                                    {1,0,0,0,1,0,-1,2},
-                                    {2,0,0,0,0,1,-1,5.5},
-                                    {0,1,0,0,0,0,1,2},
-                                    {0,3,0,0,0,0,3,6},
-                                    {2,0,0,0,0,0,-3,0}
+                                new Fraction[][] {
+                                    {new Fraction(1),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(18,5)},
+                                    {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-2),new Fraction(1)},
+                                    {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-1),new Fraction(2)},
+                                    {new Fraction(2),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-1),new Fraction(11,2)},
+                                    {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(2)},
+                                    {new Fraction(0),new Fraction(3),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3),new Fraction(6)},
+                                    {new Fraction(2),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-3),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,3,4,5,1},
-                            new Double[] {3.6,1.0,2.0,2.75,null},
+                            new Fraction[] {new Fraction(18,5),new Fraction(1),new Fraction(2),new Fraction(11,4),null},
                             1,
                             0
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new double[][] {
-                                    {0,0,1,-1,0,0, 2,2.6},
-                                    {1,0,0, 1,0,0,-2,1},
-                                    {0,0,0,-1,1,0, 1,1},
-                                    {0,0,0,-2,0,1, 3,3.5},
-                                    {0,1,0, 0,0,0, 1,2},
-                                    {2,3,0, 2,0,0,-1,8},
-                                    {0,0,0,-2,0,0, 1,0}
+                                new Fraction[][] {
+                                    {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-1),new Fraction(0),new Fraction(0),new Fraction( 2),new Fraction(13,5)},
+                                    {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction( 1),new Fraction(0),new Fraction(0),new Fraction(-2),new Fraction(1)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction(1),new Fraction(0),new Fraction( 1),new Fraction(1)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-2),new Fraction(0),new Fraction(1),new Fraction( 3),new Fraction(7,2)},
+                                    {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction( 0),new Fraction(0),new Fraction(0),new Fraction( 1),new Fraction(2)},
+                                    {new Fraction(2),new Fraction(3),new Fraction(0),new Fraction( 2),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction(8)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-2),new Fraction(0),new Fraction(0),new Fraction( 1),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,0,4,5,1},
-                            new Double[] {1.3,null,1.0,3.5/3,2.0},
+                            new Fraction[] {new Fraction(13,10),null,new Fraction(1),new Fraction(7,6),new Fraction(2)},
                             2,
                             6
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new double[][] {
-                                    {0,0,1, 1,-2,0,0,0.6},
-                                    {1,0,0,-1, 2,0,0,3},
-                                    {0,0,0,-1, 1,0,1,1},
-                                    {0,0,0, 1,-3,1,0,0.5},
-                                    {0,1,0, 1,-1,0,0,1},
-                                    {2,3,0, 1, 1,0,0,9},
-                                    {0,0,0,-1,-1,0,0,0}
+                                new Fraction[][] {
+                                    {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction( 1),new Fraction(-2),new Fraction(0),new Fraction(0),new Fraction(3,5)},
+                                    {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction( 2),new Fraction(0),new Fraction(0),new Fraction(3)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction( 1),new Fraction(0),new Fraction(1),new Fraction(1)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction( 1),new Fraction(-3),new Fraction(1),new Fraction(0),new Fraction(1,2)},
+                                    {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction( 1),new Fraction(-1),new Fraction(0),new Fraction(0),new Fraction(1)},
+                                    {new Fraction(2),new Fraction(3),new Fraction(0),new Fraction( 1),new Fraction( 1),new Fraction(0),new Fraction(0),new Fraction(9)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction(-1),new Fraction(0),new Fraction(0),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,0,6,5,1},
@@ -237,10 +237,10 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new double[][] {
-                        {1,2,5},
-                        {-1,-1,-2},
-                        {2,1,7}
+                    new Fraction[][] {
+                        {new Fraction(1),new Fraction(2),new Fraction(5)},
+                        {new Fraction(-1),new Fraction(-1),new Fraction(-2)},
+                        {new Fraction(2),new Fraction(1),new Fraction(7)}
                     }
                 ),
                 new SimplexSolution(
@@ -248,44 +248,44 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new double[][] {
-                                    {1,2,1,0,0,5},
-                                    {-1,-1,0,1,0,-2},
-                                    {2,1,0,0,1,7},
-                                    {0,0,0,0,0,0},
-                                    {1,1,0,0,0,0}
+                                new Fraction[][] {
+                                    {new Fraction(1),new Fraction(2),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(5)},
+                                    {new Fraction(-1),new Fraction(-1),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-2)},
+                                    {new Fraction(2),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(7)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0)},
+                                    {new Fraction(1),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,3,4},
-                            new Double[] {5.0,null,3.5},
+                            new Fraction[] {new Fraction(5),null,new Fraction(7,2)},
                             2,
                             0
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new double[][] {
-                                    {0, 1.5,1,0,-0.5,1.5},
-                                    {0,-0.5,0,1, 0.5,1.5},
-                                    {1, 0.5,0,0, 0.5,3.5},
-                                    {1, 0.5,0,0, 0.5,3.5},
-                                    {0, 0.5,0,0,-0.5,0}
+                                new Fraction[][] {
+                                    {new Fraction(0),new Fraction(3,2),new Fraction(1),new Fraction(0),new Fraction(-1,2),new Fraction(3,2)},
+                                    {new Fraction(0),new Fraction(-1,2),new Fraction(0),new Fraction(1),new Fraction(1,2),new Fraction(3,2)},
+                                    {new Fraction(1),new Fraction(1,2),new Fraction(0),new Fraction(0),new Fraction(1,2),new Fraction(7,2)},
+                                    {new Fraction(1),new Fraction(1,2),new Fraction(0),new Fraction(0),new Fraction(1,2),new Fraction(7,2)},
+                                    {new Fraction(0),new Fraction(1,2),new Fraction(0),new Fraction(0),new Fraction(-1,2),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,3,0},
-                            new Double[] {1.0,null,7.0},
+                            new Fraction[] {new Fraction(1),null,new Fraction(7)},
                             0,
                             1
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new double[][] {
-                                    {0,1, 2.0/3.0,0,-1.0/3.0,1},
-                                    {0,0, 1.0/3.0,1, 1.0/3.0,2},
-                                    {1,0,-1.0/3.0,0, 2.0/3.0,3},
-                                    {1,1, 1.0/3.0,0, 1.0/3.0,4},
-                                    {0,0,-1.0/3.0,0,-1.0/3.0,0}
+                                new Fraction[][] {
+                                    {new Fraction(0),new Fraction(1),new Fraction(2,3),new Fraction(0),new Fraction(-1,3),new Fraction(1)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(1,3),new Fraction(1),new Fraction(1,3),new Fraction(2)},
+                                    {new Fraction(1),new Fraction(0),new Fraction(-1,3),new Fraction(0),new Fraction(2,3),new Fraction(3)},
+                                    {new Fraction(1),new Fraction(1),new Fraction(1,3),new Fraction(0),new Fraction(1,3),new Fraction(4)},
+                                    {new Fraction(0),new Fraction(0),new Fraction(-1,3),new Fraction(0),new Fraction(-1,3),new Fraction(0)}
                                 }
                             ),
                             new int[] {1,3,0},
@@ -300,9 +300,9 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new double[][] {
-                        {-2,1,1},
-                        {1,-2,1}
+                    new Fraction[][] {
+                        {new Fraction(-2),new Fraction(1),new Fraction(1)},
+                        {new Fraction(1),new Fraction(-2),new Fraction(1)}
                     }
                 ),
                 new SimplexSolution(
@@ -310,30 +310,30 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new double[][] {
-                                    {-2, 1,1,0,1},
-                                    { 1,-2,0,1,1},
-                                    { 0, 0,0,0,0},
-                                    { 1, 1,0,0,0}
+                                new Fraction[][] {
+                                    {new Fraction(-2),new Fraction( 1),new Fraction(1),new Fraction(0),new Fraction(1)},
+                                    {new Fraction( 1),new Fraction(-2),new Fraction(0),new Fraction(1),new Fraction(1)},
+                                    {new Fraction( 0),new Fraction( 0),new Fraction(0),new Fraction(0),new Fraction(0)},
+                                    {new Fraction( 1),new Fraction( 1),new Fraction(0),new Fraction(0),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,3},
-                            new Double[] {null,1.0},
+                            new Fraction[] {null,new Fraction(1)},
                             1,
                             0
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new double[][] {
-                                    {0,-3,1, 2,3},
-                                    {1,-2,0, 1,1},
-                                    {1,-2,0, 1,1},
-                                    {0, 3,0,-1,0}
+                                new Fraction[][] {
+                                    {new Fraction(0),new Fraction(-3),new Fraction(1),new Fraction( 2),new Fraction(3)},
+                                    {new Fraction(1),new Fraction(-2),new Fraction(0),new Fraction( 1),new Fraction(1)},
+                                    {new Fraction(1),new Fraction(-2),new Fraction(0),new Fraction( 1),new Fraction(1)},
+                                    {new Fraction(0),new Fraction( 3),new Fraction(0),new Fraction(-1),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,0},
-                            new Double[] {null,null},
+                            new Fraction[] {null,null},
                             -1,
                             1
                         )
@@ -344,9 +344,9 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new double[][] {
-                        {1,-1,-1},
-                        {-1,2,-1}
+                    new Fraction[][] {
+                        {new Fraction(1),new Fraction(-1),new Fraction(-1)},
+                        {new Fraction(-1),new Fraction(2),new Fraction(-1)}
                     }
                 ),
                 new SimplexSolution(
@@ -354,26 +354,26 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new double[][] {
-                                    { 1,-1,1,0,-1},
-                                    {-1, 2,0,1,-1},
-                                    { 0, 0,0,0,0},
-                                    { 1, 1,0,0,0}
+                                new Fraction[][] {
+                                    {new Fraction( 1),new Fraction(-1),new Fraction(1),new Fraction(0),new Fraction(-1)},
+                                    {new Fraction(-1),new Fraction( 2),new Fraction(0),new Fraction(1),new Fraction(-1)},
+                                    {new Fraction( 0),new Fraction( 0),new Fraction(0),new Fraction(0),new Fraction(0)},
+                                    {new Fraction( 1),new Fraction( 1),new Fraction(0),new Fraction(0),new Fraction(0)}
                                 }
                             ),
                             new int[] {2,3},
-                            new Double[] {null,null},
+                            new Fraction[] {null,null},
                             -1,
                             1
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new double[][] {
-                                    {-1,1,-1,0,1},
-                                    { 1,0, 2,1,-3},
-                                    {-1,1,-1,0,1},
-                                    { 2,0, 1,0,0}
+                                new Fraction[][] {
+                                    {new Fraction(-1),new Fraction(1),new Fraction(-1),new Fraction(0),new Fraction(1)},
+                                    {new Fraction( 1),new Fraction(0),new Fraction( 2),new Fraction(1),new Fraction(-3)},
+                                    {new Fraction(-1),new Fraction(1),new Fraction(-1),new Fraction(0),new Fraction(1)},
+                                    {new Fraction( 2),new Fraction(0),new Fraction( 1),new Fraction(0),new Fraction(0)}
                                 }
                             ),
                             new int[] {1,3},
@@ -412,17 +412,16 @@ public class OptimizationAlgorithmsTest {
                     if (expectedTableau.quotients[i] == null) {
                         Assert.assertNull(resultTableau.quotients[i], msg);
                     } else {
-                        Assert.assertEquals(resultTableau.quotients[i], expectedTableau.quotients[i], 0.015625, msg);
+                        Assert.assertEquals(resultTableau.quotients[i], expectedTableau.quotients[i], msg);
                     }
                 }
             }
-            Assert.assertEquals(resultTableau.problem.target, expectedTableau.problem.target, 0.015625, msg);
+            Assert.assertEquals(resultTableau.problem.target, expectedTableau.problem.target, msg);
             Assert.assertEquals(resultTableau.problem.matrix.length, expectedTableau.problem.matrix.length, msg);
             for (int i = 0; i < resultTableau.problem.matrix.length; i++) {
                 Assert.assertEquals(
                     resultTableau.problem.matrix[i],
                     expectedTableau.problem.matrix[i],
-                    0.015625,
                     msg + ", Zeile " + i
                 );
             }

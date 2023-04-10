@@ -62,6 +62,16 @@ public abstract class ArrayUtils {
         return result;
     }
 
+    public static <T> T[][] copy(final T[][] array) {
+        final int length = array.length;
+        @SuppressWarnings("unchecked")
+        final T[][] result = (T[][])Array.newInstance(array.getClass().getComponentType(), length);
+        for (int index = 0; index < length; index++) {
+            result[index] = ArrayUtils.copy(array[index]);
+        }
+        return result;
+    }
+
     public static void swap(final int[] array, final int a, final int b) {
         if (a >= 0 && b >= 0) {
             final int store = array[a];

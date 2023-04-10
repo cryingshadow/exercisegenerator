@@ -1,7 +1,6 @@
 package exercisegenerator.algorithms;
 
 import java.io.*;
-import java.text.*;
 import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
@@ -17,9 +16,8 @@ import exercisegenerator.util.*;
  */
 public abstract class OptimizationAlgorithms {
 
-    private static final DecimalFormat DECIMAL_FORMAT =
-        new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
     private static final Random RANDOM = new Random();
+
     private static final Object VARIABLE_NAME = "x";
 
     public static List<LinearSystemOfEquations> gaussJordan(final LinearSystemOfEquations problem) {
@@ -654,13 +652,15 @@ public abstract class OptimizationAlgorithms {
         throw new IllegalStateException("Solved system should not be solved further!");
     }
 
-    private static double generateCoefficient(final int oneToChanceForNegative) {
-        return OptimizationAlgorithms.RANDOM.nextInt(11)
-            * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1);
+    private static Fraction generateCoefficient(final int oneToChanceForNegative) {
+        return new Fraction(
+            OptimizationAlgorithms.RANDOM.nextInt(11)
+            * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
+        );
     }
 
-    private static double[][] generateInequalities(final int numberOfInequalities, final int numberOfVariables) {
-        final double[][] matrix = new double[numberOfInequalities][numberOfVariables + 1];
+    private static Fraction[][] generateInequalities(final int numberOfInequalities, final int numberOfVariables) {
+        final Fraction[][] matrix = new Fraction[numberOfInequalities][numberOfVariables + 1];
         for (int row = 0; row < numberOfInequalities; row++) {
             for (int col = 0; col < numberOfVariables; col++) {
                 matrix[row][col] = OptimizationAlgorithms.generateCoefficient(4);
@@ -691,9 +691,11 @@ public abstract class OptimizationAlgorithms {
         throw new UnsupportedOperationException("Not yet implemented!");
     }
 
-    private static double generateNonZeroCoefficient(final int oneToChanceForNegative) {
-        return (OptimizationAlgorithms.RANDOM.nextInt(10) + 1)
-            * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1);
+    private static Fraction generateNonZeroCoefficient(final int oneToChanceForNegative) {
+        return new Fraction(
+            (OptimizationAlgorithms.RANDOM.nextInt(10) + 1)
+            * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
+        );
     }
 
     private static int generateNumberOfInequalities() {
@@ -703,13 +705,14 @@ public abstract class OptimizationAlgorithms {
     private static SimplexProblem generateSimplexProblem(final Parameters options) {
         final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
         final int numberOfInequalities = OptimizationAlgorithms.generateNumberOfInequalities();
-        final double[] target = OptimizationAlgorithms.generateTargetFunction(numberOfVariables);
-        final double[][] matrix = OptimizationAlgorithms.generateInequalities(numberOfInequalities, numberOfVariables);
+        final Fraction[] target = OptimizationAlgorithms.generateTargetFunction(numberOfVariables);
+        final Fraction[][] matrix =
+            OptimizationAlgorithms.generateInequalities(numberOfInequalities, numberOfVariables);
         return new SimplexProblem(target, matrix);
     }
 
-    private static double[] generateTargetFunction(final int numberOfVariables) {
-        final double[] target = new double[numberOfVariables];
+    private static Fraction[] generateTargetFunction(final int numberOfVariables) {
+        final Fraction[] target = new Fraction[numberOfVariables];
         for (int i = 0; i < numberOfVariables; i++) {
             target[i] = OptimizationAlgorithms.generateNonZeroCoefficient(4);
         }
@@ -880,14 +883,21 @@ public abstract class OptimizationAlgorithms {
         ).getResult(options);
     }
 
+    private static Fraction parseRationalNumber(final String number) {
+        final String[] parts = number.split("/");
+        return parts.length == 1 ?
+            new Fraction(Integer.parseInt(parts[0])) :
+                new Fraction(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    }
+
     private static SimplexProblem parseSimplexProblem(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
         final String line = reader.readLine();
         final String[] rows = line.split(";");
-        final double[] target = OptimizationAlgorithms.parseTargetFunction(rows[0]);
-        final double[][] matrix = new double[rows.length - 1][target.length + 1];
+        final Fraction[] target = OptimizationAlgorithms.parseTargetFunction(rows[0]);
+        final Fraction[][] matrix = new Fraction[rows.length - 1][target.length + 1];
         for (int row = 0; row < matrix.length; row++) {
             final String[] numbers = rows[row + 1].split(",");
             if (numbers.length != matrix[row].length) {
@@ -896,17 +906,17 @@ public abstract class OptimizationAlgorithms {
                 );
             }
             for (int col = 0; col < numbers.length; col++) {
-                matrix[row][col] = Double.parseDouble(numbers[col]);
+                matrix[row][col] = OptimizationAlgorithms.parseRationalNumber(numbers[col]);
             }
         }
         return new SimplexProblem(target, matrix);
     }
 
-    private static double[] parseTargetFunction(final String line) {
+    private static Fraction[] parseTargetFunction(final String line) {
         final String[] numbers = line.split(",");
-        final double[] target = new double[numbers.length];
+        final Fraction[] target = new Fraction[numbers.length];
         for (int i = 0; i < target.length; i++) {
-            target[i] = Double.parseDouble(numbers[i]);
+            target[i] = OptimizationAlgorithms.parseRationalNumber(numbers[i]);
         }
         return target;
     }
@@ -1081,8 +1091,8 @@ public abstract class OptimizationAlgorithms {
     throws IOException {
         writer.write("Maximiere $z(\\mathbf{x}) = ");
         int firstNonZeroIndex = 0;
-        for (final double coefficient : problem.target) {
-            if (Double.compare(coefficient, 0) != 0) {
+        for (final Fraction coefficient : problem.target) {
+            if (coefficient.compareTo(Fraction.ZERO) != 0) {
                 break;
             }
             firstNonZeroIndex++;
@@ -1122,8 +1132,8 @@ public abstract class OptimizationAlgorithms {
         for (int row = 0; row < problem.matrix.length; row++) {
             boolean firstNonZero = true;
             for (int col = 0; col < problem.target.length; col++) {
-                final double coefficient = problem.matrix[row][col];
-                if (firstNonZero && Double.compare(coefficient, 0) != 0) {
+                final Fraction coefficient = problem.matrix[row][col];
+                if (firstNonZero && coefficient.compareTo(Fraction.ZERO) != 0) {
                     writer.write(
                         OptimizationAlgorithms.toCoefficientWithVariable(col == 0, true, true, col + 1, coefficient)
                     );
@@ -1219,43 +1229,48 @@ public abstract class OptimizationAlgorithms {
     private static void simplexBaseSwap(
         final int pivotRow,
         final int pivotColumn,
-        final double[][] matrix,
+        final Fraction[][] matrix,
         final int[] basicVariables,
-        final double[] target
+        final Fraction[] target
     ) {
-        final double pivotElement = matrix[pivotRow][pivotColumn];
-        if (pivotElement != 1.0) {
+        final Fraction pivotElement = matrix[pivotRow][pivotColumn];
+        if (pivotElement.compareTo(Fraction.ONE) != 0) {
             for (int col = 0; col < matrix[pivotRow].length; col++) {
-                matrix[pivotRow][col] /= pivotElement;
+                matrix[pivotRow][col] = matrix[pivotRow][col].divide(pivotElement);
             }
         }
         for (int row = 0; row < matrix.length - 2; row++) {
-            if (row != pivotRow && Double.compare(matrix[row][pivotColumn], 0.0) != 0) {
-                final double factor = matrix[row][pivotColumn];
+            if (row != pivotRow && matrix[row][pivotColumn].compareTo(Fraction.ZERO) != 0) {
+                final Fraction factor = matrix[row][pivotColumn];
                 for (int col = 0; col < matrix[row].length; col++) {
-                    matrix[row][col] -= factor * matrix[pivotRow][col];
+                    matrix[row][col] = matrix[row][col].subtract(matrix[pivotRow][col].multiply(factor));
                 }
             }
         }
         basicVariables[pivotRow] = pivotColumn;
         for (int col = 0; col < matrix[basicVariables.length].length; col++) {
-            double sum = 0;
+            Fraction sum = Fraction.ZERO;
             for (int row = 0; row < basicVariables.length; row++) {
-                sum += matrix[row][col] * OptimizationAlgorithms.simplexTargetValue(target, basicVariables[row]);
+                sum =
+                    sum.add(
+                        matrix[row][col].multiply(
+                            OptimizationAlgorithms.simplexTargetValue(target, basicVariables[row])
+                        )
+                    );
             }
             matrix[basicVariables.length][col] = sum;
             if (col < target.length) {
-                matrix[basicVariables.length + 1][col] = target[col] - sum;
+                matrix[basicVariables.length + 1][col] = target[col].subtract(sum);
             } else if (col < matrix[basicVariables.length].length - 1) {
-                matrix[basicVariables.length + 1][col] = -sum;
+                matrix[basicVariables.length + 1][col] = sum.negate();
             } else {
-                matrix[basicVariables.length + 1][col] = 0;
+                matrix[basicVariables.length + 1][col] = Fraction.ZERO;
             }
         }
     }
 
     private static SimplexAnswer simplexComputeAnswer(final SimplexTableau tableau) {
-        final double[][] matrix = tableau.problem.matrix;
+        final Fraction[][] matrix = tableau.problem.matrix;
         if (OptimizationAlgorithms.simplexHasNegativeLimit(matrix)) {
             if (OptimizationAlgorithms.simplexHasNegativeLimitWithNonNegativeRow(matrix)) {
                 return SimplexAnswer.UNSOLVABLE;
@@ -1273,14 +1288,17 @@ public abstract class OptimizationAlgorithms {
         return SimplexAnswer.SOLVED;
     }
 
-    private static Double[] simplexComputeQuotients(final double[][] matrix, final int pivotColumn) {
+    private static Fraction[] simplexComputeQuotients(final Fraction[][] matrix, final int pivotColumn) {
         if (pivotColumn < 0) {
             return null;
         }
-        final Double[] quotients = new Double[matrix.length - 2];
+        final Fraction[] quotients = new Fraction[matrix.length - 2];
         for (int row = 0; row < quotients.length; row++) {
-            if (matrix[row][pivotColumn] > 0 && Double.compare(matrix[row][matrix[row].length - 1], 0) >= 0) {
-                quotients[row] = matrix[row][matrix[row].length - 1] / matrix[row][pivotColumn];
+            if (
+                matrix[row][pivotColumn].compareTo(Fraction.ZERO) > 0
+                && matrix[row][matrix[row].length - 1].compareTo(Fraction.ZERO) >= 0
+            ) {
+                quotients[row] = matrix[row][matrix[row].length - 1].divide(matrix[row][pivotColumn]);
             } else {
                 quotients[row] = null;
             }
@@ -1288,16 +1306,16 @@ public abstract class OptimizationAlgorithms {
         return quotients;
     }
 
-    private static int simplexFirstRowWithNegativeLimit(final double[][] matrix) {
+    private static int simplexFirstRowWithNegativeLimit(final Fraction[][] matrix) {
         for (int row = 0; row < matrix.length - 2; row++) {
-            if (matrix[row][matrix[row].length - 1] < 0) {
+            if (matrix[row][matrix[row].length - 1].compareTo(Fraction.ZERO) < 0) {
                 return row;
             }
         }
         return -1;
     }
 
-    private static double simplexGetCurrentValue(final int variableIndex, final SimplexTableau tableau) {
+    private static Fraction simplexGetCurrentValue(final int variableIndex, final SimplexTableau tableau) {
         int index = -1;
         for (int i = 0; i < tableau.basicVariables.length; i++) {
             if (tableau.basicVariables[i] == variableIndex) {
@@ -1306,26 +1324,26 @@ public abstract class OptimizationAlgorithms {
             }
         }
         if (index < 0) {
-            return 0;
+            return Fraction.ZERO;
         }
         return tableau.problem.matrix[index][tableau.problem.matrix[index].length - 1];
     }
 
-    private static boolean simplexHasNegativeLimit(final double[][] matrix) {
+    private static boolean simplexHasNegativeLimit(final Fraction[][] matrix) {
         for (int i = 0; i < matrix.length - 2; i++) {
-            if (matrix[i][matrix[i].length - 1] < 0) {
+            if (matrix[i][matrix[i].length - 1].compareTo(Fraction.ZERO) < 0) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean simplexHasNegativeLimitWithNonNegativeRow(final double[][] matrix) {
+    private static boolean simplexHasNegativeLimitWithNonNegativeRow(final Fraction[][] matrix) {
         for (int i = 0; i < matrix.length - 2; i++) {
-            if (matrix[i][matrix[i].length - 1] < 0) {
+            if (matrix[i][matrix[i].length - 1].compareTo(Fraction.ZERO) < 0) {
                 boolean notFound = true;
                 for (int j = 0; j < matrix.length - 1; j++) {
-                    if (matrix[i][j] < 0) {
+                    if (matrix[i][j].compareTo(Fraction.ZERO) < 0) {
                         notFound = false;
                         break;
                     }
@@ -1338,9 +1356,9 @@ public abstract class OptimizationAlgorithms {
         return false;
     }
 
-    private static double[][] simplexInitializeMatrix(final double[][] initialMatrix, final double[] target) {
+    private static Fraction[][] simplexInitializeMatrix(final Fraction[][] initialMatrix, final Fraction[] target) {
         final int initialColumnLength = initialMatrix.length;
-        final double[][] newMatrix = new double[initialColumnLength + 2][initialMatrix[0].length + initialColumnLength];
+        final Fraction[][] newMatrix = new Fraction[initialColumnLength + 2][initialMatrix[0].length + initialColumnLength];
         for (int row = 0; row < initialColumnLength; row++) {
             final int initialRowLength = initialMatrix[row].length - 1;
             for (int col = 0; col < initialRowLength; col++) {
@@ -1349,36 +1367,36 @@ public abstract class OptimizationAlgorithms {
             final int newRowLength = newMatrix[row].length - 1;
             for (int col = initialRowLength; col < newRowLength; col++) {
                 if (col - initialRowLength == row) {
-                    newMatrix[row][col] = 1;
+                    newMatrix[row][col] = Fraction.ONE;
                 } else {
-                    newMatrix[row][col] = 0;
+                    newMatrix[row][col] = Fraction.ZERO;
                 }
             }
             newMatrix[row][newRowLength] = initialMatrix[row][initialRowLength];
         }
         for (int col = 0; col < newMatrix[initialColumnLength].length; col++) {
-            newMatrix[initialColumnLength][col] = 0;
+            newMatrix[initialColumnLength][col] = Fraction.ZERO;
         }
         final int targetLength = target.length;
         for (int col = 0; col < targetLength; col++) {
             newMatrix[initialColumnLength + 1][col] = target[col];
         }
         for (int col = targetLength; col < newMatrix[initialColumnLength + 1].length; col++) {
-            newMatrix[initialColumnLength + 1][col] = 0;
+            newMatrix[initialColumnLength + 1][col] = Fraction.ZERO;
         }
         return newMatrix;
     }
 
     private static SimplexTableau simplexInitializeTableau(final SimplexProblem problem) {
-        final double[][] initialMatrix = problem.matrix;
+        final Fraction[][] initialMatrix = problem.matrix;
         final int initialColumnLength = initialMatrix.length;
-        final double[][] newMatrix = OptimizationAlgorithms.simplexInitializeMatrix(initialMatrix, problem.target);
+        final Fraction[][] newMatrix = OptimizationAlgorithms.simplexInitializeMatrix(initialMatrix, problem.target);
         final int[] basicVariables = new int[initialColumnLength];
         for (int i = 0; i < initialColumnLength; i++) {
             basicVariables[i] = i + problem.target.length;
         }
         final int pivotColumn = OptimizationAlgorithms.simplexSelectPivotColumn(newMatrix);
-        final Double[] quotients = OptimizationAlgorithms.simplexComputeQuotients(newMatrix, pivotColumn);
+        final Fraction[] quotients = OptimizationAlgorithms.simplexComputeQuotients(newMatrix, pivotColumn);
         return new SimplexTableau(
             new SimplexProblem(problem.target, newMatrix),
             basicVariables,
@@ -1388,20 +1406,20 @@ public abstract class OptimizationAlgorithms {
         );
     }
 
-    private static boolean simplexPivotColumnExists(final double[][] matrix) {
+    private static boolean simplexPivotColumnExists(final Fraction[][] matrix) {
         for (int col = 0; col < matrix[matrix.length - 1].length - 1; col++) {
-            if (matrix[matrix.length - 1][col] > 0) {
+            if (matrix[matrix.length - 1][col].compareTo(Fraction.ZERO) > 0) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean simplexPivotRowExists(final Double[] quotients) {
+    private static boolean simplexPivotRowExists(final Fraction[] quotients) {
         if (quotients == null) {
             return false;
         }
-        for (final Double quotient : quotients) {
+        for (final Fraction quotient : quotients) {
             if (quotient != null) {
                 return true;
             }
@@ -1409,19 +1427,19 @@ public abstract class OptimizationAlgorithms {
         return false;
     }
 
-    private static int simplexSelectPivotColumn(final double[][] matrix) {
+    private static int simplexSelectPivotColumn(final Fraction[][] matrix) {
         return OptimizationAlgorithms.simplexHasNegativeLimit(matrix) ?
             OptimizationAlgorithms.simplexSelectPivotColumnPhaseOne(matrix) :
                 OptimizationAlgorithms.simplexSelectPivotColumnPhaseTwo(matrix);
     }
 
-    private static int simplexSelectPivotColumnPhaseOne(final double[][] matrix) {
+    private static int simplexSelectPivotColumnPhaseOne(final Fraction[][] matrix) {
         for (int row = 0; row < matrix.length - 2; row++) {
-            if (matrix[row][matrix[row].length - 1] < 0) {
-                double min = 0;
+            if (matrix[row][matrix[row].length - 1].compareTo(Fraction.ZERO) < 0) {
+                Fraction min = Fraction.ZERO;
                 int pivotColumn = -1;
                 for (int col = 0; col < matrix[row].length - 1; col++) {
-                    if (matrix[row][col] < min) {
+                    if (matrix[row][col].compareTo(min) < 0) {
                         min = matrix[row][col];
                         pivotColumn = col;
                     }
@@ -1432,11 +1450,11 @@ public abstract class OptimizationAlgorithms {
         return -1;
     }
 
-    private static int simplexSelectPivotColumnPhaseTwo(final double[][] matrix) {
-        double max = 0;
+    private static int simplexSelectPivotColumnPhaseTwo(final Fraction[][] matrix) {
+        Fraction max = Fraction.ZERO;
         int pivotColumn = -1;
         for (int col = 0; col < matrix[matrix.length - 1].length - 1; col++) {
-            if (matrix[matrix.length - 1][col] > max) {
+            if (matrix[matrix.length - 1][col].compareTo(max) > 0) {
                 max = matrix[matrix.length - 1][col];
                 pivotColumn = col;
             }
@@ -1444,14 +1462,14 @@ public abstract class OptimizationAlgorithms {
         return pivotColumn;
     }
 
-    private static int simplexSelectPivotRow(final Double[] quotients) {
+    private static int simplexSelectPivotRow(final Fraction[] quotients) {
         if (quotients == null) {
             return -1;
         }
-        Double min = null;
+        Fraction min = null;
         int pivotRow = -1;
         for (int row = 0; row < quotients.length; row++) {
-            if (quotients[row] != null && (min == null || quotients[row] < min)) {
+            if (quotients[row] != null && (min == null || quotients[row].compareTo(min) < 0)) {
                 min = quotients[row];
                 pivotRow = row;
             }
@@ -1460,14 +1478,14 @@ public abstract class OptimizationAlgorithms {
     }
 
     private static SimplexTableau simplexStep(final SimplexTableau tableau) {
-        final double[] target = tableau.problem.target;
-        final double[][] matrix = ArrayUtils.copy(tableau.problem.matrix);
+        final Fraction[] target = tableau.problem.target;
+        final Fraction[][] matrix = ArrayUtils.copy(tableau.problem.matrix);
         final int[] basicVariables = ArrayUtils.copy(tableau.basicVariables);
         final int pivotRow =
             tableau.pivotRow < 0 ? OptimizationAlgorithms.simplexFirstRowWithNegativeLimit(matrix) : tableau.pivotRow;
         OptimizationAlgorithms.simplexBaseSwap(pivotRow, tableau.pivotColumn, matrix, basicVariables, target);
         final int pivotColumn = OptimizationAlgorithms.simplexSelectPivotColumn(matrix);
-        final Double[] quotients = OptimizationAlgorithms.simplexComputeQuotients(matrix, pivotColumn);
+        final Fraction[] quotients = OptimizationAlgorithms.simplexComputeQuotients(matrix, pivotColumn);
         return new SimplexTableau(
             new SimplexProblem(target, matrix),
             basicVariables,
@@ -1481,15 +1499,15 @@ public abstract class OptimizationAlgorithms {
         return String.format("|*{%d}{C{9mm}|}", cols);
     }
 
-    private static double simplexTargetValue(final double[] target, final int index) {
-        return index < target.length ? target[index] : 0;
+    private static Fraction simplexTargetValue(final Fraction[] target, final int index) {
+        return index < target.length ? target[index] : Fraction.ZERO;
     }
 
-    private static String toCoefficient(final Double coefficient) {
-        if (coefficient % 1 == 0) {
+    private static String toCoefficient(final Fraction coefficient) {
+        if (coefficient.getDenominator() == 1) {
             return String.valueOf(coefficient.intValue());
         }
-        return OptimizationAlgorithms.toFloatNumber(coefficient);
+        return OptimizationAlgorithms.toFraction(coefficient);
     }
 
     private static String toCoefficientWithVariable(
@@ -1497,9 +1515,9 @@ public abstract class OptimizationAlgorithms {
         final boolean matrix,
         final boolean firstNonZero,
         final int variableIndex,
-        final Double coefficient
+        final Fraction coefficient
     ) {
-        if (coefficient % 1 == 0) {
+        if (coefficient.getDenominator() == 1) {
             final int value = coefficient.intValue();
             if (value == 0) {
                 if (matrix && !first) {
@@ -1564,31 +1582,31 @@ public abstract class OptimizationAlgorithms {
         if (first) {
             return String.format(
                 "%s%s_{%d}",
-                OptimizationAlgorithms.toFloatNumber(coefficient),
+                OptimizationAlgorithms.toFraction(coefficient),
                 OptimizationAlgorithms.VARIABLE_NAME,
                 variableIndex
             );
         }
-        if (coefficient < 0) {
+        if (coefficient.compareTo(Fraction.ZERO) < 0) {
             if (matrix) {
                 if (firstNonZero) {
                     return String.format(
                         " &  & %s%s_{%d}",
-                        OptimizationAlgorithms.toFloatNumber(coefficient),
+                        OptimizationAlgorithms.toFraction(coefficient),
                         OptimizationAlgorithms.VARIABLE_NAME,
                         variableIndex
                     );
                 }
                 return String.format(
                     " & - & %s%s_{%d}",
-                    OptimizationAlgorithms.toFloatNumber(-coefficient),
+                    OptimizationAlgorithms.toFraction(coefficient.negate()),
                     OptimizationAlgorithms.VARIABLE_NAME,
                     variableIndex
                 );
             }
             return String.format(
                 " - %s%s_{%d}",
-                OptimizationAlgorithms.toFloatNumber(-coefficient),
+                OptimizationAlgorithms.toFraction(coefficient.negate()),
                 OptimizationAlgorithms.VARIABLE_NAME,
                 variableIndex
             );
@@ -1597,28 +1615,34 @@ public abstract class OptimizationAlgorithms {
             if (firstNonZero) {
                 return String.format(
                     " &  & %s%s_{%d}",
-                    OptimizationAlgorithms.toFloatNumber(coefficient),
+                    OptimizationAlgorithms.toFraction(coefficient),
                     OptimizationAlgorithms.VARIABLE_NAME,
                     variableIndex
                 );
             }
             return String.format(
                 " & + & %s%s_{%d}",
-                OptimizationAlgorithms.toFloatNumber(coefficient),
+                OptimizationAlgorithms.toFraction(coefficient),
                 OptimizationAlgorithms.VARIABLE_NAME,
                 variableIndex
             );
         }
         return String.format(
             " + %s%s_{%d}",
-            OptimizationAlgorithms.toFloatNumber(coefficient),
+            OptimizationAlgorithms.toFraction(coefficient),
             OptimizationAlgorithms.VARIABLE_NAME,
             variableIndex
         );
     }
 
-    private static String toFloatNumber(final double number) {
-        return String.format("\\num{%s}", OptimizationAlgorithms.DECIMAL_FORMAT.format(number));
+    private static String toFraction(final Fraction coefficient) {
+        final int numerator = coefficient.getNumerator();
+        return String.format(
+            "%s\\frac{%d}{%d}",
+            numerator < 0 ? "-" : "",
+            Math.abs(numerator),
+            coefficient.getDenominator()
+        );
     }
 
     private static int[] toIntArray(final String line) {
@@ -1667,15 +1691,18 @@ public abstract class OptimizationAlgorithms {
             result[1][index + 1] = String.format("$%s_{%d}$", OptimizationAlgorithms.VARIABLE_NAME, index);
         }
         for (int col = 0; col < tableau.problem.target.length; col++) {
-            result[0][col + 2] = fill ? OptimizationAlgorithms.toCoefficient(tableau.problem.target[col]) : "";
+            result[0][col + 2] =
+                fill ? String.format("$%s$", OptimizationAlgorithms.toCoefficient(tableau.problem.target[col])) : "";
         }
         for (int col = tableau.problem.target.length + 2; col < result[0].length - 2; col++) {
-            result[0][col] = fill ? "0" : "";
+            result[0][col] = fill ? "$0$" : "";
         }
         for (int row = 0; row < tableau.problem.matrix.length; row++) {
             for (int col = 0; col < tableau.problem.matrix[row].length; col++) {
                 result[row + 2][col + 2] =
-                    fill ? OptimizationAlgorithms.toCoefficient(tableau.problem.matrix[row][col]) : "";
+                    fill ?
+                        String.format("$%s$", OptimizationAlgorithms.toCoefficient(tableau.problem.matrix[row][col])) :
+                            "";
             }
         }
         for (int i = 0; i < tableau.basicVariables.length; i++) {
@@ -1683,8 +1710,11 @@ public abstract class OptimizationAlgorithms {
                 final int variableIndex = tableau.basicVariables[i];
                 result[i + 2][0] =
                     variableIndex < tableau.problem.target.length ?
-                        OptimizationAlgorithms.toCoefficient(tableau.problem.target[variableIndex]) :
-                            "0";
+                        String.format(
+                            "$%s$",
+                            OptimizationAlgorithms.toCoefficient(tableau.problem.target[variableIndex])
+                        ) :
+                            "$0$";
                 result[i + 2][1] = String.format("$%s_{%d}$", OptimizationAlgorithms.VARIABLE_NAME, variableIndex + 1);
             } else {
                 result[i + 2][0] = "";
@@ -1694,7 +1724,7 @@ public abstract class OptimizationAlgorithms {
                 result[i + 2][result[i + 2].length - 1] = "";
             } else {
                 result[i + 2][result[i + 2].length - 1] =
-                    fill ? OptimizationAlgorithms.toCoefficient(tableau.quotients[i]) : "";
+                    fill ? String.format("$%s$", OptimizationAlgorithms.toCoefficient(tableau.quotients[i])) : "";
             }
         }
         result[result.length - 1][result[0].length - 2] = "";

@@ -2,18 +2,20 @@ package exercisegenerator.structures.optimization;
 
 import java.util.*;
 
+import org.apache.commons.math3.fraction.*;
+
 public class SimplexTableau {
 
     public final int[] basicVariables;
     public final int pivotColumn;
     public final int pivotRow;
     public final SimplexProblem problem;
-    public final Double[] quotients;
+    public final Fraction[] quotients;
 
     public SimplexTableau(
         final SimplexProblem problem,
         final int[] basicVariables,
-        final Double[] quotients,
+        final Fraction[] quotients,
         final int pivotRow,
         final int pivotColumn
     ) {
