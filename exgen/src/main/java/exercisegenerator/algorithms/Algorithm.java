@@ -223,6 +223,16 @@ public enum Algorithm {
         Cryptography::generateTestParameters
     ),
 
+    GAUSS_JORDAN(
+        "gaussjordan",
+        "Gauﬂ-Jordan-Algorithm",
+        new String[] {
+            "Solves a linear system of equations over rational numbers using the Gauﬂ-Jordan-Algorithm."
+        },
+        OptimizationAlgorithms::gaussJordan,
+        OptimizationAlgorithms::generateTestParameters
+    ),
+
     /**
      * Linked hashing on Integer arrays with the division method.
      */

@@ -20,6 +20,14 @@ public abstract class OptimizationAlgorithms {
 
     private static final Object VARIABLE_NAME = "x";
 
+    public static void gaussJordan(final AlgorithmInput input) throws Exception {
+        final LinearSystemOfEquations problem =
+            OptimizationAlgorithms.parseOrGenerateLinearSystemOfEquations(input.options);
+        final List<LinearSystemOfEquations> solution = OptimizationAlgorithms.gaussJordan(problem);
+        OptimizationAlgorithms.printGaussJordanExercise(problem, input.options, input.exerciseWriter);
+        OptimizationAlgorithms.printGaussJordanSolution(solution, input.options, input.solutionWriter);
+    }
+
     public static List<LinearSystemOfEquations> gaussJordan(final LinearSystemOfEquations problem) {
         final List<LinearSystemOfEquations> solution = new LinkedList<LinearSystemOfEquations>();
         solution.add(problem);
@@ -587,8 +595,46 @@ public abstract class OptimizationAlgorithms {
         return new SimplexSolution(tableaus, answer);
     }
 
+    private static boolean assignmentHasConflict(
+        final Fraction[] assignment,
+        final LinearSystemOfEquations solvedSystem
+    ) {
+        if (solvedSystem.numberOfRows <= assignment.length) {
+            return false;
+        }
+        for (int row = assignment.length; row < solvedSystem.numberOfRows; row++) {
+            Fraction left = Fraction.ZERO;
+            for (int col = 0; col < solvedSystem.numberOfColumns - 1; col++) {
+                if (solvedSystem.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                    left = left.add(solvedSystem.matrix[row][col].multiply(assignment[col]));
+                }
+            }
+            if (left.compareTo(solvedSystem.matrix[row][solvedSystem.numberOfColumns - 1]) != 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Fraction[] computeAssignment(final LinearSystemOfEquations solvedSystem) {
+        final int rank = OptimizationAlgorithms.computeRankForSolvedMatrix(solvedSystem.matrix);
+        final Fraction[] result = new Fraction[rank];
+        for (int row = 0; row < rank; row++) {
+            result[row] = solvedSystem.matrix[row][solvedSystem.numberOfColumns - 1];
+        }
+        return result;
+    }
+
     private static int computeMinimumDimension(final LinearSystemOfEquations system) {
         return Math.min(system.numberOfRows, system.numberOfColumns - 1);
+    }
+
+    private static int computeRankForSolvedMatrix(final Fraction[][] matrix) {
+        int rank = 0;
+        while (rank < matrix.length && rank < matrix[rank].length && matrix[rank][rank].compareTo(Fraction.ONE) == 0) {
+            rank++;
+        }
+        return rank;
     }
 
     private static void fillKnapsackSolutionTable(
@@ -659,9 +705,12 @@ public abstract class OptimizationAlgorithms {
         );
     }
 
-    private static Fraction[][] generateInequalities(final int numberOfInequalities, final int numberOfVariables) {
-        final Fraction[][] matrix = new Fraction[numberOfInequalities][numberOfVariables + 1];
-        for (int row = 0; row < numberOfInequalities; row++) {
+    private static Fraction[][] generateInequalitiesOrEquations(
+        final int numberOfInequalitiesOrEquations,
+        final int numberOfVariables
+    ) {
+        final Fraction[][] matrix = new Fraction[numberOfInequalitiesOrEquations][numberOfVariables + 1];
+        for (int row = 0; row < numberOfInequalitiesOrEquations; row++) {
             for (int col = 0; col < numberOfVariables; col++) {
                 matrix[row][col] = OptimizationAlgorithms.generateCoefficient(4);
             }
@@ -691,6 +740,14 @@ public abstract class OptimizationAlgorithms {
         throw new UnsupportedOperationException("Not yet implemented!");
     }
 
+    private static LinearSystemOfEquations generateLinearSystemOfEquations(final Parameters options) {
+        final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
+        final int numberOfEquations = OptimizationAlgorithms.generateNumberOfInequalitiesOrEquations();
+        final Fraction[][] matrix =
+            OptimizationAlgorithms.generateInequalitiesOrEquations(numberOfEquations, numberOfVariables);
+        return new LinearSystemOfEquations(matrix);
+    }
+
     private static Fraction generateNonZeroCoefficient(final int oneToChanceForNegative) {
         return new Fraction(
             (OptimizationAlgorithms.RANDOM.nextInt(10) + 1)
@@ -698,16 +755,16 @@ public abstract class OptimizationAlgorithms {
         );
     }
 
-    private static int generateNumberOfInequalities() {
+    private static int generateNumberOfInequalitiesOrEquations() {
         return OptimizationAlgorithms.RANDOM.nextInt(5) + 2;
     }
 
     private static SimplexProblem generateSimplexProblem(final Parameters options) {
         final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
-        final int numberOfInequalities = OptimizationAlgorithms.generateNumberOfInequalities();
+        final int numberOfInequalities = OptimizationAlgorithms.generateNumberOfInequalitiesOrEquations();
         final Fraction[] target = OptimizationAlgorithms.generateTargetFunction(numberOfVariables);
         final Fraction[][] matrix =
-            OptimizationAlgorithms.generateInequalities(numberOfInequalities, numberOfVariables);
+            OptimizationAlgorithms.generateInequalitiesOrEquations(numberOfInequalities, numberOfVariables);
         return new SimplexProblem(target, matrix);
     }
 
@@ -839,6 +896,25 @@ public abstract class OptimizationAlgorithms {
         return new Pair<String,String>(wordA, wordB);
     }
 
+    private static LinearSystemOfEquations parseLinearSystemOfEquations(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        final String line = reader.readLine();
+        final String[] rows = line.split(";");
+        final Fraction[][] matrix = new Fraction[rows.length][((int)rows[0].chars().filter(c -> c == ',').count()) + 1];
+        for (int row = 0; row < matrix.length; row++) {
+            final String[] numbers = rows[row].split(",");
+            if (numbers.length != matrix[row].length) {
+                throw new IOException("The rows of the matrix must all have the same length!");
+            }
+            for (int col = 0; col < numbers.length; col++) {
+                matrix[row][col] = OptimizationAlgorithms.parseRationalNumber(numbers[col]);
+            }
+        }
+        return new LinearSystemOfEquations(matrix);
+    }
+
     private static KnapsackProblem parseOrGenerateKnapsackProblem(final Parameters options)
     throws IOException {
         return new ParserAndGenerator<KnapsackProblem>(
@@ -851,6 +927,14 @@ public abstract class OptimizationAlgorithms {
         return new ParserAndGenerator<Pair<String, String>>(
             OptimizationAlgorithms::parseLCSProblem,
             OptimizationAlgorithms::generateLCSProblem
+        ).getResult(options);
+    }
+
+    private static LinearSystemOfEquations parseOrGenerateLinearSystemOfEquations(final Parameters options)
+    throws IOException {
+        return new ParserAndGenerator<LinearSystemOfEquations>(
+            OptimizationAlgorithms::parseLinearSystemOfEquations,
+            OptimizationAlgorithms::generateLinearSystemOfEquations
         ).getResult(options);
     }
 
@@ -919,6 +1003,78 @@ public abstract class OptimizationAlgorithms {
             target[i] = OptimizationAlgorithms.parseRationalNumber(numbers[i]);
         }
         return target;
+    }
+
+    private static void printGaussJordanExercise(
+        final LinearSystemOfEquations problem,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Gegeben sei das folgende \\emphasize{lineare Gleichungssystem}:\\\\[2ex]");
+        Main.newLine(writer);
+        OptimizationAlgorithms.printMatrixAsInequalitiesOrEquations(
+            problem.matrix,
+            problem.numberOfColumns,
+            "=",
+            writer
+        );
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write(
+            "L\\\"osen Sie dieses lineare Gleichungssystem mithilfe des \\emphasize{Gau\\ss{}-Jordan-Algorithmus}."
+        );
+        Main.newLine(writer);
+        Main.newLine(writer);
+    }
+
+    private static void printGaussJordanSolution(
+        final List<LinearSystemOfEquations> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("{\\renewcommand{\\arraystretch}{1.2}");
+        Main.newLine(writer);
+        Main.newLine(writer);
+        writer.write("\\begin{enumerate}");
+        Main.newLine(writer);
+        LinearSystemOfEquations lastSystem = null;
+        for (final LinearSystemOfEquations system : solution) {
+            writer.write(String.format("\\item $\\left(\\begin{array}{*{%d}c|c}", system.numberOfColumns - 1));
+            Main.newLine(writer);
+            for (int row = 0; row < system.numberOfRows; row++) {
+                writer.write(OptimizationAlgorithms.toCoefficient(system.matrix[row][0]));
+                for (int col = 1; col < system.numberOfColumns; col++) {
+                    writer.write(" & ");
+                    writer.write(OptimizationAlgorithms.toCoefficient(system.matrix[row][col]));
+                }
+                writer.write("\\\\");
+                Main.newLine(writer);
+            }
+            writer.write("\\end{array}\\right)$");
+            Main.newLine(writer);
+            lastSystem = system;
+        }
+        writer.write("\\end{enumerate}");
+        Main.newLine(writer);
+        Main.newLine(writer);
+        writer.write("\\renewcommand{\\arraystretch}{1}}");
+        Main.newLine(writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("Ergebnis: ");
+        final Fraction[] assignment = OptimizationAlgorithms.computeAssignment(lastSystem);
+        if (OptimizationAlgorithms.assignmentHasConflict(assignment, lastSystem)) {
+            writer.write("unl\\\"osbar");
+        } else {
+            writer.write("$");
+            writer.write(OptimizationAlgorithms.toParameterizedAssignment(lastSystem, 0));
+            final int rank = OptimizationAlgorithms.computeRankForSolvedMatrix(lastSystem.matrix);
+            for (int col = 1; col < rank; col++) {
+                writer.write("$, $");
+                writer.write(OptimizationAlgorithms.toParameterizedAssignment(lastSystem, col));
+            }
+            writer.write("$");
+        }
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
     private static void printKnapsackExercise(
@@ -1034,6 +1190,48 @@ public abstract class OptimizationAlgorithms {
         Main.newLine(writer);
     }
 
+    private static void printMatrixAsInequalitiesOrEquations(
+        final Fraction[][] matrix,
+        final int numberOfColumns,
+        final String inequalityOrEquationSymbol,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("$\\begin{array}{*{");
+        writer.write(String.valueOf(numberOfColumns * 2 - 1));
+        writer.write("}c}");
+        Main.newLine(writer);
+        for (int row = 0; row < matrix.length; row++) {
+            boolean firstNonZero = true;
+            for (int col = 0; col < numberOfColumns - 1; col++) {
+                final Fraction coefficient = matrix[row][col];
+                if (firstNonZero && coefficient.compareTo(Fraction.ZERO) != 0) {
+                    writer.write(
+                        OptimizationAlgorithms.toCoefficientWithVariable(col == 0, true, true, col + 1, coefficient)
+                    );
+                    firstNonZero = false;
+                } else {
+                    writer.write(
+                        OptimizationAlgorithms.toCoefficientWithVariable(
+                            col == 0,
+                            true,
+                            firstNonZero,
+                            col + 1,
+                            coefficient
+                        )
+                    );
+                }
+            }
+            writer.write(" & ");
+            writer.write(inequalityOrEquationSymbol);
+            writer.write(" & ");
+            writer.write(OptimizationAlgorithms.toCoefficient(matrix[row][numberOfColumns - 1]));
+            writer.write("\\\\");
+            Main.newLine(writer);
+        }
+        writer.write("\\end{array}$\\\\");
+        Main.newLine(writer);
+    }
+
     private static void printSimplexExercise(
         final SimplexProblem problem,
         final SimplexSolution solution,
@@ -1125,38 +1323,12 @@ public abstract class OptimizationAlgorithms {
         Main.newLine(writer);
         writer.write("unter den folgenden Nebenbedingungen:\\\\");
         Main.newLine(writer);
-        writer.write("$\\begin{array}{*{");
-        writer.write(String.valueOf(problem.matrix[0].length * 2 - 1));
-        writer.write("}c}");
-        Main.newLine(writer);
-        for (int row = 0; row < problem.matrix.length; row++) {
-            boolean firstNonZero = true;
-            for (int col = 0; col < problem.target.length; col++) {
-                final Fraction coefficient = problem.matrix[row][col];
-                if (firstNonZero && coefficient.compareTo(Fraction.ZERO) != 0) {
-                    writer.write(
-                        OptimizationAlgorithms.toCoefficientWithVariable(col == 0, true, true, col + 1, coefficient)
-                    );
-                    firstNonZero = false;
-                } else {
-                    writer.write(
-                        OptimizationAlgorithms.toCoefficientWithVariable(
-                            col == 0,
-                            true,
-                            firstNonZero,
-                            col + 1,
-                            coefficient
-                        )
-                    );
-                }
-            }
-            writer.write(" & \\leq & ");
-            writer.write(OptimizationAlgorithms.toCoefficient(problem.matrix[row][problem.target.length]));
-            writer.write("\\\\");
-            Main.newLine(writer);
-        }
-        writer.write("\\end{array}$\\\\");
-        Main.newLine(writer);
+        OptimizationAlgorithms.printMatrixAsInequalitiesOrEquations(
+            problem.matrix,
+            problem.matrix[0].length,
+            "\\leq",
+            writer
+        );
         writer.write(String.format("$%s_{1}", OptimizationAlgorithms.VARIABLE_NAME));
         for (int index = 1; index < problem.target.length; index++) {
             writer.write(String.format(", %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, index + 1));
@@ -1202,7 +1374,7 @@ public abstract class OptimizationAlgorithms {
             final SimplexTableau lastTableau = solution.tableaus.get(solution.tableaus.size() - 1);
             writer.write(
                 String.format(
-                    "$%s_{1}^* = %s",
+                    "$%s_{1}^* = %s$",
                     OptimizationAlgorithms.VARIABLE_NAME,
                     OptimizationAlgorithms.toCoefficient(OptimizationAlgorithms.simplexGetCurrentValue(0, lastTableau))
                 )
@@ -1210,7 +1382,7 @@ public abstract class OptimizationAlgorithms {
             for (int i = 1; i < lastTableau.problem.target.length; i++) {
                 writer.write(
                     String.format(
-                        ", %s_{%d}^* = %s",
+                        ", $%s_{%d}^* = %s$",
                         OptimizationAlgorithms.VARIABLE_NAME,
                         i + 1,
                         OptimizationAlgorithms.toCoefficient(
@@ -1219,7 +1391,6 @@ public abstract class OptimizationAlgorithms {
                     )
                 );
             }
-            writer.write("$");
             break;
         }
         Main.newLine(writer);
@@ -1669,6 +1840,26 @@ public abstract class OptimizationAlgorithms {
             );
         }
         return tableWithArrows;
+    }
+
+    private static String toParameterizedAssignment(final LinearSystemOfEquations solvedSystem, final int column) {
+        final StringBuilder result = new StringBuilder();
+        result.append(String.format("x_{%d} = ", solvedSystem.columnPositions[column] + 1));
+        result.append(
+            OptimizationAlgorithms.toCoefficient(solvedSystem.matrix[column][solvedSystem.numberOfColumns - 1])
+        );
+        for (int col = column + 1; col < solvedSystem.numberOfColumns - 1; col++) {
+            if (solvedSystem.matrix[column][col].compareTo(Fraction.ZERO) != 0) {
+                if (solvedSystem.matrix[column][col].compareTo(Fraction.ZERO) < 0) {
+                    result.append(" + ");
+                } else {
+                    result.append(" - ");
+                }
+                result.append(OptimizationAlgorithms.toCoefficient(solvedSystem.matrix[column][col].abs()));
+                result.append(String.format("x_{%d}", solvedSystem.columnPositions[col] + 1));
+            }
+        }
+        return result.toString();
     }
 
     private static String[][] toSimplexTableau(final SimplexTableau tableau, final boolean fill) {

@@ -1386,6 +1386,93 @@ public class MainTest {
     }
 
     @Test
+    public void gaussJordan() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.GAUSS_JORDAN.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "2,1,1,5;-1,-2,4,7;4,0,-2,3"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Gegeben sei das folgende \\emphasize{lineare Gleichungssystem}:\\\\[2ex]",
+                    "$\\begin{array}{*{7}c}",
+                    "2x_{1} & + & x_{2} & + & x_{3} & = & 5\\\\",
+                    "-x_{1} & - & 2x_{2} & + & 4x_{3} & = & 7\\\\",
+                    "4x_{1} &  &  & - & 2x_{3} & = & 3\\\\",
+                    "\\end{array}$\\\\",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "L\\\"osen Sie dieses lineare Gleichungssystem mithilfe des \\emphasize{Gau\\ss{}-Jordan-Algorithmus}."
+                ),
+                List.of(
+                    "{\\renewcommand{\\arraystretch}{1.2}",
+                    "",
+                    "\\begin{enumerate}",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "2 & 1 & 1 & 5\\\\",
+                    "-1 & -2 & 4 & 7\\\\",
+                    "4 & 0 & -2 & 3\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & \\frac{1}{2} & \\frac{1}{2} & \\frac{5}{2}\\\\",
+                    "-1 & -2 & 4 & 7\\\\",
+                    "4 & 0 & -2 & 3\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & \\frac{1}{2} & \\frac{1}{2} & \\frac{5}{2}\\\\",
+                    "0 & -\\frac{3}{2} & \\frac{9}{2} & \\frac{19}{2}\\\\",
+                    "4 & 0 & -2 & 3\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & \\frac{1}{2} & \\frac{1}{2} & \\frac{5}{2}\\\\",
+                    "0 & -\\frac{3}{2} & \\frac{9}{2} & \\frac{19}{2}\\\\",
+                    "0 & -2 & -4 & -7\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & \\frac{1}{2} & \\frac{1}{2} & \\frac{5}{2}\\\\",
+                    "0 & 1 & -3 & -\\frac{19}{3}\\\\",
+                    "0 & -2 & -4 & -7\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & 0 & 2 & \\frac{17}{3}\\\\",
+                    "0 & 1 & -3 & -\\frac{19}{3}\\\\",
+                    "0 & -2 & -4 & -7\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & 0 & 2 & \\frac{17}{3}\\\\",
+                    "0 & 1 & -3 & -\\frac{19}{3}\\\\",
+                    "0 & 0 & -10 & -\\frac{59}{3}\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & 0 & 2 & \\frac{17}{3}\\\\",
+                    "0 & 1 & -3 & -\\frac{19}{3}\\\\",
+                    "0 & 0 & 1 & \\frac{59}{30}\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & 0 & 0 & \\frac{26}{15}\\\\",
+                    "0 & 1 & -3 & -\\frac{19}{3}\\\\",
+                    "0 & 0 & 1 & \\frac{59}{30}\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{3}c|c}",
+                    "1 & 0 & 0 & \\frac{26}{15}\\\\",
+                    "0 & 1 & 0 & -\\frac{13}{30}\\\\",
+                    "0 & 0 & 1 & \\frac{59}{30}\\\\",
+                    "\\end{array}\\right)$",
+                    "\\end{enumerate}",
+                    "",
+                    "\\renewcommand{\\arraystretch}{1}}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "Ergebnis: $x_{1} = \\frac{26}{15}$, $x_{2} = -\\frac{13}{30}$, $x_{3} = \\frac{59}{30}$"
+                )
+            )
+        );
+    }
+
+    @Test
     public void hashing() throws IOException {
         final int contentLength = 1;
         int nodeNumber = 0;
@@ -1794,7 +1881,7 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Ergebnis: $x_{1}^* = \\frac{7}{4}, x_{2}^* = \\frac{7}{2}$"
+                    "Ergebnis: $x_{1}^* = \\frac{7}{4}$, $x_{2}^* = \\frac{7}{2}$"
                 )
             )
         );

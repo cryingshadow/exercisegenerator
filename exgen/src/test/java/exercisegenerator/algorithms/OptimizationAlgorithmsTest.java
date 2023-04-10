@@ -391,41 +391,7 @@ public class OptimizationAlgorithmsTest {
     @Test(dataProvider="simplexData")
     public void simplexTest(final SimplexProblem problem, final SimplexSolution expected) {
         final SimplexSolution result = OptimizationAlgorithms.simplex(problem);
-        Assert.assertEquals(result.answer, expected.answer);
-        Assert.assertEquals(result.tableaus.size(), expected.tableaus.size());
-        final Iterator<SimplexTableau> resultIterator = result.tableaus.iterator();
-        final Iterator<SimplexTableau> expectedIterator = expected.tableaus.iterator();
-        int tableauNr = 0;
-        while (resultIterator.hasNext()) {
-            final SimplexTableau resultTableau = resultIterator.next();
-            final SimplexTableau expectedTableau = expectedIterator.next();
-            tableauNr++;
-            final String msg = "Fehler bei Tableau Nr. " + tableauNr;
-            Assert.assertEquals(resultTableau.pivotColumn, expectedTableau.pivotColumn, msg);
-            Assert.assertEquals(resultTableau.pivotRow, expectedTableau.pivotRow, msg);
-            Assert.assertEquals(resultTableau.basicVariables, expectedTableau.basicVariables, msg);
-            if (expectedTableau.quotients == null) {
-                Assert.assertNull(resultTableau.quotients, msg);
-            } else {
-                Assert.assertEquals(resultTableau.quotients.length, expectedTableau.quotients.length, msg);
-                for (int i = 0; i < resultTableau.quotients.length; i++) {
-                    if (expectedTableau.quotients[i] == null) {
-                        Assert.assertNull(resultTableau.quotients[i], msg);
-                    } else {
-                        Assert.assertEquals(resultTableau.quotients[i], expectedTableau.quotients[i], msg);
-                    }
-                }
-            }
-            Assert.assertEquals(resultTableau.problem.target, expectedTableau.problem.target, msg);
-            Assert.assertEquals(resultTableau.problem.matrix.length, expectedTableau.problem.matrix.length, msg);
-            for (int i = 0; i < resultTableau.problem.matrix.length; i++) {
-                Assert.assertEquals(
-                    resultTableau.problem.matrix[i],
-                    expectedTableau.problem.matrix[i],
-                    msg + ", Zeile " + i
-                );
-            }
-        }
+        Assert.assertEquals(result, expected);
     }
 
 }
