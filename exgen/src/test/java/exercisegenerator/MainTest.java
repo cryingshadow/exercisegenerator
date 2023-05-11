@@ -1632,9 +1632,8 @@ public class MainTest {
                     + "Rucksacks). ",
                     "Die \\emphasize{Gewichte} seien dabei $w_{1} = 4$, $w_{2} = 3$ und $w_{3} = 3$. ",
                     "Die \\emphasize{Werte} seien $c_{1} = 3$, $c_{2} = 2$ und $c_{3} = 2$. ",
-                    "Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} an und beschreiben Sie anhand "
-                    + "der Tabelle, wie man die mitzunehmenden Gegenst\\\"ande bestimmen kann, um den maximalen Wert "
-                    + "zu erreichen.",
+                    "Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} und die mitzunehmenden "
+                    + "Gegenst\\\"ande an.",
                     "",
                     "\\ifprintanswers",
                     "",
@@ -1643,9 +1642,9 @@ public class MainTest {
                     "\\else",
                     "\\begin{center}",
                     "{\\Large",
-                    "\\begin{tabular}{|C{1.2cm}|*{8}{C{1.2cm}C{5mm}|}}",
+                    "\\begin{tabular}{|C{5mm}|*{8}{C{5mm}C{7mm}|}}",
                     "\\hline",
-                    "\\textbf{Gegenstand/Kapazit\\\"at} & \\textbf{0} &  & \\textbf{1} &  & \\textbf{2} &  & \\textbf{3} &  & \\textbf{4} &  & \\textbf{5} &  & \\textbf{6} &  & \\textbf{7} & \\\\\\hline",
+                    "${}^*$ & \\textbf{0} &  & \\textbf{1} &  & \\textbf{2} &  & \\textbf{3} &  & \\textbf{4} &  & \\textbf{5} &  & \\textbf{6} &  & \\textbf{7} & \\\\\\hline",
                     "\\textbf{0} &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
                     "\\textbf{1} &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
                     "\\textbf{2} &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
@@ -1653,7 +1652,11 @@ public class MainTest {
                     "\\end{tabular}",
                     "",
                     "}",
+                    "${}^*$ Gegenstand/Kapazit\\\"at",
                     "\\end{center}",
+                    "",
+                    "Gegenst\\\"ande:\\\\[2ex]",
+                    "Wert:\\\\[2ex]",
                     "",
                     "\\vspace*{1ex}",
                     "",
@@ -1665,9 +1668,9 @@ public class MainTest {
                     "",
                     "\\begin{center}",
                     "{\\Large",
-                    "\\begin{tabular}{|C{1.2cm}|*{8}{C{1.2cm}C{5mm}|}}",
+                    "\\begin{tabular}{|C{5mm}|*{8}{C{5mm}C{7mm}|}}",
                     "\\hline",
-                    "\\textbf{Gegenstand/Kapazit\\\"at} & \\textbf{0} &  & \\textbf{1} &  & \\textbf{2} &  & \\textbf{3} &  & \\textbf{4} &  & \\textbf{5} &  & \\textbf{6} &  & \\textbf{7} & \\\\\\hline",
+                    "${}^*$ & \\textbf{0} &  & \\textbf{1} &  & \\textbf{2} &  & \\textbf{3} &  & \\textbf{4} &  & \\textbf{5} &  & \\textbf{6} &  & \\textbf{7} & \\\\\\hline",
                     "\\textbf{0} & 0 &  & 0 &  & 0 &  & 0 &  & 0 &  & 0 &  & 0 &  & 0 & \\\\\\hline",
                     "\\textbf{1} & 0 & $\\uparrow$ & 0 & $\\leftarrow$ & 0 & $\\leftarrow$ & 0 & $\\leftarrow$ & 3 & $\\leftarrow$ & 3 &  & 3 &  & 3 & \\\\\\hline",
                     "\\textbf{2} & 0 &  & 0 &  & 0 &  & 2 &  & 3 & $\\uparrow$ & 3 & $\\leftarrow$ & 3 & $\\leftarrow$ & 5 & $\\leftarrow$\\\\\\hline",
@@ -1675,13 +1678,11 @@ public class MainTest {
                     "\\end{tabular}",
                     "",
                     "}",
+                    "${}^*$ Gegenstand/Kapazit\\\"at",
                     "\\end{center}",
                     "",
-                    "Damit ergibt sich der maximale Wert 5 f\\\"ur den Fall, dass die folgenden Gegenst\\\"ande mitgenommen werden:",
-                    "",
-                    "\\[\\{1,2\\}\\]",
-                    "",
-                    "Dies l\\\"asst sich von der Tabelle wie folgt ablesen: Wenn die Zeile f\\\"ur den $i$-ten Gegenstand einen Pfeil nach links enth\\\"alt, dann wird der $i$-te Gegenstand mitgenommen (ein Pfeil nach links in der Zeile f\\\"ur den 0-ten Gegenstand hat keine Bedeutung)."
+                    "Gegenst\\\"ande: $\\{1,2\\}$\\\\[2ex]",
+                    "Wert: 5\\\\[2ex]"
                 )
             )
         );
