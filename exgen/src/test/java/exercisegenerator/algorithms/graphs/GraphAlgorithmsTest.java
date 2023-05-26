@@ -5,9 +5,96 @@ import java.util.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.algorithms.graphs.BellmanFordAlgorithm.*;
 import exercisegenerator.structures.graphs.*;
 
 public class GraphAlgorithmsTest {
+
+    @Test(dataProvider="bellmanFordData")
+    public void bellmanFord(
+        final Graph<String, Integer> graph,
+        final Vertex<String> start,
+        final List<BellmanFordStep<String>> expected
+    ) {
+        Assert.assertEquals(BellmanFordAlgorithm.bellmanFord(graph, start, new StringVertexComparator()), expected);
+    }
+
+    @DataProvider
+    public Object[][] bellmanFordData() {
+        final Vertex<String> a = new Vertex<String>("A");
+        final Vertex<String> b = new Vertex<String>("B");
+        final Vertex<String> c = new Vertex<String>("C");
+        final Vertex<String> d = new Vertex<String>("D");
+        final Vertex<String> e = new Vertex<String>("E");
+        final Vertex<String> f = new Vertex<String>("F");
+        final Vertex<String> g = new Vertex<String>("G");
+        final AdjacencyLists<String, Integer> adjacencyLists1 = new AdjacencyLists<String, Integer>();
+        adjacencyLists1.addEdge(a, 1, b);
+        adjacencyLists1.addEdge(a, 7, d);
+        adjacencyLists1.addEdge(b, 6, c);
+        adjacencyLists1.addEdge(b, 1, e);
+        adjacencyLists1.addEdge(c, 1, b);
+        adjacencyLists1.addEdge(c, 1, f);
+        adjacencyLists1.addEdge(d, 1, a);
+        adjacencyLists1.addEdge(d, 5, g);
+        adjacencyLists1.addEdge(e, 2, b);
+        adjacencyLists1.addEdge(e, 3, d);
+        adjacencyLists1.addEdge(e, 4, f);
+        adjacencyLists1.addEdge(e, 9, g);
+        adjacencyLists1.addEdge(f, 1, c);
+        adjacencyLists1.addEdge(g, 1, d);
+        final BellmanFordStep<String> lastStep =
+            new BellmanFordStep<String>(
+                Map.of(
+                    "E", 0,
+                    "A", 4,
+                    "B", 2,
+                    "C", 5,
+                    "D", 3,
+                    "F", 4,
+                    "G", 8
+                ),
+                Map.of(
+                    "A", "D",
+                    "B", "E",
+                    "C", "F",
+                    "D", "E",
+                    "F", "E",
+                    "G", "D"
+                )
+            );
+        return new Object[][] {
+            {
+                Graph.create(adjacencyLists1),
+                e,
+                List.of(
+                    new BellmanFordStep<String>(Map.of("E", 0), Map.of()),
+                    new BellmanFordStep<String>(
+                        Map.of(
+                            "E", 0,
+                            "B", 2,
+                            "C", 5,
+                            "D", 3,
+                            "F", 4,
+                            "G", 9
+                        ),
+                        Map.of(
+                            "B", "E",
+                            "C", "F",
+                            "D", "E",
+                            "F", "E",
+                            "G", "E"
+                        )
+                    ),
+                    lastStep,
+                    lastStep,
+                    lastStep,
+                    lastStep,
+                    lastStep
+                )
+            }
+        };
+    }
 
     @DataProvider
     public Object[][] bfsData() {

@@ -36,6 +36,16 @@ public enum Algorithm {
         AVLTreeAlgorithm.INSTANCE
     ),
 
+    BELLMAN_FORD(
+        "bellmanford",
+        "Bellman-Ford-Algorithmus",
+        new String[] {
+            "The algorithm of Bellman and Ford to find the shortest paths from a single source to all other vertices.",
+            "The flag -l specifies how many vertices will be added to the graph for generated instances."
+        },
+        BellmanFordAlgorithm.INSTANCE
+    ),
+
     BFS(
         "bfs",
         "Breadth-First-Search",
