@@ -96,9 +96,6 @@ public enum Flag {
      */
     TARGET("-t", "Target file", "Path to the file where to store the solution text in LaTeX code."),
 
-    /**
-     * Target file to store the LaTeX code in. If not specified, the solution is sent to the standard output.
-     */
     VARIANT(
         "-v",
         "Variant of the algorithm",

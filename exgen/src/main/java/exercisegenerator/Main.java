@@ -123,7 +123,9 @@ public class Main {
                 System.out.println("Unknown algorithm!");
                 return;
             }
-            algorithm.get().algorithm.accept(new AlgorithmInput(exerciseWriter, solutionWriter, options));
+            algorithm.get().implementation.executeAlgorithm(
+                new AlgorithmInput(exerciseWriter, solutionWriter, options)
+            );
             if (standalone) {
                 LaTeXUtils.printLaTeXEnd(exerciseWriter);
                 LaTeXUtils.printLaTeXEnd(solutionWriter);

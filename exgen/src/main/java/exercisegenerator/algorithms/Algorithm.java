@@ -2,13 +2,21 @@ package exercisegenerator.algorithms;
 
 import java.io.*;
 import java.util.*;
-import java.util.function.*;
 
 import exercisegenerator.*;
+import exercisegenerator.algorithms.binary.*;
+import exercisegenerator.algorithms.coding.*;
+import exercisegenerator.algorithms.cryptography.*;
+import exercisegenerator.algorithms.geometry.*;
+import exercisegenerator.algorithms.graphs.*;
+import exercisegenerator.algorithms.hashing.*;
+import exercisegenerator.algorithms.logic.*;
+import exercisegenerator.algorithms.optimization.*;
+import exercisegenerator.algorithms.sorting.*;
+import exercisegenerator.algorithms.trees.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.trees.*;
-import exercisegenerator.util.*;
 
 /**
  * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
@@ -25,8 +33,7 @@ public enum Algorithm {
             "Insertion and deletion of keys in an AVL-Tree.",
             "The flag -l specifies how many operations should be performed on the AVL-Tree for generated instances."
         },
-        TreeAlgorithms::avltree,
-        TreeAlgorithms::generateTestParameters
+        AVLTreeAlgorithm.INSTANCE
     ),
 
     BFS(
@@ -35,8 +42,7 @@ public enum Algorithm {
         new String[] {
             "Breadth first search from a start vertex."
         },
-        GraphAlgorithms::breadthFirstSearch,
-        GraphAlgorithms::generateTestParameters
+        BreadthFirstSearch.INSTANCE
     ),
 
     BSTREE(
@@ -46,8 +52,7 @@ public enum Algorithm {
             "Insertion and deletion in a binary search tree.",
             "The flag -l specifies how many operations should be performed on the tree for generated instances."
         },
-        TreeAlgorithms::bstree,
-        TreeAlgorithms::generateTestParameters
+        BinarySearchTreeAlgorithm.INSTANCE
     ),
 
     /**
@@ -61,8 +66,7 @@ public enum Algorithm {
             + "(an integer greater than 1, if not specified, the degree defaults to 2).",
             "The flag -l specifies how many operations should be performed on the B-Tree for generated instances."
         },
-        TreeAlgorithms::btree,
-        TreeAlgorithms::generateTestParameters
+        BTreeAlgorithm.INSTANCE
     ),
 
     /**
@@ -75,8 +79,7 @@ public enum Algorithm {
             "Perform Bubblesort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        Sorting::bubblesort,
-        Sorting::generateTestParameters
+        BubbleSort.INSTANCE
     ),
 
     DFS(
@@ -85,8 +88,7 @@ public enum Algorithm {
         new String[] {
             "Depth first search from a start vertex."
         },
-        GraphAlgorithms::depthFirstSearch,
-        GraphAlgorithms::generateTestParameters
+        DepthFirstSearch.INSTANCE
     ),
 
     /**
@@ -99,8 +101,7 @@ public enum Algorithm {
             "Dijkstra's algorithm to find the shortest paths from a single source to all other vertices.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
-        GraphAlgorithms::dijkstra,
-        GraphAlgorithms::generateTestParameters
+        DijkstraAlgorithm.INSTANCE
     ),
 
     /**
@@ -113,8 +114,7 @@ public enum Algorithm {
             "Floyd's algorithm to find all shortest paths to all other vertices.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
-        GraphAlgorithms::floyd,
-        GraphAlgorithms::generateTestParameters
+        FloydWarshallAlgorithm.INSTANCE
     ),
 
     /**
@@ -128,8 +128,7 @@ public enum Algorithm {
             "The flag -l specifies how many vertices will be added to the flow network in addition to source "
             + "and sink (for generated instances). Thus, the number of vertices in the network is l + 2."
         },
-        GraphAlgorithms::fordFulkerson,
-        GraphAlgorithms::generateTestParameters
+        FordFulkersonAlgorithm.INSTANCE
     ),
 
     FROM_ASCII(
@@ -139,8 +138,7 @@ public enum Algorithm {
             "Transform ASCII character to their binary representation.",
             "You can specify the number of tasks with the -l flag."
         },
-        BinaryNumbers::fromASCII,
-        BinaryNumbers::generateTestParameters
+        ConversionFromASCII.INSTANCE
     ),
 
     FROM_FLOAT(
@@ -152,8 +150,7 @@ public enum Algorithm {
             + "and the -d flag to specify the length of the exponent.",
             "You can specify the number of tasks with the -l flag."
         },
-        BinaryNumbers::fromFloat,
-        BinaryNumbers::generateTestParameters
+        ConversionFromFloat.INSTANCE
     ),
 
     FROM_HAMMING(
@@ -163,8 +160,7 @@ public enum Algorithm {
             "Decode a Hamming code possibly fixing 1-bit errors.",
             "You can specify the length of the generated code with the -l flag."
         },
-        CodingAlgorithms::decodeHamming,
-        CodingAlgorithms::generateTestParametersTo
+        HammingDecoding.INSTANCE
     ),
 
     FROM_HUFFMAN(
@@ -174,8 +170,7 @@ public enum Algorithm {
             "Decodes a text using the Huffman code.",
             "Needs the -o flag to specify the code book."
         },
-        CodingAlgorithms::decodeHuffman,
-        CodingAlgorithms::generateTestParametersFrom
+        HuffmanDecoding.INSTANCE
     ),
 
     FROM_ONES_COMPLEMENT(
@@ -186,8 +181,7 @@ public enum Algorithm {
             "Needs the -c flag to specify the binary length.",
             "You can specify the number of tasks with the -l flag."
         },
-        BinaryNumbers::fromOnesComplement,
-        BinaryNumbers::generateTestParameters
+        ConversionFromOnesComplement.INSTANCE
     ),
 
     FROM_TRUTH_TABLE(
@@ -197,8 +191,7 @@ public enum Algorithm {
             "Compute a formula matching the specified truth table.",
             "You can specify the number of variables with the -l flag."
         },
-        PropositionalLogic::fromTruthTable,
-        PropositionalLogic::generateTestParameters
+        ConversionFromTruthTable.INSTANCE
     ),
 
     FROM_TWOS_COMPLEMENT(
@@ -209,8 +202,7 @@ public enum Algorithm {
             "Needs the -c flag to specify the binary length.",
             "You can specify the number of tasks with the -l flag."
         },
-        BinaryNumbers::fromTwosComplement,
-        BinaryNumbers::generateTestParameters
+        ConversionFromTwosComplement.INSTANCE
     ),
 
     FROM_VIGENERE(
@@ -219,8 +211,7 @@ public enum Algorithm {
         new String[] {
             "Decode a text with the specified keyword using the Vigenere cipher."
         },
-        Cryptography::vigenereDecode,
-        Cryptography::generateTestParameters
+        VigenereDecryption.INSTANCE
     ),
 
     GAUSS_JORDAN(
@@ -229,8 +220,7 @@ public enum Algorithm {
         new String[] {
             "Solves a linear system of equations over rational numbers using the Gauﬂ-Jordan-Algorithm."
         },
-        OptimizationAlgorithms::gaussJordan,
-        OptimizationAlgorithms::generateTestParameters
+        GaussJordanAlgorithm.INSTANCE
     ),
 
     /**
@@ -244,8 +234,7 @@ public enum Algorithm {
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap)"
         },
-        Hashing::hashDiv,
-        Hashing::generateTestParameters
+        HashingDivisionOpen.INSTANCE
     ),
 
     /**
@@ -259,8 +248,7 @@ public enum Algorithm {
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap)"
         },
-        Hashing::hashDivLin,
-        Hashing::generateTestParameters
+        HashingDivisionLinear.INSTANCE
     ),
 
     /**
@@ -274,8 +262,7 @@ public enum Algorithm {
             "The flag -l specifies how many elements will be added to the hash table for generated instances.",
             "Parameters for fixed instances are: m (size of the hashmap), c1 and c2 (constants for quadratic probing)"
         },
-        Hashing::hashDivQuad,
-        Hashing::generateTestParameters
+        HashingDivisionQuadratic.INSTANCE
     ),
 
     /**
@@ -290,8 +277,7 @@ public enum Algorithm {
             "Parameters for fixed instances are: m (size of the hashmap), c (constant between 0 and 1 for the "
             + "multiplication method)"
         },
-        Hashing::hashMult,
-        Hashing::generateTestParameters
+        HashingMultiplicationOpen.INSTANCE
     ),
 
     /**
@@ -306,8 +292,7 @@ public enum Algorithm {
             "Parameters for fixed instances are: m (size of the hashmap), c (constant between 0 and 1 for the "
             + "multiplication method)"
         },
-        Hashing::hashMultLin,
-        Hashing::generateTestParameters
+        HashingMultiplicationLinear.INSTANCE
     ),
 
     /**
@@ -322,8 +307,7 @@ public enum Algorithm {
             "Parameters for fixed instances are: m (size of the hashmap), c (constant between 0 and 1 for the "
             + "multiplication method), c1 and c2 (constants for quadratic probing)"
         },
-        Hashing::hashMultQuad,
-        Hashing::generateTestParameters
+        HashingMultiplicationQuadratic.INSTANCE
     ),
 
     /**
@@ -336,8 +320,7 @@ public enum Algorithm {
             "Perform Heapsort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        Sorting::heapsort,
-        Sorting::generateTestParameters
+        HeapSort.INSTANCE
     ),
 
     /**
@@ -351,8 +334,7 @@ public enum Algorithm {
             + "in the solution as trees.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        Sorting::heapsortWithTrees,
-        Sorting::generateTestParameters
+        HeapSort.INSTANCE
     ),
 
     /**
@@ -365,8 +347,7 @@ public enum Algorithm {
             "Calculate the convex hull of a given pointset according to Grahams' Scan.",
             "The flag -l specifies the number of points in the pointset for generated instances."
         },
-        GeometricAlgorithms::hull,
-        GeometricAlgorithms::generateTestParameters
+        ConvexHullAlgorithm.INSTANCE
     ),
 
     /**
@@ -379,8 +360,7 @@ public enum Algorithm {
             "Perform Insertionsort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        Sorting::insertionsort,
-        Sorting::generateTestParameters
+        InsertionSort.INSTANCE
     ),
 
     /**
@@ -394,8 +374,7 @@ public enum Algorithm {
             "Knapsack problem solved with dynamic programming.",
             "The flag -l specifies how many items can be chosen to put into the bag for generated instances."
         },
-        OptimizationAlgorithms::knapsack,
-        OptimizationAlgorithms::generateTestParameters
+        KnapsackAlgorithm.INSTANCE
     ),
 
     /**
@@ -407,8 +386,7 @@ public enum Algorithm {
         new String[] {
             "LCS problem solved with dynamic programming." // TODO
         },
-        OptimizationAlgorithms::lcs,
-        OptimizationAlgorithms::generateTestParameters,
+        LCSAlgorithm.INSTANCE,
         false
     ),
 
@@ -422,8 +400,7 @@ public enum Algorithm {
             "Perform Mergesort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        Sorting::mergesort,
-        Sorting::generateTestParameters
+        MergeSort.INSTANCE
     ),
 
     /**
@@ -437,8 +414,7 @@ public enum Algorithm {
             + "although they do not change the array content.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        Sorting::mergesortSplit,
-        Sorting::generateTestParameters
+        MergeSort.INSTANCE
     ),
 
     /**
@@ -451,8 +427,7 @@ public enum Algorithm {
             "Prim's algorithm to find the minimum spanning tree.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
-        GraphAlgorithms::prim,
-        GraphAlgorithms::generateTestParameters
+        PrimAlgorithm.INSTANCE
     ),
 
     /**
@@ -465,8 +440,7 @@ public enum Algorithm {
             "Perform Quicksort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        Sorting::quicksort,
-        Sorting::generateTestParameters
+        QuickSort.INSTANCE
     ),
 
     /**
@@ -480,8 +454,7 @@ public enum Algorithm {
             "The flag -l specifies how many operations should be performed on the Red-Black-Tree for generated "
             + "instances."
         },
-        TreeAlgorithms::rbtree,
-        TreeAlgorithms::generateTestParameters
+        RedBlackTreeAlgorithm.INSTANCE
     ),
 
     /**
@@ -493,8 +466,7 @@ public enum Algorithm {
         new String[] {
             "Detection of strongly connected components." // TODO
         },
-        GraphAlgorithms::scc,
-        GraphAlgorithms::generateTestParameters
+        SCCAlgorithm.INSTANCE
     ),
 
     /**
@@ -507,8 +479,7 @@ public enum Algorithm {
             "Perform Selectionsort on an array of integers.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        Sorting::selectionsort,
-        Sorting::generateTestParameters
+        SelectionSort.INSTANCE
     ),
 
     /**
@@ -520,8 +491,7 @@ public enum Algorithm {
         new String[] {
             "Detection of strongly connected components using Sharir's algorithm." // TODO
         },
-        GraphAlgorithms::sharir,
-        GraphAlgorithms::generateTestParameters
+        SharirAlgorithm.INSTANCE
     ),
 
     SIMPLEX(
@@ -531,8 +501,7 @@ public enum Algorithm {
             "Simplex algorithm to solve linear programs in standard maximum form.",
             "The flag -l specifies how many decision variables are used (minimum is 2)."
         },
-        OptimizationAlgorithms::simplex,
-        OptimizationAlgorithms::generateTestParameters
+        SimplexAlgorithm.INSTANCE
     ),
 
     TO_ASCII(
@@ -542,8 +511,7 @@ public enum Algorithm {
             "Transform the binary ASCII representation to the corresponding character.",
             "You can specify the number of tasks with the -l flag."
         },
-        BinaryNumbers::toASCII,
-        BinaryNumbers::generateTestParameters
+        ConversionToASCII.INSTANCE
     ),
 
     TO_FLOAT(
@@ -555,8 +523,7 @@ public enum Algorithm {
             + "and the -d flag to specify the length of the exponent.",
             "You can specify the number of tasks with the -l flag."
         },
-        BinaryNumbers::toFloat,
-        BinaryNumbers::generateTestParameters
+        ConversionToFloat.INSTANCE
     ),
 
     TO_HAMMING(
@@ -566,8 +533,7 @@ public enum Algorithm {
             "Encode a binary message to the corresponding Hamming code.",
             "You can specify the length of the generated message with the -l flag."
         },
-        CodingAlgorithms::encodeHamming,
-        CodingAlgorithms::generateTestParametersTo
+        HammingEncoding.INSTANCE
     ),
 
     TO_HUFFMAN(
@@ -579,8 +545,7 @@ public enum Algorithm {
             "You can furthermore specify the number of different letters used for the source text with the -d flag and "
             + "its length with the -l flag."
         },
-        CodingAlgorithms::encodeHuffman,
-        CodingAlgorithms::generateTestParametersTo
+        HuffmanEncoding.INSTANCE
     ),
 
     TO_ONES_COMPLEMENT(
@@ -591,8 +556,7 @@ public enum Algorithm {
             "Needs the -c flag to specify the binary length.",
             "You can specify the number of tasks with the -l flag."
         },
-        BinaryNumbers::toOnesComplement,
-        BinaryNumbers::generateTestParameters
+        ConversionToOnesComplement.INSTANCE
     ),
 
     TO_TRUTH_TABLE(
@@ -602,8 +566,7 @@ public enum Algorithm {
             "Compute the truth table for a given propositional formula.",
             "You can specify the number of variables with the -l flag."
         },
-        PropositionalLogic::toTruthTable,
-        PropositionalLogic::generateTestParameters
+        ConversionToTruthTable.INSTANCE
     ),
 
     TO_TWOS_COMPLEMENT(
@@ -614,8 +577,7 @@ public enum Algorithm {
             "Needs the -c flag to specify the binary length.",
             "You can specify the number of tasks with the -l flag."
         },
-        BinaryNumbers::toTwosComplement,
-        BinaryNumbers::generateTestParameters
+        ConversionToTwosComplement.INSTANCE
     ),
 
     TO_VIGENERE(
@@ -624,8 +586,7 @@ public enum Algorithm {
         new String[] {
             "Encode a text with the specified keyword using the Vigenere cipher."
         },
-        Cryptography::vigenereEncode,
-        Cryptography::generateTestParameters
+        VigenereEncryption.INSTANCE
     ),
 
     /**
@@ -637,8 +598,7 @@ public enum Algorithm {
         new String[] {
             "Perform topological sort." // TODO
         },
-        GraphAlgorithms::topologicsort,
-        GraphAlgorithms::generateTestParameters
+        TopologicSort.INSTANCE
     ),
 
     /**
@@ -651,8 +611,7 @@ public enum Algorithm {
             "Warshall's algorithm to find the transitive hull.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
-        GraphAlgorithms::warshall,
-        GraphAlgorithms::generateTestParameters
+        FloydWarshallAlgorithm.INSTANCE
     );
 
     public static final int DEFAULT_CONTENT_LENGTH = 2;
@@ -747,8 +706,6 @@ public enum Algorithm {
         return String.format("$%s = {}$", leftHandSide);
     }
 
-    public final CheckedConsumer<AlgorithmInput, ? extends Exception> algorithm;
-
     /**
      * The documentation for this algorithm.
      */
@@ -759,7 +716,7 @@ public enum Algorithm {
      */
     public final boolean enabled;
 
-    public final Supplier<String[]> generateTestParameters;
+    public final AlgorithmImplementation implementation;
 
     /**
      * The name of the algorithm for text processing.
@@ -778,25 +735,22 @@ public enum Algorithm {
         final String name,
         final String longName,
         final String[] documentation,
-        final CheckedConsumer<AlgorithmInput, ? extends Exception> algorithm,
-        final Supplier<String[]> generateTestParameters
+        final AlgorithmImplementation implementation
     ) {
-        this(name, longName, documentation, algorithm, generateTestParameters, true);
+        this(name, longName, documentation, implementation, true);
     }
 
     private Algorithm(
         final String name,
         final String longName,
         final String[] documentation,
-        final CheckedConsumer<AlgorithmInput, ? extends Exception> algorithm,
-        final Supplier<String[]> generateTestParameters,
+        final AlgorithmImplementation implementation,
         final boolean enabled
     ) {
         this.name = name;
         this.longName = longName;
         this.documentation = documentation;
-        this.algorithm = algorithm;
-        this.generateTestParameters = generateTestParameters;
+        this.implementation = implementation;
         this.enabled = enabled;
     }
 
