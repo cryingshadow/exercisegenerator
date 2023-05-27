@@ -68,6 +68,12 @@ public enum Flag {
         "Used to specify a length, e.g., of an array. Its use depends on the chosen algorithm."
     ),
 
+    NUMBER(
+        "-n",
+        "Number of randomly generated exercises",
+        "Specify the number of randomly generated exercises in one document. Only compatible with flags a, e, t, and w."
+    ),
+
     /**
      * File containing operations used to construct a start structure.
      */

@@ -115,17 +115,43 @@ public class Main {
             BufferedWriter exerciseWriter = Main.getExerciseWriter(options);
         ) {
             final boolean standalone = Main.standalone(options);
+            final boolean multipleExercises = options.containsKey(Flag.NUMBER);
             if (standalone) {
-                Main.printLaTeXBeginning(exerciseWriter, solutionWriter);
+                Main.printLaTeXBeginning(!multipleExercises, exerciseWriter, solutionWriter);
             }
-            final Optional<Algorithm> algorithm = Algorithm.forName(options.get(Flag.ALGORITHM));
-            if (algorithm.isEmpty()) {
-                System.out.println("Unknown algorithm!");
-                return;
+            if (multipleExercises) {
+                final List<Algorithm> algorithms = Main.parseAlgorithms(options.get(Flag.ALGORITHM));
+                if (algorithms.isEmpty()) {
+                    throw new Exception("No known algorithm has been specified!");
+                }
+                final int numberOfExercises = Integer.parseInt(options.get(Flag.NUMBER));
+                final Random random = new Random();
+                for (int i = 0; i < numberOfExercises; i++) {
+                    final Algorithm algorithm = algorithms.get(random.nextInt(algorithms.size()));
+                    final Parameters singleAlgorithmOptions =
+                        Main.parseFlags(
+                            Main.toCLIArguments(algorithm, algorithm.implementation.generateTestParameters(), options)
+                        );
+                    exerciseWriter.write(String.format("{\\large Aufgabe %d}\\\\[3ex]", i + 1));
+                    Main.newLine(exerciseWriter);
+                    Main.newLine(exerciseWriter);
+                    solutionWriter.write(String.format("{\\large L\\\"osung %d}\\\\[3ex]", i + 1));
+                    Main.newLine(solutionWriter);
+                    Main.newLine(solutionWriter);
+                    algorithm.implementation.executeAlgorithm(
+                        new AlgorithmInput(exerciseWriter, solutionWriter, singleAlgorithmOptions)
+                    );
+                }
+            } else {
+                final Optional<Algorithm> algorithm = Algorithm.forName(options.get(Flag.ALGORITHM));
+                if (algorithm.isEmpty()) {
+                    System.out.println("Unknown algorithm!");
+                    return;
+                }
+                algorithm.get().implementation.executeAlgorithm(
+                    new AlgorithmInput(exerciseWriter, solutionWriter, options)
+                );
             }
-            algorithm.get().implementation.executeAlgorithm(
-                new AlgorithmInput(exerciseWriter, solutionWriter, options)
-            );
             if (standalone) {
                 LaTeXUtils.printLaTeXEnd(exerciseWriter);
                 LaTeXUtils.printLaTeXEnd(solutionWriter);
@@ -187,6 +213,21 @@ public class Main {
         return "-h".equals(args[0]);
     }
 
+    private static List<Algorithm> parseAlgorithms(final String text) {
+        if (text == null) {
+            return Collections.emptyList();
+        }
+        final List<Algorithm> result = new ArrayList<Algorithm>();
+        final String[] algorithms = text.split(",");
+        for (final String algorithmName : algorithms) {
+            final Optional<Algorithm> algorithm = Algorithm.forName(algorithmName.strip());
+            if (algorithm.isPresent()) {
+                result.add(algorithm.get());
+            }
+        }
+        return result;
+    }
+
     /**
      * @param args The program arguments.
      * @return A map from Flags to their values parsed from the program arguments.
@@ -225,6 +266,17 @@ public class Main {
         if (!res.containsKey(Flag.ALGORITHM)) {
             throw new Exception("No algorithm specified!");
         }
+        if (res.containsKey(Flag.NUMBER)) {
+            if (
+                !List.of(Flag.NUMBER, Flag.ALGORITHM, Flag.EXERCISE, Flag.TARGET, Flag.WINDOWS)
+                .containsAll(res.keySet())
+            ) {
+                throw new Exception("Number is only compatible with flags a, e, t, and w!");
+            }
+            if (!res.containsKey(Flag.TARGET) || !res.containsKey(Flag.EXERCISE)) {
+                throw new Exception("Both exercise and solution files must be specified for multiple exercises!");
+            }
+        }
         if (!res.containsKey(Flag.TARGET) && !res.containsKey(Flag.EXERCISE)) {
             throw new Exception(
                 "Cannot output both exercise and solution on stdout! Please specify a file for at least one of them."
@@ -233,16 +285,21 @@ public class Main {
         return res;
     }
 
-    private static void printLaTeXBeginning(final BufferedWriter exerciseWriter, final BufferedWriter solutionWriter)
-    throws IOException {
+    private static void printLaTeXBeginning(
+        final boolean singleExercise,
+        final BufferedWriter exerciseWriter,
+        final BufferedWriter solutionWriter
+    ) throws IOException {
         LaTeXUtils.printLaTeXBeginning(exerciseWriter);
-        exerciseWriter.write("{\\large Aufgabe}\\\\[3ex]");
-        Main.newLine(exerciseWriter);
-        Main.newLine(exerciseWriter);
         LaTeXUtils.printLaTeXBeginning(solutionWriter);
-        solutionWriter.write("{\\large L\\\"osung}\\\\[3ex]");
-        Main.newLine(solutionWriter);
-        Main.newLine(solutionWriter);
+        if (singleExercise) {
+            exerciseWriter.write("{\\large Aufgabe}\\\\[3ex]");
+            Main.newLine(exerciseWriter);
+            Main.newLine(exerciseWriter);
+            solutionWriter.write("{\\large L\\\"osung}\\\\[3ex]");
+            Main.newLine(solutionWriter);
+            Main.newLine(solutionWriter);
+        }
     }
 
     private static void showHelp(final String[] args) {
@@ -262,6 +319,23 @@ public class Main {
                 }
             }
         }
+    }
+
+    private static String[] toCLIArguments(
+        final Algorithm alg,
+        final String[] generatedOptions,
+        final Parameters options
+    ) {
+        final int numOfAddedParameters = 6;
+        final String[] result = new String[generatedOptions.length + numOfAddedParameters];
+        result[0] = "-a";
+        result[1] = alg.name;
+        result[2] = "-e";
+        result[3] = options.get(Flag.EXERCISE);
+        result[4] = "-t";
+        result[5] = options.get(Flag.TARGET);
+        System.arraycopy(generatedOptions, 0, result, numOfAddedParameters, generatedOptions.length);
+        return result;
     }
 
 }
