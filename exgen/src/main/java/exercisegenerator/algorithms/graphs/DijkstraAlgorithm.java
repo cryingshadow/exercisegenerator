@@ -21,10 +21,7 @@ public class DijkstraAlgorithm implements AlgorithmImplementation {
         final Vertex<V> start,
         final Comparator<Vertex<V>> comp
     ) {
-        final List<Vertex<V>> vertices = new ArrayList<Vertex<V>>(graph.getVertices());
-        if (comp != null) {
-            Collections.sort(vertices, comp);
-        }
+        final List<Vertex<V>> vertices = GraphAlgorithms.getSortedListOfVertices(graph, comp);
         vertices.remove(start);
         vertices.add(0, start);
         final int size = vertices.size();

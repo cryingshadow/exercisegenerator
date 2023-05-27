@@ -230,7 +230,7 @@ public class MainTest {
                 "\\newcommand{\\code}[1]{\\textnormal{\\texttt{#1}}}",
                 "\\newcommand{\\codeseq}[1]{{\\ttfamily\\seqsplit{#1}}}",
                 "\\newcommand{\\emphasize}[1]{\\textbf{#1}}",
-                "\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{",
+                "\\newcommand*{\\circled}[1]{\\tikz[baseline=(char.base)]{",
                 "            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}",
                 "\\newcommand{\\var}[1]{\\textit{#1}}",
                 "",
@@ -489,6 +489,104 @@ public class MainTest {
                     "~\\\\*\\vspace*{1ex}",
                     "\\end{center}",
                     "\\end{minipage}"
+                )
+            )
+        );
+    }
+
+    @Test
+    public void bellmanFord() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.BELLMAN_FORD.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "!A\n"
+                    + " A , |2, B \n"
+                    + "5| , | , |3\n"
+                    + " C ,4| , D "
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
+                    "\\node[node] (n1) at (0.0,1.0) {A};",
+                    "\\node[node] (n2) at (1.0,1.0) {B};",
+                    "\\node[node] (n3) at (0.0,0.0) {C};",
+                    "\\node[node] (n4) at (1.0,0.0) {D};",
+                    "\\draw[p, bend right = 10] (n1) to node[auto, swap] {5} (n3);",
+                    "\\draw[p, bend right = 10] (n2) to node[auto, swap] {2} (n1);",
+                    "\\draw[p, bend right = 10] (n3) to node[auto, swap] {4} (n4);",
+                    "\\draw[p, bend right = 10] (n4) to node[auto, swap] {3} (n2);",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "",
+                    "F\\\"uhren Sie den \\emphasize{Bellman-Ford}-Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus.",
+                    "F\\\"ullen Sie dazu die nachfolgenden Tabellen aus:\\\\[2ex]",
+                    "\\ifprintanswers",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\else",
+                    "\\begin{center}",
+                    "",
+                    "\\renewcommand{\\arraystretch}{1.5}",
+                    "\\begin{tabular}{|c|*{4}{C{16mm}|}}",
+                    "\\hline",
+                    "\\textbf{Knoten} & \\textbf{A} & \\textbf{B} & \\textbf{C} & \\textbf{D}\\\\\\hline",
+                    "\\textbf{Distanz/Vorg\\\"anger} &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\begin{tabular}{|c|*{4}{C{16mm}|}}",
+                    "\\hline",
+                    "\\textbf{Knoten} & \\textbf{A} & \\textbf{B} & \\textbf{C} & \\textbf{D}\\\\\\hline",
+                    "\\textbf{Distanz/Vorg\\\"anger} &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\begin{tabular}{|c|*{4}{C{16mm}|}}",
+                    "\\hline",
+                    "\\textbf{Knoten} & \\textbf{A} & \\textbf{B} & \\textbf{C} & \\textbf{D}\\\\\\hline",
+                    "\\textbf{Distanz/Vorg\\\"anger} &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\renewcommand{\\arraystretch}{1.0}",
+                    "\\end{center}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\fi"
+                ),
+                List.of(
+                    "\\begin{center}",
+                    "",
+                    "\\renewcommand{\\arraystretch}{1.5}",
+                    "\\begin{tabular}{|c|*{4}{C{16mm}|}}",
+                    "\\hline",
+                    "\\textbf{Knoten} & \\textbf{A} & \\textbf{B} & \\textbf{C} & \\textbf{D}\\\\\\hline",
+                    "\\textbf{Distanz/Vorg\\\"anger} & $0$ & $\\infty$ & $\\infty$ & $\\infty$\\\\\\hline",
+                    "\\end{tabular}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\begin{tabular}{|c|*{4}{C{16mm}|}}",
+                    "\\hline",
+                    "\\textbf{Knoten} & \\textbf{A} & \\textbf{B} & \\textbf{C} & \\textbf{D}\\\\\\hline",
+                    "\\textbf{Distanz/Vorg\\\"anger} & $0$ & $12/D$ & $5/A$ & $9/C$\\\\\\hline",
+                    "\\end{tabular}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\begin{tabular}{|c|*{4}{C{16mm}|}}",
+                    "\\hline",
+                    "\\textbf{Knoten} & \\textbf{A} & \\textbf{B} & \\textbf{C} & \\textbf{D}\\\\\\hline",
+                    "\\textbf{Distanz/Vorg\\\"anger} & $0$ & $12/D$ & $5/A$ & $9/C$\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\renewcommand{\\arraystretch}{1.0}",
+                    "\\end{center}"
                 )
             )
         );

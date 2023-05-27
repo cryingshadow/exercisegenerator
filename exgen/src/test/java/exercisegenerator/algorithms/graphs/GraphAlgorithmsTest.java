@@ -87,9 +87,6 @@ public class GraphAlgorithmsTest {
                         )
                     ),
                     lastStep,
-                    lastStep,
-                    lastStep,
-                    lastStep,
                     lastStep
                 )
             }

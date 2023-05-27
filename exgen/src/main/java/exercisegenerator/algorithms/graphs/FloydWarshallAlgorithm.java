@@ -27,6 +27,7 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
         final Graph<V, Integer> graph,
         final boolean warshall,
         final Comparator<Vertex<V>> comp,
+        final Parameters options,
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
@@ -211,6 +212,7 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
         }
         Main.newLine(exWriter);
         Main.newLine(exWriter);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
         LaTeXUtils.printArrayStretch(1.5, exWriter);
         LaTeXUtils.printArrayStretch(1.5, solWriter);
         int solCount = 0;
@@ -242,9 +244,12 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
                     true,
                     tableMaxWidth
                 );
+            LaTeXUtils.printVerticalProtectedSpace(exWriter);
+            LaTeXUtils.printVerticalProtectedSpace(solWriter);
         }
         LaTeXUtils.printArrayStretch(1.0, exWriter);
         LaTeXUtils.printArrayStretch(1.0, solWriter);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
     }
 
     /**
@@ -279,12 +284,8 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
                 breakAtColumn,
                 writer
             );
-            writer.write("\\hspace{2em}");
-            Main.newLine(writer);
             return count + 1;
         }
-        writer.write("\\\\[2ex]");
-        Main.newLine(writer);
         LaTeXUtils.printTable(
             table,
             Optional.of(color),
@@ -293,8 +294,6 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
             breakAtColumn,
             writer
         );
-        writer.write("\\hspace{2em}");
-        Main.newLine(writer);
         return 1;
     }
 
@@ -307,6 +306,7 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
             pair.x,
             Algorithm.WARSHALL.name.equals(input.options.get(Flag.ALGORITHM)),
             new StringVertexComparator(),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );

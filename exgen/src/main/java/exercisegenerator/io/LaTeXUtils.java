@@ -103,6 +103,10 @@ public abstract class LaTeXUtils {
             .replaceAll("^\"", "''");
     }
 
+    public static String inlineMath(final String content) {
+        return String.format("$%s$", content);
+    }
+
     public static String mathematicalSet(final Collection<?> elements) {
         return LaTeXUtils.mathematicalSet(elements.stream());
     }
@@ -326,7 +330,7 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         writer.write("\\newcommand{\\emphasize}[1]{\\textbf{#1}}");
         Main.newLine(writer);
-        writer.write("\\newcommand*\\circled[1]{\\tikz[baseline=(char.base)]{");
+        writer.write("\\newcommand*{\\circled}[1]{\\tikz[baseline=(char.base)]{");
         Main.newLine(writer);
         writer.write("            \\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}");
         Main.newLine(writer);
@@ -511,15 +515,20 @@ public abstract class LaTeXUtils {
         final Function<Integer, String> columnDefinition,
         final boolean transpose,
         final int breakAtColumn,
+        final boolean titleColumn,
         final BufferedWriter writer
     ) throws IOException {
         final int allCols = (transpose ? table[0].length : table.length);
         int remainingCols = allCols;
+        boolean firstColumnBlock = true;
         do {
-            final int cols = remainingCols > breakAtColumn && breakAtColumn > 0 ? breakAtColumn : remainingCols;
+            final int cols =
+                LaTeXUtils.computeNumberOfColumns(remainingCols, breakAtColumn, titleColumn, firstColumnBlock);
+//                remainingCols > breakAtColumn && breakAtColumn > 0 ? breakAtColumn : remainingCols;
+//                LaTeXUtils.computeNumberOfColumns(remainingCols, breakAtColumn, titleColumn, firstRow);
             final int rows = (transpose ? table.length : table[0].length);
             writer.write("\\begin{tabular}{");
-            writer.write(columnDefinition.apply(cols));
+            writer.write(columnDefinition.apply(titleColumn && !firstColumnBlock ? cols + 1 : cols));
             writer.write("}");
             Main.newLine(writer);
             writer.write("\\hline");
@@ -530,21 +539,14 @@ public abstract class LaTeXUtils {
                 for (int col = startCol; col < startCol + cols; col++) {
                     if (first) {
                         first = false;
+                        if (titleColumn && !firstColumnBlock) {
+                            LaTeXUtils.writeTableCell(0, row, transpose, optionalColor, table, writer);
+                            writer.write(" & ");
+                        }
                     } else {
                         writer.write(" & ");
                     }
-                    final int transCol = transpose ? row : col;
-                    final int transRow = transpose ? col : row;
-                    if (optionalColor.isPresent()) {
-                        final String color = optionalColor.get()[transCol][transRow];
-                        if (color != null) {
-                            writer.write(String.format("\\cellcolor{%s}", color));
-                        }
-                    }
-                    final String content = table[transCol][transRow];
-                    if (content != null) {
-                        writer.write(content);
-                    }
+                    LaTeXUtils.writeTableCell(col, row, transpose, optionalColor, table, writer);
                 }
                 writer.write("\\\\\\hline");
                 Main.newLine(writer);
@@ -552,7 +554,19 @@ public abstract class LaTeXUtils {
             writer.write("\\end{tabular}");
             Main.newLine(writer);
             remainingCols -= cols;
+            firstColumnBlock = false;
         } while (remainingCols > 0);
+    }
+
+    public static void printTable(
+        final String[][] table,
+        final Optional<String[][]> optionalColor,
+        final Function<Integer, String> columnDefinition,
+        final boolean transpose,
+        final int breakAtColumn,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printTable(table, optionalColor, columnDefinition, transpose, breakAtColumn, false, writer);
     }
 
     /**
@@ -762,6 +776,22 @@ public abstract class LaTeXUtils {
         return String.format("\\textwidth-\\widthof{%s}", text);
     }
 
+    private static int computeNumberOfColumns(
+        final int remainingCols,
+        final int breakAtColumn,
+        final boolean titleColumn,
+        final boolean firstColumnBlock
+    ) {
+        if (remainingCols > breakAtColumn && breakAtColumn > 0) {
+            if (titleColumn && !firstColumnBlock) {
+                return breakAtColumn - 1;
+            } else {
+                return breakAtColumn;
+            }
+        }
+        return remainingCols;
+    }
+
     private static void printElse(final BufferedWriter writer) throws IOException {
         writer.write("\\else");
         Main.newLine(writer);
@@ -842,6 +872,28 @@ public abstract class LaTeXUtils {
     private static void printZeros(final int numOfZeros, final BufferedWriter writer) throws IOException {
         for (int i = 0; i < numOfZeros; i++) {
             writer.write("0");
+        }
+    }
+
+    private static void writeTableCell(
+        final int col,
+        final int row,
+        final boolean transpose,
+        final Optional<String[][]> optionalColor,
+        final String[][] table,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int transCol = transpose ? row : col;
+        final int transRow = transpose ? col : row;
+        if (optionalColor.isPresent()) {
+            final String color = optionalColor.get()[transCol][transRow];
+            if (color != null) {
+                writer.write(String.format("\\cellcolor{%s}", color));
+            }
+        }
+        final String content = table[transCol][transRow];
+        if (content != null) {
+            writer.write(content);
         }
     }
 

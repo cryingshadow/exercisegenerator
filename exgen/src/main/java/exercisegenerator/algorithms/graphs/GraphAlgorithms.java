@@ -110,6 +110,17 @@ abstract class GraphAlgorithms {
         return gridPos;
     }
 
+    static <V> List<Vertex<V>> getSortedListOfVertices(
+        final Graph<V, Integer> graph,
+        final Comparator<Vertex<V>> comparator
+    ) {
+        final List<Vertex<V>> vertices = new ArrayList<Vertex<V>>(graph.getVertices());
+        if (comparator != null) {
+            Collections.sort(vertices, comparator);
+        }
+        return vertices;
+    }
+
     static double parseDistanceFactor(final Parameters options) {
         return Double.parseDouble(options.getOrDefault(Flag.DEGREE, "1.0"));
     }
