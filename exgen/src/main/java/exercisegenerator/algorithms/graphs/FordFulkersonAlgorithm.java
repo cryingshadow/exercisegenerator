@@ -436,10 +436,11 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         final Vertex<V> sink,
         final double multiplier,
         final boolean twocolumns,
-        final PreprintMode mode,
+        final Parameters options,
         final BufferedWriter exWriter,
         final BufferedWriter solWriter
     ) throws IOException {
+        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
         exWriter.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
         exWriter.write(source.label.isEmpty() ? "" : source.label.get().toString());
         exWriter.write(" und Senke ");
@@ -461,26 +462,16 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 exWriter.write(
                     " Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl "
                 );
-                exWriter.write("solcher Schritte \\\"ubereinstimmen.");
+                exWriter.write("solcher Schritte \\\"ubereinstimmen.\\\\[2ex]");
                 break;
             case NEVER:
                 // do nothing
         }
         Main.newLine(exWriter);
-        int step = 0;
-        LaTeXUtils.printSamePageBeginning(
-            step++,
-            twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
-            solWriter
-        );
-        solWriter.write("Initiales Flussnetzwerk:\\\\[2ex]");
-        graph.printTikZ(GraphPrintMode.ALL, multiplier, null, solWriter);
-        LaTeXUtils.printSamePageEnd(solWriter);
-        Main.newLine(solWriter);
+        int step = 1;
         switch (mode) {
             case SOLUTION_SPACE:
-                exWriter.write("\\solutionSpace{");
-                Main.newLine(exWriter);
+                LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
                 // fall-through
             case ALWAYS:
                 if (twocolumns) {
@@ -614,8 +605,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 exWriter.write("Der maximale Fluss hat den Wert: ");
                 Main.newLine(exWriter);
                 if (mode == PreprintMode.SOLUTION_SPACE) {
-                    exWriter.write("}");
-                    Main.newLine(exWriter);
+                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
                 }
                 Main.newLine(exWriter);
                 break;
@@ -928,7 +918,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             flow.sink,
             flow.multiplier,
             flow.twocolumns,
-            PreprintMode.parsePreprintMode(input.options),
+            input.options,
             input.exerciseWriter,
             input.solutionWriter
         );
