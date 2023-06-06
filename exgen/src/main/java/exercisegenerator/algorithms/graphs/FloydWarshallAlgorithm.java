@@ -185,10 +185,11 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
         exWriter.write("Betrachten Sie den folgenden Graphen:");
         Main.newLine(exWriter);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
+        final double multiplier = FloydWarshallAlgorithm.parseMultiplier(options);
         if (warshall) {
-            graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, 1, null, exWriter);
+            graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, multiplier, null, exWriter);
         } else {
-            graph.printTikZ(GraphPrintMode.ALL, 1, null, exWriter);
+            graph.printTikZ(GraphPrintMode.ALL, multiplier, null, exWriter);
         }
         Main.newLine(exWriter);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
@@ -250,6 +251,13 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
         LaTeXUtils.printArrayStretch(1.0, exWriter);
         LaTeXUtils.printArrayStretch(1.0, solWriter);
         LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
+    }
+
+    private static double parseMultiplier(final Parameters options) {
+        if (options.containsKey(Flag.DEGREE)) {
+            return Double.parseDouble(options.get(Flag.DEGREE));
+        }
+        return 1.0;
     }
 
     /**
