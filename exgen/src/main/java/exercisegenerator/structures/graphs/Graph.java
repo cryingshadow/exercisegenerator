@@ -5,7 +5,6 @@ import java.math.*;
 import java.util.*;
 import java.util.Map.*;
 
-import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
