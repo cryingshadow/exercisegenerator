@@ -12,9 +12,9 @@ import exercisegenerator.structures.optimization.*;
 public class KnapsackAlgorithm implements AlgorithmImplementation {
 
     private static class LengthConfiguration {
+        private final String arrowLength;
         private final String headerColLength;
         private final String numberLength;
-        private final String arrowLength;
         private LengthConfiguration() {
             this("5mm", "5mm", "7mm");
         }
@@ -28,7 +28,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
             this.arrowLength = arrowLength;
         }
     }
-    
+
     public static final KnapsackAlgorithm INSTANCE = new KnapsackAlgorithm();
 
     public static int[][] knapsack(final KnapsackProblem problem) {
@@ -77,10 +77,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         }
     }
 
-    private static LengthConfiguration generateLengthConfiguration(final Parameters options) {
-        return new LengthConfiguration();
-    }
-    
     private static KnapsackProblem generateKnapsackProblem(final Parameters options) {
         final int numberOfItems = KnapsackAlgorithm.parseOrGenerateNumberOfItems(options);
 //        int sumOfWeights = 0;
@@ -97,6 +93,10 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
 //        final int capacity = (sumOfWeights * p) / 100;
         final int capacity = 3 + OptimizationAlgorithms.RANDOM.nextInt(6);
         return new KnapsackProblem(weights, values, capacity);
+    }
+
+    private static LengthConfiguration generateLengthConfiguration(final Parameters options) {
+        return new LengthConfiguration();
     }
 
     private static List<Integer> knapsackItems(final KnapsackProblem problem, final int[][] solution) {
@@ -128,19 +128,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         );
     }
 
-    private static LengthConfiguration parseLengthConfiguration(
-        final BufferedReader reader,
-        final Parameters options
-    ) throws IOException {
-        final String line = reader.readLine();
-        final String[] parts = line.strip().split(";");
-        if (parts.length != 6) {
-            return new LengthConfiguration();
-        }
-        return new LengthConfiguration(parts[3], parts[4], parts[5]);
-
-    }
-    
     private static KnapsackProblem parseKnapsackProblem(
         final BufferedReader reader,
         final Parameters options
@@ -160,11 +147,31 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         );
     }
 
+    private static LengthConfiguration parseLengthConfiguration(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        final String line = reader.readLine();
+        final String[] parts = line.strip().split(";");
+        if (parts.length != 6) {
+            return new LengthConfiguration();
+        }
+        return new LengthConfiguration(parts[3], parts[4], parts[5]);
+
+    }
+
     private static KnapsackProblem parseOrGenerateKnapsackProblem(final Parameters options)
     throws IOException {
         return new ParserAndGenerator<KnapsackProblem>(
             KnapsackAlgorithm::parseKnapsackProblem,
             KnapsackAlgorithm::generateKnapsackProblem
+        ).getResult(options);
+    }
+
+    private static LengthConfiguration parseOrGenerateLengthConfiguration(final Parameters options) throws IOException {
+        return new ParserAndGenerator<LengthConfiguration>(
+            KnapsackAlgorithm::parseLengthConfiguration,
+            KnapsackAlgorithm::generateLengthConfiguration
         ).getResult(options);
     }
 
@@ -326,17 +333,10 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final KnapsackProblem problem = KnapsackAlgorithm.parseOrGenerateKnapsackProblem(input.options);
-        final LengthConfiguration configuration = parseOrGenerateLengthConfiguration(input.options);
+        final LengthConfiguration configuration = KnapsackAlgorithm.parseOrGenerateLengthConfiguration(input.options);
         final int[][] table = KnapsackAlgorithm.knapsack(problem);
         KnapsackAlgorithm.printKnapsackExercise(problem, table, input.options, configuration, input.exerciseWriter);
         KnapsackAlgorithm.printKnapsackSolution(problem, table, input.options, configuration, input.solutionWriter);
-    }
-
-    private static LengthConfiguration parseOrGenerateLengthConfiguration(Parameters options) throws IOException {
-        return new ParserAndGenerator<LengthConfiguration>(
-            KnapsackAlgorithm::parseLengthConfiguration,
-            KnapsackAlgorithm::generateLengthConfiguration
-        ).getResult(options);
     }
 
     @Override

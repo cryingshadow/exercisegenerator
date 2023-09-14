@@ -911,7 +911,8 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final FlowNetworkInput<String, FlowPair> flow = FordFulkersonAlgorithm.parseOrGenerateFlowNetwork(input.options);
+        final FlowNetworkInput<String, FlowPair> flow =
+            FordFulkersonAlgorithm.parseOrGenerateFlowNetwork(input.options);
         FordFulkersonAlgorithm.fordFulkerson(
             flow.graph,
             flow.source,
