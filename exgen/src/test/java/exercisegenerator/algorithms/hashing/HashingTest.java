@@ -11,12 +11,12 @@ import exercisegenerator.util.*;
 public class HashingTest {
 
     private static class HashingTestData {
-        private final HashList[] expectedResult;
-        private final CheckedSupplier<HashList[], HashException> hashingMethod;
+        private final IntegerList[] expectedResult;
+        private final CheckedSupplier<IntegerList[], HashException> hashingMethod;
 
         private HashingTestData(
-            final CheckedSupplier<HashList[], HashException> hashingMethod,
-            final HashList[] expectedResult
+            final CheckedSupplier<IntegerList[], HashException> hashingMethod,
+            final IntegerList[] expectedResult
         ) {
             this.hashingMethod = hashingMethod;
             this.expectedResult = expectedResult;
@@ -32,18 +32,18 @@ public class HashingTest {
                     Hashing.createEmptyArray(11),
                     java.util.Optional.empty()
                 ),
-                new HashList[] {
-                    new HashList(),
-                    new HashList(1),
-                    new HashList(),
-                    new HashList(3),
-                    new HashList(4),
-                    new HashList(),
-                    new HashList(),
-                    new HashList(7),
-                    new HashList(8),
-                    new HashList(),
-                    new HashList()
+                new IntegerList[] {
+                    new IntegerList(),
+                    new IntegerList(1),
+                    new IntegerList(),
+                    new IntegerList(3),
+                    new IntegerList(4),
+                    new IntegerList(),
+                    new IntegerList(),
+                    new IntegerList(7),
+                    new IntegerList(8),
+                    new IntegerList(),
+                    new IntegerList()
                 }
             )},
             {new HashingTestData(
@@ -52,14 +52,14 @@ public class HashingTest {
                     Hashing.createEmptyArray(7),
                     java.util.Optional.empty()
                 ),
-                new HashList[] {
-                    new HashList(7),
-                    new HashList(8,1),
-                    new HashList(),
-                    new HashList(3),
-                    new HashList(4),
-                    new HashList(),
-                    new HashList()
+                new IntegerList[] {
+                    new IntegerList(7),
+                    new IntegerList(8,1),
+                    new IntegerList(),
+                    new IntegerList(3),
+                    new IntegerList(4),
+                    new IntegerList(),
+                    new IntegerList()
                 }
             )},
             {new HashingTestData(
@@ -68,14 +68,14 @@ public class HashingTest {
                     Hashing.createEmptyArray(7),
                     java.util.Optional.of(Hashing.linearProbing())
                 ),
-                new HashList[] {
-                    new HashList(7),
-                    new HashList(8),
-                    new HashList(1),
-                    new HashList(3),
-                    new HashList(4),
-                    new HashList(),
-                    new HashList()
+                new IntegerList[] {
+                    new IntegerList(7),
+                    new IntegerList(8),
+                    new IntegerList(1),
+                    new IntegerList(3),
+                    new IntegerList(4),
+                    new IntegerList(),
+                    new IntegerList()
                 }
             )},
             {new HashingTestData(
@@ -84,14 +84,14 @@ public class HashingTest {
                     Hashing.createEmptyArray(7),
                     java.util.Optional.of(Hashing.linearProbing())
                 ),
-                new HashList[] {
-                    new HashList(7),
-                    new HashList(8),
-                    new HashList(1),
-                    new HashList(3),
-                    new HashList(4),
-                    new HashList(2),
-                    new HashList()
+                new IntegerList[] {
+                    new IntegerList(7),
+                    new IntegerList(8),
+                    new IntegerList(1),
+                    new IntegerList(3),
+                    new IntegerList(4),
+                    new IntegerList(2),
+                    new IntegerList()
                 }
             )},
             {new HashingTestData(
@@ -100,14 +100,14 @@ public class HashingTest {
                     Hashing.createEmptyArray(7),
                     java.util.Optional.of(Hashing.quadraticProbing(3, 7))
                 ),
-                new HashList[] {
-                    new HashList(7),
-                    new HashList(8),
-                    new HashList(2),
-                    new HashList(3),
-                    new HashList(4),
-                    new HashList(),
-                    new HashList(1)
+                new IntegerList[] {
+                    new IntegerList(7),
+                    new IntegerList(8),
+                    new IntegerList(2),
+                    new IntegerList(3),
+                    new IntegerList(4),
+                    new IntegerList(),
+                    new IntegerList(1)
                 }
             )},
             {new HashingTestData(
@@ -116,14 +116,14 @@ public class HashingTest {
                     Hashing.createEmptyArray(7),
                     java.util.Optional.of(Hashing.quadraticProbing(5, 2))
                 ),
-                new HashList[] {
-                    new HashList(7),
-                    new HashList(8),
-                    new HashList(2),
-                    new HashList(3),
-                    new HashList(4),
-                    new HashList(1),
-                    new HashList()
+                new IntegerList[] {
+                    new IntegerList(7),
+                    new IntegerList(8),
+                    new IntegerList(2),
+                    new IntegerList(3),
+                    new IntegerList(4),
+                    new IntegerList(1),
+                    new IntegerList()
                 }
             )},
             {new HashingTestData(
@@ -133,14 +133,14 @@ public class HashingTest {
                     0.3,
                     java.util.Optional.empty()
                 ),
-                new HashList[] {
-                    new HashList(7),
-                    new HashList(4),
-                    new HashList(8,1),
-                    new HashList(),
-                    new HashList(),
-                    new HashList(),
-                    new HashList(3)
+                new IntegerList[] {
+                    new IntegerList(7),
+                    new IntegerList(4),
+                    new IntegerList(8,1),
+                    new IntegerList(),
+                    new IntegerList(),
+                    new IntegerList(),
+                    new IntegerList(3)
                 }
             )},
             {new HashingTestData(
@@ -150,20 +150,20 @@ public class HashingTest {
                     0.5,
                     java.util.Optional.of(Hashing.quadraticProbing(3, 2))
                 ),
-                new HashList[] {
-                    new HashList(4),
-                    new HashList(3),
-                    new HashList(1),
-                    new HashList(7),
-                    new HashList(),
-                    new HashList(8),
-                    new HashList()
+                new IntegerList[] {
+                    new IntegerList(4),
+                    new IntegerList(3),
+                    new IntegerList(1),
+                    new IntegerList(7),
+                    new IntegerList(),
+                    new IntegerList(8),
+                    new IntegerList()
                 }
             )}
         };
     }
 
-    private static boolean equalHashResult(final HashList[] result, final HashList[] expectedResult) {
+    private static boolean equalHashResult(final IntegerList[] result, final IntegerList[] expectedResult) {
         if (result == null) {
             return expectedResult == null;
         }
@@ -171,8 +171,8 @@ public class HashingTest {
             return false;
         }
         for (int i = 0; i < result.length; i++) {
-            final HashList resultList = result[i];
-            final HashList expectedList = expectedResult[i];
+            final IntegerList resultList = result[i];
+            final IntegerList expectedList = expectedResult[i];
             if (
                 resultList == null && expectedList != null
                 || resultList != null && expectedList == null

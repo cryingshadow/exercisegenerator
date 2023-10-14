@@ -25,9 +25,9 @@ public class HashingDivisionLinear implements AlgorithmImplementation {
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
-        final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
+        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         try {
-            final HashList[] result =
+            final IntegerList[] result =
                 Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.of(Hashing.linearProbing()));
             Hashing.printHashingExerciseAndSolution(
                 values,

@@ -719,12 +719,159 @@ public class MainTest {
         );
     }
 
+    @Test
+    public void bucketsort() throws IOException {
+        final int contentLength = 1;
+        int nodeNumber = 0;
+        final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
+        exText.add(
+            "Sortieren Sie das folgende Array mit ganzen Zahlen von 0 bis 99 mithilfe von Bucketsort mit 10 Buckets."
+        );
+        exText.add("Geben Sie dazu die Buckets vor deren Sortierung sowie das Ergebnisarray an.\\\\[2ex]");
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(
+            List.of(
+                "\\begin{tikzpicture}",
+                Patterns.ARRAY_STYLE,
+                Patterns.singleNode(nodeNumber++, "33", contentLength),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "13"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "55"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "11"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "44"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "22"),
+                "\\end{tikzpicture}"
+            )
+        );
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
+
+        solText.addAll(
+            List.of(
+                "\\begin{tikzpicture}",
+                Patterns.ARRAY_STYLE,
+                Patterns.singleNode(nodeNumber++, "33", contentLength),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "13"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "55"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "11"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "44"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "22"),
+                "\\end{tikzpicture}",
+                "",
+                "\\begin{tikzpicture}",
+                Patterns.BORDERLESS_STYLE
+            )
+        );
+        int belowOf = nodeNumber;
+        solText.add(Patterns.singleNode(nodeNumber++, "0: ", contentLength));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "1: 13, 11"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "2: 22"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "3: 33"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "4: 44"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "5: 55"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "6: "));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "7: "));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "8: "));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf++, "9: "));
+        solText.addAll(
+            List.of(
+                "\\end{tikzpicture}",
+                "",
+                "\\begin{tikzpicture}",
+                Patterns.ARRAY_STYLE,
+                Patterns.singleNode(nodeNumber++, "11", contentLength),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "13"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "22"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "33"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "44"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "55"),
+                "\\end{tikzpicture}"
+            )
+        );
+        this.harness(
+            new String[] {
+                "-a", Algorithm.BUCKETSORT.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "33,13,55,11,44,22\n0;99;10"
+            },
+            MainTest.simpleComparison(exText, solText)
+        );
+    }
+
     @AfterMethod
     public void cleanUp() {
         for (final File file : this.tmpFiles) {
             file.delete();
         }
         this.tmpFiles.clear();
+    }
+
+    @Test
+    public void countingsort() throws IOException {
+        final int contentLength = 1;
+        int nodeNumber = 0;
+        final List<String> exText = new LinkedList<String>();
+        final List<String> solText = new LinkedList<String>();
+        exText.add("Sortieren Sie das folgende Array mit ganzen Zahlen von 0 bis 9 mithilfe von Countingsort.");
+        exText.add("Geben Sie dazu das Z\\\"ahlarray sowie das Ergebnisarray an.\\\\[2ex]");
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
+        exText.addAll(
+            List.of(
+                "\\begin{tikzpicture}",
+                Patterns.ARRAY_STYLE,
+                Patterns.singleNode(nodeNumber++, "3", contentLength),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "5"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "1"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "4"),
+                Patterns.rightNodeToPredecessor(nodeNumber++, "2")
+            )
+        );
+        int belowOf = 0;
+        exText.add(Patterns.belowEmptyNode(nodeNumber++, belowOf, contentLength));
+        belowOf = nodeNumber - 1;
+        for (int j = 0; j < 9; j++) {
+            exText.add(Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength));
+        }
+        exText.add(Patterns.belowEmptyNode(nodeNumber++, belowOf, contentLength));
+        belowOf = nodeNumber - 1;
+        for (int j = 0; j < 4; j++) {
+            exText.add(Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength));
+        }
+        exText.add("\\end{tikzpicture}");
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
+
+        solText.add("\\begin{tikzpicture}");
+        solText.add(Patterns.ARRAY_STYLE);
+        belowOf = nodeNumber;
+        solText.add(Patterns.singleNode(nodeNumber++, "3", contentLength));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf, 0, contentLength));
+        belowOf = nodeNumber - 1;
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "1"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "0"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "0"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "0"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "0"));
+        solText.add(Patterns.belowNode(nodeNumber++, belowOf, 1, contentLength));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "2"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "3"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "4"));
+        solText.add(Patterns.rightNodeToPredecessor(nodeNumber++, "5"));
+        solText.add("\\end{tikzpicture}");
+        this.harness(
+            new String[] {
+                "-a", Algorithm.COUNTINGSORT.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "3,5,1,4,2\n0;9"
+            },
+            MainTest.simpleComparison(exText, solText)
+        );
     }
 
     @Test

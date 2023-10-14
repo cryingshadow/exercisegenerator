@@ -23,9 +23,9 @@ public class HashingDivisionOpen implements AlgorithmImplementation {
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
-        final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
+        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         try {
-            final HashList[] result = Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.empty());
+            final IntegerList[] result = Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.empty());
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,

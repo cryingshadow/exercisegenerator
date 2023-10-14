@@ -8,6 +8,9 @@ public class Patterns {
     public static final String ARRAY_STYLE =
         "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Large}},node distance=0.25 and 0]";
 
+    public static final String BORDERLESS_STYLE =
+        "[node/.style={draw=none,thick,inner sep=5pt, text width = 10cm,font={\\Large}}, node distance=0.25 and 0]";
+
     public static final String FROM_ASCII =
         "Geben Sie zu den folgenden ASCII Zeichen das jeweilige Bitmuster an:\\\\[2ex]";
 
@@ -44,11 +47,11 @@ public class Patterns {
     }
 
     public static String belowNode(final int number, final int belowOf, final int content, final int contentLength) {
-        return Patterns.belowNode(
-            "n" + number,
-            "n" + belowOf,
-            Patterns.padWithPhantom(String.valueOf(content), contentLength)
-        );
+        return Patterns.belowNode(number, belowOf, Patterns.padWithPhantom(String.valueOf(content), contentLength));
+    }
+
+    public static String belowNode(final int number, final int belowOf, final String content) {
+        return Patterns.belowNode("n" + number, "n" + belowOf, content);
     }
 
     public static String belowNode(final String name, final String belowOf, final String content) {

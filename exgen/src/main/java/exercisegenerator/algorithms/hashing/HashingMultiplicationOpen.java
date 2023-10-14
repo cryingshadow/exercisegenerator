@@ -30,10 +30,10 @@ public class HashingMultiplicationOpen implements AlgorithmImplementation {
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
-        final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
+        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         final double factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
         try {
-            final HashList[] result =
+            final IntegerList[] result =
                 Hashing.hashingWithMultiplicationMethod(values, initialHashTable, factor, Optional.empty());
             Hashing.printHashingExerciseAndSolution(
                 values,

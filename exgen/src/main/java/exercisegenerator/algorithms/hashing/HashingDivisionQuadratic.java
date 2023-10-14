@@ -49,7 +49,7 @@ public class HashingDivisionQuadratic implements AlgorithmImplementation {
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
-        final HashList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
+        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
         final HashResultWithProbingFactors resultWithProbingFactors =
             Hashing.parseOrGenerateProbingFactorsAndComputeResult(
                 initialHashTable.length,

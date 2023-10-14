@@ -92,6 +92,29 @@ public enum Algorithm {
         BubbleSort.INSTANCE
     ),
 
+    BUCKETSORT(
+        "bucketsort",
+        "Bucketsort",
+        new String[] {
+            "Perform Bucketsort on an array of integers.",
+            "The flag -l specifies the length of the array to sort for generated instances.",
+            "Specify the range of integers and the number of buckets in the form start;end;buckets (both start and end "
+            + "inclusive) with the -c flag."
+        },
+        BucketSort.INSTANCE
+    ),
+
+    COUNTINGSORT(
+        "countingsort",
+        "Countingsort",
+        new String[] {
+            "Perform Countingsort on an array of integers.",
+            "The flag -l specifies the length of the array to sort for generated instances.",
+            "Specify the range of integers in the form start;end (both inclusive) with the -c flag."
+        },
+        CountingSort.INSTANCE
+    ),
+
     DFS(
         "dfs",
         "Depth-First-Search",

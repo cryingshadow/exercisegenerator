@@ -15,10 +15,10 @@ abstract class Hashing {
     static class HashResultWithProbingFactors {
         final int linearProbingFactor;
         final int quadraticProbingFactor;
-        final HashList[] result;
+        final IntegerList[] result;
 
         HashResultWithProbingFactors(
-            final HashList[] result,
+            final IntegerList[] result,
             final int linearProbingFactor,
             final int quadraticProbingFactor
         ) {
@@ -63,17 +63,17 @@ abstract class Hashing {
     private static final int[] PRIMES_5_101 =
         new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
 
-    static HashList[] createEmptyArray(final int length) {
-        final HashList[] result = new HashList[length];
+    static IntegerList[] createEmptyArray(final int length) {
+        final IntegerList[] result = new IntegerList[length];
         for (int i = 0; i < length; i++) {
-            result[i] = new HashList();
+            result[i] = new IntegerList();
         }
         return result;
     }
 
-    static HashList[] hashingWithDivisionMethod(
+    static IntegerList[] hashingWithDivisionMethod(
         final List<Integer> values,
-        final HashList[] initialHashTable,
+        final IntegerList[] initialHashTable,
         final Optional<ProbingFunction> optionalProbingFunction
     ) throws HashException {
         return Hashing.hashing(
@@ -84,9 +84,9 @@ abstract class Hashing {
         );
     }
 
-    static HashList[] hashingWithMultiplicationMethod(
+    static IntegerList[] hashingWithMultiplicationMethod(
         final List<Integer> values,
-        final HashList[] initialHashTable,
+        final IntegerList[] initialHashTable,
         final double factor,
         final Optional<ProbingFunction> optionalProbingFunction
     ) throws HashException {
@@ -107,7 +107,7 @@ abstract class Hashing {
         };
     }
 
-    static HashList[] parseOrGenerateInitialArray(final int numberOfValues, final Parameters options)
+    static IntegerList[] parseOrGenerateInitialArray(final int numberOfValues, final Parameters options)
     throws IOException {
         if (!options.containsKey(Flag.OPERATIONS)) {
             return Hashing.createEmptyArray(Hashing.parseOrGenerateCapacity(numberOfValues, options));
@@ -116,8 +116,8 @@ abstract class Hashing {
             .map(
                 text -> Arrays.stream(text.split(","))
                     .map(Integer::parseInt)
-                    .collect(Collectors.toCollection(HashList::new))
-            ).toArray(HashList[]::new);
+                    .collect(Collectors.toCollection(IntegerList::new))
+            ).toArray(IntegerList[]::new);
     }
 
     static double parseOrGenerateMultiplicationFactor(final Parameters options) throws IOException {
@@ -129,7 +129,7 @@ abstract class Hashing {
 
     static HashResultWithProbingFactors parseOrGenerateProbingFactorsAndComputeResult(
         final int capacity,
-        final CheckedBiFunction<Integer, Integer, HashList[], HashException> hashingAlgorithm,
+        final CheckedBiFunction<Integer, Integer, IntegerList[], HashException> hashingAlgorithm,
         final Parameters options
     ) throws IOException {
         return new ParserAndGenerator<HashResultWithProbingFactors>(
@@ -147,8 +147,8 @@ abstract class Hashing {
 
     static void printHashingExerciseAndSolution(
         final List<Integer> values,
-        final HashList[] initialArray,
-        final HashList[] result,
+        final IntegerList[] initialArray,
+        final IntegerList[] result,
         final PrintOptions printOptions,
         final Parameters options,
         final BufferedWriter exerciseWriter,
@@ -255,7 +255,7 @@ abstract class Hashing {
         return Hashing.gcd(a,b) == 1 && Hashing.gcd(b,c) == 1 && Hashing.gcd(a,c) == 1;
     }
 
-    private static int computeContentLength(final HashList[] array) {
+    private static int computeContentLength(final IntegerList[] array) {
         return Arrays.stream(array)
             .mapToInt(list -> list.stream().mapToInt(x -> String.valueOf(x).length()).max().orElse(1))
             .max()
@@ -275,7 +275,7 @@ abstract class Hashing {
         return new Pair<Integer, Integer>(coprimeLinearProbingFactor, coprimeQuadraticProbingFactor);
     }
 
-    private static void copyValues(final HashList[] initialHashTable, final HashList[] hashTable) {
+    private static void copyValues(final IntegerList[] initialHashTable, final IntegerList[] hashTable) {
         for (int i = 0; i < hashTable.length; i++) {
             hashTable[i].addAll(initialHashTable[i]);
         }
@@ -314,11 +314,11 @@ abstract class Hashing {
 
     private static HashResultWithProbingFactors generateProbingFactorsAndComputeResult(
         final int capacity,
-        final CheckedBiFunction<Integer, Integer, HashList[], HashException> hashingAlgorithm,
+        final CheckedBiFunction<Integer, Integer, IntegerList[], HashException> hashingAlgorithm,
         final Parameters options
     ) {
         final Random gen = new Random();
-        HashList[] result = null;
+        IntegerList[] result = null;
         int linearProbingFactor = 0;
         int quadraticProbingFactor = 0;
         boolean failed = false;
@@ -385,14 +385,14 @@ abstract class Hashing {
         return gen.nextInt(capacity - 1) + 1;
     }
 
-    private static HashList[] hashing(
+    private static IntegerList[] hashing(
         final List<Integer> values,
-        final HashList[] initialHashTable,
+        final IntegerList[] initialHashTable,
         final BiFunction<Integer, Integer, Integer> hashFunction,
         final Optional<ProbingFunction> optionalProbingFunction
     ) throws HashException {
         final int capacity = initialHashTable.length;
-        final HashList[] hashTable = Hashing.createEmptyArray(capacity);
+        final IntegerList[] hashTable = Hashing.createEmptyArray(capacity);
         Hashing.copyValues(initialHashTable, hashTable);
         if (optionalProbingFunction.isPresent()) {
             final ProbingFunction probingFunction = optionalProbingFunction.get();
@@ -455,7 +455,7 @@ abstract class Hashing {
 
     private static HashResultWithProbingFactors parseProbingFactorsAndComputeResult(
         final BufferedReader reader,
-        final CheckedBiFunction<Integer, Integer, HashList[], HashException> hashingAlgorithm,
+        final CheckedBiFunction<Integer, Integer, IntegerList[], HashException> hashingAlgorithm,
         final Parameters options
     ) throws IOException {
         final String[] parameters = reader.readLine().split(",");
@@ -481,7 +481,7 @@ abstract class Hashing {
     }
 
     private static void printArray(
-        final HashList[] array,
+        final IntegerList[] array,
         final int contentLength,
         final boolean probing,
         final BufferedWriter writer
@@ -489,33 +489,16 @@ abstract class Hashing {
         if (probing) {
             LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
             LaTeXUtils.printListAndReturnLeftmostNodesName(
-                Hashing.toTikZList(array),
+                IntegerList.toTikZList(array),
                 Optional.empty(),
                 contentLength,
                 writer
             );
         } else {
             LaTeXUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
-            LaTeXUtils.printVerticalStringArray(Hashing.toVerticalStringArray(array), null, null, null, writer);
+            LaTeXUtils.printVerticalStringArray(IntegerList.toVerticalStringArray(array), null, null, null, writer);
         }
         LaTeXUtils.printTikzEnd(writer);
-    }
-
-    private static List<ItemWithTikZInformation<Integer>> toTikZList(final HashList[] array) {
-        return Arrays.stream(array)
-            .map(list -> list.isEmpty() ?
-                new ItemWithTikZInformation<Integer>() :
-                    new ItemWithTikZInformation<Integer>(Optional.of(list.get(0))))
-            .toList();
-    }
-
-    private static String[] toVerticalStringArray(final HashList[] array) {
-        final String[] result = new String[array.length];
-        for (int i = 0; i < array.length; ++i) {
-            result[i] =
-                String.format("%d: %s", i, array[i].stream().map(String::valueOf).collect(Collectors.joining(", ")));
-        }
-        return result;
     }
 
 }

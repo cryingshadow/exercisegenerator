@@ -27,6 +27,25 @@ abstract class Sorting {
         }
     }
 
+    static int getMaximumContentLength(final int[] array) {
+        return Arrays.stream(array).map(n -> String.valueOf(n).length()).max().getAsInt();
+    }
+
+    static int[] parseOrGenerateArray(final Parameters flags) throws IOException {
+        return Sorting.parseOrGenerateArray(flags, 0, Main.NUMBER_LIMIT - 1);
+    }
+
+    static int[] parseOrGenerateArray(
+        final Parameters flags,
+        final int lowestInt,
+        final int highestInt
+    ) throws IOException {
+        return new ParserAndGenerator<int[]>(
+            Sorting::parseArray,
+            options -> Sorting.generateArray(options, lowestInt, highestInt)
+        ).getResult(flags);
+    }
+
     static void printSolution(final SortingSolution solutionData) throws IOException {
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, solutionData.writer);
         String anchor = null;
@@ -99,7 +118,7 @@ abstract class Sorting {
         return result;
     }
 
-    private static int[] generateArray(final Parameters options) {
+    private static int[] generateArray(final Parameters options, final int lowestInt, final int highestInt) {
         final int length;
         final Random gen = new Random();
         if (options.containsKey(Flag.LENGTH)) {
@@ -108,14 +127,11 @@ abstract class Sorting {
             length = gen.nextInt(16) + 5;
         }
         final int[] array = new int[length];
+        final int range = highestInt - lowestInt + 1;
         for (int i = 0; i < array.length; i++) {
-            array[i] = gen.nextInt(Main.NUMBER_LIMIT);
+            array[i] = gen.nextInt(range) + lowestInt;
         }
         return array;
-    }
-
-    private static int getMaximumContentLength(final int[] array) {
-        return Arrays.stream(array).map(n -> String.valueOf(n).length()).max().getAsInt();
     }
 
     private static int[] parseArray(final BufferedReader reader, final Parameters options)
@@ -126,10 +142,6 @@ abstract class Sorting {
             array[i] = Integer.parseInt(numbers[i].trim());
         }
         return array;
-    }
-
-    private static int[] parseOrGenerateArray(final Parameters flags) throws IOException {
-        return new ParserAndGenerator<int[]>(Sorting::parseArray, Sorting::generateArray).getResult(flags);
     }
 
     private static void printExerciseText(
@@ -158,7 +170,7 @@ abstract class Sorting {
             LaTeXUtils.printListAndReturnLeftmostNodesName(
                 Sorting.toTikZItems(array),
                 Optional.empty(),
-                Sorting.getMaximumContentLength(array),
+                contentLength,
                 writer
             );
         for (int i = 0; i < rows; i++) {

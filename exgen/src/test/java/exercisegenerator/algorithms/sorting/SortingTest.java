@@ -8,23 +8,30 @@ import org.testng.*;
 import org.testng.annotations.*;
 
 import exercisegenerator.io.*;
+import exercisegenerator.structures.*;
 
 public class SortingTest {
 
-    private static List<List<ItemWithTikZInformation<Integer>>> toItemsLists(final int[][] arrays) {
-        return Arrays.stream(arrays)
-            .map(array ->
-                Arrays.stream(array)
-                    .mapToObj(i -> new ItemWithTikZInformation<Integer>(Optional.of(i)))
-                    .toList()
-            ).toList();
+    private static List<ItemWithTikZInformation<Integer>> toItemsList(final int[] array) {
+        return Arrays.stream(array)
+            .mapToObj(i -> new ItemWithTikZInformation<Integer>(Optional.of(i)))
+            .toList();
     }
 
-    private static List<List<ItemWithTikZInformation<Integer>>> toItemsLists(final int[][] arrays, final boolean[][] markers) {
+    private static List<List<ItemWithTikZInformation<Integer>>> toItemsLists(final int[][] arrays) {
+        return Arrays.stream(arrays).map(SortingTest::toItemsList).toList();
+    }
+
+    private static List<List<ItemWithTikZInformation<Integer>>> toItemsLists(
+        final int[][] arrays,
+        final boolean[][] markers
+    ) {
         return IntStream.range(0, arrays.length)
             .mapToObj(
                 i -> IntStream.range(0, arrays[i].length)
-                    .mapToObj(j -> new ItemWithTikZInformation<Integer>(Optional.of(arrays[i][j]), markers[i][j], false))
+                    .mapToObj(
+                        j -> new ItemWithTikZInformation<Integer>(Optional.of(arrays[i][j]), markers[i][j], false)
+                    )
                     .toList()
             ).toList();
     }
@@ -49,6 +56,45 @@ public class SortingTest {
                 }
             );
         Assert.assertEquals(BubbleSort.bubblesort(array), expected);
+    }
+
+    @Test
+    public void bucketsort() {
+        final int[] array = new int[] {27,25,44,18,31,73};
+        final Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>> expected =
+            new Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>>(
+                new IntegerList[] {
+                    new IntegerList(),
+                    new IntegerList(18),
+                    new IntegerList(27,25),
+                    new IntegerList(31),
+                    new IntegerList(44),
+                    new IntegerList(),
+                    new IntegerList(),
+                    new IntegerList(73),
+                    new IntegerList(),
+                    new IntegerList()
+                },
+                SortingTest.toItemsList(new int[] {18,25,27,31,44,73})
+            );
+        final Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>> result =
+            BucketSort.bucketsort(array, 0, 99, 10);
+        Assert.assertEquals(result.x, expected.x);
+        Assert.assertEquals(result.y, expected.y);
+    }
+
+    @Test
+    public void countingsort() {
+        final int[] array = new int[] {5,7,4,8,1,3};
+        final List<List<ItemWithTikZInformation<Integer>>> expected =
+            SortingTest.toItemsLists(
+                new int[][] {
+                    {5,7,4,8,1,3},
+                    {0,1,0,1,1,1,0,1,1,0},
+                    {1,3,4,5,7,8}
+                }
+            );
+        Assert.assertEquals(CountingSort.countingsort(array, 0, 9), expected);
     }
 
     @Test
