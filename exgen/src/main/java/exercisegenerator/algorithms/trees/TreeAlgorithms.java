@@ -17,6 +17,29 @@ abstract class TreeAlgorithms {
     static final BinaryTreeFactory<Integer> BINARY_TREE_FACTORY =
         new BinaryTreeFactory<Integer>(new BinaryTreeNodeFactory<Integer>());
 
+    static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> generateConstructionAndTasks(
+        final Parameters options
+    ) {
+        return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
+            TreeAlgorithms.generateTasks(options),
+            TreeAlgorithms.generateConstruction(options)
+        );
+    }
+
+    static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> parseConstructionAndTasks(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        final String[] parts = reader.readLine().split(";");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Input must contain exactly two parts: construction and tasks!");
+        }
+        return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
+            TreeAlgorithms.parseOperations(parts[0].split(",")),
+            TreeAlgorithms.parseOperations(parts[1].split(","))
+        );
+    }
+
     static Deque<Pair<Integer, Boolean>> parseOrGenerateConstruction(
         final String line,
         final Parameters options
@@ -79,15 +102,6 @@ abstract class TreeAlgorithms {
         return deque;
     }
 
-    private static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> generateConstructionAndTasks(
-        final Parameters options
-    ) {
-        return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
-            TreeAlgorithms.generateTasks(options),
-            TreeAlgorithms.generateConstruction(options)
-        );
-    }
-
     private static Deque<Pair<Integer, Boolean>> generateTasks(final Parameters options) {
         final int length;
         final Random gen = new Random();
@@ -122,20 +136,6 @@ abstract class TreeAlgorithms {
             return 5;
         }
         return height;
-    }
-
-    private static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> parseConstructionAndTasks(
-        final BufferedReader reader,
-        final Parameters options
-    ) throws IOException {
-        final String[] parts = reader.readLine().split(";");
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Input must contain exactly two parts: construction and tasks!");
-        }
-        return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
-            TreeAlgorithms.parseOperations(parts[0].split(",")),
-            TreeAlgorithms.parseOperations(parts[1].split(","))
-        );
     }
 
     private static Deque<Pair<Integer, Boolean>> parseOperations(final String[] operations) {

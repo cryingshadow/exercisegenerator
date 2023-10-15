@@ -170,10 +170,15 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
+        final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =
+            new ParserAndGenerator<Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>>(
+                TreeAlgorithms::parseConstructionAndTasks,
+                TreeAlgorithms::generateConstructionAndTasks
+            ).getResult(input.options);
         RedBlackTreeAlgorithm.rbtree(
             new IntRBTree(),
-            TreeAlgorithms.parseOrGenerateTasks(input.options),
-            TreeAlgorithms.parseOrGenerateConstruction("", input.options),
+            constructionAndTasks.y,
+            constructionAndTasks.x,
             input.solutionWriter,
             Algorithm.getOptionalSpaceWriter(input)
         );
