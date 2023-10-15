@@ -113,4 +113,24 @@ public class LinearSystemOfEquations {
         return new LinearSystemOfEquations(matrix, this.columnPositions);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder res = new StringBuilder();
+        for (int row = 0; row < this.numberOfRows; row++) {
+            boolean first = true;
+            for (int col = 0; col < this.numberOfColumns - 1; col++) {
+                if (first) {
+                    first = false;
+                } else {
+                    res.append(", ");
+                }
+                res.append(this.matrix[row][col].toString());
+            }
+            res.append(" | ");
+            res.append(this.matrix[row][this.numberOfColumns - 1].toString());
+            res.append("\n");
+        }
+        return res.toString();
+    }
+
 }

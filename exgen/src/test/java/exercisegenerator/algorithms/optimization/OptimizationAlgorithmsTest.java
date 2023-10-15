@@ -20,6 +20,17 @@ public class OptimizationAlgorithmsTest {
                     {7,1,1,2}
                 }
             );
+        final LinearSystemOfEquations problem2 =
+            new LinearSystemOfEquations(
+                new int[][] {
+                    {5, 6, -8, 4, -8, 4},
+                    {0, -8, 2, 0, 7, 9},
+                    {7, -10, 4, 8, 6, 2},
+                    {5, 3, -10, 10, 1, 2},
+                    {4, -7, 0, 4, 4, 7},
+                    {8, 10, 2, 8, 5, 1}
+                }
+            );
         return new Object[][] {
             {
                 problem1,
@@ -86,6 +97,302 @@ public class OptimizationAlgorithmsTest {
                             {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(105,413)},
                             {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(147,413)},
                             {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-8,59)}
+                        }
+                    )
+                )
+            },
+            {
+                problem2,
+                List.of(
+                    problem2,
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
+                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
+                            {new Fraction(7),new Fraction(-10),new Fraction(4),new Fraction(8),new Fraction(6),new Fraction(2)},
+                            {new Fraction(5),new Fraction(3),new Fraction(-10),new Fraction(10),new Fraction(1),new Fraction(2)},
+                            {new Fraction(4),new Fraction(-7),new Fraction(0),new Fraction(4),new Fraction(4),new Fraction(7)},
+                            {new Fraction(8),new Fraction(10),new Fraction(2),new Fraction(8),new Fraction(5),new Fraction(1)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
+                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
+                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
+                            {new Fraction(5),new Fraction(3),new Fraction(-10),new Fraction(10),new Fraction(1),new Fraction(2)},
+                            {new Fraction(4),new Fraction(-7),new Fraction(0),new Fraction(4),new Fraction(4),new Fraction(7)},
+                            {new Fraction(8),new Fraction(10),new Fraction(2),new Fraction(8),new Fraction(5),new Fraction(1)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
+                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
+                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
+                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
+                            {new Fraction(4),new Fraction(-7),new Fraction(0),new Fraction(4),new Fraction(4),new Fraction(7)},
+                            {new Fraction(8),new Fraction(10),new Fraction(2),new Fraction(8),new Fraction(5),new Fraction(1)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
+                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
+                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
+                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
+                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
+                            {new Fraction(8),new Fraction(10),new Fraction(2),new Fraction(8),new Fraction(5),new Fraction(1)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
+                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
+                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
+                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
+                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
+                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
+                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
+                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
+                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
+                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
+                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
+                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
+                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
+                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
+                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
+                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
+                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(53,5),new Fraction(12,5),new Fraction(11,10),new Fraction(-243,10)},
+                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
+                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
+                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
+                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(53,5),new Fraction(12,5),new Fraction(11,10),new Fraction(-243,10)},
+                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
+                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
+                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
+                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(53,5),new Fraction(12,5),new Fraction(11,10),new Fraction(-243,10)},
+                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
+                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
+                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(53,5),new Fraction(12,5),new Fraction(11,10),new Fraction(-243,10)},
+                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
+                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
+                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
+                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
+                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
+                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
+                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(351,53),new Fraction(353,53),new Fraction(-619,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
+                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(351,53),new Fraction(353,53),new Fraction(-619,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(351,53),new Fraction(353,53),new Fraction(-619,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-106,351),new Fraction(-538,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-106,351),new Fraction(-538,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-67,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-67,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-364,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new Fraction[][] {
+                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
+                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3)},
+                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-67,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-364,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
+                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-3564,53)}
                         }
                     )
                 )

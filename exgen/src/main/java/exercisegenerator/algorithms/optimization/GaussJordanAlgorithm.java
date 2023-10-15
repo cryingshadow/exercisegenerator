@@ -62,7 +62,9 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
 
     private static int computeRankForSolvedMatrix(final Fraction[][] matrix) {
         int rank = 0;
-        while (rank < matrix.length && rank < matrix[rank].length && matrix[rank][rank].compareTo(Fraction.ONE) == 0) {
+        while (
+            rank < matrix.length && rank < matrix[rank].length - 1 && matrix[rank][rank].compareTo(Fraction.ONE) == 0
+        ) {
             rank++;
         }
         return rank;
@@ -89,7 +91,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
                 }
                 throw new IllegalStateException("Solved system should not be solved further!");
             }
-            for (int row = 0; row < minDimension; row++) {
+            for (int row = 0; row < system.numberOfRows; row++) {
                 if (row != col) {
                     if (system.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
                         return system.addRow(row, col, system.matrix[row][col].negate());
@@ -136,25 +138,28 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
             }
         }
         return GaussJordanAlgorithm.isIdentityMatrix(system.matrix, 0, rank)
-            && GaussJordanAlgorithm.isZeroMatrixFrom(
+            && GaussJordanAlgorithm.isSolvedBelowIdentity(
                 system.matrix,
                 rank,
                 system.numberOfRows,
-                system.numberOfColumns - 1
+                system.numberOfColumns
             );
     }
 
-    private static boolean isZeroMatrixFrom(
+    private static boolean isSolvedBelowIdentity(
         final Fraction[][] matrix,
         final int from,
         final int numberOfRows,
         final int numberOfColumns
     ) {
         for (int row = from; row < numberOfRows; row++) {
-            for (int col = from; col < numberOfColumns; col++) {
+            for (int col = 0; col < numberOfColumns - 1; col++) {
                 if (matrix[row][col].compareTo(Fraction.ZERO) != 0) {
                     return false;
                 }
+            }
+            if (matrix[row][numberOfColumns - 1].compareTo(Fraction.ZERO) != 0) {
+                return true;
             }
         }
         return true;
