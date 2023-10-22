@@ -444,9 +444,6 @@ public class GridGraph {
             result[w] = -1;
         }
 
-        // get the connected components
-        final int[] color = new int[this.numOfAllVertices()];
-
         // split all connected components into strongly connected components
         final int[] lastOfS = new int[1]; // Array storing only one int, as it is not possible to call primitive types in java by reference..
         lastOfS[0] = -1;
