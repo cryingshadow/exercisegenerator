@@ -1,5 +1,7 @@
 package exercisegenerator.structures.trees;
 
+import java.util.*;
+
 import exercisegenerator.util.*;
 
 /**
@@ -66,6 +68,16 @@ public class IntBTree {
             this.nodes = new IntBTreeNode[2 * IntBTree.this.fillingDegree];
             this.filled = 0;
             this.leaf = false;
+        }
+
+        public BTreeNode<Integer> toBTreeNode() {
+            return new BTreeNode<Integer>(
+                IntBTree.this.fillingDegree,
+                Arrays.stream(this.keys).limit(this.filled).toList(),
+                this.leaf ?
+                    Collections.emptyList() :
+                        Arrays.stream(this.nodes).limit(this.filled + 1).map(IntBTreeNode::toBTreeNode).toList()
+            );
         }
 
         /* (non-Javadoc)
@@ -393,6 +405,13 @@ public class IntBTree {
             return false;
         }
         return this.root.remove(key, this);
+    }
+
+    public BTree<Integer> toBTree() {
+        if (this.isEmpty()) {
+            return new BTree<Integer>(this.fillingDegree);
+        }
+        return new BTree<Integer>(this.fillingDegree, Optional.of(this.root.toBTreeNode()));
     }
 
     /* (non-Javadoc)
