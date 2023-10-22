@@ -13,6 +13,9 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
 
     public static final BTreeAlgorithm INSTANCE = new BTreeAlgorithm();
 
+    private static String OPERATIONS =
+        "\\begin{itemize}\\item \\emphasize{Aufteilung}\\item \\emphasize{Diebstahloperation}\\item \\emphasize{Einf\\\"ugeoperation}\\item \\emphasize{L\\\"oschoperation}\\item \\emphasize{Rotation}\\item \\emphasize{Verschmelzung}\\end{itemize}";
+
     /**
      * Performs the operations specified by <code>construction</code> and <code>ops</code> on the specified B-tree and
      * prints the results to the specified writer. The <code>construction</code> operations are not displayed.
@@ -25,7 +28,7 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
      * @throws IOException If some error occurs during output.
      */
     public static void btree(
-        final IntBTree tree,
+        final int degree,
         final Deque<Pair<Integer, Boolean>> tasks,
         final Deque<Pair<Integer, Boolean>> construction,
         final BufferedWriter writer,
@@ -34,52 +37,45 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
         if (tasks.isEmpty()) {
             return;
         }
+        BTree<Integer> tree = new BTree<Integer>(degree);
         while (!construction.isEmpty()) {
             final Pair<Integer, Boolean> operation = construction.poll();
             if (operation.y) {
-                tree.add(operation.x);
+                tree = tree.add(operation.x).getLast().x;
             } else {
-                tree.remove(operation.x);
+                tree = tree.remove(operation.x).getLast().x;
             }
         }
         if (optionalWriterSpace.isPresent()) {
             final BufferedWriter writerSpace = optionalWriterSpace.get();
-            final int degree = tree.getDegree();
             if (tasks.size() > 1) {
                 if (tree.isEmpty()) {
-                    writerSpace.write(
-                        "F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren \\emphasize{"
-                        + (
-                            degree == 2 ?
-                                IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}" :
-                                    "B-Baum} mit Grad $t = " + degree + "$"
-                        ) + " aus und geben Sie die dabei jeweils entstehenden B\\\"aume an:\\\\\\\\"
-                    );
+                    writerSpace.write("F\\\"uhren Sie folgenden Operationen beginnend mit einem anfangs leeren ");
+                    writerSpace.write("\\emphasize{B-Baum} mit Grad $t = ");
+                    writerSpace.write(String.valueOf(degree));
+                    writerSpace.write("$ aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ");
+                    Main.newLine(writerSpace);
+                    writerSpace.write(BTreeAlgorithm.OPERATIONS);
+                    Main.newLine(writerSpace);
+                    writerSpace.write("an:\\\\");
                     Main.newLine(writerSpace);
                 } else {
-                    writerSpace.write(
-                        "Betrachten Sie den folgenden \\emphasize{"
-                        + (
-                            degree == 2 ?
-                                IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}" :
-                                    "B-Baum} mit Grad $t = " + degree + "$"
-                        ) + ":\\\\[2ex]"
-                    );
-                    Main.newLine(writerSpace);
+                    writerSpace.write("Betrachten Sie den folgenden \\emphasize{B-Baum} mit Grad $t = ");
+                    writerSpace.write(String.valueOf(degree));
+                    writerSpace.write("$:\\\\");
                     Main.newLine(writerSpace);
                     LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writerSpace);
                     LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writerSpace);
                     LaTeXUtils.printBTree(tree, writerSpace);
                     LaTeXUtils.printTikzEnd(writerSpace);
                     LaTeXUtils.printEnd(LaTeXUtils.CENTER, writerSpace);
+                    LaTeXUtils.printVerticalProtectedSpace(writerSpace);
+                    writerSpace.write("F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus ");
+                    writerSpace.write("und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ");
                     Main.newLine(writerSpace);
+                    writerSpace.write(BTreeAlgorithm.OPERATIONS);
                     Main.newLine(writerSpace);
-                    writerSpace.write("\\vspace*{1ex}");
-                    Main.newLine(writerSpace);
-                    writerSpace.write(
-                        "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus "
-                        + "und geben Sie die dabei jeweils entstehenden B\\\"aume an:\\\\\\\\"
-                    );
+                    writerSpace.write("an:\\\\");
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
@@ -96,43 +92,47 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
                 final Pair<Integer, Boolean> task = tasks.peek();
                 if (tree.isEmpty()) {
                     if (task.y) {
-                        writerSpace.write(
-                            "F\\\"ugen Sie den Wert "
-                            + task.x
-                            + " in einen leeren \\emphasize{"
-                            + (
-                                degree == 2 ?
-                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}" :
-                                        "B-Baum} mit Grad $t = " + degree + "$"
-                            ) + " ein und geben Sie den dabei entstehenden Baum an."
-                        );
+                        writerSpace.write("F\\\"ugen Sie den Wert ");
+                        writerSpace.write(String.valueOf(task.x));
+                        writerSpace.write(" in einen leeren \\emphasize{B-Baum} mit Grad $t = ");
+                        writerSpace.write(String.valueOf(degree));
+                        writerSpace.write("$ ein und geben Sie die dabei entstehenden B\\\"aume nach jeder ");
+                        Main.newLine(writerSpace);
+                        writerSpace.write(BTreeAlgorithm.OPERATIONS);
+                        Main.newLine(writerSpace);
+                        writerSpace.write("an.");
                     } else {
-                        // this case is nonsense
-                        return;
+                        writerSpace.write("L\\\"oschen Sie den Wert ");
+                        writerSpace.write(String.valueOf(task.x));
+                        writerSpace.write(" aus einem leeren \\emphasize{B-Baum} mit Grad $t = ");
+                        writerSpace.write(String.valueOf(degree));
+                        writerSpace.write("$ und geben Sie die dabei entstehenden B\\\"aume nach jeder ");
+                        Main.newLine(writerSpace);
+                        writerSpace.write(BTreeAlgorithm.OPERATIONS);
+                        Main.newLine(writerSpace);
+                        writerSpace.write("an.");
                     }
                 } else {
                     if (task.y) {
-                        writerSpace.write(
-                            "F\\\"ugen Sie den Wert "
-                            + task.x
-                            + " in den folgenden \\emphasize{"
-                            + (
-                                degree == 2 ?
-                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}":
-                                        "B-Baum} mit Grad $t = " + degree + "$"
-                            ) + " ein und geben Sie den dabei entstehenden Baum an:\\\\[2ex]"
-                        );
+                        writerSpace.write("F\\\"ugen Sie den Wert ");
+                        writerSpace.write(String.valueOf(task.x));
+                        writerSpace.write(" in den folgenden \\emphasize{B-Baum} mit Grad $t = ");
+                        writerSpace.write(String.valueOf(degree));
+                        writerSpace.write("$ ein und geben Sie die dabei entstehenden B\\\"aume nach jeder ");
+                        Main.newLine(writerSpace);
+                        writerSpace.write(BTreeAlgorithm.OPERATIONS);
+                        Main.newLine(writerSpace);
+                        writerSpace.write("an:");
                     } else {
-                        writerSpace.write(
-                            "L\\\"oschen Sie den Wert "
-                            + task.x
-                            + " aus dem folgenden \\emphasize{"
-                            + (
-                                degree == 2 ?
-                                    IntBTree.NAME_OF_BTREE_WITH_DEGREE_2 + "}" :
-                                        "B-Baum} mit Grad $t = " + degree + "$"
-                            ) + " und geben Sie den dabei entstehenden Baum an:\\\\[2ex]"
-                        );
+                        writerSpace.write("L\\\"oschen Sie den Wert ");
+                        writerSpace.write(String.valueOf(task.x));
+                        writerSpace.write(" aus dem folgenden \\emphasize{B-Baum} mit Grad $t = ");
+                        writerSpace.write(String.valueOf(degree));
+                        writerSpace.write("$ und geben Sie die dabei entstehenden B\\\"aume nach jeder ");
+                        Main.newLine(writerSpace);
+                        writerSpace.write(BTreeAlgorithm.OPERATIONS);
+                        Main.newLine(writerSpace);
+                        writerSpace.write("an:");
                     }
                     Main.newLine(writerSpace);
                     Main.newLine(writerSpace);
@@ -144,21 +144,25 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
                     Main.newLine(writerSpace);
                 }
             }
+            Main.newLine(writerSpace);
         }
-        int step = 1;
+        int stepCounter = 1;
         while (!tasks.isEmpty()) {
             final Pair<Integer, Boolean> task = tasks.poll();
-            if (task.y) {
-                tree.add(task.x);
-            } else {
-                tree.remove(task.x);
+            final BTreeSteps<Integer> steps = task.y ? tree.add(task.x) : tree.remove(task.x);
+            for (final BTreeAndStep<Integer> step : steps) {
+                LaTeXUtils.printSamePageBeginning(stepCounter++, LaTeXUtils.COL_WIDTH, writer);
+                writer.write(step.y.toLaTeX());
+                writer.write("\\\\[2ex]");
+                Main.newLine(writer);
+                LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writer);
+                LaTeXUtils.printBTree(step.x, writer);
+                LaTeXUtils.printTikzEnd(writer);
+                LaTeXUtils.printSamePageEnd(writer);
             }
-            LaTeXUtils.printSamePageBeginning(step++, task, writer);
-            LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writer);
-            LaTeXUtils.printBTree(tree, writer);
-            LaTeXUtils.printTikzEnd(writer);
-            LaTeXUtils.printSamePageEnd(writer);
+            tree = steps.getLast().x;
         }
+        Main.newLine(writer);
     }
 
     private BTreeAlgorithm() {
@@ -172,9 +176,7 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
                 TreeAlgorithms::generateConstructionAndTasks
             ).getResult(input.options);
         BTreeAlgorithm.btree(
-            new IntBTree(
-                input.options.containsKey(Flag.DEGREE) ? Integer.parseInt(input.options.get(Flag.DEGREE)) : 2
-            ),
+            input.options.containsKey(Flag.DEGREE) ? Integer.parseInt(input.options.get(Flag.DEGREE)) : 2,
             constructionAndTasks.y,
             constructionAndTasks.x,
             input.solutionWriter,

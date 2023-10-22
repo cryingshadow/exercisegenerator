@@ -720,6 +720,87 @@ public class MainTest {
     }
 
     @Test
+    public void btree() throws IOException {
+        final List<String> exText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "Betrachten Sie den folgenden \\emphasize{B-Baum} mit Grad $t = 2$:\\\\",
+                "\\begin{center}",
+                "\\begin{tikzpicture}",
+                "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+                    + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
+                    + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                "\\Tree [.{3,5} {1} {4} {6,7,8} ];",
+                "\\end{tikzpicture}",
+                "\\end{center}"
+            )
+        );
+        exText.addAll(Patterns.MIDDLE_SPACE);
+        exText.addAll(
+            List.of(
+                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ",
+                "\\begin{itemize}\\item \\emphasize{Aufteilung}\\item \\emphasize{Diebstahloperation}\\item \\emphasize{Einf\\\"ugeoperation}\\item \\emphasize{L\\\"oschoperation}\\item \\emphasize{Rotation}\\item \\emphasize{Verschmelzung}\\end{itemize}",
+                "an:\\\\",
+                "\\begin{enumerate}",
+                "\\item 2 einf\\\"ugen\\\\",
+                "\\item 5 l\\\"oschen\\\\",
+                "\\end{enumerate}"
+            )
+        );
+        this.harness(
+            new String[] {
+                "-a", Algorithm.BTREE.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "3,1,5,4,7,6,8;2,~5"
+            },
+            MainTest.simpleComparison(
+                exText,
+                List.of(
+                    "\\begin{minipage}{\\columnwidth}",
+                    "\\vspace*{1ex}",
+                    "Schritt 1:\\\\[-2ex]",
+                    "\\begin{center}",
+                    "f\\\"uge 2 ein\\\\[2ex]",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+                        + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
+                        + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.{3,5} {1,2} {4} {6,7,8} ];",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "\\begin{minipage}{\\columnwidth}",
+                    "\\vspace*{1ex}",
+                    "Schritt 2:\\\\[-2ex]",
+                    "\\begin{center}",
+                    "stehle Nachfolger von 5\\\\[2ex]",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+                        + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
+                        + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.{3,6} {1,2} {4} {6,7,8} ];",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "\\begin{minipage}{\\columnwidth}",
+                    "\\vspace*{1ex}",
+                    "Schritt 3:\\\\[-2ex]",
+                    "\\begin{center}",
+                    "entferne 6\\\\[2ex]",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+                        + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
+                        + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.{3,6} {1,2} {4} {7,8} ];",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "\\end{minipage}"
+                )
+            )
+        );
+    }
+
+    @Test
     public void bucketsort() throws IOException {
         final int contentLength = 1;
         int nodeNumber = 0;

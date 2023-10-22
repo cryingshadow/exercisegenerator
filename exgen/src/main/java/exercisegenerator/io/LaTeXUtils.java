@@ -143,7 +143,7 @@ public abstract class LaTeXUtils {
      * @param writer The writer.
      * @throws IOException If some error occurs during output.
      */
-    public static void printBTree(final IntBTree tree, final BufferedWriter writer) throws IOException {
+    public static void printBTree(final BTree<Integer> tree, final BufferedWriter writer) throws IOException {
         if (tree.hasJustRoot()) {
             writer.write("\\node[draw=black,rounded corners,thick,inner sep=5pt] " + tree.toString() + ";");
         } else if (tree.isEmpty()) {

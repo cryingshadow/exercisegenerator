@@ -27,10 +27,10 @@ public class BTreeTest {
         for (final Input operation : operations) {
             if (operation.add) {
                 oldTree.add(operation.value);
-                newTree = newTree.add(operation.value);
+                newTree = newTree.add(operation.value).getLast().x;
             } else {
                 oldTree.remove(operation.value);
-                newTree = newTree.remove(operation.value);
+                newTree = newTree.remove(operation.value).getLast().x;
             }
             Assert.assertEquals(newTree, oldTree.toBTree(), "Step " + operation.index);
         }

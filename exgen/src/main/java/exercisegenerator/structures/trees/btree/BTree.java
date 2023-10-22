@@ -25,25 +25,37 @@ public class BTree<T extends Comparable<T>> {
         this.root = root;
     }
 
-    public BTree<T> add(final T value) {
+    public BTreeSteps<T> add(final T value) {
         if (this.isEmpty()) {
-            return new BTree<T>(this.degree, Optional.of(new BTreeNode<T>(this.degree, value)));
+            return new BTreeSteps<T>(
+                new BTree<T>(this.degree, Optional.of(new BTreeNode<T>(this.degree, value))),
+                new BTreeStep<T>(BTreeStepType.ADD, value)
+            );
         }
         final BTreeNode<T> rootNode = this.root.get();
         if (rootNode.isFull()) {
+            final BTreeSteps<T> result = new BTreeSteps<T>();
             final SplitResult<T> split = rootNode.split();
-            return new BTree<T>(
-                this.degree,
-                Optional.of(
-                    new BTreeNode<T>(
-                        this.degree,
-                        List.of(split.value),
-                        List.of(split.leftChild, split.rightChild)
-                    ).add(value)
-                )
-            );
+            final BTree<T> newTree =
+                new BTree<T>(
+                    this.degree,
+                    Optional.of(
+                        new BTreeNode<T>(
+                            this.degree,
+                            List.of(split.value),
+                            List.of(split.leftChild, split.rightChild)
+                        )
+                    )
+                );
+            result.add(new BTreeAndStep<T>(newTree, new BTreeStep<T>(BTreeStepType.SPLIT, split.value)));
+            result.addAll(newTree.add(value));
+            return result;
         }
-        return new BTree<T>(this.degree, Optional.of(rootNode.add(value)));
+        return rootNode
+            .add(value)
+            .stream()
+            .map(pair -> new BTreeAndStep<T>(new BTree<T>(this.degree, pair.x), pair.y))
+            .collect(Collectors.toCollection(BTreeSteps::new));
     }
 
     @Override
@@ -70,11 +82,17 @@ public class BTree<T extends Comparable<T>> {
         return this.root.isEmpty();
     }
 
-    public BTree<T> remove(final T value) {
+    public BTreeSteps<T> remove(final T value) {
         if (this.isEmpty()) {
-            return this;
+            return new BTreeSteps<T>(this, new BTreeStep<T>(BTreeStepType.REMOVE, value));
         }
-        return new BTree<T>(this.degree, this.root.get().remove(value));
+        return this
+            .root
+            .get()
+            .remove(value)
+            .stream()
+            .map(pair -> new BTreeAndStep<T>(new BTree<T>(this.degree, pair.x), pair.y))
+            .collect(Collectors.toCollection(BTreeSteps::new));
     }
 
     @Override

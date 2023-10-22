@@ -6,7 +6,7 @@ import java.util.stream.*;
 public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
 
     final Optional<? extends BinaryTreeNode<T>> root;
-    
+
     final BinaryTreeFactory<T> treeFactory;
 
     BinaryTree(final Optional<? extends BinaryTreeNode<T>> root, final BinaryTreeFactory<T> treeFactory) {
@@ -101,7 +101,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
 
     public BinaryTreeSteps<T> removeWithSteps(final T value) {
         if (this.isEmpty()) {
-            return new BinaryTreeSteps<T>();
+            return new BinaryTreeSteps<T>(this, new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value));
         }
         return this.root
             .get()

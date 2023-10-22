@@ -337,12 +337,6 @@ public class IntBTree {
     }
 
     /**
-     * Since there are three different names for B-trees of degree 2, this String can be used to customize the output
-     * for a lecture.
-     */
-    public static final String NAME_OF_BTREE_WITH_DEGREE_2 = "2-3-4-Baum";
-
-    /**
      * Filling degree of this B-tree. Must be greater than 1.
      */
     private final int fillingDegree;

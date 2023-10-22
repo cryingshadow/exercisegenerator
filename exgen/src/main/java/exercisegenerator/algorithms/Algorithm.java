@@ -16,7 +16,6 @@ import exercisegenerator.algorithms.sorting.*;
 import exercisegenerator.algorithms.trees.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
-import exercisegenerator.structures.trees.btree.*;
 
 /**
  * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
@@ -70,7 +69,7 @@ public enum Algorithm {
      */
     BTREE(
         "btree",
-        IntBTree.NAME_OF_BTREE_WITH_DEGREE_2,
+        "B-Baum",
         new String[] {
             "Insertion and deletion of keys in a B-tree. The flag -d can be used to set the degree of the B-Tree "
             + "(an integer greater than 1, if not specified, the degree defaults to 2).",
@@ -249,9 +248,9 @@ public enum Algorithm {
 
     GAUSS_JORDAN(
         "gaussjordan",
-        "Gauﬂ-Jordan-Algorithm",
+        "Gau√ü-Jordan-Algorithm",
         new String[] {
-            "Solves a linear system of equations over rational numbers using the Gauﬂ-Jordan-Algorithm."
+            "Solves a linear system of equations over rational numbers using the Gau√ü-Jordan-Algorithm."
         },
         GaussJordanAlgorithm.INSTANCE
     ),
