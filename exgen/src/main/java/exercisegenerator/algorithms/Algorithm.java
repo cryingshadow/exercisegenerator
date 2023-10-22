@@ -16,7 +16,7 @@ import exercisegenerator.algorithms.sorting.*;
 import exercisegenerator.algorithms.trees.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
-import exercisegenerator.structures.trees.*;
+import exercisegenerator.structures.trees.btree.*;
 
 /**
  * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.

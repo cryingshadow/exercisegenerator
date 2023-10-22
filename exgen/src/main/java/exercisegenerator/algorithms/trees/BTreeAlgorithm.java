@@ -7,7 +7,7 @@ import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
-import exercisegenerator.structures.trees.*;
+import exercisegenerator.structures.trees.btree.*;
 
 public class BTreeAlgorithm implements AlgorithmImplementation {
 

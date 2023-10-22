@@ -9,8 +9,8 @@ import java.util.stream.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.structures.*;
-import exercisegenerator.structures.graphs.Vertex;
-import exercisegenerator.structures.trees.*;
+import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.trees.btree.*;
 
 public abstract class LaTeXUtils {
 

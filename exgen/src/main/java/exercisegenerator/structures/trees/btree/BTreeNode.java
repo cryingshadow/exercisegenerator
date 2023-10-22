@@ -1,4 +1,4 @@
-package exercisegenerator.structures.trees;
+package exercisegenerator.structures.trees.btree;
 
 import java.util.*;
 import java.util.stream.*;

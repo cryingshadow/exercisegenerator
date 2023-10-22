@@ -1,4 +1,4 @@
-package exercisegenerator.structures.trees;
+package exercisegenerator.structures.trees.btree;
 
 class SplitResult<T extends Comparable<T>> {
 
