@@ -25,7 +25,19 @@ public class BTree<T extends Comparable<T>> {
         this.root = root;
     }
 
-    public BTreeSteps<T> add(final T value) {
+    public BTree<T> add(final T value) {
+        return this.addWithSteps(value).getLast().x;
+    }
+
+    public BTree<T> addAll(final Collection<T> values) {
+        BTree<T> result = this;
+        for (final T value : values) {
+            result = result.add(value);
+        }
+        return result;
+    }
+
+    public BTreeSteps<T> addWithSteps(final T value) {
         if (this.isEmpty()) {
             return new BTreeSteps<T>(
                 new BTree<T>(this.degree, Optional.of(new BTreeNode<T>(this.degree, value))),
@@ -48,7 +60,7 @@ public class BTree<T extends Comparable<T>> {
                     )
                 );
             result.add(new BTreeAndStep<T>(newTree, new BTreeStep<T>(BTreeStepType.SPLIT, split.value)));
-            result.addAll(newTree.add(value));
+            result.addAll(newTree.addWithSteps(value));
             return result;
         }
         return rootNode
@@ -82,7 +94,11 @@ public class BTree<T extends Comparable<T>> {
         return this.root.isEmpty();
     }
 
-    public BTreeSteps<T> remove(final T value) {
+    public BTree<T> remove(final T value) {
+        return this.removeWithSteps(value).getLast().x;
+    }
+
+    public BTreeSteps<T> removeWithSteps(final T value) {
         if (this.isEmpty()) {
             return new BTreeSteps<T>(this, new BTreeStep<T>(BTreeStepType.REMOVE, value));
         }

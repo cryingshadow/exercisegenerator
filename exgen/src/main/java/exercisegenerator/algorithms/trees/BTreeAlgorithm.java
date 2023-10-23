@@ -41,9 +41,9 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
         while (!construction.isEmpty()) {
             final Pair<Integer, Boolean> operation = construction.poll();
             if (operation.y) {
-                tree = tree.add(operation.x).getLast().x;
+                tree = tree.addWithSteps(operation.x).getLast().x;
             } else {
-                tree = tree.remove(operation.x).getLast().x;
+                tree = tree.removeWithSteps(operation.x).getLast().x;
             }
         }
         if (optionalWriterSpace.isPresent()) {
@@ -149,7 +149,7 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
         int stepCounter = 1;
         while (!tasks.isEmpty()) {
             final Pair<Integer, Boolean> task = tasks.poll();
-            final BTreeSteps<Integer> steps = task.y ? tree.add(task.x) : tree.remove(task.x);
+            final BTreeSteps<Integer> steps = task.y ? tree.addWithSteps(task.x) : tree.removeWithSteps(task.x);
             for (final BTreeAndStep<Integer> step : steps) {
                 LaTeXUtils.printSamePageBeginning(stepCounter++, LaTeXUtils.COL_WIDTH, writer);
                 writer.write(step.y.toLaTeX());
