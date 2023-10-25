@@ -39,6 +39,16 @@ public enum TikZStyle {
     "[framed,draw=black]"
     ),
 
+    RED_BLACK_TREE(
+        "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, "
+        + "b/.style={rectangle,draw=black,thick,inner sep=5pt}, "
+        + "r/.style={circle,draw=gray,thick,inner sep=5pt}, "
+        + "bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, "
+        + "rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, "
+        + "sibling distance=10pt, level distance=30pt, "
+        + "edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]"
+    ),
+
     /**
      * Symmetric graph style.
      */

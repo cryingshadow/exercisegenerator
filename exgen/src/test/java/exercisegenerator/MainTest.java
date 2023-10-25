@@ -674,7 +674,7 @@ public class MainTest {
         );
         this.harness(
             new String[] {
-                "-a", Algorithm.BSTREE.name,
+                "-a", Algorithm.BIN_SEARCH_TREE.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "3,1,5,4,7,6,8;2,~5"
             },
@@ -2373,6 +2373,80 @@ public class MainTest {
                 Assert.assertEquals(nextLine, "\\end{tikzpicture}");
                 MainTest.checkLaTeXEpilogue(solReader);
             }
+        );
+    }
+
+    @Test
+    public void redBlackTree() throws IOException {
+        final List<String> exText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "Betrachten Sie den folgenden \\emphasize{Rot-Schwarz-Baum}:\\\\",
+                "\\begin{minipage}[t]{7cm}",
+                "\\begin{center}",
+                "\\begin{tikzpicture}",
+                "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                "\\Tree [.\\node[b]{3}; \\node[b]{1}; [.\\node[r]{5}; \\node[b]{4}; [.\\node[b]{7}; \\node[r]{6}; \\node[r]{8}; ] ] ]",
+                "\\end{tikzpicture}",
+                "~\\\\*\\vspace*{1ex}",
+                "\\end{center}",
+                "\\end{minipage}"
+            )
+        );
+        exText.addAll(Patterns.MIDDLE_SPACE);
+        exText.addAll(
+            List.of(
+                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Umf\\\"arbe-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation an:\\\\[2ex]",
+                "\\begin{enumerate}",
+                "\\item 2 einf\\\"ugen\\\\",
+                "\\item 5 l\\\"oschen\\\\",
+                "\\end{enumerate}"
+            )
+        );
+        this.harness(
+            new String[] {
+                "-a", Algorithm.RED_BLACK_TREE.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "3,1,5,4,7,6,8;2,~5"
+            },
+            MainTest.simpleComparison(
+                exText,
+                List.of(
+                    "\\begin{minipage}[t]{7cm}",
+                    "f\\\"uge 2 ein\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.\\node[b]{3}; [.\\node[b]{1}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{2}; ] [.\\node[r]{5}; \\node[b]{4}; [.\\node[b]{7}; \\node[r]{6}; \\node[r]{8}; ] ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "\\begin{minipage}[t]{7cm}",
+                    "entferne 6\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.\\node[b]{3}; [.\\node[b]{1}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{2}; ] [.\\node[r]{5}; \\node[b]{4}; [.\\node[b]{7}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{8}; ] ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "",
+                    "~\\\\",
+                    "",
+                    "\\begin{minipage}[t]{7cm}",
+                    "ersetze 5\\\\[-2ex]",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.\\node[b]{3}; [.\\node[b]{1}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{2}; ] [.\\node[r]{6}; \\node[b]{4}; [.\\node[b]{7}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{8}; ] ] ]",
+                    "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
+                    "\\end{center}",
+                    "\\end{minipage}"
+                )
+            )
         );
     }
 

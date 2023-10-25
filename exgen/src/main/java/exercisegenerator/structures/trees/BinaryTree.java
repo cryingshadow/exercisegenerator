@@ -3,6 +3,8 @@ package exercisegenerator.structures.trees;
 import java.util.*;
 import java.util.stream.*;
 
+import exercisegenerator.io.*;
+
 public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
 
     final Optional<? extends BinaryTreeNode<T>> root;
@@ -72,6 +74,10 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         return "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-} und \\emphasize{Ersetzungs-}Operation";
     }
 
+    public TikZStyle getTikZStyle() {
+        return TikZStyle.TREE;
+    }
+
     public List<T> getValues() {
         return this.stream().toList();
     }
@@ -125,7 +131,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         if (this.root.isEmpty()) {
             return "\\Tree [.\\phantom{0} ];";
         } else if (this.getHeight() == 1) {
-            return String.format("\\Tree [.%s ];", this.root.get().value);
+            return String.format("\\Tree [.%s ];", this.root.get().valueToTikZ());
         } else {
             return "\\Tree" + this.root.get().toTikZ();
         }

@@ -347,4 +347,239 @@ public class TreeAlgorithmsTest {
         }
     }
 
+    @DataProvider
+    public Object[][] rbtreeData() {
+        return new Object[][] {
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(),
+                new ArrayDeque<TreeOperation<Integer>>(Arrays.asList(new TreeOperation<Integer>(1, true))),
+                List.of("((,R(1),),ADD1)", "((,B(1),),COLOR1)")
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(5, true),
+                        new TreeOperation<Integer>(3, true),
+                        new TreeOperation<Integer>(7, true),
+                        new TreeOperation<Integer>(2, true),
+                        new TreeOperation<Integer>(4, true),
+                        new TreeOperation<Integer>(6, true),
+                        new TreeOperation<Integer>(8, true)
+                    )
+                ),
+                Arrays.asList(
+                    "((,R(5),),ADD5)",
+                    "((,B(5),),COLOR5)",
+                    "(((,R(3),),B(5),),ADD3)",
+                    "(((,R(3),),B(5),(,R(7),)),ADD7)",
+                    "((((,R(2),),R(3),),B(5),(,R(7),)),ADD2)",
+                    "((((,R(2),),B(3),),R(5),(,B(7),)),COLOR3|5|7)",
+                    "((((,R(2),),B(3),),B(5),(,B(7),)),COLOR5)",
+                    "((((,R(2),),B(3),(,R(4),)),B(5),(,B(7),)),ADD4)",
+                    "((((,R(2),),B(3),(,R(4),)),B(5),((,R(6),),B(7),)),ADD6)",
+                    "((((,R(2),),B(3),(,R(4),)),B(5),((,R(6),),B(7),(,R(8),))),ADD8)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4,6,8),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(2, false)
+                    )
+                ),
+                Arrays.asList(
+                    "(((,B(3),(,R(4),)),B(5),((,R(6),),B(7),(,R(8),))),REMOVE2)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4,6,8),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(7, false),
+                        new TreeOperation<Integer>(5, false)
+                    )
+                ),
+                Arrays.asList(
+                    "((((,R(2),),B(3),(,R(4),)),B(5),((,R(6),),B(7),)),REMOVE8)",
+                    "((((,R(2),),B(3),(,R(4),)),B(5),((,R(6),),B(8),)),REPLACE7)",
+                    "((((,R(2),),B(3),(,R(4),)),B(5),(,B(8),)),REMOVE6)",
+                    "((((,R(2),),B(3),(,R(4),)),B(6),(,B(8),)),REPLACE5)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(7, false)
+                    )
+                ),
+                Arrays.asList(
+                    "((((,R(2),),B(3),(,R(4),)),B(5),(,B()B,)),REMOVE7)",
+                    "((((,B(2),),B(3),(,R(4),)),B(5),(,B()B,)),COLOR2)",
+                    "(((,B(2),),B(3),((,R(4),),B(5),)),ROTATE_RIGHT5)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(5,3,7,4),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(7, false)
+                    )
+                ),
+                Arrays.asList(
+                    "(((,B(3),(,R(4),)),B(5),(,B()B,)),REMOVE7)",
+                    "((((,B(3),),R(4),),B(5),(,B()B,)),ROTATE_LEFT3)",
+                    "((((,R(3),),B(4),),B(5),(,B()B,)),COLOR3|4)",
+                    "((((,B(3),),B(4),),B(5),(,B()B,)),COLOR3)",
+                    "(((,B(3),),B(4),(,B(5),)),ROTATE_RIGHT5)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(6,3,7,4),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(5, true)
+                    )
+                ),
+                Arrays.asList(
+                    "(((,B(3),(,R(4),(,R(5),))),B(6),(,B(7),)),ADD5)",
+                    "((((,B(3),),R(4),(,R(5),)),B(6),(,B(7),)),ROTATE_LEFT3)",
+                    "((((,R(3),),B(4),(,R(5),)),B(6),(,B(7),)),COLOR3|4)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(7,3,8,4,5),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(6, true)
+                    )
+                ),
+                Arrays.asList(
+                    "((((,R(3),),B(4),(,R(5),(,R(6),))),B(7),(,B(8),)),ADD6)",
+                    "((((,B(3),),R(4),(,B(5),(,R(6),))),B(7),(,B(8),)),COLOR3|4|5)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(7,6,5,4,3,2),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(1, true)
+                    )
+                ),
+                Arrays.asList(
+                    "((((((,R(1),),R(2),),B(3),),R(4),(,B(5),)),B(6),(,B(7),)),ADD1)",
+                    "(((((,R(1),),R(2),(,B(3),)),R(4),(,B(5),)),B(6),(,B(7),)),ROTATE_RIGHT3)",
+                    "(((((,R(1),),B(2),(,R(3),)),R(4),(,B(5),)),B(6),(,B(7),)),COLOR2|3)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(9),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(9, false)
+                    )
+                ),
+                Arrays.asList(
+                    "(,REMOVE9)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(10,8,12,7,9,11,13,6,5),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(4, true)
+                    )
+                ),
+                Arrays.asList(
+                    "((((((,R(4),),R(5),),B(6),(,R(7),)),R(8),(,B(9),)),B(10),((,R(11),),B(12),(,R(13),))),ADD4)",
+                    "((((((,R(4),),B(5),),R(6),(,B(7),)),R(8),(,B(9),)),B(10),((,R(11),),B(12),(,R(13),))),COLOR5|6|7)",
+                    "(((((,R(4),),B(5),),R(6),(,B(7),)),R(8),((,B(9),),B(10),((,R(11),),B(12),(,R(13),)))),ROTATE_RIGHT10)",
+                    "(((((,R(4),),B(5),),R(6),(,B(7),)),B(8),((,B(9),),R(10),((,R(11),),B(12),(,R(13),)))),COLOR8|10)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(
+                    new ArrayDeque<TreeOperation<Integer>>(
+                        List.of(
+                            new TreeOperation<Integer>(6, true),
+                            new TreeOperation<Integer>(3, true),
+                            new TreeOperation<Integer>(8, true),
+                            new TreeOperation<Integer>(2, true),
+                            new TreeOperation<Integer>(4, true),
+                            new TreeOperation<Integer>(7, true),
+                            new TreeOperation<Integer>(9, true),
+                            new TreeOperation<Integer>(1, true),
+                            new TreeOperation<Integer>(5, true),
+                            new TreeOperation<Integer>(1, false),
+                            new TreeOperation<Integer>(5, false),
+                            new TreeOperation<Integer>(7, false),
+                            new TreeOperation<Integer>(9, false)
+                        )
+                    )
+                ),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(8, false)
+                    )
+                ),
+                Arrays.asList(
+                    "((((,B(2),),R(3),(,B(4),)),B(6),(,B()B,)),REMOVE8)",
+                    "(((,B(2),),R(3),((,B(4),),B(6),(,B()B,))),ROTATE_RIGHT6)",
+                    "(((,B(2),),B(3),((,B(4),),R(6),(,B()B,))),COLOR3|6)",
+                    "(((,B(2),),B(3),((,R(4),),R(6)B,)),COLOR4)",
+                    "(((,B(2),),B(3),((,R(4),),B(6),)),COLOR6)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(3,5),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(4, true)
+                    )
+                ),
+                Arrays.asList(
+                    "((,B(3),((,R(4),),R(5),)),ADD4)",
+                    "((,B(3),(,R(4),(,R(5),))),ROTATE_RIGHT5)",
+                    "(((,B(3),),R(4),(,R(5),)),ROTATE_LEFT3)",
+                    "(((,R(3),),B(4),(,R(5),)),COLOR3|4)"
+                )
+            },
+            {
+                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(
+                    new ArrayDeque<TreeOperation<Integer>>(
+                        List.of(
+                            new TreeOperation<Integer>(5, true),
+                            new TreeOperation<Integer>(3, true),
+                            new TreeOperation<Integer>(6, true),
+                            new TreeOperation<Integer>(2, true),
+                            new TreeOperation<Integer>(4, true),
+                            new TreeOperation<Integer>(2, false),
+                            new TreeOperation<Integer>(4, false)
+                        )
+                    )
+                ),
+                new ArrayDeque<TreeOperation<Integer>>(
+                    Arrays.asList(
+                        new TreeOperation<Integer>(3, false)
+                    )
+                ),
+                Arrays.asList(
+                    "(((,B()B,),B(5),(,B(6),)),REMOVE3)",
+                    "((,B(5),(,R(6),)),COLOR6)"
+                )
+            }
+        };
+    }
+
+    @Test(dataProvider = "rbtreeData")
+    public void rbtreeTest(
+        final RedBlackTree<Integer> tree,
+        final Deque<TreeOperation<Integer>> operations,
+        final List<String> expectedStructures
+    ) {
+        final BinaryTreeSteps<Integer> steps = RedBlackTreeAlgorithm.redBlackTree(tree, operations);
+        Assert.assertEquals(steps.stream().map(Pair::toString).toList(), expectedStructures);
+    }
+
 }

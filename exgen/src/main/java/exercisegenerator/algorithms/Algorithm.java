@@ -54,8 +54,8 @@ public enum Algorithm {
         BreadthFirstSearch.INSTANCE
     ),
 
-    BSTREE(
-        "bstree",
+    BIN_SEARCH_TREE(
+        "binsearchtree",
         "Binary Search Tree",
         new String[] {
             "Insertion and deletion in a binary search tree.",
@@ -478,8 +478,8 @@ public enum Algorithm {
     /**
      * Insertion and deletion in Red-Black-trees with int values.
      */
-    RBTREE(
-        "rbtree",
+    RED_BLACK_TREE(
+        "redblacktree",
         "Rot-Schwarz-Baum",
         new String[] {
             "Insertion and deletion of keys in a Red-Black-Tree.",

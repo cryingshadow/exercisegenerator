@@ -133,11 +133,11 @@ public class BinaryTreeNode<T extends Comparable<T>> {
             }
             final T min = this.rightChild.get().getMin();
             final BinaryTreeNodeSteps<T> minSteps = this.rightChild.get().removeWithSteps(min);
-            final Optional<? extends BinaryTreeNode<T>> minRightChild = minSteps.get(minSteps.size() - 1).x;
+            final Optional<? extends BinaryTreeNode<T>> minRightChild = minSteps.getLast().x;
             result.addAll(this.asRightChildren(minSteps));
             result.add(
                 new BinaryTreeNodeAndStep<T>(
-                    this.nodeFactory.create(min, this.leftChild, minRightChild),
+                    this.replace(min, this.leftChild, minRightChild),
                     new BinaryTreeStep<T>(BinaryTreeStepType.REPLACE, value)
                 )
             );
@@ -198,7 +198,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return String.format(
             "(%s,%s,%s)",
             this.leftChild.isEmpty() ? "" : this.leftChild.get().toString(),
-            this.value.toString(),
+            this.valueToString(),
             this.rightChild.isEmpty() ? "" : this.rightChild.get().toString()
         );
     }
@@ -207,10 +207,10 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         final StringBuilder result = new StringBuilder();
         if (this.leftChild.isEmpty() && this.rightChild.isEmpty()) {
             result.append(" ");
-            result.append(this.value);
+            result.append(this.valueToTikZ());
         } else {
             result.append(" [.");
-            result.append(this.value);
+            result.append(this.valueToTikZ());
             if (this.leftChild.isPresent()) {
                 result.append(this.leftChild.get().toTikZ());
             } else {
@@ -279,6 +279,14 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return Optional.empty();
     }
 
+    BinaryTreeNode<T> replace(
+        final T value,
+        final Optional<? extends BinaryTreeNode<T>> leftChild,
+        final Optional<? extends BinaryTreeNode<T>> rightChild
+    ) {
+        return this.nodeFactory.create(value, leftChild, rightChild);
+    }
+
     BinaryTreeNodeSteps<T> rotateLeft() {
         return new BinaryTreeNodeSteps<T>(
             this.rotationLeft(),
@@ -299,6 +307,14 @@ public class BinaryTreeNode<T extends Comparable<T>> {
 
     BinaryTreeNode<T> rotationRight() {
         return this.leftChild.get().setRightChild(this.setLeftChild(this.leftChild.get().rightChild));
+    }
+
+    String valueToString() {
+        return this.value.toString();
+    }
+
+    String valueToTikZ() {
+        return this.value.toString();
     }
 
     private LinkedList<? extends T> getLeft(final Collection<? extends T> values) {

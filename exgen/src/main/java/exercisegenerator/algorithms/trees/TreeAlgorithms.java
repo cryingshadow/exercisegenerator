@@ -17,6 +17,24 @@ abstract class TreeAlgorithms {
     static final BinaryTreeFactory<Integer> BINARY_TREE_FACTORY =
         new BinaryTreeFactory<Integer>(new BinaryTreeNodeFactory<Integer>());
 
+    static final BinaryTreeFactory<Integer> RED_BLACK_TREE_FACTORY =
+        new RedBlackTreeFactory<Integer>(new RedBlackTreeNodeFactory<Integer>());
+
+    static <T extends Comparable<T>> BinaryTreeSteps<T> binaryTreeAlgorithm(
+        final BinaryTree<T> tree,
+        final Deque<TreeOperation<T>> tasks
+    ) {
+        final BinaryTreeSteps<T> result = new BinaryTreeSteps<T>();
+        BinaryTree<T> currentTree = tree;
+        for (final TreeOperation<T> task : tasks) {
+            result.addAll(
+                task.add ? currentTree.addWithSteps(task.value) : currentTree.removeWithSteps(task.value)
+            );
+            currentTree = result.getLast().x;
+        }
+        return result;
+    }
+
     static Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> generateConstructionAndTasks(
         final Parameters options
     ) {
@@ -197,7 +215,7 @@ abstract class TreeAlgorithms {
         final int height = tree.getHeight();
         final int newStepCounter = TreeAlgorithms.printVerticalSpaceAndReturnStepCounter(stepCounter, height, writer);
         TreeAlgorithms.printSamePageBeginning(height, headline, writer);
-        LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        LaTeXUtils.printTikzBeginning(tree.getTikZStyle(), writer);
         writer.write(tree.toTikZ());
         Main.newLine(writer);
         LaTeXUtils.printTikzEnd(writer);

@@ -15,15 +15,7 @@ public class BinarySearchTreeAlgorithm implements AlgorithmImplementation {
         final BinaryTree<T> tree,
         final Deque<TreeOperation<T>> tasks
     ) {
-        final BinaryTreeSteps<T> result = new BinaryTreeSteps<T>();
-        BinaryTree<T> currentTree = tree;
-        for (final TreeOperation<T> task : tasks) {
-            result.addAll(
-                task.add ? currentTree.addWithSteps(task.value) : currentTree.removeWithSteps(task.value)
-            );
-            currentTree = result.getLast().x;
-        }
-        return result;
+        return TreeAlgorithms.binaryTreeAlgorithm(tree, tasks);
     }
 
     private BinarySearchTreeAlgorithm() {

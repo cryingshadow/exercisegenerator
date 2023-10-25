@@ -10,4 +10,9 @@ public class TreeOperation<T extends Comparable<T>> {
         this.add = add;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s%s", this.value.toString(), this.add ? "+" : "-");
+    }
+
 }
