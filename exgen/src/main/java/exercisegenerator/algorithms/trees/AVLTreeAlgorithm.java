@@ -13,13 +13,13 @@ public class AVLTreeAlgorithm implements AlgorithmImplementation {
 
     public static <T extends Comparable<T>> BinaryTreeSteps<T> avltree(
         final AVLTree<T> tree,
-        final Deque<Pair<T, Boolean>> tasks
+        final Deque<TreeOperation<T>> tasks
     ) {
         final BinaryTreeSteps<T> result = new BinaryTreeSteps<T>();
         AVLTree<T> currentTree = tree;
-        for (final Pair<T, Boolean> task : tasks) {
+        for (final TreeOperation<T> task : tasks) {
             result.addAll(
-                task.y ? currentTree.addWithSteps(task.x) : currentTree.removeWithSteps(task.x)
+                task.add ? currentTree.addWithSteps(task.value) : currentTree.removeWithSteps(task.value)
             );
             currentTree = (AVLTree<T>)result.getLast().x;
         }

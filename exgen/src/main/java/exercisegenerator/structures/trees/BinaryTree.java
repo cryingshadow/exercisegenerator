@@ -24,17 +24,13 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
 
     public BinaryTreeSteps<T> addWithSteps(final T value) {
         if (this.isEmpty()) {
-            return new BinaryTreeSteps<T>(
-                this.treeFactory.create(value),
-                new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value)
-            );
+            final BinaryTree<T> tree = this.treeFactory.create(value);
+            final BinaryTreeSteps<T> result =
+                new BinaryTreeSteps<T>(tree, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
+            result.addAll(this.toBinaryTreeSteps(tree.root.get().balanceWithSteps()));
+            return result;
         }
-        return this.root
-            .get()
-            .addWithSteps(value)
-            .stream()
-            .map(pair -> new BinaryTreeAndStep<T>(this.treeFactory.create(pair.x), pair.y))
-            .collect(Collectors.toCollection(BinaryTreeSteps::new));
+        return this.toBinaryTreeSteps(this.root.get().addWithSteps(value));
     }
 
     public boolean contains(final T value) {
@@ -103,12 +99,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         if (this.isEmpty()) {
             return new BinaryTreeSteps<T>(this, new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value));
         }
-        return this.root
-            .get()
-            .removeWithSteps(value)
-            .stream()
-            .map(pair -> new BinaryTreeAndStep<T>(this.treeFactory.create(pair.x), pair.y))
-            .collect(Collectors.toCollection(BinaryTreeSteps::new));
+        return this.toBinaryTreeSteps(this.root.get().removeWithSteps(value));
     }
 
     public int size() {
@@ -149,6 +140,13 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
             rootNode.visit(visitor);
         }
         visitor.onBackFromRoot();
+    }
+
+    private BinaryTreeSteps<T> toBinaryTreeSteps(final BinaryTreeNodeSteps<T> steps) {
+        return steps
+            .stream()
+            .map(pair -> new BinaryTreeAndStep<T>(this.treeFactory.create(pair.x), pair.y))
+            .collect(Collectors.toCollection(BinaryTreeSteps::new));
     }
 
 }

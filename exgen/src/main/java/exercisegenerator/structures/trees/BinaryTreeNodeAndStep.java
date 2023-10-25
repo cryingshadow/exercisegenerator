@@ -5,7 +5,7 @@ import java.util.*;
 import exercisegenerator.structures.*;
 
 public class BinaryTreeNodeAndStep<T extends Comparable<T>>
-extends Pair<Optional<BinaryTreeNode<T>>, BinaryTreeStep<T>> {
+extends Pair<Optional<? extends BinaryTreeNode<T>>, BinaryTreeStep<T>> {
 
     private static final long serialVersionUID = 4717977696974699847L;
 
@@ -13,7 +13,7 @@ extends Pair<Optional<BinaryTreeNode<T>>, BinaryTreeStep<T>> {
         super(Optional.of(node), step);
     }
 
-    public BinaryTreeNodeAndStep(final Optional<BinaryTreeNode<T>> node, final BinaryTreeStep<T> step) {
+    public BinaryTreeNodeAndStep(final Optional<? extends BinaryTreeNode<T>> node, final BinaryTreeStep<T> step) {
         super(node, step);
     }
 

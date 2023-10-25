@@ -17,16 +17,16 @@ abstract class TreeAlgorithms {
     static final BinaryTreeFactory<Integer> BINARY_TREE_FACTORY =
         new BinaryTreeFactory<Integer>(new BinaryTreeNodeFactory<Integer>());
 
-    static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> generateConstructionAndTasks(
+    static Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> generateConstructionAndTasks(
         final Parameters options
     ) {
-        return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
+        return new Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>(
             TreeAlgorithms.generateTasks(options),
             TreeAlgorithms.generateConstruction(options)
         );
     }
 
-    static Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> parseConstructionAndTasks(
+    static Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> parseConstructionAndTasks(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
@@ -34,13 +34,13 @@ abstract class TreeAlgorithms {
         if (parts.length != 2) {
             throw new IllegalArgumentException("Input must contain exactly two parts: construction and tasks!");
         }
-        return new Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>(
+        return new Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>(
             TreeAlgorithms.parseOperations(parts[0].split(",")),
             TreeAlgorithms.parseOperations(parts[1].split(","))
         );
     }
 
-    static Deque<Pair<Integer, Boolean>> parseOrGenerateConstruction(
+    static Deque<TreeOperation<Integer>> parseOrGenerateConstruction(
         final String line,
         final Parameters options
     ) {
@@ -56,14 +56,14 @@ abstract class TreeAlgorithms {
             nums = reader.readLine().split(",");
         } catch (final IOException e) {
             e.printStackTrace();
-            return new ArrayDeque<Pair<Integer, Boolean>>();
+            return new ArrayDeque<TreeOperation<Integer>>();
         }
         return TreeAlgorithms.parseOperations(nums);
     }
 
-    static Deque<Pair<Integer, Boolean>> parseOrGenerateTasks(final Parameters options)
+    static Deque<TreeOperation<Integer>> parseOrGenerateTasks(final Parameters options)
     throws IOException {
-        return new ParserAndGenerator<Deque<Pair<Integer, Boolean>>>(
+        return new ParserAndGenerator<Deque<TreeOperation<Integer>>>(
             TreeAlgorithms::parseTasks,
             TreeAlgorithms::generateTasks
         ).getResult(options);
@@ -72,10 +72,10 @@ abstract class TreeAlgorithms {
     static void treeAlgorithm(
         final AlgorithmInput input,
         final BinaryTreeFactory<Integer> factory,
-        final BiFunction<BinaryTree<Integer>, Deque<Pair<Integer, Boolean>>, BinaryTreeSteps<Integer>> algorithm
+        final BiFunction<BinaryTree<Integer>, Deque<TreeOperation<Integer>>, BinaryTreeSteps<Integer>> algorithm
     ) throws IOException {
-        final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =
-            new ParserAndGenerator<Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>>(
+        final Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> constructionAndTasks =
+            new ParserAndGenerator<Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>>(
                 TreeAlgorithms::parseConstructionAndTasks,
                 TreeAlgorithms::generateConstructionAndTasks
             ).getResult(input.options);
@@ -85,24 +85,24 @@ abstract class TreeAlgorithms {
         TreeAlgorithms.printTreeSolution(steps, input.solutionWriter);
     }
 
-    private static Deque<Pair<Integer, Boolean>> generateConstruction(final Parameters options) {
+    private static Deque<TreeOperation<Integer>> generateConstruction(final Parameters options) {
         final Random gen = new Random();
         final int length = gen.nextInt(20) + 1;
-        final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
+        final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         final List<Integer> in = new ArrayList<Integer>();
         for (int i = 0; i < length; i++) {
             if (in.isEmpty() || gen.nextInt(3) > 0) {
                 final int next = gen.nextInt(Main.NUMBER_LIMIT);
-                deque.offer(new Pair<Integer, Boolean>(next, true));
+                deque.offer(new TreeOperation<Integer>(next, true));
                 in.add(next);
             } else {
-                deque.offer(new Pair<Integer, Boolean>(in.remove(gen.nextInt(in.size())), false));
+                deque.offer(new TreeOperation<Integer>(in.remove(gen.nextInt(in.size())), false));
             }
         }
         return deque;
     }
 
-    private static Deque<Pair<Integer, Boolean>> generateTasks(final Parameters options) {
+    private static Deque<TreeOperation<Integer>> generateTasks(final Parameters options) {
         final int length;
         final Random gen = new Random();
         if (options.containsKey(Flag.LENGTH)) {
@@ -110,7 +110,7 @@ abstract class TreeAlgorithms {
         } else {
             length = gen.nextInt(16) + 5;
         }
-        final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
+        final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         final List<Integer> in = new ArrayList<Integer>();
         for (int i = 0; i < length; i++) {
             if (
@@ -119,10 +119,10 @@ abstract class TreeAlgorithms {
                 || gen.nextInt(3) > 0
             ) {
                 final int next = gen.nextInt(Main.NUMBER_LIMIT);
-                deque.offer(new Pair<Integer, Boolean>(next, true));
+                deque.offer(new TreeOperation<Integer>(next, true));
                 in.add(next);
             } else {
-                deque.offer(new Pair<Integer, Boolean>(in.remove(gen.nextInt(in.size())), false));
+                deque.offer(new TreeOperation<Integer>(in.remove(gen.nextInt(in.size())), false));
             }
         }
         return deque;
@@ -138,23 +138,23 @@ abstract class TreeAlgorithms {
         return height;
     }
 
-    private static Deque<Pair<Integer, Boolean>> parseOperations(final String[] operations) {
-        final Deque<Pair<Integer, Boolean>> deque = new ArrayDeque<Pair<Integer, Boolean>>();
+    private static Deque<TreeOperation<Integer>> parseOperations(final String[] operations) {
+        final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         for (final String num : operations) {
             if (num.isBlank()) {
                 continue;
             }
             final String stripped = num.strip();
             if (stripped.startsWith("~")) {
-                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(stripped.substring(1)), false));
+                deque.offer(new TreeOperation<Integer>(Integer.parseInt(stripped.substring(1)), false));
             } else {
-                deque.offer(new Pair<Integer, Boolean>(Integer.parseInt(stripped), true));
+                deque.offer(new TreeOperation<Integer>(Integer.parseInt(stripped), true));
             }
         }
         return deque;
     }
 
-    private static Deque<Pair<Integer, Boolean>> parseTasks(final BufferedReader reader, final Parameters options)
+    private static Deque<TreeOperation<Integer>> parseTasks(final BufferedReader reader, final Parameters options)
     throws IOException {
         final String[] nums = reader.readLine().split(",");
         return TreeAlgorithms.parseOperations(nums);
@@ -208,7 +208,7 @@ abstract class TreeAlgorithms {
 
     private static void printTreeExercise(
         final BinaryTree<Integer> tree,
-        final Deque<Pair<Integer, Boolean>> tasks,
+        final Deque<TreeOperation<Integer>> tasks,
         final BufferedWriter writer
     ) throws IOException {
         if (tasks.size() > 1) {
@@ -233,27 +233,27 @@ abstract class TreeAlgorithms {
                 Main.newLine(writer);
             }
             LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
-            for (final Pair<Integer, Boolean> task : tasks) {
-                if (task.y) {
+            for (final TreeOperation<Integer> task : tasks) {
+                if (task.add) {
                     writer.write(LaTeXUtils.ITEM);
                     writer.write(" ");
-                    writer.write(String.valueOf(task.x));
+                    writer.write(String.valueOf(task.value));
                     writer.write(" einf\\\"ugen\\\\");
                 } else {
                     writer.write(LaTeXUtils.ITEM);
                     writer.write(" ");
-                    writer.write(String.valueOf(task.x));
+                    writer.write(String.valueOf(task.value));
                     writer.write(" l\\\"oschen\\\\");
                 }
                 Main.newLine(writer);
             }
             LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writer);
         } else {
-            final Pair<Integer, Boolean> op = tasks.peek();
+            final TreeOperation<Integer> op = tasks.peek();
             if (tree.isEmpty()) {
-                if (op.y) {
+                if (op.add) {
                     writer.write("F\\\"ugen Sie den Wert ");
-                    writer.write(String.valueOf(op.x));
+                    writer.write(String.valueOf(op.value));
                     writer.write(" in einen leeren \\emphasize{");
                     writer.write(tree.getName());
                     writer.write("} ein und geben Sie die entstehenden B\\\"aume nach jeder ");
@@ -263,9 +263,9 @@ abstract class TreeAlgorithms {
                     throw new IllegalArgumentException("Deleting a value from an empty tree makes no sense!");
                 }
             } else {
-                if (op.y) {
+                if (op.add) {
                     writer.write("F\\\"ugen Sie den Wert ");
-                    writer.write(String.valueOf(op.x));
+                    writer.write(String.valueOf(op.value));
                     writer.write(" in den folgenden \\emphasize{");
                     writer.write(tree.getName());
                     writer.write("} ein und geben Sie die entstehenden B\\\"aume nach jeder ");
@@ -273,7 +273,7 @@ abstract class TreeAlgorithms {
                     writer.write(" an:\\\\");
                 } else {
                     writer.write("L\\\"oschen Sie den Wert ");
-                    writer.write(String.valueOf(op.x));
+                    writer.write(String.valueOf(op.value));
                     writer.write(" aus dem folgenden \\emphasize{");
                     writer.write(tree.getName());
                     writer.write("} und geben Sie die entstehenden B\\\"aume nach jeder ");

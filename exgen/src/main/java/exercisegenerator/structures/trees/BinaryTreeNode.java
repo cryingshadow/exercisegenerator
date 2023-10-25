@@ -10,7 +10,7 @@ public class BinaryTreeNode<T extends Comparable<T>> {
     }
 
     private static <T extends Comparable<T>> void addBalanceSteps(final BinaryTreeNodeSteps<T> steps) {
-        final Optional<BinaryTreeNode<T>> lastNode = steps.getLast().x;
+        final Optional<? extends BinaryTreeNode<T>> lastNode = steps.getLast().x;
         steps.addAll(lastNode.isEmpty() ? Collections.emptyList() : lastNode.get().balanceWithSteps());
     }
 
@@ -66,10 +66,6 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return result;
     }
 
-    public BinaryTreeNodeSteps<T> balanceWithSteps() {
-        return new BinaryTreeNodeSteps<T>();
-    }
-
     public boolean containsAll(final Collection<? extends T> values) {
         if (values.isEmpty()) {
             return true;
@@ -112,26 +108,32 @@ public class BinaryTreeNode<T extends Comparable<T>> {
                 if (this.rightChild.isEmpty()) {
                     return
                         new BinaryTreeNodeSteps<T>(
-                            Optional.empty(),
+                            this.removeToEmpty(),
                             new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
                         );
                 }
-                return
-                    new BinaryTreeNodeSteps<T>(
-                        this.rightChild.get(),
+                result.add(
+                    new BinaryTreeNodeAndStep<T>(
+                        this.removeByReplace(this.rightChild.get()),
                         new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
-                    );
+                    )
+                );
+                BinaryTreeNode.addBalanceSteps(result);
+                return result;
             }
             if (this.rightChild.isEmpty()) {
-                return
-                    new BinaryTreeNodeSteps<T>(
-                        this.leftChild.get(),
+                result.add(
+                    new BinaryTreeNodeAndStep<T>(
+                        this.removeByReplace(this.leftChild.get()),
                         new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value)
-                    );
+                    )
+                );
+                BinaryTreeNode.addBalanceSteps(result);
+                return result;
             }
             final T min = this.rightChild.get().getMin();
             final BinaryTreeNodeSteps<T> minSteps = this.rightChild.get().removeWithSteps(min);
-            final Optional<BinaryTreeNode<T>> minRightChild = minSteps.get(minSteps.size() - 1).x;
+            final Optional<? extends BinaryTreeNode<T>> minRightChild = minSteps.get(minSteps.size() - 1).x;
             result.addAll(this.asRightChildren(minSteps));
             result.add(
                 new BinaryTreeNodeAndStep<T>(
@@ -261,8 +263,42 @@ public class BinaryTreeNode<T extends Comparable<T>> {
         return result;
     }
 
+    BinaryTreeNodeSteps<T> balanceWithSteps() {
+        return new BinaryTreeNodeSteps<T>();
+    }
+
     T getMin() {
         return this.stream().findFirst().get();
+    }
+
+    BinaryTreeNode<T> removeByReplace(final BinaryTreeNode<T> replace) {
+        return replace;
+    }
+
+    Optional<BinaryTreeNode<T>> removeToEmpty() {
+        return Optional.empty();
+    }
+
+    BinaryTreeNodeSteps<T> rotateLeft() {
+        return new BinaryTreeNodeSteps<T>(
+            this.rotationLeft(),
+            new BinaryTreeStep<T>(BinaryTreeStepType.ROTATE_LEFT, this.value)
+        );
+    }
+
+    BinaryTreeNodeSteps<T> rotateRight() {
+        return new BinaryTreeNodeSteps<T>(
+            this.rotationRight(),
+            new BinaryTreeStep<T>(BinaryTreeStepType.ROTATE_RIGHT, this.value)
+        );
+    }
+
+    BinaryTreeNode<T> rotationLeft() {
+        return this.rightChild.get().setLeftChild(this.setRightChild(this.rightChild.get().leftChild));
+    }
+
+    BinaryTreeNode<T> rotationRight() {
+        return this.leftChild.get().setRightChild(this.setLeftChild(this.leftChild.get().rightChild));
     }
 
     private LinkedList<? extends T> getLeft(final Collection<? extends T> values) {

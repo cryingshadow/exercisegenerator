@@ -7,6 +7,7 @@ import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.trees.*;
 import exercisegenerator.structures.trees.btree.*;
 
 public class BTreeAlgorithm implements AlgorithmImplementation {
@@ -29,8 +30,8 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
      */
     public static void btree(
         final int degree,
-        final Deque<Pair<Integer, Boolean>> tasks,
-        final Deque<Pair<Integer, Boolean>> construction,
+        final Deque<TreeOperation<Integer>> tasks,
+        final Deque<TreeOperation<Integer>> construction,
         final BufferedWriter writer,
         final Optional<BufferedWriter> optionalWriterSpace
     ) throws IOException {
@@ -39,11 +40,11 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
         }
         BTree<Integer> tree = new BTree<Integer>(degree);
         while (!construction.isEmpty()) {
-            final Pair<Integer, Boolean> operation = construction.poll();
-            if (operation.y) {
-                tree = tree.addWithSteps(operation.x).getLast().x;
+            final TreeOperation<Integer> operation = construction.poll();
+            if (operation.add) {
+                tree = tree.addWithSteps(operation.value).getLast().x;
             } else {
-                tree = tree.removeWithSteps(operation.x).getLast().x;
+                tree = tree.removeWithSteps(operation.value).getLast().x;
             }
         }
         if (optionalWriterSpace.isPresent()) {
@@ -79,21 +80,21 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
-                for (final Pair<Integer, Boolean> task : tasks) {
-                    if (task.y) {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " einf\\\"ugen\\\\");
+                for (final TreeOperation<Integer> task : tasks) {
+                    if (task.add) {
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.value + " einf\\\"ugen\\\\");
                     } else {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " l\\\"oschen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.value + " l\\\"oschen\\\\");
                     }
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writerSpace);
             } else {
-                final Pair<Integer, Boolean> task = tasks.peek();
+                final TreeOperation<Integer> task = tasks.peek();
                 if (tree.isEmpty()) {
-                    if (task.y) {
+                    if (task.add) {
                         writerSpace.write("F\\\"ugen Sie den Wert ");
-                        writerSpace.write(String.valueOf(task.x));
+                        writerSpace.write(String.valueOf(task.value));
                         writerSpace.write(" in einen leeren \\emphasize{B-Baum} mit Grad $t = ");
                         writerSpace.write(String.valueOf(degree));
                         writerSpace.write("$ ein und geben Sie die dabei entstehenden B\\\"aume nach jeder ");
@@ -103,7 +104,7 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
                         writerSpace.write("an.");
                     } else {
                         writerSpace.write("L\\\"oschen Sie den Wert ");
-                        writerSpace.write(String.valueOf(task.x));
+                        writerSpace.write(String.valueOf(task.value));
                         writerSpace.write(" aus einem leeren \\emphasize{B-Baum} mit Grad $t = ");
                         writerSpace.write(String.valueOf(degree));
                         writerSpace.write("$ und geben Sie die dabei entstehenden B\\\"aume nach jeder ");
@@ -113,9 +114,9 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
                         writerSpace.write("an.");
                     }
                 } else {
-                    if (task.y) {
+                    if (task.add) {
                         writerSpace.write("F\\\"ugen Sie den Wert ");
-                        writerSpace.write(String.valueOf(task.x));
+                        writerSpace.write(String.valueOf(task.value));
                         writerSpace.write(" in den folgenden \\emphasize{B-Baum} mit Grad $t = ");
                         writerSpace.write(String.valueOf(degree));
                         writerSpace.write("$ ein und geben Sie die dabei entstehenden B\\\"aume nach jeder ");
@@ -125,7 +126,7 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
                         writerSpace.write("an:");
                     } else {
                         writerSpace.write("L\\\"oschen Sie den Wert ");
-                        writerSpace.write(String.valueOf(task.x));
+                        writerSpace.write(String.valueOf(task.value));
                         writerSpace.write(" aus dem folgenden \\emphasize{B-Baum} mit Grad $t = ");
                         writerSpace.write(String.valueOf(degree));
                         writerSpace.write("$ und geben Sie die dabei entstehenden B\\\"aume nach jeder ");
@@ -148,8 +149,8 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
         }
         int stepCounter = 1;
         while (!tasks.isEmpty()) {
-            final Pair<Integer, Boolean> task = tasks.poll();
-            final BTreeSteps<Integer> steps = task.y ? tree.addWithSteps(task.x) : tree.removeWithSteps(task.x);
+            final TreeOperation<Integer> task = tasks.poll();
+            final BTreeSteps<Integer> steps = task.add ? tree.addWithSteps(task.value) : tree.removeWithSteps(task.value);
             for (final BTreeAndStep<Integer> step : steps) {
                 LaTeXUtils.printSamePageBeginning(stepCounter++, LaTeXUtils.COL_WIDTH, writer);
                 writer.write(step.y.toLaTeX());
@@ -170,8 +171,8 @@ public class BTreeAlgorithm implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =
-            new ParserAndGenerator<Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>>(
+        final Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> constructionAndTasks =
+            new ParserAndGenerator<Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>>(
                 TreeAlgorithms::parseConstructionAndTasks,
                 TreeAlgorithms::generateConstructionAndTasks
             ).getResult(input.options);

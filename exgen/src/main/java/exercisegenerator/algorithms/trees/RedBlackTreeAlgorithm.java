@@ -26,8 +26,8 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
      */
     public static void rbtree(
         final IntRBTree tree,
-        final Deque<Pair<Integer, Boolean>> tasks,
-        final Deque<Pair<Integer, Boolean>> construction,
+        final Deque<TreeOperation<Integer>> tasks,
+        final Deque<TreeOperation<Integer>> construction,
         final BufferedWriter writer,
         final Optional<BufferedWriter> optionalWriterSpace
     ) throws IOException {
@@ -35,11 +35,11 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
             return;
         }
         while (!construction.isEmpty()) {
-            final Pair<Integer, Boolean> operation = construction.poll();
-            if (operation.y) {
-                tree.rbInsert(operation.x, writer, false);
+            final TreeOperation<Integer> operation = construction.poll();
+            if (operation.add) {
+                tree.rbInsert(operation.value, writer, false);
             } else {
-                final RBNode toRemove = tree.find(operation.x);
+                final RBNode toRemove = tree.find(operation.value);
                 if (toRemove != null) {
                     tree.remove(toRemove, writer, false);
                 }
@@ -75,20 +75,20 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writerSpace);
-                for (final Pair<Integer, Boolean> task : tasks) {
-                    if (task.y) {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " einf\\\"ugen\\\\");
+                for (final TreeOperation<Integer> task : tasks) {
+                    if (task.add) {
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.value + " einf\\\"ugen\\\\");
                     } else {
-                        writerSpace.write(LaTeXUtils.ITEM + " " + task.x + " l\\\"oschen\\\\");
+                        writerSpace.write(LaTeXUtils.ITEM + " " + task.value + " l\\\"oschen\\\\");
                     }
                     Main.newLine(writerSpace);
                 }
                 LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writerSpace);
             } else {
-                final Pair<Integer, Boolean> task = tasks.peek();
+                final TreeOperation<Integer> task = tasks.peek();
                 if (tree.isEmpty()) {
-                    if (task.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + task.x);
+                    if (task.add) {
+                        writerSpace.write("F\\\"ugen Sie den Wert " + task.value);
                         writerSpace.write(" in einen leeren \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
                         Main.newLine(writerSpace);
@@ -108,8 +108,8 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
                         throw new IllegalArgumentException("Deletion from an empty tree makes no sense!");
                     }
                 } else {
-                    if (task.y) {
-                        writerSpace.write("F\\\"ugen Sie den Wert " + task.x);
+                    if (task.add) {
+                        writerSpace.write("F\\\"ugen Sie den Wert " + task.value);
                         writerSpace.write(" in den folgenden \\emphasize{Rot-Schwarz-Baum} ein und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
                         Main.newLine(writerSpace);
@@ -126,7 +126,7 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
                         writerSpace.write(note);
                         writerSpace.write("\\\\[2ex]");
                     } else {
-                        writerSpace.write("L\\\"oschen Sie den Wert " + task.x);
+                        writerSpace.write("L\\\"oschen Sie den Wert " + task.value);
                         writerSpace.write(" aus dem folgenden \\emphasize{Rot-Schwarz-Baum} und geben Sie die ");
                         writerSpace.write("entstehenden B\\\"aume nach");
                         Main.newLine(writerSpace);
@@ -152,15 +152,15 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
         }
         tree.resetStepCounter();
         while (!tasks.isEmpty()) {
-            final Pair<Integer, Boolean> task = tasks.poll();
-            if (task.y) {
-                tree.rbInsert(task.x, writer, true);
+            final TreeOperation<Integer> task = tasks.poll();
+            if (task.add) {
+                tree.rbInsert(task.value, writer, true);
             } else {
-                final RBNode toRemove = tree.find(task.x);
+                final RBNode toRemove = tree.find(task.value);
                 if (toRemove != null) {
                     tree.remove(toRemove, writer, true);
                 } else {
-                    tree.print(task.x + " kommt nicht vor", writer);
+                    tree.print(task.value + " kommt nicht vor", writer);
                 }
             }
         }
@@ -170,8 +170,8 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>> constructionAndTasks =
-            new ParserAndGenerator<Pair<Deque<Pair<Integer, Boolean>>, Deque<Pair<Integer, Boolean>>>>(
+        final Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> constructionAndTasks =
+            new ParserAndGenerator<Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>>(
                 TreeAlgorithms::parseConstructionAndTasks,
                 TreeAlgorithms::generateConstructionAndTasks
             ).getResult(input.options);

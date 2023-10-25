@@ -14,7 +14,7 @@ public class BinaryTreeNodeSteps<T extends Comparable<T>> extends LinkedList<Bin
         super(Collections.singleton(new BinaryTreeNodeAndStep<T>(node, step)));
     }
 
-    public BinaryTreeNodeSteps(final Optional<BinaryTreeNode<T>> node, final BinaryTreeStep<T> step) {
+    public BinaryTreeNodeSteps(final Optional<? extends BinaryTreeNode<T>> node, final BinaryTreeStep<T> step) {
         super(Collections.singleton(new BinaryTreeNodeAndStep<T>(node, step)));
     }
 

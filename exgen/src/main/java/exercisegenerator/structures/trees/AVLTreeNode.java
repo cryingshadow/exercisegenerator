@@ -22,7 +22,12 @@ public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
     }
 
     @Override
-    public BinaryTreeNodeSteps<T> balanceWithSteps() {
+    public int getHeight() {
+        return this.height;
+    }
+
+    @Override
+    BinaryTreeNodeSteps<T> balanceWithSteps() {
         final int diff = this.leftHeight() - this.rightHeight();
         if (diff < -1) {
             return this.balanceRightToLeft();
@@ -33,11 +38,6 @@ public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
         }
     }
 
-    @Override
-    public int getHeight() {
-        return this.height;
-    }
-
     int leftHeight() {
         return BinaryTreeNode.height(this.leftChild);
     }
@@ -46,10 +46,9 @@ public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
         return BinaryTreeNode.height(this.rightChild);
     }
 
+    @SuppressWarnings("unchecked")
     private BinaryTreeNodeSteps<T> balanceLeftToRight() {
-        @SuppressWarnings("unchecked")
-        final
-        AVLTreeNode<T> left = (AVLTreeNode<T>)this.leftChild.get();
+        final AVLTreeNode<T> left = (AVLTreeNode<T>)this.leftChild.get();
         if (
             left.rightChild.isEmpty() ||
             (left.leftChild.isPresent() && left.rightChild.get().getHeight() <= left.leftChild.get().getHeight())
@@ -61,8 +60,8 @@ public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     private BinaryTreeNodeSteps<T> balanceRightToLeft() {
-        @SuppressWarnings("unchecked")
         final AVLTreeNode<T> right = (AVLTreeNode<T>)this.rightChild.get();
         if (
             right.leftChild.isEmpty() ||
@@ -73,20 +72,6 @@ public class AVLTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
         final BinaryTreeNodeSteps<T> result = this.asRightChildren(right.rotateRight());
         result.addAll(((AVLTreeNode<T>)result.getLast().x.get()).rotateLeft());
         return result;
-    }
-
-    private BinaryTreeNodeSteps<T> rotateLeft() {
-        return new BinaryTreeNodeSteps<T>(
-            this.rightChild.get().setLeftChild(this.setRightChild(this.rightChild.get().leftChild)),
-            new BinaryTreeStep<T>(BinaryTreeStepType.ROTATE_LEFT, this.value)
-        );
-    }
-
-    private BinaryTreeNodeSteps<T> rotateRight() {
-        return new BinaryTreeNodeSteps<T>(
-            this.leftChild.get().setRightChild(this.setLeftChild(this.leftChild.get().rightChild)),
-            new BinaryTreeStep<T>(BinaryTreeStepType.ROTATE_RIGHT, this.value)
-        );
     }
 
 }
