@@ -218,7 +218,7 @@ public class MainTest {
                 "\\usepackage{calc}",
                 "\\usepackage{array}",
                 "\\usepackage{amsmath}",
-                "\\usepackage{enumerate}",
+                "\\usepackage{enumitem}",
                 "\\usepackage{seqsplit}",
                 "\\usepackage{multicol}",
                 "\\usepackage[output-decimal-marker={,}]{siunitx}",

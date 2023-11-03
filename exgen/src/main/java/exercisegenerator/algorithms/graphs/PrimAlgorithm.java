@@ -104,7 +104,7 @@ public class PrimAlgorithm implements AlgorithmImplementation {
         exWriter.write("Der Startknoten hat hierbei den Schl\\\"ussel " + start.label.get().toString() + ".");
         exWriter.write(" Geben Sie dazu \\emphasize{vor} jedem Durchlauf der \\\"au{\\ss}eren Schleife an,");
         Main.newLine(exWriter);
-        exWriter.write("\\begin{enumerate}[1)]");
+        exWriter.write("\\begin{enumerate}[label=\\arabic*)]");
         Main.newLine(exWriter);
         exWriter.write("    \\item welche Kosten die Randknoten haben (d.\\,h.~f\\\"ur jeden Knoten \\texttt{v} in ");
         exWriter.write("\\texttt{Q} den Wert \\texttt{key[v]})");

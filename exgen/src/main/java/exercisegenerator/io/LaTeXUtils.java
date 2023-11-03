@@ -309,7 +309,7 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         writer.write("\\usepackage{amsmath}");
         Main.newLine(writer);
-        writer.write("\\usepackage{enumerate}");
+        writer.write("\\usepackage{enumitem}");
         Main.newLine(writer);
         writer.write("\\usepackage{seqsplit}");
         Main.newLine(writer);
