@@ -1,13 +1,18 @@
 package exercisegenerator.structures.graphs;
 
-import exercisegenerator.structures.*;
+public class Edge<E, V> {
 
-public class Edge<E, V> extends Pair<E, Vertex<V>> {
+    public final E label;
 
-    private static final long serialVersionUID = -5425151288469119238L;
+    public final Vertex<V> to;
 
-    public Edge(final E edgeLabel, final Vertex<V> vertex) {
-        super(edgeLabel, vertex);
+    public Edge(final E label, final Vertex<V> to) {
+        this.label = label;
+        this.to = to;
+    }
+
+    public boolean logicallyEquals(final Edge<E, V> other) {
+        return this.label.equals(other.label) && this.to.logicallyEquals(other.to);
     }
 
 }

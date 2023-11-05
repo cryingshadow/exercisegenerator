@@ -54,6 +54,10 @@ public class Vertex<L> {
         return this.id.hashCode();
     }
 
+    public boolean logicallyEquals(final Vertex<L> otherVertex) {
+        return this.label.equals(otherVertex.label);
+    }
+
     @Override
     public String toString() {
         return String.format(

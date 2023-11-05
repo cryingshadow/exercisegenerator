@@ -35,8 +35,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             throw new IllegalArgumentException("Number of vertices must not be negative!");
         }
         final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
-        final Map<GridCoordinates, Vertex<String>> grid =
-            new LinkedHashMap<GridCoordinates, Vertex<String>>();
+        final Grid<String> grid = new Grid<String>();
         final Vertex<String> source = new Vertex<String>(Optional.of("s"));
         final Map<Vertex<String>, VertexGridPosition> positions =
             new LinkedHashMap<Vertex<String>, VertexGridPosition>();
@@ -407,8 +406,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         if (minYPos % 2 != 0) {
             xAdd++;
         }
-        final Map<GridCoordinates, Vertex<String>> newGrid =
-            new LinkedHashMap<GridCoordinates, Vertex<String>>();
+        final Grid<String> newGrid = new Grid<String>();
         for (final Entry<GridCoordinates, Vertex<String>> entry : grid.entrySet()) {
             final GridCoordinates key = entry.getKey();
             newGrid.put(new GridCoordinates(key.x + xAdd, key.y - minYPos), entry.getValue());
@@ -587,7 +585,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         final List<Edge<FlowPair, V>> list = graph.getAdjacencyList(source);
         if (list != null) {
             for (final Edge<FlowPair, V> edge : list) {
-                flow += edge.x.x;
+                flow += edge.label.x;
             }
         }
         switch (mode) {
@@ -649,18 +647,18 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             to = it.next();
             int flow = min;
             for (final Edge<FlowPair, V> edge : graph.getEdges(from, to)) {
-                final int added = Math.min(flow, edge.x.y - edge.x.x);
+                final int added = Math.min(flow, edge.label.y - edge.label.x);
                 if (added > 0) {
                     flow -= added;
-                    edge.x.x += added;
+                    edge.label.x += added;
                     toHighlight.add(new Pair<Vertex<V>, Edge<FlowPair, V>>(from, edge));
                 }
             }
             for (final Edge<FlowPair, V> edge : graph.getEdges(to, from)) {
-                final int added = Math.min(flow, edge.x.x);
+                final int added = Math.min(flow, edge.label.x);
                 if (added > 0) {
                     flow -= added;
-                    edge.x.x -= added;
+                    edge.label.x -= added;
                     toHighlight.add(new Pair<Vertex<V>, Edge<FlowPair, V>>(to, edge));
                 }
             }
@@ -686,10 +684,10 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             to = it.next();
             int flow = 0;
             for (final Edge<FlowPair, V> edge : graph.getEdges(from, to)) {
-                flow += edge.x.y - edge.x.x;
+                flow += edge.label.y - edge.label.x;
             }
             for (final Edge<FlowPair, V> edge : graph.getEdges(to, from)) {
-                flow += edge.x.x;
+                flow += edge.label.x;
             }
             if (min == null || min > flow) {
                 min = flow;
@@ -713,23 +711,25 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 continue;
             }
             for (final Edge<FlowPair, V> edge : list) {
-                final Vertex<V> target = edge.y;
-                final Integer back = edge.x.x;
+                final Vertex<V> target = edge.to;
+                final Integer back = edge.label.x;
                 if (back > 0) {
                     final Set<Edge<Integer, V>> backEdges = res.getEdges(target, vertex);
                     if (backEdges.isEmpty()) {
                         res.addEdge(target, back, vertex);
                     } else {
-                        backEdges.iterator().next().x += back;
+                        final Edge<Integer, V> backEdge = backEdges.iterator().next();
+                        res.replaceEdgeLabel(target, backEdge.label + back, vertex);
                     }
                 }
-                final Integer forth = edge.x.y - back;
+                final Integer forth = edge.label.y - back;
                 if (forth > 0) {
                     final Set<Edge<Integer, V>> forthEdges = res.getEdges(vertex, target);
                     if (forthEdges.isEmpty()) {
                         res.addEdge(vertex, forth, target);
                     } else {
-                        forthEdges.iterator().next().x += forth;
+                        final Edge<Integer, V> forthEdge = forthEdges.iterator().next();
+                        res.replaceEdgeLabel(vertex, forthEdge.label + forth, target);
                     }
                 }
             }
@@ -863,15 +863,15 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 continue;
             }
             for (final Edge<Integer, V> edge : list) {
-                if (visited.contains(edge.y)) {
+                if (visited.contains(edge.to)) {
                     continue;
                 }
                 final List<Vertex<V>> newPath = new ArrayList<Vertex<V>>(path);
-                newPath.add(edge.y);
-                if (sink.equals(edge.y)) {
+                newPath.add(edge.to);
+                if (sink.equals(edge.to)) {
                     return newPath;
                 }
-                visited.add(edge.y);
+                visited.add(edge.to);
                 queue.add(newPath);
             }
         }
@@ -897,7 +897,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         while (it.hasNext()) {
             final Vertex<V> next = it.next();
             for (final Edge<Integer, V> edge : graph.getAdjacencyList(cur)) {
-                if (edge.y.equals(next)) {
+                if (edge.to.equals(next)) {
                     res.add(new Pair<Vertex<V>, Edge<Integer, V>>(cur, edge));
                     break;
                 }

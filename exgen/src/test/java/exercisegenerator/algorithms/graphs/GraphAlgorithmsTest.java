@@ -1,11 +1,13 @@
 package exercisegenerator.algorithms.graphs;
 
 import java.util.*;
+import java.util.Optional;
 
 import org.testng.*;
 import org.testng.annotations.*;
 
 import exercisegenerator.algorithms.graphs.BellmanFordAlgorithm.*;
+import exercisegenerator.algorithms.graphs.PrimAlgorithm.*;
 import exercisegenerator.structures.graphs.*;
 
 public class GraphAlgorithmsTest {
@@ -140,7 +142,10 @@ public class GraphAlgorithmsTest {
         final Vertex<String> start,
         final List<String> expected
     ) {
-        Assert.assertEquals(BreadthFirstSearch.breadthFirstSearch(graph, start, new StringVertexComparator()), expected);
+        Assert.assertEquals(
+            BreadthFirstSearch.breadthFirstSearch(graph, start, new StringVertexComparator()),
+            expected
+        );
     }
 
     @Test(dataProvider="dfsData")
@@ -269,6 +274,77 @@ public class GraphAlgorithmsTest {
                     },
                     true
                 )
+            }
+        };
+    }
+
+    @Test(dataProvider="primData")
+    public void prim(
+        final Graph<String, Integer> graph,
+        final Vertex<String> start,
+        final Optional<Comparator<Vertex<String>>> comparator,
+        final PrimResult<String> expected
+    ) {
+        Assert.assertEquals(PrimAlgorithm.prim(graph, start, comparator), expected);
+    }
+
+    @DataProvider
+    public Object[][] primData() {
+        final Vertex<String> a = new Vertex<String>("A");
+        final Vertex<String> b = new Vertex<String>("B");
+        final Vertex<String> c = new Vertex<String>("C");
+        final Vertex<String> d = new Vertex<String>("D");
+        final Vertex<String> e = new Vertex<String>("E");
+        final Vertex<String> f = new Vertex<String>("F");
+        final Vertex<String> g = new Vertex<String>("G");
+        final AdjacencyLists<String, Integer> adjacencyLists1 = new AdjacencyLists<String, Integer>();
+        adjacencyLists1.addEdge(a, 1, b);
+        adjacencyLists1.addEdge(b, 1, a);
+        adjacencyLists1.addEdge(a, 7, d);
+        adjacencyLists1.addEdge(d, 7, a);
+        adjacencyLists1.addEdge(b, 6, c);
+        adjacencyLists1.addEdge(c, 6, b);
+        adjacencyLists1.addEdge(b, 2, e);
+        adjacencyLists1.addEdge(e, 2, b);
+        adjacencyLists1.addEdge(c, 1, f);
+        adjacencyLists1.addEdge(f, 1, c);
+        adjacencyLists1.addEdge(d, 3, e);
+        adjacencyLists1.addEdge(e, 3, d);
+        adjacencyLists1.addEdge(d, 5, g);
+        adjacencyLists1.addEdge(g, 5, d);
+        adjacencyLists1.addEdge(e, 4, f);
+        adjacencyLists1.addEdge(f, 4, e);
+        adjacencyLists1.addEdge(e, 9, g);
+        adjacencyLists1.addEdge(g, 9, e);
+        final AdjacencyLists<String, Integer> adjacencyLists2 = new AdjacencyLists<String, Integer>();
+        adjacencyLists2.addEdge(e, 2, b);
+        adjacencyLists2.addEdge(b, 2, e);
+        adjacencyLists2.addEdge(b, 1, a);
+        adjacencyLists2.addEdge(a, 1, b);
+        adjacencyLists2.addEdge(e, 3, d);
+        adjacencyLists2.addEdge(d, 3, e);
+        adjacencyLists2.addEdge(e, 4, f);
+        adjacencyLists2.addEdge(f, 4, e);
+        adjacencyLists2.addEdge(f, 1, c);
+        adjacencyLists2.addEdge(c, 1, f);
+        adjacencyLists2.addEdge(d, 5, g);
+        adjacencyLists2.addEdge(g, 5, d);
+        final PrimEntry[][] table =
+            new PrimEntry[][] {
+                {PrimAlgorithm.INFINITY,PrimAlgorithm.INFINITY,PrimAlgorithm.INFINITY,PrimAlgorithm.INFINITY,new PrimEntry(0).done(),PrimAlgorithm.INFINITY,PrimAlgorithm.INFINITY},
+                {PrimAlgorithm.INFINITY,new PrimEntry(2).done(),PrimAlgorithm.INFINITY,new PrimEntry(3),null,new PrimEntry(4),new PrimEntry(9)},
+                {new PrimEntry(1).done(),null,new PrimEntry(6),new PrimEntry(3),null,new PrimEntry(4),new PrimEntry(9)},
+                {null,null,new PrimEntry(6),new PrimEntry(3).done(),null,new PrimEntry(4),new PrimEntry(9)},
+                {null,null,new PrimEntry(6),null,null,new PrimEntry(4).done(),new PrimEntry(5)},
+                {null,null,new PrimEntry(1).done(),null,null,null,new PrimEntry(5)},
+                {null,null,null,null,null,null,new PrimEntry(5).done()},
+            };
+        return new Object[][] {
+            {
+                Graph.create(adjacencyLists1),
+                e,
+                Optional.of(new StringVertexComparator()),
+                new PrimResult<String>(table, Graph.create(adjacencyLists2))
             }
         };
     }

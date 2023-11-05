@@ -70,8 +70,8 @@ public class BellmanFordAlgorithm implements AlgorithmImplementation {
                     continue;
                 }
                 for (final Edge<Integer, V> edge : graph.getAdjacencyList(from)) {
-                    final int newDistance = distances.get(from.label.get()) + edge.x;
-                    final V toLabel = edge.y.label.get();
+                    final int newDistance = distances.get(from.label.get()) + edge.label;
+                    final V toLabel = edge.to.label.get();
                     if (!distances.containsKey(toLabel) || newDistance < distances.get(toLabel)) {
                         distances.put(toLabel, newDistance);
                         predecessors.put(toLabel, fromLabel);

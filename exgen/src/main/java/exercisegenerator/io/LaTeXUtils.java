@@ -14,49 +14,16 @@ import exercisegenerator.structures.trees.btree.*;
 
 public abstract class LaTeXUtils {
 
-    /**
-     * The name of the center environment.
-     */
     public static final String CENTER = "center";
 
-    /**
-     * The column width.
-     */
     public static final String COL_WIDTH = "\\columnwidth";
 
-    /**
-     * Style for drawing highlighted edges.
-     */
-    public static final String EDGE_HIGHLIGHT_STYLE = "[p, bend right = 10, very thick, red]";
-
-    /**
-     * Style for drawing edges.
-     */
-    public static final String EDGE_STYLE = "[p, bend right = 10]";
-
-    /**
-     * The name of the enumerate environment.
-     */
     public static final String ENUMERATE = "enumerate";
 
-    /**
-     * The item command.
-     */
     public static final String ITEM = "\\item";
 
-    /**
-     * Style for drawing symmetric edges.
-     */
-    public static final String SYM_EDGE_STYLE = "[p]";
-
-    /**
-     * A bit less than half the column width.
-     */
     public static final String TWO_COL_WIDTH = "8cm";
 
-    /**
-     * A number to uniquely identify nodes.
-     */
     private static int number = 0;
 
     public static void beginMulticols(final int cols, final BufferedWriter writer) throws IOException {
@@ -165,7 +132,7 @@ public abstract class LaTeXUtils {
      * @throws IOException If some error occurs during output.
      */
     public static <E> void printEdge(
-        final String style,
+        final TikZStyle style,
         final BigInteger from,
         final E label,
         final BigInteger to,
@@ -173,7 +140,7 @@ public abstract class LaTeXUtils {
     ) throws IOException {
         final StringBuilder res = new StringBuilder();
         res.append("\\draw");
-        res.append(style);
+        res.append(style.style);
         res.append(" (n");
         res.append(from.toString());
         res.append(") to ");

@@ -219,8 +219,7 @@ abstract class GraphAlgorithms {
             throw new IllegalArgumentException("Number of vertices must not be negative!");
         }
         final Graph<String, Integer> graph = new Graph<String, Integer>();
-        final Map<GridCoordinates, Vertex<String>> grid =
-            new LinkedHashMap<GridCoordinates, Vertex<String>>();
+        final Grid<String> grid = new Grid<String>();
         if (numOfVertices == 0) {
             graph.setGrid(grid);
             return graph;
@@ -300,8 +299,7 @@ abstract class GraphAlgorithms {
         ) {
             minX--;
         }
-        final Map<GridCoordinates, Vertex<String>> newGrid =
-            new LinkedHashMap<GridCoordinates, Vertex<String>>();
+        final Grid<String> newGrid = new Grid<String>();
         for (final Entry<GridCoordinates, Vertex<String>> entry : grid.entrySet()) {
             final GridCoordinates key = entry.getKey();
             newGrid.put(new GridCoordinates(key.x - minX, key.y - minY), entry.getValue());

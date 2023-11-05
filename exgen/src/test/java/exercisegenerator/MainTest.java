@@ -2301,6 +2301,90 @@ public class MainTest {
     }
 
     @Test
+    public void prim() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.PRIM.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "!A\n"
+                    + " A ,2|2, B \n"
+                    + "5|5, | ,3|3\n"
+                    + " C ,4|4, D "
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
+                    "\\node[node] (n1) at (0.0,1.0) {A};",
+                    "\\node[node] (n2) at (1.0,1.0) {B};",
+                    "\\node[node] (n3) at (0.0,0.0) {C};",
+                    "\\node[node] (n4) at (1.0,0.0) {D};",
+                    "\\draw[p] (n1) to node[auto, swap] {2} (n2);",
+                    "\\draw[p] (n1) to node[auto, swap] {5} (n3);",
+                    "\\draw[p] (n2) to node[auto, swap] {3} (n4);",
+                    "\\draw[p] (n3) to node[auto, swap] {4} (n4);",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "",
+                    "F\\\"uhren Sie den \\emphasize{Algorithmus von Prim} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus.",
+                    "F\\\"ullen Sie dazu die nachfolgende Tabelle aus und geben Sie den resultierenden minimalen Spannbaum an:\\\\[2ex]",
+                    "\\ifprintanswers",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\else",
+                    "\\begin{center}",
+                    "\\renewcommand{\\arraystretch}{1.5}",
+                    "\\begin{tabular}{|c|*{4}{C{7mm}|}}",
+                    "\\hline",
+                    "\\#Iteration & A & B & C & D\\\\\\hline",
+                    "1 &  &  &  & \\\\\\hline",
+                    "2 &  &  &  & \\\\\\hline",
+                    "3 &  &  &  & \\\\\\hline",
+                    "4 &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\renewcommand{\\arraystretch}{1.0}",
+                    "\\end{center}",
+                    "Minimaler Spannbaum:",
+                    "",
+                    "\\vspace*{10ex}",
+                    "",
+                    "\\fi"
+                ),
+                List.of(
+                    "\\begin{center}",
+                    "\\renewcommand{\\arraystretch}{1.5}",
+                    "\\begin{tabular}{|c|*{4}{C{7mm}|}}",
+                    "\\hline",
+                    "\\#Iteration & A & B & C & D\\\\\\hline",
+                    "1 & \\underline{0} & $\\infty$ & $\\infty$ & $\\infty$\\\\\\hline",
+                    "2 &  & \\underline{2} & 5 & $\\infty$\\\\\\hline",
+                    "3 &  &  & 5 & \\underline{3}\\\\\\hline",
+                    "4 &  &  & \\underline{4} & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\renewcommand{\\arraystretch}{1.0}",
+                    "\\end{center}",
+                    "Minimaler Spannbaum:",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
+                    "\\node[node] (n1) at (0.0,1.0) {A};",
+                    "\\node[node] (n2) at (1.0,1.0) {B};",
+                    "\\node[node] (n3) at (0.0,0.0) {C};",
+                    "\\node[node] (n4) at (1.0,0.0) {D};",
+                    "\\draw[p] (n1) to node[auto, swap] {2} (n2);",
+                    "\\draw[p] (n2) to node[auto, swap] {3} (n4);",
+                    "\\draw[p] (n3) to node[auto, swap] {4} (n4);",
+                    "\\end{tikzpicture}",
+                    "\\end{center}"
+                )
+            )
+        );
+    }
+
+    @Test
     public void quicksortStandalone() throws IOException {
         this.harness(
             new String[] {

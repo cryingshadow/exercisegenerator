@@ -78,13 +78,13 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
                 weights[current][i] = null;
             }
             for (final Edge<Integer, V> edge : graph.getAdjacencyList(currentVertex)) {
-                weights[current][ids.get(edge.y)] = edge.x;
+                weights[current][ids.get(edge.to)] = edge.label;
                 if (!warshall) {
-                    firstExercise[current+1][ids.get(edge.y)+1] = edge.x.toString();
-                    currentSolution[current+1][ids.get(edge.y)+1] = edge.x.toString();
+                    firstExercise[current + 1][ids.get(edge.to) + 1] = edge.label.toString();
+                    currentSolution[current + 1][ids.get(edge.to) + 1] = edge.label.toString();
                 } else {
-                    firstExercise[current+1][ids.get(edge.y)+1] = "true";
-                    currentSolution[current+1][ids.get(edge.y)+1] = "true";
+                    firstExercise[current + 1][ids.get(edge.to) + 1] = "true";
+                    currentSolution[current + 1][ids.get(edge.to) + 1] = "true";
 //                    System.out.println(
 //                        "Add: "
 //                        + currentVertex.getLabel()
