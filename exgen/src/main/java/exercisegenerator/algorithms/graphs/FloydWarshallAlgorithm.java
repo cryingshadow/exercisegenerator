@@ -78,10 +78,11 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
                 weights[current][i] = null;
             }
             for (final Edge<Integer, V> edge : graph.getAdjacencyList(currentVertex)) {
-                weights[current][ids.get(edge.to)] = edge.label.get();
+                final Integer edgeLabel = edge.label.get();
+                weights[current][ids.get(edge.to)] = edgeLabel;
                 if (!warshall) {
-                    firstExercise[current + 1][ids.get(edge.to) + 1] = edge.label.toString();
-                    currentSolution[current + 1][ids.get(edge.to) + 1] = edge.label.toString();
+                    firstExercise[current + 1][ids.get(edge.to) + 1] = edgeLabel.toString();
+                    currentSolution[current + 1][ids.get(edge.to) + 1] = edgeLabel.toString();
                 } else {
                     firstExercise[current + 1][ids.get(edge.to) + 1] = "true";
                     currentSolution[current + 1][ids.get(edge.to) + 1] = "true";
@@ -130,9 +131,9 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
                                 Integer.compare(
                                     weights[start][target],
                                     weights[start][intermediate] + weights[intermediate][target]
-                                    ) < 0 ?
-                                        weights[start][target] :
-                                            weights[start][intermediate] + weights[intermediate][target];
+                                ) < 0 ?
+                                    weights[start][target] :
+                                        weights[start][intermediate] + weights[intermediate][target];
                         }
                         // no else here as we can keep the old value as the path is currently infinite (null)
                     } else if (weights[start][intermediate] != null && weights[intermediate][target] != null) {

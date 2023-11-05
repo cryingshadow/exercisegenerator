@@ -2328,7 +2328,7 @@ public class MainTest {
                     "\\vspace*{-3ex}",
                     "",
                     "\\else",
-                    "Kantenreihenfolge:\\\\[7ex]",
+                    "Kantenreihenfolge:\\\\[20ex]",
                     "Minimaler Spannbaum:",
                     "",
                     "\\vspace*{10ex}",
@@ -2336,7 +2336,7 @@ public class MainTest {
                     "\\fi"
                 ),
                 List.of(
-                    "Kantenreihenfolge:\\\\",
+                    "Kantenreihenfolge:\\\\[-2ex]",
                     "\\begin{enumerate}",
                     "\\item (A, 2, B)",
                     "\\item (B, 3, D)",
