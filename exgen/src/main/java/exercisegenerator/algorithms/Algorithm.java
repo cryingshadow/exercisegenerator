@@ -17,14 +17,8 @@ import exercisegenerator.algorithms.trees.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
-/**
- * Algorithms supported by the current version. Can be used to switch on/off certain algorithms.
- */
 public enum Algorithm {
 
-    /**
-     * Insertion and deletion in AVL-trees with int values.
-     */
     AVLTREE(
         "avltree",
         "AVL-Baum",
@@ -64,9 +58,6 @@ public enum Algorithm {
         BinarySearchTreeAlgorithm.INSTANCE
     ),
 
-    /**
-     * Insertion and deletion in B-trees with int values.
-     */
     BTREE(
         "btree",
         "B-Baum",
@@ -78,9 +69,6 @@ public enum Algorithm {
         BTreeAlgorithm.INSTANCE
     ),
 
-    /**
-     * Bubblesort on Integer arrays.
-     */
     BUBBLESORT(
         "bubblesort",
         "Bubblesort",
@@ -123,9 +111,6 @@ public enum Algorithm {
         DepthFirstSearch.INSTANCE
     ),
 
-    /**
-     * Dijkstra's algorithm to find shortest paths from a single source.
-     */
     DIJKSTRA(
         "dijkstra",
         "Dijkstra Algorithmus",
@@ -136,9 +121,6 @@ public enum Algorithm {
         DijkstraAlgorithm.INSTANCE
     ),
 
-    /**
-     * Floyd's algorithm to find shortest paths from a single source.
-     */
     FLOYD(
         "floyd",
         "Floyd Algorithmus",
@@ -149,9 +131,6 @@ public enum Algorithm {
         FloydWarshallAlgorithm.INSTANCE
     ),
 
-    /**
-     * Ford-Fulkerson for flow networks.
-     */
     FORD_FULKERSON(
         "fordfulkerson",
         "Ford-Fulkerson",
@@ -255,9 +234,6 @@ public enum Algorithm {
         GaussJordanAlgorithm.INSTANCE
     ),
 
-    /**
-     * Linked hashing on Integer arrays with the division method.
-     */
     HASH_DIV(
         "hashDivision",
         "Hashing",
@@ -269,9 +245,6 @@ public enum Algorithm {
         HashingDivisionOpen.INSTANCE
     ),
 
-    /**
-     * Hashing on Integer arrays with the division method and linear probing.
-     */
     HASH_DIV_LIN(
         "hashDivisionLinear",
         "Hashing",
@@ -283,9 +256,6 @@ public enum Algorithm {
         HashingDivisionLinear.INSTANCE
     ),
 
-    /**
-     * Hashing on Integer arrays with the division method and quadratic probing.
-     */
     HASH_DIV_QUAD(
         "hashDivisionQuadratic",
         "Hashing",
@@ -297,9 +267,6 @@ public enum Algorithm {
         HashingDivisionQuadratic.INSTANCE
     ),
 
-    /**
-     * Linked hashing on Integer arrays with the multiplication method.
-     */
     HASH_MULT(
         "hashMultiplication",
         "Hashing",
@@ -312,9 +279,6 @@ public enum Algorithm {
         HashingMultiplicationOpen.INSTANCE
     ),
 
-    /**
-     * Hashing on Integer arrays with the multiplication method and linear probing.
-     */
     HASH_MULT_LIN(
         "hashMultiplicationLinear",
         "Hashing",
@@ -327,9 +291,6 @@ public enum Algorithm {
         HashingMultiplicationLinear.INSTANCE
     ),
 
-    /**
-     * Hashing on Integer arrays with the multiplication method and quadratic probing.
-     */
     HASH_MULT_QUAD(
         "hashMultiplicationQuadratic",
         "Hashing",
@@ -342,9 +303,6 @@ public enum Algorithm {
         HashingMultiplicationQuadratic.INSTANCE
     ),
 
-    /**
-     * Heapsort on Integer arrays.
-     */
     HEAPSORT(
         "heapsort",
         "Heapsort",
@@ -355,9 +313,6 @@ public enum Algorithm {
         HeapSort.INSTANCE
     ),
 
-    /**
-     * Heapsort on Integer arrays where the tree interpretation of the current array is explicitly displayed.
-     */
     HEAPSORT_TREE(
         "heapsortWithTrees",
         "Heapsort",
@@ -369,9 +324,6 @@ public enum Algorithm {
         HeapSort.INSTANCE
     ),
 
-    /**
-     * Convex hull according to Grahams' Scan.
-     */
     HULL(
         "hull",
         "Convex Hull",
@@ -382,9 +334,6 @@ public enum Algorithm {
         ConvexHullAlgorithm.INSTANCE
     ),
 
-    /**
-     * Insertionsort on Integer arrays.
-     */
     INSERTIONSORT(
         "insertionsort",
         "Insertionsort",
@@ -395,10 +344,6 @@ public enum Algorithm {
         InsertionSort.INSTANCE
     ),
 
-    /**
-     * Dynamic programming based algorithm to find the maximum value of the items fitting into a knapsack with a
-     * certain capacity.
-     */
     KNAPSACK(
         "knapsack",
         "Knapsack Problem Solved With Dynamic programming",
@@ -409,9 +354,16 @@ public enum Algorithm {
         KnapsackAlgorithm.INSTANCE
     ),
 
-    /**
-     * Dynamic programming based algorithm to find the longest common subsequence of two strings.
-     */
+    KRUSKAL(
+        "kruskal",
+        "Kruskal Algorithmus",
+        new String[] {
+            "Kruskal's algorithm to find the minimum spanning tree.",
+            "The flag -l specifies how many vertices will be added to the graph for generated instances."
+        },
+        KruskalAlgorithm.INSTANCE
+    ),
+
     LCS(
         "lcs",
         "LCS Problem Solved With Dynamic programming",
@@ -422,9 +374,6 @@ public enum Algorithm {
         false
     ),
 
-    /**
-     * Mergesort on Integer arrays.
-     */
     MERGESORT(
         "mergesort",
         "Mergesort",
@@ -435,9 +384,6 @@ public enum Algorithm {
         MergeSort.INSTANCE
     ),
 
-    /**
-     * Mergesort on Integer arrays where splitting is explicitly displayed.
-     */
     MERGESORT_SPLIT(
         "mergesortWithSplitting",
         "Mergesort",
@@ -449,9 +395,6 @@ public enum Algorithm {
         MergeSort.INSTANCE
     ),
 
-    /**
-     * Prim's algorithm to find minimum spanning trees from a single source.
-     */
     PRIM(
         "prim",
         "Prim Algorithmus",
@@ -462,9 +405,6 @@ public enum Algorithm {
         PrimAlgorithm.INSTANCE
     ),
 
-    /**
-     * Quicksort on Integer arrays.
-     */
     QUICKSORT(
         "quicksort",
         "Quicksort",
@@ -475,9 +415,6 @@ public enum Algorithm {
         QuickSort.INSTANCE
     ),
 
-    /**
-     * Insertion and deletion in Red-Black-trees with int values.
-     */
     RED_BLACK_TREE(
         "redblacktree",
         "Rot-Schwarz-Baum",
@@ -489,9 +426,6 @@ public enum Algorithm {
         RedBlackTreeAlgorithm.INSTANCE
     ),
 
-    /**
-     * Detection of strongly connected components.
-     */
     SCC(
         "scc",
         "Starke Zusammenhangskomponenten",
@@ -501,9 +435,6 @@ public enum Algorithm {
         SCCAlgorithm.INSTANCE
     ),
 
-    /**
-     * Selectionsort on Integer arrays.
-     */
     SELECTIONSORT(
         "selectionsort",
         "Selectionsort",
@@ -514,9 +445,6 @@ public enum Algorithm {
         SelectionSort.INSTANCE
     ),
 
-    /**
-     * Detection of strongly connected components using Sharir's algorithm.
-     */
     SHARIR(
         "sharir",
         "Starke Zusammenhangskomponenten finden mit Sharir's Algorithmus",
@@ -621,9 +549,6 @@ public enum Algorithm {
         VigenereEncryption.INSTANCE
     ),
 
-    /**
-     * Topological sorting of a graph.
-     */
     TOPOLOGICSORT(
         "topologicSort",
         "Topologisches Sortieren",
@@ -633,9 +558,6 @@ public enum Algorithm {
         TopologicSort.INSTANCE
     ),
 
-    /**
-     * Warshall's algorithm to find shortest paths from a single source.
-     */
     WARSHALL(
         "warshall",
         "Warshall Algorithmus",

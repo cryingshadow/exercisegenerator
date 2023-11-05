@@ -121,20 +121,10 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
     }
 
-    /**
-     * Prints a String representation of the edge from the specified from node to the specified to node with the
-     * specified label suitable for TikZ output to the specified writer.
-     * @param from The ID of the from node.
-     * @param style The edge style (may be empty, but not null).
-     * @param label The edge label (may be null).
-     * @param to The ID of the to node.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static <E> void printEdge(
         final TikZStyle style,
         final BigInteger from,
-        final E label,
+        final Optional<E> label,
         final BigInteger to,
         final BufferedWriter writer
     ) throws IOException {
@@ -144,11 +134,11 @@ public abstract class LaTeXUtils {
         res.append(" (n");
         res.append(from.toString());
         res.append(") to ");
-        res.append("node[auto, swap] {");
-        if (label != null) {
-            res.append(label.toString());
+        if (label.isPresent()) {
+            res.append("node[auto, swap] {");
+            res.append(label.get().toString());
+            res.append("} ");
         }
-        res.append("} ");
         res.append("(n");
         res.append(to.toString());
         res.append(")");

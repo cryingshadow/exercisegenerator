@@ -57,7 +57,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 positions
             );
             final int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
-            graph.addEdge(source, new FlowPair(0, value), sink);
+            graph.addEdge(source, Optional.of(new FlowPair(0, value)), sink);
             graph.setGrid(grid);
             return graph;
         }
@@ -268,13 +268,15 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                     previousVertex = existing.remove(index);
                     graph.addEdge(
                         previousVertex,
-                        new FlowPair(
-                            0,
-                            GraphAlgorithms.randomEdgeValue(
-                                gen,
-                                prevXPos == 0 ?
-                                    FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT :
-                                        GraphAlgorithms.DEFAULT_EDGE_ROOT
+                        Optional.of(
+                            new FlowPair(
+                                0,
+                                GraphAlgorithms.randomEdgeValue(
+                                    gen,
+                                    prevXPos == 0 ?
+                                        FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT :
+                                            GraphAlgorithms.DEFAULT_EDGE_ROOT
+                                )
                             )
                         ),
                         vertex
@@ -283,9 +285,11 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         if (gen.nextBoolean()) {
                             graph.addEdge(
                                 otherVertex,
-                                new FlowPair(
-                                    0,
-                                    GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)
+                                Optional.of(
+                                    new FlowPair(
+                                        0,
+                                        GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)
+                                    )
                                 ),
                                 vertex
                             );
@@ -294,13 +298,15 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 } else {
                     graph.addEdge(
                         grid.get(new GridCoordinates(prevXPos, yPos)),
-                        new FlowPair(
-                            0,
-                            GraphAlgorithms.randomEdgeValue(
-                                gen,
-                                prevXPos == 0 ?
-                                    FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT :
-                                        GraphAlgorithms.DEFAULT_EDGE_ROOT
+                        Optional.of(
+                            new FlowPair(
+                                0,
+                                GraphAlgorithms.randomEdgeValue(
+                                    gen,
+                                    prevXPos == 0 ?
+                                        FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT :
+                                            GraphAlgorithms.DEFAULT_EDGE_ROOT
+                                )
                             )
                         ),
                         vertex
@@ -312,14 +318,18 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                     if (gen.nextBoolean()) {
                         graph.addEdge(
                             north,
-                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)),
+                            Optional.of(
+                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                            ),
                             vertex
                         );
                     }
                     if (gen.nextBoolean()) {
                         graph.addEdge(
                             vertex,
-                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)),
+                            Optional.of(
+                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                            ),
                             north
                         );
                     }
@@ -352,7 +362,9 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                     nextVertex = existing.remove(index);
                     graph.addEdge(
                         previousVertex,
-                        new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)),
+                        Optional.of(
+                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                        ),
                         nextVertex
                     );
                 } else {
@@ -360,7 +372,9 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                     if (graph.getEdges(previousVertex, nextVertex).isEmpty()) {
                         graph.addEdge(
                             previousVertex,
-                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)),
+                            Optional.of(
+                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                            ),
                             nextVertex
                         );
                     }
@@ -397,7 +411,12 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         for (final Vertex<String> otherVertex : existing) {
             graph.addEdge(
                 otherVertex,
-                new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT)),
+                Optional.of(
+                    new FlowPair(
+                        0,
+                        GraphAlgorithms.randomEdgeValue(gen, FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT)
+                    )
+                ),
                 sink
             );
         }
@@ -585,7 +604,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         final List<Edge<FlowPair, V>> list = graph.getAdjacencyList(source);
         if (list != null) {
             for (final Edge<FlowPair, V> edge : list) {
-                flow += edge.label.x;
+                flow += edge.label.get().x;
             }
         }
         switch (mode) {
@@ -647,18 +666,18 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             to = it.next();
             int flow = min;
             for (final Edge<FlowPair, V> edge : graph.getEdges(from, to)) {
-                final int added = Math.min(flow, edge.label.y - edge.label.x);
+                final int added = Math.min(flow, edge.label.get().y - edge.label.get().x);
                 if (added > 0) {
                     flow -= added;
-                    edge.label.x += added;
+                    edge.label.get().x += added;
                     toHighlight.add(new Pair<Vertex<V>, Edge<FlowPair, V>>(from, edge));
                 }
             }
             for (final Edge<FlowPair, V> edge : graph.getEdges(to, from)) {
-                final int added = Math.min(flow, edge.label.x);
+                final int added = Math.min(flow, edge.label.get().x);
                 if (added > 0) {
                     flow -= added;
-                    edge.label.x -= added;
+                    edge.label.get().x -= added;
                     toHighlight.add(new Pair<Vertex<V>, Edge<FlowPair, V>>(to, edge));
                 }
             }
@@ -684,10 +703,10 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             to = it.next();
             int flow = 0;
             for (final Edge<FlowPair, V> edge : graph.getEdges(from, to)) {
-                flow += edge.label.y - edge.label.x;
+                flow += edge.label.get().y - edge.label.get().x;
             }
             for (final Edge<FlowPair, V> edge : graph.getEdges(to, from)) {
-                flow += edge.label.x;
+                flow += edge.label.get().x;
             }
             if (min == null || min > flow) {
                 min = flow;
@@ -712,24 +731,24 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             }
             for (final Edge<FlowPair, V> edge : list) {
                 final Vertex<V> target = edge.to;
-                final Integer back = edge.label.x;
+                final Integer back = edge.label.get().x;
                 if (back > 0) {
                     final Set<Edge<Integer, V>> backEdges = res.getEdges(target, vertex);
                     if (backEdges.isEmpty()) {
-                        res.addEdge(target, back, vertex);
+                        res.addEdge(target, Optional.of(back), vertex);
                     } else {
                         final Edge<Integer, V> backEdge = backEdges.iterator().next();
-                        res.replaceEdgeLabel(target, backEdge.label + back, vertex);
+                        res.replaceEdgeLabel(target, backEdge.label.get() + back, vertex);
                     }
                 }
-                final Integer forth = edge.label.y - back;
+                final Integer forth = edge.label.get().y - back;
                 if (forth > 0) {
                     final Set<Edge<Integer, V>> forthEdges = res.getEdges(vertex, target);
                     if (forthEdges.isEmpty()) {
-                        res.addEdge(vertex, forth, target);
+                        res.addEdge(vertex, Optional.of(forth), target);
                     } else {
                         final Edge<Integer, V> forthEdge = forthEdges.iterator().next();
-                        res.replaceEdgeLabel(vertex, forthEdge.label + forth, target);
+                        res.replaceEdgeLabel(vertex, forthEdge.label.get() + forth, target);
                     }
                 }
             }

@@ -56,8 +56,8 @@ public class Graph<V, E> {
         }
         final Map<GridCoordinates, Vertex<V>> newGrid =
             new LinkedHashMap<GridCoordinates, Vertex<V>>();
-        final Map<GridCoordinates, List<Pair<E, GridCoordinates>>> edges =
-            new LinkedHashMap<GridCoordinates, List<Pair<E, GridCoordinates>>>();
+        final Map<GridCoordinates, List<Pair<Optional<E>, GridCoordinates>>> edges =
+            new LinkedHashMap<GridCoordinates, List<Pair<Optional<E>, GridCoordinates>>>();
         int maxRow = 0;
         for (int num = 0; line != null; num++) {
             line.trim();
@@ -141,8 +141,8 @@ public class Graph<V, E> {
         if (!vertices.containsAll(edges.keySet())) {
             throw new IOException("Edge from non-existent vertex detected!");
         }
-        for (final List<Pair<E, GridCoordinates>> list : edges.values()) {
-            for (final Pair<E, GridCoordinates> pair : list) {
+        for (final List<Pair<Optional<E>, GridCoordinates>> list : edges.values()) {
+            for (final Pair<Optional<E>, GridCoordinates> pair : list) {
                 if (!vertices.contains(pair.y)) {
                     throw new IOException("Edge to non-existent vertex detected!");
                 }
@@ -157,9 +157,9 @@ public class Graph<V, E> {
             result.adjacencyLists.put(vertex, new ArrayList<Edge<E, V>>());
             mirroredGrid.put(new GridCoordinates(pos.x, maxRow - pos.y), vertex);
         }
-        for (final Entry<GridCoordinates, List<Pair<E, GridCoordinates>>> edge : edges.entrySet()) {
+        for (final Entry<GridCoordinates, List<Pair<Optional<E>, GridCoordinates>>> edge : edges.entrySet()) {
             final List<Edge<E, V>> list = result.adjacencyLists.get(newGrid.get(edge.getKey()));
-            for (final Pair<E, GridCoordinates> pair : edge.getValue()) {
+            for (final Pair<Optional<E>, GridCoordinates> pair : edge.getValue()) {
                 list.add(new Edge<E, V>(pair.x, newGrid.get(pair.y)));
             }
         }
@@ -187,15 +187,7 @@ public class Graph<V, E> {
         this.grid = grid;
     }
 
-    /**
-     * Adds an edge from the specified from vertex to the specified to vertex with the specified label. If some of the
-     * argument vertices do not yet exist in the graph, they are added. Moreover, the grid structure is removed as we
-     * cannot guarantee anymore that the graph complies to the grid format.
-     * @param from The from vertex.
-     * @param label The edge label.
-     * @param to The to vertex.
-     */
-    public void addEdge(final Vertex<V> from, final E label, final Vertex<V> to) {
+    public void addEdge(final Vertex<V> from, final Optional<E> label, final Vertex<V> to) {
         if (from == null || to == null) {
             throw new NullPointerException();
         }
@@ -236,6 +228,23 @@ public class Graph<V, E> {
 
     public List<Vertex<V>> getAdjacentVertices(final Vertex<V> vertex) {
         return this.getAdjacencyList(vertex).stream().map(edge -> edge.to).toList();
+    }
+
+    public List<UndirectedEdge<V, E>> getAllUndirectedEdges() {
+        final List<UndirectedEdge<V, E>> result = new ArrayList<UndirectedEdge<V, E>>();
+        final List<Pair<BigInteger,BigInteger>> finishedVertexPairs =
+            new ArrayList<Pair<BigInteger,BigInteger>>();
+        for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
+            for (final Edge<E, V> edge : entry.getValue()) {
+                final Pair<BigInteger,BigInteger> reverseVertexPair =
+                    new Pair<BigInteger,BigInteger>(edge.to.id, entry.getKey().id);
+                if (!finishedVertexPairs.contains(reverseVertexPair)) {
+                    result.add(new UndirectedEdge<V, E>(entry.getKey(), edge.label, edge.to));
+                    finishedVertexPairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id, edge.to.id));
+                }
+            }
+        }
+        return result;
     }
 
     public Set<Edge<E, V>> getEdges(final Vertex<V> from, final Vertex<V> to) {
@@ -289,72 +298,6 @@ public class Graph<V, E> {
         return new Graph<V, E>(emptyLists, this.grid);
     }
 
-    /**
-     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout
-     * is used for the output. Otherwise, there is no guarantee for the layout.
-     * @param writer The writer to send the output to.
-     * @param adListsParam TODO
-     * @param directed TODO
-     * @throws IOException If some error occurs during output.
-     */
-    public void printTikZ(
-        final BufferedWriter writer,
-        final AdjacencyLists<V, E> adListsParam,
-        final boolean directed
-    ) throws IOException {
-        final AdjacencyLists<V, E> adLists = adListsParam == null ? this.adjacencyLists : adListsParam;
-        if (directed) {
-            LaTeXUtils.printTikzBeginning(TikZStyle.GRAPH, writer);
-        } else {
-            LaTeXUtils.printTikzBeginning(TikZStyle.SYM_GRAPH, writer);
-        }
-        if (this.grid.isEmpty()) {
-            final int limit = (int)Math.sqrt(this.adjacencyLists.size());
-            final Iterator<Vertex<V>> it = this.adjacencyLists.keySet().iterator();
-            for (int row = 0; it.hasNext(); row++) {
-                for (int col = 0; col < limit && it.hasNext(); col++) {
-                    LaTeXUtils.printVertex(it.next(), "[node]", "at (" + col + "," + row + ") ", writer);
-                }
-            }
-        } else {
-            for (final Entry<GridCoordinates, Vertex<V>> entry : this.grid.get().entrySet()) {
-                final GridCoordinates pos = entry.getKey();
-                LaTeXUtils.printVertex(entry.getValue(), "[node]", "at (" + pos.x + "," + pos.y + ") ", writer);
-            }
-        }
-        if (directed) {
-            for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : adLists.entrySet()) {
-                final BigInteger from = entry.getKey().id;
-                for (final Edge<E, V> edge : entry.getValue()) {
-                    LaTeXUtils.printEdge(TikZStyle.EDGE_STYLE, from, edge.label, edge.to.id, writer);
-                }
-            }
-        } else {
-            final List<Pair<BigInteger,BigInteger>> finishedVertexPairs = new ArrayList<Pair<BigInteger,BigInteger>>();
-            for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : adLists.entrySet()) {
-                final BigInteger from = entry.getKey().id;
-                for (final Edge<E, V> edge : entry.getValue()) {
-                    final Pair<BigInteger,BigInteger> reverseVertexPair =
-                        new Pair<BigInteger,BigInteger>(edge.to.id, entry.getKey().id);
-                    if (!finishedVertexPairs.contains(reverseVertexPair)) {
-                        LaTeXUtils.printEdge(TikZStyle.SYM_EDGE_STYLE, from, edge.label, edge.to.id, writer);
-                        finishedVertexPairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id, edge.to.id));
-                    }
-                }
-            }
-        }
-        LaTeXUtils.printTikzEnd(writer);
-    }
-
-    /**
-     * Prints this graph in TikZ format to the specified writer. If this graph complies to the grid format, this layout
-     * is used for the output. Otherwise, there is no guarantee for the layout.
-     * @param printMode Print the edges or edge labels?
-     * @param multiplier Multiplier for vertex distances.
-     * @param toHighlight A set of edges to highlight in the graph.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public void printTikZ(
         final GraphPrintMode printMode,
         final double multiplier,
@@ -417,7 +360,7 @@ public class Graph<V, E> {
                                 LaTeXUtils.printEdge(
                                     TikZStyle.EDGE_HIGHLIGHT_STYLE,
                                     from,
-                                    null,
+                                    Optional.empty(),
                                     edge.to.id,
                                     writer
                                 );
@@ -426,24 +369,14 @@ public class Graph<V, E> {
                             if (printEdgeLabels) {
                                 LaTeXUtils.printEdge(TikZStyle.EDGE_STYLE, from, edge.label, edge.to.id, writer);
                             } else {
-                                LaTeXUtils.printEdge(TikZStyle.EDGE_STYLE, from, null, edge.to.id, writer);
+                                LaTeXUtils.printEdge(TikZStyle.EDGE_STYLE, from, Optional.empty(), edge.to.id, writer);
                             }
                         }
                     }
                 }
             } else {
-                final List<Pair<BigInteger,BigInteger>> finishedVertexPairs =
-                    new ArrayList<Pair<BigInteger,BigInteger>>();
-                for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
-                    final BigInteger from = entry.getKey().id;
-                    for (final Edge<E, V> edge : entry.getValue()) {
-                        final Pair<BigInteger,BigInteger> reverseVertexPair =
-                            new Pair<BigInteger,BigInteger>(edge.to.id, entry.getKey().id);
-                        if (!finishedVertexPairs.contains(reverseVertexPair)) {
-                            LaTeXUtils.printEdge(TikZStyle.SYM_EDGE_STYLE, from, edge.label, edge.to.id, writer);
-                            finishedVertexPairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id, edge.to.id));
-                        }
-                    }
+                for (final UndirectedEdge<V, E> edge : this.getAllUndirectedEdges()) {
+                    LaTeXUtils.printEdge(TikZStyle.SYM_EDGE_STYLE, edge.from.id, edge.label, edge.to.id, writer);
                 }
             }
         }
@@ -457,7 +390,7 @@ public class Graph<V, E> {
             .adjacencyLists
             .get(from)
             .stream()
-            .map(edge -> edge.to.equals(to) ? new Edge<E, V>(label, to) : edge)
+            .map(edge -> edge.to.equals(to) ? new Edge<E, V>(Optional.of(label), to) : edge)
             .collect(Collectors.toCollection(ArrayList::new))
         );
     }
@@ -480,7 +413,7 @@ public class Graph<V, E> {
      * @throws IOException If an edge label cannot be parsed.
      */
     private void addEdges(
-        final Map<GridCoordinates, List<Pair<E, GridCoordinates>>> edges,
+        final Map<GridCoordinates, List<Pair<Optional<E>, GridCoordinates>>> edges,
         final String[] edgeLabels,
         final LabelParser<E> edgeParser,
         final GridCoordinates fromPos,
@@ -490,19 +423,19 @@ public class Graph<V, E> {
         final String toEdge = edgeLabels[1].trim();
         if (!"".equals(fromEdge)) {
             if (!edges.containsKey(fromPos)) {
-                edges.put(fromPos, new ArrayList<Pair<E, GridCoordinates>>());
+                edges.put(fromPos, new ArrayList<Pair<Optional<E>, GridCoordinates>>());
             }
             edges.get(
                 fromPos
-            ).add(new Pair<E, GridCoordinates>(edgeParser.parse(fromEdge), toPos));
+            ).add(new Pair<Optional<E>, GridCoordinates>(Optional.of(edgeParser.parse(fromEdge)), toPos));
         }
         if (!"".equals(toEdge)) {
             if (!edges.containsKey(toPos)) {
-                edges.put(toPos, new ArrayList<Pair<E, GridCoordinates>>());
+                edges.put(toPos, new ArrayList<Pair<Optional<E>, GridCoordinates>>());
             }
             edges.get(
                 toPos
-            ).add(new Pair<E, GridCoordinates>(edgeParser.parse(toEdge), fromPos));
+            ).add(new Pair<Optional<E>, GridCoordinates>(Optional.of(edgeParser.parse(toEdge)), fromPos));
         }
     }
 

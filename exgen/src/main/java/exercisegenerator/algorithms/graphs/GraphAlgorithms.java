@@ -247,9 +247,9 @@ abstract class GraphAlgorithms {
                 new Vertex<String>(Optional.of(GraphAlgorithms.toStringLabel(letter)));
             final VertexGridPosition gridPos = GraphAlgorithms.addVertex(toAddVertex, graph, toAddPos, grid, positions);
             final int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
-            graph.addEdge(nextVertex, value, toAddVertex);
+            graph.addEdge(nextVertex, Optional.of(value), toAddVertex);
             if (undirected) {
-                graph.addEdge(toAddVertex, value, nextVertex);
+                graph.addEdge(toAddVertex, Optional.of(value), nextVertex);
             }
             final List<Pair<GridCoordinates, Boolean>> existing = gridPos.getExistingPositions();
             final List<Pair<Vertex<String>, Vertex<String>>> freeVertexPairs =
@@ -267,13 +267,17 @@ abstract class GraphAlgorithms {
                     }
                 }
             }
-            for (int numEdges = GraphAlgorithms.randomNumOfEdges(gen, freeVertexPairs.size()); numEdges > 0; numEdges--) {
+            for (
+                int numEdges = GraphAlgorithms.randomNumOfEdges(gen, freeVertexPairs.size());
+                numEdges > 0;
+                numEdges--
+            ) {
                 final int pairIndex = gen.nextInt(freeVertexPairs.size());
                 final Pair<Vertex<String>, Vertex<String>> pair = freeVertexPairs.remove(pairIndex);
                 final int nextValue = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
-                graph.addEdge(pair.x, nextValue, pair.y);
+                graph.addEdge(pair.x, Optional.of(nextValue), pair.y);
                 if (undirected) {
-                    graph.addEdge(pair.y, nextValue, pair.x);
+                    graph.addEdge(pair.y, Optional.of(nextValue), pair.x);
                 }
             }
             for (final Pair<GridCoordinates, Boolean> neighborPos : existing) {

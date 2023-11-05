@@ -135,8 +135,8 @@ public class PrimAlgorithm implements AlgorithmImplementation {
             for (final Edge<Integer,V> edge : graph.getAdjacencyList(vertices.get(recentlyAdded))) {
                 final int toIndex = vertices.indexOf(edge.to);
                 final PrimEntry toEntry = table[i - 1][toIndex];
-                if (toEntry != null && !toEntry.done && toEntry.compareTo(edge.label) > 0) {
-                    table[i][toIndex] = new PrimEntry(edge.label);
+                if (toEntry != null && !toEntry.done && toEntry.compareTo(edge.label.get()) > 0) {
+                    table[i][toIndex] = new PrimEntry(edge.label.get());
                     parents[toIndex] = recentlyAdded;
                 }
             }
@@ -155,8 +155,8 @@ public class PrimAlgorithm implements AlgorithmImplementation {
             table[i][minIndex] = table[i][minIndex].done();
             final Vertex<V> from = vertices.get(parents[minIndex]);
             final Vertex<V> to = vertices.get(minIndex);
-            tree.addEdge(from, min, to);
-            tree.addEdge(to, min, from);
+            tree.addEdge(from, Optional.of(min), to);
+            tree.addEdge(to, Optional.of(min), from);
             tree.setGrid(graph.getGrid());
             recentlyAdded = minIndex;
         }

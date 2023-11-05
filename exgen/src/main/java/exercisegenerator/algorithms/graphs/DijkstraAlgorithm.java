@@ -149,9 +149,12 @@ public class DijkstraAlgorithm implements AlgorithmImplementation {
             final Integer toVertexId = vertexIds.get(edge.to);
             if (
                 toVertexId != null
-                && (distances[toVertexId] == null || distances[toVertexId] > distances[currentVertexId] + edge.label)
+                && (
+                    distances[toVertexId] == null
+                    || distances[toVertexId] > distances[currentVertexId] + edge.label.get()
+                )
             ) {
-                distances[toVertexId] = distances[currentVertexId] + edge.label;
+                distances[toVertexId] = distances[currentVertexId] + edge.label.get();
             }
         }
     }

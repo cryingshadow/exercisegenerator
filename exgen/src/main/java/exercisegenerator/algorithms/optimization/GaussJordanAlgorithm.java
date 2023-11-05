@@ -107,6 +107,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         final int numberOfEquations = OptimizationAlgorithms.generateNumberOfInequalitiesOrEquations();
         final Fraction[][] matrix =
             OptimizationAlgorithms.generateInequalitiesOrEquations(numberOfEquations, numberOfVariables);
+        System.out.println(Arrays.deepToString(matrix));
         return new LinearSystemOfEquations(matrix);
     }
 

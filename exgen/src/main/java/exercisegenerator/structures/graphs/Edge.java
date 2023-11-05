@@ -1,12 +1,14 @@
 package exercisegenerator.structures.graphs;
 
+import java.util.*;
+
 public class Edge<E, V> {
 
-    public final E label;
+    public final Optional<E> label;
 
     public final Vertex<V> to;
 
-    public Edge(final E label, final Vertex<V> to) {
+    public Edge(final Optional<E> label, final Vertex<V> to) {
         this.label = label;
         this.to = to;
     }

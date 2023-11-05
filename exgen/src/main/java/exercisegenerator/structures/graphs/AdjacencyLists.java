@@ -15,6 +15,10 @@ public class AdjacencyLists<V, E> extends LinkedHashMap<Vertex<V>, List<Edge<E, 
     }
 
     public void addEdge(final Vertex<V> from, final E edgeLabel, final Vertex<V> to) {
+        this.addEdge(from, Optional.of(edgeLabel), to);
+    }
+
+    public void addEdge(final Vertex<V> from, final Optional<E> edgeLabel, final Vertex<V> to) {
         if (!this.containsKey(from)) {
             this.put(from, new ArrayList<Edge<E, V>>());
         }

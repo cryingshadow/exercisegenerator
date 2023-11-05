@@ -74,7 +74,12 @@ public class GenerateCompileTest {
                 final File exFile = new File(testDir, exFileName);
                 final File solFile = new File(testDir, solFileName);
                 Main.main(
-                    GenerateCompileTest.toCLIArguments(alg, alg.implementation.generateTestParameters(), exFile, solFile)
+                    GenerateCompileTest.toCLIArguments(
+                        alg,
+                        alg.implementation.generateTestParameters(),
+                        exFile,
+                        solFile
+                    )
                 );
                 final Process processExercise = GenerateCompileTest.buildAndStartProcess(exFileName, testDir);
                 final Process processSolution = GenerateCompileTest.buildAndStartProcess(solFileName, testDir);
