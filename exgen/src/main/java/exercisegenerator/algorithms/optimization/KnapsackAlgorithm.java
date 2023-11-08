@@ -221,7 +221,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         }
         writer.write(" und $c_{" + numberOfItems + "} = " + problem.values[numberOfItems - 1] + "$. ");
         Main.newLine(writer);
-        writer.write("Geben Sie zudem die vom Algorithmus bestimmte Tabelle \\texttt{C} ");
+        writer.write("Geben Sie zudem die vom Algorithmus bestimmte Tabelle ");
         writer.write("und die mitzunehmenden Gegenst\\\"ande an.");
         Main.newLine(writer);
         Main.newLine(writer);
@@ -270,7 +270,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Die Tabelle \\texttt{C} wird vom Algorithmus wie folgt gef\\\"ullt:");
+        writer.write("Die Tabelle wird vom Algorithmus wie folgt gef\\\"ullt:");
         Main.newLine(writer);
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
