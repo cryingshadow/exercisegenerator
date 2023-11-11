@@ -231,7 +231,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final KnapsackProblem problem = KnapsackAlgorithm.parseOrGenerateKnapsackProblem(input.options);
         final LengthConfiguration configuration =
-            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(input.options);
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(input.options, 2);
         final int[][] table = KnapsackAlgorithm.knapsack(problem);
         KnapsackAlgorithm.printKnapsackExercise(problem, table, input.options, configuration, input.exerciseWriter);
         KnapsackAlgorithm.printKnapsackSolution(problem, table, input.options, configuration, input.solutionWriter);

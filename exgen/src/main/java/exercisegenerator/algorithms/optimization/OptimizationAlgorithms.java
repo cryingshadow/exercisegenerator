@@ -64,20 +64,30 @@ public abstract class OptimizationAlgorithms {
 
     static LengthConfiguration parseLengthConfiguration(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters options,
+        final int lineNumber
     ) throws IOException {
+        for (int i = 1; i < lineNumber; i++) {
+            reader.readLine();
+        }
         final String line = reader.readLine();
-        final String[] parts = line.strip().split(";");
-        if (parts.length != 6) {
+        if (line == null) {
             return new LengthConfiguration();
         }
-        return new LengthConfiguration(parts[3], parts[4], parts[5]);
+        final String[] parts = line.strip().split(";");
+        if (parts.length != 3) {
+            return new LengthConfiguration();
+        }
+        return new LengthConfiguration(parts[0], parts[1], parts[2]);
 
     }
 
-    static LengthConfiguration parseOrGenerateLengthConfiguration(final Parameters options) throws IOException {
+    static LengthConfiguration parseOrGenerateLengthConfiguration(
+        final Parameters options,
+        final int lineNumber
+    ) throws IOException {
         return new ParserAndGenerator<LengthConfiguration>(
-            OptimizationAlgorithms::parseLengthConfiguration,
+            (reader, flags) -> OptimizationAlgorithms.parseLengthConfiguration(reader, flags, lineNumber),
             OptimizationAlgorithms::generateLengthConfiguration
         ).getResult(options);
     }
@@ -111,6 +121,10 @@ public abstract class OptimizationAlgorithms {
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        if (solution[0].length > 6) {
+            writer.write("\\resizebox{0.9\\textwidth}{!}{%");
+            Main.newLine(writer);
+        }
         writer.write("{\\Large");
         Main.newLine(writer);
         LaTeXUtils.printTable(
@@ -122,7 +136,12 @@ public abstract class OptimizationAlgorithms {
             writer
         );
         Main.newLine(writer);
+        if (solution[0].length > 6) {
+            writer.write("}");
+            Main.newLine(writer);
+        }
         writer.write("}");
+        Main.newLine(writer);
         Main.newLine(writer);
     }
 

@@ -117,13 +117,12 @@ public class LCSAlgorithm implements AlgorithmImplementation {
                     System.out.println(errorMessage);
                     return null;
                 }
-            } else {
-                System.out.println(errorMessage);
-                return null;
+                return new LCSProblem(wordA, wordB);
             }
             rowNum++;
         }
-        return new LCSProblem(wordA, wordB);
+        System.out.println(errorMessage);
+        return null;
     }
 
     private static LCSProblem parseOrGenerateLCSProblem(final Parameters options) throws IOException {
@@ -150,13 +149,13 @@ public class LCSAlgorithm implements AlgorithmImplementation {
         final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilsequenz} der Sequenzen \\code{");
+        writer.write("Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilfolge} der Folgen \\code{");
         writer.write(problem.word1);
         writer.write("} und \\code{");
         writer.write(problem.word2);
         writer.write("}. Benutzen Sie hierf\\\"ur den in der Vorlesung vorgestellten Algorithmus mit dynamischer ");
         writer.write("Programmierung und f\\\"ullen Sie die folgende Tabelle aus. Geben Sie au\\ss{}erdem die vom ");
-        writer.write("Algorithmus bestimmte l\\\"angste gemeinsame Teilsequenz an.");
+        writer.write("Algorithmus bestimmte l\\\"angste gemeinsame Teilfolge an.");
         Main.newLine(writer);
         Main.newLine(writer);
         final PreprintMode mode = PreprintMode.parsePreprintMode(options);
@@ -174,11 +173,11 @@ public class LCSAlgorithm implements AlgorithmImplementation {
                 configuration,
                 writer
             );
-            writer.write("${}^*$ Sequenz 1/Sequenz 2");
+            writer.write("${}^*$ Folge 1/Folge 2");
             Main.newLine(writer);
             LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
             Main.newLine(writer);
-            writer.write("L\\\"angste gemeinsame Teilsequenz:\\\\[2ex]");
+            writer.write("L\\\"angste gemeinsame Teilfolge:\\\\[2ex]");
             Main.newLine(writer);
             if (mode == PreprintMode.SOLUTION_SPACE) {
                 LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
@@ -209,11 +208,11 @@ public class LCSAlgorithm implements AlgorithmImplementation {
             configuration,
             writer
         );
-        writer.write("${}^*$ Sequenz 1/Sequenz 2");
+        writer.write("${}^*$ Folge 1/Folge 2");
         Main.newLine(writer);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         Main.newLine(writer);
-        writer.write("L\\\"angste gemeinsame Teilsequenz: ");
+        writer.write("L\\\"angste gemeinsame Teilfolge: ");
         writer.write(LCSAlgorithm.lcs(problem, table));
         writer.write("\\\\[2ex]");
         Main.newLine(writer);
@@ -226,7 +225,7 @@ public class LCSAlgorithm implements AlgorithmImplementation {
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final LCSProblem problem = LCSAlgorithm.parseOrGenerateLCSProblem(input.options);
         final LengthConfiguration configuration =
-            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(input.options);
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(input.options, 3);
         final int[][] table = LCSAlgorithm.lcs(problem);
         LCSAlgorithm.printLCSExercise(problem, table, input.options, configuration, input.exerciseWriter);
         LCSAlgorithm.printLCSSolution(problem, table, input.options, configuration, input.solutionWriter);

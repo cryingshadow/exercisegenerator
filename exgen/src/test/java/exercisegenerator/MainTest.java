@@ -2246,6 +2246,7 @@ public class MainTest {
                     "",
                     "\\else",
                     "\\begin{center}",
+                    "\\resizebox{0.9\\textwidth}{!}{%",
                     "{\\Large",
                     "\\begin{tabular}{|C{5mm}|*{8}{C{5mm}C{7mm}|}}",
                     "\\hline",
@@ -2257,6 +2258,8 @@ public class MainTest {
                     "\\end{tabular}",
                     "",
                     "}",
+                    "}",
+                    "",
                     "${}^*$ Gegenstand/Kapazit\\\"at",
                     "\\end{center}",
                     "",
@@ -2272,6 +2275,7 @@ public class MainTest {
                     "Die Tabelle wird vom Algorithmus wie folgt gef\\\"ullt:",
                     "",
                     "\\begin{center}",
+                    "\\resizebox{0.9\\textwidth}{!}{%",
                     "{\\Large",
                     "\\begin{tabular}{|C{5mm}|*{8}{C{5mm}C{7mm}|}}",
                     "\\hline",
@@ -2283,6 +2287,8 @@ public class MainTest {
                     "\\end{tabular}",
                     "",
                     "}",
+                    "}",
+                    "",
                     "${}^*$ Gegenstand/Kapazit\\\"at",
                     "\\end{center}",
                     "",
@@ -2370,10 +2376,10 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilsequenz} der Sequenzen \\code{TEST} und "
+                    "Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilfolge} der Folgen \\code{TEST} und "
                     + "\\code{ME}. Benutzen Sie hierf\\\"ur den in der Vorlesung vorgestellten Algorithmus mit "
                     + "dynamischer Programmierung und f\\\"ullen Sie die folgende Tabelle aus. Geben Sie "
-                    + "au\\ss{}erdem die vom Algorithmus bestimmte l\\\"angste gemeinsame Teilsequenz an.",
+                    + "au\\ss{}erdem die vom Algorithmus bestimmte l\\\"angste gemeinsame Teilfolge an.",
                     "",
                     "\\ifprintanswers",
                     "",
@@ -2393,10 +2399,11 @@ public class MainTest {
                     "\\end{tabular}",
                     "",
                     "}",
-                    "${}^*$ Sequenz 1/Sequenz 2",
+                    "",
+                    "${}^*$ Folge 1/Folge 2",
                     "\\end{center}",
                     "",
-                    "L\\\"angste gemeinsame Teilsequenz:\\\\[2ex]",
+                    "L\\\"angste gemeinsame Teilfolge:\\\\[2ex]",
                     "",
                     "\\vspace*{1ex}",
                     "",
@@ -2419,10 +2426,11 @@ public class MainTest {
                     "\\end{tabular}",
                     "",
                     "}",
-                    "${}^*$ Sequenz 1/Sequenz 2",
+                    "",
+                    "${}^*$ Folge 1/Folge 2",
                     "\\end{center}",
                     "",
-                    "L\\\"angste gemeinsame Teilsequenz: E\\\\[2ex]"
+                    "L\\\"angste gemeinsame Teilfolge: E\\\\[2ex]"
                 )
             )
         );
