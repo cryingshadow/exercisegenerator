@@ -10,12 +10,12 @@ public class SimplexTableau {
     public final int pivotColumn;
     public final int pivotRow;
     public final SimplexProblem problem;
-    public final Fraction[] quotients;
+    public final BigFraction[] quotients;
 
     public SimplexTableau(
         final SimplexProblem problem,
         final int[] basicVariables,
-        final Fraction[] quotients,
+        final BigFraction[] quotients,
         final int pivotRow,
         final int pivotColumn
     ) {

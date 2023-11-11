@@ -8,17 +8,17 @@ public class LinearSystemOfEquations {
 
     public final int[] columnPositions;
 
-    public final Fraction[][] matrix;
+    public final BigFraction[][] matrix;
 
     public final int numberOfColumns;
 
     public final int numberOfRows;
 
-    public LinearSystemOfEquations(final Fraction[][] matrix) {
+    public LinearSystemOfEquations(final BigFraction[][] matrix) {
         this(matrix, IntStream.range(0, matrix[0].length - 1).toArray());
     }
 
-    public LinearSystemOfEquations(final Fraction[][] matrix, final int[] columnPositions) {
+    public LinearSystemOfEquations(final BigFraction[][] matrix, final int[] columnPositions) {
         this.matrix = matrix;
         this.numberOfRows = matrix.length;
         this.numberOfColumns = matrix[0].length;
@@ -29,13 +29,13 @@ public class LinearSystemOfEquations {
         this(
             Arrays
             .stream(matrix)
-            .map(row -> Arrays.stream(row).mapToObj(Fraction::new).toArray(Fraction[]::new))
-            .toArray(Fraction[][]::new)
+            .map(row -> Arrays.stream(row).mapToObj(BigFraction::new).toArray(BigFraction[]::new))
+            .toArray(BigFraction[][]::new)
         );
     }
 
-    public LinearSystemOfEquations addRow(final int rowIndex, final int rowToAdd, final Fraction factor) {
-        final Fraction[][] matrix = new Fraction[this.numberOfRows][this.numberOfColumns];
+    public LinearSystemOfEquations addRow(final int rowIndex, final int rowToAdd, final BigFraction factor) {
+        final BigFraction[][] matrix = new BigFraction[this.numberOfRows][this.numberOfColumns];
         for (int row = 0; row < this.numberOfRows; row++) {
             for (int col = 0; col < this.numberOfColumns; col++) {
                 if (row == rowIndex) {
@@ -63,8 +63,8 @@ public class LinearSystemOfEquations {
         return 666 + this.matrix.hashCode() * 2 + this.columnPositions.hashCode() * 3;
     }
 
-    public LinearSystemOfEquations multiplyRow(final int rowIndex, final Fraction factor) {
-        final Fraction[][] matrix = new Fraction[this.numberOfRows][this.numberOfColumns];
+    public LinearSystemOfEquations multiplyRow(final int rowIndex, final BigFraction factor) {
+        final BigFraction[][] matrix = new BigFraction[this.numberOfRows][this.numberOfColumns];
         for (int row = 0; row < this.numberOfRows; row++) {
             for (int col = 0; col < this.numberOfColumns; col++) {
                 if (row == rowIndex) {
@@ -78,7 +78,7 @@ public class LinearSystemOfEquations {
     }
 
     public LinearSystemOfEquations swapColumns(final int col1, final int col2) {
-        final Fraction[][] matrix = new Fraction[this.numberOfRows][this.numberOfColumns];
+        final BigFraction[][] matrix = new BigFraction[this.numberOfRows][this.numberOfColumns];
         for (int row = 0; row < this.numberOfRows; row++) {
             for (int col = 0; col < this.numberOfColumns; col++) {
                 if (col == col1) {
@@ -98,7 +98,7 @@ public class LinearSystemOfEquations {
     }
 
     public LinearSystemOfEquations swapRows(final int row1, final int row2) {
-        final Fraction[][] matrix = new Fraction[this.numberOfRows][this.numberOfColumns];
+        final BigFraction[][] matrix = new BigFraction[this.numberOfRows][this.numberOfColumns];
         for (int row = 0; row < this.numberOfRows; row++) {
             for (int col = 0; col < this.numberOfColumns; col++) {
                 if (row == row1) {

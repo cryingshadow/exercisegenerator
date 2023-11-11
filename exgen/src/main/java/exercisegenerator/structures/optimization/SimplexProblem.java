@@ -6,10 +6,10 @@ import org.apache.commons.math3.fraction.*;
 
 public class SimplexProblem {
 
-    public final Fraction[][] matrix;
-    public final Fraction[] target;
+    public final BigFraction[][] matrix;
+    public final BigFraction[] target;
 
-    public SimplexProblem(final Fraction[] target, final Fraction[][] matrix) {
+    public SimplexProblem(final BigFraction[] target, final BigFraction[][] matrix) {
         this.target = target;
         this.matrix = matrix;
     }

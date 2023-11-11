@@ -31,72 +31,79 @@ public class OptimizationAlgorithmsTest {
                     {8, 10, 2, 8, 5, 1}
                 }
             );
+        final LinearSystemOfEquations problem3 =
+            new LinearSystemOfEquations(
+                new int[][] {
+                    {0, 0, 10, -8, 0, 6},
+                    {4, 0, 8, -3, 5, 2}
+                }
+            );
         return new Object[][] {
             {
                 problem1,
                 List.of(
                     problem1,
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(5,3),new Fraction(4,3),new Fraction(2,3)},
-                            {new Fraction(2),new Fraction(1),new Fraction(-1),new Fraction(1)},
-                            {new Fraction(7),new Fraction(1),new Fraction(1),new Fraction(2)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(5,3),new BigFraction(4,3),new BigFraction(2,3)},
+                            {new BigFraction(2),new BigFraction(1),new BigFraction(-1),new BigFraction(1)},
+                            {new BigFraction(7),new BigFraction(1),new BigFraction(1),new BigFraction(2)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(5,3),new Fraction(4,3),new Fraction(2,3)},
-                            {new Fraction(0),new Fraction(-7,3),new Fraction(-11,3),new Fraction(-1,3)},
-                            {new Fraction(7),new Fraction(1),new Fraction(1),new Fraction(2)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(5,3),new BigFraction(4,3),new BigFraction(2,3)},
+                            {new BigFraction(0),new BigFraction(-7,3),new BigFraction(-11,3),new BigFraction(-1,3)},
+                            {new BigFraction(7),new BigFraction(1),new BigFraction(1),new BigFraction(2)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(5,3),new Fraction(4,3),new Fraction(2,3)},
-                            {new Fraction(0),new Fraction(-7,3),new Fraction(-11,3),new Fraction(-1,3)},
-                            {new Fraction(0),new Fraction(-32,3),new Fraction(-25,3),new Fraction(-8,3)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(5,3),new BigFraction(4,3),new BigFraction(2,3)},
+                            {new BigFraction(0),new BigFraction(-7,3),new BigFraction(-11,3),new BigFraction(-1,3)},
+                            {new BigFraction(0),new BigFraction(-32,3),new BigFraction(-25,3),new BigFraction(-8,3)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(5,3),new Fraction(4,3),new Fraction(2,3)},
-                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
-                            {new Fraction(0),new Fraction(-32,3),new Fraction(-25,3),new Fraction(-8,3)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(5,3),new BigFraction(4,3),new BigFraction(2,3)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(11,7),new BigFraction(1,7)},
+                            {new BigFraction(0),new BigFraction(-32,3),new BigFraction(-25,3),new BigFraction(-8,3)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-9,7),new Fraction(3,7)},
-                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
-                            {new Fraction(0),new Fraction(-32,3),new Fraction(-25,3),new Fraction(-8,3)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-9,7),new BigFraction(3,7)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(11,7),new BigFraction(1,7)},
+                            {new BigFraction(0),new BigFraction(-32,3),new BigFraction(-25,3),new BigFraction(-8,3)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-9,7),new Fraction(3,7)},
-                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
-                            {new Fraction(0),new Fraction(0),new Fraction(59,7),new Fraction(-8,7)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-9,7),new BigFraction(3,7)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(11,7),new BigFraction(1,7)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(59,7),new BigFraction(-8,7)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-9,7),new Fraction(3,7)},
-                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-8,59)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-9,7),new BigFraction(3,7)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(11,7),new BigFraction(1,7)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-8,59)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(105,413)},
-                            {new Fraction(0),new Fraction(1),new Fraction(11,7),new Fraction(1,7)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-8,59)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(105,413)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(11,7),new BigFraction(1,7)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-8,59)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(105,413)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(147,413)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-8,59)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(105,413)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(147,413)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-8,59)}
                         }
                     )
                 )
@@ -106,294 +113,333 @@ public class OptimizationAlgorithmsTest {
                 List.of(
                     problem2,
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
-                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
-                            {new Fraction(7),new Fraction(-10),new Fraction(4),new Fraction(8),new Fraction(6),new Fraction(2)},
-                            {new Fraction(5),new Fraction(3),new Fraction(-10),new Fraction(10),new Fraction(1),new Fraction(2)},
-                            {new Fraction(4),new Fraction(-7),new Fraction(0),new Fraction(4),new Fraction(4),new Fraction(7)},
-                            {new Fraction(8),new Fraction(10),new Fraction(2),new Fraction(8),new Fraction(5),new Fraction(1)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(6,5),new BigFraction(-8,5),new BigFraction(4,5),new BigFraction(-8,5),new BigFraction(4,5)},
+                            {new BigFraction(0),new BigFraction(-8),new BigFraction(2),new BigFraction(0),new BigFraction(7),new BigFraction(9)},
+                            {new BigFraction(7),new BigFraction(-10),new BigFraction(4),new BigFraction(8),new BigFraction(6),new BigFraction(2)},
+                            {new BigFraction(5),new BigFraction(3),new BigFraction(-10),new BigFraction(10),new BigFraction(1),new BigFraction(2)},
+                            {new BigFraction(4),new BigFraction(-7),new BigFraction(0),new BigFraction(4),new BigFraction(4),new BigFraction(7)},
+                            {new BigFraction(8),new BigFraction(10),new BigFraction(2),new BigFraction(8),new BigFraction(5),new BigFraction(1)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
-                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
-                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
-                            {new Fraction(5),new Fraction(3),new Fraction(-10),new Fraction(10),new Fraction(1),new Fraction(2)},
-                            {new Fraction(4),new Fraction(-7),new Fraction(0),new Fraction(4),new Fraction(4),new Fraction(7)},
-                            {new Fraction(8),new Fraction(10),new Fraction(2),new Fraction(8),new Fraction(5),new Fraction(1)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(6,5),new BigFraction(-8,5),new BigFraction(4,5),new BigFraction(-8,5),new BigFraction(4,5)},
+                            {new BigFraction(0),new BigFraction(-8),new BigFraction(2),new BigFraction(0),new BigFraction(7),new BigFraction(9)},
+                            {new BigFraction(0),new BigFraction(-92,5),new BigFraction(76,5),new BigFraction(12,5),new BigFraction(86,5),new BigFraction(-18,5)},
+                            {new BigFraction(5),new BigFraction(3),new BigFraction(-10),new BigFraction(10),new BigFraction(1),new BigFraction(2)},
+                            {new BigFraction(4),new BigFraction(-7),new BigFraction(0),new BigFraction(4),new BigFraction(4),new BigFraction(7)},
+                            {new BigFraction(8),new BigFraction(10),new BigFraction(2),new BigFraction(8),new BigFraction(5),new BigFraction(1)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
-                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
-                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
-                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
-                            {new Fraction(4),new Fraction(-7),new Fraction(0),new Fraction(4),new Fraction(4),new Fraction(7)},
-                            {new Fraction(8),new Fraction(10),new Fraction(2),new Fraction(8),new Fraction(5),new Fraction(1)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(6,5),new BigFraction(-8,5),new BigFraction(4,5),new BigFraction(-8,5),new BigFraction(4,5)},
+                            {new BigFraction(0),new BigFraction(-8),new BigFraction(2),new BigFraction(0),new BigFraction(7),new BigFraction(9)},
+                            {new BigFraction(0),new BigFraction(-92,5),new BigFraction(76,5),new BigFraction(12,5),new BigFraction(86,5),new BigFraction(-18,5)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-2),new BigFraction(6),new BigFraction(9),new BigFraction(-2)},
+                            {new BigFraction(4),new BigFraction(-7),new BigFraction(0),new BigFraction(4),new BigFraction(4),new BigFraction(7)},
+                            {new BigFraction(8),new BigFraction(10),new BigFraction(2),new BigFraction(8),new BigFraction(5),new BigFraction(1)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
-                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
-                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
-                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
-                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
-                            {new Fraction(8),new Fraction(10),new Fraction(2),new Fraction(8),new Fraction(5),new Fraction(1)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(6,5),new BigFraction(-8,5),new BigFraction(4,5),new BigFraction(-8,5),new BigFraction(4,5)},
+                            {new BigFraction(0),new BigFraction(-8),new BigFraction(2),new BigFraction(0),new BigFraction(7),new BigFraction(9)},
+                            {new BigFraction(0),new BigFraction(-92,5),new BigFraction(76,5),new BigFraction(12,5),new BigFraction(86,5),new BigFraction(-18,5)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-2),new BigFraction(6),new BigFraction(9),new BigFraction(-2)},
+                            {new BigFraction(0),new BigFraction(-59,5),new BigFraction(32,5),new BigFraction(4,5),new BigFraction(52,5),new BigFraction(19,5)},
+                            {new BigFraction(8),new BigFraction(10),new BigFraction(2),new BigFraction(8),new BigFraction(5),new BigFraction(1)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
-                            {new Fraction(0),new Fraction(-8),new Fraction(2),new Fraction(0),new Fraction(7),new Fraction(9)},
-                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
-                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
-                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
-                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(6,5),new BigFraction(-8,5),new BigFraction(4,5),new BigFraction(-8,5),new BigFraction(4,5)},
+                            {new BigFraction(0),new BigFraction(-8),new BigFraction(2),new BigFraction(0),new BigFraction(7),new BigFraction(9)},
+                            {new BigFraction(0),new BigFraction(-92,5),new BigFraction(76,5),new BigFraction(12,5),new BigFraction(86,5),new BigFraction(-18,5)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-2),new BigFraction(6),new BigFraction(9),new BigFraction(-2)},
+                            {new BigFraction(0),new BigFraction(-59,5),new BigFraction(32,5),new BigFraction(4,5),new BigFraction(52,5),new BigFraction(19,5)},
+                            {new BigFraction(0),new BigFraction(2,5),new BigFraction(74,5),new BigFraction(8,5),new BigFraction(89,5),new BigFraction(-27,5)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(6,5),new Fraction(-8,5),new Fraction(4,5),new Fraction(-8,5),new Fraction(4,5)},
-                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
-                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
-                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
-                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
-                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(6,5),new BigFraction(-8,5),new BigFraction(4,5),new BigFraction(-8,5),new BigFraction(4,5)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(-1,4),new BigFraction(0),new BigFraction(-7,8),new BigFraction(-9,8)},
+                            {new BigFraction(0),new BigFraction(-92,5),new BigFraction(76,5),new BigFraction(12,5),new BigFraction(86,5),new BigFraction(-18,5)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-2),new BigFraction(6),new BigFraction(9),new BigFraction(-2)},
+                            {new BigFraction(0),new BigFraction(-59,5),new BigFraction(32,5),new BigFraction(4,5),new BigFraction(52,5),new BigFraction(19,5)},
+                            {new BigFraction(0),new BigFraction(2,5),new BigFraction(74,5),new BigFraction(8,5),new BigFraction(89,5),new BigFraction(-27,5)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
-                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
-                            {new Fraction(0),new Fraction(-92,5),new Fraction(76,5),new Fraction(12,5),new Fraction(86,5),new Fraction(-18,5)},
-                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
-                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
-                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-13,10),new BigFraction(4,5),new BigFraction(-11,20),new BigFraction(43,20)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(-1,4),new BigFraction(0),new BigFraction(-7,8),new BigFraction(-9,8)},
+                            {new BigFraction(0),new BigFraction(-92,5),new BigFraction(76,5),new BigFraction(12,5),new BigFraction(86,5),new BigFraction(-18,5)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-2),new BigFraction(6),new BigFraction(9),new BigFraction(-2)},
+                            {new BigFraction(0),new BigFraction(-59,5),new BigFraction(32,5),new BigFraction(4,5),new BigFraction(52,5),new BigFraction(19,5)},
+                            {new BigFraction(0),new BigFraction(2,5),new BigFraction(74,5),new BigFraction(8,5),new BigFraction(89,5),new BigFraction(-27,5)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
-                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(53,5),new Fraction(12,5),new Fraction(11,10),new Fraction(-243,10)},
-                            {new Fraction(0),new Fraction(-3),new Fraction(-2),new Fraction(6),new Fraction(9),new Fraction(-2)},
-                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
-                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-13,10),new BigFraction(4,5),new BigFraction(-11,20),new BigFraction(43,20)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(-1,4),new BigFraction(0),new BigFraction(-7,8),new BigFraction(-9,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(53,5),new BigFraction(12,5),new BigFraction(11,10),new BigFraction(-243,10)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-2),new BigFraction(6),new BigFraction(9),new BigFraction(-2)},
+                            {new BigFraction(0),new BigFraction(-59,5),new BigFraction(32,5),new BigFraction(4,5),new BigFraction(52,5),new BigFraction(19,5)},
+                            {new BigFraction(0),new BigFraction(2,5),new BigFraction(74,5),new BigFraction(8,5),new BigFraction(89,5),new BigFraction(-27,5)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
-                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(53,5),new Fraction(12,5),new Fraction(11,10),new Fraction(-243,10)},
-                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
-                            {new Fraction(0),new Fraction(-59,5),new Fraction(32,5),new Fraction(4,5),new Fraction(52,5),new Fraction(19,5)},
-                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-13,10),new BigFraction(4,5),new BigFraction(-11,20),new BigFraction(43,20)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(-1,4),new BigFraction(0),new BigFraction(-7,8),new BigFraction(-9,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(53,5),new BigFraction(12,5),new BigFraction(11,10),new BigFraction(-243,10)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(-11,4),new BigFraction(6),new BigFraction(51,8),new BigFraction(-43,8)},
+                            {new BigFraction(0),new BigFraction(-59,5),new BigFraction(32,5),new BigFraction(4,5),new BigFraction(52,5),new BigFraction(19,5)},
+                            {new BigFraction(0),new BigFraction(2,5),new BigFraction(74,5),new BigFraction(8,5),new BigFraction(89,5),new BigFraction(-27,5)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
-                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(53,5),new Fraction(12,5),new Fraction(11,10),new Fraction(-243,10)},
-                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
-                            {new Fraction(0),new Fraction(2,5),new Fraction(74,5),new Fraction(8,5),new Fraction(89,5),new Fraction(-27,5)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-13,10),new BigFraction(4,5),new BigFraction(-11,20),new BigFraction(43,20)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(-1,4),new BigFraction(0),new BigFraction(-7,8),new BigFraction(-9,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(53,5),new BigFraction(12,5),new BigFraction(11,10),new BigFraction(-243,10)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(-11,4),new BigFraction(6),new BigFraction(51,8),new BigFraction(-43,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(69,20),new BigFraction(4,5),new BigFraction(3,40),new BigFraction(-379,40)},
+                            {new BigFraction(0),new BigFraction(2,5),new BigFraction(74,5),new BigFraction(8,5),new BigFraction(89,5),new BigFraction(-27,5)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
-                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(53,5),new Fraction(12,5),new Fraction(11,10),new Fraction(-243,10)},
-                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
-                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-13,10),new BigFraction(4,5),new BigFraction(-11,20),new BigFraction(43,20)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(-1,4),new BigFraction(0),new BigFraction(-7,8),new BigFraction(-9,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(53,5),new BigFraction(12,5),new BigFraction(11,10),new BigFraction(-243,10)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(-11,4),new BigFraction(6),new BigFraction(51,8),new BigFraction(-43,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(69,20),new BigFraction(4,5),new BigFraction(3,40),new BigFraction(-379,40)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(149,10),new BigFraction(8,5),new BigFraction(363,20),new BigFraction(-99,20)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(-13,10),new Fraction(4,5),new Fraction(-11,20),new Fraction(43,20)},
-                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
-                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-13,10),new BigFraction(4,5),new BigFraction(-11,20),new BigFraction(43,20)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(-1,4),new BigFraction(0),new BigFraction(-7,8),new BigFraction(-9,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(-11,4),new BigFraction(6),new BigFraction(51,8),new BigFraction(-43,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(69,20),new BigFraction(4,5),new BigFraction(3,40),new BigFraction(-379,40)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(149,10),new BigFraction(8,5),new BigFraction(363,20),new BigFraction(-99,20)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(-1,4),new Fraction(0),new Fraction(-7,8),new Fraction(-9,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
-                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(58,53),new BigFraction(-22,53),new BigFraction(-44,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(-1,4),new BigFraction(0),new BigFraction(-7,8),new BigFraction(-9,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(-11,4),new BigFraction(6),new BigFraction(51,8),new BigFraction(-43,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(69,20),new BigFraction(4,5),new BigFraction(3,40),new BigFraction(-379,40)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(149,10),new BigFraction(8,5),new BigFraction(363,20),new BigFraction(-99,20)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(-11,4),new Fraction(6),new Fraction(51,8),new Fraction(-43,8)},
-                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
-                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(58,53),new BigFraction(-22,53),new BigFraction(-44,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(3,53),new BigFraction(-45,53),new BigFraction(-90,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(-11,4),new BigFraction(6),new BigFraction(51,8),new BigFraction(-43,8)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(69,20),new BigFraction(4,5),new BigFraction(3,40),new BigFraction(-379,40)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(149,10),new BigFraction(8,5),new BigFraction(363,20),new BigFraction(-99,20)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(351,53),new Fraction(353,53),new Fraction(-619,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(69,20),new Fraction(4,5),new Fraction(3,40),new Fraction(-379,40)},
-                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(58,53),new BigFraction(-22,53),new BigFraction(-44,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(3,53),new BigFraction(-45,53),new BigFraction(-90,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(351,53),new BigFraction(353,53),new BigFraction(-619,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(69,20),new BigFraction(4,5),new BigFraction(3,40),new BigFraction(-379,40)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(149,10),new BigFraction(8,5),new BigFraction(363,20),new BigFraction(-99,20)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(351,53),new Fraction(353,53),new Fraction(-619,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(149,10),new Fraction(8,5),new Fraction(363,20),new Fraction(-99,20)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(58,53),new BigFraction(-22,53),new BigFraction(-44,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(3,53),new BigFraction(-45,53),new BigFraction(-90,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(351,53),new BigFraction(353,53),new BigFraction(-619,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1,53),new BigFraction(-15,53),new BigFraction(-83,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(149,10),new BigFraction(8,5),new BigFraction(363,20),new BigFraction(-99,20)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(351,53),new Fraction(353,53),new Fraction(-619,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(58,53),new BigFraction(-22,53),new BigFraction(-44,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(3,53),new BigFraction(-45,53),new BigFraction(-90,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(351,53),new BigFraction(353,53),new BigFraction(-619,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1,53),new BigFraction(-15,53),new BigFraction(-83,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-94,53),new BigFraction(880,53),new BigFraction(1548,53)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(58,53),new Fraction(-22,53),new Fraction(-44,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(58,53),new BigFraction(-22,53),new BigFraction(-44,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(3,53),new BigFraction(-45,53),new BigFraction(-90,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1,53),new BigFraction(-15,53),new BigFraction(-83,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-94,53),new BigFraction(880,53),new BigFraction(1548,53)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(3,53),new Fraction(-45,53),new Fraction(-90,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-532,351),new BigFraction(386,351)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(3,53),new BigFraction(-45,53),new BigFraction(-90,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1,53),new BigFraction(-15,53),new BigFraction(-83,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-94,53),new BigFraction(880,53),new BigFraction(1548,53)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(12,53),new Fraction(11,106),new Fraction(-243,106)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-532,351),new BigFraction(386,351)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-106,117),new BigFraction(-187,117)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(12,53),new BigFraction(11,106),new BigFraction(-243,106)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1,53),new BigFraction(-15,53),new BigFraction(-83,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-94,53),new BigFraction(880,53),new BigFraction(1548,53)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1,53),new Fraction(-15,53),new Fraction(-83,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-532,351),new BigFraction(386,351)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-106,117),new BigFraction(-187,117)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-29,234),new BigFraction(-443,234)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1,53),new BigFraction(-15,53),new BigFraction(-83,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-94,53),new BigFraction(880,53),new BigFraction(1548,53)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-106,351),new Fraction(-538,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-94,53),new Fraction(880,53),new Fraction(1548,53)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-532,351),new BigFraction(386,351)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-106,117),new BigFraction(-187,117)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-29,234),new BigFraction(-443,234)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-106,351),new BigFraction(-538,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-94,53),new BigFraction(880,53),new BigFraction(1548,53)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-106,351),new Fraction(-538,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-532,351),new BigFraction(386,351)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-106,117),new BigFraction(-187,117)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-29,234),new BigFraction(-443,234)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-106,351),new BigFraction(-538,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(6454,351),new BigFraction(9154,351)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-532,351),new Fraction(386,351)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-532,351),new BigFraction(386,351)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-106,117),new BigFraction(-187,117)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-29,234),new BigFraction(-443,234)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(269,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(6454,351),new BigFraction(9154,351)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-106,117),new Fraction(-187,117)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(466,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-106,117),new BigFraction(-187,117)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-29,234),new BigFraction(-443,234)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(269,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(6454,351),new BigFraction(9154,351)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-29,234),new Fraction(-443,234)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(466,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-29,234),new BigFraction(-443,234)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(269,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(6454,351),new BigFraction(9154,351)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-67,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(353,351),new Fraction(-619,351)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(466,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-67,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(353,351),new BigFraction(-619,351)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(269,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(6454,351),new BigFraction(9154,351)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-67,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-364,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(6454,351),new Fraction(9154,351)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(466,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-67,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-364,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(269,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(6454,351),new BigFraction(9154,351)}
                         }
                     ),
                     new LinearSystemOfEquations(
-                        new Fraction[][] {
-                            {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(466,53)},
-                            {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3)},
-                            {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-67,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-364,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(269,53)},
-                            {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-3564,53)}
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(466,53)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-67,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-364,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(269,53)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-3564,53)}
                         }
+                    )
+                )
+            },
+            {
+                problem3,
+                List.of(
+                    problem3,
+                    new LinearSystemOfEquations(
+                        new BigFraction[][] {
+                            {new BigFraction(4),new BigFraction(0),new BigFraction(8),new BigFraction(-3),new BigFraction(5),new BigFraction(2)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(10),new BigFraction(-8),new BigFraction(0),new BigFraction(6)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(2),new BigFraction(-3,4),new BigFraction(5,4),new BigFraction(1,2)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(10),new BigFraction(-8),new BigFraction(0),new BigFraction(6)}
+                        }
+                    ),
+                    new LinearSystemOfEquations(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(-3,4),new BigFraction(5,4),new BigFraction(1,2)},
+                            {new BigFraction(0),new BigFraction(10),new BigFraction(0),new BigFraction(-8),new BigFraction(0),new BigFraction(6)}
+                        },
+                        new int[] {0,2,1,3,4}
+                    ),
+                    new LinearSystemOfEquations(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(-3,4),new BigFraction(5,4),new BigFraction(1,2)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-4,5),new BigFraction(0),new BigFraction(3,5)}
+                        },
+                        new int[] {0,2,1,3,4}
+                    ),
+                    new LinearSystemOfEquations(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(17,20),new BigFraction(5,4),new BigFraction(-7,10)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-4,5),new BigFraction(0),new BigFraction(3,5)}
+                        },
+                        new int[] {0,2,1,3,4}
                     )
                 )
             }
@@ -449,18 +495,18 @@ public class OptimizationAlgorithmsTest {
 
     @DataProvider
     public Object[][] simplexData() {
-        final Fraction[] target1 = new Fraction[] {new Fraction(2), new Fraction(3)};
-        final Fraction[] target2 = new Fraction[] {new Fraction(1), new Fraction(1)};
+        final BigFraction[] target1 = new BigFraction[] {new BigFraction(2), new BigFraction(3)};
+        final BigFraction[] target2 = new BigFraction[] {new BigFraction(1), new BigFraction(1)};
         return new Object[][] {
             {
                 new SimplexProblem(
                     target1,
-                    new Fraction[][] {
-                        {new Fraction(1),new Fraction(0),new Fraction(18,5)},
-                        {new Fraction(1),new Fraction(2),new Fraction(5)},
-                        {new Fraction(1),new Fraction(1),new Fraction(4)},
-                        {new Fraction(2),new Fraction(1),new Fraction(15,2)},
-                        {new Fraction(0),new Fraction(1),new Fraction(2)}
+                    new BigFraction[][] {
+                        {new BigFraction(1),new BigFraction(0),new BigFraction(18,5)},
+                        {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
+                        {new BigFraction(1),new BigFraction(1),new BigFraction(4)},
+                        {new BigFraction(2),new BigFraction(1),new BigFraction(15,2)},
+                        {new BigFraction(0),new BigFraction(1),new BigFraction(2)}
                     }
                 ),
                 new SimplexSolution(
@@ -468,68 +514,68 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new Fraction[][] {
-                                    {new Fraction(1),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(18,5)},
-                                    {new Fraction(1),new Fraction(2),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(5)},
-                                    {new Fraction(1),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(4)},
-                                    {new Fraction(2),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(15,2)},
-                                    {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(2)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0)},
-                                    {new Fraction(2),new Fraction(3),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
+                                    {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
+                                    {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
+                                    {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(15,2)},
+                                    {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                    {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,3,4,5,6},
-                            new Fraction[] {null,new Fraction(5,2),new Fraction(4),new Fraction(15,2),new Fraction(2)},
+                            new BigFraction[] {null,new BigFraction(5,2),new BigFraction(4),new BigFraction(15,2),new BigFraction(2)},
                             4,
                             1
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new Fraction[][] {
-                                    {new Fraction(1),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(18,5)},
-                                    {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-2),new Fraction(1)},
-                                    {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-1),new Fraction(2)},
-                                    {new Fraction(2),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-1),new Fraction(11,2)},
-                                    {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(2)},
-                                    {new Fraction(0),new Fraction(3),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(3),new Fraction(6)},
-                                    {new Fraction(2),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-3),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
+                                    {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
+                                    {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(2)},
+                                    {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(11,2)},
+                                    {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
+                                    {new BigFraction(0),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3),new BigFraction(6)},
+                                    {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-3),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,3,4,5,1},
-                            new Fraction[] {new Fraction(18,5),new Fraction(1),new Fraction(2),new Fraction(11,4),null},
+                            new BigFraction[] {new BigFraction(18,5),new BigFraction(1),new BigFraction(2),new BigFraction(11,4),null},
                             1,
                             0
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new Fraction[][] {
-                                    {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(-1),new Fraction(0),new Fraction(0),new Fraction( 2),new Fraction(13,5)},
-                                    {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction( 1),new Fraction(0),new Fraction(0),new Fraction(-2),new Fraction(1)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction(1),new Fraction(0),new Fraction( 1),new Fraction(1)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-2),new Fraction(0),new Fraction(1),new Fraction( 3),new Fraction(7,2)},
-                                    {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction( 0),new Fraction(0),new Fraction(0),new Fraction( 1),new Fraction(2)},
-                                    {new Fraction(2),new Fraction(3),new Fraction(0),new Fraction( 2),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction(8)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-2),new Fraction(0),new Fraction(0),new Fraction( 1),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(13,5)},
+                                    {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction( 3),new BigFraction(7,2)},
+                                    {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(2)},
+                                    {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(8)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,0,4,5,1},
-                            new Fraction[] {new Fraction(13,10),null,new Fraction(1),new Fraction(7,6),new Fraction(2)},
+                            new BigFraction[] {new BigFraction(13,10),null,new BigFraction(1),new BigFraction(7,6),new BigFraction(2)},
                             2,
                             6
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new Fraction[][] {
-                                    {new Fraction(0),new Fraction(0),new Fraction(1),new Fraction( 1),new Fraction(-2),new Fraction(0),new Fraction(0),new Fraction(3,5)},
-                                    {new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction( 2),new Fraction(0),new Fraction(0),new Fraction(3)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction( 1),new Fraction(0),new Fraction(1),new Fraction(1)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction( 1),new Fraction(-3),new Fraction(1),new Fraction(0),new Fraction(1,2)},
-                                    {new Fraction(0),new Fraction(1),new Fraction(0),new Fraction( 1),new Fraction(-1),new Fraction(0),new Fraction(0),new Fraction(1)},
-                                    {new Fraction(2),new Fraction(3),new Fraction(0),new Fraction( 1),new Fraction( 1),new Fraction(0),new Fraction(0),new Fraction(9)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(-1),new Fraction(-1),new Fraction(0),new Fraction(0),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction(3,5)},
+                                    {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(-3),new BigFraction(1),new BigFraction(0),new BigFraction(1,2)},
+                                    {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(1)},
+                                    {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(9)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,0,6,5,1},
@@ -544,10 +590,10 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new Fraction[][] {
-                        {new Fraction(1),new Fraction(2),new Fraction(5)},
-                        {new Fraction(-1),new Fraction(-1),new Fraction(-2)},
-                        {new Fraction(2),new Fraction(1),new Fraction(7)}
+                    new BigFraction[][] {
+                        {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
+                        {new BigFraction(-1),new BigFraction(-1),new BigFraction(-2)},
+                        {new BigFraction(2),new BigFraction(1),new BigFraction(7)}
                     }
                 ),
                 new SimplexSolution(
@@ -555,44 +601,44 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new Fraction[][] {
-                                    {new Fraction(1),new Fraction(2),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(5)},
-                                    {new Fraction(-1),new Fraction(-1),new Fraction(0),new Fraction(1),new Fraction(0),new Fraction(-2)},
-                                    {new Fraction(2),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(1),new Fraction(7)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0)},
-                                    {new Fraction(1),new Fraction(1),new Fraction(0),new Fraction(0),new Fraction(0),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(1),new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
+                                    {new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-2)},
+                                    {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(7)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                    {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,3,4},
-                            new Fraction[] {new Fraction(5),null,new Fraction(7,2)},
+                            new BigFraction[] {new BigFraction(5),null,new BigFraction(7,2)},
                             2,
                             0
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new Fraction[][] {
-                                    {new Fraction(0),new Fraction(3,2),new Fraction(1),new Fraction(0),new Fraction(-1,2),new Fraction(3,2)},
-                                    {new Fraction(0),new Fraction(-1,2),new Fraction(0),new Fraction(1),new Fraction(1,2),new Fraction(3,2)},
-                                    {new Fraction(1),new Fraction(1,2),new Fraction(0),new Fraction(0),new Fraction(1,2),new Fraction(7,2)},
-                                    {new Fraction(1),new Fraction(1,2),new Fraction(0),new Fraction(0),new Fraction(1,2),new Fraction(7,2)},
-                                    {new Fraction(0),new Fraction(1,2),new Fraction(0),new Fraction(0),new Fraction(-1,2),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(0),new BigFraction(3,2),new BigFraction(1),new BigFraction(0),new BigFraction(-1,2),new BigFraction(3,2)},
+                                    {new BigFraction(0),new BigFraction(-1,2),new BigFraction(0),new BigFraction(1),new BigFraction(1,2),new BigFraction(3,2)},
+                                    {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
+                                    {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
+                                    {new BigFraction(0),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(-1,2),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,3,0},
-                            new Fraction[] {new Fraction(1),null,new Fraction(7)},
+                            new BigFraction[] {new BigFraction(1),null,new BigFraction(7)},
                             0,
                             1
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new Fraction[][] {
-                                    {new Fraction(0),new Fraction(1),new Fraction(2,3),new Fraction(0),new Fraction(-1,3),new Fraction(1)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(1,3),new Fraction(1),new Fraction(1,3),new Fraction(2)},
-                                    {new Fraction(1),new Fraction(0),new Fraction(-1,3),new Fraction(0),new Fraction(2,3),new Fraction(3)},
-                                    {new Fraction(1),new Fraction(1),new Fraction(1,3),new Fraction(0),new Fraction(1,3),new Fraction(4)},
-                                    {new Fraction(0),new Fraction(0),new Fraction(-1,3),new Fraction(0),new Fraction(-1,3),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(0),new BigFraction(1),new BigFraction(2,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(1)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(1,3),new BigFraction(1),new BigFraction(1,3),new BigFraction(2)},
+                                    {new BigFraction(1),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(2,3),new BigFraction(3)},
+                                    {new BigFraction(1),new BigFraction(1),new BigFraction(1,3),new BigFraction(0),new BigFraction(1,3),new BigFraction(4)},
+                                    {new BigFraction(0),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0)}
                                 }
                             ),
                             new int[] {1,3,0},
@@ -607,9 +653,9 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new Fraction[][] {
-                        {new Fraction(-2),new Fraction(1),new Fraction(1)},
-                        {new Fraction(1),new Fraction(-2),new Fraction(1)}
+                    new BigFraction[][] {
+                        {new BigFraction(-2),new BigFraction(1),new BigFraction(1)},
+                        {new BigFraction(1),new BigFraction(-2),new BigFraction(1)}
                     }
                 ),
                 new SimplexSolution(
@@ -617,30 +663,30 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new Fraction[][] {
-                                    {new Fraction(-2),new Fraction( 1),new Fraction(1),new Fraction(0),new Fraction(1)},
-                                    {new Fraction( 1),new Fraction(-2),new Fraction(0),new Fraction(1),new Fraction(1)},
-                                    {new Fraction( 0),new Fraction( 0),new Fraction(0),new Fraction(0),new Fraction(0)},
-                                    {new Fraction( 1),new Fraction( 1),new Fraction(0),new Fraction(0),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(-2),new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction(1)},
+                                    {new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
+                                    {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                    {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,3},
-                            new Fraction[] {null,new Fraction(1)},
+                            new BigFraction[] {null,new BigFraction(1)},
                             1,
                             0
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new Fraction[][] {
-                                    {new Fraction(0),new Fraction(-3),new Fraction(1),new Fraction( 2),new Fraction(3)},
-                                    {new Fraction(1),new Fraction(-2),new Fraction(0),new Fraction( 1),new Fraction(1)},
-                                    {new Fraction(1),new Fraction(-2),new Fraction(0),new Fraction( 1),new Fraction(1)},
-                                    {new Fraction(0),new Fraction( 3),new Fraction(0),new Fraction(-1),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(0),new BigFraction(-3),new BigFraction(1),new BigFraction( 2),new BigFraction(3)},
+                                    {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                    {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                    {new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(-1),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,0},
-                            new Fraction[] {null,null},
+                            new BigFraction[] {null,null},
                             -1,
                             1
                         )
@@ -651,9 +697,9 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new Fraction[][] {
-                        {new Fraction(1),new Fraction(-1),new Fraction(-1)},
-                        {new Fraction(-1),new Fraction(2),new Fraction(-1)}
+                    new BigFraction[][] {
+                        {new BigFraction(1),new BigFraction(-1),new BigFraction(-1)},
+                        {new BigFraction(-1),new BigFraction(2),new BigFraction(-1)}
                     }
                 ),
                 new SimplexSolution(
@@ -661,26 +707,26 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new Fraction[][] {
-                                    {new Fraction( 1),new Fraction(-1),new Fraction(1),new Fraction(0),new Fraction(-1)},
-                                    {new Fraction(-1),new Fraction( 2),new Fraction(0),new Fraction(1),new Fraction(-1)},
-                                    {new Fraction( 0),new Fraction( 0),new Fraction(0),new Fraction(0),new Fraction(0)},
-                                    {new Fraction( 1),new Fraction( 1),new Fraction(0),new Fraction(0),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction( 1),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-1)},
+                                    {new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(1),new BigFraction(-1)},
+                                    {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                    {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
                                 }
                             ),
                             new int[] {2,3},
-                            new Fraction[] {null,null},
+                            new BigFraction[] {null,null},
                             -1,
                             1
                         ),
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new Fraction[][] {
-                                    {new Fraction(-1),new Fraction(1),new Fraction(-1),new Fraction(0),new Fraction(1)},
-                                    {new Fraction( 1),new Fraction(0),new Fraction( 2),new Fraction(1),new Fraction(-3)},
-                                    {new Fraction(-1),new Fraction(1),new Fraction(-1),new Fraction(0),new Fraction(1)},
-                                    {new Fraction( 2),new Fraction(0),new Fraction( 1),new Fraction(0),new Fraction(0)}
+                                new BigFraction[][] {
+                                    {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
+                                    {new BigFraction( 1),new BigFraction(0),new BigFraction( 2),new BigFraction(1),new BigFraction(-3)},
+                                    {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
+                                    {new BigFraction( 2),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0)}
                                 }
                             ),
                             new int[] {1,3},

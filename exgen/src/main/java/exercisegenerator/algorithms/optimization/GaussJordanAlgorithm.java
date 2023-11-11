@@ -27,16 +27,16 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
     }
 
     private static boolean assignmentHasConflict(
-        final Fraction[] assignment,
+        final BigFraction[] assignment,
         final LinearSystemOfEquations solvedSystem
     ) {
         if (solvedSystem.numberOfRows <= assignment.length) {
             return false;
         }
         for (int row = assignment.length; row < solvedSystem.numberOfRows; row++) {
-            Fraction left = Fraction.ZERO;
+            BigFraction left = BigFraction.ZERO;
             for (int col = 0; col < solvedSystem.numberOfColumns - 1; col++) {
-                if (solvedSystem.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                if (solvedSystem.matrix[row][col].compareTo(BigFraction.ZERO) != 0) {
                     left = left.add(solvedSystem.matrix[row][col].multiply(assignment[col]));
                 }
             }
@@ -47,9 +47,9 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         return false;
     }
 
-    private static Fraction[] computeAssignment(final LinearSystemOfEquations solvedSystem) {
+    private static BigFraction[] computeAssignment(final LinearSystemOfEquations solvedSystem) {
         final int rank = GaussJordanAlgorithm.computeRankForSolvedMatrix(solvedSystem.matrix);
-        final Fraction[] result = new Fraction[rank];
+        final BigFraction[] result = new BigFraction[rank];
         for (int row = 0; row < rank; row++) {
             result[row] = solvedSystem.matrix[row][solvedSystem.numberOfColumns - 1];
         }
@@ -60,10 +60,10 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         return Math.min(system.numberOfRows, system.numberOfColumns - 1);
     }
 
-    private static int computeRankForSolvedMatrix(final Fraction[][] matrix) {
+    private static int computeRankForSolvedMatrix(final BigFraction[][] matrix) {
         int rank = 0;
         while (
-            rank < matrix.length && rank < matrix[rank].length - 1 && matrix[rank][rank].compareTo(Fraction.ONE) == 0
+            rank < matrix.length && rank < matrix[rank].length - 1 && matrix[rank][rank].compareTo(BigFraction.ONE) == 0
         ) {
             rank++;
         }
@@ -73,18 +73,18 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
     private static LinearSystemOfEquations gaussJordanStep(final LinearSystemOfEquations system) {
         final int minDimension = GaussJordanAlgorithm.computeMinimumDimension(system);
         for (int col = 0; col < minDimension; col++) {
-            if (system.matrix[col][col].compareTo(Fraction.ONE) != 0) {
-                if (system.matrix[col][col].compareTo(Fraction.ZERO) != 0) {
+            if (system.matrix[col][col].compareTo(BigFraction.ONE) != 0) {
+                if (system.matrix[col][col].compareTo(BigFraction.ZERO) != 0) {
                     return system.multiplyRow(col, system.matrix[col][col].reciprocal());
                 }
                 for (int row = col + 1; row < system.numberOfRows; row++) {
-                    if (system.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                    if (system.matrix[row][col].compareTo(BigFraction.ZERO) != 0) {
                         return system.swapRows(col, row);
                     }
                 }
                 for (int secondCol = col + 1; secondCol < system.numberOfColumns - 1; secondCol++) {
                     for (int row = col; row < system.numberOfRows; row++) {
-                        if (system.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                        if (system.matrix[row][secondCol].compareTo(BigFraction.ZERO) != 0) {
                             return system.swapColumns(col, secondCol);
                         }
                     }
@@ -93,7 +93,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
             }
             for (int row = 0; row < system.numberOfRows; row++) {
                 if (row != col) {
-                    if (system.matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                    if (system.matrix[row][col].compareTo(BigFraction.ZERO) != 0) {
                         return system.addRow(row, col, system.matrix[row][col].negate());
                     }
                 }
@@ -105,20 +105,20 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
     private static LinearSystemOfEquations generateLinearSystemOfEquations(final Parameters options) {
         final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
         final int numberOfEquations = OptimizationAlgorithms.generateNumberOfInequalitiesOrEquations();
-        final Fraction[][] matrix =
+        final BigFraction[][] matrix =
             OptimizationAlgorithms.generateInequalitiesOrEquations(numberOfEquations, numberOfVariables);
         System.out.println(Arrays.deepToString(matrix));
         return new LinearSystemOfEquations(matrix);
     }
 
-    private static boolean isIdentityMatrix(final Fraction[][] matrix, final int from, final int to) {
+    private static boolean isIdentityMatrix(final BigFraction[][] matrix, final int from, final int to) {
         for (int row = from; row < to; row++) {
             for (int col = from; col < to; col++) {
                 if (row == col) {
-                    if (matrix[row][col].compareTo(Fraction.ONE) != 0) {
+                    if (matrix[row][col].compareTo(BigFraction.ONE) != 0) {
                         return false;
                     }
-                } else if (matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                } else if (matrix[row][col].compareTo(BigFraction.ZERO) != 0) {
                     return false;
                 }
             }
@@ -130,9 +130,9 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         final int minDimension = GaussJordanAlgorithm.computeMinimumDimension(system);
         int rank = 0;
         while (rank < minDimension) {
-            if (system.matrix[rank][rank].compareTo(Fraction.ONE) == 0) {
+            if (system.matrix[rank][rank].compareTo(BigFraction.ONE) == 0) {
                 rank++;
-            } else if (system.matrix[rank][rank].compareTo(Fraction.ZERO) == 0) {
+            } else if (system.matrix[rank][rank].compareTo(BigFraction.ZERO) == 0) {
                 break;
             } else {
                 return false;
@@ -148,18 +148,18 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
     }
 
     private static boolean isSolvedBelowIdentity(
-        final Fraction[][] matrix,
+        final BigFraction[][] matrix,
         final int from,
         final int numberOfRows,
         final int numberOfColumns
     ) {
         for (int row = from; row < numberOfRows; row++) {
             for (int col = 0; col < numberOfColumns - 1; col++) {
-                if (matrix[row][col].compareTo(Fraction.ZERO) != 0) {
+                if (matrix[row][col].compareTo(BigFraction.ZERO) != 0) {
                     return false;
                 }
             }
-            if (matrix[row][numberOfColumns - 1].compareTo(Fraction.ZERO) != 0) {
+            if (matrix[row][numberOfColumns - 1].compareTo(BigFraction.ZERO) != 0) {
                 return true;
             }
         }
@@ -172,7 +172,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
     ) throws IOException {
         final String line = reader.readLine();
         final String[] rows = line.split(";");
-        final Fraction[][] matrix = new Fraction[rows.length][((int)rows[0].chars().filter(c -> c == ',').count()) + 1];
+        final BigFraction[][] matrix = new BigFraction[rows.length][((int)rows[0].chars().filter(c -> c == ',').count()) + 1];
         for (int row = 0; row < matrix.length; row++) {
             final String[] numbers = rows[row].split(",");
             if (numbers.length != matrix[row].length) {
@@ -248,7 +248,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Ergebnis: ");
-        final Fraction[] assignment = GaussJordanAlgorithm.computeAssignment(lastSystem);
+        final BigFraction[] assignment = GaussJordanAlgorithm.computeAssignment(lastSystem);
         if (GaussJordanAlgorithm.assignmentHasConflict(assignment, lastSystem)) {
             writer.write("unl\\\"osbar");
         } else {
@@ -272,8 +272,8 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
             OptimizationAlgorithms.toCoefficient(solvedSystem.matrix[column][solvedSystem.numberOfColumns - 1])
         );
         for (int col = column + 1; col < solvedSystem.numberOfColumns - 1; col++) {
-            if (solvedSystem.matrix[column][col].compareTo(Fraction.ZERO) != 0) {
-                if (solvedSystem.matrix[column][col].compareTo(Fraction.ZERO) < 0) {
+            if (solvedSystem.matrix[column][col].compareTo(BigFraction.ZERO) != 0) {
+                if (solvedSystem.matrix[column][col].compareTo(BigFraction.ZERO) < 0) {
                     result.append(" + ");
                 } else {
                     result.append(" - ");

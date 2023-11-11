@@ -30,7 +30,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
     }
 
     static SimplexAnswer simplexComputeAnswer(final SimplexTableau tableau) {
-        final Fraction[][] matrix = tableau.problem.matrix;
+        final BigFraction[][] matrix = tableau.problem.matrix;
         if (SimplexAlgorithm.simplexHasNegativeLimit(matrix)) {
             if (SimplexAlgorithm.simplexHasNegativeLimitWithNonNegativeRow(matrix)) {
                 return SimplexAnswer.UNSOLVABLE;
@@ -48,8 +48,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return SimplexAnswer.SOLVED;
     }
 
-    private static Fraction generateNonZeroCoefficient(final int oneToChanceForNegative) {
-        return new Fraction(
+    private static BigFraction generateNonZeroCoefficient(final int oneToChanceForNegative) {
+        return new BigFraction(
             (OptimizationAlgorithms.RANDOM.nextInt(10) + 1)
             * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
         );
@@ -58,14 +58,14 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
     private static SimplexProblem generateSimplexProblem(final Parameters options) {
         final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
         final int numberOfInequalities = OptimizationAlgorithms.generateNumberOfInequalitiesOrEquations();
-        final Fraction[] target = SimplexAlgorithm.generateTargetFunction(numberOfVariables);
-        final Fraction[][] matrix =
+        final BigFraction[] target = SimplexAlgorithm.generateTargetFunction(numberOfVariables);
+        final BigFraction[][] matrix =
             OptimizationAlgorithms.generateInequalitiesOrEquations(numberOfInequalities, numberOfVariables);
         return new SimplexProblem(target, matrix);
     }
 
-    private static Fraction[] generateTargetFunction(final int numberOfVariables) {
-        final Fraction[] target = new Fraction[numberOfVariables];
+    private static BigFraction[] generateTargetFunction(final int numberOfVariables) {
+        final BigFraction[] target = new BigFraction[numberOfVariables];
         for (int i = 0; i < numberOfVariables; i++) {
             target[i] = SimplexAlgorithm.generateNonZeroCoefficient(4);
         }
@@ -85,8 +85,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
     ) throws IOException {
         final String line = reader.readLine();
         final String[] rows = line.split(";");
-        final Fraction[] target = SimplexAlgorithm.parseTargetFunction(rows[0]);
-        final Fraction[][] matrix = new Fraction[rows.length - 1][target.length + 1];
+        final BigFraction[] target = SimplexAlgorithm.parseTargetFunction(rows[0]);
+        final BigFraction[][] matrix = new BigFraction[rows.length - 1][target.length + 1];
         for (int row = 0; row < matrix.length; row++) {
             final String[] numbers = rows[row + 1].split(",");
             if (numbers.length != matrix[row].length) {
@@ -101,9 +101,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return new SimplexProblem(target, matrix);
     }
 
-    private static Fraction[] parseTargetFunction(final String line) {
+    private static BigFraction[] parseTargetFunction(final String line) {
         final String[] numbers = line.split(",");
-        final Fraction[] target = new Fraction[numbers.length];
+        final BigFraction[] target = new BigFraction[numbers.length];
         for (int i = 0; i < target.length; i++) {
             target[i] = OptimizationAlgorithms.parseRationalNumber(numbers[i]);
         }
@@ -167,8 +167,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
     throws IOException {
         writer.write("Maximiere $z(\\mathbf{x}) = ");
         int firstNonZeroIndex = 0;
-        for (final Fraction coefficient : problem.target) {
-            if (coefficient.compareTo(Fraction.ZERO) != 0) {
+        for (final BigFraction coefficient : problem.target) {
+            if (coefficient.compareTo(BigFraction.ZERO) != 0) {
                 break;
             }
             firstNonZeroIndex++;
@@ -276,19 +276,19 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
     private static void simplexBaseSwap(
         final int pivotRow,
         final int pivotColumn,
-        final Fraction[][] matrix,
+        final BigFraction[][] matrix,
         final int[] basicVariables,
-        final Fraction[] target
+        final BigFraction[] target
     ) {
-        final Fraction pivotElement = matrix[pivotRow][pivotColumn];
-        if (pivotElement.compareTo(Fraction.ONE) != 0) {
+        final BigFraction pivotElement = matrix[pivotRow][pivotColumn];
+        if (pivotElement.compareTo(BigFraction.ONE) != 0) {
             for (int col = 0; col < matrix[pivotRow].length; col++) {
                 matrix[pivotRow][col] = matrix[pivotRow][col].divide(pivotElement);
             }
         }
         for (int row = 0; row < matrix.length - 2; row++) {
-            if (row != pivotRow && matrix[row][pivotColumn].compareTo(Fraction.ZERO) != 0) {
-                final Fraction factor = matrix[row][pivotColumn];
+            if (row != pivotRow && matrix[row][pivotColumn].compareTo(BigFraction.ZERO) != 0) {
+                final BigFraction factor = matrix[row][pivotColumn];
                 for (int col = 0; col < matrix[row].length; col++) {
                     matrix[row][col] = matrix[row][col].subtract(matrix[pivotRow][col].multiply(factor));
                 }
@@ -296,7 +296,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         }
         basicVariables[pivotRow] = pivotColumn;
         for (int col = 0; col < matrix[basicVariables.length].length; col++) {
-            Fraction sum = Fraction.ZERO;
+            BigFraction sum = BigFraction.ZERO;
             for (int row = 0; row < basicVariables.length; row++) {
                 sum =
                     sum.add(
@@ -309,20 +309,20 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             } else if (col < matrix[basicVariables.length].length - 1) {
                 matrix[basicVariables.length + 1][col] = sum.negate();
             } else {
-                matrix[basicVariables.length + 1][col] = Fraction.ZERO;
+                matrix[basicVariables.length + 1][col] = BigFraction.ZERO;
             }
         }
     }
 
-    private static Fraction[] simplexComputeQuotients(final Fraction[][] matrix, final int pivotColumn) {
+    private static BigFraction[] simplexComputeQuotients(final BigFraction[][] matrix, final int pivotColumn) {
         if (pivotColumn < 0) {
             return null;
         }
-        final Fraction[] quotients = new Fraction[matrix.length - 2];
+        final BigFraction[] quotients = new BigFraction[matrix.length - 2];
         for (int row = 0; row < quotients.length; row++) {
             if (
-                matrix[row][pivotColumn].compareTo(Fraction.ZERO) > 0
-                && matrix[row][matrix[row].length - 1].compareTo(Fraction.ZERO) >= 0
+                matrix[row][pivotColumn].compareTo(BigFraction.ZERO) > 0
+                && matrix[row][matrix[row].length - 1].compareTo(BigFraction.ZERO) >= 0
             ) {
                 quotients[row] = matrix[row][matrix[row].length - 1].divide(matrix[row][pivotColumn]);
             } else {
@@ -332,16 +332,16 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return quotients;
     }
 
-    private static int simplexFirstRowWithNegativeLimit(final Fraction[][] matrix) {
+    private static int simplexFirstRowWithNegativeLimit(final BigFraction[][] matrix) {
         for (int row = 0; row < matrix.length - 2; row++) {
-            if (matrix[row][matrix[row].length - 1].compareTo(Fraction.ZERO) < 0) {
+            if (matrix[row][matrix[row].length - 1].compareTo(BigFraction.ZERO) < 0) {
                 return row;
             }
         }
         return -1;
     }
 
-    private static Fraction simplexGetCurrentValue(final int variableIndex, final SimplexTableau tableau) {
+    private static BigFraction simplexGetCurrentValue(final int variableIndex, final SimplexTableau tableau) {
         int index = -1;
         for (int i = 0; i < tableau.basicVariables.length; i++) {
             if (tableau.basicVariables[i] == variableIndex) {
@@ -350,26 +350,26 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             }
         }
         if (index < 0) {
-            return Fraction.ZERO;
+            return BigFraction.ZERO;
         }
         return tableau.problem.matrix[index][tableau.problem.matrix[index].length - 1];
     }
 
-    private static boolean simplexHasNegativeLimit(final Fraction[][] matrix) {
+    private static boolean simplexHasNegativeLimit(final BigFraction[][] matrix) {
         for (int i = 0; i < matrix.length - 2; i++) {
-            if (matrix[i][matrix[i].length - 1].compareTo(Fraction.ZERO) < 0) {
+            if (matrix[i][matrix[i].length - 1].compareTo(BigFraction.ZERO) < 0) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean simplexHasNegativeLimitWithNonNegativeRow(final Fraction[][] matrix) {
+    private static boolean simplexHasNegativeLimitWithNonNegativeRow(final BigFraction[][] matrix) {
         for (int i = 0; i < matrix.length - 2; i++) {
-            if (matrix[i][matrix[i].length - 1].compareTo(Fraction.ZERO) < 0) {
+            if (matrix[i][matrix[i].length - 1].compareTo(BigFraction.ZERO) < 0) {
                 boolean notFound = true;
                 for (int j = 0; j < matrix.length - 1; j++) {
-                    if (matrix[i][j].compareTo(Fraction.ZERO) < 0) {
+                    if (matrix[i][j].compareTo(BigFraction.ZERO) < 0) {
                         notFound = false;
                         break;
                     }
@@ -382,9 +382,13 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return false;
     }
 
-    private static Fraction[][] simplexInitializeMatrix(final Fraction[][] initialMatrix, final Fraction[] target) {
+    private static BigFraction[][] simplexInitializeMatrix(
+        final BigFraction[][] initialMatrix,
+        final BigFraction[] target
+    ) {
         final int initialColumnLength = initialMatrix.length;
-        final Fraction[][] newMatrix = new Fraction[initialColumnLength + 2][initialMatrix[0].length + initialColumnLength];
+        final BigFraction[][] newMatrix =
+            new BigFraction[initialColumnLength + 2][initialMatrix[0].length + initialColumnLength];
         for (int row = 0; row < initialColumnLength; row++) {
             final int initialRowLength = initialMatrix[row].length - 1;
             for (int col = 0; col < initialRowLength; col++) {
@@ -393,36 +397,36 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             final int newRowLength = newMatrix[row].length - 1;
             for (int col = initialRowLength; col < newRowLength; col++) {
                 if (col - initialRowLength == row) {
-                    newMatrix[row][col] = Fraction.ONE;
+                    newMatrix[row][col] = BigFraction.ONE;
                 } else {
-                    newMatrix[row][col] = Fraction.ZERO;
+                    newMatrix[row][col] = BigFraction.ZERO;
                 }
             }
             newMatrix[row][newRowLength] = initialMatrix[row][initialRowLength];
         }
         for (int col = 0; col < newMatrix[initialColumnLength].length; col++) {
-            newMatrix[initialColumnLength][col] = Fraction.ZERO;
+            newMatrix[initialColumnLength][col] = BigFraction.ZERO;
         }
         final int targetLength = target.length;
         for (int col = 0; col < targetLength; col++) {
             newMatrix[initialColumnLength + 1][col] = target[col];
         }
         for (int col = targetLength; col < newMatrix[initialColumnLength + 1].length; col++) {
-            newMatrix[initialColumnLength + 1][col] = Fraction.ZERO;
+            newMatrix[initialColumnLength + 1][col] = BigFraction.ZERO;
         }
         return newMatrix;
     }
 
     private static SimplexTableau simplexInitializeTableau(final SimplexProblem problem) {
-        final Fraction[][] initialMatrix = problem.matrix;
+        final BigFraction[][] initialMatrix = problem.matrix;
         final int initialColumnLength = initialMatrix.length;
-        final Fraction[][] newMatrix = SimplexAlgorithm.simplexInitializeMatrix(initialMatrix, problem.target);
+        final BigFraction[][] newMatrix = SimplexAlgorithm.simplexInitializeMatrix(initialMatrix, problem.target);
         final int[] basicVariables = new int[initialColumnLength];
         for (int i = 0; i < initialColumnLength; i++) {
             basicVariables[i] = i + problem.target.length;
         }
         final int pivotColumn = SimplexAlgorithm.simplexSelectPivotColumn(newMatrix);
-        final Fraction[] quotients = SimplexAlgorithm.simplexComputeQuotients(newMatrix, pivotColumn);
+        final BigFraction[] quotients = SimplexAlgorithm.simplexComputeQuotients(newMatrix, pivotColumn);
         return new SimplexTableau(
             new SimplexProblem(problem.target, newMatrix),
             basicVariables,
@@ -432,20 +436,20 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         );
     }
 
-    private static boolean simplexPivotColumnExists(final Fraction[][] matrix) {
+    private static boolean simplexPivotColumnExists(final BigFraction[][] matrix) {
         for (int col = 0; col < matrix[matrix.length - 1].length - 1; col++) {
-            if (matrix[matrix.length - 1][col].compareTo(Fraction.ZERO) > 0) {
+            if (matrix[matrix.length - 1][col].compareTo(BigFraction.ZERO) > 0) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean simplexPivotRowExists(final Fraction[] quotients) {
+    private static boolean simplexPivotRowExists(final BigFraction[] quotients) {
         if (quotients == null) {
             return false;
         }
-        for (final Fraction quotient : quotients) {
+        for (final BigFraction quotient : quotients) {
             if (quotient != null) {
                 return true;
             }
@@ -453,16 +457,16 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return false;
     }
 
-    private static int simplexSelectPivotColumn(final Fraction[][] matrix) {
+    private static int simplexSelectPivotColumn(final BigFraction[][] matrix) {
         return SimplexAlgorithm.simplexHasNegativeLimit(matrix) ?
             SimplexAlgorithm.simplexSelectPivotColumnPhaseOne(matrix) :
                 SimplexAlgorithm.simplexSelectPivotColumnPhaseTwo(matrix);
     }
 
-    private static int simplexSelectPivotColumnPhaseOne(final Fraction[][] matrix) {
+    private static int simplexSelectPivotColumnPhaseOne(final BigFraction[][] matrix) {
         for (int row = 0; row < matrix.length - 2; row++) {
-            if (matrix[row][matrix[row].length - 1].compareTo(Fraction.ZERO) < 0) {
-                Fraction min = Fraction.ZERO;
+            if (matrix[row][matrix[row].length - 1].compareTo(BigFraction.ZERO) < 0) {
+                BigFraction min = BigFraction.ZERO;
                 int pivotColumn = -1;
                 for (int col = 0; col < matrix[row].length - 1; col++) {
                     if (matrix[row][col].compareTo(min) < 0) {
@@ -476,8 +480,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return -1;
     }
 
-    private static int simplexSelectPivotColumnPhaseTwo(final Fraction[][] matrix) {
-        Fraction max = Fraction.ZERO;
+    private static int simplexSelectPivotColumnPhaseTwo(final BigFraction[][] matrix) {
+        BigFraction max = BigFraction.ZERO;
         int pivotColumn = -1;
         for (int col = 0; col < matrix[matrix.length - 1].length - 1; col++) {
             if (matrix[matrix.length - 1][col].compareTo(max) > 0) {
@@ -488,11 +492,11 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return pivotColumn;
     }
 
-    private static int simplexSelectPivotRow(final Fraction[] quotients) {
+    private static int simplexSelectPivotRow(final BigFraction[] quotients) {
         if (quotients == null) {
             return -1;
         }
-        Fraction min = null;
+        BigFraction min = null;
         int pivotRow = -1;
         for (int row = 0; row < quotients.length; row++) {
             if (quotients[row] != null && (min == null || quotients[row].compareTo(min) < 0)) {
@@ -504,14 +508,14 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
     }
 
     private static SimplexTableau simplexStep(final SimplexTableau tableau) {
-        final Fraction[] target = tableau.problem.target;
-        final Fraction[][] matrix = ArrayUtils.copy(tableau.problem.matrix);
+        final BigFraction[] target = tableau.problem.target;
+        final BigFraction[][] matrix = ArrayUtils.copy(tableau.problem.matrix);
         final int[] basicVariables = ArrayUtils.copy(tableau.basicVariables);
         final int pivotRow =
             tableau.pivotRow < 0 ? SimplexAlgorithm.simplexFirstRowWithNegativeLimit(matrix) : tableau.pivotRow;
         SimplexAlgorithm.simplexBaseSwap(pivotRow, tableau.pivotColumn, matrix, basicVariables, target);
         final int pivotColumn = SimplexAlgorithm.simplexSelectPivotColumn(matrix);
-        final Fraction[] quotients = SimplexAlgorithm.simplexComputeQuotients(matrix, pivotColumn);
+        final BigFraction[] quotients = SimplexAlgorithm.simplexComputeQuotients(matrix, pivotColumn);
         return new SimplexTableau(
             new SimplexProblem(target, matrix),
             basicVariables,
@@ -525,8 +529,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return String.format("|*{%d}{C{9mm}|}", cols);
     }
 
-    private static Fraction simplexTargetValue(final Fraction[] target, final int index) {
-        return index < target.length ? target[index] : Fraction.ZERO;
+    private static BigFraction simplexTargetValue(final BigFraction[] target, final int index) {
+        return index < target.length ? target[index] : BigFraction.ZERO;
     }
 
     private static String[][] toSimplexTableau(final SimplexTableau tableau, final boolean fill) {

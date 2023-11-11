@@ -1,6 +1,7 @@
 package exercisegenerator.algorithms.optimization;
 
 import java.io.*;
+import java.math.*;
 import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
@@ -8,20 +9,17 @@ import org.apache.commons.math3.fraction.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 
-/**
- * Class offering methods for dynamic programming.
- */
 public abstract class OptimizationAlgorithms {
 
     static final Random RANDOM = new Random();
 
     static final Object VARIABLE_NAME = "x";
 
-    static Fraction[][] generateInequalitiesOrEquations(
+    static BigFraction[][] generateInequalitiesOrEquations(
         final int numberOfInequalitiesOrEquations,
         final int numberOfVariables
     ) {
-        final Fraction[][] matrix = new Fraction[numberOfInequalitiesOrEquations][numberOfVariables + 1];
+        final BigFraction[][] matrix = new BigFraction[numberOfInequalitiesOrEquations][numberOfVariables + 1];
         for (int row = 0; row < numberOfInequalitiesOrEquations; row++) {
             for (int col = 0; col < numberOfVariables; col++) {
                 matrix[row][col] = OptimizationAlgorithms.generateCoefficient(4);
@@ -47,15 +45,15 @@ public abstract class OptimizationAlgorithms {
         return OptimizationAlgorithms.RANDOM.nextInt(3) + 2;
     }
 
-    static Fraction parseRationalNumber(final String number) {
+    static BigFraction parseRationalNumber(final String number) {
         final String[] parts = number.split("/");
         return parts.length == 1 ?
-            new Fraction(Integer.parseInt(parts[0])) :
-                new Fraction(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+            new BigFraction(Integer.parseInt(parts[0])) :
+                new BigFraction(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
     }
 
     static void printMatrixAsInequalitiesOrEquations(
-        final Fraction[][] matrix,
+        final BigFraction[][] matrix,
         final int numberOfColumns,
         final String inequalityOrEquationSymbol,
         final BufferedWriter writer
@@ -67,8 +65,8 @@ public abstract class OptimizationAlgorithms {
         for (int row = 0; row < matrix.length; row++) {
             boolean firstNonZero = true;
             for (int col = 0; col < numberOfColumns - 1; col++) {
-                final Fraction coefficient = matrix[row][col];
-                if (firstNonZero && coefficient.compareTo(Fraction.ZERO) != 0) {
+                final BigFraction coefficient = matrix[row][col];
+                if (firstNonZero && coefficient.compareTo(BigFraction.ZERO) != 0) {
                     writer.write(
                         OptimizationAlgorithms.toCoefficientWithVariable(col == 0, true, true, col + 1, coefficient)
                     );
@@ -96,11 +94,11 @@ public abstract class OptimizationAlgorithms {
         Main.newLine(writer);
     }
 
-    static String toCoefficient(final Fraction coefficient) {
-        if (coefficient.getDenominator() == 1) {
+    static String toCoefficient(final BigFraction coefficient) {
+        if (coefficient.getDenominator().compareTo(BigInteger.ONE) == 0) {
             return String.valueOf(coefficient.intValue());
         }
-        return OptimizationAlgorithms.toFraction(coefficient);
+        return OptimizationAlgorithms.toFractionString(coefficient);
     }
 
     static String toCoefficientWithVariable(
@@ -108,9 +106,9 @@ public abstract class OptimizationAlgorithms {
         final boolean matrix,
         final boolean firstNonZero,
         final int variableIndex,
-        final Fraction coefficient
+        final BigFraction coefficient
     ) {
-        if (coefficient.getDenominator() == 1) {
+        if (coefficient.getDenominator().compareTo(BigInteger.ONE) == 0) {
             final int value = coefficient.intValue();
             if (value == 0) {
                 if (matrix && !first) {
@@ -175,31 +173,31 @@ public abstract class OptimizationAlgorithms {
         if (first) {
             return String.format(
                 "%s%s_{%d}",
-                OptimizationAlgorithms.toFraction(coefficient),
+                OptimizationAlgorithms.toFractionString(coefficient),
                 OptimizationAlgorithms.VARIABLE_NAME,
                 variableIndex
             );
         }
-        if (coefficient.compareTo(Fraction.ZERO) < 0) {
+        if (coefficient.compareTo(BigFraction.ZERO) < 0) {
             if (matrix) {
                 if (firstNonZero) {
                     return String.format(
                         " &  & %s%s_{%d}",
-                        OptimizationAlgorithms.toFraction(coefficient),
+                        OptimizationAlgorithms.toFractionString(coefficient),
                         OptimizationAlgorithms.VARIABLE_NAME,
                         variableIndex
                     );
                 }
                 return String.format(
                     " & - & %s%s_{%d}",
-                    OptimizationAlgorithms.toFraction(coefficient.negate()),
+                    OptimizationAlgorithms.toFractionString(coefficient.negate()),
                     OptimizationAlgorithms.VARIABLE_NAME,
                     variableIndex
                 );
             }
             return String.format(
                 " - %s%s_{%d}",
-                OptimizationAlgorithms.toFraction(coefficient.negate()),
+                OptimizationAlgorithms.toFractionString(coefficient.negate()),
                 OptimizationAlgorithms.VARIABLE_NAME,
                 variableIndex
             );
@@ -208,40 +206,40 @@ public abstract class OptimizationAlgorithms {
             if (firstNonZero) {
                 return String.format(
                     " &  & %s%s_{%d}",
-                    OptimizationAlgorithms.toFraction(coefficient),
+                    OptimizationAlgorithms.toFractionString(coefficient),
                     OptimizationAlgorithms.VARIABLE_NAME,
                     variableIndex
                 );
             }
             return String.format(
                 " & + & %s%s_{%d}",
-                OptimizationAlgorithms.toFraction(coefficient),
+                OptimizationAlgorithms.toFractionString(coefficient),
                 OptimizationAlgorithms.VARIABLE_NAME,
                 variableIndex
             );
         }
         return String.format(
             " + %s%s_{%d}",
-            OptimizationAlgorithms.toFraction(coefficient),
+            OptimizationAlgorithms.toFractionString(coefficient),
             OptimizationAlgorithms.VARIABLE_NAME,
             variableIndex
         );
     }
 
-    private static Fraction generateCoefficient(final int oneToChanceForNegative) {
-        return new Fraction(
+    private static BigFraction generateCoefficient(final int oneToChanceForNegative) {
+        return new BigFraction(
             OptimizationAlgorithms.RANDOM.nextInt(11)
             * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
         );
     }
 
-    private static String toFraction(final Fraction coefficient) {
-        final int numerator = coefficient.getNumerator();
+    private static String toFractionString(final BigFraction coefficient) {
+        final BigInteger numerator = coefficient.getNumerator();
         return String.format(
-            "%s\\frac{%d}{%d}",
-            numerator < 0 ? "-" : "",
-            Math.abs(numerator),
-            coefficient.getDenominator()
+            "%s\\frac{%s}{%s}",
+            numerator.compareTo(BigInteger.ZERO) < 0 ? "-" : "",
+            numerator.abs().toString(),
+            coefficient.getDenominator().toString()
         );
     }
 
