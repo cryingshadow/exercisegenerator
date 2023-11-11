@@ -368,10 +368,9 @@ public enum Algorithm {
         "lcs",
         "LCS Problem Solved With Dynamic programming",
         new String[] {
-            "LCS problem solved with dynamic programming." // TODO
+            "LCS problem solved with dynamic programming."
         },
-        LCSAlgorithm.INSTANCE,
-        false
+        LCSAlgorithm.INSTANCE
     ),
 
     MERGESORT(

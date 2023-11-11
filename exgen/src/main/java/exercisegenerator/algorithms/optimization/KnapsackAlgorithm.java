@@ -11,24 +11,6 @@ import exercisegenerator.structures.optimization.*;
 
 public class KnapsackAlgorithm implements AlgorithmImplementation {
 
-    private static class LengthConfiguration {
-        private final String arrowLength;
-        private final String headerColLength;
-        private final String numberLength;
-        private LengthConfiguration() {
-            this("5mm", "5mm", "7mm");
-        }
-        private LengthConfiguration(
-            final String headerColLength,
-            final String numberLength,
-            final String arrowLength
-        ) {
-            this.headerColLength = headerColLength;
-            this.numberLength = numberLength;
-            this.arrowLength = arrowLength;
-        }
-    }
-
     public static final KnapsackAlgorithm INSTANCE = new KnapsackAlgorithm();
 
     public static int[][] knapsack(final KnapsackProblem problem) {
@@ -48,55 +30,39 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         return result;
     }
 
-    private static void fillKnapsackSolutionTable(
-        final String[][] tableWithArrows,
-        final int[][] solution,
-        final int[] weights
-    ) {
-        for (int i = 0; i < solution.length; i++) {
-            for (int j = 0; j < solution[i].length; j++) {
-                tableWithArrows[i + 1][2 * j + 1] = String.valueOf(solution[i][j]);
+    static DPTracebackFunction traceback(final int[] weights) {
+        return position -> {
+            final List<DPDirection> result = new LinkedList<DPDirection>();
+            if (position.row == 0) {
+                for (int i = 0; i < position.column; i++) {
+                    result.add(DPDirection.LEFT);
+                }
+                return result;
             }
-        }
-        int i = solution.length - 1;
-        int j = solution[0].length - 1;
-        while (i > 0) {
-            final int valueAbove = i == 0 ? 0 : solution[i - 1][j];
-            if (solution[i][j] > valueAbove) {
-                for (int k = 0; k < weights[i - 1]; k++) {
-                    tableWithArrows[i + 1][2 * j + 2] = "$\\leftarrow$";
-                    j--;
+            final int currentValue = position.solution[position.row][position.column];
+            final int valueAbove = position.solution[position.row - 1][position.column];
+            if (currentValue > valueAbove) {
+                for (int i = 0; i < weights[position.row - 1]; i++) {
+                    result.add(DPDirection.LEFT);
                 }
             }
-            tableWithArrows[i + 1][2 * j + 2] = "$\\uparrow$";
-            i--;
-        }
-        while (j > 0) {
-            tableWithArrows[0][2 * j + 2] = "$\\leftarrow$";
-            j--;
-        }
+            result.add(DPDirection.UP);
+            return result;
+        };
     }
 
     private static KnapsackProblem generateKnapsackProblem(final Parameters options) {
         final int numberOfItems = KnapsackAlgorithm.parseOrGenerateNumberOfItems(options);
-//        int sumOfWeights = 0;
         final int[] weights = new int[numberOfItems];
         for (int i = 0; i < weights.length; i++) {
             weights[i] = 1 + OptimizationAlgorithms.RANDOM.nextInt(11);
-//            sumOfWeights += weights[i];
         }
         final int[] values = new int[numberOfItems];
         for (int i = 0; i < values.length; i++) {
             values[i] = 1 + OptimizationAlgorithms.RANDOM.nextInt(11);
         }
-//        final int p = 35 + OptimizationAlgorithms.RANDOM.nextInt(30);
-//        final int capacity = (sumOfWeights * p) / 100;
         final int capacity = 3 + OptimizationAlgorithms.RANDOM.nextInt(6);
         return new KnapsackProblem(weights, values, capacity);
-    }
-
-    private static LengthConfiguration generateLengthConfiguration(final Parameters options) {
-        return new LengthConfiguration();
     }
 
     private static List<Integer> knapsackItems(final KnapsackProblem problem, final int[][] solution) {
@@ -113,19 +79,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         }
         Collections.sort(result);
         return result;
-    }
-
-    private static String knapsackTableColumnDefinition(
-        final LengthConfiguration configuration,
-        final int cols
-    ) {
-        return String.format(
-            "|C{%s}|*{%d}{C{%s}C{%s}|}",
-            configuration.headerColLength,
-            cols / 2,
-            configuration.numberLength,
-            configuration.arrowLength
-        );
     }
 
     private static KnapsackProblem parseKnapsackProblem(
@@ -147,31 +100,11 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         );
     }
 
-    private static LengthConfiguration parseLengthConfiguration(
-        final BufferedReader reader,
-        final Parameters options
-    ) throws IOException {
-        final String line = reader.readLine();
-        final String[] parts = line.strip().split(";");
-        if (parts.length != 6) {
-            return new LengthConfiguration();
-        }
-        return new LengthConfiguration(parts[3], parts[4], parts[5]);
-
-    }
-
     private static KnapsackProblem parseOrGenerateKnapsackProblem(final Parameters options)
     throws IOException {
         return new ParserAndGenerator<KnapsackProblem>(
             KnapsackAlgorithm::parseKnapsackProblem,
             KnapsackAlgorithm::generateKnapsackProblem
-        ).getResult(options);
-    }
-
-    private static LengthConfiguration parseOrGenerateLengthConfiguration(final Parameters options) throws IOException {
-        return new ParserAndGenerator<LengthConfiguration>(
-            KnapsackAlgorithm::parseLengthConfiguration,
-            KnapsackAlgorithm::generateLengthConfiguration
         ).getResult(options);
     }
 
@@ -193,13 +126,9 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         final BufferedWriter writer
     ) throws IOException {
         final int numberOfItems = problem.weights.length;
-        writer.write(
-            String.format(
-                "Gegeben sei ein Rucksack mit \\emphasize{maximaler Tragkraft} %d sowie %d \\emphasize{Gegenst\\\"ande}. ",
-                problem.capacity,
-                numberOfItems
-            )
-        );
+        writer.write("Gegeben sei ein Rucksack mit ");
+        writer.write(String.format("\\emphasize{maximaler Tragkraft} %d ", problem.capacity));
+        writer.write(String.format("sowie %d \\emphasize{Gegenst\\\"ande}. ", numberOfItems));
         Main.newLine(writer);
         writer.write("Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $c_i$ haben. ");
         Main.newLine(writer);
@@ -231,20 +160,15 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
             LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
             // fall-through
         case ALWAYS:
-            LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-            writer.write("{\\Large");
-            Main.newLine(writer);
-            LaTeXUtils.printTable(
-                KnapsackAlgorithm.toKnapsackSolutionTable(solution, Optional.empty()),
+            OptimizationAlgorithms.printDPTable(
+                solution,
+                i -> i.toString(),
+                i -> i.toString(),
                 Optional.empty(),
-                cols -> KnapsackAlgorithm.knapsackTableColumnDefinition(configuration, cols),
-                true,
-                0,
+                options,
+                configuration,
                 writer
             );
-            Main.newLine(writer);
-            writer.write("}");
-            Main.newLine(writer);
             writer.write("${}^*$ Gegenstand/Kapazit\\\"at");
             Main.newLine(writer);
             LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
@@ -273,20 +197,15 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         writer.write("Die Tabelle wird vom Algorithmus wie folgt gef\\\"ullt:");
         Main.newLine(writer);
         Main.newLine(writer);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        writer.write("{\\Large");
-        Main.newLine(writer);
-        LaTeXUtils.printTable(
-            KnapsackAlgorithm.toKnapsackSolutionTable(solution, Optional.of(problem.weights)),
-            Optional.empty(),
-            cols -> KnapsackAlgorithm.knapsackTableColumnDefinition(configuration, cols),
-            true,
-            0,
+        OptimizationAlgorithms.printDPTable(
+            solution,
+            i -> i.toString(),
+            i -> i.toString(),
+            Optional.of(KnapsackAlgorithm.traceback(problem.weights)),
+            options,
+            configuration,
             writer
         );
-        Main.newLine(writer);
-        writer.write("}");
-        Main.newLine(writer);
         writer.write("${}^*$ Gegenstand/Kapazit\\\"at");
         Main.newLine(writer);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
@@ -306,34 +225,13 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         return Arrays.stream(line.split(",")).mapToInt(Integer::parseInt).toArray();
     }
 
-    private static String[][] toKnapsackSolutionTable(
-        final int[][] solution,
-        final Optional<int[]> optionalWeightsForFilling
-    ) {
-        final String[][] tableWithArrows = new String[solution.length + 1][2 * solution[0].length + 1];
-        tableWithArrows[0][0] = "${}^*$";
-        for (int i = 0; i < solution.length; i++) {
-            tableWithArrows[i + 1][0] = LaTeXUtils.bold(String.valueOf(i));
-        }
-        for (int i = 0; i < solution[0].length; i++) {
-            tableWithArrows[0][2 * i + 1] = LaTeXUtils.bold(String.valueOf(i));
-        }
-        if (optionalWeightsForFilling.isPresent()) {
-            KnapsackAlgorithm.fillKnapsackSolutionTable(
-                tableWithArrows,
-                solution,
-                optionalWeightsForFilling.get()
-            );
-        }
-        return tableWithArrows;
-    }
-
     private KnapsackAlgorithm() {}
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final KnapsackProblem problem = KnapsackAlgorithm.parseOrGenerateKnapsackProblem(input.options);
-        final LengthConfiguration configuration = KnapsackAlgorithm.parseOrGenerateLengthConfiguration(input.options);
+        final LengthConfiguration configuration =
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(input.options);
         final int[][] table = KnapsackAlgorithm.knapsack(problem);
         KnapsackAlgorithm.printKnapsackExercise(problem, table, input.options, configuration, input.exerciseWriter);
         KnapsackAlgorithm.printKnapsackSolution(problem, table, input.options, configuration, input.solutionWriter);

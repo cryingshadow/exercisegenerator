@@ -1,6 +1,8 @@
 package exercisegenerator.algorithms.optimization;
 
 import java.util.*;
+import java.util.Optional;
+import java.util.function.*;
 
 import org.apache.commons.math3.fraction.*;
 import org.testng.*;
@@ -9,6 +11,92 @@ import org.testng.annotations.*;
 import exercisegenerator.structures.optimization.*;
 
 public class OptimizationAlgorithmsTest {
+
+    @DataProvider
+    public Object[][] dpData() {
+        return new Object[][] {
+            {
+                new int[][] {
+                    {0,0,0},
+                    {0,1,1},
+                    {0,1,2}
+                },
+                (Function<Integer,String>)i -> i.toString(),
+                (Function<Integer,String>)i -> i.toString(),
+                Optional.of(KnapsackAlgorithm.traceback(new int[] {1,1})),
+                new String[][] {
+                    {"${}^*$", "\\textbf{0}", null, "\\textbf{1}", null, "\\textbf{2}", null},
+                    {"\\textbf{0}", "0", null, "0", null, "0", null},
+                    {"\\textbf{1}", "0", "$\\uparrow$", "1", "$\\leftarrow$", "1", null},
+                    {"\\textbf{2}", "0", null, "1", "$\\uparrow$", "2", "$\\leftarrow$"}
+                }
+            },
+            {
+                new int[][] {
+                    {0,0,0},
+                    {0,1,1},
+                    {0,1,2}
+                },
+                (Function<Integer,String>)i -> i.toString(),
+                (Function<Integer,String>)i -> i.toString(),
+                Optional.of(KnapsackAlgorithm.traceback(new int[] {1,2})),
+                new String[][] {
+                    {"${}^*$", "\\textbf{0}", null, "\\textbf{1}", null, "\\textbf{2}", null},
+                    {"\\textbf{0}", "0", null, "0", null, "0", null},
+                    {"\\textbf{1}", "0", "$\\uparrow$", "1", null, "1", null},
+                    {"\\textbf{2}", "0", "$\\uparrow$", "1", "$\\leftarrow$", "2", "$\\leftarrow$"}
+                }
+            },
+            {
+                new int[][] {
+                    {0,0,0},
+                    {0,1,1},
+                    {0,1,1}
+                },
+                (Function<Integer,String>)i -> i.toString(),
+                (Function<Integer,String>)i -> i.toString(),
+                Optional.of(KnapsackAlgorithm.traceback(new int[] {1,3})),
+                new String[][] {
+                    {"${}^*$", "\\textbf{0}", null, "\\textbf{1}", null, "\\textbf{2}", null},
+                    {"\\textbf{0}", "0", null, "0", "$\\leftarrow$", "0", null},
+                    {"\\textbf{1}", "0", null, "1", "$\\uparrow$", "1", "$\\leftarrow$"},
+                    {"\\textbf{2}", "0", null, "1", null, "1", "$\\uparrow$"}
+                }
+            },
+            {
+                new int[][] {
+                    {0,0,0},
+                    {0,1,1},
+                    {0,1,1}
+                },
+                (Function<Integer,String>)i -> i == 0 ? "" : String.valueOf("AB".charAt(i - 1)),
+                (Function<Integer,String>)i -> i == 0 ? "" : String.valueOf("AC".charAt(i - 1)),
+                Optional.of(LCSAlgorithm.TRACEBACK),
+                new String[][] {
+                    {"${}^*$", "", null, "\\textbf{A}", null, "\\textbf{C}", null},
+                    {"", "0", null, "0", null, "0", null},
+                    {"\\textbf{A}", "0", null, "1", "$\\nwarrow$", "1", "$\\leftarrow$"},
+                    {"\\textbf{B}", "0", null, "1", null, "1", "$\\uparrow$"}
+                }
+            }
+        };
+    }
+
+    @Test(dataProvider="dpData")
+    public void dpTableTest(
+        final int[][] solution,
+        final Function<Integer, String> rowHeading,
+        final Function<Integer, String> columnHeading,
+        final Optional<DPTracebackFunction> optionalTraceback,
+        final String[][] expected
+    ) {
+        final String[][] result =
+            OptimizationAlgorithms.toDPSolutionTable(solution, rowHeading, columnHeading, optionalTraceback);
+        Assert.assertTrue(
+            Arrays.deepEquals(result, expected),
+            String.format("\nExpected: %s\nActual:   %s\n", Arrays.deepToString(expected), Arrays.deepToString(result))
+        );
+    }
 
     @DataProvider
     public Object[][] gaussJordanData() {
@@ -487,6 +575,37 @@ public class OptimizationAlgorithmsTest {
     @Test(dataProvider="knapsackData")
     public void knapsackTest(final KnapsackProblem problem, final int[][] expected) {
         final int[][] result = KnapsackAlgorithm.knapsack(problem);
+        Assert.assertTrue(
+            Arrays.deepEquals(result, expected),
+            String.format("\nExpected: %s\nActual:   %s\n", Arrays.deepToString(expected), Arrays.deepToString(result))
+        );
+    }
+
+    @DataProvider
+    public Object[][] lcsData() {
+        return new Object[][] {
+            {
+                new LCSProblem("REGENRINNE", "INDERINNEN"),
+                new int[][] {
+                    {0,0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,1,1,1,1,1,1},
+                    {0,0,0,0,1,1,1,1,1,2,2},
+                    {0,0,0,0,1,1,1,1,1,2,2},
+                    {0,0,0,0,1,1,1,1,1,2,2},
+                    {0,0,1,1,1,1,1,2,2,2,3},
+                    {0,0,1,1,1,2,2,2,2,2,3},
+                    {0,1,1,1,1,2,3,3,3,3,3},
+                    {0,1,2,2,2,2,3,4,4,4,4},
+                    {0,1,2,2,2,2,3,4,5,5,5},
+                    {0,1,2,2,3,3,3,4,5,6,6},
+                }
+            }
+        };
+    }
+
+    @Test(dataProvider="lcsData")
+    public void lcsTest(final LCSProblem problem, final int[][] expected) {
+        final int[][] result = LCSAlgorithm.lcs(problem);
         Assert.assertTrue(
             Arrays.deepEquals(result, expected),
             String.format("\nExpected: %s\nActual:   %s\n", Arrays.deepToString(expected), Arrays.deepToString(result))

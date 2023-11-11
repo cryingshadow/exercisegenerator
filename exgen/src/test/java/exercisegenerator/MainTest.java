@@ -2359,6 +2359,75 @@ public class MainTest {
         );
     }
 
+    @Test
+    public void lcs() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.LCS.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-p", PreprintMode.SOLUTION_SPACE.text,
+                "-i", "TEST\nME"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilsequenz} der Sequenzen \\code{TEST} und "
+                    + "\\code{ME}. Benutzen Sie hierf\\\"ur den in der Vorlesung vorgestellten Algorithmus mit "
+                    + "dynamischer Programmierung und f\\\"ullen Sie die folgende Tabelle aus. Geben Sie "
+                    + "au\\ss{}erdem die vom Algorithmus bestimmte l\\\"angste gemeinsame Teilsequenz an.",
+                    "",
+                    "\\ifprintanswers",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\else",
+                    "\\begin{center}",
+                    "{\\Large",
+                    "\\begin{tabular}{|C{5mm}|*{3}{C{5mm}C{7mm}|}}",
+                    "\\hline",
+                    "${}^*$ &  &  & \\textbf{M} &  & \\textbf{E} & \\\\\\hline",
+                    " &  &  &  &  &  & \\\\\\hline",
+                    "\\textbf{T} &  &  &  &  &  & \\\\\\hline",
+                    "\\textbf{E} &  &  &  &  &  & \\\\\\hline",
+                    "\\textbf{S} &  &  &  &  &  & \\\\\\hline",
+                    "\\textbf{T} &  &  &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "",
+                    "}",
+                    "${}^*$ Sequenz 1/Sequenz 2",
+                    "\\end{center}",
+                    "",
+                    "L\\\"angste gemeinsame Teilsequenz:\\\\[2ex]",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\fi",
+                    ""
+                ),
+                List.of(
+                    "Die Tabelle wird vom Algorithmus wie folgt gef\\\"ullt:",
+                    "",
+                    "\\begin{center}",
+                    "{\\Large",
+                    "\\begin{tabular}{|C{5mm}|*{3}{C{5mm}C{7mm}|}}",
+                    "\\hline",
+                    "${}^*$ &  &  & \\textbf{M} &  & \\textbf{E} & \\\\\\hline",
+                    " & 0 &  & 0 & $\\leftarrow$ & 0 & \\\\\\hline",
+                    "\\textbf{T} & 0 &  & 0 & $\\uparrow$ & 0 & \\\\\\hline",
+                    "\\textbf{E} & 0 &  & 0 &  & 1 & $\\nwarrow$\\\\\\hline",
+                    "\\textbf{S} & 0 &  & 0 &  & 1 & $\\uparrow$\\\\\\hline",
+                    "\\textbf{T} & 0 &  & 0 &  & 1 & $\\uparrow$\\\\\\hline",
+                    "\\end{tabular}",
+                    "",
+                    "}",
+                    "${}^*$ Sequenz 1/Sequenz 2",
+                    "\\end{center}",
+                    "",
+                    "L\\\"angste gemeinsame Teilsequenz: E\\\\[2ex]"
+                )
+            )
+        );
+    }
+
     @BeforeMethod
     public void prepare() {
         LaTeXUtils.reset();
