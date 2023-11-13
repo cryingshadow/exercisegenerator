@@ -157,7 +157,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         final PreprintMode mode = PreprintMode.parsePreprintMode(options);
         switch (mode) {
         case SOLUTION_SPACE:
-            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
             // fall-through
         case ALWAYS:
             OptimizationAlgorithms.printDPTable(

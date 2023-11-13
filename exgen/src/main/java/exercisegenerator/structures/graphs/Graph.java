@@ -51,7 +51,7 @@ public class Graph<V, E> {
     ) throws IOException {
         final Graph<V, E> result = new Graph<V, E>();
         String line = reader.readLine();
-        if (line.startsWith("!")) {
+        while (line.startsWith("!")) {
             line = reader.readLine();
         }
         final Map<GridCoordinates, Vertex<V>> newGrid =

@@ -725,6 +725,20 @@ public abstract class LaTeXUtils {
         LaTeXUtils.number = 0;
     }
 
+    public static void resizeboxBeginning(
+        final String horizontal,
+        final String vertical,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write(String.format("\\resizebox{%s}{%s}{%%", horizontal, vertical));
+        Main.newLine(writer);
+    }
+
+    public static void resizeboxEnd(final BufferedWriter writer) throws IOException {
+        writer.write("}");
+        Main.newLine(writer);
+    }
+
     public static String widthOf(final String text) {
         return String.format("\\widthof{%s}", text);
     }

@@ -279,6 +279,81 @@ public class GraphAlgorithmsTest {
         };
     }
 
+    @Test(dataProvider="floydData")
+    public void floyd(
+        final Graph<String, Integer> graph,
+        final Integer[][][] expected
+    ) {
+        Assert.assertEquals(FloydWarshallAlgorithm.floyd(graph, Optional.of(new StringVertexComparator())), expected);
+    }
+
+    @DataProvider
+    public Object[][] floydData() {
+        final Vertex<String> a = new Vertex<String>("A");
+        final Vertex<String> b = new Vertex<String>("B");
+        final Vertex<String> c = new Vertex<String>("C");
+        final Vertex<String> d = new Vertex<String>("D");
+        final Vertex<String> e = new Vertex<String>("E");
+        final AdjacencyLists<String, Integer> adjacencyLists1 = new AdjacencyLists<String, Integer>();
+        adjacencyLists1.addEdge(a, 1, b);
+        adjacencyLists1.addEdge(a, 7, d);
+        adjacencyLists1.addEdge(b, 6, c);
+        adjacencyLists1.addEdge(b, 1, e);
+        adjacencyLists1.addEdge(c, 1, b);
+        adjacencyLists1.addEdge(d, 1, a);
+        adjacencyLists1.addEdge(e, 2, b);
+        adjacencyLists1.addEdge(e, 3, d);
+        return new Object[][] {
+            {
+                Graph.create(adjacencyLists1),
+                new Integer[][][] {
+                    {
+                        {   0,   1,null,   7,null},
+                        {null,   0,   6,null,   1},
+                        {null,   1,   0,null,null},
+                        {   1,null,null,   0,null},
+                        {null,   2,null,   3,   0}
+                    },
+                    {
+                        {   0,   1,null,   7,null},
+                        {null,   0,   6,null,   1},
+                        {null,   1,   0,null,null},
+                        {   1,   2,null,   0,null},
+                        {null,   2,null,   3,   0}
+                    },
+                    {
+                        {   0,   1,   7,   7,   2},
+                        {null,   0,   6,null,   1},
+                        {null,   1,   0,null,   2},
+                        {   1,   2,   8,   0,   3},
+                        {null,   2,   8,   3,   0}
+                    },
+                    {
+                        {   0,   1,   7,   7,   2},
+                        {null,   0,   6,null,   1},
+                        {null,   1,   0,null,   2},
+                        {   1,   2,   8,   0,   3},
+                        {null,   2,   8,   3,   0}
+                    },
+                    {
+                        {   0,   1,   7,   7,   2},
+                        {null,   0,   6,null,   1},
+                        {null,   1,   0,null,   2},
+                        {   1,   2,   8,   0,   3},
+                        {   4,   2,   8,   3,   0}
+                    },
+                    {
+                        {   0,   1,   7,   5,   2},
+                        {   5,   0,   6,   4,   1},
+                        {   6,   1,   0,   5,   2},
+                        {   1,   2,   8,   0,   3},
+                        {   4,   2,   8,   3,   0}
+                    }
+                }
+            }
+        };
+    }
+
     @Test(dataProvider="kruskalData")
     public void kruskal(
         final Graph<String, Integer> graph,

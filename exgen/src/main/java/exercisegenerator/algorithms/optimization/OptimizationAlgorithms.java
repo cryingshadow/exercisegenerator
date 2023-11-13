@@ -122,8 +122,7 @@ public abstract class OptimizationAlgorithms {
     ) throws IOException {
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         if (solution[0].length > 6) {
-            writer.write("\\resizebox{0.9\\textwidth}{!}{%");
-            Main.newLine(writer);
+            LaTeXUtils.resizeboxBeginning("0.9\\textwidth", "!", writer);
         }
         writer.write("{\\Large");
         Main.newLine(writer);
@@ -137,8 +136,7 @@ public abstract class OptimizationAlgorithms {
         );
         Main.newLine(writer);
         if (solution[0].length > 6) {
-            writer.write("}");
-            Main.newLine(writer);
+            LaTeXUtils.resizeboxEnd(writer);
         }
         writer.write("}");
         Main.newLine(writer);

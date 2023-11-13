@@ -11,299 +11,300 @@ import exercisegenerator.structures.graphs.*;
 
 public class FloydWarshallAlgorithm implements AlgorithmImplementation {
 
+    private static class LayoutConfiguration {
+
+        private final int columns;
+
+        private LayoutConfiguration() {
+            this(1);
+        }
+
+        private LayoutConfiguration(final int columns) {
+            this.columns = columns;
+        }
+
+    }
+
     public static final FloydWarshallAlgorithm INSTANCE = new FloydWarshallAlgorithm();
 
-    /**
-     * Prints exercise and solution for the Floyd Algorithm.
-     * @param graph The graph.
-     * @param warshall Flag indicating whether the Floyd-Warshall or just the Floyd algorithm should be performed.
-     * @param start The start vertex.
-     * @param comp A comparator for sorting the vertices in the table (may be null - then no sorting is applied).
-     * @param exWriter The writer to send the exercise output to.
-     * @param solWriter The writer to send the solution output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static <V> void floydWarshall(
+    private static final String FLOYD_WARSHALL_PATTERN =
+        "F\\\"uhren Sie den \\emphasize{Algorithmus von %s} auf diesem Graphen aus. F\\\"ullen Sie dazu die "
+        + "nachfolgenden Tabellen aus.\\\\[2ex]";
+
+    public static <V> Integer[][][] floyd(
         final Graph<V, Integer> graph,
-        final boolean warshall,
-        final Comparator<Vertex<V>> comp,
-        final Parameters options,
-        final BufferedWriter exWriter,
-        final BufferedWriter solWriter
-    ) throws IOException {
-        final int tableCount = 1; // TODO had a choice for 2 when not in student mode
-        final int tableMaxWidth = 10; // TODO rename, current name does not reflect usage; had a choice for 0 when not in student mode
-        final List<Vertex<V>> vertices = new ArrayList<Vertex<V>>(graph.getVertices());
+        final Optional<? extends Comparator<Vertex<V>>> optionalComparator
+    ) {
+        final List<Vertex<V>> vertices = FloydWarshallAlgorithm.getSortedListOfVertices(graph, optionalComparator);
         final int size = vertices.size();
-        final ArrayList<String[][]> exercises = new ArrayList<String[][]>();
-        final ArrayList<String[][]> solutions = new ArrayList<String[][]>();
-        final ArrayList<String[][]> exColors = new ArrayList<String[][]>();
-        final ArrayList<String[][]> solColors = new ArrayList<String[][]>();
-        final String[][] firstExercise = new String[size+1][size+1];
-        final String[][] otherExercise = new String[size+1][size+1];
-        String[][] currentSolution = new String[size+1][size+1];
-        final String[][] curExColor = new String[size+1][size+1];
-        String[][] curSolColor = new String[size+1][size+1];
-        final Integer[][] weights = new Integer[size][size];
-        boolean[][] changed = new boolean[size][size];
-        // initialize ids
-        final Map<Vertex<V>, Integer> ids = new LinkedHashMap<Vertex<V>, Integer>();
-        for (int current = 0 ; current < size; ++current) {
-            final Vertex<V> currentVertex = vertices.get(current);
-            ids.put(currentVertex, current);
-        }
-        firstExercise[0][0] = "";
-        otherExercise[0][0] = "";
-        currentSolution[0][0] = "";
-        // initialize weights
-        for (int current = 0 ; current < size; ++current) {
-            final Vertex<V> currentVertex = vertices.get(current);
-            // set labels
-            final String currentLabel = currentVertex.label.isEmpty() ? "" : currentVertex.label.get().toString();
-            firstExercise[0][current+1] = currentLabel;
-            firstExercise[current+1][0] = currentLabel;
-            otherExercise[0][current+1] = currentLabel;
-            otherExercise[current+1][0] = currentLabel;
-            currentSolution[0][current+1] = currentLabel;
-            currentSolution[current+1][0] = currentLabel;
-            // prepare weights and solution array
-            for (int i = 0; i < size; ++i) {
-                if (!warshall) {
-                    firstExercise[current+1][i+1] = "$\\infty$";
-                    currentSolution[current+1][i+1] = "$\\infty$";
+        final Integer[][][] tables = new Integer[size + 1][size][size];
+        for (int from = 0; from < size; from++) {
+            for (int to = 0; to < size; to++) {
+                if (from == to) {
+                    tables[0][from][to] = 0;
                 } else {
-                    firstExercise[current+1][i+1] = "false";
-                    currentSolution[current+1][i+1] = "false";
-                }
-                weights[current][i] = null;
-            }
-            for (final Edge<Integer, V> edge : graph.getAdjacencyList(currentVertex)) {
-                final Integer edgeLabel = edge.label.get();
-                weights[current][ids.get(edge.to)] = edgeLabel;
-                if (!warshall) {
-                    firstExercise[current + 1][ids.get(edge.to) + 1] = edgeLabel.toString();
-                    currentSolution[current + 1][ids.get(edge.to) + 1] = edgeLabel.toString();
-                } else {
-                    firstExercise[current + 1][ids.get(edge.to) + 1] = "true";
-                    currentSolution[current + 1][ids.get(edge.to) + 1] = "true";
-//                    System.out.println(
-//                        "Add: "
-//                        + currentVertex.getLabel()
-//                        + " -"
-//                        + currentSolution[current][ids.get(edge.y)]
-//                        + "-> "
-//                        + edge.y.getLabel()
-//                    );
-                }
-            }
-            weights[current][current] = 0;
-            if (!warshall) {
-                firstExercise[current+1][current+1] = "0";
-                currentSolution[current+1][current+1] = "0";
-            } else {
-                firstExercise[current+1][current+1] = "true";
-                currentSolution[current+1][current+1] = "true";
-            }
-        }
-        exercises.add(firstExercise);
-        solutions.add(currentSolution);
-        exColors.add(curExColor);
-        solColors.add(curSolColor);
-        // clear solution and reset
-        currentSolution = new String[size+1][size+1];
-        curSolColor = new String[size+1][size+1];
-        currentSolution[0][0] = "";
-        for (int current = 0 ; current < size; ++current) {
-            final Vertex<V> currentVertex = vertices.get(current);
-            // set labels
-            final String currentLabel = currentVertex.label.isEmpty() ? "" : currentVertex.label.get().toString();
-            currentSolution[0][current+1] = currentLabel;
-            currentSolution[current+1][0] = currentLabel;
-        }
-        // actual algorithm
-        for (int intermediate = 0; intermediate < size; ++intermediate) {
-            for (int start = 0; start < size; ++start) {
-                for (int target = 0; target < size; ++target) {
-                    final Integer oldValue = weights[start][target];
-                    if (weights[start][target] != null) {
-                        if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
-                            weights[start][target] =
-                                Integer.compare(
-                                    weights[start][target],
-                                    weights[start][intermediate] + weights[intermediate][target]
-                                ) < 0 ?
-                                    weights[start][target] :
-                                        weights[start][intermediate] + weights[intermediate][target];
-                        }
-                        // no else here as we can keep the old value as the path is currently infinite (null)
-                    } else if (weights[start][intermediate] != null && weights[intermediate][target] != null) {
-                        weights[start][target] = weights[start][intermediate] + weights[intermediate][target];
+                    final Set<Edge<Integer, V>> edges = graph.getEdges(vertices.get(from), vertices.get(to));
+                    if (!edges.isEmpty()) {
+                        tables[0][from][to] = edges.iterator().next().label.get();
                     }
-                    if(!warshall) {
-                        changed[start][target] = (oldValue != weights[start][target]);
+                }
+            }
+        }
+        for (int via = 0; via < size; via++) {
+            for (int from = 0; from < size; from++) {
+                for (int to = 0; to < size; to++) {
+                    final Integer oldValue = tables[via][from][to];
+                    final Integer fromVia = tables[via][from][via];
+                    final Integer viaTo = tables[via][via][to];
+                    final Integer update = fromVia == null ? null : (viaTo == null ? null : fromVia + viaTo);
+                    if (oldValue == null || update != null && update < oldValue) {
+                        tables[via + 1][from][to] = update;
                     } else {
-                        changed[start][target] = (oldValue == null && weights[start][target] != null);
+                        tables[via + 1][from][to] = oldValue;
                     }
                 }
             }
-            // write solution
-            for (int i = 0; i < size; ++i) {
-                for (int j = 0; j < size; ++j) {
-                    if (changed[i][j]) {
-                        curSolColor[i+1][j+1] = "black!20";
-                    }
-                    if (weights[i][j] == null) {
-                        if (!warshall) {
-                            currentSolution[i+1][j+1] = "$\\infty$";
-                        } else {
-                            currentSolution[i+1][j+1] = "false";
-                        }
-                    } else if (!warshall) {
-                        currentSolution[i+1][j+1] = "" + weights[i][j];
-                    } else {
-                        currentSolution[i+1][j+1] = "true";
-                    }
-                }
-            }
-            exercises.add(otherExercise);
-            solutions.add(currentSolution);
-            exColors.add(curExColor);
-            solColors.add(curSolColor);
-            // clear solution and reset.
-            currentSolution = new String[size+1][size+1];
-            curSolColor = new String[size+1][size+1];
-            currentSolution[0][0] = "";
-            for (int current = 0 ; current < size; ++current) {
-                final Vertex<V> currentVertex = vertices.get(current);
-                // set labels
-                final String currentLabel = currentVertex.label.isEmpty() ? "" : currentVertex.label.get().toString();
-                currentSolution[0][current+1] = currentLabel;
-                currentSolution[current+1][0] = currentLabel;
-            }
-            changed = new boolean[size][size];
         }
-        // create output
-        exWriter.write("Betrachten Sie den folgenden Graphen:");
-        Main.newLine(exWriter);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
-        final double multiplier = FloydWarshallAlgorithm.parseMultiplier(options);
-        if (warshall) {
-            graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, multiplier, null, exWriter);
-        } else {
-            graph.printTikZ(GraphPrintMode.ALL, multiplier, null, exWriter);
-        }
-        Main.newLine(exWriter);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
-        Main.newLine(exWriter);
-        if (!warshall) {
-            exWriter.write("F\\\"uhren Sie den \\emphasize{Algorithmus von Floyd} auf diesem Graphen aus. ");
-        } else {
-            exWriter.write("F\\\"uhren Sie den \\emphasize{Algorithmus von Warshall} auf diesem Graphen aus. ");
-        }
-        exWriter.write("Geben Sie dazu nach jedem Durchlauf der \\\"au{\\ss}eren Schleife die aktuellen Entfernungen ");
-        exWriter.write("in einer Tabelle an. Die erste Tabelle enth\\\"alt bereits die Adjazenzmatrix nach Bildung ");
-        exWriter.write("der reflexiven H\\\"ulle.");
-        if (warshall) {
-            exWriter.write(" Der Eintrag in der Zeile $i$ und Spalte $j$ gibt also an, ob es eine Kante");
-            exWriter.write(" vom Knoten der Zeile $i$ zu dem Knoten der Spalte $j$ gibt.\\\\[2ex]");
-        } else {
-            exWriter.write(" Der Eintrag in der Zeile $i$ und Spalte $j$ ist also $\\infty$, falls es keine Kante");
-            exWriter.write(" vom Knoten der Zeile $i$ zu dem Knoten der Spalte $j$ gibt, und sonst");
-            exWriter.write(" das Gewicht dieser Kante. Beachten Sie, dass in der reflexiven H\\\"ulle jeder Knoten");
-            exWriter.write(" eine Kante mit Gewicht $0$ zu sich selbst hat.\\\\[2ex]");
-        }
-        Main.newLine(exWriter);
-        Main.newLine(exWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
-        LaTeXUtils.printArrayStretch(1.5, exWriter);
-        LaTeXUtils.printArrayStretch(1.5, solWriter);
-        int solCount = 0;
-        int exCount = 0;
-        for (int iteration = 0; iteration < solutions.size(); ++iteration) {
-            final String[][] exTable = exercises.get(iteration);
-            final String[][] solTable = solutions.get(iteration);
-            exTable[0][0] = "\\circled{" + (iteration + 1) + "}";
-            solTable[0][0] = "\\circled{" + (iteration + 1) + "}";
-            solCount =
-                FloydWarshallAlgorithm.printTables(
-                    solCount,
-                    tableCount,
-                    iteration,
-                    solTable,
-                    solColors.get(iteration),
-                    solWriter,
-                    true,
-                    tableMaxWidth
-                );
-            exCount =
-                FloydWarshallAlgorithm.printTables(
-                    exCount,
-                    tableCount,
-                    iteration,
-                    exTable,
-                    exColors.get(iteration),
-                    exWriter,
-                    true,
-                    tableMaxWidth
-                );
-            LaTeXUtils.printVerticalProtectedSpace(exWriter);
-            LaTeXUtils.printVerticalProtectedSpace(solWriter);
-        }
-        LaTeXUtils.printArrayStretch(1.0, exWriter);
-        LaTeXUtils.printArrayStretch(1.0, solWriter);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
+        return tables;
     }
 
-    private static double parseMultiplier(final Parameters options) {
-        if (options.containsKey(Flag.DEGREE)) {
-            return Double.parseDouble(options.get(Flag.DEGREE));
+    public static <V> boolean[][][] warshall(
+        final Graph<V, Integer> graph,
+        final Optional<? extends Comparator<Vertex<V>>> optionalComparator
+    ) {
+        final List<Vertex<V>> vertices = FloydWarshallAlgorithm.getSortedListOfVertices(graph, optionalComparator);
+        final int size = vertices.size();
+        final boolean[][][] tables = new boolean[size + 1][size][size];
+        for (int from = 0; from < size; from++) {
+            for (int to = 0; to < size; to++) {
+                if (from == to) {
+                    tables[0][from][to] = true;
+                } else {
+                    final Set<Edge<Integer, V>> edges = graph.getEdges(vertices.get(from), vertices.get(to));
+                    if (!edges.isEmpty()) {
+                        tables[0][from][to] = true;
+                    } else {
+                        tables[0][from][to] = false;
+                    }
+                }
+            }
         }
-        return 1.0;
+        for (int via = 0; via < size; via++) {
+            for (int from = 0; from < size; from++) {
+                for (int to = 0; to < size; to++) {
+                    if (tables[via][from][via] && tables[via][via][to]) {
+                        tables[via + 1][from][to] = true;
+                    } else {
+                        tables[via + 1][from][to] = tables[via][from][to];
+                    }
+                }
+            }
+        }
+        return tables;
     }
 
-    /**
-     * Prints the specified table with the specified cell colors and possibly insert line breaks.
-     * @param count The current number of tables printed in one row.
-     * @param tableCount The max number of tables printed in one row.
-     * @param iteration The current iteration.
-     * @param table The table to print.
-     * @param color The cell colors.
-     * @param writer The writer to send the output to.
-     * @param transpose Transpose the tables?
-     * @param breakAtColumn Insert line breaks after this number of columns. Ignored if 0.
-     * @return The next number of tables printed in the current row.
-     * @throws IOException If some error occurs during output.
-     */
-    private static int printTables(
-        final int count,
-        final int tableCount,
-        final int iteration,
-        final String[][] table,
-        final String[][] color,
-        final BufferedWriter writer,
-        final boolean transpose,
-        final int breakAtColumn
+    private static LayoutConfiguration generateLayoutConfiguration(final Parameters options) {
+        return new LayoutConfiguration();
+    }
+
+    private static <V> List<Vertex<V>> getSortedListOfVertices(
+        final Graph<V, Integer> graph,
+        final Optional<? extends Comparator<Vertex<V>>> optionalComparator
+    ) {
+        final List<Vertex<V>> vertices = new ArrayList<Vertex<V>>(graph.getVertices());
+        if (optionalComparator.isPresent()) {
+            Collections.sort(vertices, optionalComparator.get());
+        }
+        return vertices;
+    }
+
+    private static LayoutConfiguration parseLayoutConfiguration(final BufferedReader reader, final Parameters options)
+    throws IOException {
+        final String line = reader.readLine();
+        if (line.startsWith("!")) {
+            try {
+                return new LayoutConfiguration(Integer.parseInt(line.substring(1)));
+            } catch (final NumberFormatException e) {
+                // fall through
+            }
+        }
+        return FloydWarshallAlgorithm.generateLayoutConfiguration(options);
+    }
+
+    private static LayoutConfiguration parseOrGenerateLayoutConfiguration(final Parameters options) throws IOException {
+        return new ParserAndGenerator<LayoutConfiguration>(
+            FloydWarshallAlgorithm::parseLayoutConfiguration,
+            FloydWarshallAlgorithm::generateLayoutConfiguration
+        ).getResult(options);
+    }
+
+    private static void printExercise(
+        final Graph<String, Integer> graph,
+        final boolean warshall,
+        final LayoutConfiguration layout,
+        final String[][][] tables,
+        final Parameters options,
+        final BufferedWriter writer
     ) throws IOException {
-        if (count < tableCount) {
-            LaTeXUtils.printTable(
-                table,
-                Optional.of(color),
-                LaTeXUtils.defaultColumnDefinition("1cm"),
-                transpose,
-                breakAtColumn,
-                writer
-            );
-            return count + 1;
-        }
-        LaTeXUtils.printTable(
-            table,
-            Optional.of(color),
-            LaTeXUtils.defaultColumnDefinition("1cm"),
-            transpose,
-            breakAtColumn,
+        GraphAlgorithms.printGraphExercise(
+            graph,
+            String.format(FloydWarshallAlgorithm.FLOYD_WARSHALL_PATTERN, warshall ? "Warshall" : "Floyd"),
+            GraphAlgorithms.parseDistanceFactor(options),
+            GraphPrintMode.ALL,
             writer
         );
-        return 1;
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+        if (layout.columns > 1) {
+            LaTeXUtils.beginMulticols(layout.columns, writer);
+        }
+        FloydWarshallAlgorithm.printTables(tables, Optional.empty(), layout.columns > 1, writer);
+        if (layout.columns > 1) {
+            LaTeXUtils.endMulticols(writer);
+        }
+        LaTeXUtils.printSolutionSpaceEnd(Optional.empty(), options, writer);
+    }
+
+    private static void printSolution(
+        final LayoutConfiguration layout,
+        final String[][][] tables,
+        final String[][][] color,
+        final BufferedWriter writer
+    ) throws IOException {
+        if (layout.columns > 1) {
+            LaTeXUtils.beginMulticols(layout.columns, writer);
+        }
+        FloydWarshallAlgorithm.printTables(tables, Optional.of(color), layout.columns > 1, writer);
+        if (layout.columns > 1) {
+            LaTeXUtils.endMulticols(writer);
+        }
+        Main.newLine(writer);
+    }
+
+    private static void printTables(
+        final String[][][] tables,
+        final Optional<String[][][]> color,
+        final boolean multicol,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printArrayStretch(1.5, writer);
+        for (int i = 0; i < tables.length; i++) {
+            if (multicol) {
+                LaTeXUtils.resizeboxBeginning("\\columnwidth", "!", writer);
+            }
+            LaTeXUtils.printTable(
+                tables[i],
+                color.isEmpty() ? Optional.empty() : Optional.of(color.get()[i]),
+                LaTeXUtils.defaultColumnDefinition("1cm"),
+                true,
+                0,
+                writer
+            );
+            if (multicol) {
+                LaTeXUtils.resizeboxEnd(writer);
+            }
+            LaTeXUtils.printVerticalProtectedSpace(writer);
+        }
+        LaTeXUtils.printArrayStretch(1.0, writer);
+    }
+
+    private static String[][][] toColorTables(final boolean[][][] tables) {
+        final String[][][] result = new String[tables.length][tables.length][tables.length];
+        for (int i = 1; i < tables.length; i++) {
+            for (int from = 0; from < tables.length - 1; from++) {
+                for (int to = 0; to < tables.length - 1; to++) {
+                    if (tables[i][from][to] != tables[i - 1][from][to]) {
+                        result[i][from + 1][to + 1] = "black!20";
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private static String[][][] toColorTables(final Integer[][][] tables) {
+        final String[][][] result = new String[tables.length][tables.length][tables.length];
+        for (int i = 1; i < tables.length; i++) {
+            for (int from = 0; from < tables.length - 1; from++) {
+                for (int to = 0; to < tables.length - 1; to++) {
+                    if (tables[i][from][to] != null && !tables[i][from][to].equals(tables[i - 1][from][to])) {
+                        result[i][from + 1][to + 1] = "black!20";
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private static String toIteration(final int i) {
+        return String.format("\\circled{%d}", i + 1);
+    }
+
+    private static String[][][] toPrintableTables(
+        final boolean[][][] tables,
+        final boolean fillSolution,
+        final String[] labels
+    ) {
+        final String[][][] result = new String[tables.length][tables.length][tables.length];
+        for (int i = 0; i < tables.length; i++) {
+            result[i][0][0] = FloydWarshallAlgorithm.toIteration(i);
+            for (int j = 0; j < labels.length; j++) {
+                result[i][j + 1][0] = labels[j];
+                result[i][0][j + 1] = labels[j];
+            }
+        }
+        for (int from = 0; from < labels.length; from++) {
+            for (int to = 0; to < labels.length; to++) {
+                result[0][from + 1][to + 1] = FloydWarshallAlgorithm.toString(tables[0][from][to]);
+            }
+        }
+        if (fillSolution) {
+            for (int i = 1; i < tables.length; i++) {
+                for (int from = 0; from < labels.length; from++) {
+                    for (int to = 0; to < labels.length; to++) {
+                        result[i][from + 1][to + 1] = FloydWarshallAlgorithm.toString(tables[i][from][to]);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private static String[][][] toPrintableTables(
+        final Integer[][][] tables,
+        final boolean fillSolution,
+        final String[] labels
+    ) {
+        final String[][][] result = new String[tables.length][tables.length][tables.length];
+        for (int i = 0; i < tables.length; i++) {
+            result[i][0][0] = FloydWarshallAlgorithm.toIteration(i);
+            for (int j = 0; j < labels.length; j++) {
+                result[i][j + 1][0] = labels[j];
+                result[i][0][j + 1] = labels[j];
+            }
+        }
+        for (int from = 0; from < labels.length; from++) {
+            for (int to = 0; to < labels.length; to++) {
+                result[0][from + 1][to + 1] = FloydWarshallAlgorithm.toString(tables[0][from][to]);
+            }
+        }
+        if (fillSolution) {
+            for (int i = 1; i < tables.length; i++) {
+                for (int from = 0; from < labels.length; from++) {
+                    for (int to = 0; to < labels.length; to++) {
+                        result[i][from + 1][to + 1] = FloydWarshallAlgorithm.toString(tables[i][from][to]);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private static String toString(final boolean entry) {
+        return entry ? "true" : "false";
+    }
+
+    private static String toString(final Integer entry) {
+        return entry == null ? "$\\infty$" : entry.toString();
     }
 
     private FloydWarshallAlgorithm() {}
@@ -311,14 +312,44 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final Pair<Graph<String, Integer>, Vertex<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
-        FloydWarshallAlgorithm.floydWarshall(
-            pair.x,
-            Algorithm.WARSHALL.name.equals(input.options.get(Flag.ALGORITHM)),
-            new StringVertexComparator(),
-            input.options,
-            input.exerciseWriter,
-            input.solutionWriter
-        );
+        final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(input.options);
+        final Graph<String, Integer> graph = pair.x;
+        final Optional<StringVertexComparator> optionalComparator = Optional.of(new StringVertexComparator());
+        final List<Vertex<String>> vertices = FloydWarshallAlgorithm.getSortedListOfVertices(graph, optionalComparator);
+        final String[] labels = vertices.stream().map(v -> v.label.get()).toArray(String[]::new);
+        if (Algorithm.WARSHALL.name.equals(input.options.get(Flag.ALGORITHM))) {
+            final boolean[][][] tables = FloydWarshallAlgorithm.warshall(graph, optionalComparator);
+            FloydWarshallAlgorithm.printExercise(
+                graph,
+                true,
+                layout,
+                FloydWarshallAlgorithm.toPrintableTables(tables, false, labels),
+                input.options,
+                input.exerciseWriter
+            );
+            FloydWarshallAlgorithm.printSolution(
+                layout,
+                FloydWarshallAlgorithm.toPrintableTables(tables, true, labels),
+                FloydWarshallAlgorithm.toColorTables(tables),
+                input.solutionWriter
+            );
+        } else {
+            final Integer[][][] tables = FloydWarshallAlgorithm.floyd(graph, optionalComparator);
+            FloydWarshallAlgorithm.printExercise(
+                graph,
+                false,
+                layout,
+                FloydWarshallAlgorithm.toPrintableTables(tables, false, labels),
+                input.options,
+                input.exerciseWriter
+            );
+            FloydWarshallAlgorithm.printSolution(
+                layout,
+                FloydWarshallAlgorithm.toPrintableTables(tables, true, labels),
+                FloydWarshallAlgorithm.toColorTables(tables),
+                input.solutionWriter
+            );
+        }
     }
 
     @Override
