@@ -157,7 +157,7 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
         if (layout.columns > 1) {
             LaTeXUtils.beginMulticols(layout.columns, writer);
         }
-        FloydWarshallAlgorithm.printTables(tables, Optional.empty(), layout.columns > 1, writer);
+        FloydWarshallAlgorithm.printTables(tables, Optional.empty(), layout, writer);
         if (layout.columns > 1) {
             LaTeXUtils.endMulticols(writer);
         }
@@ -173,7 +173,7 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
         if (layout.columns > 1) {
             LaTeXUtils.beginMulticols(layout.columns, writer);
         }
-        FloydWarshallAlgorithm.printTables(tables, Optional.of(color), layout.columns > 1, writer);
+        FloydWarshallAlgorithm.printTables(tables, Optional.of(color), layout, writer);
         if (layout.columns > 1) {
             LaTeXUtils.endMulticols(writer);
         }
@@ -183,12 +183,12 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
     private static void printTables(
         final String[][][] tables,
         final Optional<String[][][]> color,
-        final boolean multicol,
+        final LayoutConfiguration layout,
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printArrayStretch(1.5, writer);
         for (int i = 0; i < tables.length; i++) {
-            if (multicol) {
+            if (layout.columns > 1) {
                 LaTeXUtils.resizeboxBeginning("\\columnwidth", "!", writer);
             }
             LaTeXUtils.printTable(
@@ -199,10 +199,19 @@ public class FloydWarshallAlgorithm implements AlgorithmImplementation {
                 0,
                 writer
             );
-            if (multicol) {
+            if (layout.columns > 1) {
                 LaTeXUtils.resizeboxEnd(writer);
             }
-            LaTeXUtils.printVerticalProtectedSpace(writer);
+            if (layout.columns > 1 && i == tables.length / layout.columns) {
+                Main.newLine(writer);
+                writer.write("\\vfill\\null");
+                Main.newLine(writer);
+                writer.write("\\columnbreak");
+                Main.newLine(writer);
+                Main.newLine(writer);
+            } else {
+                LaTeXUtils.printVerticalProtectedSpace(writer);
+            }
         }
         LaTeXUtils.printArrayStretch(1.0, writer);
     }
