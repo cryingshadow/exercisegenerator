@@ -2443,9 +2443,9 @@ public class MainTest {
                     "\\end{center}",
                     "",
                     "Gegenst\\\"ande:\\\\[2ex]",
-                    "Wert:\\\\[2ex]",
+                    "Wert:",
                     "",
-                    "\\vspace*{1ex}",
+                    "\\vspace*{3ex}",
                     "",
                     "\\fi",
                     ""
@@ -2472,7 +2472,7 @@ public class MainTest {
                     "\\end{center}",
                     "",
                     "Gegenst\\\"ande: $\\{1,2\\}$\\\\[2ex]",
-                    "Wert: 5\\\\[2ex]"
+                    "Wert: 5"
                 )
             )
         );
@@ -2579,9 +2579,9 @@ public class MainTest {
                     "${}^*$ Folge 1/Folge 2",
                     "\\end{center}",
                     "",
-                    "L\\\"angste gemeinsame Teilfolge:\\\\[2ex]",
+                    "L\\\"angste gemeinsame Teilfolge:",
                     "",
-                    "\\vspace*{1ex}",
+                    "\\vspace*{3ex}",
                     "",
                     "\\fi",
                     ""
@@ -2606,7 +2606,7 @@ public class MainTest {
                     "${}^*$ Folge 1/Folge 2",
                     "\\end{center}",
                     "",
-                    "L\\\"angste gemeinsame Teilfolge: E\\\\[2ex]"
+                    "L\\\"angste gemeinsame Teilfolge: E"
                 )
             )
         );

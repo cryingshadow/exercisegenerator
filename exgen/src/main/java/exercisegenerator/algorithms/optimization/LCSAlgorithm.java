@@ -177,10 +177,10 @@ public class LCSAlgorithm implements AlgorithmImplementation {
             Main.newLine(writer);
             LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
             Main.newLine(writer);
-            writer.write("L\\\"angste gemeinsame Teilfolge:\\\\[2ex]");
+            writer.write("L\\\"angste gemeinsame Teilfolge:");
             Main.newLine(writer);
             if (mode == PreprintMode.SOLUTION_SPACE) {
-                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("3ex"), options, writer);
             }
             Main.newLine(writer);
             break;
@@ -214,7 +214,6 @@ public class LCSAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
         writer.write("L\\\"angste gemeinsame Teilfolge: ");
         writer.write(LCSAlgorithm.lcs(problem, table));
-        writer.write("\\\\[2ex]");
         Main.newLine(writer);
         Main.newLine(writer);
     }

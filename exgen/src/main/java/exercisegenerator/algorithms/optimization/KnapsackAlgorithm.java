@@ -175,10 +175,10 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
             Main.newLine(writer);
             writer.write("Gegenst\\\"ande:\\\\[2ex]");
             Main.newLine(writer);
-            writer.write("Wert:\\\\[2ex]");
+            writer.write("Wert:");
             Main.newLine(writer);
             if (mode == PreprintMode.SOLUTION_SPACE) {
-                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("3ex"), options, writer);
             }
             Main.newLine(writer);
             break;
@@ -216,7 +216,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
         writer.write("Wert: ");
         writer.write(String.valueOf(solution[solution.length - 1][solution[0].length - 1]));
-        writer.write("\\\\[2ex]");
         Main.newLine(writer);
         Main.newLine(writer);
     }
