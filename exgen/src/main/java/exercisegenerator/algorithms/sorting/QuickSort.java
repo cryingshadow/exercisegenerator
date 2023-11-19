@@ -10,38 +10,20 @@ import exercisegenerator.util.*;
 
 public class QuickSort implements AlgorithmImplementation {
 
-    /**
-     * Mode indicating how to treat elements equal to the pivot element during partitioning.
-     */
     private static enum PartitionMode {
 
-        /**
-         * Elements equal to the pivot element are always swapped.
-         */
         EQUAL_ALWAYS_SWAP,
 
-        /**
-         * Elements equal to the pivot element end up in the left partition.
-         */
         EQUAL_LEFT,
 
-        /**
-         * Elements equal to the pivot element are never swapped.
-         */
         EQUAL_NEVER_SWAP,
 
-        /**
-         * Elements equal to the pivot element end up in the right partition.
-         */
         EQUAL_RIGHT
 
     }
 
     public static final QuickSort INSTANCE = new QuickSort();
 
-    /**
-     * Flag indicating whether elements equal to the pivot element should end up in the left partition.
-     */
     private static final PartitionMode PARTITION_MODE = PartitionMode.EQUAL_RIGHT; // TODO parameterize
 
     public static List<List<ItemWithTikZInformation<Integer>>> quicksort(final int[] initialArray) {
@@ -57,79 +39,51 @@ public class QuickSort implements AlgorithmImplementation {
         return result;
     }
 
-    /**
-     * Partitions the array part between <code>start</code> and <code>end</code> using the element at <code>end</code>
-     * as Pivot element. It returns the resulting index of the Pivot element. So after this method call, all elements
-     * from <code>start</code> to the returned index minus one are less than or equal to the element at the returned
-     * index and all elements from the returned index plus one to <code>end</code> are greater than or equal to the
-     * element at the returned index.
-     * @param array The array.
-     * @param start The start index.
-     * @param end The end index.
-     * @return The index of the Pivot element after partitioning.
-     */
-    private static int partition(final int[] array, final int start, final int end) {
-        int i = start - 1;
-        int j = end;
-        switch (QuickSort.PARTITION_MODE) {
-            case EQUAL_ALWAYS_SWAP:
-                while (i < j) {
-                    i++;
-                    while (array[i] < array[end]) {
-                        i++;
-                    }
-                    j--;
-                    while (j > start - 1 && array[j] > array[end]) {
-                        j--;
-                    }
-                    ArrayUtils.swap(array, i, j);
-                }
-                break;
-            case EQUAL_LEFT:
-                while (i < j) {
-                    i++;
-                    while (array[i] <= array[end]) {
-                        i++;
-                    }
-                    j--;
-                    while (j > start - 1 && array[j] > array[end]) {
-                        j--;
-                    }
-                    ArrayUtils.swap(array, i, j);
-                }
-                break;
-            case EQUAL_NEVER_SWAP:
-                while (i < j) {
-                    i++;
-                    while (array[i] <= array[end]) {
-                        i++;
-                    }
-                    j--;
-                    while (j > start - 1 && array[j] >= array[end]) {
-                        j--;
-                    }
-                    ArrayUtils.swap(array, i, j);
-                }
-                break;
-            case EQUAL_RIGHT:
-                while (i < j) {
-                    i++;
-                    while (array[i] < array[end]) {
-                        i++;
-                    }
-                    j--;
-                    while (j > start - 1 && array[j] >= array[end]) {
-                        j--;
-                    }
-                    ArrayUtils.swap(array, i, j);
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unknown partition mode!");
+    private static boolean forwardLeft(final int left, final int pivot, final PartitionMode mode) {
+        switch (mode) {
+        case EQUAL_LEFT:
+        case EQUAL_NEVER_SWAP:
+            return left <= pivot;
+        case EQUAL_ALWAYS_SWAP:
+        case EQUAL_RIGHT:
+            return left < pivot;
+        default:
+            throw new IllegalStateException("Unknown partition mode!");
         }
-        ArrayUtils.swap(array, i, j);
-        ArrayUtils.swap(array, i, end);
-        return i;
+    }
+
+    private static boolean forwardRight(final int right, final int pivot, final PartitionMode mode) {
+        switch (mode) {
+        case EQUAL_NEVER_SWAP:
+        case EQUAL_RIGHT:
+            return right >= pivot;
+        case EQUAL_ALWAYS_SWAP:
+        case EQUAL_LEFT:
+            return right > pivot;
+        default:
+            throw new IllegalStateException("Unknown partition mode!");
+        }
+    }
+
+    private static int partition(final int[] array, final int from, final int to) {
+        int left = from - 1;
+        int right = to;
+        final int pivot = array[to];
+        final PartitionMode mode = QuickSort.PARTITION_MODE;
+        while (left < right) {
+            left++;
+            while (QuickSort.forwardLeft(array[left], pivot, mode)) {
+                left++;
+            }
+            right--;
+            while (right > from && QuickSort.forwardRight(array[right], pivot, mode)) {
+                right--;
+            }
+            ArrayUtils.swap(array, left, right);
+        }
+        ArrayUtils.swap(array, left, right);
+        ArrayUtils.swap(array, left, to);
+        return left;
     }
 
     private static void quicksort(

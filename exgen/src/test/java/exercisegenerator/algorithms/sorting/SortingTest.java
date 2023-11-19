@@ -365,45 +365,110 @@ public class SortingTest {
         Assert.assertEquals(MergeSort.mergesort(array, true), expected);
     }
 
-    @Test
-    public void quicksort() {
-        final int[] array = new int[] {5,7,4,8,1,3};
-        final List<List<ItemWithTikZInformation<Integer>>> expected =
-            Arrays.asList(
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true, true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true, true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true)
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5), true, true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true)
-                )
-            );
+    @Test(dataProvider="quicksortData")
+    public void quicksort(final int[] array, final List<List<ItemWithTikZInformation<Integer>>> expected) {
         Assert.assertEquals(QuickSort.quicksort(array), expected);
+    }
+
+    @DataProvider
+    public Object[][] quicksortData() {
+        return new Object[][] {
+            {
+                new int[] {5,7,4,8,1,3},
+                List.of(
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7))
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                    )
+                )
+            },
+            {
+                new int[] {1,2,3,4},
+                List.of(
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4))
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true, true)
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true)
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(2), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true)
+                    )
+                )
+            },
+            {
+                new int[] {4,3,2,1},
+                List.of(
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1))
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4))
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true, true)
+                    ),
+                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(2), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true)
+                    )
+                )
+            }
+        };
     }
 
     @Test
