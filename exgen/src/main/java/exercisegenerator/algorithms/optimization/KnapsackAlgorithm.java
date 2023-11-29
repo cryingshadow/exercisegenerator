@@ -130,7 +130,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         writer.write(String.format("\\emphasize{maximaler Tragkraft} %d ", problem.capacity));
         writer.write(String.format("sowie %d \\emphasize{Gegenst\\\"ande}. ", numberOfItems));
         Main.newLine(writer);
-        writer.write("Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $c_i$ haben. ");
+        writer.write("Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $v_i$ haben. ");
         Main.newLine(writer);
         writer.write("Bestimmen Sie mit Hilfe des Algorithmus zum L\\\"osen ");
         writer.write("des Rucksackproblems mittels dynamischer Programmierung den maximalen ");
@@ -144,11 +144,11 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         writer.write(" und $w_{" + numberOfItems + "} = " + problem.weights[numberOfItems - 1]);
         writer.write("$. ");
         Main.newLine(writer);
-        writer.write("Die \\emphasize{Werte} seien $c_{1} = " + problem.values[0] + "$");
+        writer.write("Die \\emphasize{Werte} seien $v_{1} = " + problem.values[0] + "$");
         for (int i = 1; i < numberOfItems - 1; i++) {
-            writer.write(", $c_{" + (i + 1) + "} = " + problem.values[i] + "$");
+            writer.write(", $v_{" + (i + 1) + "} = " + problem.values[i] + "$");
         }
-        writer.write(" und $c_{" + numberOfItems + "} = " + problem.values[numberOfItems - 1] + "$. ");
+        writer.write(" und $v_{" + numberOfItems + "} = " + problem.values[numberOfItems - 1] + "$. ");
         Main.newLine(writer);
         writer.write("Geben Sie zudem die vom Algorithmus bestimmte Tabelle ");
         writer.write("und die mitzunehmenden Gegenst\\\"ande an.");

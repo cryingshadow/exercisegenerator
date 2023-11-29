@@ -2413,13 +2413,13 @@ public class MainTest {
                 List.of(
                     "Gegeben sei ein Rucksack mit \\emphasize{maximaler Tragkraft} 7 sowie 3 "
                     + "\\emphasize{Gegenst\\\"ande}. ",
-                    "Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $c_i$ haben. ",
+                    "Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $v_i$ haben. ",
                     "Bestimmen Sie mit Hilfe des Algorithmus zum L\\\"osen des Rucksackproblems mittels dynamischer "
                     + "Programmierung den maximalen Gesamtwert der Gegenst\\\"ande, die der Rucksack tragen kann (das "
                     + "Gesamtgewicht der mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des "
                     + "Rucksacks). ",
                     "Die \\emphasize{Gewichte} seien dabei $w_{1} = 4$, $w_{2} = 3$ und $w_{3} = 3$. ",
-                    "Die \\emphasize{Werte} seien $c_{1} = 3$, $c_{2} = 2$ und $c_{3} = 2$. ",
+                    "Die \\emphasize{Werte} seien $v_{1} = 3$, $v_{2} = 2$ und $v_{3} = 2$. ",
                     "Geben Sie zudem die vom Algorithmus bestimmte Tabelle und die mitzunehmenden Gegenst\\\"ande an.",
                     "",
                     "\\ifprintanswers",
