@@ -17,6 +17,9 @@ public class ConversionToASCII implements AlgorithmImplementation {
     private static final String EXERCISE_TEXT_TO_ASCII =
         "Geben Sie zu den folgenden Bitmustern das jeweilige ASCII Zeichen an";
 
+    private static final String EXERCISE_TEXT_TO_ASCII_SINGULAR =
+        "Geben Sie zum folgenden Bitmuster das entsprechende ASCII Zeichen an";
+
     public static char toASCII(final BitString bitString) {
         if (bitString.size() != 8) {
             throw new IllegalArgumentException("Bit string must have length 8!");
@@ -55,6 +58,7 @@ public class ConversionToASCII implements AlgorithmImplementation {
         BinaryNumbers.allBinaryTasks(
             input,
             ConversionToASCII.EXERCISE_TEXT_TO_ASCII,
+            ConversionToASCII.EXERCISE_TEXT_TO_ASCII_SINGULAR,
             task -> new SolvedBinaryTask(
                 String.valueOf(ConversionToASCII.toASCII(task.bitString)),
                 task.bitString

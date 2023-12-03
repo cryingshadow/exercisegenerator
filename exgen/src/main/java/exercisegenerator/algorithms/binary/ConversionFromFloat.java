@@ -29,6 +29,9 @@ public class ConversionFromFloat implements AlgorithmImplementation {
     private static final String EXERCISE_TEXT_PATTERN_FROM_FLOAT =
         "Geben Sie zu den folgenden 1.%d.%d Gleitkommazahlen die jeweilige rationale Zahl an";
 
+    private static final String EXERCISE_TEXT_PATTERN_FROM_FLOAT_SINGULAR =
+        "Geben Sie zur folgenden 1.%d.%d Gleitkommazahl die entsprechende rationale Zahl an";
+
     public static String fromFloat(final BitString bitString, final int exponentLength, final int mantissaLength) {
         final String sign = bitString.getFirst().isZero() ? "" : "-";
         final int excess = BinaryNumbers.getExcess(exponentLength);
@@ -142,6 +145,11 @@ public class ConversionFromFloat implements AlgorithmImplementation {
             input,
             String.format(
                 ConversionFromFloat.EXERCISE_TEXT_PATTERN_FROM_FLOAT,
+                BinaryNumbers.getExponentLength(input.options),
+                BinaryNumbers.getMantissaLength(input.options)
+            ),
+            String.format(
+                ConversionFromFloat.EXERCISE_TEXT_PATTERN_FROM_FLOAT_SINGULAR,
                 BinaryNumbers.getExponentLength(input.options),
                 BinaryNumbers.getMantissaLength(input.options)
             ),

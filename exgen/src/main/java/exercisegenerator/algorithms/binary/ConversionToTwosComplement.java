@@ -14,6 +14,9 @@ public class ConversionToTwosComplement implements AlgorithmImplementation {
     private static final String EXERCISE_TEXT_PATTERN_TO_TWOS =
         "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Zweierkomplement dar";
 
+    private static final String EXERCISE_TEXT_PATTERN_TO_TWOS_SINGULAR =
+        "Stellen Sie die folgende Dezimalzahl im %d-Bit Zweierkomplement dar";
+
     public static BitString toTwosComplement(final int number, final int length) {
         if (ConversionToTwosComplement.outOfBoundsForTwosComplement(number, length)) {
             throw new IllegalArgumentException(
@@ -40,6 +43,10 @@ public class ConversionToTwosComplement implements AlgorithmImplementation {
             input,
             String.format(
                 ConversionToTwosComplement.EXERCISE_TEXT_PATTERN_TO_TWOS,
+                BinaryNumbers.getBitLength(input.options)
+            ),
+            String.format(
+                ConversionToTwosComplement.EXERCISE_TEXT_PATTERN_TO_TWOS_SINGULAR,
                 BinaryNumbers.getBitLength(input.options)
             ),
             task -> new SolvedBinaryTask(

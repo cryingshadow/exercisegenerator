@@ -47,6 +47,7 @@ abstract class BinaryNumbers {
     static <T extends BinaryTask> void allBinaryTasks(
         final AlgorithmInput input,
         final String exerciseText,
+        final String exerciseTextSingular,
         final Function<T, SolvedBinaryTask> algorithm,
         final CheckedFunction<Parameters, List<T>, IOException> parserOrGenerator,
         final Function<SolvedBinaryTask, String> toTaskText,
@@ -63,7 +64,12 @@ abstract class BinaryNumbers {
             .findFirst()
             .get();
         final int contentLength = toContentLength.apply(solvedTasks);
-        BinaryNumbers.binaryBeginning(exerciseText, input.options, input.exerciseWriter, input.solutionWriter);
+        BinaryNumbers.binaryBeginning(
+            tasks.size() == 1 ? exerciseTextSingular : exerciseText,
+            input.options,
+            input.exerciseWriter,
+            input.solutionWriter
+        );
         boolean first = true;
         for (final SolvedBinaryTask solvedTask : solvedTasks) {
             if (first) {

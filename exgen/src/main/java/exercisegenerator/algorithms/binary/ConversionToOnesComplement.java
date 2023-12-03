@@ -14,6 +14,9 @@ public class ConversionToOnesComplement implements AlgorithmImplementation {
     private static final String EXERCISE_TEXT_PATTERN_TO_ONES =
         "Stellen Sie die folgenden Dezimalzahlen im %d-Bit Einerkomplement dar";
 
+    private static final String EXERCISE_TEXT_PATTERN_TO_ONES_SINGULAR =
+        "Stellen Sie die folgende Dezimalzahl im %d-Bit Einerkomplement dar";
+
     public static BitString toOnesComplement(final int number, final int length) {
         if (BinaryNumbers.outOfBoundsForOnesComplement(number, length)) {
             throw new IllegalArgumentException(
@@ -35,6 +38,10 @@ public class ConversionToOnesComplement implements AlgorithmImplementation {
             input,
             String.format(
                 ConversionToOnesComplement.EXERCISE_TEXT_PATTERN_TO_ONES,
+                BinaryNumbers.getBitLength(input.options)
+            ),
+            String.format(
+                ConversionToOnesComplement.EXERCISE_TEXT_PATTERN_TO_ONES_SINGULAR,
                 BinaryNumbers.getBitLength(input.options)
             ),
             task -> new SolvedBinaryTask(

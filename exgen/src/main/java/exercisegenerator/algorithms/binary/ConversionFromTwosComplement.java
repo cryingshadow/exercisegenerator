@@ -14,6 +14,9 @@ public class ConversionFromTwosComplement implements AlgorithmImplementation {
     private static final String EXERCISE_TEXT_PATTERN_FROM_TWOS =
         "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Zweierkomplement an";
 
+    private static final String EXERCISE_TEXT_PATTERN_FROM_TWOS_SINGULAR =
+        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahl im %d-Bit Zweierkomplement an";
+
     public static int fromTwosComplement(final BitString bitString) {
         if (bitString.getFirst().isZero()) {
             return bitString.toUnsignedInt();
@@ -27,7 +30,14 @@ public class ConversionFromTwosComplement implements AlgorithmImplementation {
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         BinaryNumbers.allBinaryTasks(
             input,
-            String.format(ConversionFromTwosComplement.EXERCISE_TEXT_PATTERN_FROM_TWOS, BinaryNumbers.getBitLength(input.options)),
+            String.format(
+                ConversionFromTwosComplement.EXERCISE_TEXT_PATTERN_FROM_TWOS,
+                BinaryNumbers.getBitLength(input.options)
+            ),
+            String.format(
+                ConversionFromTwosComplement.EXERCISE_TEXT_PATTERN_FROM_TWOS_SINGULAR,
+                BinaryNumbers.getBitLength(input.options)
+            ),
             task -> new SolvedBinaryTask(
                 String.valueOf(ConversionFromTwosComplement.fromTwosComplement(task.bitString)),
                 task.bitString

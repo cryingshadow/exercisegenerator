@@ -14,6 +14,9 @@ public class ConversionFromOnesComplement implements AlgorithmImplementation {
     private static final String EXERCISE_TEXT_PATTERN_FROM_ONES =
         "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahlen im %d-Bit Einerkomplement an";
 
+    private static final String EXERCISE_TEXT_PATTERN_FROM_ONES_SINGULAR =
+        "Geben Sie den Dezimalwert der folgenden Bin\\\"arzahl im %d-Bit Einerkomplement an";
+
     public static int fromOnesComplement(final BitString bitString) {
         if (bitString.getFirst().isZero()) {
             return bitString.toUnsignedInt();
@@ -29,6 +32,10 @@ public class ConversionFromOnesComplement implements AlgorithmImplementation {
             input,
             String.format(
                 ConversionFromOnesComplement.EXERCISE_TEXT_PATTERN_FROM_ONES,
+                BinaryNumbers.getBitLength(input.options)
+            ),
+            String.format(
+                ConversionFromOnesComplement.EXERCISE_TEXT_PATTERN_FROM_ONES_SINGULAR,
                 BinaryNumbers.getBitLength(input.options)
             ),
             task -> new SolvedBinaryTask(

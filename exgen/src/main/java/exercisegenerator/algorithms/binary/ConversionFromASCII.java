@@ -24,6 +24,13 @@ public class ConversionFromASCII implements AlgorithmImplementation {
     private static final String EXERCISE_TEXT_FROM_ASCII =
         "Geben Sie zu den folgenden ASCII Zeichen das jeweilige Bitmuster an";
 
+    private static final String EXERCISE_TEXT_FROM_ASCII_SINGULAR =
+        "Geben Sie zum folgenden ASCII Zeichen das entsprechende Bitmuster an";
+
+    public static BitString fromASCII(final char character) {
+        return ConversionToTwosComplement.toTwosComplement(character, 8);
+    }
+
     private static String generateASCII(final Random gen) {
         return String.valueOf((char)(gen.nextInt(95) + 32));
     }
@@ -63,6 +70,7 @@ public class ConversionFromASCII implements AlgorithmImplementation {
         BinaryNumbers.allBinaryTasks(
             input,
             ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII,
+            ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII_SINGULAR,
             task -> new SolvedBinaryTask(
                 task.character,
                 ConversionFromASCII.fromASCII(task.character.charAt(0))
@@ -84,10 +92,6 @@ public class ConversionFromASCII implements AlgorithmImplementation {
         result[4] = "-l";
         result[5] = "3";
         return result; //TODO
-    }
-
-    public static BitString fromASCII(final char character) {
-        return ConversionToTwosComplement.toTwosComplement(character, 8);
     }
 
 }
