@@ -78,6 +78,7 @@ public class KruskalAlgorithm implements AlgorithmImplementation {
 
     private static void printExercise(
         final Graph<String, Integer> graph,
+        final int numberOfEdges,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
@@ -93,7 +94,7 @@ public class KruskalAlgorithm implements AlgorithmImplementation {
         writer.write("an:\\\\[2ex]");
         Main.newLine(writer);
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        writer.write("Kantenreihenfolge:\\\\[20ex]");
+        writer.write(String.format("Kantenreihenfolge:\\\\[%dex]", numberOfEdges * 4));
         Main.newLine(writer);
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
@@ -133,6 +134,7 @@ public class KruskalAlgorithm implements AlgorithmImplementation {
         final KruskalResult<String> result = KruskalAlgorithm.kruskal(graph);
         KruskalAlgorithm.printExercise(
             graph,
+            result.edges.size(),
             input.options,
             input.exerciseWriter
         );

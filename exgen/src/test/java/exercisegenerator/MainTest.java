@@ -2512,7 +2512,7 @@ public class MainTest {
                     "\\vspace*{-3ex}",
                     "",
                     "\\else",
-                    "Kantenreihenfolge:\\\\[20ex]",
+                    "Kantenreihenfolge:\\\\[12ex]",
                     "Minimaler Spannbaum:",
                     "",
                     "\\vspace*{10ex}",
