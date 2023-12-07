@@ -7,7 +7,6 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 import exercisegenerator.structures.trees.btree.*;
@@ -82,34 +81,16 @@ public abstract class LaTeXUtils {
         return String.format("\\{%s\\}", elements.map(x -> x.toString()).collect(Collectors.joining(",")));
     }
 
-    /**
-     * Prints a new stretch factor for the array height.
-     * @param stretch The stretch factor.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printArrayStretch(final double stretch, final BufferedWriter writer) throws IOException {
         writer.write("\\renewcommand{\\arraystretch}{" + stretch + "}");
         Main.newLine(writer);
     }
 
-    /**
-     * Prints the beginning of the specified environment.
-     * @param environment The environment.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printBeginning(final String environment, final BufferedWriter writer) throws IOException {
         writer.write("\\begin{" + environment + "}");
         Main.newLine(writer);
     }
 
-    /**
-     * Prints a B-tree to the specified writer.
-     * @param tree The B-tree.
-     * @param writer The writer.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printBTree(final BTree<Integer> tree, final BufferedWriter writer) throws IOException {
         if (tree.hasJustRoot()) {
             writer.write("\\node[draw=black,rounded corners,thick,inner sep=5pt] " + tree.toString() + ";");
@@ -161,63 +142,6 @@ public abstract class LaTeXUtils {
         );
     }
 
-    /**
-     * Prints a row of empty nodes as solution space for the contents of the array with array indices above.
-     * @param length The length of the array.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some I/O error occurs.
-     */
-    public static void printEmptyArrayWithIndex(final int length, final BufferedWriter writer) throws IOException {
-        LaTeXUtils.printListAndReturnLeftmostNodesName(
-            IntStream.range(0, length).mapToObj(i -> new ItemWithTikZInformation<>(i)).toList(),
-            Optional.empty(),
-            Algorithm.DEFAULT_CONTENT_LENGTH,
-            writer
-        );
-    }
-
-    /**
-     * Prints a colum of empty nodes as solution space for the contents of the array.
-     * @param length The length of the array.
-     * @param left The name of the top-most node in the colum left of the current colum.
-     * @param writer The writer to send the output to.
-     * @return The name of the top-most node of the current colum.
-     * @throws IOException If some I/O error occurs.
-     */
-    public static String printEmptyVerticalArray(
-        final int length,
-        final String left,
-        final BufferedWriter writer
-        ) throws IOException {
-        final String firstName = "n" + LaTeXUtils.number++;
-        if (left == null) {
-            writer.write("\\node[node] (");
-            writer.write(firstName);
-            writer.write(") {\\phantom{00}};");
-            Main.newLine(writer);
-        } else {
-            writer.write("\\node[node] (");
-            writer.write(firstName);
-            writer.write(") [right=of ");
-            writer.write(left);
-            writer.write("] {\\phantom{00}};");
-            Main.newLine(writer);
-        }
-        for (int i = 1; i < length; i++) {
-            writer.write("\\node[node] (n" + LaTeXUtils.number++);
-            writer.write(") [below=of n" + (LaTeXUtils.number - 2));
-            writer.write("] {\\phantom{00}};");
-            Main.newLine(writer);
-        }
-        return firstName;
-    }
-
-    /**
-     * Prints the end of the specified environment.
-     * @param environment The environment.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printEnd(final String environment, final BufferedWriter writer) throws IOException {
         writer.write("\\end{");
         writer.write(environment);
@@ -235,11 +159,6 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
     }
 
-    /**
-     * Prints the header of a LaTeX file with the required packages and settings for our exercise environment.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printLaTeXBeginning(final BufferedWriter writer) throws IOException {
         writer.write("\\documentclass{article}");
         Main.newLine(writer);
@@ -299,11 +218,6 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
     }
 
-    /**
-     * Prints the end of a LaTeX document.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printLaTeXEnd(final BufferedWriter writer) throws IOException {
         Main.newLine(writer);
         writer.write("\\end{document}");
@@ -326,7 +240,7 @@ public abstract class LaTeXUtils {
                         Optional.of(new TikZNodeOrientation(below.get(), TikZNodeDirection.BELOW)),
                 firstItem.marker,
                 firstItem.separateBefore,
-                Optional.empty(),
+                firstItem.optionalIndex,
                 contentLength,
                 writer
             );
@@ -339,7 +253,7 @@ public abstract class LaTeXUtils {
                     Optional.of(new TikZNodeOrientation(previousName, TikZNodeDirection.RIGHT)),
                     item.marker,
                     item.separateBefore,
-                    Optional.empty(),
+                    item.optionalIndex,
                     contentLength,
                     writer
                 );
@@ -821,9 +735,9 @@ public abstract class LaTeXUtils {
             writer.write(String.valueOf(currentNumber));
             writer.write(") [above=0 of ");
             writer.write(name);
-            writer.write("] {\\scriptsize\\texttt{a[");
+            writer.write("] {\\scriptsize\\texttt{");
             writer.write(String.valueOf(optionalIndex.get()));
-            writer.write("]}};");
+            writer.write("}};");
             Main.newLine(writer);
         }
         return name;

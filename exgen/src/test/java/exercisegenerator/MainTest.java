@@ -2267,12 +2267,12 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\",
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\",
                 "\\begin{center}",
                 "3, 5, 1, 4, 2, 1.",
                 "\\end{center}",
                 "",
-                "\\vspace*{3ex}",
+                "\\vspace*{2ex}",
                 ""
             )
         );
@@ -2282,11 +2282,13 @@ public class MainTest {
                 "\\begin{center}",
                 "\\begin{tikzpicture}",
                 Patterns.ARRAY_STYLE,
-                Patterns.singleEmptyNode(nodeNumber++, contentLength)
+                Patterns.singleEmptyNode(nodeNumber, contentLength),
+                Patterns.indexNode(nodeNumber++, 0)
             )
         );
         for (int i = 1; i < 11; i++) {
-            exText.add(Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength));
+            exText.add(Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength));
+            exText.add(Patterns.indexNode(nodeNumber++, i));
         }
         exText.addAll(
             List.of(
@@ -2309,17 +2311,28 @@ public class MainTest {
                     "m = 11, c = 0,70, $c_1$ = 7, $c_2$ = 3:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     Patterns.ARRAY_STYLE,
-                    Patterns.singleEmptyNode(nodeNumber++, contentLength),
-                    Patterns.rightNodeToPredecessor(nodeNumber++, "3"),
-                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
-                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
-                    Patterns.rightNodeToPredecessor(nodeNumber++, "2"),
-                    Patterns.rightNodeToPredecessor(nodeNumber++, "5"),
-                    Patterns.rightNodeToPredecessor(nodeNumber++, "1"),
-                    Patterns.rightNodeToPredecessor(nodeNumber++, "1"),
-                    Patterns.rightNodeToPredecessor(nodeNumber++, "4"),
-                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
-                    Patterns.rightEmptyNodeToPredecessor(nodeNumber++, contentLength),
+                    Patterns.singleEmptyNode(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 0),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "3"),
+                    Patterns.indexNode(nodeNumber++, 1),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 2),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 3),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "2"),
+                    Patterns.indexNode(nodeNumber++, 4),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "5"),
+                    Patterns.indexNode(nodeNumber++, 5),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "1"),
+                    Patterns.indexNode(nodeNumber++, 6),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "1"),
+                    Patterns.indexNode(nodeNumber++, 7),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "4"),
+                    Patterns.indexNode(nodeNumber++, 8),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 9),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 10),
                     "\\end{tikzpicture}",
                     "\\end{center}"
                 )

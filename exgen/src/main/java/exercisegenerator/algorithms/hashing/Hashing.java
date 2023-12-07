@@ -154,47 +154,8 @@ abstract class Hashing {
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
-        final int capacity = result.length;
-        final int contentLength = Hashing.computeContentLength(result);
-        exerciseWriter.write("F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array \\code{a} der L\\\"ange ");
-        exerciseWriter.write(String.valueOf(capacity));
-        exerciseWriter.write(" unter Verwendung der ");
-        exerciseWriter.write(printOptions.optionsText);
-        exerciseWriter.write(":\\\\");
-        Main.newLine(exerciseWriter);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
-        exerciseWriter.write(values.stream().map(String::valueOf).collect(Collectors.joining(", ")));
-        exerciseWriter.write(".");
-        Main.newLine(exerciseWriter);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
-        switch (printOptions.preprintMode) {
-            case ALWAYS:
-            case SOLUTION_SPACE:
-                LaTeXUtils.printVerticalProtectedSpace("3ex", exerciseWriter);
-                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exerciseWriter);
-                }
-                LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
-                Hashing.printArray(initialArray, contentLength, printOptions.probing, exerciseWriter);
-                LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
-                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exerciseWriter);
-                } else {
-                    Main.newLine(exerciseWriter);
-                    Main.newLine(exerciseWriter);
-                }
-                break;
-            case NEVER:
-                Main.newLine(exerciseWriter);
-                Main.newLine(exerciseWriter);
-        }
-
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solutionWriter);
-        solutionWriter.write(printOptions.parameterText);
-        Main.newLine(solutionWriter);
-        Hashing.printArray(result, contentLength, printOptions.probing, solutionWriter);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, solutionWriter);
-        Main.newLine(solutionWriter);
+        Hashing.printHashingExercise(values, initialArray, result, printOptions, options, exerciseWriter);
+        Hashing.printHashingSolution(result, printOptions, solutionWriter);
     }
 
     static ProbingFunction quadraticProbing(final int linearFactor, final int quadraticFactor) {
@@ -499,6 +460,66 @@ abstract class Hashing {
             LaTeXUtils.printVerticalStringArray(IntegerList.toVerticalStringArray(array), null, null, null, writer);
         }
         LaTeXUtils.printTikzEnd(writer);
+    }
+
+    private static void printHashingExercise(
+        final List<Integer> values,
+        final IntegerList[] initialArray,
+        final IntegerList[] result,
+        final PrintOptions printOptions,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int capacity = result.length;
+        final int contentLength = Hashing.computeContentLength(result);
+        writer.write(
+            "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange "
+        );
+        writer.write(String.valueOf(capacity));
+        writer.write(" unter Verwendung der ");
+        writer.write(printOptions.optionsText);
+        writer.write(":\\\\");
+        Main.newLine(writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        writer.write(values.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        writer.write(".");
+        Main.newLine(writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        switch (printOptions.preprintMode) {
+            case ALWAYS:
+            case SOLUTION_SPACE:
+                LaTeXUtils.printVerticalProtectedSpace("2ex", writer);
+                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
+                    LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+                }
+                LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+                Hashing.printArray(initialArray, contentLength, printOptions.probing, writer);
+                LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
+                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+                } else {
+                    Main.newLine(writer);
+                    Main.newLine(writer);
+                }
+                break;
+            case NEVER:
+                Main.newLine(writer);
+                Main.newLine(writer);
+        }
+    }
+
+    private static void printHashingSolution(
+        final IntegerList[] result,
+        final PrintOptions printOptions,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int contentLength = Hashing.computeContentLength(result);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        writer.write(printOptions.parameterText);
+        Main.newLine(writer);
+        Hashing.printArray(result, contentLength, printOptions.probing, writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        Main.newLine(writer);
     }
 
 }

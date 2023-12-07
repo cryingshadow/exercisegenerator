@@ -51,6 +51,10 @@ public class ItemWithTikZInformation<T> {
         this.optionalIndex = optionalIndex;
     }
 
+    public ItemWithTikZInformation(final Optional<T> optionalContent, final int index) {
+        this(optionalContent, false, false, Optional.of(index));
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (!(o instanceof ItemWithTikZInformation)) {

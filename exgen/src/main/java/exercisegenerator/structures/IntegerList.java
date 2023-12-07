@@ -10,11 +10,15 @@ public class IntegerList extends ArrayList<Integer> {
     private static final long serialVersionUID = -3161606546742721639L;
 
     public static List<ItemWithTikZInformation<Integer>> toTikZList(final IntegerList[] array) {
-        return Arrays.stream(array)
-            .map(list -> list.isEmpty() ?
-                new ItemWithTikZInformation<Integer>() :
-                    new ItemWithTikZInformation<Integer>(Optional.of(list.get(0))))
-            .toList();
+        final List<ItemWithTikZInformation<Integer>> result = new LinkedList<ItemWithTikZInformation<Integer>>();
+        for (int i = 0; i < array.length; i++) {
+            result.add(
+                array[i].isEmpty() ?
+                    new ItemWithTikZInformation<Integer>(i) :
+                        new ItemWithTikZInformation<Integer>(Optional.of(array[i].get(0)), i)
+            );
+        }
+        return result;
     }
 
     public static String[] toVerticalStringArray(final IntegerList[] array) {

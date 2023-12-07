@@ -88,6 +88,15 @@ public class Patterns {
         );
     }
 
+    public static String indexNode(final int nodeNumber, final int index) {
+        return String.format(
+            "\\node (l%d) [above=0 of n%d] {\\scriptsize\\texttt{%d}};",
+            nodeNumber,
+            nodeNumber,
+            index
+        );
+    }
+
     public static List<String> middleSpace(final String space) {
         return List.of("", String.format("\\vspace*{%s}", space), "");
     }
