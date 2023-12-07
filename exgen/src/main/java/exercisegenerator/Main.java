@@ -145,7 +145,7 @@ public class Main {
             } else {
                 final Optional<Algorithm> algorithm = Algorithm.forName(options.get(Flag.ALGORITHM));
                 if (algorithm.isEmpty()) {
-                    System.out.println("Unknown algorithm!");
+                    System.out.println(String.format("Unknown algorithm (%s)!", options.get(Flag.ALGORITHM)));
                     return;
                 }
                 algorithm.get().implementation.executeAlgorithm(
