@@ -10,5 +10,5 @@ To build the executable jar file, you need JDK 17 or higher and Gradle. To conve
 
 To simply use the tool, you can download the pre-built executable jar file in the root folder. You need Java version 17 or higher and a LaTeX distribution.
 
-For instance, to create an exercise sheet with 12 random exercises from a list `L` of algorithms, store the exercise sheet in the file `ex.tex` and the solution in the file `sol.tex`, use the following command:
-`java -jar exercisegenerator.jar -a L -n 12 -e ex.tex -t sol.tex`
+For instance, to create an exercise sheet with 12 random exercises from the three algorithms `bubblesort`, `avltree`, and `dijkstra`, store the exercise sheet in the file `ex.tex` and the solution in the file `sol.tex`, use the following command:
+`java -jar exercisegenerator.jar -a bubblesort,avltree,dijkstra -n 12 -e ex.tex -t sol.tex`
