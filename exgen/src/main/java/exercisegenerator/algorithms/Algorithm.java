@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import exercisegenerator.*;
+import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.algorithms.binary.*;
 import exercisegenerator.algorithms.coding.*;
 import exercisegenerator.algorithms.cryptography.*;

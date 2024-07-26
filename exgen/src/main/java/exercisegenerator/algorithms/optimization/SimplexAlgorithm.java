@@ -7,6 +7,7 @@ import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
+import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.optimization.*;
@@ -56,11 +57,11 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
     }
 
     private static SimplexProblem generateSimplexProblem(final Parameters options) {
-        final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
-        final int numberOfInequalities = OptimizationAlgorithms.generateNumberOfInequalitiesOrEquations();
+        final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
+        final int numberOfInequalities = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
         final BigFraction[] target = SimplexAlgorithm.generateTargetFunction(numberOfVariables);
         final BigFraction[][] matrix =
-            OptimizationAlgorithms.generateInequalitiesOrEquations(numberOfInequalities, numberOfVariables);
+            AlgebraAlgorithms.generateInequalitiesOrEquations(numberOfInequalities, numberOfVariables);
         return new SimplexProblem(target, matrix);
     }
 
@@ -95,7 +96,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
                 );
             }
             for (int col = 0; col < numbers.length; col++) {
-                matrix[row][col] = OptimizationAlgorithms.parseRationalNumber(numbers[col]);
+                matrix[row][col] = AlgebraAlgorithms.parseRationalNumber(numbers[col]);
             }
         }
         return new SimplexProblem(target, matrix);
@@ -105,7 +106,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         final String[] numbers = line.split(",");
         final BigFraction[] target = new BigFraction[numbers.length];
         for (int i = 0; i < target.length; i++) {
-            target[i] = OptimizationAlgorithms.parseRationalNumber(numbers[i]);
+            target[i] = AlgebraAlgorithms.parseRationalNumber(numbers[i]);
         }
         return target;
     }
@@ -121,9 +122,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         SimplexAlgorithm.printSimplexProblem(problem, writer);
         writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
         writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale Belegung ");
-        writer.write(String.format("f\\\"ur die Variablen $%s_{1}", OptimizationAlgorithms.VARIABLE_NAME));
+        writer.write(String.format("f\\\"ur die Variablen $%s_{1}", AlgebraAlgorithms.VARIABLE_NAME));
         for (int index = 1; index < problem.target.length; index++) {
-            writer.write(String.format(", %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, index + 1));
+            writer.write(String.format(", %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, index + 1));
         }
         writer.write("$ an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.");
         Main.newLine(writer);
@@ -177,7 +178,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             writer.write("0");
         } else {
             writer.write(
-                OptimizationAlgorithms.toCoefficientWithVariable(
+                AlgebraAlgorithms.toCoefficientWithVariable(
                     true,
                     false,
                     true,
@@ -187,7 +188,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             );
             for (int index = firstNonZeroIndex + 1; index < problem.target.length; index++) {
                 writer.write(
-                    OptimizationAlgorithms.toCoefficientWithVariable(
+                    AlgebraAlgorithms.toCoefficientWithVariable(
                         false,
                         false,
                         false,
@@ -201,15 +202,15 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
         writer.write("unter den folgenden Nebenbedingungen:\\\\");
         Main.newLine(writer);
-        OptimizationAlgorithms.printMatrixAsInequalitiesOrEquations(
+        AlgebraAlgorithms.printMatrixAsInequalitiesOrEquations(
             problem.matrix,
             problem.matrix[0].length,
             "\\leq",
             writer
         );
-        writer.write(String.format("$%s_{1}", OptimizationAlgorithms.VARIABLE_NAME));
+        writer.write(String.format("$%s_{1}", AlgebraAlgorithms.VARIABLE_NAME));
         for (int index = 1; index < problem.target.length; index++) {
-            writer.write(String.format(", %s_{%d}", OptimizationAlgorithms.VARIABLE_NAME, index + 1));
+            writer.write(String.format(", %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, index + 1));
         }
         writer.write(" \\geq 0$\\\\[2ex]");
         Main.newLine(writer);
@@ -253,17 +254,17 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             writer.write(
                 String.format(
                     "$%s_{1}^* = %s$",
-                    OptimizationAlgorithms.VARIABLE_NAME,
-                    OptimizationAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(0, lastTableau))
+                    AlgebraAlgorithms.VARIABLE_NAME,
+                    AlgebraAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(0, lastTableau))
                 )
             );
             for (int i = 1; i < lastTableau.problem.target.length; i++) {
                 writer.write(
                     String.format(
                         ", $%s_{%d}^* = %s$",
-                        OptimizationAlgorithms.VARIABLE_NAME,
+                        AlgebraAlgorithms.VARIABLE_NAME,
                         i + 1,
-                        OptimizationAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(i, lastTableau))
+                        AlgebraAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(i, lastTableau))
                     )
                 );
             }
@@ -550,11 +551,11 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         result[result.length - 2][result[0].length - 1] = "";
         result[result.length - 1][result[0].length - 1] = "";
         for (int index = 1; index < result[0].length - 3; index++) {
-            result[1][index + 1] = String.format("$%s_{%d}$", OptimizationAlgorithms.VARIABLE_NAME, index);
+            result[1][index + 1] = String.format("$%s_{%d}$", AlgebraAlgorithms.VARIABLE_NAME, index);
         }
         for (int col = 0; col < tableau.problem.target.length; col++) {
             result[0][col + 2] =
-                fill ? String.format("$%s$", OptimizationAlgorithms.toCoefficient(tableau.problem.target[col])) : "";
+                fill ? String.format("$%s$", AlgebraAlgorithms.toCoefficient(tableau.problem.target[col])) : "";
         }
         for (int col = tableau.problem.target.length + 2; col < result[0].length - 2; col++) {
             result[0][col] = fill ? "$0$" : "";
@@ -563,7 +564,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             for (int col = 0; col < tableau.problem.matrix[row].length; col++) {
                 result[row + 2][col + 2] =
                     fill ?
-                        String.format("$%s$", OptimizationAlgorithms.toCoefficient(tableau.problem.matrix[row][col])) :
+                        String.format("$%s$", AlgebraAlgorithms.toCoefficient(tableau.problem.matrix[row][col])) :
                             "";
             }
         }
@@ -574,10 +575,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
                     variableIndex < tableau.problem.target.length ?
                         String.format(
                             "$%s$",
-                            OptimizationAlgorithms.toCoefficient(tableau.problem.target[variableIndex])
+                            AlgebraAlgorithms.toCoefficient(tableau.problem.target[variableIndex])
                         ) :
                             "$0$";
-                result[i + 2][1] = String.format("$%s_{%d}$", OptimizationAlgorithms.VARIABLE_NAME, variableIndex + 1);
+                result[i + 2][1] = String.format("$%s_{%d}$", AlgebraAlgorithms.VARIABLE_NAME, variableIndex + 1);
             } else {
                 result[i + 2][0] = "";
                 result[i + 2][1] = "";
@@ -586,7 +587,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
                 result[i + 2][result[i + 2].length - 1] = "";
             } else {
                 result[i + 2][result[i + 2].length - 1] =
-                    fill ? String.format("$%s$", OptimizationAlgorithms.toCoefficient(tableau.quotients[i])) : "";
+                    fill ? String.format("$%s$", AlgebraAlgorithms.toCoefficient(tableau.quotients[i])) : "";
             }
         }
         result[result.length - 1][result[0].length - 2] = "";

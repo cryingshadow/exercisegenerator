@@ -1,4 +1,4 @@
-package exercisegenerator.structures.optimization;
+package exercisegenerator.structures.algebra;
 
 import java.util.*;
 import java.util.stream.*;

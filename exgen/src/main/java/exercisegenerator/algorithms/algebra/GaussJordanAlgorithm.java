@@ -1,4 +1,4 @@
-package exercisegenerator.algorithms.optimization;
+package exercisegenerator.algorithms.algebra;
 
 import java.io.*;
 import java.util.*;
@@ -9,7 +9,7 @@ import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
-import exercisegenerator.structures.optimization.*;
+import exercisegenerator.structures.algebra.*;
 
 public class GaussJordanAlgorithm implements AlgorithmImplementation {
 
@@ -103,10 +103,10 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
     }
 
     private static Matrix generateLinearSystemOfEquations(final Parameters options) {
-        final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
-        final int numberOfEquations = OptimizationAlgorithms.generateNumberOfInequalitiesOrEquations();
+        final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
+        final int numberOfEquations = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
         final BigFraction[][] coefficients =
-            OptimizationAlgorithms.generateInequalitiesOrEquations(numberOfEquations, numberOfVariables);
+            AlgebraAlgorithms.generateInequalitiesOrEquations(numberOfEquations, numberOfVariables);
         return new Matrix(coefficients, numberOfVariables);
     }
 
@@ -179,7 +179,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
                 throw new IOException("The rows of the matrix must all have the same length!");
             }
             for (int col = 0; col < numbers.length; col++) {
-                coefficients[row][col] = OptimizationAlgorithms.parseRationalNumber(numbers[col]);
+                coefficients[row][col] = AlgebraAlgorithms.parseRationalNumber(numbers[col]);
             }
         }
         return new Matrix(coefficients, coefficients[0].length - 1);
@@ -200,7 +200,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
     ) throws IOException {
         writer.write("Gegeben sei das folgende \\emphasize{lineare Gleichungssystem}:\\\\[2ex]");
         Main.newLine(writer);
-        OptimizationAlgorithms.printMatrixAsInequalitiesOrEquations(
+        AlgebraAlgorithms.printMatrixAsInequalitiesOrEquations(
             problem.coefficients,
             problem.getNumberOfColumns(),
             "=",
@@ -229,10 +229,10 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
             writer.write(String.format("\\item $\\left(\\begin{array}{*{%d}c|c}", system.getNumberOfColumns() - 1));
             Main.newLine(writer);
             for (int row = 0; row < system.getNumberOfRows(); row++) {
-                writer.write(OptimizationAlgorithms.toCoefficient(system.coefficients[row][0]));
+                writer.write(AlgebraAlgorithms.toCoefficient(system.coefficients[row][0]));
                 for (int col = 1; col < system.getNumberOfColumns(); col++) {
                     writer.write(" & ");
-                    writer.write(OptimizationAlgorithms.toCoefficient(system.coefficients[row][col]));
+                    writer.write(AlgebraAlgorithms.toCoefficient(system.coefficients[row][col]));
                 }
                 writer.write("\\\\");
                 Main.newLine(writer);
@@ -269,7 +269,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         final StringBuilder result = new StringBuilder();
         result.append(String.format("x_{%d} = ", solvedSystem.columnPositions[column] + 1));
         result.append(
-            OptimizationAlgorithms.toCoefficient(solvedSystem.coefficients[column][solvedSystem.getNumberOfColumns() - 1])
+            AlgebraAlgorithms.toCoefficient(solvedSystem.coefficients[column][solvedSystem.getNumberOfColumns() - 1])
         );
         for (int col = column + 1; col < solvedSystem.getNumberOfColumns() - 1; col++) {
             if (solvedSystem.coefficients[column][col].compareTo(BigFraction.ZERO) != 0) {
@@ -278,7 +278,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
                 } else {
                     result.append(" - ");
                 }
-                result.append(OptimizationAlgorithms.toCoefficient(solvedSystem.coefficients[column][col].abs()));
+                result.append(AlgebraAlgorithms.toCoefficient(solvedSystem.coefficients[column][col].abs()));
                 result.append(String.format("x_{%d}", solvedSystem.columnPositions[col] + 1));
             }
         }
