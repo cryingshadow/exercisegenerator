@@ -15,10 +15,10 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
 
     public static final GaussJordanAlgorithm INSTANCE = new GaussJordanAlgorithm();
 
-    public static List<LinearSystemOfEquations> gaussJordan(final LinearSystemOfEquations problem) {
-        final List<LinearSystemOfEquations> solution = new LinkedList<LinearSystemOfEquations>();
+    public static List<Matrix> gaussJordan(final Matrix problem) {
+        final List<Matrix> solution = new LinkedList<Matrix>();
         solution.add(problem);
-        LinearSystemOfEquations current = problem;
+        Matrix current = problem;
         while (!GaussJordanAlgorithm.isSolved(current)) {
             current = GaussJordanAlgorithm.gaussJordanStep(current);
             solution.add(current);
@@ -28,36 +28,36 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
 
     private static boolean assignmentHasConflict(
         final BigFraction[] assignment,
-        final LinearSystemOfEquations solvedSystem
+        final Matrix solvedSystem
     ) {
-        if (solvedSystem.numberOfRows <= assignment.length) {
+        if (solvedSystem.getNumberOfRows() <= assignment.length) {
             return false;
         }
-        for (int row = assignment.length; row < solvedSystem.numberOfRows; row++) {
+        for (int row = assignment.length; row < solvedSystem.getNumberOfRows(); row++) {
             BigFraction left = BigFraction.ZERO;
-            for (int col = 0; col < solvedSystem.numberOfColumns - 1; col++) {
-                if (solvedSystem.matrix[row][col].compareTo(BigFraction.ZERO) != 0) {
-                    left = left.add(solvedSystem.matrix[row][col].multiply(assignment[col]));
+            for (int col = 0; col < solvedSystem.getNumberOfColumns() - 1; col++) {
+                if (solvedSystem.coefficients[row][col].compareTo(BigFraction.ZERO) != 0) {
+                    left = left.add(solvedSystem.coefficients[row][col].multiply(assignment[col]));
                 }
             }
-            if (left.compareTo(solvedSystem.matrix[row][solvedSystem.numberOfColumns - 1]) != 0) {
+            if (left.compareTo(solvedSystem.coefficients[row][solvedSystem.getNumberOfColumns() - 1]) != 0) {
                 return true;
             }
         }
         return false;
     }
 
-    private static BigFraction[] computeAssignment(final LinearSystemOfEquations solvedSystem) {
-        final int rank = GaussJordanAlgorithm.computeRankForSolvedMatrix(solvedSystem.matrix);
+    private static BigFraction[] computeAssignment(final Matrix solvedSystem) {
+        final int rank = GaussJordanAlgorithm.computeRankForSolvedMatrix(solvedSystem.coefficients);
         final BigFraction[] result = new BigFraction[rank];
         for (int row = 0; row < rank; row++) {
-            result[row] = solvedSystem.matrix[row][solvedSystem.numberOfColumns - 1];
+            result[row] = solvedSystem.coefficients[row][solvedSystem.getNumberOfColumns() - 1];
         }
         return result;
     }
 
-    private static int computeMinimumDimension(final LinearSystemOfEquations system) {
-        return Math.min(system.numberOfRows, system.numberOfColumns - 1);
+    private static int computeMinimumDimension(final Matrix system) {
+        return Math.min(system.getNumberOfRows(), system.getNumberOfColumns() - 1);
     }
 
     private static int computeRankForSolvedMatrix(final BigFraction[][] matrix) {
@@ -70,31 +70,31 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         return rank;
     }
 
-    private static LinearSystemOfEquations gaussJordanStep(final LinearSystemOfEquations system) {
+    private static Matrix gaussJordanStep(final Matrix system) {
         final int minDimension = GaussJordanAlgorithm.computeMinimumDimension(system);
         for (int col = 0; col < minDimension; col++) {
-            if (system.matrix[col][col].compareTo(BigFraction.ONE) != 0) {
-                if (system.matrix[col][col].compareTo(BigFraction.ZERO) != 0) {
-                    return system.multiplyRow(col, system.matrix[col][col].reciprocal());
+            if (system.coefficients[col][col].compareTo(BigFraction.ONE) != 0) {
+                if (system.coefficients[col][col].compareTo(BigFraction.ZERO) != 0) {
+                    return system.multiplyRow(col, system.coefficients[col][col].reciprocal());
                 }
-                for (int row = col + 1; row < system.numberOfRows; row++) {
-                    if (system.matrix[row][col].compareTo(BigFraction.ZERO) != 0) {
+                for (int row = col + 1; row < system.getNumberOfRows(); row++) {
+                    if (system.coefficients[row][col].compareTo(BigFraction.ZERO) != 0) {
                         return system.swapRows(col, row);
                     }
                 }
-                for (int secondCol = col + 1; secondCol < system.numberOfColumns - 1; secondCol++) {
-                    for (int row = col; row < system.numberOfRows; row++) {
-                        if (system.matrix[row][secondCol].compareTo(BigFraction.ZERO) != 0) {
+                for (int secondCol = col + 1; secondCol < system.getNumberOfColumns() - 1; secondCol++) {
+                    for (int row = col; row < system.getNumberOfRows(); row++) {
+                        if (system.coefficients[row][secondCol].compareTo(BigFraction.ZERO) != 0) {
                             return system.swapColumns(col, secondCol);
                         }
                     }
                 }
                 throw new IllegalStateException("Solved system should not be solved further!");
             }
-            for (int row = 0; row < system.numberOfRows; row++) {
+            for (int row = 0; row < system.getNumberOfRows(); row++) {
                 if (row != col) {
-                    if (system.matrix[row][col].compareTo(BigFraction.ZERO) != 0) {
-                        return system.addRow(row, col, system.matrix[row][col].negate());
+                    if (system.coefficients[row][col].compareTo(BigFraction.ZERO) != 0) {
+                        return system.addRow(row, col, system.coefficients[row][col].negate());
                     }
                 }
             }
@@ -102,13 +102,12 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         throw new IllegalStateException("Solved system should not be solved further!");
     }
 
-    private static LinearSystemOfEquations generateLinearSystemOfEquations(final Parameters options) {
+    private static Matrix generateLinearSystemOfEquations(final Parameters options) {
         final int numberOfVariables = OptimizationAlgorithms.parseOrGenerateNumberOfVariables(options);
         final int numberOfEquations = OptimizationAlgorithms.generateNumberOfInequalitiesOrEquations();
-        final BigFraction[][] matrix =
+        final BigFraction[][] coefficients =
             OptimizationAlgorithms.generateInequalitiesOrEquations(numberOfEquations, numberOfVariables);
-        System.out.println(Arrays.deepToString(matrix));
-        return new LinearSystemOfEquations(matrix);
+        return new Matrix(coefficients, numberOfVariables);
     }
 
     private static boolean isIdentityMatrix(final BigFraction[][] matrix, final int from, final int to) {
@@ -126,24 +125,24 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         return true;
     }
 
-    private static boolean isSolved(final LinearSystemOfEquations system) {
+    private static boolean isSolved(final Matrix system) {
         final int minDimension = GaussJordanAlgorithm.computeMinimumDimension(system);
         int rank = 0;
         while (rank < minDimension) {
-            if (system.matrix[rank][rank].compareTo(BigFraction.ONE) == 0) {
+            if (system.coefficients[rank][rank].compareTo(BigFraction.ONE) == 0) {
                 rank++;
-            } else if (system.matrix[rank][rank].compareTo(BigFraction.ZERO) == 0) {
+            } else if (system.coefficients[rank][rank].compareTo(BigFraction.ZERO) == 0) {
                 break;
             } else {
                 return false;
             }
         }
-        return GaussJordanAlgorithm.isIdentityMatrix(system.matrix, 0, rank)
+        return GaussJordanAlgorithm.isIdentityMatrix(system.coefficients, 0, rank)
             && GaussJordanAlgorithm.isSolvedBelowIdentity(
-                system.matrix,
+                system.coefficients,
                 rank,
-                system.numberOfRows,
-                system.numberOfColumns
+                system.getNumberOfRows(),
+                system.getNumberOfColumns()
             );
     }
 
@@ -166,43 +165,44 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         return true;
     }
 
-    private static LinearSystemOfEquations parseLinearSystemOfEquations(
+    private static Matrix parseLinearSystemOfEquations(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
         final String line = reader.readLine();
         final String[] rows = line.split(";");
-        final BigFraction[][] matrix = new BigFraction[rows.length][((int)rows[0].chars().filter(c -> c == ',').count()) + 1];
-        for (int row = 0; row < matrix.length; row++) {
+        final BigFraction[][] coefficients =
+            new BigFraction[rows.length][((int)rows[0].chars().filter(c -> c == ',').count()) + 1];
+        for (int row = 0; row < coefficients.length; row++) {
             final String[] numbers = rows[row].split(",");
-            if (numbers.length != matrix[row].length) {
+            if (numbers.length != coefficients[row].length) {
                 throw new IOException("The rows of the matrix must all have the same length!");
             }
             for (int col = 0; col < numbers.length; col++) {
-                matrix[row][col] = OptimizationAlgorithms.parseRationalNumber(numbers[col]);
+                coefficients[row][col] = OptimizationAlgorithms.parseRationalNumber(numbers[col]);
             }
         }
-        return new LinearSystemOfEquations(matrix);
+        return new Matrix(coefficients, coefficients[0].length - 1);
     }
 
-    private static LinearSystemOfEquations parseOrGenerateLinearSystemOfEquations(final Parameters options)
+    private static Matrix parseOrGenerateLinearSystemOfEquations(final Parameters options)
     throws IOException {
-        return new ParserAndGenerator<LinearSystemOfEquations>(
+        return new ParserAndGenerator<Matrix>(
             GaussJordanAlgorithm::parseLinearSystemOfEquations,
             GaussJordanAlgorithm::generateLinearSystemOfEquations
         ).getResult(options);
     }
 
     private static void printGaussJordanExercise(
-        final LinearSystemOfEquations problem,
+        final Matrix problem,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Gegeben sei das folgende \\emphasize{lineare Gleichungssystem}:\\\\[2ex]");
         Main.newLine(writer);
         OptimizationAlgorithms.printMatrixAsInequalitiesOrEquations(
-            problem.matrix,
-            problem.numberOfColumns,
+            problem.coefficients,
+            problem.getNumberOfColumns(),
             "=",
             writer
         );
@@ -215,7 +215,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
     }
 
     private static void printGaussJordanSolution(
-        final List<LinearSystemOfEquations> solution,
+        final List<Matrix> solution,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
@@ -224,15 +224,15 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
         writer.write("\\begin{enumerate}");
         Main.newLine(writer);
-        LinearSystemOfEquations lastSystem = null;
-        for (final LinearSystemOfEquations system : solution) {
-            writer.write(String.format("\\item $\\left(\\begin{array}{*{%d}c|c}", system.numberOfColumns - 1));
+        Matrix lastSystem = null;
+        for (final Matrix system : solution) {
+            writer.write(String.format("\\item $\\left(\\begin{array}{*{%d}c|c}", system.getNumberOfColumns() - 1));
             Main.newLine(writer);
-            for (int row = 0; row < system.numberOfRows; row++) {
-                writer.write(OptimizationAlgorithms.toCoefficient(system.matrix[row][0]));
-                for (int col = 1; col < system.numberOfColumns; col++) {
+            for (int row = 0; row < system.getNumberOfRows(); row++) {
+                writer.write(OptimizationAlgorithms.toCoefficient(system.coefficients[row][0]));
+                for (int col = 1; col < system.getNumberOfColumns(); col++) {
                     writer.write(" & ");
-                    writer.write(OptimizationAlgorithms.toCoefficient(system.matrix[row][col]));
+                    writer.write(OptimizationAlgorithms.toCoefficient(system.coefficients[row][col]));
                 }
                 writer.write("\\\\");
                 Main.newLine(writer);
@@ -254,7 +254,7 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         } else {
             writer.write("$");
             writer.write(GaussJordanAlgorithm.toParameterizedAssignment(lastSystem, 0));
-            final int rank = GaussJordanAlgorithm.computeRankForSolvedMatrix(lastSystem.matrix);
+            final int rank = GaussJordanAlgorithm.computeRankForSolvedMatrix(lastSystem.coefficients);
             for (int col = 1; col < rank; col++) {
                 writer.write("$, $");
                 writer.write(GaussJordanAlgorithm.toParameterizedAssignment(lastSystem, col));
@@ -265,20 +265,20 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
     }
 
-    private static String toParameterizedAssignment(final LinearSystemOfEquations solvedSystem, final int column) {
+    private static String toParameterizedAssignment(final Matrix solvedSystem, final int column) {
         final StringBuilder result = new StringBuilder();
         result.append(String.format("x_{%d} = ", solvedSystem.columnPositions[column] + 1));
         result.append(
-            OptimizationAlgorithms.toCoefficient(solvedSystem.matrix[column][solvedSystem.numberOfColumns - 1])
+            OptimizationAlgorithms.toCoefficient(solvedSystem.coefficients[column][solvedSystem.getNumberOfColumns() - 1])
         );
-        for (int col = column + 1; col < solvedSystem.numberOfColumns - 1; col++) {
-            if (solvedSystem.matrix[column][col].compareTo(BigFraction.ZERO) != 0) {
-                if (solvedSystem.matrix[column][col].compareTo(BigFraction.ZERO) < 0) {
+        for (int col = column + 1; col < solvedSystem.getNumberOfColumns() - 1; col++) {
+            if (solvedSystem.coefficients[column][col].compareTo(BigFraction.ZERO) != 0) {
+                if (solvedSystem.coefficients[column][col].compareTo(BigFraction.ZERO) < 0) {
                     result.append(" + ");
                 } else {
                     result.append(" - ");
                 }
-                result.append(OptimizationAlgorithms.toCoefficient(solvedSystem.matrix[column][col].abs()));
+                result.append(OptimizationAlgorithms.toCoefficient(solvedSystem.coefficients[column][col].abs()));
                 result.append(String.format("x_{%d}", solvedSystem.columnPositions[col] + 1));
             }
         }
@@ -289,9 +289,9 @@ public class GaussJordanAlgorithm implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final LinearSystemOfEquations problem =
+        final Matrix problem =
             GaussJordanAlgorithm.parseOrGenerateLinearSystemOfEquations(input.options);
-        final List<LinearSystemOfEquations> solution = GaussJordanAlgorithm.gaussJordan(problem);
+        final List<Matrix> solution = GaussJordanAlgorithm.gaussJordan(problem);
         GaussJordanAlgorithm.printGaussJordanExercise(problem, input.options, input.exerciseWriter);
         GaussJordanAlgorithm.printGaussJordanSolution(solution, input.options, input.solutionWriter);
     }
