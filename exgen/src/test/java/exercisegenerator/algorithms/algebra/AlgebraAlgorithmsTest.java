@@ -41,6 +41,15 @@ public class AlgebraAlgorithmsTest {
                 },
                 5
             );
+        final Matrix problem4 =
+            new Matrix(
+                new int[][] {
+                    {2, 3, 4, 1, 0, 0},
+                    {5, 6, 7, 0, 1, 0},
+                    {8, 9, 1, 0, 0, 1}
+                },
+                3
+            );
         return new Object[][] {
             {
                 problem1,
@@ -486,6 +495,84 @@ public class AlgebraAlgorithmsTest {
                         },
                         new int[] {0,2,1,3,4},
                         5
+                    )
+                )
+            },
+            {
+                problem4,
+                List.of(
+                    problem4,
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(3, 2),new BigFraction(2),new BigFraction(1, 2),new BigFraction(0),new BigFraction(0)},
+                            {new BigFraction(5),new BigFraction(6),new BigFraction(7),new BigFraction(0),new BigFraction(1),new BigFraction(0)},
+                            {new BigFraction(8),new BigFraction(9),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1)}
+                        },
+                        3
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(3, 2),new BigFraction(2),new BigFraction(1, 2),new BigFraction(0),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(-3, 2),new BigFraction(-3),new BigFraction(-5, 2),new BigFraction(1),new BigFraction(0)},
+                            {new BigFraction(8),new BigFraction(9),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1)}
+                        },
+                        3
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(3, 2),new BigFraction(2),new BigFraction(1, 2),new BigFraction(0),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(-3, 2),new BigFraction(-3),new BigFraction(-5, 2),new BigFraction(1),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-15),new BigFraction(-4),new BigFraction(0),new BigFraction(1)}
+                        },
+                        3
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(3, 2),new BigFraction(2),new BigFraction(1, 2),new BigFraction(0),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(2),new BigFraction(5, 3),new BigFraction(-2, 3),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-15),new BigFraction(-4),new BigFraction(0),new BigFraction(1)}
+                        },
+                        3
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(-2),new BigFraction(1),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(2),new BigFraction(5, 3),new BigFraction(-2, 3),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(-3),new BigFraction(-15),new BigFraction(-4),new BigFraction(0),new BigFraction(1)}
+                        },
+                        3
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(-2),new BigFraction(1),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(2),new BigFraction(5, 3),new BigFraction(-2, 3),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(-9),new BigFraction(1),new BigFraction(-2),new BigFraction(1)}
+                        },
+                        3
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(-2),new BigFraction(1),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(2),new BigFraction(5, 3),new BigFraction(-2, 3),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1, 9),new BigFraction(2, 9),new BigFraction(-1, 9)}
+                        },
+                        3
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-19, 9),new BigFraction(11, 9),new BigFraction(-1, 9)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(2),new BigFraction(5, 3),new BigFraction(-2, 3),new BigFraction(0)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1, 9),new BigFraction(2, 9),new BigFraction(-1, 9)}
+                        },
+                        3
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-19, 9),new BigFraction(11, 9),new BigFraction(-1, 9)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(17, 9),new BigFraction(-10, 9),new BigFraction(2, 9)},
+                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1, 9),new BigFraction(2, 9),new BigFraction(-1, 9)}
+                        },
+                        3
                     )
                 )
             }
