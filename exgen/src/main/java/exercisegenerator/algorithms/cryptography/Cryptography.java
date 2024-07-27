@@ -55,21 +55,19 @@ public abstract class Cryptography {
     }
 
     private static String generateInputText(final List<Character> alphabet, final Parameters flags) {
-        final Random gen = new Random();
-        final int size = gen.nextInt(26) + 5;
-        return Cryptography.generateText(alphabet, size, gen);
+        final int size = Main.RANDOM.nextInt(26) + 5;
+        return Cryptography.generateText(alphabet, size);
     }
 
     private static String generateKeyword(final List<Character> alphabet, final Parameters flags) {
-        final Random gen = new Random();
-        final int size = gen.nextInt(17) + 4;
-        return Cryptography.generateText(alphabet, size, gen);
+        final int size = Main.RANDOM.nextInt(17) + 4;
+        return Cryptography.generateText(alphabet, size);
     }
 
-    private static String generateText(final List<Character> alphabet, final int size, final Random gen) {
+    private static String generateText(final List<Character> alphabet, final int size) {
         final StringBuilder result = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            result.append(alphabet.get(gen.nextInt(alphabet.size())));
+            result.append(alphabet.get(Main.RANDOM.nextInt(alphabet.size())));
         }
         return result.toString();
     }

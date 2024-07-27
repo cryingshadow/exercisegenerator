@@ -2,6 +2,7 @@ package exercisegenerator.structures.graphs;
 
 import java.util.*;
 
+import exercisegenerator.*;
 import exercisegenerator.structures.*;
 
 /**
@@ -220,12 +221,11 @@ public class VertexGridPosition {
     }
 
     /**
-     * @param gen A random number generator.
      * @return A random free position next to the current position.
      */
-    public Pair<GridCoordinates, Boolean> randomFreePosition(final Random gen) {
+    public Pair<GridCoordinates, Boolean> randomFreePosition() {
         final List<Pair<GridCoordinates, Boolean>> res = this.getFreePositions();
-        return res.get(gen.nextInt(res.size()));
+        return res.get(Main.RANDOM.nextInt(res.size()));
     }
 
 }

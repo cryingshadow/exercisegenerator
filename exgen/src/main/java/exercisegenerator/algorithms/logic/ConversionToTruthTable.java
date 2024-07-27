@@ -26,43 +26,43 @@ public class ConversionToTruthTable implements AlgorithmImplementation {
     }
 
     private static List<PropositionalFormula> generateFormulas(final Parameters options) {
-        final Random gen = new Random();
         final List<String> variables = PropositionalLogic.generateVariables(options);
         final List<PropositionalFormula> formulas = new ArrayList<PropositionalFormula>();
         for (final String name : variables) {
             final PropositionalVariable var = new PropositionalVariable(name);
-            formulas.add(gen.nextBoolean() ? var : var.negate());
+            formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
         }
-        final int additional = gen.nextInt(10);
+        final int additional = Main.RANDOM.nextInt(10);
         for (int i = 0; i < additional; i++) {
-            final PropositionalVariable var = new PropositionalVariable(variables.get(gen.nextInt(variables.size())));
-            formulas.add(gen.nextBoolean() ? var : var.negate());
+            final PropositionalVariable var =
+                new PropositionalVariable(variables.get(Main.RANDOM.nextInt(variables.size())));
+            formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
         }
         while (formulas.size() > 3) {
-            final int number = gen.nextInt(formulas.size() - 1) + 1;
+            final int number = Main.RANDOM.nextInt(formulas.size() - 1) + 1;
             if (number == 1) {
-                final PropositionalFormula formula = formulas.remove(gen.nextInt(formulas.size()));
+                final PropositionalFormula formula = formulas.remove(Main.RANDOM.nextInt(formulas.size()));
                 formulas.add(formula.negate());
             } else {
                 final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
                 for (int i = 0; i < number; i++) {
-                    children.add(formulas.remove(gen.nextInt(formulas.size())));
+                    children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
                 }
                 formulas.add(
-                    gen.nextBoolean() ?
+                    Main.RANDOM.nextBoolean() ?
                         Conjunction.createConjunction(children) :
                             Disjunction.createDisjunction(children)
                 );
             }
         }
         while (formulas.size() > 1) {
-            final int number = formulas.size() > 2 ? gen.nextInt(formulas.size() - 2) + 2 : 2;
+            final int number = formulas.size() > 2 ? Main.RANDOM.nextInt(formulas.size() - 2) + 2 : 2;
             final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
             for (int i = 0; i < number; i++) {
-                children.add(formulas.remove(gen.nextInt(formulas.size())));
+                children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
             }
             formulas.add(
-                gen.nextBoolean() ?
+                Main.RANDOM.nextBoolean() ?
                     Conjunction.createConjunction(children) :
                         Disjunction.createDisjunction(children)
             );

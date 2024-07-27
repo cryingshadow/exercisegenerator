@@ -2,7 +2,6 @@ package exercisegenerator.algorithms.coding;
 
 import java.io.*;
 import java.math.*;
-import java.util.*;
 
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
@@ -39,9 +38,8 @@ public class HammingDecoding implements AlgorithmImplementation {
         final int messageLength = HammingDecoding.hammingCodeLengthToMessageLength(length);
         final BitString message = CodingAlgorithms.generateHammingMessage(messageLength);
         final BitString result = HammingEncoding.encodeHamming(message);
-        final Random gen = new Random();
-        if (gen.nextBoolean()) {
-            result.invertBit(gen.nextInt(result.size()));
+        if (Main.RANDOM.nextBoolean()) {
+            result.invertBit(Main.RANDOM.nextInt(result.size()));
         }
         return result;
     }

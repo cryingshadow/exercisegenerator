@@ -7,9 +7,6 @@ import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
-/**
- * Programm for creating exercises and solutions for algorithmic problems.
- */
 public class Main {
 
     public static final String EMBEDDED;
@@ -18,29 +15,20 @@ public class Main {
 
     public static String lineSeparator;
 
-    /**
-     * Limit for random numbers in student mode.
-     */
     public static final int NUMBER_LIMIT;
+
+    public static final Random RANDOM;
 
     public static final String STANDALONE;
 
-    /**
-     * Text version.
-     */
     public static final TextVersion TEXT_VERSION;
 
-    /**
-     * The help text displayed when just called with -h. Each entry is separated by a newline.
-     */
     private static final String[] HELP;
 
-    /**
-     * The release version of this program.
-     */
     private static final String VERSION = "2.0.1";
 
     static {
+        RANDOM = new Random();
         NUMBER_LIMIT = 100;
         EMBEDDED = "embedded";
         EMBEDDED_EXAM = "embeddedExam";
@@ -50,9 +38,6 @@ public class Main {
         Main.lineSeparator = System.lineSeparator();
     }
 
-    /**
-     * @return The names of the supported algorithms, separated by commas.
-     */
     public static String algorithmNames() {
         return String.join(
             ", ",
@@ -125,9 +110,8 @@ public class Main {
                     throw new Exception("No known algorithm has been specified!");
                 }
                 final int numberOfExercises = Integer.parseInt(options.get(Flag.NUMBER));
-                final Random random = new Random();
                 for (int i = 0; i < numberOfExercises; i++) {
-                    final Algorithm algorithm = algorithms.get(random.nextInt(algorithms.size()));
+                    final Algorithm algorithm = algorithms.get(Main.RANDOM.nextInt(algorithms.size()));
                     final Parameters singleAlgorithmOptions =
                         Main.parseFlags(
                             Main.toCLIArguments(algorithm, algorithm.implementation.generateTestParameters(), options)
@@ -186,9 +170,6 @@ public class Main {
             );
     }
 
-    /**
-     * @return The general help text as String array.
-     */
     private static String[] initHelpText() {
         final List<String> text = new ArrayList<String>();
         text.add(String.format("This is ExerciseCreator version %s.", Main.VERSION));
@@ -228,11 +209,6 @@ public class Main {
         return result;
     }
 
-    /**
-     * @param args The program arguments.
-     * @return A map from Flags to their values parsed from the program arguments.
-     * @throws Exception If the program arguments are not of the desired form.
-     */
     private static Parameters parseFlags(final String[] args) throws Exception {
         final Parameters res = new Parameters();
         outer: for (int i = 0; i < args.length - 1; i += 2) {

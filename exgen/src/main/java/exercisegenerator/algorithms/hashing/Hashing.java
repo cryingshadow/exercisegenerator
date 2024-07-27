@@ -123,7 +123,7 @@ abstract class Hashing {
     static double parseOrGenerateMultiplicationFactor(final Parameters options) throws IOException {
         return new ParserAndGenerator<Double>(
             Hashing::parseMultiplicationFactor,
-            flags -> Hashing.getRandomFactorBetweenZeroAndOne(new Random())
+            flags -> Hashing.getRandomFactorBetweenZeroAndOne()
         ).getResult(options);
     }
 
@@ -223,15 +223,15 @@ abstract class Hashing {
             .orElse(1);
     }
 
-    private static Pair<Integer, Integer> computeCoprimeProbingFactors(final int capacity, final Random gen) {
-        int coprimeLinearProbingFactor = Hashing.getRandomProbingFactor(capacity, gen);
-        int coprimeQuadraticProbingFactor = Hashing.getRandomProbingFactor(capacity, gen);
+    private static Pair<Integer, Integer> computeCoprimeProbingFactors(final int capacity) {
+        int coprimeLinearProbingFactor = Hashing.getRandomProbingFactor(capacity);
+        int coprimeQuadraticProbingFactor = Hashing.getRandomProbingFactor(capacity);
         while (!Hashing.areCoprime(capacity, coprimeLinearProbingFactor, coprimeQuadraticProbingFactor)) {
-            coprimeLinearProbingFactor = Hashing.getRandomProbingFactor(capacity, gen);
+            coprimeLinearProbingFactor = Hashing.getRandomProbingFactor(capacity);
             if (Hashing.areCoprime(capacity, coprimeLinearProbingFactor, coprimeQuadraticProbingFactor)) {
                 break;
             }
-            coprimeQuadraticProbingFactor = Hashing.getRandomProbingFactor(capacity, gen);
+            coprimeQuadraticProbingFactor = Hashing.getRandomProbingFactor(capacity);
         }
         return new Pair<Integer, Integer>(coprimeLinearProbingFactor, coprimeQuadraticProbingFactor);
     }
@@ -257,16 +257,15 @@ abstract class Hashing {
     }
 
     private static int generateCapacity(final int numberOfValues, final Parameters options) {
-        final Random gen = new Random();
         final int length = (int)(numberOfValues * 1.25);
         final String alg = options.get(Flag.ALGORITHM);
         if (alg == "hashDivision" || alg == "hashMultiplication") {
             final Integer[] primes = Hashing.getAllUpToNextPrimes(length);
-            final int index = gen.nextInt(primes.length);
+            final int index = Main.RANDOM.nextInt(primes.length);
             return primes[index];
         } else {
             int result = Hashing.getNextPrime(length);
-            while (gen.nextBoolean()) {
+            while (Main.RANDOM.nextBoolean()) {
                 result = Hashing.getNextPrime(result + 1);
             }
             return result;
@@ -278,7 +277,6 @@ abstract class Hashing {
         final CheckedBiFunction<Integer, Integer, IntegerList[], HashException> hashingAlgorithm,
         final Parameters options
     ) {
-        final Random gen = new Random();
         IntegerList[] result = null;
         int linearProbingFactor = 0;
         int quadraticProbingFactor = 0;
@@ -286,7 +284,7 @@ abstract class Hashing {
         do {
             try {
                 final Pair<Integer, Integer> coprimeProbingFactors =
-                    Hashing.computeCoprimeProbingFactors(capacity, gen);
+                    Hashing.computeCoprimeProbingFactors(capacity);
                 linearProbingFactor = coprimeProbingFactors.x;
                 quadraticProbingFactor = coprimeProbingFactors.y;
                 result = hashingAlgorithm.apply(linearProbingFactor, quadraticProbingFactor);
@@ -299,10 +297,9 @@ abstract class Hashing {
     }
 
     private static List<Integer> generateValues(final Parameters options) {
-        final Random gen = new Random();
         final int length =
-            options.containsKey(Flag.LENGTH) ? Integer.parseInt(options.get(Flag.LENGTH)) : gen.nextInt(16) + 5;
-        return Stream.generate(() -> gen.nextInt(Main.NUMBER_LIMIT)).limit(length).toList();
+            options.containsKey(Flag.LENGTH) ? Integer.parseInt(options.get(Flag.LENGTH)) : Main.RANDOM.nextInt(16) + 5;
+        return Stream.generate(() -> Main.RANDOM.nextInt(Main.NUMBER_LIMIT)).limit(length).toList();
     }
 
     /**
@@ -334,16 +331,16 @@ abstract class Hashing {
         return current;
     }
 
-    private static double getRandomFactorBetweenZeroAndOne(final Random gen) {
-        final double result = Math.round((gen.nextDouble()) * 100.0) / 100.0;
+    private static double getRandomFactorBetweenZeroAndOne() {
+        final double result = Math.round((Main.RANDOM.nextDouble()) * 100.0) / 100.0;
         if (Double.compare(result, 0.0) == 0) {
             return 0.01;
         }
         return result;
     }
 
-    private static int getRandomProbingFactor(final int capacity, final Random gen) {
-        return gen.nextInt(capacity - 1) + 1;
+    private static int getRandomProbingFactor(final int capacity) {
+        return Main.RANDOM.nextInt(capacity - 1) + 1;
     }
 
     private static IntegerList[] hashing(

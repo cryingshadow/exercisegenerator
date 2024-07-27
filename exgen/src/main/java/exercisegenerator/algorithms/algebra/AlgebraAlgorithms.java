@@ -2,7 +2,6 @@ package exercisegenerator.algorithms.algebra;
 
 import java.io.*;
 import java.math.*;
-import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
@@ -13,8 +12,6 @@ import exercisegenerator.structures.algebra.*;
 public abstract class AlgebraAlgorithms {
 
     public static final Object VARIABLE_NAME = "x";
-
-    static final Random RANDOM = new Random();
 
     public static BigFraction[][] generateInequalitiesOrEquations(
         final int numberOfInequalitiesOrEquations,
@@ -31,7 +28,7 @@ public abstract class AlgebraAlgorithms {
     }
 
     public static int generateNumberOfInequalitiesOrEquations() {
-        return AlgebraAlgorithms.RANDOM.nextInt(5) + 2;
+        return Main.RANDOM.nextInt(5) + 2;
     }
 
     public static int parseOrGenerateNumberOfVariables(final Parameters options) {
@@ -43,7 +40,7 @@ public abstract class AlgebraAlgorithms {
                 return 2;
             }
         }
-        return AlgebraAlgorithms.RANDOM.nextInt(3) + 2;
+        return Main.RANDOM.nextInt(3) + 2;
     }
 
     public static BigFraction parseRationalNumber(final String number) {
@@ -232,8 +229,8 @@ public abstract class AlgebraAlgorithms {
 
     private static BigFraction generateCoefficient(final int oneToChanceForNegative) {
         return new BigFraction(
-            AlgebraAlgorithms.RANDOM.nextInt(11)
-            * (AlgebraAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
+            Main.RANDOM.nextInt(11)
+            * (Main.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
         );
     }
 

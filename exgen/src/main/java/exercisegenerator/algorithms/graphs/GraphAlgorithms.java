@@ -158,18 +158,17 @@ abstract class GraphAlgorithms {
     }
 
     /**
-     * @param gen Random number generator.
      * @param root A value which is probably close to the result.
      * @return A random non-negative edge value.
      */
-    static int randomEdgeValue(final Random gen, final int root) {
+    static int randomEdgeValue(final int root) {
         int value = root;
-        if (gen.nextInt(3) > 0) {
-            while (gen.nextInt(3) > 0) {
+        if (Main.RANDOM.nextInt(3) > 0) {
+            while (Main.RANDOM.nextInt(3) > 0) {
                 value++;
             }
         } else {
-            while (value > 1 && gen.nextInt(4) == 0) {
+            while (value > 1 && Main.RANDOM.nextInt(4) == 0) {
                 value--;
             }
         }
@@ -204,17 +203,12 @@ abstract class GraphAlgorithms {
     }
 
     /**
-     * @param gen A random number generator.
      * @param numOfVertices The number of vertices in the returned graph.
      * @param undirected Should the graph be undirected?
      * @return A random graph with <code>numOfVertices</code> vertices labeled with Strings (each vertex has a unique
      *         label and there is a vertex with label A) and edges labeled with Integers.
      */
-    private static Graph<String, Integer> createRandomGraph(
-        final Random gen,
-        final int numOfVertices,
-        final boolean undirected
-    ) {
+    private static Graph<String, Integer> createRandomGraph(final int numOfVertices, final boolean undirected) {
         if (numOfVertices < 0) {
             throw new IllegalArgumentException("Number of vertices must not be negative!");
         }
@@ -228,7 +222,7 @@ abstract class GraphAlgorithms {
             new LinkedHashMap<Vertex<String>, VertexGridPosition>();
         final Vertex<String> start = new Vertex<String>(Optional.of("A"));
         final GridCoordinates startPos = new GridCoordinates(0, 0);
-        final boolean startDiagonal = gen.nextBoolean();
+        final boolean startDiagonal = Main.RANDOM.nextBoolean();
         GraphAlgorithms.addVertex(
             start,
             graph,
@@ -240,13 +234,13 @@ abstract class GraphAlgorithms {
         verticesWithFreeNeighbors.add(start);
         for (int letter = 1; letter < numOfVertices; letter++) {
             final Vertex<String> nextVertex =
-                verticesWithFreeNeighbors.get(gen.nextInt(verticesWithFreeNeighbors.size()));
+                verticesWithFreeNeighbors.get(Main.RANDOM.nextInt(verticesWithFreeNeighbors.size()));
             final VertexGridPosition nextPos = positions.get(nextVertex);
-            final Pair<GridCoordinates, Boolean> toAddPos = nextPos.randomFreePosition(gen);
+            final Pair<GridCoordinates, Boolean> toAddPos = nextPos.randomFreePosition();
             final Vertex<String> toAddVertex =
                 new Vertex<String>(Optional.of(GraphAlgorithms.toStringLabel(letter)));
             final VertexGridPosition gridPos = GraphAlgorithms.addVertex(toAddVertex, graph, toAddPos, grid, positions);
-            final int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
+            final int value = GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT);
             graph.addEdge(nextVertex, Optional.of(value), toAddVertex);
             if (undirected) {
                 graph.addEdge(toAddVertex, Optional.of(value), nextVertex);
@@ -268,13 +262,13 @@ abstract class GraphAlgorithms {
                 }
             }
             for (
-                int numEdges = GraphAlgorithms.randomNumOfEdges(gen, freeVertexPairs.size());
+                int numEdges = GraphAlgorithms.randomNumOfEdges(freeVertexPairs.size());
                 numEdges > 0;
                 numEdges--
             ) {
-                final int pairIndex = gen.nextInt(freeVertexPairs.size());
+                final int pairIndex = Main.RANDOM.nextInt(freeVertexPairs.size());
                 final Pair<Vertex<String>, Vertex<String>> pair = freeVertexPairs.remove(pairIndex);
-                final int nextValue = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
+                final int nextValue = GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT);
                 graph.addEdge(pair.x, Optional.of(nextValue), pair.y);
                 if (undirected) {
                     graph.addEdge(pair.y, Optional.of(nextValue), pair.x);
@@ -314,16 +308,14 @@ abstract class GraphAlgorithms {
 
     private static Pair<Graph<String, Integer>, Vertex<String>> generateGraph(final Parameters options) {
         final String alg = options.get(Flag.ALGORITHM);
-        final Random gen = new Random();
         final int numOfVertices;
         if (options.containsKey(Flag.LENGTH)) {
             numOfVertices = Integer.parseInt(options.get(Flag.LENGTH));
         } else {
-            numOfVertices = gen.nextInt(16) + 5;
+            numOfVertices = Main.RANDOM.nextInt(16) + 5;
         }
         final Graph<String, Integer> graph =
             GraphAlgorithms.createRandomGraph(
-                gen,
                 numOfVertices,
                 GraphAlgorithms.UNDIRECTED_GRAPH_ALGORITHMS.contains(alg)
             );
@@ -400,11 +392,10 @@ abstract class GraphAlgorithms {
                 + "0,0,0,0,0,0\n0,x,0,0,0,0\n1,2,0,0,0,1\n0,0,0,0,0,0\n0,0,0,0,0,0\n0,0,x,x,x,x\n0,0,x,x,0,0\n0,0,x,x,0,0\n0,x,x,x,0,0\n\n"
                 + "where x can be anything and will not affect the resulting graph."
             );
-        final Random gen = new Random();
         if (Algorithm.SHARIR.name.equals(options.get(Flag.ALGORITHM))) {
             final int[] numbers = new int[18];
             for (int i = 0; i < numbers.length; i++) {
-                final int rndNumber = gen.nextInt(9);
+                final int rndNumber = Main.RANDOM.nextInt(9);
                 if (rndNumber < 3) {
                     numbers[i] = -1;
                 } else if (rndNumber < 4) {
@@ -441,7 +432,7 @@ abstract class GraphAlgorithms {
             for (int i = 0; i < graph.numOfVerticesInSparseAdjacencyMatrix(); i++) {
                 for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
                     if (graph.isNecessarySparseMatrixEntry(i,j) ) {
-                        final int rndNumber = gen.nextInt(18);
+                        final int rndNumber = Main.RANDOM.nextInt(18);
                         int entry = 0;
                         if (rndNumber >= 10 && rndNumber < 13) {
                             entry = -1;
@@ -594,18 +585,17 @@ abstract class GraphAlgorithms {
     }
 
     /**
-     * @param gen A random number generator.
      * @param max The maximum number of additional edges.
      * @return A random number between 0 and max, most likely to be max / 2.
      */
-    private static int randomNumOfEdges(final Random gen, final int max) {
+    private static int randomNumOfEdges(final int max) {
         int res = max / 2;
-        if (gen.nextBoolean()) {
-            while (res < max && gen.nextInt(3) == 0) {
+        if (Main.RANDOM.nextBoolean()) {
+            while (res < max && Main.RANDOM.nextInt(3) == 0) {
                 res++;
             }
         } else {
-            while (res > 0 && gen.nextInt(3) == 0) {
+            while (res > 0 && Main.RANDOM.nextInt(3) == 0) {
                 res--;
             }
         }

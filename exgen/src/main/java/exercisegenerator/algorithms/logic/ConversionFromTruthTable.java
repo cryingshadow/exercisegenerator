@@ -20,11 +20,10 @@ public class ConversionFromTruthTable implements AlgorithmImplementation {
     }
 
     private static List<TruthTable> generateTruthTables(final Parameters options) {
-        final Random gen = new Random();
         final List<String> variables = PropositionalLogic.generateVariables(options);
         final boolean[] truthValues = new boolean[(int)Math.pow(2, variables.size())];
         for (int i = 0; i < truthValues.length; i++) {
-            truthValues[i] = gen.nextBoolean();
+            truthValues[i] = Main.RANDOM.nextBoolean();
         }
         final TruthTable result = new TruthTable(variables, truthValues );
         return Collections.singletonList(result);

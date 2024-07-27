@@ -90,19 +90,14 @@ abstract class BinaryNumbers {
         BinaryNumbers.binaryEnd(input.options, input.exerciseWriter, input.solutionWriter);
     }
 
-    static BitString generateBitString(final Random gen, final int bitLength) {
-        return BinaryNumbers.generateBitString(gen, bitLength, BigInteger.ZERO, BigInteger.TWO.pow(bitLength));
+    static BitString generateBitString(final int bitLength) {
+        return BinaryNumbers.generateBitString(bitLength, BigInteger.ZERO, BigInteger.TWO.pow(bitLength));
     }
 
-    static BitString generateBitString(
-        final Random gen,
-        final int bitLength,
-        final BigInteger from,
-        final BigInteger to
-    ) {
+    static BitString generateBitString(final int bitLength, final BigInteger from, final BigInteger to) {
         final BitString result = new BitString();
         for (int i = 0; i < bitLength; i++) {
-            result.add(Bit.fromBoolean(gen.nextBoolean()));
+            result.add(Bit.fromBoolean(Main.RANDOM.nextBoolean()));
         }
         final BigInteger value = result.toNonNegativeBigInteger();
         if (value.compareTo(from) < 0 || value.compareTo(to) > 0) {
@@ -113,7 +108,7 @@ abstract class BinaryNumbers {
         return result;
     }
 
-    static int generateNumOfTasks(final Parameters options, final Random gen) {
+    static int generateNumOfTasks(final Parameters options) {
         if (options.containsKey(Flag.LENGTH)) {
             return Integer.parseInt(options.get(Flag.LENGTH));
         }
@@ -239,19 +234,17 @@ abstract class BinaryNumbers {
     }
 
     private static List<BitStringValueTask> generateBitStringValueTasks(final Parameters options) {
-        final Random gen = new Random();
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
         final int bitLength = BinaryNumbers.getBitLength(options);
         final List<BitStringValueTask> result = new ArrayList<BitStringValueTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
-            result.add(new BitStringValueTask(BinaryNumbers.generateBitString(gen, bitLength)));
+            result.add(new BitStringValueTask(BinaryNumbers.generateBitString(bitLength)));
         }
         return result;
     }
 
     private static List<NumberComplementTask> generateNumberComplementTasks(final Parameters options) {
-        final Random gen = new Random();
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
         final int bitLength = BinaryNumbers.getBitLength(options);
         final List<NumberComplementTask> result = new ArrayList<NumberComplementTask>(numOfTasks);
         final boolean onesComplement = BinaryNumbers.algorithmUsesOnesComplement(options);
@@ -259,24 +252,20 @@ abstract class BinaryNumbers {
             result.add(
                 new NumberComplementTask(
                     bitLength,
-                    BinaryNumbers.generateNumberWithinBitlength(gen, bitLength, onesComplement)
+                    BinaryNumbers.generateNumberWithinBitlength(bitLength, onesComplement)
                 )
             );
         }
         return result;
     }
 
-    private static int generateNumberWithinBitlength(
-        final Random gen,
-        final int bitLength,
-        final boolean onesComplement
-    ) {
+    private static int generateNumberWithinBitlength(final int bitLength, final boolean onesComplement) {
         int limit = (int)Math.pow(2, bitLength);
         final int toSubtract = limit / 2;
         if (onesComplement) {
             limit--;
         }
-        int number = gen.nextInt(limit) - toSubtract;
+        int number = Main.RANDOM.nextInt(limit) - toSubtract;
         if (onesComplement) {
             number++;
         }

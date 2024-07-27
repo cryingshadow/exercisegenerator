@@ -120,16 +120,15 @@ abstract class Sorting {
 
     private static int[] generateArray(final Parameters options, final int lowestInt, final int highestInt) {
         final int length;
-        final Random gen = new Random();
         if (options.containsKey(Flag.LENGTH)) {
             length = Integer.parseInt(options.get(Flag.LENGTH));
         } else {
-            length = gen.nextInt(16) + 5;
+            length = Main.RANDOM.nextInt(16) + 5;
         }
         final int[] array = new int[length];
         final int range = highestInt - lowestInt + 1;
         for (int i = 0; i < array.length; i++) {
-            array[i] = gen.nextInt(range) + lowestInt;
+            array[i] = Main.RANDOM.nextInt(range) + lowestInt;
         }
         return array;
     }

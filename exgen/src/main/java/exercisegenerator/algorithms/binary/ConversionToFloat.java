@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.binary.BinaryNumbers.*;
 import exercisegenerator.io.*;
@@ -124,15 +125,14 @@ public class ConversionToFloat implements AlgorithmImplementation {
     }
 
     private static List<NumberFloatTask> generateNumberFloatTasks(final Parameters options) {
-        final Random gen = new Random();
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
         final int exponentLength = BinaryNumbers.getExponentLength(options);
         final int mantissaLength = BinaryNumbers.getMantissaLength(options);
         final List<NumberFloatTask> result = new ArrayList<NumberFloatTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
             result.add(
                 new NumberFloatTask(
-                    ConversionToFloat.generateRationalNumberWithinRange(gen, exponentLength),
+                    ConversionToFloat.generateRationalNumberWithinRange(exponentLength),
                     exponentLength,
                     mantissaLength
                 )
@@ -141,9 +141,9 @@ public class ConversionToFloat implements AlgorithmImplementation {
         return result;
     }
 
-    private static String generateRationalNumberWithinRange(final Random gen, final int exponentLength) {
+    private static String generateRationalNumberWithinRange(final int exponentLength) {
         final int limit = (int)Math.pow(2, exponentLength - 1);
-        return String.format("%d,%d", gen.nextInt(2 * limit - 1) - limit + 1, gen.nextInt(100000));
+        return String.format("%d,%d", Main.RANDOM.nextInt(2 * limit - 1) - limit + 1, Main.RANDOM.nextInt(100000));
     }
 
     private static Pair<Bit, NumberTimesDecimalPower> getNextBitAndNumberTimesDecimalPower(

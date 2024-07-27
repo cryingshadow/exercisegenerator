@@ -269,15 +269,14 @@ public class ConvexHullAlgorithm implements AlgorithmImplementation {
 
     private static ArrayList<Pair<Double, Double>> generateConvexHullProblem(final Parameters options) {
         final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
-        final Random gen = new Random();
         final int numOfPoints;
         if (options.containsKey(Flag.LENGTH)) {
             numOfPoints = Integer.parseInt(options.get(Flag.LENGTH));
         } else {
-            numOfPoints = gen.nextInt(16) + 5;
+            numOfPoints = Main.RANDOM.nextInt(16) + 5;
         }
         for (int i = 0; i < numOfPoints; ++i) {
-            input.add(new Pair<Double,Double>((double)gen.nextInt(11), (double)gen.nextInt(11)));
+            input.add(new Pair<Double,Double>((double)Main.RANDOM.nextInt(11), (double)Main.RANDOM.nextInt(11)));
         }
         return input;
     }

@@ -67,15 +67,14 @@ public class ConversionFromFloat implements AlgorithmImplementation {
     }
 
     private static List<BitStringFloatTask> generateBitStringFloatTasks(final Parameters options) {
-        final Random gen = new Random();
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
         final int exponentLength = BinaryNumbers.getExponentLength(options);
         final int mantissaLength = BinaryNumbers.getMantissaLength(options);
         final List<BitStringFloatTask> result = new ArrayList<BitStringFloatTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
             result.add(
                 new BitStringFloatTask(
-                    BinaryNumbers.generateBitString(gen, exponentLength + mantissaLength + 1),
+                    BinaryNumbers.generateBitString(exponentLength + mantissaLength + 1),
                     exponentLength,
                     mantissaLength
                 )

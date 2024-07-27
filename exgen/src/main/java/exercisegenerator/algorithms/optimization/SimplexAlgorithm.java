@@ -52,8 +52,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
 
     private static BigFraction generateNonZeroCoefficient(final int oneToChanceForNegative) {
         return new BigFraction(
-            (OptimizationAlgorithms.RANDOM.nextInt(10) + 1)
-            * (OptimizationAlgorithms.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
+            (Main.RANDOM.nextInt(10) + 1)
+            * (Main.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
         );
     }
 

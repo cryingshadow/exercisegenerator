@@ -63,7 +63,7 @@ public class LCSAlgorithm implements AlgorithmImplementation {
 
     private static String generateRandomString(final int length) {
         return
-            OptimizationAlgorithms
+            Main
             .RANDOM
             .ints(65, 91)
             .limit(length)
@@ -139,7 +139,7 @@ public class LCSAlgorithm implements AlgorithmImplementation {
                 return result;
             }
         }
-        return OptimizationAlgorithms.RANDOM.nextInt(8) + 3;
+        return Main.RANDOM.nextInt(8) + 3;
     }
 
     private static void printLCSExercise(

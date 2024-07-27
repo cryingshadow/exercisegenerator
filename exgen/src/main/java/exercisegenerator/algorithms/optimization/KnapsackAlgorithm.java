@@ -55,13 +55,13 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         final int numberOfItems = KnapsackAlgorithm.parseOrGenerateNumberOfItems(options);
         final int[] weights = new int[numberOfItems];
         for (int i = 0; i < weights.length; i++) {
-            weights[i] = 1 + OptimizationAlgorithms.RANDOM.nextInt(11);
+            weights[i] = 1 + Main.RANDOM.nextInt(11);
         }
         final int[] values = new int[numberOfItems];
         for (int i = 0; i < values.length; i++) {
-            values[i] = 1 + OptimizationAlgorithms.RANDOM.nextInt(11);
+            values[i] = 1 + Main.RANDOM.nextInt(11);
         }
-        final int capacity = 3 + OptimizationAlgorithms.RANDOM.nextInt(6);
+        final int capacity = 3 + Main.RANDOM.nextInt(6);
         return new KnapsackProblem(weights, values, capacity);
     }
 
@@ -115,7 +115,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
                 return result;
             }
         }
-        return OptimizationAlgorithms.RANDOM.nextInt(4) + 3;
+        return Main.RANDOM.nextInt(4) + 3;
     }
 
     private static void printKnapsackExercise(

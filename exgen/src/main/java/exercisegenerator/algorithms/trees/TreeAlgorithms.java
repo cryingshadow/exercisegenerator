@@ -104,17 +104,16 @@ abstract class TreeAlgorithms {
     }
 
     private static Deque<TreeOperation<Integer>> generateConstruction(final Parameters options) {
-        final Random gen = new Random();
-        final int length = gen.nextInt(20) + 1;
+        final int length = Main.RANDOM.nextInt(20) + 1;
         final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         final List<Integer> in = new ArrayList<Integer>();
         for (int i = 0; i < length; i++) {
-            if (in.isEmpty() || gen.nextInt(3) > 0) {
-                final int next = gen.nextInt(Main.NUMBER_LIMIT);
+            if (in.isEmpty() || Main.RANDOM.nextInt(3) > 0) {
+                final int next = Main.RANDOM.nextInt(Main.NUMBER_LIMIT);
                 deque.offer(new TreeOperation<Integer>(next, true));
                 in.add(next);
             } else {
-                deque.offer(new TreeOperation<Integer>(in.remove(gen.nextInt(in.size())), false));
+                deque.offer(new TreeOperation<Integer>(in.remove(Main.RANDOM.nextInt(in.size())), false));
             }
         }
         return deque;
@@ -122,11 +121,10 @@ abstract class TreeAlgorithms {
 
     private static Deque<TreeOperation<Integer>> generateTasks(final Parameters options) {
         final int length;
-        final Random gen = new Random();
         if (options.containsKey(Flag.LENGTH)) {
             length = Integer.parseInt(options.get(Flag.LENGTH));
         } else {
-            length = gen.nextInt(16) + 5;
+            length = Main.RANDOM.nextInt(16) + 5;
         }
         final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         final List<Integer> in = new ArrayList<Integer>();
@@ -134,13 +132,13 @@ abstract class TreeAlgorithms {
             if (
                 (options.containsKey(Flag.VARIANT) && options.get(Flag.VARIANT).equals("1"))
                 || in.isEmpty()
-                || gen.nextInt(3) > 0
+                || Main.RANDOM.nextInt(3) > 0
             ) {
-                final int next = gen.nextInt(Main.NUMBER_LIMIT);
+                final int next = Main.RANDOM.nextInt(Main.NUMBER_LIMIT);
                 deque.offer(new TreeOperation<Integer>(next, true));
                 in.add(next);
             } else {
-                deque.offer(new TreeOperation<Integer>(in.remove(gen.nextInt(in.size())), false));
+                deque.offer(new TreeOperation<Integer>(in.remove(Main.RANDOM.nextInt(in.size())), false));
             }
         }
         return deque;

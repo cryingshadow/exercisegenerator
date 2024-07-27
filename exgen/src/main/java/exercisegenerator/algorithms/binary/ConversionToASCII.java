@@ -28,14 +28,13 @@ public class ConversionToASCII implements AlgorithmImplementation {
     }
 
     private static List<BitStringValueTask> generateBitStringASCIITasks(final Parameters options) {
-        final Random gen = new Random();
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
         final int bitLength = 8;
         final List<BitStringValueTask> result = new ArrayList<BitStringValueTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
             result.add(
                 new BitStringValueTask(
-                    BinaryNumbers.generateBitString(gen, bitLength, BigInteger.valueOf(32), BigInteger.valueOf(126))
+                    BinaryNumbers.generateBitString(bitLength, BigInteger.valueOf(32), BigInteger.valueOf(126))
                 )
             );
         }

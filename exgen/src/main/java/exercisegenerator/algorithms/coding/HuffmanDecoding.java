@@ -23,12 +23,11 @@ public class HuffmanDecoding implements AlgorithmImplementation {
     }
 
     private static String generateTargetText(final Map<Character, String> codeBook, final Parameters options) {
-        final Random gen = new Random();
-        final int length = CodingAlgorithms.parseOrGenerateTextLength(options, gen);
+        final int length = CodingAlgorithms.parseOrGenerateTextLength(options);
         final StringBuilder result = new StringBuilder();
         final List<String> samples = new ArrayList<String>(codeBook.values());
         for (int i = 0; i < length; i++) {
-            result.append(samples.get(gen.nextInt(samples.size())));
+            result.append(samples.get(Main.RANDOM.nextInt(samples.size())));
         }
         return result.toString();
     }

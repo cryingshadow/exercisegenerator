@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.binary;
 import java.io.*;
 import java.util.*;
 
+import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.binary.BinaryNumbers.*;
 import exercisegenerator.io.*;
@@ -31,16 +32,15 @@ public class ConversionFromASCII implements AlgorithmImplementation {
         return ConversionToTwosComplement.toTwosComplement(character, 8);
     }
 
-    private static String generateASCII(final Random gen) {
-        return String.valueOf((char)(gen.nextInt(95) + 32));
+    private static String generateASCII() {
+        return String.valueOf((char)(Main.RANDOM.nextInt(95) + 32));
     }
 
     private static List<ASCIIBitStringTask> generateASCIIBitStringTasks(final Parameters options) {
-        final Random gen = new Random();
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options, gen);
+        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
         final List<ASCIIBitStringTask> result = new ArrayList<ASCIIBitStringTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
-            result.add(new ASCIIBitStringTask(ConversionFromASCII.generateASCII(gen)));
+            result.add(new ASCIIBitStringTask(ConversionFromASCII.generateASCII()));
         }
         return result;
     }

@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.binary.*;
@@ -13,10 +14,9 @@ abstract class CodingAlgorithms {
     public static final List<Character> BINARY_ALPHABET = Arrays.asList('0', '1');
 
     static BitString generateHammingMessage(final int length) {
-        final Random gen = new Random();
         final BitString result = new BitString();
         for (int i = 0; i < length; i++) {
-            result.add(Bit.fromBoolean(gen.nextBoolean()));
+            result.add(Bit.fromBoolean(Main.RANDOM.nextBoolean()));
         }
         return result;
     }
@@ -40,11 +40,11 @@ abstract class CodingAlgorithms {
         return reader.readLine();
     }
 
-    static int parseOrGenerateTextLength(final Parameters options, final Random gen) {
+    static int parseOrGenerateTextLength(final Parameters options) {
         if (options.containsKey(Flag.LENGTH)) {
             return Integer.parseInt(options.get(Flag.LENGTH));
         }
-        return gen.nextInt(16) + 5;
+        return Main.RANDOM.nextInt(16) + 5;
     }
 
     static BitString toIndexBits(final int index, final int numOfParityBits) {

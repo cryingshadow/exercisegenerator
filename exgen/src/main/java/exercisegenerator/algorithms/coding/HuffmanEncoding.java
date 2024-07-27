@@ -22,7 +22,7 @@ public class HuffmanEncoding implements AlgorithmImplementation {
         return new Pair<HuffmanTree, String>(tree, tree.toEncoder().encode(sourceText));
     }
 
-    private static List<Character> generateAlphabet(final int alphabetSize, final Random gen) {
+    private static List<Character> generateAlphabet(final int alphabetSize) {
         final List<Character> biggestAlphabet = new ArrayList<Character>();
         for (int i = 32; i < 127; i++) {
             biggestAlphabet.add(Character.valueOf((char)i));
@@ -32,28 +32,27 @@ public class HuffmanEncoding implements AlgorithmImplementation {
         }
         final List<Character> result = new ArrayList<Character>();
         for (int i = 0; i < alphabetSize; i++) {
-            result.add(biggestAlphabet.remove(gen.nextInt(biggestAlphabet.size())));
+            result.add(biggestAlphabet.remove(Main.RANDOM.nextInt(biggestAlphabet.size())));
         }
         return result;
     }
 
     private static String generateSourceText(final Parameters options) {
-        final Random gen = new Random();
-        final int alphabetSize = HuffmanEncoding.parseOrGenerateAlphabetSize(options, gen);
-        final int textLength = CodingAlgorithms.parseOrGenerateTextLength(options, gen);
-        final List<Character> alphabet = HuffmanEncoding.generateAlphabet(alphabetSize, gen);
+        final int alphabetSize = HuffmanEncoding.parseOrGenerateAlphabetSize(options);
+        final int textLength = CodingAlgorithms.parseOrGenerateTextLength(options);
+        final List<Character> alphabet = HuffmanEncoding.generateAlphabet(alphabetSize);
         final StringBuilder result = new StringBuilder();
         for (int i = 0; i < textLength; i++) {
-            result.append(alphabet.get(gen.nextInt(alphabetSize)));
+            result.append(alphabet.get(Main.RANDOM.nextInt(alphabetSize)));
         }
         return result.toString();
     }
 
-    private static int parseOrGenerateAlphabetSize(final Parameters options, final Random gen) {
+    private static int parseOrGenerateAlphabetSize(final Parameters options) {
         if (options.containsKey(Flag.DEGREE)) {
             return Integer.parseInt(options.get(Flag.DEGREE));
         }
-        return gen.nextInt(6) + 5;
+        return Main.RANDOM.nextInt(6) + 5;
     }
 
     private static String parseOrGenerateSourceText(final Parameters options) throws IOException {

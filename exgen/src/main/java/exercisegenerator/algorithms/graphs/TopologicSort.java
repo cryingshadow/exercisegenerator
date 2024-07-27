@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.graphs;
 import java.io.*;
 import java.util.*;
 
+import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
@@ -28,11 +29,10 @@ public class TopologicSort implements AlgorithmImplementation {
             } catch (final IOException e) {
                 //System.out.println("Caught cycle-exception.");
                 fail = true;
-                final Random gen = new Random();
                 for (int i = 0; i < graph.numOfVerticesInSparseAdjacencyMatrix(); i++) {
                     for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
                         if (graph.isNecessarySparseMatrixEntry(i,j) ) {
-                            int entry = gen.nextInt(3);
+                            int entry = Main.RANDOM.nextInt(3);
                             entry = entry == 2 ? -1 : entry;
                             if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
                                 sparseAdjacencyMatrix[i][j] = entry;

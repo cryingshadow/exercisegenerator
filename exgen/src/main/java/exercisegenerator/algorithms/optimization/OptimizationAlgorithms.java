@@ -10,8 +10,6 @@ import exercisegenerator.structures.optimization.*;
 
 public abstract class OptimizationAlgorithms {
 
-    static final Random RANDOM = new Random();
-
     static void fillDPSolutionTable(
         final String[][] tableWithArrows,
         final int[][] solution,

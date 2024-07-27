@@ -24,13 +24,12 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
     private static final String RESIDUAL_GRAPH_NAME = "Restnetzwerk";
 
     /**
-     * @param gen A random number generator.
      * @param numOfVertices The number of vertices (excluding source and sink) in the returned flow network.
      * @return A random flow network with <code>numOfVertices</code> vertices labeled with Strings (each vertex has a
      *         unique label and the source is labeled with s and the sink is labeled with t) and edges labeled with
      *         pairs of Integers (the current flow and the capacity - the current flow will be set to 0).
      */
-    public static Graph<String, FlowPair> createRandomFlowNetwork(final Random gen, final int numOfVertices) {
+    public static Graph<String, FlowPair> createRandomFlowNetwork(final int numOfVertices) {
         if (numOfVertices < 0) {
             throw new IllegalArgumentException("Number of vertices must not be negative!");
         }
@@ -56,7 +55,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 grid,
                 positions
             );
-            final int value = GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT);
+            final int value = GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT);
             graph.addEdge(source, Optional.of(new FlowPair(0, value)), sink);
             graph.setGrid(grid);
             return graph;
@@ -79,7 +78,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             if (prevMaxYPos == prevMinYPos) {
                 if (minDiagonal) {
                     if (remainingVertices > 2) {
-                        switch (gen.nextInt(3)) {
+                        switch (Main.RANDOM.nextInt(3)) {
                             case 0:
                                 // expand min
                                 curMinYPos--;
@@ -94,7 +93,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                                 curMaxYPos++;
                         }
                     } else if (remainingVertices == 2) {
-                        if (gen.nextBoolean()) {
+                        if (Main.RANDOM.nextBoolean()) {
                             // expand min
                             curMinYPos--;
                         } else {
@@ -116,7 +115,14 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 if (minDiagonal) {
                     if (maxDiagonal) {
                         options.add(reduceMin + reduceMax);
-                        if (FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos - 1, prevMaxYPos + 1, xPos)) {
+                        if (
+                            FordFulkersonAlgorithm.enoughVertices(
+                                remainingVertices,
+                                prevMinYPos - 1,
+                                prevMaxYPos + 1,
+                                xPos
+                            )
+                        ) {
                             options.add(keepMin + reduceMax);
                             options.add(reduceMin + keepMax);
                             options.add(keepMin + keepMax);
@@ -135,9 +141,19 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                             options.add(expandMin + expandMax);
                         } else {
                             final boolean justExpandMax =
-                                FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos + 1, xPos);
+                                FordFulkersonAlgorithm.enoughVertices(
+                                    remainingVertices,
+                                    prevMinYPos,
+                                    prevMaxYPos + 1,
+                                    xPos
+                                );
                             final boolean justExpandMin =
-                                FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos - 1, prevMaxYPos, xPos);
+                                FordFulkersonAlgorithm.enoughVertices(
+                                    remainingVertices,
+                                    prevMinYPos - 1,
+                                    prevMaxYPos,
+                                    xPos
+                                );
                             if (justExpandMax && justExpandMin) {
                                 options.add(keepMin + reduceMax);
                                 options.add(reduceMin + keepMax);
@@ -165,29 +181,49 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                                 options.add(expandMin + keepMax);
                                 options.add(expandMin + keepMax);
                                 options.add(expandMin + keepMax);
-                            } else if (FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)) {
+                            } else if (
+                                FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)
+                            ) {
                                 options.add(keepMin + reduceMax);
                                 options.add(reduceMin + keepMax);
                                 options.add(keepMin + keepMax);
                                 options.add(keepMin + keepMax);
                             } else {
-                                if (FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos + 1, prevMaxYPos, xPos)) {
+                                if (
+                                    FordFulkersonAlgorithm.enoughVertices(
+                                        remainingVertices,
+                                        prevMinYPos + 1,
+                                        prevMaxYPos,
+                                        xPos
+                                    )
+                                ) {
                                     options.add(reduceMin + keepMax);
                                 }
-                                if (FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos - 1, xPos)) {
+                                if (
+                                    FordFulkersonAlgorithm.enoughVertices(
+                                        remainingVertices,
+                                        prevMinYPos,
+                                        prevMaxYPos - 1,
+                                        xPos
+                                    )
+                                ) {
                                     options.add(keepMin + reduceMax);
                                 }
                             }
                         }
                     } else {
                         options.add(reduceMin + keepMax);
-                        if (FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos - 1, prevMaxYPos, xPos)) {
+                        if (
+                            FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos - 1, prevMaxYPos, xPos)
+                        ) {
                             options.add(keepMin + keepMax);
                             options.add(keepMin + keepMax);
                             options.add(expandMin + keepMax);
                             options.add(expandMin + keepMax);
                             options.add(expandMin + keepMax);
-                        } else if (FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)) {
+                        } else if (
+                            FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)
+                        ) {
                             options.add(keepMin + keepMax);
                             options.add(keepMin + keepMax);
                         }
@@ -200,14 +236,16 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         options.add(keepMin + expandMax);
                         options.add(keepMin + expandMax);
                         options.add(keepMin + expandMax);
-                    } else if (FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)) {
+                    } else if (
+                        FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)
+                    ) {
                         options.add(keepMin + keepMax);
                         options.add(keepMin + keepMax);
                     }
                 } else {
                     options.add(keepMin + keepMax);
                 }
-                switch (options.get(gen.nextInt(options.size()))) {
+                switch (options.get(Main.RANDOM.nextInt(options.size()))) {
                     case reduceMin | reduceMax:
                         curMinYPos++;
                         curMaxYPos--;
@@ -264,7 +302,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                     if (previousVertex != null) {
                         existing.add(previousVertex);
                     }
-                    final int index = gen.nextInt(existing.size());
+                    final int index = Main.RANDOM.nextInt(existing.size());
                     previousVertex = existing.remove(index);
                     graph.addEdge(
                         previousVertex,
@@ -272,7 +310,6 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                             new FlowPair(
                                 0,
                                 GraphAlgorithms.randomEdgeValue(
-                                    gen,
                                     prevXPos == 0 ?
                                         FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT :
                                             GraphAlgorithms.DEFAULT_EDGE_ROOT
@@ -282,13 +319,13 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         vertex
                     );
                     for (final Vertex<String> otherVertex : existing) {
-                        if (gen.nextBoolean()) {
+                        if (Main.RANDOM.nextBoolean()) {
                             graph.addEdge(
                                 otherVertex,
                                 Optional.of(
                                     new FlowPair(
                                         0,
-                                        GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT)
+                                        GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT)
                                     )
                                 ),
                                 vertex
@@ -302,7 +339,6 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                             new FlowPair(
                                 0,
                                 GraphAlgorithms.randomEdgeValue(
-                                    gen,
                                     prevXPos == 0 ?
                                         FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT :
                                             GraphAlgorithms.DEFAULT_EDGE_ROOT
@@ -315,20 +351,20 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 if (yPos > curMinYPos) {
                     // north-south edges
                     final Vertex<String> north = grid.get(new GridCoordinates(xPos, yPos - 1));
-                    if (gen.nextBoolean()) {
+                    if (Main.RANDOM.nextBoolean()) {
                         graph.addEdge(
                             north,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT))
                             ),
                             vertex
                         );
                     }
-                    if (gen.nextBoolean()) {
+                    if (Main.RANDOM.nextBoolean()) {
                         graph.addEdge(
                             vertex,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT))
                             ),
                             north
                         );
@@ -358,12 +394,12 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                             continue outer;
                         }
                     }
-                    final int index = gen.nextInt(existing.size());
+                    final int index = Main.RANDOM.nextInt(existing.size());
                     nextVertex = existing.remove(index);
                     graph.addEdge(
                         previousVertex,
                         Optional.of(
-                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT))
                         ),
                         nextVertex
                     );
@@ -373,7 +409,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         graph.addEdge(
                             previousVertex,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(gen, GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT))
                             ),
                             nextVertex
                         );
@@ -414,7 +450,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 Optional.of(
                     new FlowPair(
                         0,
-                        GraphAlgorithms.randomEdgeValue(gen, FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT)
+                        GraphAlgorithms.randomEdgeValue(FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT)
                     )
                 ),
                 sink
@@ -792,15 +828,14 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
     }
 
     private static FlowNetworkInput<String, FlowPair> generateFlowNetwork(final Parameters options) {
-        final Random gen = new Random();
         final int numOfVertices;
         if (options.containsKey(Flag.LENGTH)) {
             numOfVertices = Integer.parseInt(options.get(Flag.LENGTH));
         } else {
-            numOfVertices = gen.nextInt(16) + 3;
+            numOfVertices = Main.RANDOM.nextInt(16) + 3;
         }
         final FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
-        res.graph = FordFulkersonAlgorithm.createRandomFlowNetwork(gen, numOfVertices);
+        res.graph = FordFulkersonAlgorithm.createRandomFlowNetwork(numOfVertices);
         res.source = res.graph.getVerticesWithLabel("s").iterator().next();
         res.sink = res.graph.getVerticesWithLabel("t").iterator().next();
         res.multiplier = 1.0;
