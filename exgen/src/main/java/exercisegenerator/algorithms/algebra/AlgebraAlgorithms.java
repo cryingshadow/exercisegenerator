@@ -8,6 +8,7 @@ import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
 import exercisegenerator.io.*;
+import exercisegenerator.structures.algebra.*;
 
 public abstract class AlgebraAlgorithms {
 
@@ -53,31 +54,34 @@ public abstract class AlgebraAlgorithms {
     }
 
     public static void printMatrixAsInequalitiesOrEquations(
-        final BigFraction[][] coefficients,
-        final int numberOfColumns,
+        final Matrix matrix,
         final String inequalityOrEquationSymbol,
         final BufferedWriter writer
     ) throws IOException {
+        if (matrix.separatorIndex != matrix.getIndexOfLastColumn()) {
+            throw new IllegalArgumentException("Matrix must be an assignment matrix!");
+        }
+        final int numberOfColumns = matrix.getNumberOfColumns();
         writer.write("$\\begin{array}{*{");
         writer.write(String.valueOf(numberOfColumns * 2 - 1));
         writer.write("}c}");
         Main.newLine(writer);
-        for (int row = 0; row < coefficients.length; row++) {
+        for (int row = 0; row < matrix.getNumberOfRows(); row++) {
             boolean firstNonZero = true;
-            for (int col = 0; col < numberOfColumns - 1; col++) {
-                final BigFraction coefficient = coefficients[row][col];
+            for (int column = 0; column < numberOfColumns - 1; column++) {
+                final BigFraction coefficient = matrix.getCoefficient(column, row);
                 if (firstNonZero && coefficient.compareTo(BigFraction.ZERO) != 0) {
                     writer.write(
-                        AlgebraAlgorithms.toCoefficientWithVariable(col == 0, true, true, col + 1, coefficient)
+                        AlgebraAlgorithms.toCoefficientWithVariable(column == 0, true, true, column + 1, coefficient)
                     );
                     firstNonZero = false;
                 } else {
                     writer.write(
                         AlgebraAlgorithms.toCoefficientWithVariable(
-                            col == 0,
+                            column == 0,
                             true,
                             firstNonZero,
-                            col + 1,
+                            column + 1,
                             coefficient
                         )
                     );
@@ -86,7 +90,7 @@ public abstract class AlgebraAlgorithms {
             writer.write(" & ");
             writer.write(inequalityOrEquationSymbol);
             writer.write(" & ");
-            writer.write(AlgebraAlgorithms.toCoefficient(coefficients[row][numberOfColumns - 1]));
+            writer.write(AlgebraAlgorithms.toCoefficient(matrix.getLastCoefficientOfRow(row)));
             writer.write("\\\\");
             Main.newLine(writer);
         }

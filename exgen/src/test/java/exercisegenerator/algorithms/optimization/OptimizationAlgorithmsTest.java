@@ -8,6 +8,7 @@ import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.structures.algebra.*;
 import exercisegenerator.structures.optimization.*;
 
 public class OptimizationAlgorithmsTest {
@@ -178,28 +179,34 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target1,
-                    new BigFraction[][] {
-                        {new BigFraction(1),new BigFraction(0),new BigFraction(18,5)},
-                        {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
-                        {new BigFraction(1),new BigFraction(1),new BigFraction(4)},
-                        {new BigFraction(2),new BigFraction(1),new BigFraction(15,2)},
-                        {new BigFraction(0),new BigFraction(1),new BigFraction(2)}
-                    }
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(0),new BigFraction(18,5)},
+                            {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
+                            {new BigFraction(1),new BigFraction(1),new BigFraction(4)},
+                            {new BigFraction(2),new BigFraction(1),new BigFraction(15,2)},
+                            {new BigFraction(0),new BigFraction(1),new BigFraction(2)}
+                        },
+                        2
+                    )
                 ),
                 new SimplexSolution(
                     List.of(
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new BigFraction[][] {
-                                    {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
-                                    {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
-                                    {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
-                                    {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(15,2)},
-                                    {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                    {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
+                                        {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
+                                        {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
+                                        {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(15,2)},
+                                        {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                        {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                    },
+                                    7
+                                )
                             ),
                             new int[] {2,3,4,5,6},
                             new BigFraction[] {null,new BigFraction(5,2),new BigFraction(4),new BigFraction(15,2),new BigFraction(2)},
@@ -209,15 +216,18 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new BigFraction[][] {
-                                    {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
-                                    {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
-                                    {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(2)},
-                                    {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(11,2)},
-                                    {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
-                                    {new BigFraction(0),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3),new BigFraction(6)},
-                                    {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-3),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
+                                        {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
+                                        {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(2)},
+                                        {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(11,2)},
+                                        {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
+                                        {new BigFraction(0),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3),new BigFraction(6)},
+                                        {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-3),new BigFraction(0)}
+                                    },
+                                    7
+                                )
                             ),
                             new int[] {2,3,4,5,1},
                             new BigFraction[] {new BigFraction(18,5),new BigFraction(1),new BigFraction(2),new BigFraction(11,4),null},
@@ -227,15 +237,18 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new BigFraction[][] {
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(13,5)},
-                                    {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction( 3),new BigFraction(7,2)},
-                                    {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(2)},
-                                    {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(8)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(13,5)},
+                                        {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction( 3),new BigFraction(7,2)},
+                                        {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(2)},
+                                        {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(8)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0)}
+                                    },
+                                    7
+                                )
                             ),
                             new int[] {2,0,4,5,1},
                             new BigFraction[] {new BigFraction(13,10),null,new BigFraction(1),new BigFraction(7,6),new BigFraction(2)},
@@ -245,15 +258,18 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target1,
-                                new BigFraction[][] {
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction(3,5)},
-                                    {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(-3),new BigFraction(1),new BigFraction(0),new BigFraction(1,2)},
-                                    {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(1)},
-                                    {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(9)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction(3,5)},
+                                        {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(-3),new BigFraction(1),new BigFraction(0),new BigFraction(1,2)},
+                                        {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(1)},
+                                        {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(9)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                    },
+                                    7
+                                )
                             ),
                             new int[] {2,0,6,5,1},
                             null,
@@ -267,24 +283,30 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new BigFraction[][] {
-                        {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
-                        {new BigFraction(-1),new BigFraction(-1),new BigFraction(-2)},
-                        {new BigFraction(2),new BigFraction(1),new BigFraction(7)}
-                    }
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
+                            {new BigFraction(-1),new BigFraction(-1),new BigFraction(-2)},
+                            {new BigFraction(2),new BigFraction(1),new BigFraction(7)}
+                        },
+                        2
+                    )
                 ),
                 new SimplexSolution(
                     List.of(
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new BigFraction[][] {
-                                    {new BigFraction(1),new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
-                                    {new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-2)},
-                                    {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(7)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                    {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(1),new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
+                                        {new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-2)},
+                                        {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(7)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                        {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                    },
+                                    5
+                                )
                             ),
                             new int[] {2,3,4},
                             new BigFraction[] {new BigFraction(5),null,new BigFraction(7,2)},
@@ -294,13 +316,16 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new BigFraction[][] {
-                                    {new BigFraction(0),new BigFraction(3,2),new BigFraction(1),new BigFraction(0),new BigFraction(-1,2),new BigFraction(3,2)},
-                                    {new BigFraction(0),new BigFraction(-1,2),new BigFraction(0),new BigFraction(1),new BigFraction(1,2),new BigFraction(3,2)},
-                                    {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
-                                    {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
-                                    {new BigFraction(0),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(-1,2),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(0),new BigFraction(3,2),new BigFraction(1),new BigFraction(0),new BigFraction(-1,2),new BigFraction(3,2)},
+                                        {new BigFraction(0),new BigFraction(-1,2),new BigFraction(0),new BigFraction(1),new BigFraction(1,2),new BigFraction(3,2)},
+                                        {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
+                                        {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
+                                        {new BigFraction(0),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(-1,2),new BigFraction(0)}
+                                    },
+                                    5
+                                )
                             ),
                             new int[] {2,3,0},
                             new BigFraction[] {new BigFraction(1),null,new BigFraction(7)},
@@ -310,13 +335,16 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new BigFraction[][] {
-                                    {new BigFraction(0),new BigFraction(1),new BigFraction(2,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(1)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(1,3),new BigFraction(1),new BigFraction(1,3),new BigFraction(2)},
-                                    {new BigFraction(1),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(2,3),new BigFraction(3)},
-                                    {new BigFraction(1),new BigFraction(1),new BigFraction(1,3),new BigFraction(0),new BigFraction(1,3),new BigFraction(4)},
-                                    {new BigFraction(0),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(0),new BigFraction(1),new BigFraction(2,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(1)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(1,3),new BigFraction(1),new BigFraction(1,3),new BigFraction(2)},
+                                        {new BigFraction(1),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(2,3),new BigFraction(3)},
+                                        {new BigFraction(1),new BigFraction(1),new BigFraction(1,3),new BigFraction(0),new BigFraction(1,3),new BigFraction(4)},
+                                        {new BigFraction(0),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0)}
+                                    },
+                                    5
+                                )
                             ),
                             new int[] {1,3,0},
                             null,
@@ -330,22 +358,28 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new BigFraction[][] {
-                        {new BigFraction(-2),new BigFraction(1),new BigFraction(1)},
-                        {new BigFraction(1),new BigFraction(-2),new BigFraction(1)}
-                    }
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(-2),new BigFraction(1),new BigFraction(1)},
+                            {new BigFraction(1),new BigFraction(-2),new BigFraction(1)}
+                        },
+                        2
+                    )
                 ),
                 new SimplexSolution(
                     List.of(
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new BigFraction[][] {
-                                    {new BigFraction(-2),new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction(1)},
-                                    {new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
-                                    {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                    {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(-2),new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction(1)},
+                                        {new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
+                                        {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                        {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                    },
+                                    4
+                                )
                             ),
                             new int[] {2,3},
                             new BigFraction[] {null,new BigFraction(1)},
@@ -355,12 +389,15 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new BigFraction[][] {
-                                    {new BigFraction(0),new BigFraction(-3),new BigFraction(1),new BigFraction( 2),new BigFraction(3)},
-                                    {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
-                                    {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
-                                    {new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(-1),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(0),new BigFraction(-3),new BigFraction(1),new BigFraction( 2),new BigFraction(3)},
+                                        {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                        {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                        {new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(-1),new BigFraction(0)}
+                                    },
+                                    4
+                                )
                             ),
                             new int[] {2,0},
                             new BigFraction[] {null,null},
@@ -374,22 +411,28 @@ public class OptimizationAlgorithmsTest {
             {
                 new SimplexProblem(
                     target2,
-                    new BigFraction[][] {
-                        {new BigFraction(1),new BigFraction(-1),new BigFraction(-1)},
-                        {new BigFraction(-1),new BigFraction(2),new BigFraction(-1)}
-                    }
+                    new Matrix(
+                        new BigFraction[][] {
+                            {new BigFraction(1),new BigFraction(-1),new BigFraction(-1)},
+                            {new BigFraction(-1),new BigFraction(2),new BigFraction(-1)}
+                        },
+                        2
+                    )
                 ),
                 new SimplexSolution(
                     List.of(
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new BigFraction[][] {
-                                    {new BigFraction( 1),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-1)},
-                                    {new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(1),new BigFraction(-1)},
-                                    {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                    {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction( 1),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-1)},
+                                        {new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(1),new BigFraction(-1)},
+                                        {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                        {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                    },
+                                    4
+                                )
                             ),
                             new int[] {2,3},
                             new BigFraction[] {null,null},
@@ -399,12 +442,15 @@ public class OptimizationAlgorithmsTest {
                         new SimplexTableau(
                             new SimplexProblem(
                                 target2,
-                                new BigFraction[][] {
-                                    {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
-                                    {new BigFraction( 1),new BigFraction(0),new BigFraction( 2),new BigFraction(1),new BigFraction(-3)},
-                                    {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
-                                    {new BigFraction( 2),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0)}
-                                }
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
+                                        {new BigFraction( 1),new BigFraction(0),new BigFraction( 2),new BigFraction(1),new BigFraction(-3)},
+                                        {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
+                                        {new BigFraction( 2),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0)}
+                                    },
+                                    4
+                                )
                             ),
                             new int[] {1,3},
                             null,

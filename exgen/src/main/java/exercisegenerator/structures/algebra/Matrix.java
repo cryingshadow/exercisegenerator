@@ -4,13 +4,15 @@ import java.util.*;
 import java.util.stream.*;
 import org.apache.commons.math3.fraction.*;
 
-public class Matrix {
+import exercisegenerator.util.*;
 
-    public final BigFraction[][] coefficients;
+public class Matrix {
 
     public final int[] columnPositions;
 
     public final int separatorIndex;
+
+    private final BigFraction[][] coefficients;
 
     public Matrix(final BigFraction[][] coefficients, final int separatorIndex) {
         this(coefficients, IntStream.range(0, coefficients[0].length - 1).toArray(), separatorIndex);
@@ -20,6 +22,10 @@ public class Matrix {
         this.coefficients = coefficients;
         this.columnPositions = columnPositions;
         this.separatorIndex = separatorIndex;
+    }
+
+    public Matrix(final int numberOfColumns, final int numberOfRows, final int separatorIndex) {
+        this(new BigFraction[numberOfRows][numberOfColumns], separatorIndex);
     }
 
     public Matrix(final int[][] coefficients, final int separatorIndex) {
@@ -47,6 +53,14 @@ public class Matrix {
         return new Matrix(coefficients, this.columnPositions, this.separatorIndex);
     }
 
+    public Matrix copy() {
+        return new Matrix(
+            ArrayUtils.copy(this.coefficients),
+            ArrayUtils.copy(this.columnPositions),
+            this.separatorIndex
+        );
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (o instanceof Matrix) {
@@ -55,6 +69,26 @@ public class Matrix {
                 && Arrays.deepEquals(this.coefficients, other.coefficients);
         }
         return false;
+    }
+
+    public BigFraction getCoefficient(final int column, final int row) {
+        return this.coefficients[row][column];
+    }
+
+    public int getIndexOfLastColumn() {
+        return this.getNumberOfColumns() - 1;
+    }
+
+    public int getIndexOfLastRow() {
+        return this.getNumberOfRows() - 1;
+    }
+
+    public BigFraction getLastCoefficientOfColumn(final int column) {
+        return this.getCoefficient(column, this.getIndexOfLastRow());
+    }
+
+    public BigFraction getLastCoefficientOfRow(final int row) {
+        return this.getCoefficient(this.getIndexOfLastColumn(), row);
     }
 
     public int getNumberOfColumns() {
@@ -70,6 +104,54 @@ public class Matrix {
         return 666 + this.coefficients.hashCode() * 2 + this.columnPositions.hashCode() * 3;
     }
 
+    public boolean isIdentityMatrix(final int from, final int to) {
+        for (int row = from; row < to; row++) {
+            for (int column = from; column < to; column++) {
+                if (row == column) {
+                    if (!this.isOne(column, row)) {
+                        return false;
+                    }
+                } else if (!this.isZero(column, row)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isNegative(final int column, final int row) {
+        return this.getCoefficient(column, row).compareTo(BigFraction.ZERO) < 0;
+    }
+
+    public boolean isNonNegative(final int column, final int row) {
+        return this.getCoefficient(column, row).compareTo(BigFraction.ZERO) >= 0;
+    }
+
+    public boolean isNonPositive(final int column, final int row) {
+        return this.getCoefficient(column, row).compareTo(BigFraction.ZERO) <= 0;
+    }
+
+    public boolean isOne(final int column, final int row) {
+        return this.getCoefficient(column, row).compareTo(BigFraction.ONE) == 0;
+    }
+
+    public boolean isPositive(final int column, final int row) {
+        return this.getCoefficient(column, row).compareTo(BigFraction.ZERO) > 0;
+    }
+
+    public boolean isZero(final int column, final int row) {
+        return this.getCoefficient(column, row).compareTo(BigFraction.ZERO) == 0;
+    }
+
+    public boolean isZeroOnTheRight(final int row) {
+        for (int column = this.separatorIndex; column < this.getNumberOfColumns(); column++) {
+            if (!this.isZero(column, row)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public Matrix multiplyRow(final int rowIndex, final BigFraction factor) {
         final BigFraction[][] coefficients = new BigFraction[this.getNumberOfRows()][this.getNumberOfColumns()];
         for (int row = 0; row < this.getNumberOfRows(); row++) {
@@ -82,6 +164,10 @@ public class Matrix {
             }
         }
         return new Matrix(coefficients, this.columnPositions, this.separatorIndex);
+    }
+
+    public void setCoefficient(final int column, final int row, final BigFraction coefficient) {
+        this.coefficients[row][column] = coefficient;
     }
 
     public Matrix swapColumns(final int col1, final int col2) {
