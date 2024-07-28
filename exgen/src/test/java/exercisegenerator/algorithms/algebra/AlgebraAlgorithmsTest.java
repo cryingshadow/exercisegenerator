@@ -585,4 +585,150 @@ public class AlgebraAlgorithmsTest {
         Assert.assertEquals(result, expected);
     }
 
+    @DataProvider
+    public Object[][] matrixArithmeticData() {
+        final Matrix matrix1 =
+            new Matrix(
+                new int[][] {
+                    {3,5,4},
+                    {2,1,-1},
+                    {7,1,1}
+                },
+                3
+            );
+        final Matrix matrix2 =
+            new Matrix(
+                new int[][] {
+                    {5, 6, -8},
+                    {0, -8, 2},
+                    {7, -10, 4}
+                },
+                3
+            );
+        final Matrix matrix3 =
+            new Matrix(
+                new int[][] {
+                    {10, -8, 3},
+                    {4, 2, 1}
+                },
+                3
+            );
+        final Matrix matrix4 =
+            new Matrix(
+                new int[][] {
+                    {2, 3},
+                    {5, 6},
+                    {8, 9}
+                },
+                2
+            );
+        final Matrix matrix5 =
+            new Matrix(
+                new int[][] {
+                    {2, 3, 4},
+                    {5, 6, 7},
+                    {8, 9, 1}
+                },
+                3
+            );
+        final Matrix matrix6 =
+            new Matrix(
+                new BigFraction[][] {
+                    {new BigFraction(-19, 9),new BigFraction(11, 9),new BigFraction(-1, 9)},
+                    {new BigFraction(17, 9),new BigFraction(-10, 9),new BigFraction(2, 9)},
+                    {new BigFraction(-1, 9),new BigFraction(2, 9),new BigFraction(-1, 9)}
+                },
+                3
+            );
+        return new Object[][] {
+            {
+                new MatrixMultiplication(matrix1, matrix2),
+                List.of(
+                    new MatrixMultiplication(matrix1, matrix2),
+                    new Matrix(
+                        new int[][] {
+                            {43,-62,2},
+                            {3,14,-18},
+                            {42,24,-50}
+                        },
+                        3
+                    )
+                )
+            },
+            {
+                new MatrixMultiplication(matrix5, matrix6),
+                List.of(
+                    new MatrixMultiplication(matrix5, matrix6),
+                    new Matrix(
+                        new int[][] {
+                            {1,0,0},
+                            {0,1,0},
+                            {0,0,1}
+                        },
+                        3
+                    )
+                )
+            },
+            {
+                new MatrixMultiplication(matrix6, matrix5),
+                List.of(
+                    new MatrixMultiplication(matrix6, matrix5),
+                    new Matrix(
+                        new int[][] {
+                            {1,0,0},
+                            {0,1,0},
+                            {0,0,1}
+                        },
+                        3
+                    )
+                )
+            },
+            {
+                new MatrixAddition(matrix1, matrix2),
+                List.of(
+                    new MatrixAddition(matrix1, matrix2),
+                    new Matrix(
+                        new int[][] {
+                            {8,11,-4},
+                            {2,-7,1},
+                            {14,-9,5}
+                        },
+                        3
+                    )
+                )
+            },
+            {
+                new MatrixMultiplication(new MatrixMultiplication(matrix4, matrix3), matrix5),
+                List.of(
+                    new MatrixMultiplication(new MatrixMultiplication(matrix4, matrix3), matrix5),
+                    new MatrixMultiplication(
+                        new Matrix(
+                            new int[][] {
+                                {32,-10,9},
+                                {74,-28,21},
+                                {116,-46,33}
+                            },
+                            3
+                        ),
+                        matrix5
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            {86,117,67},
+                            {176,243,121},
+                            {266,369,175}
+                        },
+                        3
+                    )
+                )
+            }
+        };
+    }
+
+    @Test(dataProvider="matrixArithmeticData")
+    public void matrixArithmeticTest(final MatrixTerm problem, final List<MatrixTerm> expected) {
+        final List<MatrixTerm> result = MatrixArithmeticAlgorithm.applyMatrixArithmetic(problem);
+        Assert.assertEquals(result, expected);
+    }
+
 }

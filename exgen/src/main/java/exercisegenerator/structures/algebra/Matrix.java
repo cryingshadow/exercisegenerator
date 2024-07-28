@@ -4,9 +4,11 @@ import java.util.*;
 import java.util.stream.*;
 import org.apache.commons.math3.fraction.*;
 
+import exercisegenerator.*;
+import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.util.*;
 
-public class Matrix {
+public class Matrix implements MatrixTerm {
 
     public final int[] columnPositions;
 
@@ -102,6 +104,16 @@ public class Matrix {
     @Override
     public int hashCode() {
         return 666 + this.coefficients.hashCode() * 2 + this.columnPositions.hashCode() * 3;
+    }
+
+    @Override
+    public boolean isCompound() {
+        return false;
+    }
+
+    @Override
+    public boolean isDirectlyEvaluable() {
+        return false;
     }
 
     public boolean isIdentityMatrix(final int from, final int to) {
@@ -204,6 +216,45 @@ public class Matrix {
             }
         }
         return new Matrix(coefficients, this.columnPositions, this.separatorIndex);
+    }
+
+    @Override
+    public String toLaTeX() {
+        final StringBuilder result = new StringBuilder();
+        result.append("\\left(\\begin{array}{");
+        for (int column = 0; column < this.separatorIndex; column++) {
+            result.append("c");
+        }
+        if (this.separatorIndex < this.getNumberOfColumns()) {
+            result.append("|");
+            for (int column = this.separatorIndex; column < this.getNumberOfColumns(); column++) {
+                result.append("c");
+            }
+        }
+        result.append("}");
+        result.append(Main.lineSeparator);
+        for (int row = 0; row < this.getNumberOfRows(); row++) {
+            boolean first = true;
+            for (int column = 0; column < this.getNumberOfColumns(); column++) {
+                if (first) {
+                    first = false;
+                } else {
+                    result.append(" & ");
+                }
+                result.append(AlgebraAlgorithms.toCoefficient(this.getCoefficient(column, row)));
+            }
+            result.append("\\\\");
+            result.append(Main.lineSeparator);
+        }
+        result.append(Main.lineSeparator);
+        result.append("\\end{array}\\right)");
+        result.append(Main.lineSeparator);
+        return result.toString();
+    }
+
+    @Override
+    public Matrix toMatrix() {
+        return this;
     }
 
     @Override

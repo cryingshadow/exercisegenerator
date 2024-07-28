@@ -13,6 +13,8 @@ public abstract class AlgebraAlgorithms {
 
     public static final Object VARIABLE_NAME = "x";
 
+    private static final int DEFAULT_BOUND = 11;
+
     public static BigFraction[][] generateInequalitiesOrEquations(
         final int numberOfInequalitiesOrEquations,
         final int numberOfVariables
@@ -20,9 +22,10 @@ public abstract class AlgebraAlgorithms {
         final BigFraction[][] coefficients = new BigFraction[numberOfInequalitiesOrEquations][numberOfVariables + 1];
         for (int row = 0; row < numberOfInequalitiesOrEquations; row++) {
             for (int col = 0; col < numberOfVariables; col++) {
-                coefficients[row][col] = AlgebraAlgorithms.generateCoefficient(4);
+                coefficients[row][col] = AlgebraAlgorithms.generateCoefficient(AlgebraAlgorithms.DEFAULT_BOUND, 4);
             }
-            coefficients[row][numberOfVariables] = AlgebraAlgorithms.generateCoefficient(8);
+            coefficients[row][numberOfVariables] =
+                AlgebraAlgorithms.generateCoefficient(AlgebraAlgorithms.DEFAULT_BOUND, 8);
         }
         return coefficients;
     }
@@ -227,9 +230,9 @@ public abstract class AlgebraAlgorithms {
         );
     }
 
-    private static BigFraction generateCoefficient(final int oneToChanceForNegative) {
+    static BigFraction generateCoefficient(final int absoluteBound, final int oneToChanceForNegative) {
         return new BigFraction(
-            Main.RANDOM.nextInt(11)
+            Main.RANDOM.nextInt(absoluteBound)
             * (Main.RANDOM.nextInt(oneToChanceForNegative) == 0 ? -1 : 1)
         );
     }
