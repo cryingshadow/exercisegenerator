@@ -640,6 +640,30 @@ public class AlgebraAlgorithmsTest {
                 },
                 3
             );
+        final Matrix matrix7 =
+            new Matrix(
+                new int[][] {
+                    {2, 1},
+                    {1, 2}
+                },
+                2
+            );
+        final Matrix matrix8 =
+            new Matrix(
+                new int[][] {
+                    {1, 5},
+                    {3, 1}
+                },
+                2
+            );
+        final Matrix matrix9 =
+            new Matrix(
+                new int[][] {
+                    {-2, -1},
+                    {-1, -2}
+                },
+                2
+            );
         return new Object[][] {
             {
                 new MatrixMultiplication(matrix1, matrix2),
@@ -719,6 +743,52 @@ public class AlgebraAlgorithmsTest {
                             {266,369,175}
                         },
                         3
+                    )
+                )
+            },
+            {
+                new MatrixMultiplication(matrix8, new MatrixMultiplication(matrix7, matrix9)),
+                List.of(
+                    new MatrixMultiplication(matrix8, new MatrixMultiplication(matrix7, matrix9)),
+                    new MatrixMultiplication(
+                        matrix8,
+                        new Matrix(
+                            new int[][] {
+                                {-5,-4},
+                                {-4,-5}
+                            },
+                            2
+                        )
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            {-25,-29},
+                            {-19,-17}
+                        },
+                        2
+                    )
+                )
+            },
+            {
+                new MatrixMultiplication(matrix8, new MatrixAddition(matrix7, matrix9)),
+                List.of(
+                    new MatrixMultiplication(matrix8, new MatrixAddition(matrix7, matrix9)),
+                    new MatrixMultiplication(
+                        matrix8,
+                        new Matrix(
+                            new int[][] {
+                                {0,0},
+                                {0,0}
+                            },
+                            2
+                        )
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            {0,0},
+                            {0,0}
+                        },
+                        2
                     )
                 )
             }

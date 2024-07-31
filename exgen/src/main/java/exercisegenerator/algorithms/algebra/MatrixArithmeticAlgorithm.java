@@ -56,22 +56,12 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
         return null;
     }
 
-    private static Matrix generateMatrix(final int dimension) {
-        final Matrix result = new Matrix(dimension, dimension, dimension);
-        for (int row = 0; row < dimension; row++) {
-            for (int column = 0; column < dimension; column++) {
-                result.setCoefficient(column, row, AlgebraAlgorithms.generateCoefficient(21, 2));
-            }
-        }
-        return result;
-    }
-
     private static MatrixTerm generateMatrixTerm(final Parameters options) {
         final int numberOfMatrices = MatrixArithmeticAlgorithm.parseOrGenerateNumberOfMatrices(options);
-        final int dimensionOfMatrices = MatrixArithmeticAlgorithm.parseOrGenerateDimensionOfMatrices(options);
+        final int dimensionOfMatrices = AlgebraAlgorithms.parseOrGenerateDimensionOfMatrices(options);
         final List<MatrixTerm> terms = new ArrayList<MatrixTerm>();
         for (int i = 0; i < numberOfMatrices; i++) {
-            terms.add(MatrixArithmeticAlgorithm.generateMatrix(dimensionOfMatrices));
+            terms.add(AlgebraAlgorithms.generateQuadraticMatrix(dimensionOfMatrices));
         }
         while (terms.size() > 1) {
             final MatrixTerm left = terms.remove(Main.RANDOM.nextInt(terms.size()));
@@ -125,19 +115,14 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
     private static List<Object> parseMatrix(final List<Object> toParse) {
         int numberOfRows = 1;
         while (
-            toParse.get(numberOfRows) instanceof String
+            numberOfRows < toParse.size()
+            && toParse.get(numberOfRows) instanceof String
             && !((String)toParse.get(numberOfRows)).matches("\\+|\\*|\\(")
         ) {
             numberOfRows++;
         }
-        final int numberOfColumns = ((String)toParse.get(0)).split(" ").length;
-        final Matrix matrix = new Matrix(numberOfColumns, numberOfRows, numberOfColumns);
-        for (int row = 0; row < numberOfRows; row++) {
-            final String[] columns = ((String)toParse.get(row)).split(" ");
-            for (int column = 0; column < numberOfColumns; column++) {
-                matrix.setCoefficient(column, row, AlgebraAlgorithms.parseRationalNumber(columns[column]));
-            }
-        }
+        final Matrix matrix =
+            AlgebraAlgorithms.parseMatrix(toParse.stream().limit(numberOfRows).map(o -> (String)o).toList());
         final List<Object> result = new ArrayList<Object>();
         result.add(matrix);
         result.addAll(toParse.subList(numberOfRows, toParse.size()));
@@ -192,18 +177,6 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
             throw new IllegalArgumentException("Found compound expression without operator!");
         }
         return MatrixArithmeticAlgorithm.parseMatrixTerm(MatrixArithmeticAlgorithm.parseMatrix(toParse));
-    }
-
-    private static int parseOrGenerateDimensionOfMatrices(final Parameters options) {
-        if (options.containsKey(Flag.DEGREE)) {
-            final int result = Integer.parseInt(options.get(Flag.DEGREE));
-            if (result > 1) {
-                return result;
-            } else {
-                return 2;
-            }
-        }
-        return Main.RANDOM.nextInt(3) + 2;
     }
 
     private static MatrixTerm parseOrGenerateMatrixTerm(final Parameters options)

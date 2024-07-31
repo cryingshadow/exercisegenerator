@@ -2,6 +2,7 @@ package exercisegenerator.algorithms.algebra;
 
 import java.io.*;
 import java.math.*;
+import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
@@ -237,6 +238,29 @@ public abstract class AlgebraAlgorithms {
         );
     }
 
+    static Matrix generateQuadraticMatrix(final int dimension) {
+        final Matrix result = new Matrix(dimension, dimension, dimension);
+        for (int row = 0; row < dimension; row++) {
+            for (int column = 0; column < dimension; column++) {
+                result.setCoefficient(column, row, AlgebraAlgorithms.generateCoefficient(21, 2));
+            }
+        }
+        return result;
+    }
+
+    static Matrix parseMatrix(final List<String> toParse) {
+        final int numberOfRows = toParse.size();
+        final int numberOfColumns = toParse.get(0).split(" ").length;
+        final Matrix result = new Matrix(numberOfColumns, numberOfRows, numberOfColumns);
+        for (int row = 0; row < numberOfRows; row++) {
+            final String[] columns = toParse.get(row).split(" ");
+            for (int column = 0; column < numberOfColumns; column++) {
+                result.setCoefficient(column, row, AlgebraAlgorithms.parseRationalNumber(columns[column]));
+            }
+        }
+        return result;
+    }
+
     private static String toFractionString(final BigFraction coefficient) {
         final BigInteger numerator = coefficient.getNumerator();
         return String.format(
@@ -245,6 +269,18 @@ public abstract class AlgebraAlgorithms {
             numerator.abs().toString(),
             coefficient.getDenominator().toString()
         );
+    }
+
+    static int parseOrGenerateDimensionOfMatrices(final Parameters options) {
+        if (options.containsKey(Flag.DEGREE)) {
+            final int result = Integer.parseInt(options.get(Flag.DEGREE));
+            if (result > 1) {
+                return result;
+            } else {
+                return 2;
+            }
+        }
+        return Main.RANDOM.nextInt(3) + 2;
     }
 
 }

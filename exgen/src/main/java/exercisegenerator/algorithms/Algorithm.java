@@ -226,15 +226,6 @@ public enum Algorithm {
         VigenereDecryption.INSTANCE
     ),
 
-    GAUSS_JORDAN(
-        "gaussjordan",
-        "Gauß-Jordan-Algorithm",
-        new String[] {
-            "Solves a linear system of equations over rational numbers using the Gauß-Jordan-Algorithm."
-        },
-        GaussJordanAlgorithm.INSTANCE
-    ),
-
     HASH_DIV(
         "hashDivision",
         "Hashing",
@@ -372,6 +363,24 @@ public enum Algorithm {
             "LCS problem solved with dynamic programming."
         },
         LCSAlgorithm.INSTANCE
+    ),
+
+    LSE(
+        "lse",
+        "Linear System of Equations",
+        new String[] {
+            "Solves a linear system of equations over rational numbers using the Gauß-Jordan-Algorithm."
+        },
+        LSEAlgorithm.INSTANCE
+    ),
+
+    MATRIX_INVERSION(
+        "matrixinversion",
+        "Matrix Inversion",
+        new String[] {
+            "Inverts a matrix using the Gauß-Jordan-Algorithm."
+        },
+        MatrixInversionAlgorithm.INSTANCE
     ),
 
     MERGESORT(

@@ -221,15 +221,14 @@ public class Matrix implements MatrixTerm {
     @Override
     public String toLaTeX() {
         final StringBuilder result = new StringBuilder();
-        result.append("\\left(\\begin{array}{");
-        for (int column = 0; column < this.separatorIndex; column++) {
-            result.append("c");
-        }
+        result.append("\\left(\\begin{array}{*{");
+        result.append(String.valueOf(this.separatorIndex));
+        result.append("}c");
         if (this.separatorIndex < this.getNumberOfColumns()) {
             result.append("|");
-            for (int column = this.separatorIndex; column < this.getNumberOfColumns(); column++) {
-                result.append("c");
-            }
+            result.append("*{");
+            result.append(String.valueOf(this.getNumberOfColumns() - this.separatorIndex));
+            result.append("}c");
         }
         result.append("}");
         result.append(Main.lineSeparator);
@@ -246,9 +245,7 @@ public class Matrix implements MatrixTerm {
             result.append("\\\\");
             result.append(Main.lineSeparator);
         }
-        result.append(Main.lineSeparator);
         result.append("\\end{array}\\right)");
-        result.append(Main.lineSeparator);
         return result.toString();
     }
 
