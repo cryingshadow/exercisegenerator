@@ -50,6 +50,15 @@ public class AlgebraAlgorithmsTest {
                 },
                 3
             );
+        final Matrix problem5 =
+            new Matrix(
+                new int[][] {
+                    {1, 0, 1, 1, 0, 0},
+                    {-1, 1, 0, 0, 1, 0},
+                    {0, 0, 0, 0, 0, 1}
+                },
+                3
+            );
         return new Object[][] {
             {
                 problem1,
@@ -571,6 +580,20 @@ public class AlgebraAlgorithmsTest {
                             {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-19, 9),new BigFraction(11, 9),new BigFraction(-1, 9)},
                             {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(17, 9),new BigFraction(-10, 9),new BigFraction(2, 9)},
                             {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1, 9),new BigFraction(2, 9),new BigFraction(-1, 9)}
+                        },
+                        3
+                    )
+                )
+            },
+            {
+                problem5,
+                List.of(
+                    problem5,
+                    new Matrix(
+                        new int[][] {
+                            {1,0,1,1,0,0},
+                            {0,1,1,1,1,0},
+                            {0,0,0,0,0,1}
                         },
                         3
                     )

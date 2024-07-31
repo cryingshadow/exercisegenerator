@@ -2643,52 +2643,52 @@ public class MainTest {
                     "\\end{array}\\right)$"
                 ),
                 List.of(
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "2 & 1 & 1 & 1 & 0 & 0\\\\",
                     "-1 & -2 & 4 & 0 & 1 & 0\\\\",
                     "4 & 0 & -2 & 0 & 0 & 1\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & \\frac{1}{2} & \\frac{1}{2} & \\frac{1}{2} & 0 & 0\\\\",
                     "-1 & -2 & 4 & 0 & 1 & 0\\\\",
                     "4 & 0 & -2 & 0 & 0 & 1\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & \\frac{1}{2} & \\frac{1}{2} & \\frac{1}{2} & 0 & 0\\\\",
                     "0 & -\\frac{3}{2} & \\frac{9}{2} & \\frac{1}{2} & 1 & 0\\\\",
                     "4 & 0 & -2 & 0 & 0 & 1\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & \\frac{1}{2} & \\frac{1}{2} & \\frac{1}{2} & 0 & 0\\\\",
                     "0 & -\\frac{3}{2} & \\frac{9}{2} & \\frac{1}{2} & 1 & 0\\\\",
                     "0 & -2 & -4 & -2 & 0 & 1\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & \\frac{1}{2} & \\frac{1}{2} & \\frac{1}{2} & 0 & 0\\\\",
                     "0 & 1 & -3 & -\\frac{1}{3} & -\\frac{2}{3} & 0\\\\",
                     "0 & -2 & -4 & -2 & 0 & 1\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & 0 & 2 & \\frac{2}{3} & \\frac{1}{3} & 0\\\\",
                     "0 & 1 & -3 & -\\frac{1}{3} & -\\frac{2}{3} & 0\\\\",
                     "0 & -2 & -4 & -2 & 0 & 1\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & 0 & 2 & \\frac{2}{3} & \\frac{1}{3} & 0\\\\",
                     "0 & 1 & -3 & -\\frac{1}{3} & -\\frac{2}{3} & 0\\\\",
                     "0 & 0 & -10 & -\\frac{8}{3} & -\\frac{4}{3} & 1\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & 0 & 2 & \\frac{2}{3} & \\frac{1}{3} & 0\\\\",
                     "0 & 1 & -3 & -\\frac{1}{3} & -\\frac{2}{3} & 0\\\\",
                     "0 & 0 & 1 & \\frac{4}{15} & \\frac{2}{15} & -\\frac{1}{10}\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & 0 & 0 & \\frac{2}{15} & \\frac{1}{15} & \\frac{1}{5}\\\\",
                     "0 & 1 & -3 & -\\frac{1}{3} & -\\frac{2}{3} & 0\\\\",
                     "0 & 0 & 1 & \\frac{4}{15} & \\frac{2}{15} & -\\frac{1}{10}\\\\",
                     "\\end{array}\\right)$\\\\",
-                    "$\\left(\\begin{array}{*{6}c}",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
                     "1 & 0 & 0 & \\frac{2}{15} & \\frac{1}{15} & \\frac{1}{5}\\\\",
                     "0 & 1 & 0 & \\frac{7}{15} & -\\frac{4}{15} & -\\frac{3}{10}\\\\",
                     "0 & 0 & 1 & \\frac{4}{15} & \\frac{2}{15} & -\\frac{1}{10}\\\\",
@@ -2702,6 +2702,44 @@ public class MainTest {
                     "\\frac{7}{15} & -\\frac{4}{15} & -\\frac{3}{10}\\\\",
                     "\\frac{4}{15} & \\frac{2}{15} & -\\frac{1}{10}\\\\",
                     "\\end{array}\\right)$"
+                )
+            )
+        );
+    }
+
+    @Test
+    public void matrixInversionFail() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.MATRIX_INVERSION.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "1 0 1\n-1 1 0\n0 0 0"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Invertieren Sie die folgende Matrix mithilfe des \\emphasize{Gau\\ss{}-Jordan-Algorithmus} oder bestimmen Sie durch diesen Algorithmus, dass sich die Matrix nicht invertieren l\\\"asst:\\\\[2ex]",
+                    "$\\left(\\begin{array}{*{3}c}",
+                    "1 & 0 & 1\\\\",
+                    "-1 & 1 & 0\\\\",
+                    "0 & 0 & 0\\\\",
+                    "\\end{array}\\right)$"
+                ),
+                List.of(
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
+                    "1 & 0 & 1 & 1 & 0 & 0\\\\",
+                    "-1 & 1 & 0 & 0 & 1 & 0\\\\",
+                    "0 & 0 & 0 & 0 & 0 & 1\\\\",
+                    "\\end{array}\\right)$\\\\",
+                    "$\\left(\\begin{array}{*{3}c|*{3}c}",
+                    "1 & 0 & 1 & 1 & 0 & 0\\\\",
+                    "0 & 1 & 1 & 1 & 1 & 0\\\\",
+                    "0 & 0 & 0 & 0 & 0 & 1\\\\",
+                    "\\end{array}\\right)$\\\\",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "Ergebnis:\\\\",
+                    "nicht invertierbar"
                 )
             )
         );

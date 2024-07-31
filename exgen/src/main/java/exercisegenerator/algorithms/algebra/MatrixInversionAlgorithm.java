@@ -128,7 +128,7 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation {
 
     private Matrix addIdentityMatrix(final Matrix problem) {
         final int dimension = problem.getNumberOfColumns();
-        final Matrix result = new Matrix(dimension * 2, dimension, dimension * 2);
+        final Matrix result = new Matrix(dimension * 2, dimension, dimension);
         for (int row = 0; row < dimension; row++) {
             for (int column = 0; column < dimension; column++) {
                 result.setCoefficient(column, row, problem.getCoefficient(column, row));
