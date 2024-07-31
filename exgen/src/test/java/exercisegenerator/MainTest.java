@@ -2626,6 +2626,66 @@ public class MainTest {
     }
 
     @Test
+    public void matrixArithmetic() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.MATRIX_ARITHMETIC.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "2 1 1\n-1 -2 4\n4 0 -2\n+\n1 0 0\n0 1 0\n0 0 1\n*\n-2 -1 -1\n1 2 -4\n-4 0 2"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Berechnen Sie das Ergebnis der folgenden Matrix-Operationen:\\\\[2ex]",
+                    "$\\left(\\begin{array}{*{3}c}",
+                    "2 & 1 & 1\\\\",
+                    "-1 & -2 & 4\\\\",
+                    "4 & 0 & -2\\\\",
+                    "\\end{array}\\right) + \\left(\\left(\\begin{array}{*{3}c}",
+                    "1 & 0 & 0\\\\",
+                    "0 & 1 & 0\\\\",
+                    "0 & 0 & 1\\\\",
+                    "\\end{array}\\right) \\cdot \\left(\\begin{array}{*{3}c}",
+                    "-2 & -1 & -1\\\\",
+                    "1 & 2 & -4\\\\",
+                    "-4 & 0 & 2\\\\",
+                    "\\end{array}\\right)\\right)$"
+                ),
+                List.of(
+                    "\\begin{align*}",
+                    "&\\left(\\begin{array}{*{3}c}",
+                    "2 & 1 & 1\\\\",
+                    "-1 & -2 & 4\\\\",
+                    "4 & 0 & -2\\\\",
+                    "\\end{array}\\right) + \\left(\\left(\\begin{array}{*{3}c}",
+                    "1 & 0 & 0\\\\",
+                    "0 & 1 & 0\\\\",
+                    "0 & 0 & 1\\\\",
+                    "\\end{array}\\right) \\cdot \\left(\\begin{array}{*{3}c}",
+                    "-2 & -1 & -1\\\\",
+                    "1 & 2 & -4\\\\",
+                    "-4 & 0 & 2\\\\",
+                    "\\end{array}\\right)\\right)\\\\",
+                    "=&\\left(\\begin{array}{*{3}c}",
+                    "2 & 1 & 1\\\\",
+                    "-1 & -2 & 4\\\\",
+                    "4 & 0 & -2\\\\",
+                    "\\end{array}\\right) + \\left(\\begin{array}{*{3}c}",
+                    "-2 & -1 & -1\\\\",
+                    "1 & 2 & -4\\\\",
+                    "-4 & 0 & 2\\\\",
+                    "\\end{array}\\right)\\\\",
+                    "=&\\left(\\begin{array}{*{3}c}",
+                    "0 & 0 & 0\\\\",
+                    "0 & 0 & 0\\\\",
+                    "0 & 0 & 0\\\\",
+                    "\\end{array}\\right)\\\\",
+                    "\\end{align*}"
+                )
+            )
+        );
+    }
+
+    @Test
     public void matrixInversion() throws IOException {
         this.harness(
             new String[] {

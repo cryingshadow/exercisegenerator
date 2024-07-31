@@ -374,6 +374,15 @@ public enum Algorithm {
         LSEAlgorithm.INSTANCE
     ),
 
+    MATRIX_ARITHMETIC(
+        "matrixarithmetic",
+        "Matrix Arithmetic",
+        new String[] {
+            "Addition and multiplication of matrices."
+        },
+        MatrixArithmeticAlgorithm.INSTANCE
+    ),
+
     MATRIX_INVERSION(
         "matrixinversion",
         "Matrix Inversion",

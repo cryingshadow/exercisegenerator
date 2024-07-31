@@ -75,41 +75,102 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
 
     private static MatrixTerm parseFirstOperation(
         final MatrixTerm left,
-        final String first,
+        final String operator,
         final Object next,
         final List<Object> toParse
     ) {
+        if (!"*".equals(operator) && !"+".equals(operator)) {
+            throw new IllegalArgumentException("Only + and * are allowed as operators!");
+        }
         if ("(".equals(next)) {
             final List<Object> parsedFurther =
                 MatrixArithmeticAlgorithm.parseParanthesis(toParse.subList(1, toParse.size()));
-            final MatrixTerm right = (MatrixTerm)parsedFurther.get(0);
-            final List<Object> nextList = new ArrayList<Object>();
-            nextList.add(
-                "*".equals(first) ? new MatrixMultiplication(left, right) : new MatrixAddition(left, right)
-            );
-            nextList.addAll(parsedFurther.subList(1, parsedFurther.size()));
-            return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+            final MatrixTerm paranthesisTerm = (MatrixTerm)parsedFurther.get(0);
+            if ("*".equals(operator)) {
+                final List<Object> nextList = new ArrayList<Object>();
+                nextList.add(new MatrixMultiplication(left, paranthesisTerm));
+                nextList.addAll(parsedFurther.subList(1, parsedFurther.size()));
+                return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+            }
+            if (parsedFurther.size() > 1) {
+                if ("*".equals(parsedFurther.get(1))) {
+                    final MatrixTerm right =
+                        MatrixArithmeticAlgorithm.parseFirstOperation(
+                            paranthesisTerm,
+                            "*",
+                            parsedFurther.get(2),
+                            parsedFurther.subList(2, parsedFurther.size())
+                        );
+                    return new MatrixAddition(left, right);
+                }
+                if (!"+".equals(parsedFurther.get(1))) {
+                    throw new IllegalArgumentException("Only + and * are allowed as operators!");
+                }
+                final List<Object> nextList = new ArrayList<Object>();
+                nextList.add(new MatrixAddition(left, paranthesisTerm));
+                nextList.addAll(parsedFurther.subList(1, parsedFurther.size()));
+                return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+            }
+            return new MatrixAddition(left, paranthesisTerm);
         }
         if (next instanceof MatrixTerm) {
-            final List<Object> nextList = new ArrayList<Object>();
-            final MatrixTerm right = (MatrixTerm)next;
-            nextList.add(
-                "*".equals(first) ? new MatrixMultiplication(left, right) : new MatrixAddition(left, right)
-            );
-            nextList.addAll(toParse.subList(1, toParse.size()));
-            return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+            if ("*".equals(operator)) {
+                final List<Object> nextList = new ArrayList<Object>();
+                nextList.add(new MatrixMultiplication(left, (MatrixTerm)next));
+                nextList.addAll(toParse.subList(1, toParse.size()));
+                return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+            }
+            if (toParse.size() > 1) {
+                if ("*".equals(toParse.get(1))) {
+                    final MatrixTerm right =
+                        MatrixArithmeticAlgorithm.parseFirstOperation(
+                            (MatrixTerm)next,
+                            "*",
+                            toParse.get(2),
+                            toParse.subList(2, toParse.size())
+                        );
+                    return new MatrixAddition(left, right);
+                }
+                if (!"+".equals(toParse.get(1))) {
+                    throw new IllegalArgumentException("Only + and * are allowed as operators!");
+                }
+                final List<Object> nextList = new ArrayList<Object>();
+                nextList.add(new MatrixAddition(left, (MatrixTerm)next));
+                nextList.addAll(toParse.subList(1, toParse.size()));
+                return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+            }
+            return new MatrixAddition(left, (MatrixTerm)next);
         }
         if (!MatrixArithmeticAlgorithm.startsMatrix((String)next)) {
             throw new IllegalArgumentException("Parse error - matrix expected!");
         }
         final List<Object> parsedFurther = MatrixArithmeticAlgorithm.parseMatrix(toParse);
-        final List<Object> nextList = new ArrayList<Object>();
-        final MatrixTerm right = (MatrixTerm)parsedFurther.get(0);
-        nextList.add(
-            "*".equals(first) ? new MatrixMultiplication(left, right) : new MatrixAddition(left, right)
-        );
-        nextList.addAll(parsedFurther.subList(1, parsedFurther.size()));
-        return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+        if ("*".equals(operator)) {
+            final List<Object> nextList = new ArrayList<Object>();
+            nextList.add(new MatrixMultiplication(left, (MatrixTerm)parsedFurther.get(0)));
+            nextList.addAll(parsedFurther.subList(1, parsedFurther.size()));
+            return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+        }
+        if (parsedFurther.size() > 1) {
+            if ("*".equals(parsedFurther.get(1))) {
+                final MatrixTerm right =
+                    MatrixArithmeticAlgorithm.parseFirstOperation(
+                        (MatrixTerm)parsedFurther.get(0),
+                        "*",
+                        parsedFurther.get(2),
+                        parsedFurther.subList(2, parsedFurther.size())
+                    );
+                return new MatrixAddition(left, right);
+            }
+            if (!"+".equals(parsedFurther.get(1))) {
+                throw new IllegalArgumentException("Only + and * are allowed as operators!");
+            }
+            final List<Object> nextList = new ArrayList<Object>();
+            nextList.add(new MatrixAddition(left, (MatrixTerm)parsedFurther.get(0)));
+            nextList.addAll(parsedFurther.subList(1, parsedFurther.size()));
+            return MatrixArithmeticAlgorithm.parseMatrixTerm(nextList);
+        }
+        return new MatrixAddition(left, (MatrixTerm)parsedFurther.get(0));
     }
 
     private static List<Object> parseMatrix(final List<Object> toParse) {
@@ -233,7 +294,9 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
     ) throws IOException {
         writer.write("Berechnen Sie das Ergebnis der folgenden Matrix-Operationen:\\\\[2ex]");
         Main.newLine(writer);
+        writer.write("$");
         writer.write(problem.toLaTeX());
+        writer.write("$");
         Main.newLine(writer);
         Main.newLine(writer);
     }
@@ -243,14 +306,10 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("{\\renewcommand{\\arraystretch}{1.2}");
-        Main.newLine(writer);
-        Main.newLine(writer);
-        writer.write("$\\begin{align}");
+        writer.write("\\begin{align*}");
         Main.newLine(writer);
         boolean first = true;
         for (final MatrixTerm term : solution) {
-            writer.write("&");
             if (first) {
                 first = false;
             } else {
@@ -261,10 +320,7 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
             writer.write("\\\\");
             Main.newLine(writer);
         }
-        writer.write("\\end{align}$");
-        Main.newLine(writer);
-        Main.newLine(writer);
-        writer.write("\\renewcommand{\\arraystretch}{1}}");
+        writer.write("\\end{align*}");
         Main.newLine(writer);
         Main.newLine(writer);
     }
@@ -287,7 +343,7 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
 
     @Override
     public String[] generateTestParameters() {
-        final String[] result = new String[2];
+        final String[] result = new String[4];
         result[0] = "-l";
         result[1] = "2";
         result[2] = "-d";
