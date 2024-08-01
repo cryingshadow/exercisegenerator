@@ -318,6 +318,15 @@ public class MainTest {
         Assert.assertEquals(reader.readLine(), "");
     }
 
+    @SafeVarargs
+    private static <T> Stream<T> concat(final Stream<T>... streams) {
+        Stream<T> result = Stream.empty();
+        for (final Stream<T> stream : streams) {
+            result = Stream.concat(result, stream);
+        }
+        return result;
+    }
+
     private static CheckedBiConsumer<BufferedReader, BufferedReader, IOException> fromBinary(
         final BinaryTestCase[] cases,
         final String taskDescription
@@ -3236,114 +3245,112 @@ public class MainTest {
     }
 
     @Test
-    public void toTruthTable() throws IOException {
-        final List<String> exText = new LinkedList<String>();
-        final List<String> solText = new LinkedList<String>();
-        exText.add(
-            "Geben Sie die jeweiligen Wahrheitstabellen zu den folgenden aussagenlogischen Formeln an:\\\\"
-        );
-        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
-        exText.addAll(
-            List.of(
-                "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
-                "\\begin{center}",
-                "{\\Large",
-                "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
-                "\\hline",
-                "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline"
-            )
-        );
-        for (int i = 0; i < 8; i++) {
-            exText.add(" &  &  & \\\\\\hline");
-        }
-        exText.addAll(
-            List.of(
-                "\\end{tabular}",
-                "}",
-                "\\end{center}"
-            )
-        );
-        exText.addAll(Patterns.MIDDLE_SPACE);
-        exText.addAll(
-            List.of(
-                "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
-                "\\begin{center}",
-                "{\\Large",
-                "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
-                "\\hline",
-                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline"
-            )
-        );
-        for (int i = 0; i < 16; i++) {
-            exText.add(" &  &  &  & \\\\\\hline");
-        }
-        exText.addAll(
-            List.of(
-                "\\end{tabular}",
-                "}",
-                "\\end{center}"
-            )
-        );
-        exText.addAll(Patterns.SOLUTION_SPACE_END);
-
-        solText.addAll(
-            List.of(
-                "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
-                "\\begin{center}",
-                "{\\Large",
-                "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
-                "\\hline",
-                "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\end{tabular}",
-                "}",
-                "\\end{center}"
-            )
-        );
-        solText.addAll(Patterns.MIDDLE_SPACE);
-        solText.addAll(
-            List.of(
-                "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
-                "\\begin{center}",
-                "{\\Large",
-                "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
-                "\\hline",
-                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\end{tabular}",
-                "}",
-                "\\end{center}"
-            )
-        );
+    public void toTruthTableBig() throws IOException {
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_TRUTH_TABLE.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-i", "A && B || !A && C\n((D && ((A && !B) || (!A && B))) || (!D && ((A && B) || (!A && !B)))) && ((C && A && B) || (!C && (!A || !B)))"
+                "-i", "((D && ((A && !B) || (!A && B))) || (!D && ((A && B) || (!A && !B)))) && ((C && A && B) || (!C && (!A || !B)))"
             },
-            MainTest.simpleComparison(exText, solText)
+            MainTest.simpleComparison(
+                MainTest.concat(
+                    Stream.of("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\"),
+                    Patterns.SOLUTION_SPACE_BEGINNING.stream(),
+                    Stream.of(
+                        "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
+                        "\\begin{center}",
+                        "{\\Large",
+                        "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
+                        "\\hline",
+                        "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline"
+                    ),
+                    Arrays.stream(" &  &  &  & \\\\\\hline;".repeat(16).split(";")),
+                    Stream.of(
+                        "\\end{tabular}",
+                        "}",
+                        "\\end{center}"
+                    ),
+                    Patterns.SOLUTION_SPACE_END.stream()
+                ).toList(),
+                List.of(
+                    "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
+                    "\\begin{center}",
+                    "{\\Large",
+                    "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
+                    "\\hline",
+                    "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\end{tabular}",
+                    "}",
+                    "\\end{center}"
+                )
+            )
+        );
+    }
+
+    @Test
+    public void toTruthTableSmall() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.TO_TRUTH_TABLE.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "A && B || !A && C"
+            },
+            MainTest.simpleComparison(
+                MainTest.concat(
+                    Stream.of("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\"),
+                    Patterns.SOLUTION_SPACE_BEGINNING.stream(),
+                    Stream.of(
+                        "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
+                        "\\begin{center}",
+                        "{\\Large",
+                        "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
+                        "\\hline",
+                        "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline"
+                    ),
+                    Arrays.stream(" &  &  & \\\\\\hline;".repeat(8).split(";")),
+                    Stream.of(
+                        "\\end{tabular}",
+                        "}",
+                        "\\end{center}"
+                    ),
+                    Patterns.SOLUTION_SPACE_END.stream()
+                ).toList(),
+                List.of(
+                    "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
+                    "\\begin{center}",
+                    "{\\Large",
+                    "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
+                    "\\hline",
+                    "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\end{tabular}",
+                    "}",
+                    "\\end{center}"
+                )
+            )
         );
     }
 

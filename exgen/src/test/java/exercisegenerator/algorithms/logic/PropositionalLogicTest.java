@@ -54,6 +54,43 @@ public class PropositionalLogicTest {
     }
 
     @DataProvider
+    public Object[][] toDNFData() throws PropositionalFormulaParseException {
+        final PropositionalFormula formula1 = PropositionalFormula.parse("A && B");
+        final PropositionalFormula formula2 = PropositionalFormula.parse("A || B");
+        final PropositionalFormula formula3 = PropositionalFormula.parse("!A");
+        final PropositionalFormula formula4 = PropositionalFormula.parse("(A && !B) || (B && !A)");
+        final PropositionalFormula formula5 = PropositionalFormula.parse("!(A && B)");
+        final PropositionalFormula formula6 =
+            PropositionalFormula.parse("!((A || B || !(B || !C)) && !(B || (!A && (C || !B))))");
+        return new Object[][] {
+            {formula1, List.of(formula1)},
+            {formula2, List.of(formula2)},
+            {formula3, List.of(formula3)},
+            {formula4, List.of(formula4)},
+            {formula5, List.of(formula5, PropositionalFormula.parse("!A || !B"))},
+            {
+                formula6,
+                List.of(
+                    formula6,
+                    PropositionalFormula.parse("!(A || B || !(B || !C)) || !!(B || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A && !B && !!(B || !C)) || !!(B || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A && !B && (B || !C)) || !!(B || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A && !B && (B || !C)) || (B || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(B && !A && !B) || (!C && !A && !B) || (B || (!A && (C || !B)))"),
+                    PropositionalFormula.parse(
+                        "(B && !A && !B) || (!C && !A && !B) || (B || ((C && !A) || (!B && !A)))"
+                    )
+                )
+            }
+        };
+    }
+
+    @Test(dataProvider="toDNFData")
+    public void toDNFTest(final PropositionalFormula formula, final List<PropositionalFormula> expected) {
+        Assert.assertEquals(ConversionToDNF.toDNF(formula), expected);
+    }
+
+    @DataProvider
     public Object[][] toTruthTableData() throws PropositionalFormulaParseException {
         return new Object[][] {
             {

@@ -9,6 +9,51 @@ import exercisegenerator.structures.logic.*;
 
 abstract class PropositionalLogic {
 
+    static PropositionalFormula generateFormula(final Parameters options) {
+        final List<String> variables = PropositionalLogic.generateVariables(options);
+        final List<PropositionalFormula> formulas = new ArrayList<PropositionalFormula>();
+        for (final String name : variables) {
+            final PropositionalVariable var = new PropositionalVariable(name);
+            formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
+        }
+        final int additional = Main.RANDOM.nextInt(10);
+        for (int i = 0; i < additional; i++) {
+            final PropositionalVariable var =
+                new PropositionalVariable(variables.get(Main.RANDOM.nextInt(variables.size())));
+            formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
+        }
+        while (formulas.size() > 3) {
+            final int number = Main.RANDOM.nextInt(formulas.size() - 1) + 1;
+            if (number == 1) {
+                final PropositionalFormula formula = formulas.remove(Main.RANDOM.nextInt(formulas.size()));
+                formulas.add(formula.negate());
+            } else {
+                final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
+                for (int i = 0; i < number; i++) {
+                    children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
+                }
+                formulas.add(
+                    Main.RANDOM.nextBoolean() ?
+                        Conjunction.createConjunction(children) :
+                            Disjunction.createDisjunction(children)
+                );
+            }
+        }
+        while (formulas.size() > 1) {
+            final int number = formulas.size() > 2 ? Main.RANDOM.nextInt(formulas.size() - 2) + 2 : 2;
+            final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
+            for (int i = 0; i < number; i++) {
+                children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
+            }
+            formulas.add(
+                Main.RANDOM.nextBoolean() ?
+                    Conjunction.createConjunction(children) :
+                        Disjunction.createDisjunction(children)
+            );
+        }
+        return formulas.get(0);
+    }
+
     static List<String> generateVariables(final Parameters options) {
         final List<String> variables = new ArrayList<String>();
         final int size = Integer.parseInt(options.getOrDefault(Flag.LENGTH, "3"));
@@ -19,6 +64,63 @@ abstract class PropositionalLogic {
             variables.add(String.valueOf((char)(65 + i)));
         }
         return variables;
+    }
+
+    static PropositionalFormula parseFormula(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        try {
+            return PropositionalFormula.parse(reader.readLine());
+        } catch (final PropositionalFormulaParseException e) {
+            throw new IOException(e);
+        }
+    }
+
+    static void printGeneralFormula(
+        final PropositionalFormula formula,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("\\[");
+        writer.write(
+            formula.visit(
+                new FormulaVisitor<String>() {
+
+                    @Override
+                    public String onConjunction(final List<String> children) {
+                        return String.format("(%s)", String.join(" \\wedge ", children));
+                    }
+
+                    @Override
+                    public String onDisjunction(final List<String> children) {
+                        return String.format("(%s)", String.join(" \\vee ", children));
+                    }
+
+                    @Override
+                    public String onFalse() {
+                        return "\\code{0}";
+                    }
+
+                    @Override
+                    public String onNegation(final String child) {
+                        return "\\neg" + child;
+                    }
+
+                    @Override
+                    public String onTrue() {
+                        return "\\code{1}";
+                    }
+
+                    @Override
+                    public String onVariable(final String name) {
+                        return String.format("\\var{%s}", name);
+                    }
+
+                }
+            )
+        );
+        writer.write("\\]");
+        Main.newLine(writer);
     }
 
     static void printTruthTable(
@@ -64,6 +166,63 @@ abstract class PropositionalLogic {
             Main.newLine(writer);
         }
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+    }
+
+    static Optional<PropositionalFormula> moveNegationToLiterals(final PropositionalFormula formula) {
+        if (formula.isNegation()) {
+            final Negation negation = (Negation)formula;
+            if (negation.child.isNegation()) {
+                return Optional.of(((Negation)negation.child).child);
+            }
+            if (negation.child.isConjunction()) {
+                return Optional.of(
+                    Disjunction.createDisjunction(
+                        ((Conjunction)negation.child).children
+                        .stream()
+                        .map(PropositionalFormula::negate)
+                    )
+                );
+            }
+            if (negation.child.isDisjunction()) {
+                return Optional.of(
+                    Conjunction.createConjunction(
+                        ((Disjunction)negation.child).children
+                        .stream()
+                        .map(PropositionalFormula::negate)
+                    )
+                );
+            }
+            return Optional.empty();
+        }
+        if (formula.isConjunction()) {
+            final Conjunction conjunction = (Conjunction)formula;
+            for (int i = 0; i < conjunction.children.size(); i++) {
+                final Optional<PropositionalFormula> changedChild =
+                    PropositionalLogic.moveNegationToLiterals(conjunction.children.get(i));
+                if (changedChild.isPresent()) {
+                    final List<PropositionalFormula> changedChildren =
+                        new ArrayList<PropositionalFormula>(conjunction.children);
+                    changedChildren.set(i, changedChild.get());
+                    return Optional.of(Conjunction.createConjunction(changedChildren));
+                }
+            }
+            return Optional.empty();
+        }
+        if (formula.isDisjunction()) {
+            final Disjunction disjunction = (Disjunction)formula;
+            for (int i = 0; i < disjunction.children.size(); i++) {
+                final Optional<PropositionalFormula> changedChild =
+                    PropositionalLogic.moveNegationToLiterals(disjunction.children.get(i));
+                if (changedChild.isPresent()) {
+                    final List<PropositionalFormula> changedChildren =
+                        new ArrayList<PropositionalFormula>(disjunction.children);
+                    changedChildren.set(i, changedChild.get());
+                    return Optional.of(Disjunction.createDisjunction(changedChildren));
+                }
+            }
+            return Optional.empty();
+        }
+        return Optional.empty();
     }
 
 }

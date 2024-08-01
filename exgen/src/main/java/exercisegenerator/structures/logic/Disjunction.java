@@ -6,6 +6,18 @@ import java.util.stream.*;
 public class Disjunction extends PropositionalFormula {
 
     public static PropositionalFormula createDisjunction(final List<? extends PropositionalFormula> children) {
+        return Disjunction.createDisjunction(children.stream());
+    }
+
+    public static PropositionalFormula createDisjunction(final PropositionalFormula... children) {
+        return Disjunction.createDisjunction(Arrays.stream(children));
+    }
+
+    public static PropositionalFormula createDisjunction(final Stream<? extends PropositionalFormula> stream) {
+        final List<PropositionalFormula> children =
+            stream
+            .flatMap(child -> child.isDisjunction() ? ((Disjunction)child).children.stream() : Stream.of(child))
+            .toList();
         if (children.isEmpty()) {
             return False.FALSE;
         }
@@ -13,10 +25,6 @@ public class Disjunction extends PropositionalFormula {
             return children.get(0);
         }
         return new Disjunction(children);
-    }
-
-    public static PropositionalFormula createDisjunction(final PropositionalFormula... children) {
-        return Disjunction.createDisjunction(Arrays.asList(children));
     }
 
     public final List<? extends PropositionalFormula> children;
