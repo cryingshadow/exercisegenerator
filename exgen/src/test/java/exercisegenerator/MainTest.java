@@ -1760,88 +1760,86 @@ public class MainTest {
     }
 
     @Test
-    public void fromTruthTable() throws IOException {
-        final List<String> exText = new LinkedList<String>();
-        final List<String> solText = new LinkedList<String>();
-        final List<String> firstTable =
-            List.of(
-                "\\begin{center}",
-                "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
-                "\\hline",
-                "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\end{tabular}",
-                "\\end{center}"
-            );
-        final List<String> secondTable =
-            List.of(
-                "\\begin{center}",
-                "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
-                "\\hline",
-                "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
-                "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
-                "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
-                "\\end{tabular}",
-                "\\end{center}"
-            );
-        exText.add("Geben Sie zu den folgenden Wahrheitstabellen jeweils eine aussagenlogische Formel an:\\\\");
-        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
-        exText.addAll(firstTable);
-        exText.addAll(Patterns.middleSpace("4cm"));
-        exText.addAll(secondTable);
-        exText.addAll(Patterns.SOLUTION_SPACE_END);
-
-        solText.addAll(firstTable);
-        solText.addAll(
-            List.of(
-                "\\begin{align*}",
-                " & \\neg\\var{A} \\wedge \\neg\\var{B} \\wedge \\neg\\var{C} \\wedge \\neg\\var{D}\\\\",
-                "\\vee & \\neg\\var{A} \\wedge \\var{B} \\wedge \\neg\\var{C} \\wedge \\var{D}\\\\",
-                "\\vee & \\var{A} \\wedge \\neg\\var{B} \\wedge \\neg\\var{C} \\wedge \\var{D}\\\\",
-                "\\vee & \\var{A} \\wedge \\var{B} \\wedge \\var{C} \\wedge \\neg\\var{D}",
-                "\\end{align*}"
-            )
-        );
-        solText.addAll(Patterns.MIDDLE_SPACE);
-        solText.addAll(secondTable);
-        solText.addAll(
-            List.of(
-                "\\begin{align*}",
-                " & \\neg\\var{A} \\wedge \\var{B} \\wedge \\neg\\var{C}\\\\",
-                "\\vee & \\neg\\var{A} \\wedge \\var{B} \\wedge \\var{C}\\\\",
-                "\\vee & \\var{A} \\wedge \\neg\\var{B} \\wedge \\var{C}\\\\",
-                "\\vee & \\var{A} \\wedge \\var{B} \\wedge \\var{C}",
-                "\\end{align*}"
-            )
-        );
+    public void fromTruthTable3Vars() throws IOException {
         this.harness(
             new String[] {
                 "-a", Algorithm.FROM_TRUTH_TABLE.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-i", "A,B,C,D;1000010001000010\nA,B,C;00110101"
+                "-i", "A,B,C;00110101"
             },
-            MainTest.simpleComparison(exText, solText)
+            MainTest.simpleComparison(
+                List.of(
+                    "Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\",
+                    "\\begin{center}",
+                    "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
+                    "\\hline",
+                    "\\var{A} & \\var{B} & \\var{C} & \\textit{Formel}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{center}"
+                ),
+                List.of(
+                    "\\begin{align*}",
+                    " & \\neg\\var{A} \\wedge \\var{B} \\wedge \\neg\\var{C}\\\\",
+                    "\\vee & \\neg\\var{A} \\wedge \\var{B} \\wedge \\var{C}\\\\",
+                    "\\vee & \\var{A} \\wedge \\neg\\var{B} \\wedge \\var{C}\\\\",
+                    "\\vee & \\var{A} \\wedge \\var{B} \\wedge \\var{C}",
+                    "\\end{align*}"
+                )
+            )
+        );
+    }
+
+    @Test
+    public void fromTruthTable4Vars() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.FROM_TRUTH_TABLE.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "A,B,C,D;1000010001000010"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\",
+                    "\\begin{center}",
+                    "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
+                    "\\hline",
+                    "\\var{A} & \\var{B} & \\var{C} & \\var{D} & \\textit{Formel}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{0} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{0} & \\code{1} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{0} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{0} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{0} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{0} & \\code{1}\\\\\\hline",
+                    "\\code{1} & \\code{1} & \\code{1} & \\code{1} & \\code{0}\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{center}"
+                ),
+                List.of(
+                    "\\begin{align*}",
+                    " & \\neg\\var{A} \\wedge \\neg\\var{B} \\wedge \\neg\\var{C} \\wedge \\neg\\var{D}\\\\",
+                    "\\vee & \\neg\\var{A} \\wedge \\var{B} \\wedge \\neg\\var{C} \\wedge \\var{D}\\\\",
+                    "\\vee & \\var{A} \\wedge \\neg\\var{B} \\wedge \\neg\\var{C} \\wedge \\var{D}\\\\",
+                    "\\vee & \\var{A} \\wedge \\var{B} \\wedge \\var{C} \\wedge \\neg\\var{D}",
+                    "\\end{align*}"
+                )
+            )
         );
     }
 
@@ -1860,11 +1858,8 @@ public class MainTest {
                 "\\end{center}"
             );
         exText.add("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\");
-        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(table);
-        exText.addAll(Patterns.SOLUTION_SPACE_END);
 
-        solText.addAll(table);
         solText.addAll(
             List.of(
                 "\\begin{align*}",
@@ -3254,10 +3249,12 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 MainTest.concat(
-                    Stream.of("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\"),
+                    Stream.of(
+                        "Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\",
+                        "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]"
+                    ),
                     Patterns.SOLUTION_SPACE_BEGINNING.stream(),
                     Stream.of(
-                        "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
                         "\\begin{center}",
                         "{\\Large",
                         "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
@@ -3273,7 +3270,6 @@ public class MainTest {
                     Patterns.SOLUTION_SPACE_END.stream()
                 ).toList(),
                 List.of(
-                    "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
                     "\\begin{center}",
                     "{\\Large",
                     "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
@@ -3313,10 +3309,12 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 MainTest.concat(
-                    Stream.of("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\"),
+                    Stream.of(
+                        "Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\",
+                        "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]"
+                    ),
                     Patterns.SOLUTION_SPACE_BEGINNING.stream(),
                     Stream.of(
-                        "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
                         "\\begin{center}",
                         "{\\Large",
                         "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
@@ -3332,7 +3330,6 @@ public class MainTest {
                     Patterns.SOLUTION_SPACE_END.stream()
                 ).toList(),
                 List.of(
-                    "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
                     "\\begin{center}",
                     "{\\Large",
                     "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",

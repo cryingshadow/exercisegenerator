@@ -19,33 +19,25 @@ public class ConversionFromTruthTable implements AlgorithmImplementation {
         return Disjunction.createDisjunction(disjuncts);
     }
 
-    private static List<TruthTable> generateTruthTables(final Parameters options) {
+    private static TruthTable generateTruthTable(final Parameters options) {
         final List<String> variables = PropositionalLogic.generateVariables(options);
         final boolean[] truthValues = new boolean[(int)Math.pow(2, variables.size())];
         for (int i = 0; i < truthValues.length; i++) {
             truthValues[i] = Main.RANDOM.nextBoolean();
         }
         final TruthTable result = new TruthTable(variables, truthValues );
-        return Collections.singletonList(result);
+        return result;
     }
 
-    private static List<TruthTable> parseTruthTables(
+    private static TruthTable parseTruthTable(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
-        final List<TruthTable> result = new ArrayList<TruthTable>();
-        String line = reader.readLine();
-        while (line != null) {
-            if (!line.isBlank()) {
-                try {
-                    result.add(TruthTable.parse(line));
-                } catch (final TruthTableParseException e) {
-                    throw new IOException(e);
-                }
-            }
-            line = reader.readLine();
+        try {
+            return TruthTable.parse(reader.readLine());
+        } catch (final TruthTableParseException e) {
+            throw new IOException(e);
         }
-        return result;
     }
 
     private static void printDNFFormula(final PropositionalFormula formula, final BufferedWriter writer)
@@ -97,39 +89,22 @@ public class ConversionFromTruthTable implements AlgorithmImplementation {
         LaTeXUtils.printEnd("align*", writer);
     }
 
-    private static void printToFormulaExerciseAndSolution(
-        final List<TruthTable> truthTables,
-        final List<PropositionalFormula> formulas,
-        final AlgorithmInput input
+    private static void printToFormulaExercise(
+        final TruthTable truthTable,
+        final BufferedWriter writer
     ) throws IOException {
-        final BufferedWriter exWriter = input.exerciseWriter;
-        final BufferedWriter solWriter = input.solutionWriter;
-        final int size = formulas.size();
-        if (size == 1) {
-            exWriter.write("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\");
-        } else {
-            exWriter.write(
-                "Geben Sie zu den folgenden Wahrheitstabellen jeweils eine aussagenlogische Formel an:\\\\"
-            );
-        }
-        Main.newLine(exWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), input.options, exWriter);
-        boolean first = true;
-        for (int i = 0; i < size; i++) {
-            if (first) {
-                first = false;
-            } else {
-                LaTeXUtils.printVerticalProtectedSpace("4cm", exWriter);
-                LaTeXUtils.printVerticalProtectedSpace(solWriter);
-           }
-            final TruthTable table = truthTables.get(i);
-            final PropositionalFormula formula = formulas.get(i);
-            PropositionalLogic.printTruthTable(table, false, false, exWriter);
-            PropositionalLogic.printTruthTable(table, false, false, solWriter);
-            ConversionFromTruthTable.printDNFFormula(formula, solWriter);
-        }
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), input.options, exWriter);
-        Main.newLine(solWriter);
+        writer.write("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\");
+        Main.newLine(writer);
+        PropositionalLogic.printTruthTable(truthTable, false, false, writer);
+        Main.newLine(writer);
+    }
+
+    private static void printToFormulaSolution(
+        final PropositionalFormula formula,
+        final BufferedWriter writer
+    ) throws IOException {
+        ConversionFromTruthTable.printDNFFormula(formula, writer);
+        Main.newLine(writer);
     }
 
     private static PropositionalFormula toConjunction(final PropositionalInterpretation model) {
@@ -147,14 +122,14 @@ public class ConversionFromTruthTable implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final List<TruthTable> truthTables =
-            new ParserAndGenerator<List<TruthTable>>(
-                ConversionFromTruthTable::parseTruthTables,
-                ConversionFromTruthTable::generateTruthTables
+        final TruthTable truthTable =
+            new ParserAndGenerator<TruthTable>(
+                ConversionFromTruthTable::parseTruthTable,
+                ConversionFromTruthTable::generateTruthTable
             ).getResult(input.options);
-        final List<PropositionalFormula> formulas =
-            truthTables.stream().map(ConversionFromTruthTable::fromTruthTable).toList();
-        ConversionFromTruthTable.printToFormulaExerciseAndSolution(truthTables, formulas, input);
+        final PropositionalFormula formula = ConversionFromTruthTable.fromTruthTable(truthTable);
+        ConversionFromTruthTable.printToFormulaExercise(truthTable, input.exerciseWriter);
+        ConversionFromTruthTable.printToFormulaSolution(formula, input.solutionWriter);
     }
 
     @Override

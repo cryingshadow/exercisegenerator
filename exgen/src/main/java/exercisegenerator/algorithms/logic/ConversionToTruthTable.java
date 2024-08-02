@@ -25,21 +25,25 @@ public class ConversionToTruthTable implements AlgorithmImplementation {
         return new TruthTable(variables, truthValues);
     }
 
-    private static void printToTruthTableExerciseAndSolution(
+    private static void printToTruthTableExercise(
         final PropositionalFormula formula,
         final TruthTable truthTable,
-        final AlgorithmInput input
+        final Parameters options,
+        final BufferedWriter writer
     ) throws IOException {
-        final BufferedWriter exWriter = input.exerciseWriter;
-        final BufferedWriter solWriter = input.solutionWriter;
-        exWriter.write("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\");
-        Main.newLine(exWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), input.options, exWriter);
-        PropositionalLogic.printGeneralFormula(formula, exWriter);
-        PropositionalLogic.printTruthTable(truthTable, true, true, exWriter);
-        PropositionalLogic.printGeneralFormula(formula, solWriter);
+        writer.write("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\");
+        Main.newLine(writer);
+        PropositionalLogic.printGeneralFormula(formula, writer);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        PropositionalLogic.printTruthTable(truthTable, true, true, writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+    }
+
+    private static void printToTruthTableSolution(
+        final TruthTable truthTable,
+        final BufferedWriter solWriter
+    ) throws IOException {
         PropositionalLogic.printTruthTable(truthTable, false, true, solWriter);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), input.options, exWriter);
         Main.newLine(solWriter);
     }
 
@@ -52,7 +56,9 @@ public class ConversionToTruthTable implements AlgorithmImplementation {
                 PropositionalLogic::parseFormula,
                 PropositionalLogic::generateFormula
             ).getResult(input.options);
-        ConversionToTruthTable.printToTruthTableExerciseAndSolution(formula, ConversionToTruthTable.toTruthTable(formula), input);
+        final TruthTable truthTable = ConversionToTruthTable.toTruthTable(formula);
+        ConversionToTruthTable.printToTruthTableExercise(formula, truthTable, input.options, input.exerciseWriter);
+        ConversionToTruthTable.printToTruthTableSolution(truthTable, input.solutionWriter);
     }
 
     @Override

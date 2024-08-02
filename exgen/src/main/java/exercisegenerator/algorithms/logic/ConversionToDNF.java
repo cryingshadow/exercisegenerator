@@ -123,29 +123,33 @@ public class ConversionToDNF implements AlgorithmImplementation {
         return true;
     }
 
-    private static void printToDNFExerciseAndSolution(
+    private static void printToDNFExercise(
         final PropositionalFormula formula,
-        final List<PropositionalFormula> steps,
-        final AlgorithmInput input
+        final Parameters options,
+        final BufferedWriter writer
     ) throws IOException {
-        final BufferedWriter exWriter = input.exerciseWriter;
-        final BufferedWriter solWriter = input.solutionWriter;
-        exWriter.write("Geben Sie eine zur folgenden aussagenlogischen Formel ");
-        exWriter.write("\\\"aquivalente aussagenlogische Formel in DNF an:\\\\");
-        Main.newLine(exWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), input.options, exWriter);
-        PropositionalLogic.printGeneralFormula(formula, exWriter);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), input.options, exWriter);
+        writer.write("Geben Sie eine zur folgenden aussagenlogischen Formel ");
+        writer.write("\\\"aquivalente aussagenlogische Formel in DNF an:\\\\");
+        Main.newLine(writer);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        PropositionalLogic.printGeneralFormula(formula, writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+    }
+
+    private static void printToDNFSolution(
+        final List<PropositionalFormula> steps,
+        final BufferedWriter writer
+    ) throws IOException {
         boolean first = true;
         for (final PropositionalFormula step : steps) {
             if (first) {
                 first = false;
             } else {
-                solWriter.write("\\[\\equiv\\]");
+                writer.write("\\[\\equiv\\]");
             }
-            PropositionalLogic.printGeneralFormula(step, solWriter);
+            PropositionalLogic.printGeneralFormula(step, writer);
         }
-        Main.newLine(solWriter);
+        Main.newLine(writer);
     }
 
     private ConversionToDNF() {}
@@ -158,7 +162,8 @@ public class ConversionToDNF implements AlgorithmImplementation {
                 PropositionalLogic::generateFormula
             ).getResult(input.options);
         final List<PropositionalFormula> steps = ConversionToDNF.toDNF(formula);
-        ConversionToDNF.printToDNFExerciseAndSolution(formula, steps, input);
+        ConversionToDNF.printToDNFExercise(formula, input.options, input.exerciseWriter);
+        ConversionToDNF.printToDNFSolution(steps, input.exerciseWriter);
     }
 
     @Override
