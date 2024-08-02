@@ -131,9 +131,8 @@ public class ConversionToDNF implements AlgorithmImplementation {
         writer.write("Geben Sie eine zur folgenden aussagenlogischen Formel ");
         writer.write("\\\"aquivalente aussagenlogische Formel in DNF an:\\\\");
         Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
         PropositionalLogic.printGeneralFormula(formula, writer);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+        Main.newLine(writer);
     }
 
     private static void printToDNFSolution(
@@ -146,6 +145,7 @@ public class ConversionToDNF implements AlgorithmImplementation {
                 first = false;
             } else {
                 writer.write("\\[\\equiv\\]");
+                Main.newLine(writer);
             }
             PropositionalLogic.printGeneralFormula(step, writer);
         }
@@ -163,7 +163,7 @@ public class ConversionToDNF implements AlgorithmImplementation {
             ).getResult(input.options);
         final List<PropositionalFormula> steps = ConversionToDNF.toDNF(formula);
         ConversionToDNF.printToDNFExercise(formula, input.options, input.exerciseWriter);
-        ConversionToDNF.printToDNFSolution(steps, input.exerciseWriter);
+        ConversionToDNF.printToDNFSolution(steps, input.solutionWriter);
     }
 
     @Override
