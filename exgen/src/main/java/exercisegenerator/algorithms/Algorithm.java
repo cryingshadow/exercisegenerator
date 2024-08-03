@@ -492,6 +492,16 @@ public enum Algorithm {
         ConversionToASCII.INSTANCE
     ),
 
+    TO_CNF(
+        "tocnf",
+        "Formula to CNF",
+        new String[] {
+            "Compute an equivalent propositional formula in CNF for a given propositional formula.",
+            "You can specify the number of variables with the -l flag."
+        },
+        ConversionToCNF.INSTANCE
+    ),
+
     TO_DNF(
         "todnf",
         "Formula to DNF",

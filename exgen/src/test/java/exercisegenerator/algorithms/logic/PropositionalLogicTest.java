@@ -54,6 +54,56 @@ public class PropositionalLogicTest {
     }
 
     @DataProvider
+    public Object[][] toCNFData() throws PropositionalFormulaParseException {
+        final PropositionalFormula formula1 = PropositionalFormula.parse("A && B");
+        final PropositionalFormula formula2 = PropositionalFormula.parse("A || B");
+        final PropositionalFormula formula3 = PropositionalFormula.parse("!A");
+        final PropositionalFormula formula4 = PropositionalFormula.parse("(A || !B) && (B || !A)");
+        final PropositionalFormula formula5 = PropositionalFormula.parse("!(A && B)");
+        final PropositionalFormula formula6 =
+            PropositionalFormula.parse("!((A || B || !(B || !C)) && !(B || (!A && (C || !B))))");
+        return new Object[][] {
+            {formula1, List.of(formula1)},
+            {formula2, List.of(formula2)},
+            {formula3, List.of(formula3)},
+            {formula4, List.of(formula4)},
+            {formula5, List.of(formula5, PropositionalFormula.parse("!A || !B"))},
+            {
+                formula6,
+                List.of(
+                    formula6,
+                    PropositionalFormula.parse("!(A || B || !(B || !C)) || !!(B || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("!(A || B || !(B || !C)) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse("(!A && !B && !!(B || !C)) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse("(!A && !B && (B || !C)) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse(
+                        "(!A || B || (!A && (C || !B))) && (!B || B || (!A && (C || !B))) && (B || !C || B || (!A && (C || !B)))"
+                    ),
+                    PropositionalFormula.parse(
+                        "(!A || B || (!A && (C || !B))) && 1 && (B || !C || B || (!A && (C || !B)))"
+                    ),
+                    PropositionalFormula.parse("(!A || B || (!A && (C || !B))) && (B || !C || B || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A || B || (!A && (C || !B))) && (B || !C || (!A && (C || !B)))"),
+                    PropositionalFormula.parse(
+                        "(!A || !A || B) && (C || !B || !A || B) && (B || !C || (!A && (C || !B)))"
+                    ),
+                    PropositionalFormula.parse("(!A || B) && (C || !B || !A || B) && (B || !C || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A || B) && 1 && (B || !C || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A || B) && (B || !C || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A || B) && (!A || B || !C) && (C || !B || B || !C)"),
+                    PropositionalFormula.parse("(!A || B) && (!A || B || !C) && 1"),
+                    PropositionalFormula.parse("(!A || B) && (!A || B || !C)")
+                )
+            }
+        };
+    }
+
+    @Test(dataProvider="toCNFData")
+    public void toCNFTest(final PropositionalFormula formula, final List<PropositionalFormula> expected) {
+        Assert.assertEquals(ConversionToCNF.toCNF(formula), expected);
+    }
+
+    @DataProvider
     public Object[][] toDNFData() throws PropositionalFormulaParseException {
         final PropositionalFormula formula1 = PropositionalFormula.parse("A && B");
         final PropositionalFormula formula2 = PropositionalFormula.parse("A || B");
@@ -73,13 +123,13 @@ public class PropositionalLogicTest {
                 List.of(
                     formula6,
                     PropositionalFormula.parse("!(A || B || !(B || !C)) || !!(B || (!A && (C || !B)))"),
-                    PropositionalFormula.parse("(!A && !B && !!(B || !C)) || !!(B || (!A && (C || !B)))"),
-                    PropositionalFormula.parse("(!A && !B && (B || !C)) || !!(B || (!A && (C || !B)))"),
-                    PropositionalFormula.parse("(!A && !B && (B || !C)) || (B || (!A && (C || !B)))"),
-                    PropositionalFormula.parse("(B && !A && !B) || (!C && !A && !B) || (B || (!A && (C || !B)))"),
-                    PropositionalFormula.parse(
-                        "(B && !A && !B) || (!C && !A && !B) || (B || ((C && !A) || (!B && !A)))"
-                    )
+                    PropositionalFormula.parse("!(A || B || !(B || !C)) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse("(!A && !B && !!(B || !C)) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse("(!A && !B && (B || !C)) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse("(B && !A && !B) || (!C && !A && !B) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse("0 || (!C && !A && !B) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse("(!C && !A && !B) || B || (!A && (C || !B))"),
+                    PropositionalFormula.parse("(!C && !A && !B) || B || (C && !A) || (!B && !A)")
                 )
             }
         };

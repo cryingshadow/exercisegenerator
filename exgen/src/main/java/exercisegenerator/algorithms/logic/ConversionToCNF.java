@@ -9,27 +9,27 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.logic.*;
 
-public class ConversionToDNF implements AlgorithmImplementation {
+public class ConversionToCNF implements AlgorithmImplementation {
 
-    public static final ConversionToDNF INSTANCE = new ConversionToDNF();
+    public static final ConversionToCNF INSTANCE = new ConversionToCNF();
 
-    public static List<PropositionalFormula> toDNF(final PropositionalFormula formula) {
-        return PropositionalLogic.toNF(formula, false);
+    public static List<PropositionalFormula> toCNF(final PropositionalFormula formula) {
+        return PropositionalLogic.toNF(formula, true);
     }
 
-    private static void printToDNFExercise(
+    private static void printToCNFExercise(
         final PropositionalFormula formula,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Geben Sie eine zur folgenden aussagenlogischen Formel ");
-        writer.write("\\\"aquivalente aussagenlogische Formel in DNF an:\\\\");
+        writer.write("\\\"aquivalente aussagenlogische Formel in CNF an:\\\\");
         Main.newLine(writer);
         PropositionalLogic.printGeneralFormula(formula, writer);
         Main.newLine(writer);
     }
 
-    private ConversionToDNF() {}
+    private ConversionToCNF() {}
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
@@ -38,8 +38,8 @@ public class ConversionToDNF implements AlgorithmImplementation {
                 PropositionalLogic::parseFormula,
                 PropositionalLogic::generateFormula
             ).getResult(input.options);
-        final List<PropositionalFormula> steps = ConversionToDNF.toDNF(formula);
-        ConversionToDNF.printToDNFExercise(formula, input.options, input.exerciseWriter);
+        final List<PropositionalFormula> steps = ConversionToCNF.toCNF(formula);
+        ConversionToCNF.printToCNFExercise(formula, input.options, input.exerciseWriter);
         PropositionalLogic.printFormulaEquivalencesSolution(steps, input.solutionWriter);
     }
 

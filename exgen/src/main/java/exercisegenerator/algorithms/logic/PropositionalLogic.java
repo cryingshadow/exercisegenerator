@@ -77,6 +77,23 @@ abstract class PropositionalLogic {
         }
     }
 
+    static void printFormulaEquivalencesSolution(
+        final List<PropositionalFormula> steps,
+        final BufferedWriter writer
+    ) throws IOException {
+        boolean first = true;
+        for (final PropositionalFormula step : steps) {
+            if (first) {
+                first = false;
+            } else {
+                writer.write("\\[\\equiv\\]");
+                Main.newLine(writer);
+            }
+            PropositionalLogic.printGeneralFormula(step, writer);
+        }
+        Main.newLine(writer);
+    }
+
     static void printGeneralFormula(
         final PropositionalFormula formula,
         final BufferedWriter writer
@@ -168,7 +185,181 @@ abstract class PropositionalLogic {
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
     }
 
-    static Optional<PropositionalFormula> moveNegationToLiterals(final PropositionalFormula formula) {
+    static List<PropositionalFormula> toNF(final PropositionalFormula formula, final boolean shouldBeCNF) {
+        final List<PropositionalFormula> result = new LinkedList<PropositionalFormula>();
+        result.add(formula);
+        PropositionalFormula current = formula;
+        while (!PropositionalLogic.isInNF(current, shouldBeCNF)) {
+            final Optional<PropositionalFormula> simplified = PropositionalLogic.simplify(current);
+            if (simplified.isPresent()) {
+                current = simplified.get();
+            } else {
+                final Optional<PropositionalFormula> negationMoreInside =
+                    PropositionalLogic.moveNegationToLiterals(current);
+                if (negationMoreInside.isPresent()) {
+                    current = negationMoreInside.get();
+                } else {
+                    final Optional<PropositionalFormula> deMorgan =
+                        PropositionalLogic.applyDeMorgan(current, shouldBeCNF);
+                    if (deMorgan.isPresent()) {
+                        current = deMorgan.get();
+                    } else {
+                        current = null;
+                    }
+                }
+            }
+            if (current != null) {
+                result.add(current);
+            }
+        }
+        Optional<PropositionalFormula> simplified = PropositionalLogic.simplify(current);
+        while (simplified.isPresent()) {
+            result.add(simplified.get());
+            simplified = PropositionalLogic.simplify(simplified.get());
+        }
+        return result;
+    }
+
+    private static Optional<PropositionalFormula> applyDeMorgan(
+        final PropositionalFormula formula,
+        final boolean shouldBeCNF
+    ) {
+        if (formula.isConjunction()) {
+            final Conjunction conjunction = (Conjunction)formula;
+            for (int i = 0; i < conjunction.children.size(); i++) {
+                final PropositionalFormula child = conjunction.children.get(i);
+                if (!shouldBeCNF && child.isDisjunction()) {
+                    final Disjunction disjunction = (Disjunction)child;
+                    final List<PropositionalFormula> conjuncts = new LinkedList<PropositionalFormula>();
+                    for (int j = 0; j < conjunction.children.size(); j++) {
+                        if (i != j) {
+                            conjuncts.add(conjunction.children.get(j));
+                        }
+                    }
+                    final PropositionalFormula conjunct = Conjunction.createConjunction(conjuncts);
+                    return Optional.of(
+                        Disjunction.createDisjunction(
+                            disjunction.children
+                            .stream()
+                            .map(disjunct -> Conjunction.createConjunction(disjunct, conjunct))
+                        )
+                    );
+                }
+                final Optional<PropositionalFormula> changedChild =
+                    PropositionalLogic.applyDeMorgan(child, shouldBeCNF);
+                if (changedChild.isPresent()) {
+                    final List<PropositionalFormula> conjuncts =
+                        new ArrayList<PropositionalFormula>(conjunction.children);
+                    conjuncts.set(i, changedChild.get());
+                    return Optional.of(Conjunction.createConjunction(conjuncts));
+                }
+            }
+        }
+        if (formula.isDisjunction()) {
+            final Disjunction disjunction = (Disjunction)formula;
+            for (int i = 0; i < disjunction.children.size(); i++) {
+                final PropositionalFormula child = disjunction.children.get(i);
+                if (shouldBeCNF && child.isConjunction()) {
+                    final Conjunction conjunction = (Conjunction)child;
+                    final List<PropositionalFormula> disjuncts = new LinkedList<PropositionalFormula>();
+                    for (int j = 0; j < disjunction.children.size(); j++) {
+                        if (i != j) {
+                            disjuncts.add(disjunction.children.get(j));
+                        }
+                    }
+                    final PropositionalFormula disjunct = Disjunction.createDisjunction(disjuncts);
+                    return Optional.of(
+                        Conjunction.createConjunction(
+                            conjunction.children
+                            .stream()
+                            .map(conjunct -> Disjunction.createDisjunction(conjunct, disjunct))
+                        )
+                    );
+                }
+                final Optional<PropositionalFormula> changedChild =
+                    PropositionalLogic.applyDeMorgan(child, shouldBeCNF);
+                if (changedChild.isPresent()) {
+                    final List<PropositionalFormula> disjuncts =
+                        new ArrayList<PropositionalFormula>(disjunction.children);
+                    disjuncts.set(i, changedChild.get());
+                    return Optional.of(Disjunction.createDisjunction(disjuncts));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static boolean isInNF(final PropositionalFormula formula, final boolean shouldBeCNF) {
+        if (formula.isDisjunction()) {
+            final Disjunction disjunction = (Disjunction)formula;
+            for (final PropositionalFormula child : disjunction.children) {
+                if (shouldBeCNF) {
+                    if (!PropositionalLogic.isJunctionOfLiterals(child, false)) {
+                        return false;
+                    }
+                } else {
+                    if (!PropositionalLogic.isInNF(child, shouldBeCNF)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        if (formula.isConjunction()) {
+            final Conjunction conjunction = (Conjunction)formula;
+            for (final PropositionalFormula child : conjunction.children) {
+                if (shouldBeCNF) {
+                    if (!PropositionalLogic.isInNF(child, shouldBeCNF)) {
+                        return false;
+                    }
+                } else {
+                    if (!PropositionalLogic.isJunctionOfLiterals(child, true)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        if (formula.isNegation()) {
+            final Negation negation = (Negation)formula;
+            return negation.child.isConstant() || negation.child.isVariable();
+        }
+        return true;
+    }
+
+    private static boolean isJunctionOfLiterals(final PropositionalFormula formula, final boolean shouldBeConjunction) {
+        if (formula.isDisjunction()) {
+            if (shouldBeConjunction) {
+                return false;
+            }
+            final Disjunction disjunction = (Disjunction)formula;
+            for (final PropositionalFormula child : disjunction.children) {
+                if (!PropositionalLogic.isJunctionOfLiterals(child, shouldBeConjunction)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (formula.isConjunction()) {
+            if (!shouldBeConjunction) {
+                return false;
+            }
+            final Conjunction conjunction = (Conjunction)formula;
+            for (final PropositionalFormula child : conjunction.children) {
+                if (!PropositionalLogic.isJunctionOfLiterals(child, shouldBeConjunction)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (formula.isNegation()) {
+            final Negation negation = (Negation)formula;
+            return negation.child.isConstant() || negation.child.isVariable();
+        }
+        return true;
+    }
+
+    private static Optional<PropositionalFormula> moveNegationToLiterals(final PropositionalFormula formula) {
         if (formula.isNegation()) {
             final Negation negation = (Negation)formula;
             if (negation.child.isNegation()) {
@@ -221,6 +412,111 @@ abstract class PropositionalLogic {
                 }
             }
             return Optional.empty();
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<PropositionalFormula> simplify(final PropositionalFormula formula) {
+        if (formula.isConjunction()) {
+            final Conjunction conjunction = (Conjunction)formula;
+            if (conjunction.children.isEmpty()) {
+                return Optional.of(True.TRUE);
+            }
+            if (conjunction.children.size() == 1) {
+                return Optional.of(conjunction.children.get(0));
+            }
+            final Set<PropositionalFormula> distinct = new LinkedHashSet<PropositionalFormula>();
+            final Set<PropositionalFormula> positive = new LinkedHashSet<PropositionalFormula>();
+            final Set<PropositionalFormula> negative = new LinkedHashSet<PropositionalFormula>();
+            for (int i = 0; i < conjunction.children.size(); i++) {
+                final PropositionalFormula child = conjunction.children.get(i);
+                if (child.isConstant()) {
+                    if (True.TRUE.equals(child)) {
+                        final List<PropositionalFormula> changedChildren =
+                            new ArrayList<PropositionalFormula>(conjunction.children);
+                        changedChildren.remove(i);
+                        return Optional.of(Conjunction.createConjunction(changedChildren));
+                    }
+                    return Optional.of(False.FALSE);
+                }
+                final Optional<PropositionalFormula> changedChild = PropositionalLogic.simplify(child);
+                if (changedChild.isPresent()) {
+                    final List<PropositionalFormula> changedChildren =
+                        new ArrayList<PropositionalFormula>(conjunction.children);
+                    changedChildren.set(i, changedChild.get());
+                    return Optional.of(Conjunction.createConjunction(changedChildren));
+                }
+                distinct.add(child);
+                if (child.isNegation()) {
+                    negative.add(((Negation)child).child);
+                } else {
+                    positive.add(child);
+                }
+            }
+            positive.retainAll(negative);
+            if (!positive.isEmpty()) {
+                return Optional.of(False.FALSE);
+            }
+            if (distinct.size() < conjunction.children.size()) {
+                return Optional.of(Conjunction.createConjunction(distinct.stream()));
+            }
+        }
+        if (formula.isDisjunction()) {
+            final Disjunction disjunction = (Disjunction)formula;
+            if (disjunction.children.isEmpty()) {
+                return Optional.of(False.FALSE);
+            }
+            if (disjunction.children.size() == 1) {
+                return Optional.of(disjunction.children.get(0));
+            }
+            final Set<PropositionalFormula> distinct = new LinkedHashSet<PropositionalFormula>();
+            final Set<PropositionalFormula> positive = new LinkedHashSet<PropositionalFormula>();
+            final Set<PropositionalFormula> negative = new LinkedHashSet<PropositionalFormula>();
+            for (int i = 0; i < disjunction.children.size(); i++) {
+                final PropositionalFormula child = disjunction.children.get(i);
+                if (child.isConstant()) {
+                    if (True.TRUE.equals(child)) {
+                        return Optional.of(True.TRUE);
+                    }
+                    final List<PropositionalFormula> changedChildren =
+                        new ArrayList<PropositionalFormula>(disjunction.children);
+                    changedChildren.remove(i);
+                    return Optional.of(Disjunction.createDisjunction(changedChildren));
+                }
+                final Optional<PropositionalFormula> changedChild = PropositionalLogic.simplify(child);
+                if (changedChild.isPresent()) {
+                    final List<PropositionalFormula> changedChildren =
+                        new ArrayList<PropositionalFormula>(disjunction.children);
+                    changedChildren.set(i, changedChild.get());
+                    return Optional.of(Disjunction.createDisjunction(changedChildren));
+                }
+                distinct.add(child);
+                if (child.isNegation()) {
+                    negative.add(((Negation)child).child);
+                } else {
+                    positive.add(child);
+                }
+            }
+            positive.retainAll(negative);
+            if (!positive.isEmpty()) {
+                return Optional.of(True.TRUE);
+            }
+            if (distinct.size() < disjunction.children.size()) {
+                return Optional.of(Disjunction.createDisjunction(distinct.stream()));
+            }
+        }
+        if (formula.isNegation()) {
+            final Negation negation = (Negation)formula;
+            if (negation.child.isConstant()) {
+                return Optional.of(True.TRUE.equals(negation.child) ? False.FALSE : True.TRUE);
+            }
+            if (negation.child.isNegation()) {
+                return Optional.of(((Negation)negation.child).child);
+            }
+            final Optional<PropositionalFormula> changedChild = PropositionalLogic.simplify(negation.child);
+            if (changedChild.isPresent()) {
+                return Optional.of(changedChild.get().negate());
+            }
         }
         return Optional.empty();
     }
