@@ -34,17 +34,19 @@ public class ConversionToTruthTable implements AlgorithmImplementation {
         writer.write("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\");
         Main.newLine(writer);
         PropositionalLogic.printGeneralFormula(formula, writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+        LaTeXUtils.printVerticalProtectedSpace("1ex", writer);
         PropositionalLogic.printTruthTable(truthTable, true, true, writer);
         LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
     private static void printToTruthTableSolution(
         final TruthTable truthTable,
-        final BufferedWriter solWriter
+        final BufferedWriter writer
     ) throws IOException {
-        PropositionalLogic.printTruthTable(truthTable, false, true, solWriter);
-        Main.newLine(solWriter);
+        LaTeXUtils.printVerticalProtectedSpace("-6ex", writer);
+        PropositionalLogic.printTruthTable(truthTable, false, true, writer);
+        Main.newLine(writer);
     }
 
     private ConversionToTruthTable() {}

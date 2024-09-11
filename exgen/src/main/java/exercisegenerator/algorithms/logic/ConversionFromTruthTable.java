@@ -103,6 +103,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation {
         final PropositionalFormula formula,
         final BufferedWriter writer
     ) throws IOException {
+        LaTeXUtils.printVerticalProtectedSpace("-10ex", writer);
         ConversionFromTruthTable.printDNFFormula(formula, writer);
         Main.newLine(writer);
     }
