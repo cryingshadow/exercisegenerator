@@ -1786,6 +1786,9 @@ public class MainTest {
                     "\\end{center}"
                 ),
                 List.of(
+                    "",
+                    "\\vspace*{-10ex}",
+                    "",
                     "\\begin{align*}",
                     " & \\neg\\var{A} \\wedge \\var{B} \\wedge \\neg\\var{C}\\\\",
                     "\\vee & \\neg\\var{A} \\wedge \\var{B} \\wedge \\var{C}\\\\",
@@ -1832,6 +1835,9 @@ public class MainTest {
                     "\\end{center}"
                 ),
                 List.of(
+                    "",
+                    "\\vspace*{-10ex}",
+                    "",
                     "\\begin{align*}",
                     " & \\neg\\var{A} \\wedge \\neg\\var{B} \\wedge \\neg\\var{C} \\wedge \\neg\\var{D}\\\\",
                     "\\vee & \\neg\\var{A} \\wedge \\var{B} \\wedge \\neg\\var{C} \\wedge \\var{D}\\\\",
@@ -1862,6 +1868,9 @@ public class MainTest {
 
         solText.addAll(
             List.of(
+                "",
+                "\\vspace*{-10ex}",
+                "",
                 "\\begin{align*}",
                 " & \\code{1}",
                 "\\end{align*}"
@@ -3435,10 +3444,12 @@ public class MainTest {
                 MainTest.concat(
                     Stream.of(
                         "Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\",
-                        "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]"
-                    ),
-                    Patterns.SOLUTION_SPACE_BEGINNING.stream(),
-                    Stream.of(
+                        "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]",
+                        "\\ifprintanswers",
+                        "\\else",
+                        "",
+                        "\\vspace*{1ex}",
+                        "",
                         "\\begin{center}",
                         "{\\Large",
                         "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
@@ -3454,6 +3465,9 @@ public class MainTest {
                     Patterns.SOLUTION_SPACE_END.stream()
                 ).toList(),
                 List.of(
+                    "",
+                    "\\vspace*{-6ex}",
+                    "",
                     "\\begin{center}",
                     "{\\Large",
                     "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
@@ -3495,10 +3509,12 @@ public class MainTest {
                 MainTest.concat(
                     Stream.of(
                         "Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\",
-                        "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]"
-                    ),
-                    Patterns.SOLUTION_SPACE_BEGINNING.stream(),
-                    Stream.of(
+                        "\\[((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{C}))\\]",
+                        "\\ifprintanswers",
+                        "\\else",
+                        "",
+                        "\\vspace*{1ex}",
+                        "",
                         "\\begin{center}",
                         "{\\Large",
                         "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
@@ -3514,6 +3530,9 @@ public class MainTest {
                     Patterns.SOLUTION_SPACE_END.stream()
                 ).toList(),
                 List.of(
+                    "",
+                    "\\vspace*{-6ex}",
+                    "",
                     "\\begin{center}",
                     "{\\Large",
                     "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
