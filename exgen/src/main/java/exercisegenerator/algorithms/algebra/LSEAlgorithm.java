@@ -66,7 +66,7 @@ public class LSEAlgorithm implements AlgorithmImplementation {
         final Parameters options
     ) throws IOException {
         final String line = reader.readLine();
-        final String[] rows = line.split(";");
+        final String[] rows = LSEAlgorithm.parseRows(line, reader);
         final BigFraction[][] coefficients =
             new BigFraction[rows.length][((int)rows[0].chars().filter(c -> c == ',').count()) + 1];
         for (int row = 0; row < coefficients.length; row++) {
@@ -87,6 +87,23 @@ public class LSEAlgorithm implements AlgorithmImplementation {
             LSEAlgorithm::parseLinearSystemOfEquations,
             LSEAlgorithm::generateLinearSystemOfEquations
         ).getResult(options);
+    }
+
+    private static String[] parseRows(final String firstLine, final BufferedReader reader) throws IOException {
+        if (firstLine.contains(";")) {
+            return firstLine.split(";");
+        }
+        final List<String> lines = new LinkedList<String>();
+        lines.add(firstLine);
+        String line = reader.readLine();
+        while (line != null) {
+            if (!line.isBlank()) {
+                lines.add(line);
+            }
+            line = reader.readLine();
+        }
+        final String[] result = new String[lines.size()];
+        return lines.toArray(result);
     }
 
     private static void printLSEExercise(
