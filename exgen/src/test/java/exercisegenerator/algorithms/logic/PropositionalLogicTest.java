@@ -80,19 +80,15 @@ public class PropositionalLogicTest {
                         "(!A || B || (!A && (C || !B))) && (!B || B || (!A && (C || !B))) && (B || !C || B || (!A && (C || !B)))"
                     ),
                     PropositionalFormula.parse(
-                        "(!A || B || (!A && (C || !B))) && 1 && (B || !C || B || (!A && (C || !B)))"
+                        "(!A || B) && (!B || B || (!A && (C || !B))) && (B || !C || B || (!A && (C || !B)))"
                     ),
-                    PropositionalFormula.parse("(!A || B || (!A && (C || !B))) && (B || !C || B || (!A && (C || !B)))"),
-                    PropositionalFormula.parse("(!A || B || (!A && (C || !B))) && (B || !C || (!A && (C || !B)))"),
-                    PropositionalFormula.parse(
-                        "(!A || !A || B) && (C || !B || !A || B) && (B || !C || (!A && (C || !B)))"
-                    ),
-                    PropositionalFormula.parse("(!A || B) && (C || !B || !A || B) && (B || !C || (!A && (C || !B)))"),
-                    PropositionalFormula.parse("(!A || B) && 1 && (B || !C || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A || B) && 1 && (B || !C || B || (!A && (C || !B)))"),
+                    PropositionalFormula.parse("(!A || B) && (B || !C || B || (!A && (C || !B)))"),
                     PropositionalFormula.parse("(!A || B) && (B || !C || (!A && (C || !B)))"),
                     PropositionalFormula.parse("(!A || B) && (!A || B || !C) && (C || !B || B || !C)"),
-                    PropositionalFormula.parse("(!A || B) && (!A || B || !C) && 1"),
-                    PropositionalFormula.parse("(!A || B) && (!A || B || !C)")
+                    PropositionalFormula.parse("(!A || B) && (C || !B || B || !C)"),
+                    PropositionalFormula.parse("(!A || B) && 1"),
+                    PropositionalFormula.parse("!A || B")
                 )
             }
         };
@@ -127,9 +123,9 @@ public class PropositionalLogicTest {
                     PropositionalFormula.parse("(!A && !B && !!(B || !C)) || B || (!A && (C || !B))"),
                     PropositionalFormula.parse("(!A && !B && (B || !C)) || B || (!A && (C || !B))"),
                     PropositionalFormula.parse("(B && !A && !B) || (!C && !A && !B) || B || (!A && (C || !B))"),
-                    PropositionalFormula.parse("0 || (!C && !A && !B) || B || (!A && (C || !B))"),
                     PropositionalFormula.parse("(!C && !A && !B) || B || (!A && (C || !B))"),
-                    PropositionalFormula.parse("(!C && !A && !B) || B || (C && !A) || (!B && !A)")
+                    PropositionalFormula.parse("(!C && !A && !B) || B || (C && !A) || (!B && !A)"),
+                    PropositionalFormula.parse("B || (C && !A) || (!B && !A)")
                 )
             }
         };
