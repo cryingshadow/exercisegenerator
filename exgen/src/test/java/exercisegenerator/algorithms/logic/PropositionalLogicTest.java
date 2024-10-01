@@ -1,6 +1,7 @@
 package exercisegenerator.algorithms.logic;
 
 import java.util.*;
+import java.util.Optional;
 
 import org.testng.*;
 import org.testng.annotations.*;
@@ -9,6 +10,40 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.logic.*;
 
 public class PropositionalLogicTest {
+
+//    @DataProvider
+//    public Object[][] dpllData() throws PropositionalFormulaParseException {
+//        return new Object[][] {
+//            {Collections.emptySet(), new DPLLNode(Collections.emptySet())},
+//            {Set.of(Clause.EMPTY), new DPLLNode(Set.of(Clause.EMPTY))},
+//            {
+//                DPLL.parseClauses("{A}"),
+//                new DPLLNode(DPLL.parseClauses("{A}"), Optional.of(new DPLLNode(Collections.emptySet())))
+//            },
+//            {
+//                DPLL.parseClauses("{!A}"),
+//                new DPLLNode(DPLL.parseClauses("{!A}"), Optional.of(new DPLLNode(Collections.emptySet())))
+//            },
+//            {
+//                DPLL.parseClauses("{A},{!A}"),
+//                new DPLLNode(DPLL.parseClauses("{A},{!A}"), Optional.of(new DPLLNode(Set.of(Clause.EMPTY))))
+//            },
+//            {
+//                DPLL.parseClauses("{A},{!B}"),
+//                new DPLLNode(
+//                    DPLL.parseClauses("{A},{!B}"),
+//                    Optional.of(
+//                        new DPLLNode(DPLL.parseClauses("{!B}"), Optional.of(new DPLLNode(Collections.emptySet())))
+//                    )
+//                )
+//            }
+//        };
+//    }
+//
+//    @Test(dataProvider="dpllData")
+//    public void dpllTest(final Set<Clause> clauses, final DPLLNode expected) {
+//        Assert.assertEquals(DPLL.dpll(clauses), expected);
+//    }
 
     @DataProvider
     public Object[][] fromTruthTableData() throws PropositionalFormulaParseException {

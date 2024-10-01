@@ -203,6 +203,20 @@ abstract class PropositionalLogic {
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
     }
 
+    static Set<Clause> toClauses(final PropositionalFormula formula) {
+        final PropositionalFormula cnf = PropositionalLogic.toNF(formula, true).getLast();
+        if (True.TRUE.equals(cnf)) {
+            return Collections.emptySet();
+        }
+        if (False.FALSE.equals(cnf)) {
+            return Set.of(new Clause());
+        }
+        if (cnf.isConjunction()) {
+            return ((Conjunction)cnf).children.stream().map(PropositionalLogic::toClause).collect(Collectors.toSet());
+        }
+        return Set.of(PropositionalLogic.toClause(cnf));
+    }
+
     static List<PropositionalFormula> toNF(final PropositionalFormula formula, final boolean shouldBeCNF) {
         final List<PropositionalFormula> result = new LinkedList<PropositionalFormula>();
         result.add(formula);
@@ -571,6 +585,22 @@ abstract class PropositionalLogic {
             }
         }
         return new Pair<Set<PropositionalFormula>, Set<PropositionalFormula>>(positive, negative);
+    }
+
+    private static Clause toClause(final PropositionalFormula simplifiedPurelyDisjunctiveFormula) {
+        if (simplifiedPurelyDisjunctiveFormula.isDisjunction()) {
+            return new Clause(
+                ((Disjunction)simplifiedPurelyDisjunctiveFormula).children.stream().map(PropositionalLogic::toLiteral)
+            );
+        }
+        return new Clause(PropositionalLogic.toLiteral(simplifiedPurelyDisjunctiveFormula));
+    }
+
+    private static Literal toLiteral(final PropositionalFormula nonConstantLiteral) {
+        if (nonConstantLiteral.isNegation()) {
+            return new Literal((PropositionalVariable)((Negation)nonConstantLiteral).child, true);
+        }
+        return new Literal((PropositionalVariable)nonConstantLiteral, false);
     }
 
 }
