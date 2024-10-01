@@ -12,37 +12,18 @@ import exercisegenerator.structures.logic.*;
 public class DPLL implements AlgorithmImplementation {
 
     public static DPLLNode dpll(final Set<Clause> clauses) {
-        final Optional<DPLLNode> propagated = DPLL.unitPropagation(clauses);
-        final Optional<DPLLNode> assigned =
-            propagated.isEmpty() ?
-                DPLL.pureAssignment(clauses) :
-                    Optional.of(
-                        propagated.get().addLeftmost(DPLL.pureAssignment(propagated.get().getLeftmostClauses()))
-                    );
-        final Set<Clause> latest = assigned.isEmpty() ? clauses : assigned.get().getLeftmostClauses();
+        DPLLNode result = new DPLLNode(clauses).addLeftmost(DPLL.unitPropagation(clauses));
+        result = result.addLeftmost(DPLL.pureAssignment(result.getLeftmostClauses()));
+        final Set<Clause> latest = result.getLeftmostClauses();
         if (latest.isEmpty() || latest.contains(Clause.EMPTY)) {
-            return assigned.isEmpty() ?
-                new DPLLNode(clauses) :
-                    assigned.get().addLeftmost(Optional.of(new DPLLNode(latest)));
-        }
-        if (assigned.isEmpty()) {
-            final PropositionalVariable chosen = DPLL.chooseVariable(clauses);
-            final DPLLNode left = DPLL.dpll(DPLL.setTruth(chosen, true, clauses));
-            if (left.isSAT()) {
-                return new DPLLNode(clauses, Optional.of(left));
-            }
-            return new DPLLNode(
-                clauses,
-                Optional.of(left),
-                Optional.of(DPLL.dpll(DPLL.setTruth(chosen, false, clauses)))
-            );
+            return result;
         }
         final PropositionalVariable chosen = DPLL.chooseVariable(latest);
         final DPLLNode left = DPLL.dpll(DPLL.setTruth(chosen, true, latest));
         if (left.isSAT()) {
-            return assigned.get().addLeftmost(Optional.of(left));
+            return result.addLeftmost(Optional.of(left));
         }
-        return assigned.get()
+        return result
             .addRightToLeftmost(DPLL.dpll(DPLL.setTruth(chosen, false, latest)))
             .addLeftmost(Optional.of(left));
     }

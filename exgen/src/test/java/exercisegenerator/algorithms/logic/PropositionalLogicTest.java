@@ -11,39 +11,67 @@ import exercisegenerator.structures.logic.*;
 
 public class PropositionalLogicTest {
 
-//    @DataProvider
-//    public Object[][] dpllData() throws PropositionalFormulaParseException {
-//        return new Object[][] {
-//            {Collections.emptySet(), new DPLLNode(Collections.emptySet())},
-//            {Set.of(Clause.EMPTY), new DPLLNode(Set.of(Clause.EMPTY))},
-//            {
-//                DPLL.parseClauses("{A}"),
-//                new DPLLNode(DPLL.parseClauses("{A}"), Optional.of(new DPLLNode(Collections.emptySet())))
-//            },
-//            {
-//                DPLL.parseClauses("{!A}"),
-//                new DPLLNode(DPLL.parseClauses("{!A}"), Optional.of(new DPLLNode(Collections.emptySet())))
-//            },
-//            {
-//                DPLL.parseClauses("{A},{!A}"),
-//                new DPLLNode(DPLL.parseClauses("{A},{!A}"), Optional.of(new DPLLNode(Set.of(Clause.EMPTY))))
-//            },
-//            {
-//                DPLL.parseClauses("{A},{!B}"),
-//                new DPLLNode(
-//                    DPLL.parseClauses("{A},{!B}"),
-//                    Optional.of(
-//                        new DPLLNode(DPLL.parseClauses("{!B}"), Optional.of(new DPLLNode(Collections.emptySet())))
-//                    )
-//                )
-//            }
-//        };
-//    }
-//
-//    @Test(dataProvider="dpllData")
-//    public void dpllTest(final Set<Clause> clauses, final DPLLNode expected) {
-//        Assert.assertEquals(DPLL.dpll(clauses), expected);
-//    }
+    @DataProvider
+    public Object[][] dpllData() throws PropositionalFormulaParseException {
+        return new Object[][] {
+            {Collections.emptySet(), new DPLLNode(Collections.emptySet())},
+            {Set.of(Clause.EMPTY), new DPLLNode(Set.of(Clause.EMPTY))},
+            {
+                DPLL.parseClauses("{A}"),
+                new DPLLNode(DPLL.parseClauses("{A}"), Optional.of(new DPLLNode(Collections.emptySet())))
+            },
+            {
+                DPLL.parseClauses("{!A}"),
+                new DPLLNode(DPLL.parseClauses("{!A}"), Optional.of(new DPLLNode(Collections.emptySet())))
+            },
+            {
+                DPLL.parseClauses("{A},{!A}"),
+                new DPLLNode(DPLL.parseClauses("{A},{!A}"), Optional.of(new DPLLNode(Set.of(Clause.EMPTY))))
+            },
+            {
+                DPLL.parseClauses("{A},{!B}"),
+                new DPLLNode(
+                    DPLL.parseClauses("{A},{!B}"),
+                    Optional.of(
+                        new DPLLNode(DPLL.parseClauses("{!B}"), Optional.of(new DPLLNode(Collections.emptySet())))
+                    )
+                )
+            },
+            {
+                DPLL.parseClauses("{!A,B},{!B,C},{!C,!A},{A,!C},{C,!B},{B,A}"),
+                new DPLLNode(
+                    DPLL.parseClauses("{!A,B},{!B,C},{!C,!A},{A,!C},{C,!B},{B,A}"),
+                    Optional.of(
+                        new DPLLNode(
+                            DPLL.parseClauses("{B},{!B,C},{!C},{C,!B}"),
+                            Optional.of(
+                                new DPLLNode(
+                                    DPLL.parseClauses("{C},{!C}"),
+                                    Optional.of(new DPLLNode(Set.of(Clause.EMPTY)))
+                                )
+                            )
+                        )
+                    ),
+                    Optional.of(
+                        new DPLLNode(
+                            DPLL.parseClauses("{!B,C},{!C},{C,!B},{B}"),
+                            Optional.of(
+                                new DPLLNode(
+                                    DPLL.parseClauses("{C},{!C}"),
+                                    Optional.of(new DPLLNode(Set.of(Clause.EMPTY)))
+                                 )
+                            )
+                        )
+                    )
+                )
+            }
+        };
+    }
+
+    @Test(dataProvider="dpllData")
+    public void dpllTest(final Set<Clause> clauses, final DPLLNode expected) {
+        Assert.assertEquals(DPLL.dpll(clauses), expected);
+    }
 
     @DataProvider
     public Object[][] fromTruthTableData() throws PropositionalFormulaParseException {
