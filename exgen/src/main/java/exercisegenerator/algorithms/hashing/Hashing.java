@@ -5,28 +5,15 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.apache.commons.math3.fraction.*;
+
 import exercisegenerator.*;
+import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.util.*;
 
 abstract class Hashing {
-
-    static class HashResultWithProbingFactors {
-        final int linearProbingFactor;
-        final int quadraticProbingFactor;
-        final IntegerList[] result;
-
-        HashResultWithProbingFactors(
-            final IntegerList[] result,
-            final int linearProbingFactor,
-            final int quadraticProbingFactor
-        ) {
-            this.result = result;
-            this.linearProbingFactor = linearProbingFactor;
-            this.quadraticProbingFactor = quadraticProbingFactor;
-        }
-    }
 
     static class PrintOptions {
         private final String optionsText;
@@ -47,6 +34,16 @@ abstract class Hashing {
         }
     }
 
+    static class ProbingFactors {
+        final BigFraction linearProbingFactor;
+        final BigFraction quadraticProbingFactor;
+
+        ProbingFactors(final BigFraction linearProbingFactor, final BigFraction quadraticProbingFactor) {
+            this.linearProbingFactor = linearProbingFactor;
+            this.quadraticProbingFactor = quadraticProbingFactor;
+        }
+    }
+
     static final String DIVISION_METHOD = "\\emphasize{Divisionsmethode}";
 
     static final String GENERAL_HASHING_EXERCISE_TEXT_END = " ein";
@@ -57,11 +54,10 @@ abstract class Hashing {
 
     static final Object PARAMETER_STRING_END = ":\\\\[2ex]";
 
-    /**
-     * Array containing all prime numbers between 5 and 101.
-     */
     private static final int[] PRIMES_5_101 =
         new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
+
+    private static final int[] PRIMES_5_19 = new int[]{5, 7, 11, 13, 17, 19};
 
     static IntegerList[] createEmptyArray(final int length) {
         final IntegerList[] result = new IntegerList[length];
@@ -87,13 +83,18 @@ abstract class Hashing {
     static IntegerList[] hashingWithMultiplicationMethod(
         final List<Integer> values,
         final IntegerList[] initialHashTable,
-        final double factor,
+        final BigFraction factor,
         final Optional<ProbingFunction> optionalProbingFunction
     ) throws HashException {
         return Hashing.hashing(
             values,
             initialHashTable,
-            (value, capacity) -> (int)Math.floor(capacity * ((value * factor) - Math.floor(value * factor))),
+            (value, capacity) ->
+                factor
+                .multiply(value)
+                .subtract(factor.multiply(value).intValue())
+                .multiply(capacity)
+                .intValue(),
             optionalProbingFunction
         );
     }
@@ -120,25 +121,37 @@ abstract class Hashing {
             ).toArray(IntegerList[]::new);
     }
 
-    static double parseOrGenerateMultiplicationFactor(final Parameters options) throws IOException {
-        return new ParserAndGenerator<Double>(
+    static BigFraction parseOrGenerateMultiplicationFactor(final Parameters options) throws IOException {
+        return new ParserAndGenerator<BigFraction>(
             Hashing::parseMultiplicationFactor,
             flags -> Hashing.getRandomFactorBetweenZeroAndOne()
         ).getResult(options);
     }
 
-    static HashResultWithProbingFactors parseOrGenerateProbingFactorsAndComputeResult(
-        final int capacity,
-        final CheckedBiFunction<Integer, Integer, IntegerList[], HashException> hashingAlgorithm,
-        final Parameters options
-    ) throws IOException {
-        return new ParserAndGenerator<HashResultWithProbingFactors>(
-            (reader, flags) -> Hashing.parseProbingFactorsAndComputeResult(reader, hashingAlgorithm, flags),
-            flags -> Hashing.generateProbingFactorsAndComputeResult(capacity, hashingAlgorithm, flags)
+    static Integer parseOrGenerateNumberOfValues(final Parameters options) throws IOException {
+        return new ParserAndGenerator<Integer>(
+            Hashing::parseNumberOfValues,
+            Hashing::generateNumberOfValues
         ).getResult(options);
     }
 
-    static List<Integer> parseOrGenerateValues(final Parameters options) throws IOException {
+    static ProbingFactors parseOrGenerateProbingFactors(
+        final int capacity,
+        final Parameters options
+    ) throws IOException {
+        return new ParserAndGenerator<ProbingFactors>(
+            (reader, flags) -> Hashing.parseProbingFactors(reader, flags),
+            flags -> Hashing.generateProbingFactors(capacity, flags)
+        ).getResult(options);
+    }
+
+    static List<Integer> parseOrGenerateValues(
+        final int numOfValues,
+        final int capacity,
+        final Optional<BigFraction> optionalMultiplicationFactor,
+        final Optional<ProbingFactors> optionalProbingFactors,
+        final Parameters options
+    ) throws IOException {
         return new ParserAndGenerator<List<Integer>>(
             Hashing::parseValues,
             Hashing::generateValues
@@ -158,7 +171,7 @@ abstract class Hashing {
         Hashing.printHashingSolution(result, printOptions, solutionWriter);
     }
 
-    static ProbingFunction quadraticProbing(final int linearFactor, final int quadraticFactor) {
+    static ProbingFunction quadraticProbing(final BigFraction linearFactor, final BigFraction quadraticFactor) {
         return (value, initialPosition, numberOfCollisions, capacity) -> {
             if (numberOfCollisions >= capacity) {
                 throw new HashException(
@@ -170,50 +183,46 @@ abstract class Hashing {
             }
             return
                 (
-                    initialPosition
-                    + linearFactor * numberOfCollisions
-                    + quadraticFactor * numberOfCollisions * numberOfCollisions
+                    linearFactor
+                    .multiply(numberOfCollisions)
+                    .add(quadraticFactor.multiply(numberOfCollisions * numberOfCollisions))
+                    .add(initialPosition)
+                    .intValue()
                 ) % capacity;
         };
     }
 
-    static String toMultiplicationMethodExerciseText(final double factor) {
-        return String.format(Locale.GERMANY, "\\emphasize{Multiplikationsmethode} ($c = %.2f$)", factor);
+    static String toMultiplicationMethodExerciseText(final BigFraction factor) {
+        return String.format(
+            Locale.GERMANY,
+            "\\emphasize{Multiplikationsmethode} ($c = %s$)",
+            AlgebraAlgorithms.toCoefficient(factor)
+        );
     }
 
     static String toParameterString(final int capacity) {
-        return String.format("m = %d%s", capacity, Hashing.PARAMETER_STRING_END);
+        return String.format("$m = %d$%s", capacity, Hashing.PARAMETER_STRING_END);
     }
 
-    static String toParameterString(final int capacity, final double multiplicationFactor) {
+    static String toParameterString(final int capacity, final BigFraction multiplicationFactor) {
         return String.format(
             Locale.GERMANY,
-            "m = %d, c = %.2f%s",
+            "$m = %d$, $c = %s$%s",
             capacity,
-            multiplicationFactor,
+            AlgebraAlgorithms.toCoefficient(multiplicationFactor),
             Hashing.PARAMETER_STRING_END
         );
     }
 
     static String toQuadraticProbingText(
-        final int linearProbingFactor,
-        final int quadraticProbingFactor
+        final BigFraction linearProbingFactor,
+        final BigFraction quadraticProbingFactor
     ) {
         return String.format(
-            " mit \\emphasize{quadratischer Sondierung} ($c_1 = %d$, $c_2 = %d$)",
-            linearProbingFactor,
-            quadraticProbingFactor
+            " mit \\emphasize{quadratischer Sondierung} ($c_1 = %s$, $c_2 = %s$)",
+            AlgebraAlgorithms.toCoefficient(linearProbingFactor),
+            AlgebraAlgorithms.toCoefficient(quadraticProbingFactor)
         );
-    }
-
-    /**
-     * @param a Some number.
-     * @param b Another number.
-     * @param c Yet another number.
-     * @return True if the three numbers are coprime to each other. False otherwise.
-     */
-    private static boolean areCoprime(final int a, final int b, final int c) {
-        return Hashing.gcd(a,b) == 1 && Hashing.gcd(b,c) == 1 && Hashing.gcd(a,c) == 1;
     }
 
     private static int computeContentLength(final IntegerList[] array) {
@@ -223,46 +232,28 @@ abstract class Hashing {
             .orElse(1);
     }
 
-    private static Pair<Integer, Integer> computeCoprimeProbingFactors(final int capacity) {
-        int coprimeLinearProbingFactor = Hashing.getRandomProbingFactor(capacity);
-        int coprimeQuadraticProbingFactor = Hashing.getRandomProbingFactor(capacity);
-        while (!Hashing.areCoprime(capacity, coprimeLinearProbingFactor, coprimeQuadraticProbingFactor)) {
-            coprimeLinearProbingFactor = Hashing.getRandomProbingFactor(capacity);
-            if (Hashing.areCoprime(capacity, coprimeLinearProbingFactor, coprimeQuadraticProbingFactor)) {
-                break;
-            }
-            coprimeQuadraticProbingFactor = Hashing.getRandomProbingFactor(capacity);
-        }
-        return new Pair<Integer, Integer>(coprimeLinearProbingFactor, coprimeQuadraticProbingFactor);
-    }
-
     private static void copyValues(final IntegerList[] initialHashTable, final IntegerList[] hashTable) {
         for (int i = 0; i < hashTable.length; i++) {
             hashTable[i].addAll(initialHashTable[i]);
         }
     }
 
-    /**
-     * Computes the gcd of two numbers by using the Eucilidian algorithm.
-     * @param number1 The first of the two numbers.
-     * @param number2 The second of the two numbers.
-     * @return The greates common divisor of number1 and number2.
-     */
-    private static int gcd(final int number1, final int number2) {
-        //base case
-        if (number2 == 0) {
-            return number1;
-        }
-        return Hashing.gcd(number2, number1%number2);
-    }
-
     private static int generateCapacity(final int numberOfValues, final Parameters options) {
         final int length = (int)(numberOfValues * 1.25);
         final String alg = options.get(Flag.ALGORITHM);
-        if (alg == "hashDivision" || alg == "hashMultiplication") {
+        if ("hashDivision".equals(alg) || "hashMultiplication".equals(alg)) {
             final Integer[] primes = Hashing.getAllUpToNextPrimes(length);
             final int index = Main.RANDOM.nextInt(primes.length);
             return primes[index];
+        } else if (
+            ("hashDivisionQuadratic".equals(alg) || "hashMultiplicationQuadratic".equals(alg))
+            && Main.RANDOM.nextBoolean()
+        ) {
+            int result = Hashing.getNextPowerOf2(length);
+            while (Main.RANDOM.nextBoolean()) {
+                result = Hashing.getNextPowerOf2(result + 1);
+            }
+            return result;
         } else {
             int result = Hashing.getNextPrime(length);
             while (Main.RANDOM.nextBoolean()) {
@@ -272,33 +263,28 @@ abstract class Hashing {
         }
     }
 
-    private static HashResultWithProbingFactors generateProbingFactorsAndComputeResult(
-        final int capacity,
-        final CheckedBiFunction<Integer, Integer, IntegerList[], HashException> hashingAlgorithm,
-        final Parameters options
-    ) {
-        IntegerList[] result = null;
-        int linearProbingFactor = 0;
-        int quadraticProbingFactor = 0;
-        boolean failed = false;
-        do {
-            try {
-                final Pair<Integer, Integer> coprimeProbingFactors =
-                    Hashing.computeCoprimeProbingFactors(capacity);
-                linearProbingFactor = coprimeProbingFactors.x;
-                quadraticProbingFactor = coprimeProbingFactors.y;
-                result = hashingAlgorithm.apply(linearProbingFactor, quadraticProbingFactor);
-                failed = false;
-            } catch (final HashException e) {
-                failed = true;
-            }
-        } while (failed);
-        return new HashResultWithProbingFactors(result, linearProbingFactor, quadraticProbingFactor);
+    private static Integer generateNumberOfValues(final Parameters options) {
+        return
+            options.containsKey(Flag.LENGTH) ?
+                Integer.parseInt(options.get(Flag.LENGTH)) :
+                    Main.RANDOM.nextInt(11) + 5;
+    }
+
+    private static ProbingFactors generateProbingFactors(final int capacity, final Parameters options) {
+        if (Hashing.isPowerOf2(capacity)) {
+            return new ProbingFactors(BigFraction.ONE_HALF, BigFraction.ONE_HALF);
+        }
+        return new ProbingFactors(
+            new BigFraction(Main.RANDOM.nextInt(11)),
+            new BigFraction(Main.RANDOM.nextInt(10) + 1)
+        );
     }
 
     private static List<Integer> generateValues(final Parameters options) {
         final int length =
-            options.containsKey(Flag.LENGTH) ? Integer.parseInt(options.get(Flag.LENGTH)) : Main.RANDOM.nextInt(16) + 5;
+            options.containsKey(Flag.LENGTH) ?
+                Integer.parseInt(options.get(Flag.LENGTH)) :
+                    Hashing.PRIMES_5_19[Main.RANDOM.nextInt(Hashing.PRIMES_5_19.length)];
         return Stream.generate(() -> Main.RANDOM.nextInt(Main.NUMBER_LIMIT)).limit(length).toList();
     }
 
@@ -319,6 +305,14 @@ abstract class Hashing {
         return result.toArray(new Integer[result.size()]);
     }
 
+    private static int getNextPowerOf2(final int number) {
+        final int result = 1 << (31 - Integer.numberOfLeadingZeros(number));
+        if (result >= number) {
+            return result;
+        }
+        return result << 1;
+    }
+
     /**
      * @param start Value which defines the lower bound for the resulting prime.
      * @return The next largest prime greater than or equal to the input.
@@ -331,16 +325,8 @@ abstract class Hashing {
         return current;
     }
 
-    private static double getRandomFactorBetweenZeroAndOne() {
-        final double result = Math.round((Main.RANDOM.nextDouble()) * 100.0) / 100.0;
-        if (Double.compare(result, 0.0) == 0) {
-            return 0.01;
-        }
-        return result;
-    }
-
-    private static int getRandomProbingFactor(final int capacity) {
-        return Main.RANDOM.nextInt(capacity - 1) + 1;
+    private static BigFraction getRandomFactorBetweenZeroAndOne() {
+        return new BigFraction(Main.RANDOM.nextInt(99) + 1, 100);
     }
 
     private static IntegerList[] hashing(
@@ -371,10 +357,11 @@ abstract class Hashing {
         return hashTable;
     }
 
-    /**
-     * @param value Some value.
-     * @return True iff the specified value is prime.
-     */
+    private static boolean isPowerOf2(final int capacity) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
     private static boolean isPrime(final int value) {
         if (value < 2) {
             return false;
@@ -398,9 +385,17 @@ abstract class Hashing {
         return Integer.parseInt(reader.readLine().split(",")[0]);
     }
 
-    private static double parseMultiplicationFactor(final BufferedReader reader, final Parameters options)
+    private static BigFraction parseMultiplicationFactor(final BufferedReader reader, final Parameters options)
     throws NumberFormatException, IOException {
-        return Double.parseDouble(reader.readLine().split(",")[1]);
+        return AlgebraAlgorithms.parseRationalNumber(reader.readLine().split(",")[1]);
+    }
+
+    private static Integer parseNumberOfValues(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        reader.readLine();
+        return (int)Arrays.stream(reader.readLine().split(",")).count();
     }
 
     private static int parseOrGenerateCapacity(final int numberOfValues, final Parameters options)
@@ -411,23 +406,13 @@ abstract class Hashing {
         ).getResult(options);
     }
 
-    private static HashResultWithProbingFactors parseProbingFactorsAndComputeResult(
-        final BufferedReader reader,
-        final CheckedBiFunction<Integer, Integer, IntegerList[], HashException> hashingAlgorithm,
-        final Parameters options
-    ) throws IOException {
+    private static ProbingFactors parseProbingFactors(final BufferedReader reader, final Parameters options)
+    throws IOException {
         final String[] parameters = reader.readLine().split(",");
-        final int linearProbingFactor = Integer.parseInt(parameters[parameters.length - 2]);
-        final int quadraticProbingFactor = Integer.parseInt(parameters[parameters.length - 1]);
-        try {
-            return new HashResultWithProbingFactors(
-                hashingAlgorithm.apply(linearProbingFactor, quadraticProbingFactor),
-                linearProbingFactor,
-                quadraticProbingFactor
-            );
-        } catch (final HashException e) {
-            throw new IOException(e);
-        }
+        return new ProbingFactors(
+            AlgebraAlgorithms.parseRationalNumber(parameters[parameters.length - 2]),
+            AlgebraAlgorithms.parseRationalNumber(parameters[parameters.length - 1])
+        );
     }
 
     private static List<Integer> parseValues(

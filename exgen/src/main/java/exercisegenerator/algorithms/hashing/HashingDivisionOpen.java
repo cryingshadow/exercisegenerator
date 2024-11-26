@@ -22,8 +22,11 @@ public class HashingDivisionOpen implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
-        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
+        final int numOfValues = Hashing.parseOrGenerateNumberOfValues(input.options);
+        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
+        final int capacity = initialHashTable.length;
+        final List<Integer> values =
+            Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.empty(), Optional.empty(), input.options);
         try {
             final IntegerList[] result = Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.empty());
             Hashing.printHashingExerciseAndSolution(
@@ -34,8 +37,8 @@ public class HashingDivisionOpen implements AlgorithmImplementation {
                     Hashing.DIVISION_METHOD
                     .concat(Hashing.NO_PROBING)
                     .concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
-                    .concat(HashingDivisionOpen.toAdditionalHint(initialHashTable.length)),
-                    Hashing.toParameterString(initialHashTable.length),
+                    .concat(HashingDivisionOpen.toAdditionalHint(capacity)),
+                    Hashing.toParameterString(capacity),
                     false,
                     PreprintMode.parsePreprintMode(input.options)
                 ),

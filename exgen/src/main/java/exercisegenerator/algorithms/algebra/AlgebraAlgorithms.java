@@ -48,7 +48,21 @@ public abstract class AlgebraAlgorithms {
     }
 
     public static BigFraction parseRationalNumber(final String number) {
+        if (number.contains(".")) {
+            final String[] parts = number.split("\\.", -1);
+            if (parts.length != 2) {
+                throw new NumberFormatException(String.format("Number %s contains more than one dot!", number));
+            }
+            final int exponent = parts[1].length();
+            final int denominator = Integer.parseInt("1" + "0".repeat(exponent));
+            final int beforeComma = parts[0].length() == 0 ? 0 : Integer.parseInt(parts[0]);
+            final int afterComma = parts[1].length() == 0 ? 0 : Integer.parseInt(parts[1]);
+            return new BigFraction(beforeComma * denominator + afterComma, denominator);
+        }
         final String[] parts = number.split("/");
+        if (parts.length > 2) {
+            throw new NumberFormatException(String.format("Number %s contains more than one slash!", number));
+        }
         return parts.length == 1 ?
             new BigFraction(Integer.parseInt(parts[0])) :
                 new BigFraction(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
@@ -261,16 +275,6 @@ public abstract class AlgebraAlgorithms {
         return result;
     }
 
-    private static String toFractionString(final BigFraction coefficient) {
-        final BigInteger numerator = coefficient.getNumerator();
-        return String.format(
-            "%s\\frac{%s}{%s}",
-            numerator.compareTo(BigInteger.ZERO) < 0 ? "-" : "",
-            numerator.abs().toString(),
-            coefficient.getDenominator().toString()
-        );
-    }
-
     static int parseOrGenerateDimensionOfMatrices(final Parameters options) {
         if (options.containsKey(Flag.DEGREE)) {
             final int result = Integer.parseInt(options.get(Flag.DEGREE));
@@ -281,6 +285,16 @@ public abstract class AlgebraAlgorithms {
             }
         }
         return Main.RANDOM.nextInt(3) + 2;
+    }
+
+    private static String toFractionString(final BigFraction coefficient) {
+        final BigInteger numerator = coefficient.getNumerator();
+        return String.format(
+            "%s\\frac{%s}{%s}",
+            numerator.compareTo(BigInteger.ZERO) < 0 ? "-" : "",
+            numerator.abs().toString(),
+            coefficient.getDenominator().toString()
+        );
     }
 
 }

@@ -24,8 +24,11 @@ public class HashingDivisionLinear implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
-        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
+        final int numOfValues = Hashing.parseOrGenerateNumberOfValues(input.options);
+        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
+        final int capacity = initialHashTable.length;
+        final List<Integer> values =
+            Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.empty(), Optional.empty(), input.options);
         try {
             final IntegerList[] result =
                 Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.of(Hashing.linearProbing()));
@@ -37,8 +40,8 @@ public class HashingDivisionLinear implements AlgorithmImplementation {
                     Hashing.DIVISION_METHOD
                     .concat(Hashing.LINEAR_PROBING)
                     .concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
-                    .concat(HashingDivisionLinear.toAdditionalHint(initialHashTable.length, initialHashTable.length)),
-                    Hashing.toParameterString(initialHashTable.length),
+                    .concat(HashingDivisionLinear.toAdditionalHint(capacity, capacity)),
+                    Hashing.toParameterString(capacity),
                     true,
                     PreprintMode.parsePreprintMode(input.options)
                 ),

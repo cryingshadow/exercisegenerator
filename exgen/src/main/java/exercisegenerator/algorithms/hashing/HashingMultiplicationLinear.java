@@ -3,8 +3,11 @@ package exercisegenerator.algorithms.hashing;
 import java.io.*;
 import java.util.*;
 
+import org.apache.commons.math3.fraction.*;
+
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
+import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.algorithms.hashing.Hashing.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
@@ -14,13 +17,13 @@ public class HashingMultiplicationLinear implements AlgorithmImplementation {
 
     public static final HashingMultiplicationLinear INSTANCE = new HashingMultiplicationLinear();
 
-    private static String toAdditionalHint(final int length, final double factor, final int length2) {
+    private static String toAdditionalHint(final int length, final BigFraction factor, final int length2) {
         return Main.TEXT_VERSION == TextVersion.ABRAHAM ?
             String.format(
                 Locale.GERMANY,
-                " ($f(n,i) = \\left \\lfloor{%d \\cdot ( n \\cdot %.2f \\mod 1 )}\\right \\rfloor~ + i \\mod %d$), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet",
+                " ($f(n,i) = \\left \\lfloor{%d \\cdot ( n \\cdot %s \\mod 1 )}\\right \\rfloor~ + i \\mod %d$), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet",
                 length,
-                factor,
+                AlgebraAlgorithms.toCoefficient(factor),
                 length2
             ) :
                 "";
@@ -30,9 +33,12 @@ public class HashingMultiplicationLinear implements AlgorithmImplementation {
 
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final List<Integer> values = Hashing.parseOrGenerateValues(input.options);
-        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(values.size(), input.options);
-        final double factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
+        final int numOfValues = Hashing.parseOrGenerateNumberOfValues(input.options);
+        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
+        final int capacity = initialHashTable.length;
+        final BigFraction factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
+        final List<Integer> values =
+            Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.of(factor), Optional.empty(), input.options);
         try {
             final IntegerList[] result = Hashing.hashingWithMultiplicationMethod(
                 values,
@@ -48,8 +54,8 @@ public class HashingMultiplicationLinear implements AlgorithmImplementation {
                     Hashing.toMultiplicationMethodExerciseText(factor)
                     .concat(Hashing.LINEAR_PROBING)
                     .concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
-                    .concat(HashingMultiplicationLinear.toAdditionalHint(initialHashTable.length, factor, initialHashTable.length)),
-                    Hashing.toParameterString(initialHashTable.length, factor),
+                    .concat(HashingMultiplicationLinear.toAdditionalHint(capacity, factor, capacity)),
+                    Hashing.toParameterString(capacity, factor),
                     true,
                     PreprintMode.parsePreprintMode(input.options)
                 ),

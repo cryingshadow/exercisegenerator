@@ -24,7 +24,10 @@ public class ParserAndGenerator<T> {
                 return this.parser.apply(reader, options);
             }
         } else if (options.containsKey(Flag.INPUT)) {
-            try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
+            try (
+                BufferedReader reader =
+                    new BufferedReader(new StringReader(options.get(Flag.INPUT).replace("\\n", "\n")))
+            ) {
                 return this.parser.apply(reader, options);
             }
         }

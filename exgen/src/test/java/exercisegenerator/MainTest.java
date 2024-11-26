@@ -10,7 +10,7 @@ import org.testng.annotations.*;
 
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.graphs.Vertex;
+import exercisegenerator.structures.graphs.*;
 import exercisegenerator.util.*;
 
 //TODO heapsort with trees, additional complete sorting tests
@@ -1913,7 +1913,7 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = 0,70$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\",
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{7}{10}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\",
                 "\\begin{center}",
                 "3, 5, 1, 4, 2, 1.",
                 "\\end{center}",
@@ -1947,14 +1947,14 @@ public class MainTest {
             new String[] {
                 "-a", Algorithm.HASH_MULT_QUAD.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-i", "11,0.7,7,3\n3,5,1,4,2,1",
+                "-i", "11,0.7,7,3\\n3,5,1,4,2,1",
                 "-p", "solutionSpace"
             },
             MainTest.simpleComparison(
                 exText,
                 List.of(
                     "\\begin{center}",
-                    "m = 11, c = 0,70, $c_1$ = 7, $c_2$ = 3:\\\\[2ex]",
+                    "$m = 11$, $c = \\frac{7}{10}$, $c_1 = 7$, $c_2 = 3$:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     Patterns.ARRAY_STYLE,
                     Patterns.singleEmptyNode(nodeNumber, contentLength),

@@ -2,6 +2,7 @@ package exercisegenerator.algorithms.hashing;
 
 import java.util.*;
 
+import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
@@ -98,7 +99,7 @@ public class HashingTest {
                 () -> Hashing.hashingWithDivisionMethod(
                     Arrays.asList(7,4,3,8,1,2),
                     Hashing.createEmptyArray(7),
-                    java.util.Optional.of(Hashing.quadraticProbing(3, 7))
+                    java.util.Optional.of(Hashing.quadraticProbing(new BigFraction(3), new BigFraction(7)))
                 ),
                 new IntegerList[] {
                     new IntegerList(7),
@@ -114,7 +115,7 @@ public class HashingTest {
                 () -> Hashing.hashingWithDivisionMethod(
                     Arrays.asList(7,4,3,8,1,2),
                     Hashing.createEmptyArray(7),
-                    java.util.Optional.of(Hashing.quadraticProbing(5, 2))
+                    java.util.Optional.of(Hashing.quadraticProbing(new BigFraction(5), new BigFraction(2)))
                 ),
                 new IntegerList[] {
                     new IntegerList(7),
@@ -130,7 +131,7 @@ public class HashingTest {
                 () -> Hashing.hashingWithMultiplicationMethod(
                     Arrays.asList(7,4,3,8,1),
                     Hashing.createEmptyArray(7),
-                    0.3,
+                    new BigFraction(3, 10),
                     java.util.Optional.empty()
                 ),
                 new IntegerList[] {
@@ -147,8 +148,8 @@ public class HashingTest {
                 () -> Hashing.hashingWithMultiplicationMethod(
                     Arrays.asList(7,4,3,8,1),
                     Hashing.createEmptyArray(7),
-                    0.5,
-                    java.util.Optional.of(Hashing.quadraticProbing(3, 2))
+                    new BigFraction(1, 2),
+                    java.util.Optional.of(Hashing.quadraticProbing(new BigFraction(3), new BigFraction(2)))
                 ),
                 new IntegerList[] {
                     new IntegerList(4),
