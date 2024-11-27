@@ -28,11 +28,11 @@ public class HashingDivisionOpen implements AlgorithmImplementation {
         final List<Integer> values =
             Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.empty(), Optional.empty(), input.options);
         try {
-            final IntegerList[] result = Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.empty());
+            final HashResult result = Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.empty());
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result,
+                result.result,
                 new PrintOptions(
                     Hashing.DIVISION_METHOD
                     .concat(Hashing.NO_PROBING)

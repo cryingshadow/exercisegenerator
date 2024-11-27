@@ -15,6 +15,27 @@ import exercisegenerator.util.*;
 
 abstract class Hashing {
 
+    static class HashResult {
+        final IntegerList[] result;
+        final HashStatistics statistics;
+        private HashResult(final IntegerList[] result, final HashStatistics statistics) {
+            this.result = result;
+            this.statistics = statistics;
+        }
+    }
+
+    static class HashStatistics {
+        int maxNumberOfProbingsForSameValue;
+        int numberOfCollisions;
+        private HashStatistics(
+            final int numberOfCollisions,
+            final int maxNumberOfProbingsForSameValue
+        ) {
+            this.numberOfCollisions = numberOfCollisions;
+            this.maxNumberOfProbingsForSameValue = maxNumberOfProbingsForSameValue;
+        }
+    }
+
     static class PrintOptions {
         private final String optionsText;
         private final String parameterText;
@@ -57,8 +78,6 @@ abstract class Hashing {
     private static final int[] PRIMES_5_101 =
         new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
 
-    private static final int[] PRIMES_5_19 = new int[]{5, 7, 11, 13, 17, 19};
-
     static IntegerList[] createEmptyArray(final int length) {
         final IntegerList[] result = new IntegerList[length];
         for (int i = 0; i < length; i++) {
@@ -67,7 +86,7 @@ abstract class Hashing {
         return result;
     }
 
-    static IntegerList[] hashingWithDivisionMethod(
+    static HashResult hashingWithDivisionMethod(
         final List<Integer> values,
         final IntegerList[] initialHashTable,
         final Optional<ProbingFunction> optionalProbingFunction
@@ -80,7 +99,7 @@ abstract class Hashing {
         );
     }
 
-    static IntegerList[] hashingWithMultiplicationMethod(
+    static HashResult hashingWithMultiplicationMethod(
         final List<Integer> values,
         final IntegerList[] initialHashTable,
         final BigFraction factor,
@@ -154,7 +173,13 @@ abstract class Hashing {
     ) throws IOException {
         return new ParserAndGenerator<List<Integer>>(
             Hashing::parseValues,
-            Hashing::generateValues
+            flags -> Hashing.generateValues(
+                numOfValues,
+                capacity,
+                optionalMultiplicationFactor,
+                optionalProbingFactors,
+                flags
+            )
         ).getResult(options);
     }
 
@@ -280,12 +305,15 @@ abstract class Hashing {
         );
     }
 
-    private static List<Integer> generateValues(final Parameters options) {
-        final int length =
-            options.containsKey(Flag.LENGTH) ?
-                Integer.parseInt(options.get(Flag.LENGTH)) :
-                    Hashing.PRIMES_5_19[Main.RANDOM.nextInt(Hashing.PRIMES_5_19.length)];
-        return Stream.generate(() -> Main.RANDOM.nextInt(Main.NUMBER_LIMIT)).limit(length).toList();
+    private static List<Integer> generateValues(
+        final int numberOfValues,
+        final int capacity,
+        final Optional<BigFraction> optionalMultiplicationFactor,
+        final Optional<ProbingFactors> optionalProbingFactors,
+        final Parameters options
+    ) {
+
+        return Stream.generate(() -> Main.RANDOM.nextInt(Main.NUMBER_LIMIT)).limit(numberOfValues).toList();
     }
 
     /**
@@ -329,7 +357,7 @@ abstract class Hashing {
         return new BigFraction(Main.RANDOM.nextInt(99) + 1, 100);
     }
 
-    private static IntegerList[] hashing(
+    private static HashResult hashing(
         final List<Integer> values,
         final IntegerList[] initialHashTable,
         final BiFunction<Integer, Integer, Integer> hashFunction,
@@ -338,28 +366,35 @@ abstract class Hashing {
         final int capacity = initialHashTable.length;
         final IntegerList[] hashTable = Hashing.createEmptyArray(capacity);
         Hashing.copyValues(initialHashTable, hashTable);
+        int numberOfCollisions = 0;
+        int maxNumberOfProbingsForSameValue = 0;
         if (optionalProbingFunction.isPresent()) {
             final ProbingFunction probingFunction = optionalProbingFunction.get();
             for (final Integer value : values) {
                 final int initialPos = hashFunction.apply(value, capacity);
                 int pos = initialPos;
-                int numberOfCollisions = 0;
+                int numberOfProbings = 0;
                 while (!hashTable[pos].isEmpty()) {
-                    pos = probingFunction.apply(value, initialPos, ++numberOfCollisions, capacity);
+                    pos = probingFunction.apply(value, initialPos, ++numberOfProbings, capacity);
                 }
+                numberOfCollisions += numberOfProbings;
+                maxNumberOfProbingsForSameValue = Math.max(maxNumberOfProbingsForSameValue, numberOfProbings);
                 hashTable[pos].add(value);
             }
         } else {
             for (final Integer value : values) {
-                hashTable[hashFunction.apply(value, capacity)].add(value);
+                final Integer hashValue = hashFunction.apply(value, capacity);
+                if (!hashTable[hashValue].isEmpty()) {
+                    numberOfCollisions++;
+                }
+                hashTable[hashValue].add(value);
             }
         }
-        return hashTable;
+        return new HashResult(hashTable, new HashStatistics(numberOfCollisions, maxNumberOfProbingsForSameValue));
     }
 
     private static boolean isPowerOf2(final int capacity) {
-        // TODO Auto-generated method stub
-        return false;
+        return Integer.numberOfLeadingZeros(capacity) + Integer.numberOfTrailingZeros(capacity) == 31;
     }
 
     private static boolean isPrime(final int value) {

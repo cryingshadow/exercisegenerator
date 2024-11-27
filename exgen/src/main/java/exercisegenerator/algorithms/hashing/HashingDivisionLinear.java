@@ -30,12 +30,12 @@ public class HashingDivisionLinear implements AlgorithmImplementation {
         final List<Integer> values =
             Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.empty(), Optional.empty(), input.options);
         try {
-            final IntegerList[] result =
+            final HashResult result =
                 Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.of(Hashing.linearProbing()));
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result,
+                result.result,
                 new PrintOptions(
                     Hashing.DIVISION_METHOD
                     .concat(Hashing.LINEAR_PROBING)

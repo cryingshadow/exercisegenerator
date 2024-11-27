@@ -40,7 +40,7 @@ public class HashingMultiplicationLinear implements AlgorithmImplementation {
         final List<Integer> values =
             Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.of(factor), Optional.empty(), input.options);
         try {
-            final IntegerList[] result = Hashing.hashingWithMultiplicationMethod(
+            final HashResult result = Hashing.hashingWithMultiplicationMethod(
                 values,
                 initialHashTable,
                 factor,
@@ -49,7 +49,7 @@ public class HashingMultiplicationLinear implements AlgorithmImplementation {
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result,
+                result.result,
                 new PrintOptions(
                     Hashing.toMultiplicationMethodExerciseText(factor)
                     .concat(Hashing.LINEAR_PROBING)

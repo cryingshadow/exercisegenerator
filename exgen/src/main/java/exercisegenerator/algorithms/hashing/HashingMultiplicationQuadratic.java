@@ -69,9 +69,8 @@ public class HashingMultiplicationQuadratic implements AlgorithmImplementation {
                 Optional.of(probingFactors),
                 input.options
             );
-        IntegerList[] result;
         try {
-            result = Hashing.hashingWithMultiplicationMethod(
+            final HashResult result = Hashing.hashingWithMultiplicationMethod(
                 values,
                 initialHashTable,
                 factor,
@@ -79,42 +78,42 @@ public class HashingMultiplicationQuadratic implements AlgorithmImplementation {
                     Hashing.quadraticProbing(probingFactors.linearProbingFactor, probingFactors.quadraticProbingFactor)
                 )
             );
-        } catch (final HashException e) {
-            throw new IOException(e);
-        }
-        Hashing.printHashingExerciseAndSolution(
-            values,
-            initialHashTable,
-            result,
-            new PrintOptions(
-                Hashing.toMultiplicationMethodExerciseText(factor)
-                .concat(
-                    Hashing.toQuadraticProbingText(
-                        probingFactors.linearProbingFactor,
-                        probingFactors.quadraticProbingFactor
-                    )
-                ).concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
-                .concat(
-                    HashingMultiplicationQuadratic.toAdditionalHint(
+            Hashing.printHashingExerciseAndSolution(
+                values,
+                initialHashTable,
+                result.result,
+                new PrintOptions(
+                    Hashing.toMultiplicationMethodExerciseText(factor)
+                    .concat(
+                        Hashing.toQuadraticProbingText(
+                            probingFactors.linearProbingFactor,
+                            probingFactors.quadraticProbingFactor
+                        )
+                    ).concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
+                    .concat(
+                        HashingMultiplicationQuadratic.toAdditionalHint(
+                            initialHashTable.length,
+                            factor,
+                            probingFactors.linearProbingFactor,
+                            probingFactors.quadraticProbingFactor
+                        )
+                    ),
+                    HashingMultiplicationQuadratic.toParameterString(
                         initialHashTable.length,
                         factor,
                         probingFactors.linearProbingFactor,
                         probingFactors.quadraticProbingFactor
-                    )
+                    ),
+                    true,
+                    PreprintMode.parsePreprintMode(input.options)
                 ),
-                HashingMultiplicationQuadratic.toParameterString(
-                    initialHashTable.length,
-                    factor,
-                    probingFactors.linearProbingFactor,
-                    probingFactors.quadraticProbingFactor
-                ),
-                true,
-                PreprintMode.parsePreprintMode(input.options)
-            ),
-            input.options,
-            input.exerciseWriter,
-            input.solutionWriter
-        );
+                input.options,
+                input.exerciseWriter,
+                input.solutionWriter
+            );
+        } catch (final HashException e) {
+            throw new IOException(e);
+        }
     }
 
     @Override

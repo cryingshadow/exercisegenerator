@@ -6,6 +6,7 @@ import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.algorithms.hashing.Hashing.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.util.*;
 
@@ -13,10 +14,10 @@ public class HashingTest {
 
     private static class HashingTestData {
         private final IntegerList[] expectedResult;
-        private final CheckedSupplier<IntegerList[], HashException> hashingMethod;
+        private final CheckedSupplier<HashResult, HashException> hashingMethod;
 
         private HashingTestData(
-            final CheckedSupplier<IntegerList[], HashException> hashingMethod,
+            final CheckedSupplier<HashResult, HashException> hashingMethod,
             final IntegerList[] expectedResult
         ) {
             this.hashingMethod = hashingMethod;
@@ -188,7 +189,7 @@ public class HashingTest {
 
     @Test(dataProvider = "testData")
     public void hashing(final HashingTestData data) throws HashException {
-        Assert.assertTrue(HashingTest.equalHashResult(data.hashingMethod.get(), data.expectedResult));
+        Assert.assertTrue(HashingTest.equalHashResult(data.hashingMethod.get().result, data.expectedResult));
     }
 
 }

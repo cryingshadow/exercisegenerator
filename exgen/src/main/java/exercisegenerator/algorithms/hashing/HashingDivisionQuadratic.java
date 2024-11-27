@@ -64,50 +64,49 @@ public class HashingDivisionQuadratic implements AlgorithmImplementation {
                 Optional.of(probingFactors),
                 input.options
             );
-        IntegerList[] result;
         try {
-            result = Hashing.hashingWithDivisionMethod(
+            final HashResult result = Hashing.hashingWithDivisionMethod(
                 values,
                 initialHashTable,
                 Optional.of(
                     Hashing.quadraticProbing(probingFactors.linearProbingFactor, probingFactors.quadraticProbingFactor)
                 )
             );
+            Hashing.printHashingExerciseAndSolution(
+                values,
+                initialHashTable,
+                result.result,
+                new PrintOptions(
+                    Hashing.DIVISION_METHOD
+                    .concat(
+                        Hashing.toQuadraticProbingText(
+                            probingFactors.linearProbingFactor,
+                            probingFactors.quadraticProbingFactor
+                        )
+                    ).concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
+                    .concat(
+                        HashingDivisionQuadratic.toAdditionalHint(
+                            initialHashTable.length,
+                            probingFactors.linearProbingFactor,
+                            probingFactors.quadraticProbingFactor,
+                            initialHashTable.length
+                        )
+                    ),
+                    HashingDivisionQuadratic.toParameterString(
+                        initialHashTable.length,
+                        probingFactors.linearProbingFactor,
+                        probingFactors.quadraticProbingFactor
+                    ),
+                    true,
+                    PreprintMode.parsePreprintMode(input.options)
+                ),
+                input.options,
+                input.exerciseWriter,
+                input.solutionWriter
+            );
         } catch (final HashException e) {
             throw new IOException(e);
         }
-        Hashing.printHashingExerciseAndSolution(
-            values,
-            initialHashTable,
-            result,
-            new PrintOptions(
-                Hashing.DIVISION_METHOD
-                .concat(
-                    Hashing.toQuadraticProbingText(
-                        probingFactors.linearProbingFactor,
-                        probingFactors.quadraticProbingFactor
-                    )
-                ).concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
-                .concat(
-                    HashingDivisionQuadratic.toAdditionalHint(
-                        initialHashTable.length,
-                        probingFactors.linearProbingFactor,
-                        probingFactors.quadraticProbingFactor,
-                        initialHashTable.length
-                    )
-                ),
-                HashingDivisionQuadratic.toParameterString(
-                    initialHashTable.length,
-                    probingFactors.linearProbingFactor,
-                    probingFactors.quadraticProbingFactor
-                ),
-                true,
-                PreprintMode.parsePreprintMode(input.options)
-            ),
-            input.options,
-            input.exerciseWriter,
-            input.solutionWriter
-        );
     }
 
     @Override
