@@ -1953,6 +1953,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 exText,
                 List.of(
+                    "% hashing statistics: collisions: 1, max. number of probings for same value: 1",
                     "\\begin{center}",
                     "$m = 11$, $c = \\frac{7}{10}$, $c_1 = 7$, $c_2 = 3$:\\\\[2ex]",
                     "\\begin{tikzpicture}",

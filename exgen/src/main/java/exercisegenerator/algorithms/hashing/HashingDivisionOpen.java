@@ -25,14 +25,15 @@ public class HashingDivisionOpen implements AlgorithmImplementation {
         final int numOfValues = Hashing.parseOrGenerateNumberOfValues(input.options);
         final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
         final int capacity = initialHashTable.length;
+        final HashFunction hashFunction = new DivisionMethod(capacity);
         final List<Integer> values =
-            Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.empty(), Optional.empty(), input.options);
+            Hashing.parseOrGenerateValues(numOfValues, capacity, hashFunction, Optional.empty(), input.options);
         try {
-            final HashResult result = Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.empty());
+            final HashResult result = Hashing.hashing(values, initialHashTable, hashFunction, Optional.empty());
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result.result,
+                result,
                 new PrintOptions(
                     Hashing.DIVISION_METHOD
                     .concat(Hashing.NO_PROBING)

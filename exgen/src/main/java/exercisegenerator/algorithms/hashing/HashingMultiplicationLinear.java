@@ -37,19 +37,23 @@ public class HashingMultiplicationLinear implements AlgorithmImplementation {
         final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
         final int capacity = initialHashTable.length;
         final BigFraction factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
+        final HashFunction hashFunction = new MultiplicationMethod(capacity, factor);
+        final ProbingFunction probingFunction = LinearProbing.INSTANCE;
         final List<Integer> values =
-            Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.of(factor), Optional.empty(), input.options);
-        try {
-            final HashResult result = Hashing.hashingWithMultiplicationMethod(
-                values,
-                initialHashTable,
-                factor,
-                Optional.of(Hashing.linearProbing())
+            Hashing.parseOrGenerateValues(
+                numOfValues,
+                capacity,
+                hashFunction,
+                Optional.of(probingFunction),
+                input.options
             );
+        try {
+            final HashResult result =
+                Hashing.hashing(values, initialHashTable, hashFunction, Optional.of(probingFunction));
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result.result,
+                result,
                 new PrintOptions(
                     Hashing.toMultiplicationMethodExerciseText(factor)
                     .concat(Hashing.LINEAR_PROBING)

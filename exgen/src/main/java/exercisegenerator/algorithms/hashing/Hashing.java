@@ -2,7 +2,6 @@ package exercisegenerator.algorithms.hashing;
 
 import java.io.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import org.apache.commons.math3.fraction.*;
@@ -33,6 +32,14 @@ abstract class Hashing {
         ) {
             this.numberOfCollisions = numberOfCollisions;
             this.maxNumberOfProbingsForSameValue = maxNumberOfProbingsForSameValue;
+        }
+        @Override
+        public String toString() {
+            return String.format(
+                "collisions: %d, max. number of probings for same value: %d",
+                this.numberOfCollisions,
+                this.maxNumberOfProbingsForSameValue
+            );
         }
     }
 
@@ -86,45 +93,49 @@ abstract class Hashing {
         return result;
     }
 
-    static HashResult hashingWithDivisionMethod(
+    static HashResult hashing(
         final List<Integer> values,
         final IntegerList[] initialHashTable,
+        final HashFunction hashFunction,
         final Optional<ProbingFunction> optionalProbingFunction
     ) throws HashException {
-        return Hashing.hashing(
-            values,
-            initialHashTable,
-            (value, capacity) -> value % capacity,
-            optionalProbingFunction
-        );
-    }
-
-    static HashResult hashingWithMultiplicationMethod(
-        final List<Integer> values,
-        final IntegerList[] initialHashTable,
-        final BigFraction factor,
-        final Optional<ProbingFunction> optionalProbingFunction
-    ) throws HashException {
-        return Hashing.hashing(
-            values,
-            initialHashTable,
-            (value, capacity) ->
-                factor
-                .multiply(value)
-                .subtract(factor.multiply(value).intValue())
-                .multiply(capacity)
-                .intValue(),
-            optionalProbingFunction
-        );
-    }
-
-    static ProbingFunction linearProbing() {
-        return (value, initialPosition, numberOfCollisions, capacity) -> {
-            if (numberOfCollisions > capacity) {
-                throw new HashException(String.format("The array is too small: Insertion of %d failed!", value));
+        final int capacity = initialHashTable.length;
+        final IntegerList[] hashTable = Hashing.createEmptyArray(capacity);
+        Hashing.copyValues(initialHashTable, hashTable);
+        int numberOfCollisions = 0;
+        int maxNumberOfProbingsForSameValue = 0;
+        if (optionalProbingFunction.isPresent()) {
+            final ProbingFunction probingFunction = optionalProbingFunction.get();
+            for (final Integer value : values) {
+                final int initialPos = hashFunction.apply(value);
+                int pos = initialPos;
+                int numberOfProbings = 0;
+                while (!hashTable[pos].isEmpty()) {
+                    final int offset = probingFunction.apply(++numberOfProbings);
+                    pos = (initialPos + offset) % capacity;
+                    if (numberOfProbings > capacity) {
+                        throw new HashException(
+                            String.format(
+                                "The array is too small or the probing constants are chosen badly: Insertion of %d failed!",
+                                value
+                            )
+                        );
+                    }
+                }
+                numberOfCollisions += numberOfProbings;
+                maxNumberOfProbingsForSameValue = Math.max(maxNumberOfProbingsForSameValue, numberOfProbings);
+                hashTable[pos].add(value);
             }
-            return (initialPosition + numberOfCollisions) % capacity;
-        };
+        } else {
+            for (final Integer value : values) {
+                final Integer hashValue = hashFunction.apply(value);
+                if (!hashTable[hashValue].isEmpty()) {
+                    numberOfCollisions++;
+                }
+                hashTable[hashValue].add(value);
+            }
+        }
+        return new HashResult(hashTable, new HashStatistics(numberOfCollisions, maxNumberOfProbingsForSameValue));
     }
 
     static IntegerList[] parseOrGenerateInitialArray(final int numberOfValues, final Parameters options)
@@ -167,8 +178,8 @@ abstract class Hashing {
     static List<Integer> parseOrGenerateValues(
         final int numOfValues,
         final int capacity,
-        final Optional<BigFraction> optionalMultiplicationFactor,
-        final Optional<ProbingFactors> optionalProbingFactors,
+        final HashFunction hashFunction,
+        final Optional<ProbingFunction> optionalProbingFunction,
         final Parameters options
     ) throws IOException {
         return new ParserAndGenerator<List<Integer>>(
@@ -176,8 +187,8 @@ abstract class Hashing {
             flags -> Hashing.generateValues(
                 numOfValues,
                 capacity,
-                optionalMultiplicationFactor,
-                optionalProbingFactors,
+                hashFunction,
+                optionalProbingFunction,
                 flags
             )
         ).getResult(options);
@@ -186,35 +197,14 @@ abstract class Hashing {
     static void printHashingExerciseAndSolution(
         final List<Integer> values,
         final IntegerList[] initialArray,
-        final IntegerList[] result,
+        final HashResult result,
         final PrintOptions printOptions,
         final Parameters options,
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
     ) throws IOException {
-        Hashing.printHashingExercise(values, initialArray, result, printOptions, options, exerciseWriter);
+        Hashing.printHashingExercise(values, initialArray, result.result, printOptions, options, exerciseWriter);
         Hashing.printHashingSolution(result, printOptions, solutionWriter);
-    }
-
-    static ProbingFunction quadraticProbing(final BigFraction linearFactor, final BigFraction quadraticFactor) {
-        return (value, initialPosition, numberOfCollisions, capacity) -> {
-            if (numberOfCollisions >= capacity) {
-                throw new HashException(
-                    String.format(
-                        "The array is too small or the probing constants are chosen badly: Insertion of %d failed!",
-                        value
-                    )
-                );
-            }
-            return
-                (
-                    linearFactor
-                    .multiply(numberOfCollisions)
-                    .add(quadraticFactor.multiply(numberOfCollisions * numberOfCollisions))
-                    .add(initialPosition)
-                    .intValue()
-                ) % capacity;
-        };
     }
 
     static String toMultiplicationMethodExerciseText(final BigFraction factor) {
@@ -248,6 +238,44 @@ abstract class Hashing {
             AlgebraAlgorithms.toCoefficient(linearProbingFactor),
             AlgebraAlgorithms.toCoefficient(quadraticProbingFactor)
         );
+    }
+
+    private static void addRandomValuesAndIndicesForMultipleProbingsForSameValue(
+        final int capacity,
+        final HashFunction hashFunction,
+        final ProbingFunction probingFunction,
+        final List<Integer> values,
+        final List<Integer> indices
+    ) {
+        final int firstValue = Hashing.generateRandomValue();
+        values.add(firstValue);
+        final int firstIndex = hashFunction.apply(firstValue);
+        indices.add(firstIndex);
+        final int secondIndex = (firstIndex + probingFunction.apply(1)) % capacity;
+        indices.add(secondIndex);
+        indices.add((firstIndex + probingFunction.apply(2)) % capacity);
+        values.add(Hashing.getRandomValueForIndex(secondIndex, hashFunction));
+        values.add(Hashing.getRandomValueForIndex(firstIndex, hashFunction));
+    }
+
+    private static void addRandomValuesAndIndicesForProbingForProbedValue(
+        final int capacity,
+        final HashFunction hashFunction,
+        final ProbingFunction probingFunction,
+        final List<Integer> values,
+        final List<Integer> indices
+    ) {
+
+    }
+
+    private static void addRandomValuesAndIndicesForProbingOverflow(
+        final int capacity,
+        final HashFunction hashFunction,
+        final ProbingFunction probingFunction,
+        final List<Integer> values,
+        final List<Integer> indices
+    ) {
+
     }
 
     private static int computeContentLength(final IntegerList[] array) {
@@ -305,15 +333,85 @@ abstract class Hashing {
         );
     }
 
+    private static int generateRandomValue() {
+        return Main.RANDOM.nextInt(Main.NUMBER_LIMIT);
+    }
+
+    private static Stream<Integer> generateRandomValues(
+        final int numberOfValues,
+        final HashFunction hashFunction,
+        final Collection<Integer> forbiddenIndices
+    ) {
+        if (forbiddenIndices.isEmpty()) {
+            return Stream.generate(Hashing::generateRandomValue).limit(numberOfValues);
+        }
+        final List<Integer> currentForbiddenIndices = new LinkedList<Integer>(forbiddenIndices);
+        final Stream.Builder<Integer> builder = Stream.builder();
+        for (int i = 0; i < numberOfValues; i++) {
+            final int value = Hashing.generateRandomValue();
+            final int index = hashFunction.apply(value);
+            if (currentForbiddenIndices.contains(index)) {
+                i--;
+            } else {
+                builder.accept(value);
+                currentForbiddenIndices.add(index);
+            }
+        }
+        return builder.build();
+    }
+
     private static List<Integer> generateValues(
         final int numberOfValues,
         final int capacity,
-        final Optional<BigFraction> optionalMultiplicationFactor,
-        final Optional<ProbingFactors> optionalProbingFactors,
+        final HashFunction hashFunction,
+        final Optional<ProbingFunction> optionalProbingFunction,
         final Parameters options
     ) {
-
-        return Stream.generate(() -> Main.RANDOM.nextInt(Main.NUMBER_LIMIT)).limit(numberOfValues).toList();
+        if (numberOfValues < 5 || optionalProbingFunction.isEmpty()) {
+            return Hashing.generateRandomValues(numberOfValues, hashFunction, Collections.emptyList()).toList();
+        }
+        final int choice = Hashing.parseOrGenerateChoice(options);
+        final boolean multipleProbingsForSameValue = (4 & choice) > 0;
+        final boolean probingOverflow = (2 & choice) > 0;
+        final boolean probingForProbedValue = (1 & choice) > 0;
+        final ProbingFunction probingFunction = optionalProbingFunction.get();
+        final List<Integer> values = new LinkedList<Integer>();
+        final List<Integer> indices = new LinkedList<Integer>();
+        if (multipleProbingsForSameValue) {
+            Hashing.addRandomValuesAndIndicesForMultipleProbingsForSameValue(
+                capacity,
+                hashFunction,
+                probingFunction,
+                values,
+                indices
+            );
+        }
+        if (probingOverflow) {
+            Hashing.addRandomValuesAndIndicesForProbingOverflow(
+                capacity,
+                hashFunction,
+                probingFunction,
+                values,
+                indices
+            );
+        }
+        if (probingForProbedValue) {
+            Hashing.addRandomValuesAndIndicesForProbingForProbedValue(
+                capacity,
+                hashFunction,
+                probingFunction,
+                values,
+                indices
+            );
+        }
+        final Stream<Integer> randomValues =
+            Hashing.generateRandomValues(Math.max(numberOfValues - values.size(), 0), hashFunction, indices);
+        final List<Integer> result = new LinkedList<Integer>();
+        final Iterator<Integer> iterator = Hashing.randomFlatteningZip(values.iterator(), randomValues.iterator());
+        while (iterator.hasNext()) {
+            result.add(iterator.next());
+        }
+        return result;
     }
 
     /**
@@ -357,40 +455,12 @@ abstract class Hashing {
         return new BigFraction(Main.RANDOM.nextInt(99) + 1, 100);
     }
 
-    private static HashResult hashing(
-        final List<Integer> values,
-        final IntegerList[] initialHashTable,
-        final BiFunction<Integer, Integer, Integer> hashFunction,
-        final Optional<ProbingFunction> optionalProbingFunction
-    ) throws HashException {
-        final int capacity = initialHashTable.length;
-        final IntegerList[] hashTable = Hashing.createEmptyArray(capacity);
-        Hashing.copyValues(initialHashTable, hashTable);
-        int numberOfCollisions = 0;
-        int maxNumberOfProbingsForSameValue = 0;
-        if (optionalProbingFunction.isPresent()) {
-            final ProbingFunction probingFunction = optionalProbingFunction.get();
-            for (final Integer value : values) {
-                final int initialPos = hashFunction.apply(value, capacity);
-                int pos = initialPos;
-                int numberOfProbings = 0;
-                while (!hashTable[pos].isEmpty()) {
-                    pos = probingFunction.apply(value, initialPos, ++numberOfProbings, capacity);
-                }
-                numberOfCollisions += numberOfProbings;
-                maxNumberOfProbingsForSameValue = Math.max(maxNumberOfProbingsForSameValue, numberOfProbings);
-                hashTable[pos].add(value);
-            }
-        } else {
-            for (final Integer value : values) {
-                final Integer hashValue = hashFunction.apply(value, capacity);
-                if (!hashTable[hashValue].isEmpty()) {
-                    numberOfCollisions++;
-                }
-                hashTable[hashValue].add(value);
-            }
-        }
-        return new HashResult(hashTable, new HashStatistics(numberOfCollisions, maxNumberOfProbingsForSameValue));
+    private static int getRandomValueForIndex(final int index, final HashFunction hashFunction) {
+        return Stream
+            .generate(Hashing::generateRandomValue)
+            .filter(value -> hashFunction.apply(value) == index)
+            .findAny()
+            .get();
     }
 
     private static boolean isPowerOf2(final int capacity) {
@@ -439,6 +509,13 @@ abstract class Hashing {
             Hashing::parseCapacity,
             flags -> Hashing.generateCapacity(numberOfValues, flags)
         ).getResult(options);
+    }
+
+    private static int parseOrGenerateChoice(final Parameters options) {
+        if (options.containsKey(Flag.CAPACITY)) {
+            return Integer.parseInt(options.get(Flag.CAPACITY));
+        }
+        return Main.RANDOM.nextInt(7) + 1;
     }
 
     private static ProbingFactors parseProbingFactors(final BufferedReader reader, final Parameters options)
@@ -526,17 +603,44 @@ abstract class Hashing {
     }
 
     private static void printHashingSolution(
-        final IntegerList[] result,
+        final HashResult result,
         final PrintOptions printOptions,
         final BufferedWriter writer
     ) throws IOException {
-        final int contentLength = Hashing.computeContentLength(result);
+        final int contentLength = Hashing.computeContentLength(result.result);
+        writer.write(String.format("%% hashing statistics: %s", result.statistics.toString()));
+        Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         writer.write(printOptions.parameterText);
         Main.newLine(writer);
-        Hashing.printArray(result, contentLength, printOptions.probing, writer);
+        Hashing.printArray(result.result, contentLength, printOptions.probing, writer);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         Main.newLine(writer);
+    }
+
+    private static Iterator<Integer> randomFlatteningZip(
+        final Iterator<Integer> iterator1,
+        final Iterator<Integer> iterator2
+    ) {
+        return new Iterator<Integer>() {
+
+            @Override
+            public boolean hasNext() {
+                return iterator1.hasNext() || iterator2.hasNext();
+            }
+
+            @Override
+            public Integer next() {
+                if (iterator1.hasNext()) {
+                    if (iterator2.hasNext() && Main.RANDOM.nextBoolean()) {
+                        return iterator2.next();
+                    }
+                    return iterator1.next();
+                }
+                return iterator2.next();
+            }
+
+        };
     }
 
 }

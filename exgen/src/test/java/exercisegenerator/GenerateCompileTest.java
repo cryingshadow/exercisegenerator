@@ -12,6 +12,8 @@ import exercisegenerator.structures.*;
 
 public class GenerateCompileTest {
 
+    private static final int NUMBER_OF_RUNS_FOR_EACH_ALGORITHM = 3;
+
     private static final boolean OFF = false;
 
     private static final Algorithm ONLY = null;
@@ -56,7 +58,6 @@ public class GenerateCompileTest {
         if (GenerateCompileTest.OFF) {
             return;
         }
-        final int numberOfRunsForEachAlgorithm = 3;
         final File locateTmp = File.createTempFile("locate", "tmp");
         final File testDir = new File(locateTmp.getParentFile().getAbsolutePath(), "gencomp");
         testDir.mkdir();
@@ -68,7 +69,7 @@ public class GenerateCompileTest {
                 continue;
             }
             final List<Pair<Process, String>> processes = new LinkedList<Pair<Process, String>>();
-            for (int i = 0; i < numberOfRunsForEachAlgorithm; i++) {
+            for (int i = 0; i < GenerateCompileTest.NUMBER_OF_RUNS_FOR_EACH_ALGORITHM; i++) {
                 final String exFileName = String.join("", exName, alg.name, String.valueOf(i), suffix);
                 final String solFileName = String.join("", solName, alg.name, String.valueOf(i), suffix);
                 final File exFile = new File(testDir, exFileName);

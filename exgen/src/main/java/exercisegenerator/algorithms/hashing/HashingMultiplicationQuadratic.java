@@ -61,27 +61,23 @@ public class HashingMultiplicationQuadratic implements AlgorithmImplementation {
         final int capacity = initialHashTable.length;
         final ProbingFactors probingFactors = Hashing.parseOrGenerateProbingFactors(capacity, input.options);
         final BigFraction factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
+        final HashFunction hashFunction = new MultiplicationMethod(capacity, factor);
+        final ProbingFunction probingFunction = new QuadraticProbing(probingFactors);
         final List<Integer> values =
             Hashing.parseOrGenerateValues(
                 numOfValues,
                 capacity,
-                Optional.of(factor),
-                Optional.of(probingFactors),
+                hashFunction,
+                Optional.of(probingFunction),
                 input.options
             );
         try {
-            final HashResult result = Hashing.hashingWithMultiplicationMethod(
-                values,
-                initialHashTable,
-                factor,
-                Optional.of(
-                    Hashing.quadraticProbing(probingFactors.linearProbingFactor, probingFactors.quadraticProbingFactor)
-                )
-            );
+            final HashResult result =
+                Hashing.hashing(values, initialHashTable, hashFunction, Optional.of(probingFunction));
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result.result,
+                result,
                 new PrintOptions(
                     Hashing.toMultiplicationMethodExerciseText(factor)
                     .concat(

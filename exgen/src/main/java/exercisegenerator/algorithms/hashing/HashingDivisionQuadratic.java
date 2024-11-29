@@ -55,27 +55,24 @@ public class HashingDivisionQuadratic implements AlgorithmImplementation {
         final int numOfValues = Hashing.parseOrGenerateNumberOfValues(input.options);
         final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
         final int capacity = initialHashTable.length;
+        final HashFunction hashFunction = new DivisionMethod(capacity);
         final ProbingFactors probingFactors = Hashing.parseOrGenerateProbingFactors(capacity, input.options);
+        final ProbingFunction probingFunction = new QuadraticProbing(probingFactors);
         final List<Integer> values =
             Hashing.parseOrGenerateValues(
                 numOfValues,
                 capacity,
-                Optional.empty(),
-                Optional.of(probingFactors),
+                hashFunction,
+                Optional.of(probingFunction),
                 input.options
             );
         try {
-            final HashResult result = Hashing.hashingWithDivisionMethod(
-                values,
-                initialHashTable,
-                Optional.of(
-                    Hashing.quadraticProbing(probingFactors.linearProbingFactor, probingFactors.quadraticProbingFactor)
-                )
-            );
+            final HashResult result =
+                Hashing.hashing(values, initialHashTable, hashFunction, Optional.of(probingFunction));
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result.result,
+                result,
                 new PrintOptions(
                     Hashing.DIVISION_METHOD
                     .concat(

@@ -36,15 +36,15 @@ public class HashingMultiplicationOpen implements AlgorithmImplementation {
         final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
         final int capacity = initialHashTable.length;
         final BigFraction factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
+        final HashFunction hashFunction = new MultiplicationMethod(capacity, factor);
         final List<Integer> values =
-            Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.of(factor), Optional.empty(), input.options);
+            Hashing.parseOrGenerateValues(numOfValues, capacity, hashFunction, Optional.empty(), input.options);
         try {
-            final HashResult result =
-                Hashing.hashingWithMultiplicationMethod(values, initialHashTable, factor, Optional.empty());
+            final HashResult result = Hashing.hashing(values, initialHashTable, hashFunction, Optional.empty());
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result.result,
+                result,
                 new PrintOptions(
                     Hashing.toMultiplicationMethodExerciseText(factor)
                     .concat(Hashing.NO_PROBING)

@@ -27,15 +27,23 @@ public class HashingDivisionLinear implements AlgorithmImplementation {
         final int numOfValues = Hashing.parseOrGenerateNumberOfValues(input.options);
         final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
         final int capacity = initialHashTable.length;
+        final HashFunction hashFunction = new DivisionMethod(capacity);
+        final ProbingFunction probingFunction = LinearProbing.INSTANCE;
         final List<Integer> values =
-            Hashing.parseOrGenerateValues(numOfValues, capacity, Optional.empty(), Optional.empty(), input.options);
+            Hashing.parseOrGenerateValues(
+                numOfValues,
+                capacity,
+                hashFunction,
+                Optional.of(probingFunction),
+                input.options
+            );
         try {
             final HashResult result =
-                Hashing.hashingWithDivisionMethod(values, initialHashTable, Optional.of(Hashing.linearProbing()));
+                Hashing.hashing(values, initialHashTable, hashFunction, Optional.of(probingFunction));
             Hashing.printHashingExerciseAndSolution(
                 values,
                 initialHashTable,
-                result.result,
+                result,
                 new PrintOptions(
                     Hashing.DIVISION_METHOD
                     .concat(Hashing.LINEAR_PROBING)
