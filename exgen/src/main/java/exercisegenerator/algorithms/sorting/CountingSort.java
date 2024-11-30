@@ -87,7 +87,7 @@ public class CountingSort implements AlgorithmImplementation {
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor =
-            LaTeXUtils.printListAndReturnLeftmostNodesName(
+            LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
                 result.get(0),
                 Optional.empty(),
                 contentLength,

@@ -690,7 +690,7 @@ public enum Algorithm {
         final BufferedWriter writer
     ) throws IOException {
         Algorithm.assignmentBeginning(task, longestTask, writer);
-        LaTeXUtils.printListAndReturnLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
+        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
         Algorithm.assignmentEnd(writer);
     }
 

@@ -23,6 +23,8 @@ public abstract class LaTeXUtils {
 
     public static final String TWO_COL_WIDTH = "8cm";
 
+    private static final int MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW = 17;
+
     private static int number = 0;
 
     public static void beginMulticols(final int cols, final BufferedWriter writer) throws IOException {
@@ -134,7 +136,7 @@ public abstract class LaTeXUtils {
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        return LaTeXUtils.printListAndReturnLeftmostNodesName(
+        return LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
             Stream.generate(() -> new ItemWithTikZInformation<>()).limit(length).toList(),
             below,
             contentLength,
@@ -225,7 +227,7 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
     }
 
-    public static String printListAndReturnLeftmostNodesName(
+    public static String printListAndReturnLowestLeftmostNodesName(
         final List<? extends ItemWithTikZInformation<?>> list,
         final Optional<String> below,
         final int contentLength,
@@ -245,20 +247,35 @@ public abstract class LaTeXUtils {
                 writer
             );
         String previousName = firstName;
+        String currentLeftMostName = firstName;
         for (int i = 1; i < list.size(); i++) {
             final ItemWithTikZInformation<?> item = list.get(i);
-            previousName =
-                LaTeXUtils.printListItemAndReturnNodeName(
-                    item.optionalContent,
-                    Optional.of(new TikZNodeOrientation(previousName, TikZNodeDirection.RIGHT)),
-                    item.marker,
-                    item.separateBefore,
-                    item.optionalIndex,
-                    contentLength,
-                    writer
-                );
+            if (i % LaTeXUtils.MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW == 0) {
+                previousName =
+                    LaTeXUtils.printListItemAndReturnNodeName(
+                        item.optionalContent,
+                        Optional.of(new TikZNodeOrientation(currentLeftMostName, TikZNodeDirection.BELOW)),
+                        item.marker,
+                        item.separateBefore,
+                        item.optionalIndex,
+                        contentLength,
+                        writer
+                    );
+                currentLeftMostName = previousName;
+            } else {
+                previousName =
+                    LaTeXUtils.printListItemAndReturnNodeName(
+                        item.optionalContent,
+                        Optional.of(new TikZNodeOrientation(previousName, TikZNodeDirection.RIGHT)),
+                        item.marker,
+                        item.separateBefore,
+                        item.optionalIndex,
+                        contentLength,
+                        writer
+                    );
+            }
         }
-        return firstName;
+        return currentLeftMostName;
     }
 
     public static void printMinipageBeginning(final String length, final BufferedWriter writer) throws IOException {

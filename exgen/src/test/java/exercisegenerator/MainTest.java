@@ -1927,7 +1927,7 @@ public class MainTest {
             List.of(
                 "\\begin{center}",
                 "\\begin{tikzpicture}",
-                Patterns.ARRAY_STYLE,
+                Patterns.ARRAY_WITH_INDICES_STYLE,
                 Patterns.singleEmptyNode(nodeNumber, contentLength),
                 Patterns.indexNode(nodeNumber++, 0)
             )
@@ -1957,7 +1957,7 @@ public class MainTest {
                     "\\begin{center}",
                     "$m = 11$, $c = \\frac{7}{10}$, $c_1 = 7$, $c_2 = 3$:\\\\[2ex]",
                     "\\begin{tikzpicture}",
-                    Patterns.ARRAY_STYLE,
+                    Patterns.ARRAY_WITH_INDICES_STYLE,
                     Patterns.singleEmptyNode(nodeNumber, contentLength),
                     Patterns.indexNode(nodeNumber++, 0),
                     Patterns.rightNodeToPredecessor(nodeNumber, "3"),
@@ -1980,6 +1980,137 @@ public class MainTest {
                     Patterns.indexNode(nodeNumber++, 9),
                     Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
                     Patterns.indexNode(nodeNumber++, 10),
+                    "\\end{tikzpicture}",
+                    "\\end{center}"
+                )
+            )
+        );
+    }
+
+    @Test
+    public void hashingLong() throws IOException {
+        final int contentLength = 2;
+        int nodeNumber = 0;
+        final List<String> exText = new LinkedList<String>();
+        exText.addAll(
+            List.of(
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange 32 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{3}{25}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = \\frac{1}{2}$, $c_2 = \\frac{1}{2}$) ein:\\\\",
+                "\\begin{center}",
+                "13, 55, 11, 14, 2, 17.",
+                "\\end{center}",
+                "",
+                "\\vspace*{2ex}",
+                ""
+            )
+        );
+        exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
+        int leftmost = nodeNumber;
+        exText.addAll(
+            List.of(
+                "\\begin{center}",
+                "\\begin{tikzpicture}",
+                Patterns.ARRAY_WITH_INDICES_STYLE,
+                Patterns.singleEmptyNode(nodeNumber, contentLength),
+                Patterns.indexNode(nodeNumber++, 0)
+            )
+        );
+        for (int i = 1; i < 17; i++) {
+            exText.add(Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength));
+            exText.add(Patterns.indexNode(nodeNumber++, i));
+        }
+        exText.add(Patterns.belowEmptyNode(nodeNumber, leftmost, contentLength));
+        exText.add(Patterns.indexNode(nodeNumber++, 17));
+        for (int i = 18; i < 32; i++) {
+            exText.add(Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength));
+            exText.add(Patterns.indexNode(nodeNumber++, i));
+        }
+        exText.addAll(
+            List.of(
+                "\\end{tikzpicture}",
+                "\\end{center}"
+            )
+        );
+        exText.addAll(Patterns.SOLUTION_SPACE_END);
+        leftmost = nodeNumber;
+        this.harness(
+            new String[] {
+                "-a", Algorithm.HASH_MULT_QUAD.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "32,0.12,0.5,0.5\\n13,55,11,14,2,17",
+                "-p", "solutionSpace"
+            },
+            MainTest.simpleComparison(
+                exText,
+                List.of(
+                    "% hashing statistics: collisions: 0, max. number of probings for same value: 0",
+                    "\\begin{center}",
+                    "$m = 32$, $c = \\frac{3}{25}$, $c_1 = \\frac{1}{2}$, $c_2 = \\frac{1}{2}$:\\\\[2ex]",
+                    "\\begin{tikzpicture}",
+                    Patterns.ARRAY_WITH_INDICES_STYLE,
+                    Patterns.singleEmptyNode(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 0),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "17"),
+                    Patterns.indexNode(nodeNumber++, 1),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 2),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 3),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 4),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 5),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 6),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "\\phantom{0}2"),
+                    Patterns.indexNode(nodeNumber++, 7),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 8),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 9),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "11"),
+                    Patterns.indexNode(nodeNumber++, 10),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 11),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 12),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 13),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 14),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 15),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 16),
+                    Patterns.belowNode(nodeNumber, leftmost, "13"),
+                    Patterns.indexNode(nodeNumber++, 17),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 18),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "55"),
+                    Patterns.indexNode(nodeNumber++, 19),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 20),
+                    Patterns.rightNodeToPredecessor(nodeNumber, "14"),
+                    Patterns.indexNode(nodeNumber++, 21),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 22),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 23),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 24),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 25),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 26),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 27),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 28),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 29),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 30),
+                    Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
+                    Patterns.indexNode(nodeNumber++, 31),
                     "\\end{tikzpicture}",
                     "\\end{center}"
                 )

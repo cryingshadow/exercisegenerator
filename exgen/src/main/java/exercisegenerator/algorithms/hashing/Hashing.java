@@ -539,8 +539,8 @@ abstract class Hashing {
         final BufferedWriter writer
     ) throws IOException {
         if (probing) {
-            LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-            LaTeXUtils.printListAndReturnLeftmostNodesName(
+            LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY_WITH_INDICES, writer);
+            LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
                 IntegerList.toTikZList(array),
                 Optional.empty(),
                 contentLength,

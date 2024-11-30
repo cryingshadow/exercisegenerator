@@ -8,6 +8,9 @@ public class Patterns {
     public static final String ARRAY_STYLE =
         "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Large}},node distance=0.25 and 0]";
 
+    public static final String ARRAY_WITH_INDICES_STYLE =
+        "[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Large}},node distance=0.5 and 0]";
+
     public static final String BORDERLESS_STYLE =
         "[node/.style={draw=none,thick,inner sep=5pt, text width = 10cm,font={\\Large}}, node distance=0.25 and 0]";
 

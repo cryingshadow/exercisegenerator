@@ -83,7 +83,7 @@ public class HeapSort implements AlgorithmImplementation {
             HeapSort.printTree(list, solutionData.writer);
             LaTeXUtils.printProtectedNewline(solutionData.writer);
             LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, solutionData.writer);
-            LaTeXUtils.printListAndReturnLeftmostNodesName(
+            LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
                 list,
                 Optional.empty(),
                 solutionData.contentLength,

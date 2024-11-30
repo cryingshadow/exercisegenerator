@@ -4,6 +4,8 @@ public enum TikZStyle {
 
     ARRAY("[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Large}},node distance=0.25 and 0]"),
 
+    ARRAY_WITH_INDICES("[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Large}},node distance=0.5 and 0]"),
+
     BORDERLESS(
         "[node/.style={draw=none,thick,inner sep=5pt, text width = 10cm,font={\\Large}}, node distance=0.25 and 0]"
     ),

@@ -51,7 +51,7 @@ abstract class Sorting {
         String anchor = null;
         for (final List<ItemWithTikZInformation<Integer>> list : solutionData.solution) {
             anchor =
-                LaTeXUtils.printListAndReturnLeftmostNodesName(
+                LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
                     list,
                     Optional.ofNullable(anchor),
                     solutionData.contentLength,
@@ -166,7 +166,7 @@ abstract class Sorting {
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor =
-            LaTeXUtils.printListAndReturnLeftmostNodesName(
+            LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
                 Sorting.toTikZItems(array),
                 Optional.empty(),
                 contentLength,

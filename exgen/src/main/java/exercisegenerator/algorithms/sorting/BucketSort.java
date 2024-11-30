@@ -92,7 +92,7 @@ public class BucketSort implements AlgorithmImplementation {
         Main.newLine(writer);
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        LaTeXUtils.printListAndReturnLeftmostNodesName(
+        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
             Sorting.toTikZItems(array),
             Optional.empty(),
             contentLength,
@@ -110,7 +110,7 @@ public class BucketSort implements AlgorithmImplementation {
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        LaTeXUtils.printListAndReturnLeftmostNodesName(
+        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
             Sorting.toTikZItems(array),
             Optional.empty(),
             contentLength,
@@ -129,7 +129,7 @@ public class BucketSort implements AlgorithmImplementation {
         LaTeXUtils.printTikzEnd(writer);
         Main.newLine(writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        LaTeXUtils.printListAndReturnLeftmostNodesName(
+        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
             solution,
             Optional.empty(),
             contentLength,
