@@ -172,16 +172,16 @@ abstract class PropositionalLogic {
         }
         tableForLaTeX[column][0] = "\\textit{Formel}";
         int row = 1;
-        if (!empty) {
-            for (final Map.Entry<PropositionalInterpretation, Boolean> entry : values.entrySet()) {
-                column = 0;
-                final PropositionalInterpretation interpretation = entry.getKey();
-                for (final String name : table.variables) {
-                    tableForLaTeX[column++][row] = interpretation.get(name) ? "\\code{1}" : "\\code{0}";
-                }
-                tableForLaTeX[column][row] = entry.getValue() ? "\\code{1}" : "\\code{0}";
-                row++;
+        for (final Map.Entry<PropositionalInterpretation, Boolean> entry : values.entrySet()) {
+            column = 0;
+            final PropositionalInterpretation interpretation = entry.getKey();
+            for (final String name : table.variables) {
+                tableForLaTeX[column++][row] = interpretation.get(name) ? "\\code{1}" : "\\code{0}";
             }
+            if (!empty) {
+                tableForLaTeX[column][row] = entry.getValue() ? "\\code{1}" : "\\code{0}";
+            }
+            row++;
         }
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         if (large) {
