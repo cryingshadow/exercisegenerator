@@ -82,8 +82,13 @@ abstract class Hashing {
 
     static final Object PARAMETER_STRING_END = ":\\\\[2ex]";
 
-    private static final int[] PRIMES_5_101 =
-        new int[]{5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
+    private static final int[] CAPACITIES = new int[] {5, 7, 8, 11, 13, 16, 17, 19, 23, 29, 31, 32};
+
+    private static final int[] VALUES;
+
+    static {
+        VALUES = Stream.iterate(1, x -> x + 1).limit(Main.NUMBER_LIMIT).mapToInt(x -> x).toArray();
+    }
 
     static IntegerList[] createEmptyArray(final int length) {
         final IntegerList[] result = new IntegerList[length];
@@ -240,42 +245,103 @@ abstract class Hashing {
         );
     }
 
-    private static void addRandomValuesAndIndicesForMultipleProbingsForSameValue(
+    private static boolean addRandomValueForIndex(
         final int capacity,
+        final int index,
         final HashFunction hashFunction,
         final ProbingFunction probingFunction,
         final List<Integer> values,
         final List<Integer> indices
     ) {
-        final int firstValue = Hashing.generateRandomValue();
-        values.add(firstValue);
-        final int firstIndex = hashFunction.apply(firstValue);
-        indices.add(firstIndex);
-        final int secondIndex = (firstIndex + probingFunction.apply(1)) % capacity;
+        int secondIndex = index;
+        int iteration = 1;
+        while (indices.contains(secondIndex)) {
+            if (iteration > capacity) {
+                return false;
+            }
+            secondIndex = (index + probingFunction.apply(iteration)) % capacity;
+            iteration++;
+        }
+        final Optional<Integer> optionalValue = Hashing.getRandomValueForIndex(index, hashFunction);
+        if (optionalValue.isEmpty()) {
+            return false;
+        }
         indices.add(secondIndex);
-        indices.add((firstIndex + probingFunction.apply(2)) % capacity);
-        values.add(Hashing.getRandomValueForIndex(secondIndex, hashFunction));
-        values.add(Hashing.getRandomValueForIndex(firstIndex, hashFunction));
+        values.add(optionalValue.get());
+        return true;
     }
 
-    private static void addRandomValuesAndIndicesForProbingForProbedValue(
+    private static boolean addRandomValuesAndIndicesForMultipleProbingsForSameValue(
         final int capacity,
         final HashFunction hashFunction,
         final ProbingFunction probingFunction,
         final List<Integer> values,
         final List<Integer> indices
     ) {
-
+        final int firstIndex;
+        if (indices.isEmpty()) {
+            final int firstValue = Hashing.generateRandomValue();
+            values.add(firstValue);
+            firstIndex = hashFunction.apply(firstValue);
+            indices.add(firstIndex);
+        } else {
+            firstIndex = indices.get(Main.RANDOM.nextInt(indices.size()));
+        }
+        final int secondIndex = (firstIndex + probingFunction.apply(1)) % capacity;
+        if (!indices.contains(secondIndex)) {
+            final Optional<Integer> optionalValue = Hashing.getRandomValueForIndex(secondIndex, hashFunction);
+            if (optionalValue.isEmpty()) {
+                return false;
+            }
+            indices.add(secondIndex);
+            values.add(optionalValue.get());
+        }
+        return Hashing.addRandomValueForIndex(capacity, firstIndex, hashFunction, probingFunction, values, indices);
     }
 
-    private static void addRandomValuesAndIndicesForProbingOverflow(
+    private static boolean addRandomValuesAndIndicesForProbingForProbedValue(
         final int capacity,
         final HashFunction hashFunction,
         final ProbingFunction probingFunction,
         final List<Integer> values,
         final List<Integer> indices
     ) {
+        if (indices.isEmpty()) {
+            final int firstValue = Hashing.generateRandomValue();
+            values.add(firstValue);
+            indices.add(hashFunction.apply(firstValue));
+        }
+        final int index = indices.get(Main.RANDOM.nextInt(indices.size()));
+        if (Hashing.addRandomValueForIndex(capacity, index, hashFunction, probingFunction, values, indices)) {
+            return Hashing.addRandomValueForIndex(
+                capacity,
+                indices.get(indices.size() - 1),
+                hashFunction,
+                probingFunction,
+                values,
+                indices
+            );
+        }
+        return false;
+    }
 
+    private static boolean addRandomValuesAndIndicesForProbingOverflow(
+        final int capacity,
+        final HashFunction hashFunction,
+        final ProbingFunction probingFunction,
+        final List<Integer> values,
+        final List<Integer> indices
+    ) {
+        final int lastIndex = capacity - 1;
+        if (!indices.contains(lastIndex)) {
+            final Optional<Integer> optionalValue = Hashing.getRandomValueForIndex(lastIndex, hashFunction);
+            if (optionalValue.isEmpty()) {
+                return false;
+            }
+            indices.add(lastIndex);
+            values.add(optionalValue.get());
+        }
+        return Hashing.addRandomValueForIndex(capacity, lastIndex, hashFunction, probingFunction, values, indices);
     }
 
     private static int computeContentLength(final IntegerList[] array) {
@@ -293,27 +359,12 @@ abstract class Hashing {
 
     private static int generateCapacity(final int numberOfValues, final Parameters options) {
         final int length = (int)(numberOfValues * 1.25);
-        final String alg = options.get(Flag.ALGORITHM);
-        if ("hashDivision".equals(alg) || "hashMultiplication".equals(alg)) {
-            final Integer[] primes = Hashing.getAllUpToNextPrimes(length);
-            final int index = Main.RANDOM.nextInt(primes.length);
-            return primes[index];
-        } else if (
-            ("hashDivisionQuadratic".equals(alg) || "hashMultiplicationQuadratic".equals(alg))
-            && Main.RANDOM.nextBoolean()
-        ) {
-            int result = Hashing.getNextPowerOf2(length);
-            while (Main.RANDOM.nextBoolean()) {
-                result = Hashing.getNextPowerOf2(result + 1);
-            }
-            return result;
-        } else {
-            int result = Hashing.getNextPrime(length);
-            while (Main.RANDOM.nextBoolean()) {
-                result = Hashing.getNextPrime(result + 1);
-            }
-            return result;
+        final List<Integer> candidates =
+            Arrays.stream(Hashing.CAPACITIES).filter(value -> value >= length).boxed().toList();
+        if (candidates.isEmpty()) {
+            return Hashing.CAPACITIES[Hashing.CAPACITIES.length - 1];
         }
+        return candidates.get(Main.RANDOM.nextInt(candidates.size()));
     }
 
     private static Integer generateNumberOfValues(final Parameters options) {
@@ -414,75 +465,21 @@ abstract class Hashing {
         return result;
     }
 
-    /**
-     * @param value Some value.
-     * @return The prime numbers from 5 to the smallest prime number being greater than or equal to the specified value
-     *         (if that value is at most 101). If the specified value is bigger than 101, all prime numbers between 5
-     *         and 101 are returned.
-     */
-    private static Integer[] getAllUpToNextPrimes(final int value) {
-        final List<Integer> result = new ArrayList<Integer>();
-        int current = 0;
-        while (Hashing.PRIMES_5_101[current] < value && current < Hashing.PRIMES_5_101.length - 1) {
-            result.add(Hashing.PRIMES_5_101[current]);
-            current++;
-        }
-        result.add(Hashing.PRIMES_5_101[current]);
-        return result.toArray(new Integer[result.size()]);
-    }
-
-    private static int getNextPowerOf2(final int number) {
-        final int result = 1 << (31 - Integer.numberOfLeadingZeros(number));
-        if (result >= number) {
-            return result;
-        }
-        return result << 1;
-    }
-
-    /**
-     * @param start Value which defines the lower bound for the resulting prime.
-     * @return The next largest prime greater than or equal to the input.
-     */
-    private static int getNextPrime(final int start) {
-        int current = start;
-        while (!Hashing.isPrime(current)) {
-            current++;
-        }
-        return current;
-    }
-
     private static BigFraction getRandomFactorBetweenZeroAndOne() {
         return new BigFraction(Main.RANDOM.nextInt(99) + 1, 100);
     }
 
-    private static int getRandomValueForIndex(final int index, final HashFunction hashFunction) {
-        return Stream
-            .generate(Hashing::generateRandomValue)
-            .filter(value -> hashFunction.apply(value) == index)
-            .findAny()
-            .get();
+    private static Optional<Integer> getRandomValueForIndex(final int index, final HashFunction hashFunction) {
+        final List<Integer> candidates =
+            Arrays.stream(Hashing.VALUES).filter(value -> hashFunction.apply(value) == index).boxed().toList();
+        if (candidates.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(candidates.get(Main.RANDOM.nextInt(candidates.size())));
     }
 
     private static boolean isPowerOf2(final int capacity) {
         return Integer.numberOfLeadingZeros(capacity) + Integer.numberOfTrailingZeros(capacity) == 31;
-    }
-
-    private static boolean isPrime(final int value) {
-        if (value < 2) {
-            return false;
-        }
-        if (value == 2) {
-            return true;
-        }
-        if (value % 2 == 0) {
-            return false;
-        }
-        for (int i = 3; i <= Math.sqrt(value) + 1; i = i + 2) {
-            if (value % i == 0) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static int parseCapacity(final BufferedReader reader, final Parameters options)
