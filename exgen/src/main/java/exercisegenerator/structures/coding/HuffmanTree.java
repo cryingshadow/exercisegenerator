@@ -1,7 +1,9 @@
 package exercisegenerator.structures.coding;
 
+import java.io.*;
 import java.util.*;
 
+import exercisegenerator.*;
 import exercisegenerator.structures.*;
 
 public class HuffmanTree {
@@ -131,6 +133,22 @@ public class HuffmanTree {
 
     public HuffmanEncoder toEncoder() {
         return new HuffmanEncoder(this.toCodeBook());
+    }
+
+    public void toTikZ(final BufferedWriter writer) throws IOException {
+        if (this.root.isEmpty()) {
+            return;
+        }
+        writer.write("\\Tree ");
+        final HuffmanNode node = this.root.get();
+        if (node instanceof HuffmanLeaf) {
+            writer.write("[.");
+            node.toTikZ("", writer);
+            writer.write(" ]");
+        } else {
+            node.toTikZ("      ", writer);
+        }
+        Main.newLine(writer);
     }
 
 }

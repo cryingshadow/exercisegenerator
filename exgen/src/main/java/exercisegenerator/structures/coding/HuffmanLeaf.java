@@ -1,7 +1,10 @@
 package exercisegenerator.structures.coding;
 
+import java.io.*;
 import java.util.*;
 
+import exercisegenerator.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
 public class HuffmanLeaf extends HuffmanNode {
@@ -21,6 +24,12 @@ public class HuffmanLeaf extends HuffmanNode {
     @Override
     public char getLeastSourceSymbol() {
         return this.sourceSymbol;
+    }
+
+    @Override
+    public void toTikZ(final String prefix, final BufferedWriter writer) throws IOException {
+        writer.write(String.format("%d/%s", this.frequency, LaTeXUtils.escapeForLaTeX(this.sourceSymbol)));
+        Main.newLine(writer);
     }
 
     @Override

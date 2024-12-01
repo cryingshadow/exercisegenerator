@@ -1299,6 +1299,36 @@ public class MainTest {
         solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{100} \\code{11} \\code{00} \\code{11} \\code{01} \\code{101} \\code{11} \\code{00} \\code{11} \\code{01}");
+        solText.add("");
+        solText.add("\\vspace*{1ex}");
+        solText.add("");
+        solText.add("\\begin{center}");
+        solText.add("\\begin{tikzpicture}");
+        solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
+        solText.add("\\Tree [.\\phantom{0}");
+        solText.add("        \\edge node[auto=right] {0};");
+        solText.add("        [.\\phantom{0}");
+        solText.add("          \\edge node[auto=right] {0};");
+        solText.add("          2/I");
+        solText.add("          \\edge node[auto=left] {1};");
+        solText.add("          2/R");
+        solText.add("        ]");
+        solText.add("        \\edge node[auto=left] {1};");
+        solText.add("        [.\\phantom{0}");
+        solText.add("          \\edge node[auto=right] {0};");
+        solText.add("          [.\\phantom{0}");
+        solText.add("            \\edge node[auto=right] {0};");
+        solText.add("            1/G");
+        solText.add("            \\edge node[auto=left] {1};");
+        solText.add("            1/M");
+        solText.add("          ]");
+        solText.add("          \\edge node[auto=left] {1};");
+        solText.add("          4/E");
+        solText.add("        ]");
+        solText.add("      ]");
+        solText.add("");
+        solText.add("\\end{tikzpicture}");
+        solText.add("\\end{center}");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
@@ -1386,6 +1416,36 @@ public class MainTest {
         solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{100} \\code{11} \\code{00} \\code{11} \\code{01} \\code{101} \\code{11} \\code{00} \\code{11} \\code{01}");
+        solText.add("");
+        solText.add("\\vspace*{1ex}");
+        solText.add("");
+        solText.add("\\begin{center}");
+        solText.add("\\begin{tikzpicture}");
+        solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
+        solText.add("\\Tree [.\\phantom{0}");
+        solText.add("        \\edge node[auto=right] {0};");
+        solText.add("        [.\\phantom{0}");
+        solText.add("          \\edge node[auto=right] {0};");
+        solText.add("          2/\\%");
+        solText.add("          \\edge node[auto=left] {1};");
+        solText.add("          2/\\textasciicircum{}");
+        solText.add("        ]");
+        solText.add("        \\edge node[auto=left] {1};");
+        solText.add("        [.\\phantom{0}");
+        solText.add("          \\edge node[auto=right] {0};");
+        solText.add("          [.\\phantom{0}");
+        solText.add("            \\edge node[auto=right] {0};");
+        solText.add("            1/\\textbackslash{}");
+        solText.add("            \\edge node[auto=left] {1};");
+        solText.add("            1/\\_");
+        solText.add("          ]");
+        solText.add("          \\edge node[auto=left] {1};");
+        solText.add("          4/\\&");
+        solText.add("        ]");
+        solText.add("      ]");
+        solText.add("");
+        solText.add("\\end{tikzpicture}");
+        solText.add("\\end{center}");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
@@ -1507,6 +1567,51 @@ public class MainTest {
         solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{11} \\code{00100} \\code{01} \\code{10} \\code{01} \\code{11} \\code{10} \\code{000} \\code{11} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{01} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{000} \\code{00110} \\code{10} \\code{01} \\code{11} \\code{00111} \\code{10} \\code{01} \\code{11} \\code{10} \\code{00101} \\code{000} \\code{11}");
+        solText.add("");
+        solText.add("\\vspace*{1ex}");
+        solText.add("");
+        solText.add("\\begin{center}");
+        solText.add("\\begin{tikzpicture}");
+        solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
+        solText.add("\\Tree [.\\phantom{0}");
+        solText.add("        \\edge node[auto=right] {0};");
+        solText.add("        [.\\phantom{0}");
+        solText.add("          \\edge node[auto=right] {0};");
+        solText.add("          [.\\phantom{0}");
+        solText.add("            \\edge node[auto=right] {0};");
+        solText.add("            3/E");
+        solText.add("            \\edge node[auto=left] {1};");
+        solText.add("            [.\\phantom{0}");
+        solText.add("              \\edge node[auto=right] {0};");
+        solText.add("              [.\\phantom{0}");
+        solText.add("                \\edge node[auto=right] {0};");
+        solText.add("                1/H");
+        solText.add("                \\edge node[auto=left] {1};");
+        solText.add("                1/I");
+        solText.add("              ]");
+        solText.add("              \\edge node[auto=left] {1};");
+        solText.add("              [.\\phantom{0}");
+        solText.add("                \\edge node[auto=right] {0};");
+        solText.add("                1/N");
+        solText.add("                \\edge node[auto=left] {1};");
+        solText.add("                1/T");
+        solText.add("              ]");
+        solText.add("            ]");
+        solText.add("          ]");
+        solText.add("          \\edge node[auto=left] {1};");
+        solText.add("          10/A");
+        solText.add("        ]");
+        solText.add("        \\edge node[auto=left] {1};");
+        solText.add("        [.\\phantom{0}");
+        solText.add("          \\edge node[auto=right] {0};");
+        solText.add("          10/B");
+        solText.add("          \\edge node[auto=left] {1};");
+        solText.add("          11/R");
+        solText.add("        ]");
+        solText.add("      ]");
+        solText.add("");
+        solText.add("\\end{tikzpicture}");
+        solText.add("\\end{center}");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,

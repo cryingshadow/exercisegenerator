@@ -1,5 +1,6 @@
 package exercisegenerator.structures.coding;
 
+import java.io.*;
 import java.util.*;
 
 import exercisegenerator.structures.*;
@@ -28,6 +29,8 @@ public abstract class HuffmanNode implements Comparable<HuffmanNode> {
     public abstract int getDepth();
 
     public abstract char getLeastSourceSymbol();
+
+    public abstract void toTikZ(String prefix, final BufferedWriter writer) throws IOException;
 
     abstract Pair<Character, List<Character>> decode(List<Character> targetText);
 
