@@ -51,7 +51,8 @@ public class ConversionToTwosComplement implements AlgorithmImplementation {
             ),
             task -> new SolvedBinaryTask(
                 String.valueOf(task.number),
-                ConversionToTwosComplement.toTwosComplement(task.number, task.bitLength)
+                ConversionToTwosComplement.toTwosComplement(task.number, task.bitLength),
+                "="
             ),
             BinaryNumbers::parseOrGenerateNumberComplementTasks,
             BinaryNumbers::toValueTask,

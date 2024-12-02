@@ -60,7 +60,8 @@ public class ConversionToASCII implements AlgorithmImplementation {
             ConversionToASCII.EXERCISE_TEXT_TO_ASCII_SINGULAR,
             task -> new SolvedBinaryTask(
                 String.valueOf(ConversionToASCII.toASCII(task.bitString)),
-                task.bitString
+                task.bitString,
+                "="
             ),
             ConversionToASCII::parseOrGenerateBitStringASCIITasks,
             BinaryNumbers::toBitStringTask,

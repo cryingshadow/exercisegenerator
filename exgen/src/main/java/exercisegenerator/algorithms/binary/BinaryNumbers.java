@@ -36,11 +36,13 @@ abstract class BinaryNumbers {
 
     static class SolvedBinaryTask {
         private final BitString bitString;
+        private final String relation;
         private final String value;
 
-        SolvedBinaryTask(final String value, final BitString bitString) {
+        SolvedBinaryTask(final String value, final BitString bitString, final String relation) {
             this.value = value;
             this.bitString = bitString;
+            this.relation = relation;
         }
     }
 
@@ -82,6 +84,7 @@ abstract class BinaryNumbers {
                 toTaskText.apply(solvedTask),
                 toSolution.apply(solvedTask),
                 longestTask,
+                solvedTask.relation,
                 contentLength,
                 input.exerciseWriter,
                 input.solutionWriter

@@ -275,7 +275,8 @@ public class ConversionToFloat implements AlgorithmImplementation {
             ),
             task -> new SolvedBinaryTask(
                 task.number,
-                ConversionToFloat.toFloat(task.number, task.exponentLength, task.mantissaLength)
+                ConversionToFloat.toFloat(task.number, task.exponentLength, task.mantissaLength),
+                "\\to"
             ),
             ConversionToFloat::parseOrGenerateNumberFloatTasks,
             BinaryNumbers::toValueTask,

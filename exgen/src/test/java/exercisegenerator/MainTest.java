@@ -98,18 +98,19 @@ public class MainTest {
     private static int checkAssignment(
         int currentNodeNumber,
         final String leftHandSide,
+        final String relation,
         final List<String> rightHandSide,
         final int contentLength,
         final String longestLeftHandSide,
         final List<String> exText,
         final List<String> solText
     ) {
-        exText.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide));
+        exText.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide, relation));
         exText.add("\\begin{flushright}");
-        exText.add(Patterns.forAssignmentLeftHandSide(leftHandSide));
+        exText.add(Patterns.forAssignmentLeftHandSide(leftHandSide, relation));
         exText.add("\\end{flushright}");
         exText.add("\\end{minipage}");
-        exText.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide));
+        exText.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide, relation));
         exText.add("\\begin{tikzpicture}");
         exText.add(Patterns.ARRAY_STYLE);
         exText.add(Patterns.singleEmptyNode(currentNodeNumber++, contentLength));
@@ -119,12 +120,12 @@ public class MainTest {
         exText.add("\\end{tikzpicture}");
         exText.add("\\end{minipage}");
 
-        solText.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide));
+        solText.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide, relation));
         solText.add("\\begin{flushright}");
-        solText.add(Patterns.forAssignmentLeftHandSide(leftHandSide));
+        solText.add(Patterns.forAssignmentLeftHandSide(leftHandSide, relation));
         solText.add("\\end{flushright}");
         solText.add("\\end{minipage}");
-        solText.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide));
+        solText.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide, relation));
         solText.add("\\begin{tikzpicture}");
         solText.add(Patterns.ARRAY_STYLE);
         solText.add(Patterns.singleNode(currentNodeNumber++, rightHandSide.get(0), contentLength));
@@ -329,7 +330,8 @@ public class MainTest {
 
     private static CheckedBiConsumer<BufferedReader, BufferedReader, IOException> fromBinary(
         final BinaryTestCase[] cases,
-        final String taskDescription
+        final String taskDescription,
+        final String relation
     ) throws IOException {
         final List<String> exText = new LinkedList<String>();
         final List<String> solText = new LinkedList<String>();
@@ -345,6 +347,7 @@ public class MainTest {
             input -> MainTest.checkAssignment(
                 input.currentNodeNumber,
                 Patterns.toCode(input.test.bitString),
+                relation,
                 Collections.singletonList(input.test.value),
                 Arrays.stream(cases)
                     .mapToInt(
@@ -386,6 +389,14 @@ public class MainTest {
         final BinaryTestCase[] cases,
         final String taskDescription
     ) throws IOException {
+        return MainTest.toBinary(cases, taskDescription, "=");
+    }
+
+    private static CheckedBiConsumer<BufferedReader, BufferedReader, IOException> toBinary(
+        final BinaryTestCase[] cases,
+        final String taskDescription,
+        final String relation
+    ) throws IOException {
         final List<String> exText = new LinkedList<String>();
         final List<String> solText = new LinkedList<String>();
         exText.add(taskDescription);
@@ -400,6 +411,7 @@ public class MainTest {
             input -> MainTest.checkAssignment(
                 input.currentNodeNumber,
                 input.test.value,
+                relation,
                 Patterns.toRightHandSide(input.test.bitString),
                 1,
                 longestNumber,
@@ -1247,6 +1259,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 0,
                 "\\code{`E'}",
+                "=",
                 Collections.singletonList("\\code{11}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1257,6 +1270,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`G'}",
+                "=",
                 Collections.singletonList("\\code{100}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1267,6 +1281,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`I'}",
+                "=",
                 Collections.singletonList("\\code{00}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1277,6 +1292,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`M'}",
+                "=",
                 Collections.singletonList("\\code{101}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1287,6 +1303,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`R'}",
+                "=",
                 Collections.singletonList("\\code{01}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1364,6 +1381,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 0,
                 "\\code{`\\%'}",
+                "=",
                 Collections.singletonList("\\code{00}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1374,6 +1392,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`\\&'}",
+                "=",
                 Collections.singletonList("\\code{11}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1384,6 +1403,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`\\textbackslash{}'}",
+                "=",
                 Collections.singletonList("\\code{100}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1394,6 +1414,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`\\textasciicircum{}'}",
+                "=",
                 Collections.singletonList("\\code{01}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1404,6 +1425,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`\\_'}",
+                "=",
                 Collections.singletonList("\\code{101}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1483,6 +1505,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 0,
                 "\\code{`A'}",
+                "=",
                 Collections.singletonList("\\code{01}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1493,6 +1516,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`B'}",
+                "=",
                 Collections.singletonList("\\code{10}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1503,6 +1527,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`E'}",
+                "=",
                 Collections.singletonList("\\code{000}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1513,6 +1538,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`H'}",
+                "=",
                 Collections.singletonList("\\code{00100}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1523,6 +1549,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`I'}",
+                "=",
                 Collections.singletonList("\\code{00101}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1533,6 +1560,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`N'}",
+                "=",
                 Collections.singletonList("\\code{00110}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1543,6 +1571,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`R'}",
+                "=",
                 Collections.singletonList("\\code{11}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1553,6 +1582,7 @@ public class MainTest {
             MainTest.checkAssignment(
                 currentNodeNumber,
                 "\\code{`T'}",
+                "=",
                 Collections.singletonList("\\code{00111}"),
                 longestCodeLength,
                 longestLeftHandSide,
@@ -1840,7 +1870,7 @@ public class MainTest {
                 "-d", String.valueOf(exponentLength),
                 "-i", MainTest.toBitStringInput(cases)
             },
-            MainTest.fromBinary(cases, Patterns.fromFloat(exponentLength, mantisseLength))
+            MainTest.fromBinary(cases, Patterns.fromFloat(exponentLength, mantisseLength), "=")
         );
     }
 
@@ -1860,7 +1890,7 @@ public class MainTest {
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toBitStringInput(cases)
             },
-            MainTest.fromBinary(cases, Patterns.fromOnes(bitLength))
+            MainTest.fromBinary(cases, Patterns.fromOnes(bitLength), "=")
         );
     }
 
@@ -2007,7 +2037,7 @@ public class MainTest {
                 "-c", String.valueOf(bitLength),
                 "-i", MainTest.toBitStringInput(cases)
             },
-            MainTest.fromBinary(cases, Patterns.fromTwos(bitLength))
+            MainTest.fromBinary(cases, Patterns.fromTwos(bitLength), "=")
         );
     }
 
@@ -3445,7 +3475,7 @@ public class MainTest {
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", MainTest.toBitStringInput(cases)
             },
-            MainTest.fromBinary(cases, Patterns.TO_ASCII)
+            MainTest.fromBinary(cases, Patterns.TO_ASCII, "=")
         );
     }
 
@@ -3623,7 +3653,7 @@ public class MainTest {
                 "-d", String.valueOf(exponentLength),
                 "-i", MainTest.toValueInput(cases)
             },
-            MainTest.toBinary(cases, Patterns.toFloat(exponentLength, mantisseLength))
+            MainTest.toBinary(cases, Patterns.toFloat(exponentLength, mantisseLength), "\\to")
         );
     }
 

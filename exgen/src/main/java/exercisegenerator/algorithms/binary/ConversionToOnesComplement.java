@@ -46,7 +46,8 @@ public class ConversionToOnesComplement implements AlgorithmImplementation {
             ),
             task -> new SolvedBinaryTask(
                 String.valueOf(task.number),
-                ConversionToOnesComplement.toOnesComplement(task.number, task.bitLength)
+                ConversionToOnesComplement.toOnesComplement(task.number, task.bitLength),
+                "="
             ),
             BinaryNumbers::parseOrGenerateNumberComplementTasks,
             BinaryNumbers::toValueTask,

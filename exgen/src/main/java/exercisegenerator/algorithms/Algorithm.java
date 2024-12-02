@@ -612,6 +612,7 @@ public enum Algorithm {
         final String leftHandSide,
         final List<? extends ItemWithTikZInformation<?>> rightHandSide,
         final String longestLeftHandSide,
+        final String relation,
         final int contentLength,
         final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter
@@ -620,6 +621,7 @@ public enum Algorithm {
             leftHandSide,
             rightHandSide.size(),
             longestLeftHandSide,
+            relation,
             contentLength,
             exerciseWriter
         );
@@ -627,6 +629,7 @@ public enum Algorithm {
             leftHandSide,
             rightHandSide,
             longestLeftHandSide,
+            relation,
             contentLength,
             solutionWriter
         );
@@ -651,10 +654,11 @@ public enum Algorithm {
     private static void assignmentBeginning(
         final String leftHandSide,
         final String longestLeftHandSide,
+        final String relation,
         final BufferedWriter writer
     ) throws IOException {
-        final String leftHandSideText = Algorithm.toLeftHandSideText(leftHandSide);
-        final String longestLeftHandSideText = Algorithm.toLeftHandSideText(longestLeftHandSide);
+        final String leftHandSideText = Algorithm.toLeftHandSideText(leftHandSide, relation);
+        final String longestLeftHandSideText = Algorithm.toLeftHandSideText(longestLeftHandSide, relation);
         LaTeXUtils.printMinipageBeginning(LaTeXUtils.widthOf(longestLeftHandSideText), writer);
         LaTeXUtils.printFlushRightBeginning(writer);
         writer.write(leftHandSideText);
@@ -674,10 +678,11 @@ public enum Algorithm {
         final String task,
         final int solutionLength,
         final String longestTask,
+        final String relation,
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        Algorithm.assignmentBeginning(task, longestTask, writer);
+        Algorithm.assignmentBeginning(task, longestTask, relation, writer);
         LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(solutionLength, Optional.empty(), contentLength, writer);
         Algorithm.assignmentEnd(writer);
     }
@@ -686,16 +691,17 @@ public enum Algorithm {
         final String task,
         final List<? extends ItemWithTikZInformation<?>> solution,
         final String longestTask,
+        final String relation,
         final int contentLength,
         final BufferedWriter writer
     ) throws IOException {
-        Algorithm.assignmentBeginning(task, longestTask, writer);
+        Algorithm.assignmentBeginning(task, longestTask, relation, writer);
         LaTeXUtils.printListAndReturnLowestLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
         Algorithm.assignmentEnd(writer);
     }
 
-    private static String toLeftHandSideText(final String leftHandSide) {
-        return String.format("$%s = {}$", leftHandSide);
+    private static String toLeftHandSideText(final String leftHandSide, final String relation) {
+        return String.format("$%s %s {}$", leftHandSide, relation);
     }
 
     /**

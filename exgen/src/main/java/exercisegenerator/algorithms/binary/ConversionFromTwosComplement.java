@@ -40,7 +40,8 @@ public class ConversionFromTwosComplement implements AlgorithmImplementation {
             ),
             task -> new SolvedBinaryTask(
                 String.valueOf(ConversionFromTwosComplement.fromTwosComplement(task.bitString)),
-                task.bitString
+                task.bitString,
+                "="
             ),
             BinaryNumbers::parseOrGenerateBitStringValueTasks,
             BinaryNumbers::toBitStringTask,

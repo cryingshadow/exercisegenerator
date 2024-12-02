@@ -154,7 +154,8 @@ public class ConversionFromFloat implements AlgorithmImplementation {
             ),
             task -> new SolvedBinaryTask(
                 ConversionFromFloat.fromFloat(task.bitString, task.exponentLength, task.mantissaLength),
-                task.bitString
+                task.bitString,
+                "="
             ),
             ConversionFromFloat::parseOrGenerateBitStringFloatTasks,
             BinaryNumbers::toBitStringTask,

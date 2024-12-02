@@ -73,7 +73,8 @@ public class ConversionFromASCII implements AlgorithmImplementation {
             ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII_SINGULAR,
             task -> new SolvedBinaryTask(
                 task.character,
-                ConversionFromASCII.fromASCII(task.character.charAt(0))
+                ConversionFromASCII.fromASCII(task.character.charAt(0)),
+                "="
             ),
             ConversionFromASCII::parseOrGenerateASCIIBitStringTasks,
             BinaryNumbers::toValueTask,

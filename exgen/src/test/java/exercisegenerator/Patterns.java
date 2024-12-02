@@ -27,17 +27,23 @@ public class Patterns {
     public static final String TO_ASCII =
         "Geben Sie zu den folgenden Bitmustern das jeweilige ASCII Zeichen an:\\\\[2ex]";
 
-    public static String beginMinipageForAssignmentLeftHandSide(final String longestLeftHandSide) {
+    public static String beginMinipageForAssignmentLeftHandSide(
+        final String longestLeftHandSide,
+        final String relation
+    ) {
         return String.format(
             "\\begin{minipage}{\\widthof{%s}}",
-            Patterns.forAssignmentLeftHandSide(longestLeftHandSide)
+            Patterns.forAssignmentLeftHandSide(longestLeftHandSide, relation)
         );
     }
 
-    public static String beginMinipageForAssignmentRightHandSide(final String longestLeftHandSide) {
+    public static String beginMinipageForAssignmentRightHandSide(
+        final String longestLeftHandSide,
+        final String relation
+    ) {
         return String.format(
             "\\begin{minipage}{\\textwidth-\\widthof{%s}}",
-            Patterns.forAssignmentLeftHandSide(longestLeftHandSide)
+            Patterns.forAssignmentLeftHandSide(longestLeftHandSide, relation)
         );
     }
 
@@ -65,8 +71,8 @@ public class Patterns {
         return Arrays.stream(binaryNumber).mapToObj(bit -> String.valueOf(bit)).collect(Collectors.joining());
     }
 
-    public static String forAssignmentLeftHandSide(final String leftHandSide) {
-        return String.format("$%s = {}$", leftHandSide);
+    public static String forAssignmentLeftHandSide(final String leftHandSide, final String relation) {
+        return String.format("$%s %s {}$", leftHandSide, relation);
     }
 
     public static String fromFloat(final int exponentLength, final int mantisseLength) {

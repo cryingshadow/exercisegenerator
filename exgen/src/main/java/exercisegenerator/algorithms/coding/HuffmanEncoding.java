@@ -115,6 +115,7 @@ public class HuffmanEncoding implements AlgorithmImplementation {
                     )
                 ),
                 "\\code{`M'}",
+                "=",
                 contentLength,
                 exerciseWriter,
                 solutionWriter
