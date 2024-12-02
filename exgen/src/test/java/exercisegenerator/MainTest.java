@@ -2058,6 +2058,9 @@ public class MainTest {
             MainTest.simpleComparison(
                 exText,
                 List.of(
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
                     "% hashing statistics: collisions: 1, max. number of probings for same value: 1",
                     "\\begin{center}",
                     "$m = 11$, $c = \\frac{7}{10}$, $c_1 = 7$, $c_2 = 3$:\\\\[2ex]",
@@ -2147,6 +2150,9 @@ public class MainTest {
             MainTest.simpleComparison(
                 exText,
                 List.of(
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
                     "% hashing statistics: collisions: 0, max. number of probings for same value: 0",
                     "\\begin{center}",
                     "$m = 32$, $c = \\frac{3}{25}$, $c_1 = \\frac{1}{2}$, $c_2 = \\frac{1}{2}$:\\\\[2ex]",

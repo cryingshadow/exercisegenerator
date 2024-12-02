@@ -209,7 +209,7 @@ abstract class Hashing {
         final BufferedWriter solutionWriter
     ) throws IOException {
         Hashing.printHashingExercise(values, initialArray, result.result, printOptions, options, exerciseWriter);
-        Hashing.printHashingSolution(result, printOptions, solutionWriter);
+        Hashing.printHashingSolution(result, printOptions, options, solutionWriter);
     }
 
     static String toMultiplicationMethodExerciseText(final BigFraction factor) {
@@ -602,9 +602,13 @@ abstract class Hashing {
     private static void printHashingSolution(
         final HashResult result,
         final PrintOptions printOptions,
+        final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
         final int contentLength = Hashing.computeContentLength(result.result);
+        if (Main.EMBEDDED_EXAM.equals(options.get(Flag.EXECUTION_MODE))) {
+            LaTeXUtils.printVerticalProtectedSpace("-3ex", writer);
+        }
         writer.write(String.format("%% hashing statistics: %s", result.statistics.toString()));
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
