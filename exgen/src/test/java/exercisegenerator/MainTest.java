@@ -1319,7 +1319,7 @@ public class MainTest {
         solText.add("");
         solText.add("\\vspace*{1ex}");
         solText.add("");
-        solText.add("\\begin{center}");
+        solText.add("\\resizebox{\\textwidth}{!}{");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1345,7 +1345,7 @@ public class MainTest {
         solText.add("      ]");
         solText.add("");
         solText.add("\\end{tikzpicture}");
-        solText.add("\\end{center}");
+        solText.add("}");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
@@ -1441,7 +1441,7 @@ public class MainTest {
         solText.add("");
         solText.add("\\vspace*{1ex}");
         solText.add("");
-        solText.add("\\begin{center}");
+        solText.add("\\resizebox{\\textwidth}{!}{");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1467,7 +1467,7 @@ public class MainTest {
         solText.add("      ]");
         solText.add("");
         solText.add("\\end{tikzpicture}");
-        solText.add("\\end{center}");
+        solText.add("}");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
@@ -1600,7 +1600,7 @@ public class MainTest {
         solText.add("");
         solText.add("\\vspace*{1ex}");
         solText.add("");
-        solText.add("\\begin{center}");
+        solText.add("\\resizebox{\\textwidth}{!}{");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1641,7 +1641,7 @@ public class MainTest {
         solText.add("      ]");
         solText.add("");
         solText.add("\\end{tikzpicture}");
-        solText.add("\\end{center}");
+        solText.add("}");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,

@@ -155,11 +155,13 @@ public class HuffmanEncoding implements AlgorithmImplementation {
         HuffmanEncoding.printCode(result.y, exerciseWriter, solutionWriter);
         LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exerciseWriter);
         LaTeXUtils.printVerticalProtectedSpace(solutionWriter);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, solutionWriter);
+        solutionWriter.write("\\resizebox{\\textwidth}{!}{");
+        Main.newLine(solutionWriter);
         LaTeXUtils.printTikzBeginning(TikZStyle.TREE, solutionWriter);
         result.x.toTikZ(solutionWriter);
         LaTeXUtils.printTikzEnd(solutionWriter);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, solutionWriter);
+        solutionWriter.write("}");
+        Main.newLine(solutionWriter);
         Main.newLine(solutionWriter);
     }
 
