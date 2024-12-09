@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.apache.commons.math3.fraction.*;
+
 import exercisegenerator.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
@@ -22,6 +24,8 @@ public abstract class LaTeXUtils {
     public static final String ITEM = "\\item";
 
     public static final String TWO_COL_WIDTH = "8cm";
+
+    public static final String MATH_VARIABLE_NAME = "x";
 
     private static final int MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW = 17;
 
@@ -668,6 +672,148 @@ public abstract class LaTeXUtils {
     public static void resizeboxEnd(final BufferedWriter writer) throws IOException {
         writer.write("}");
         Main.newLine(writer);
+    }
+
+    public static String toCoefficient(final BigFraction coefficient) {
+        if (coefficient.getDenominator().compareTo(BigInteger.ONE) == 0) {
+            return String.valueOf(coefficient.intValue());
+        }
+        return LaTeXUtils.toFractionString(coefficient);
+    }
+
+    public static String toCoefficientWithVariable(
+        final boolean first,
+        final boolean matrix,
+        final boolean firstNonZero,
+        final int variableIndex,
+        final BigFraction coefficient
+    ) {
+        if (coefficient.getDenominator().compareTo(BigInteger.ONE) == 0) {
+            final int value = coefficient.intValue();
+            if (value == 0) {
+                if (matrix && !first) {
+                    return " &  & ";
+                }
+                return "";
+            }
+            if (value == 1) {
+                if (first) {
+                    return String.format("%s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+                }
+                if (matrix) {
+                    if (firstNonZero) {
+                        return String.format(" &  & %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+                    }
+                    return String.format(" & + & %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+                }
+                return String.format(" + %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+            }
+            if (value == -1) {
+                if (first) {
+                    return String.format("-%s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+                }
+                if (matrix) {
+                    if (firstNonZero) {
+                        return String.format(" &  & -%s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+                    }
+                    return String.format(" & - & %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+                }
+                return String.format(" - %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+            }
+            if (first) {
+                return String.format("%d%s_{%d}", value, LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+            }
+            if (value < 0) {
+                if (matrix) {
+                    if (firstNonZero) {
+                        return String.format(
+                            " &  & %d%s_{%d}",
+                            value,
+                            LaTeXUtils.MATH_VARIABLE_NAME,
+                            variableIndex
+                        );
+                    }
+                    return String.format(
+                        " & - & %d%s_{%d}",
+                        -value,
+                        LaTeXUtils.MATH_VARIABLE_NAME,
+                        variableIndex
+                    );
+                }
+                return String.format(" - %d%s_{%d}", -value, LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+            }
+            if (matrix) {
+                if (firstNonZero) {
+                    return String.format(" &  & %d%s_{%d}", value, LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+                }
+                return String.format(" & + & %d%s_{%d}", value, LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+            }
+            return String.format(" + %d%s_{%d}", value, LaTeXUtils.MATH_VARIABLE_NAME, variableIndex);
+        }
+        if (first) {
+            return String.format(
+                "%s%s_{%d}",
+                LaTeXUtils.toFractionString(coefficient),
+                LaTeXUtils.MATH_VARIABLE_NAME,
+                variableIndex
+            );
+        }
+        if (coefficient.compareTo(BigFraction.ZERO) < 0) {
+            if (matrix) {
+                if (firstNonZero) {
+                    return String.format(
+                        " &  & %s%s_{%d}",
+                        LaTeXUtils.toFractionString(coefficient),
+                        LaTeXUtils.MATH_VARIABLE_NAME,
+                        variableIndex
+                    );
+                }
+                return String.format(
+                    " & - & %s%s_{%d}",
+                    LaTeXUtils.toFractionString(coefficient.negate()),
+                    LaTeXUtils.MATH_VARIABLE_NAME,
+                    variableIndex
+                );
+            }
+            return String.format(
+                " - %s%s_{%d}",
+                LaTeXUtils.toFractionString(coefficient.negate()),
+                LaTeXUtils.MATH_VARIABLE_NAME,
+                variableIndex
+            );
+        }
+        if (matrix) {
+            if (firstNonZero) {
+                return String.format(
+                    " &  & %s%s_{%d}",
+                    LaTeXUtils.toFractionString(coefficient),
+                    LaTeXUtils.MATH_VARIABLE_NAME,
+                    variableIndex
+                );
+            }
+            return String.format(
+                " & + & %s%s_{%d}",
+                LaTeXUtils.toFractionString(coefficient),
+                LaTeXUtils.MATH_VARIABLE_NAME,
+                variableIndex
+            );
+        }
+        return String.format(
+            " + %s%s_{%d}",
+            LaTeXUtils.toFractionString(coefficient),
+            LaTeXUtils.MATH_VARIABLE_NAME,
+            variableIndex
+        );
+    }
+
+    public static String toFractionString(final BigFraction coefficient) {
+        final BigInteger numerator = coefficient.getNumerator();
+        return String.format(
+            "%s\\frac{%s}{%s}",
+            numerator.compareTo(BigInteger.ZERO) < 0 ? "-" : "",
+            numerator.abs().toString(),
+            coefficient.getDenominator().toString()
+        );
     }
 
     public static String widthOf(final String text) {

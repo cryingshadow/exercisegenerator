@@ -178,7 +178,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         return String.format(
             Locale.GERMANY,
             "\\emphasize{Multiplikationsmethode} ($c = %s$)",
-            AlgebraAlgorithms.toCoefficient(factor)
+            LaTeXUtils.toCoefficient(factor)
         );
     }
 
@@ -188,8 +188,8 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     ) {
         return String.format(
             " mit \\emphasize{quadratischer Sondierung} ($c_1 = %s$, $c_2 = %s$)",
-            AlgebraAlgorithms.toCoefficient(linearProbingFactor),
-            AlgebraAlgorithms.toCoefficient(quadraticProbingFactor)
+            LaTeXUtils.toCoefficient(linearProbingFactor),
+            LaTeXUtils.toCoefficient(quadraticProbingFactor)
         );
     }
 
@@ -570,7 +570,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         return parameters
             .entrySet()
             .stream()
-            .map(entry -> String.format("$%s = %s$", entry.getKey(), AlgebraAlgorithms.toCoefficient(entry.getValue())))
+            .map(entry -> String.format("$%s = %s$", entry.getKey(), LaTeXUtils.toCoefficient(entry.getValue())))
             .collect(Collectors.joining(", "));
     }
 

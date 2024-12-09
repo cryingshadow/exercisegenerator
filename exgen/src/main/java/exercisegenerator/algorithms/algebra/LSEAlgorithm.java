@@ -103,7 +103,7 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
         }
         final StringBuilder result = new StringBuilder();
         result.append(String.format("x_{%d} = ", solvedSystem.columnPositions[variable] + 1));
-        result.append(AlgebraAlgorithms.toCoefficient(solvedSystem.getLastCoefficientOfRow(variable)));
+        result.append(LaTeXUtils.toCoefficient(solvedSystem.getLastCoefficientOfRow(variable)));
         for (int column = variable + 1; column < solvedSystem.getIndexOfLastColumn(); column++) {
             if (!solvedSystem.isZero(column, variable)) {
                 if (solvedSystem.isNegative(column, variable)) {
@@ -111,7 +111,7 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
                 } else {
                     result.append(" - ");
                 }
-                result.append(AlgebraAlgorithms.toCoefficient(solvedSystem.getCoefficient(column, variable).abs()));
+                result.append(LaTeXUtils.toCoefficient(solvedSystem.getCoefficient(column, variable).abs()));
                 result.append(String.format("x_{%d}", solvedSystem.columnPositions[column] + 1));
             }
         }
@@ -177,10 +177,10 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
             writer.write(String.format("\\item $\\left(\\begin{array}{*{%d}c|c}", matrix.getIndexOfLastColumn()));
             Main.newLine(writer);
             for (int row = 0; row < matrix.getNumberOfRows(); row++) {
-                writer.write(AlgebraAlgorithms.toCoefficient(matrix.getCoefficient(0, row)));
+                writer.write(LaTeXUtils.toCoefficient(matrix.getCoefficient(0, row)));
                 for (int column = 1; column < matrix.getNumberOfColumns(); column++) {
                     writer.write(" & ");
-                    writer.write(AlgebraAlgorithms.toCoefficient(matrix.getCoefficient(column, row)));
+                    writer.write(LaTeXUtils.toCoefficient(matrix.getCoefficient(column, row)));
                 }
                 writer.write("\\\\");
                 Main.newLine(writer);

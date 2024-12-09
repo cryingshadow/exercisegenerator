@@ -1275,7 +1275,6 @@ public class MainTest {
                 List.of("\\codeseq{0100101}")
             )
         );
-
     }
 
     @Test
@@ -1926,6 +1925,46 @@ public class MainTest {
                 "-i", MainTest.toBitStringInput(cases)
             },
             MainTest.fromBinary(cases, Patterns.fromTwos(bitLength), "=")
+        );
+    }
+
+    @Test
+    public void geometricSeriesConverge() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.GEOMETRIC_SERIES.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "1000;24/25",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Berechnen Sie den Wert der Reihe oder begründen Sie, warum sie nicht konvergiert:",
+                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(1000 \\cdot (\\frac{24}{25})^{i - 1}\\right)\\]"
+                ),
+                List.of(
+                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(1000 \\cdot (\\frac{24}{25})^{i - 1}\\right) = \\frac{1000}{1 - \\frac{24}{25}} = 25000\\]"
+                )
+            )
+        );
+    }
+
+    @Test
+    public void geometricSeriesDiverge() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.GEOMETRIC_SERIES.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "-20;13/5",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Berechnen Sie den Wert der Reihe oder begründen Sie, warum sie nicht konvergiert:",
+                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(-20 \\cdot (\\frac{13}{5})^{i - 1}\\right)\\]"
+                ),
+                List.of(
+                    "Die Reihe divergiert bestimmt gegen $-\\infty$, da $\\lim\\limits_{i \\to \\infty} \\left(-20 \\cdot (\\frac{13}{5})^{i - 1}\\right) \\neq 0$."
+                )
+            )
         );
     }
 

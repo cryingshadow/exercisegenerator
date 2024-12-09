@@ -232,8 +232,7 @@ public enum Algorithm {
         new String[] {
             "Calculation of a geometric series."
         },
-        GeometricSeriesAlgorithm.INSTANCE,
-        false
+        GeometricSeriesAlgorithm.INSTANCE
     ),
 
     GRAHAMS_SCAN(

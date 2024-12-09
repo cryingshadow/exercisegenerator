@@ -1,7 +1,6 @@
 package exercisegenerator.algorithms.algebra;
 
 import java.io.*;
-import java.math.*;
 import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
@@ -11,8 +10,6 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.algebra.*;
 
 public abstract class AlgebraAlgorithms {
-
-    public static final Object VARIABLE_NAME = "x";
 
     private static final int DEFAULT_BOUND = 11;
 
@@ -87,12 +84,12 @@ public abstract class AlgebraAlgorithms {
                 final BigFraction coefficient = matrix.getCoefficient(column, row);
                 if (firstNonZero && coefficient.compareTo(BigFraction.ZERO) != 0) {
                     writer.write(
-                        AlgebraAlgorithms.toCoefficientWithVariable(column == 0, true, true, column + 1, coefficient)
+                        LaTeXUtils.toCoefficientWithVariable(column == 0, true, true, column + 1, coefficient)
                     );
                     firstNonZero = false;
                 } else {
                     writer.write(
-                        AlgebraAlgorithms.toCoefficientWithVariable(
+                        LaTeXUtils.toCoefficientWithVariable(
                             column == 0,
                             true,
                             firstNonZero,
@@ -105,144 +102,12 @@ public abstract class AlgebraAlgorithms {
             writer.write(" & ");
             writer.write(inequalityOrEquationSymbol);
             writer.write(" & ");
-            writer.write(AlgebraAlgorithms.toCoefficient(matrix.getLastCoefficientOfRow(row)));
+            writer.write(LaTeXUtils.toCoefficient(matrix.getLastCoefficientOfRow(row)));
             writer.write("\\\\");
             Main.newLine(writer);
         }
         writer.write("\\end{array}$\\\\");
         Main.newLine(writer);
-    }
-
-    public static String toCoefficient(final BigFraction coefficient) {
-        if (coefficient.getDenominator().compareTo(BigInteger.ONE) == 0) {
-            return String.valueOf(coefficient.intValue());
-        }
-        return AlgebraAlgorithms.toFractionString(coefficient);
-    }
-
-    public static String toCoefficientWithVariable(
-        final boolean first,
-        final boolean matrix,
-        final boolean firstNonZero,
-        final int variableIndex,
-        final BigFraction coefficient
-    ) {
-        if (coefficient.getDenominator().compareTo(BigInteger.ONE) == 0) {
-            final int value = coefficient.intValue();
-            if (value == 0) {
-                if (matrix && !first) {
-                    return " &  & ";
-                }
-                return "";
-            }
-            if (value == 1) {
-                if (first) {
-                    return String.format("%s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-                }
-                if (matrix) {
-                    if (firstNonZero) {
-                        return String.format(" &  & %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-                    }
-                    return String.format(" & + & %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-                }
-                return String.format(" + %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-            }
-            if (value == -1) {
-                if (first) {
-                    return String.format("-%s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-                }
-                if (matrix) {
-                    if (firstNonZero) {
-                        return String.format(" &  & -%s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-                    }
-                    return String.format(" & - & %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-                }
-                return String.format(" - %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-            }
-            if (first) {
-                return String.format("%d%s_{%d}", value, AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-            }
-            if (value < 0) {
-                if (matrix) {
-                    if (firstNonZero) {
-                        return String.format(
-                            " &  & %d%s_{%d}",
-                            value,
-                            AlgebraAlgorithms.VARIABLE_NAME,
-                            variableIndex
-                        );
-                    }
-                    return String.format(
-                        " & - & %d%s_{%d}",
-                        -value,
-                        AlgebraAlgorithms.VARIABLE_NAME,
-                        variableIndex
-                    );
-                }
-                return String.format(" - %d%s_{%d}", -value, AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-            }
-            if (matrix) {
-                if (firstNonZero) {
-                    return String.format(" &  & %d%s_{%d}", value, AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-                }
-                return String.format(" & + & %d%s_{%d}", value, AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-            }
-            return String.format(" + %d%s_{%d}", value, AlgebraAlgorithms.VARIABLE_NAME, variableIndex);
-        }
-        if (first) {
-            return String.format(
-                "%s%s_{%d}",
-                AlgebraAlgorithms.toFractionString(coefficient),
-                AlgebraAlgorithms.VARIABLE_NAME,
-                variableIndex
-            );
-        }
-        if (coefficient.compareTo(BigFraction.ZERO) < 0) {
-            if (matrix) {
-                if (firstNonZero) {
-                    return String.format(
-                        " &  & %s%s_{%d}",
-                        AlgebraAlgorithms.toFractionString(coefficient),
-                        AlgebraAlgorithms.VARIABLE_NAME,
-                        variableIndex
-                    );
-                }
-                return String.format(
-                    " & - & %s%s_{%d}",
-                    AlgebraAlgorithms.toFractionString(coefficient.negate()),
-                    AlgebraAlgorithms.VARIABLE_NAME,
-                    variableIndex
-                );
-            }
-            return String.format(
-                " - %s%s_{%d}",
-                AlgebraAlgorithms.toFractionString(coefficient.negate()),
-                AlgebraAlgorithms.VARIABLE_NAME,
-                variableIndex
-            );
-        }
-        if (matrix) {
-            if (firstNonZero) {
-                return String.format(
-                    " &  & %s%s_{%d}",
-                    AlgebraAlgorithms.toFractionString(coefficient),
-                    AlgebraAlgorithms.VARIABLE_NAME,
-                    variableIndex
-                );
-            }
-            return String.format(
-                " & + & %s%s_{%d}",
-                AlgebraAlgorithms.toFractionString(coefficient),
-                AlgebraAlgorithms.VARIABLE_NAME,
-                variableIndex
-            );
-        }
-        return String.format(
-            " + %s%s_{%d}",
-            AlgebraAlgorithms.toFractionString(coefficient),
-            AlgebraAlgorithms.VARIABLE_NAME,
-            variableIndex
-        );
     }
 
     static BigFraction generateCoefficient(final int absoluteBound, final int oneToChanceForNegative) {
@@ -285,16 +150,6 @@ public abstract class AlgebraAlgorithms {
             }
         }
         return Main.RANDOM.nextInt(3) + 2;
-    }
-
-    private static String toFractionString(final BigFraction coefficient) {
-        final BigInteger numerator = coefficient.getNumerator();
-        return String.format(
-            "%s\\frac{%s}{%s}",
-            numerator.compareTo(BigInteger.ZERO) < 0 ? "-" : "",
-            numerator.abs().toString(),
-            coefficient.getDenominator().toString()
-        );
     }
 
 }

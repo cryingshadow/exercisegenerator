@@ -2,10 +2,11 @@ package exercisegenerator.structures.algebra;
 
 import java.util.*;
 import java.util.stream.*;
+
 import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.algebra.*;
+import exercisegenerator.io.*;
 import exercisegenerator.util.*;
 
 public class Matrix implements MatrixTerm {
@@ -240,7 +241,7 @@ public class Matrix implements MatrixTerm {
                 } else {
                     result.append(" & ");
                 }
-                result.append(AlgebraAlgorithms.toCoefficient(this.getCoefficient(column, row)));
+                result.append(LaTeXUtils.toCoefficient(this.getCoefficient(column, row)));
             }
             result.append("\\\\");
             result.append(Main.lineSeparator);

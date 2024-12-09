@@ -6,7 +6,6 @@ import java.util.*;
 import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.hashing.*;
 
@@ -38,7 +37,7 @@ public class HashingMultiplicationLinear implements Hashing {
                 String.format(
                     " ($f(n,i) = \\left \\lfloor{%d \\cdot ( n \\cdot %s \\mod 1 )}\\right \\rfloor~ + i \\mod %d$), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet",
                     capacity,
-                    AlgebraAlgorithms.toCoefficient(factor),
+                    LaTeXUtils.toCoefficient(factor),
                     capacity
                 ) :
                     ""

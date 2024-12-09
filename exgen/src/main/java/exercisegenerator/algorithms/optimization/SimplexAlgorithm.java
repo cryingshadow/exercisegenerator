@@ -105,7 +105,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             writer.write("0");
         } else {
             writer.write(
-                AlgebraAlgorithms.toCoefficientWithVariable(
+                LaTeXUtils.toCoefficientWithVariable(
                     true,
                     false,
                     true,
@@ -115,7 +115,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             );
             for (int index = firstNonZeroIndex + 1; index < problem.target.length; index++) {
                 writer.write(
-                    AlgebraAlgorithms.toCoefficientWithVariable(
+                    LaTeXUtils.toCoefficientWithVariable(
                         false,
                         false,
                         false,
@@ -130,9 +130,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         writer.write("unter den folgenden Nebenbedingungen:\\\\");
         Main.newLine(writer);
         AlgebraAlgorithms.printMatrixAsInequalitiesOrEquations(problem.conditions, "\\leq", writer);
-        writer.write(String.format("$%s_{1}", AlgebraAlgorithms.VARIABLE_NAME));
+        writer.write(String.format("$%s_{1}", LaTeXUtils.MATH_VARIABLE_NAME));
         for (int index = 1; index < problem.target.length; index++) {
-            writer.write(String.format(", %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, index + 1));
+            writer.write(String.format(", %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1));
         }
         writer.write(" \\geq 0$\\\\[2ex]");
         Main.newLine(writer);
@@ -424,11 +424,11 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         result[result.length - 2][result[0].length - 1] = "";
         result[result.length - 1][result[0].length - 1] = "";
         for (int index = 1; index < result[0].length - 3; index++) {
-            result[1][index + 1] = String.format("$%s_{%d}$", AlgebraAlgorithms.VARIABLE_NAME, index);
+            result[1][index + 1] = String.format("$%s_{%d}$", LaTeXUtils.MATH_VARIABLE_NAME, index);
         }
         for (int col = 0; col < tableau.problem.target.length; col++) {
             result[0][col + 2] =
-                fill ? String.format("$%s$", AlgebraAlgorithms.toCoefficient(tableau.problem.target[col])) : "";
+                fill ? String.format("$%s$", LaTeXUtils.toCoefficient(tableau.problem.target[col])) : "";
         }
         for (int col = tableau.problem.target.length + 2; col < result[0].length - 2; col++) {
             result[0][col] = fill ? "$0$" : "";
@@ -439,7 +439,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                     fill ?
                         String.format(
                             "$%s$",
-                            AlgebraAlgorithms.toCoefficient(tableau.problem.conditions.getCoefficient(column, row))
+                            LaTeXUtils.toCoefficient(tableau.problem.conditions.getCoefficient(column, row))
                         ) :
                             "";
             }
@@ -451,10 +451,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                     variableIndex < tableau.problem.target.length ?
                         String.format(
                             "$%s$",
-                            AlgebraAlgorithms.toCoefficient(tableau.problem.target[variableIndex])
+                            LaTeXUtils.toCoefficient(tableau.problem.target[variableIndex])
                         ) :
                             "$0$";
-                result[i + 2][1] = String.format("$%s_{%d}$", AlgebraAlgorithms.VARIABLE_NAME, variableIndex + 1);
+                result[i + 2][1] = String.format("$%s_{%d}$", LaTeXUtils.MATH_VARIABLE_NAME, variableIndex + 1);
             } else {
                 result[i + 2][0] = "";
                 result[i + 2][1] = "";
@@ -463,7 +463,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 result[i + 2][result[i + 2].length - 1] = "";
             } else {
                 result[i + 2][result[i + 2].length - 1] =
-                    fill ? String.format("$%s$", AlgebraAlgorithms.toCoefficient(tableau.quotients[i])) : "";
+                    fill ? String.format("$%s$", LaTeXUtils.toCoefficient(tableau.quotients[i])) : "";
             }
         }
         result[result.length - 1][result[0].length - 2] = "";
@@ -514,9 +514,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         SimplexAlgorithm.printSimplexProblem(problem, writer);
         writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
         writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale Belegung ");
-        writer.write(String.format("f\\\"ur die Variablen $%s_{1}", AlgebraAlgorithms.VARIABLE_NAME));
+        writer.write(String.format("f\\\"ur die Variablen $%s_{1}", LaTeXUtils.MATH_VARIABLE_NAME));
         for (int index = 1; index < problem.target.length; index++) {
-            writer.write(String.format(", %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, index + 1));
+            writer.write(String.format(", %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1));
         }
         writer.write("$ an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.");
         Main.newLine(writer);
@@ -595,17 +595,17 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             writer.write(
                 String.format(
                     "$%s_{1}^* = %s$",
-                    AlgebraAlgorithms.VARIABLE_NAME,
-                    AlgebraAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(0, lastTableau))
+                    LaTeXUtils.MATH_VARIABLE_NAME,
+                    LaTeXUtils.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(0, lastTableau))
                 )
             );
             for (int i = 1; i < lastTableau.problem.target.length; i++) {
                 writer.write(
                     String.format(
                         ", $%s_{%d}^* = %s$",
-                        AlgebraAlgorithms.VARIABLE_NAME,
+                        LaTeXUtils.MATH_VARIABLE_NAME,
                         i + 1,
-                        AlgebraAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(i, lastTableau))
+                        LaTeXUtils.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(i, lastTableau))
                     )
                 );
             }
