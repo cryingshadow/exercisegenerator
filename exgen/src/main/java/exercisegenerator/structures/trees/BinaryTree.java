@@ -3,9 +3,11 @@ package exercisegenerator.structures.trees;
 import java.util.*;
 import java.util.stream.*;
 
+import org.apache.commons.math3.fraction.*;
+
 import exercisegenerator.io.*;
 
-public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
+public class BinaryTree<T extends Comparable<T>> implements SearchTree<T> {
 
     final Optional<? extends BinaryTreeNode<T>> root;
 
@@ -16,29 +18,24 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         this.treeFactory = treeFactory;
     }
 
-    public BinaryTree<T> add(final T value) {
-        final BinaryTreeSteps<T> steps = this.addWithSteps(value);
-        if (steps.isEmpty()) {
-            return this;
-        }
-        return steps.get(steps.size() - 1).x;
-    }
-
-    public BinaryTreeSteps<T> addWithSteps(final T value) {
+    @Override
+    public SearchTreeSteps<T> addWithSteps(final T value) {
         if (this.isEmpty()) {
             final BinaryTree<T> tree = this.treeFactory.create(value);
-            final BinaryTreeSteps<T> result =
-                new BinaryTreeSteps<T>(tree, new BinaryTreeStep<T>(BinaryTreeStepType.ADD, value));
+            final SearchTreeSteps<T> result =
+                new SearchTreeSteps<T>(tree, new SearchTreeStep<T>(SearchTreeStepType.ADD, value));
             result.addAll(this.toBinaryTreeSteps(tree.root.get().balanceWithSteps()));
             return result;
         }
         return this.toBinaryTreeSteps(this.root.get().addWithSteps(value));
     }
 
+    @Override
     public boolean contains(final T value) {
         return this.containsAll(Collections.singleton(value));
     }
 
+    @Override
     public boolean containsAll(final Collection<? extends T> values) {
         if (this.isEmpty()) {
             return values.isEmpty();
@@ -54,30 +51,60 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         return this.root.equals(((BinaryTree<?>)o).root);
     }
 
+    @Override
     public int getHeight() {
         return this.root.isEmpty() ? 0 : this.root.get().getHeight();
     }
 
+    @Override
+    public BigFraction getHorizontalFillingDegree() {
+        final int height = this.getHeight();
+        if (height < 3) {
+            return BigFraction.ONE_THIRD;
+        }
+        if (height < 5) {
+            return BigFraction.ONE_HALF;
+        }
+        return BigFraction.ONE;
+    }
+
+    @Override
     public Optional<T> getMax() {
         return this.stream().reduce((x,y) -> y);
     }
 
+    @Override
     public Optional<T> getMin() {
         return this.stream().findFirst();
     }
 
+    @Override
     public String getName() {
         return "Bin\\\"ar-Suchbaum";
     }
 
+    @Override
     public String getOperations() {
         return "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-} und \\emphasize{Ersetzungs-}Operation";
     }
 
+    @Override
+    public Optional<String> getSamePageWidth() {
+        final int height = this.getHeight();
+        if (height < 3) {
+            return Optional.of("4cm");
+        } else if (height < 5) {
+            return Optional.of("7cm");
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public TikZStyle getTikZStyle() {
         return TikZStyle.TREE;
     }
 
+    @Override
     public List<T> getValues() {
         return this.stream().toList();
     }
@@ -87,6 +114,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         return 2 * this.root.hashCode();
     }
 
+    @Override
     public boolean isEmpty() {
         return this.root.isEmpty();
     }
@@ -96,18 +124,26 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         return this.stream().iterator();
     }
 
+    @Override
     public BinaryTree<T> remove(final T value) {
-        final BinaryTreeSteps<T> steps = this.removeWithSteps(value);
-        return steps.get(steps.size() - 1).x;
+        final SearchTreeSteps<T> steps = this.removeWithSteps(value);
+        return (BinaryTree<T>)steps.get(steps.size() - 1).tree();
     }
 
-    public BinaryTreeSteps<T> removeWithSteps(final T value) {
+    @Override
+    public SearchTreeSteps<T> removeWithSteps(final T value) {
         if (this.isEmpty()) {
-            return new BinaryTreeSteps<T>(this, new BinaryTreeStep<T>(BinaryTreeStepType.REMOVE, value));
+            return new SearchTreeSteps<T>(this, new SearchTreeStep<T>(SearchTreeStepType.REMOVE, value));
         }
         return this.toBinaryTreeSteps(this.root.get().removeWithSteps(value));
     }
 
+    @Override
+    public Optional<? extends SearchTreeNode<T>> root() {
+        return this.root;
+    }
+
+    @Override
     public int size() {
         if (this.isEmpty()) {
             return 0;
@@ -115,6 +151,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         return this.root.get().size();
     }
 
+    @Override
     public Stream<T> stream() {
         if (this.isEmpty()) {
             return Stream.empty();
@@ -127,6 +164,7 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         return this.root.isEmpty() ? "" : this.root.get().toString();
     }
 
+    @Override
     public String toTikZ() {
         if (this.root.isEmpty()) {
             return "\\Tree [.\\phantom{0} ];";
@@ -148,11 +186,15 @@ public class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
         visitor.onBackFromRoot();
     }
 
-    private BinaryTreeSteps<T> toBinaryTreeSteps(final BinaryTreeNodeSteps<T> steps) {
+    private SearchTreeSteps<T> toBinaryTreeSteps(final SearchTreeNodeSteps<T> steps) {
         return steps
             .stream()
-            .map(pair -> new BinaryTreeAndStep<T>(this.treeFactory.create(pair.x), pair.y))
-            .collect(Collectors.toCollection(BinaryTreeSteps::new));
+            .map(nodeAndStep ->
+                new SearchTreeAndStep<T>(
+                    this.treeFactory.create(nodeAndStep.node()),
+                    nodeAndStep.step()
+                )
+            ).collect(Collectors.toCollection(SearchTreeSteps::new));
     }
 
 }

@@ -7,39 +7,15 @@ import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.sorting.*;
 
-public class BucketSort implements AlgorithmImplementation {
+public class BucketSort implements AlgorithmImplementation<BucketSortProblem, BucketSortSolution> {
 
     private static class Counter {
         private int index = 0;
     }
 
     public static final BucketSort INSTANCE = new BucketSort();
-
-    public static Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>> bucketsort(
-        final int[] initialArray,
-        final int lowestInt,
-        final int highestInt,
-        final int numberOfBuckets
-    ) {
-        final int[] array = new int[initialArray.length];
-        final IntegerList[] buckets = new IntegerList[numberOfBuckets];
-        for (int i = 0; i < numberOfBuckets; i++) {
-            buckets[i] = new IntegerList();
-        }
-        for (int i = 0; i < initialArray.length; i++) {
-            final int normalized = initialArray[i] - lowestInt;
-            final int bucket = normalized / ((highestInt - lowestInt + 1) / numberOfBuckets);
-            buckets[bucket].add(initialArray[i]);
-        }
-        final Counter index = new Counter();
-        for (int i = 0; i < numberOfBuckets; i++) {
-            buckets[i].stream().sorted().forEach(number -> {
-                array[index.index++] = number;
-            });
-        }
-        return new Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>>(buckets, Sorting.toTikZItems(array));
-    }
 
     private static int[] generateLimits() {
         return new int[] {0,99,10};
@@ -54,16 +30,16 @@ public class BucketSort implements AlgorithmImplementation {
         return result;
     }
 
-    private static int[] parseOrGenerateLimitsAndBuckets(final AlgorithmInput input) throws IOException {
-        if (input.options.containsKey(Flag.CAPACITY)) {
-            return BucketSort.parseLimitsAndBuckets(input.options.get(Flag.CAPACITY));
-        } else if (input.options.containsKey(Flag.SOURCE)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(input.options.get(Flag.SOURCE)))) {
+    private static int[] parseOrGenerateLimitsAndBuckets(final Parameters options) throws IOException {
+        if (options.containsKey(Flag.CAPACITY)) {
+            return BucketSort.parseLimitsAndBuckets(options.get(Flag.CAPACITY));
+        } else if (options.containsKey(Flag.SOURCE)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                 reader.readLine();
                 return BucketSort.parseLimitsAndBuckets(reader.readLine());
             }
-        } else if (input.options.containsKey(Flag.INPUT)) {
-            try (BufferedReader reader = new BufferedReader(new StringReader(input.options.get(Flag.INPUT)))) {
+        } else if (options.containsKey(Flag.INPUT)) {
+            try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
                 reader.readLine();
                 return BucketSort.parseLimitsAndBuckets(reader.readLine());
             }
@@ -71,99 +47,31 @@ public class BucketSort implements AlgorithmImplementation {
         return BucketSort.generateLimits();
     }
 
-    private static void printExerciseText(
-        final int[] array,
-        final String lowestInt,
-        final String highestInt,
-        final String numberOfBuckets,
-        final int contentLength,
-        final Parameters options,
-        final BufferedWriter writer
-    ) throws IOException {
-        writer.write("Sortieren Sie das folgende Array mit ganzen Zahlen von ");
-        writer.write(lowestInt);
-        writer.write(" bis ");
-        writer.write(highestInt);
-        writer.write(" mithilfe von Bucketsort mit ");
-        writer.write(numberOfBuckets);
-        writer.write(" Buckets.");
-        Main.newLine(writer);
-        writer.write("Geben Sie dazu die Buckets vor deren Sortierung sowie das Ergebnisarray an.\\\\[2ex]");
-        Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
-            Sorting.toTikZItems(array),
-            Optional.empty(),
-            contentLength,
-            writer
-        );
-        LaTeXUtils.printTikzEnd(writer);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
-    }
-
-    private static void printSolutionText(
-        final int[] array,
-        final IntegerList[] buckets,
-        final List<ItemWithTikZInformation<Integer>> solution,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
-            Sorting.toTikZItems(array),
-            Optional.empty(),
-            contentLength,
-            writer
-        );
-        LaTeXUtils.printTikzEnd(writer);
-        Main.newLine(writer);
-        LaTeXUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
-        LaTeXUtils.printVerticalStringArray(
-            IntegerList.toVerticalStringArray(buckets),
-            null,
-            null,
-            null,
-            writer
-        );
-        LaTeXUtils.printTikzEnd(writer);
-        Main.newLine(writer);
-        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
-            solution,
-            Optional.empty(),
-            contentLength,
-            writer
-        );
-        LaTeXUtils.printTikzEnd(writer);
-        Main.newLine(writer);
-    }
-
     private BucketSort() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final int[] limitsAndBuckets = BucketSort.parseOrGenerateLimitsAndBuckets(input);
-        final int lowestInt = limitsAndBuckets[0];
-        final int highestInt = limitsAndBuckets[1];
-        final int buckets = limitsAndBuckets[2];
-        final int[] array = Sorting.parseOrGenerateArray(input.options, lowestInt, highestInt);
-        final Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>> solution =
-            BucketSort.bucketsort(array, lowestInt, highestInt, buckets);
-        final int contentLength =
-            Math.max(Sorting.getMaximumContentLength(array), Sorting.getMaximumContentLength(limitsAndBuckets));
-        if (input.options.containsKey(Flag.EXERCISE)) {
-            BucketSort.printExerciseText(
-                array,
-                String.valueOf(lowestInt),
-                String.valueOf(highestInt),
-                String.valueOf(buckets),
-                contentLength,
-                input.options,
-                input.exerciseWriter
-            );
+    public BucketSortSolution apply(final BucketSortProblem problem) {
+        final int[] initialArray = problem.initialArray();
+        final int numberOfBuckets = problem.numberOfBuckets();
+        final int lowestValue = problem.lowestValue();
+        final int highestValue = problem.highestValue();
+        final int[] array = new int[initialArray.length];
+        final IntegerList[] buckets = new IntegerList[numberOfBuckets];
+        for (int i = 0; i < numberOfBuckets; i++) {
+            buckets[i] = new IntegerList();
         }
-        BucketSort.printSolutionText(array, solution.x, solution.y, contentLength, input.solutionWriter);
+        for (int i = 0; i < initialArray.length; i++) {
+            final int normalized = initialArray[i] - lowestValue;
+            final int bucket = normalized / ((highestValue - lowestValue + 1) / numberOfBuckets);
+            buckets[bucket].add(initialArray[i]);
+        }
+        final Counter index = new Counter();
+        for (int i = 0; i < numberOfBuckets; i++) {
+            buckets[i].stream().sorted().forEach(number -> {
+                array[index.index++] = number;
+            });
+        }
+        return new BucketSortSolution(buckets, Sorting.toTikZItems(array));
     }
 
     @Override
@@ -172,6 +80,87 @@ public class BucketSort implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "8";
         return result;
+    }
+
+    @Override
+    public BucketSortProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+        final int[] limitsAndBuckets = BucketSort.parseOrGenerateLimitsAndBuckets(options);
+        final int lowestValue = limitsAndBuckets[0];
+        final int highestValue = limitsAndBuckets[1];
+        final int numberOfBuckets = limitsAndBuckets[2];
+        return new BucketSortProblem(
+            Sorting.parseOrGenerateArray(options, lowestValue, highestValue),
+            lowestValue,
+            highestValue,
+            numberOfBuckets
+        );
+    }
+
+    @Override
+    public void printExercise(
+        final BucketSortProblem problem,
+        final BucketSortSolution solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Sortieren Sie das folgende Array mit ganzen Zahlen von ");
+        writer.write(String.valueOf(problem.lowestValue()));
+        writer.write(" bis ");
+        writer.write(String.valueOf(problem.highestValue()));
+        writer.write(" mithilfe von Bucketsort mit ");
+        writer.write(String.valueOf(problem.numberOfBuckets()));
+        writer.write(" Buckets.");
+        Main.newLine(writer);
+        writer.write("Geben Sie dazu die Buckets vor deren Sortierung sowie das Ergebnisarray an.\\\\[2ex]");
+        Main.newLine(writer);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
+            Sorting.toTikZItems(problem.initialArray()),
+            Optional.empty(),
+            Sorting.getMaximumContentLength(problem.initialArray()),
+            writer
+        );
+        LaTeXUtils.printTikzEnd(writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+    }
+
+    @Override
+    public void printSolution(
+        final BucketSortProblem problem,
+        final BucketSortSolution solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int contentLength = Sorting.getMaximumContentLength(problem.initialArray());
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
+            Sorting.toTikZItems(problem.initialArray()),
+            Optional.empty(),
+            contentLength,
+            writer
+        );
+        LaTeXUtils.printTikzEnd(writer);
+        Main.newLine(writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.BORDERLESS, writer);
+        LaTeXUtils.printVerticalStringArray(
+            IntegerList.toVerticalStringArray(solution.buckets()),
+            null,
+            null,
+            null,
+            writer
+        );
+        LaTeXUtils.printTikzEnd(writer);
+        Main.newLine(writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
+            solution.solutionArray(),
+            Optional.empty(),
+            contentLength,
+            writer
+        );
+        LaTeXUtils.printTikzEnd(writer);
+        Main.newLine(writer);
     }
 
 }

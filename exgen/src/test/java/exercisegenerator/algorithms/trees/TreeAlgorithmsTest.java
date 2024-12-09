@@ -7,7 +7,6 @@ import org.testng.annotations.*;
 
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.trees.*;
-import exercisegenerator.structures.trees.btree.*;
 
 public class TreeAlgorithmsTest {
 
@@ -15,12 +14,12 @@ public class TreeAlgorithmsTest {
     public Object[][] avltreeData() {
         return new Object[][] {
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(),
                 new ArrayDeque<TreeOperation<Integer>>(Arrays.asList(new TreeOperation<Integer>(1, true))),
                 Collections.singletonList("((,1,),ADD1)")
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(5, true),
@@ -43,7 +42,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(5,3,7,2,4,6,8),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(5,3,7,2,4,6,8),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(2, false)
@@ -54,7 +53,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(5,3,7,2,4,6,8),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(5,3,7,2,4,6,8),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(7, false),
@@ -69,7 +68,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(5,3,7,2,4),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(5,3,7,2,4),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(7, false)
@@ -81,7 +80,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(5,3,7,4),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(5,3,7,4),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(7, false)
@@ -94,7 +93,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(6,3,7,4),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(6,3,7,4),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(5, true)
@@ -106,7 +105,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(7,3,8,4,5),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(7,3,8,4,5),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(6, true)
@@ -119,7 +118,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(7,6,5,4,3,2),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(7,6,5,4,3,2),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(1, true)
@@ -131,7 +130,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.AVL_TREE_FACTORY.create(9),
+                AVLTreeAlgorithm.AVL_TREE_FACTORY.create(9),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(9, false)
@@ -150,20 +149,27 @@ public class TreeAlgorithmsTest {
         final Deque<TreeOperation<Integer>> operations,
         final List<String> expectedStructures
     ) {
-        final BinaryTreeSteps<Integer> steps = AVLTreeAlgorithm.avltree(tree, operations);
-        Assert.assertEquals(steps.stream().map(Pair::toString).toList(), expectedStructures);
+        final SearchTreeSteps<Integer> steps =
+            AVLTreeAlgorithm.INSTANCE.apply(new SearchTreeProblem(tree, operations, AVLTreeAlgorithm.AVL_TREE_FACTORY));
+        Assert.assertEquals(
+            steps
+            .stream()
+            .map(treeAndStep -> String.format("(%s,%s)", treeAndStep.tree().toString(), treeAndStep.step().toString()))
+            .toList(),
+            expectedStructures
+        );
     }
 
     @DataProvider
     public Object[][] bstreeData() {
         return new Object[][] {
             {
-                TreeAlgorithms.BINARY_TREE_FACTORY.create(),
+                BinarySearchTreeAlgorithm.BINARY_TREE_FACTORY.create(),
                 new ArrayDeque<TreeOperation<Integer>>(Arrays.asList(new TreeOperation<Integer>(1, true))),
                 Collections.singletonList("((,1,),ADD1)")
             },
             {
-                TreeAlgorithms.BINARY_TREE_FACTORY.create(),
+                BinarySearchTreeAlgorithm.BINARY_TREE_FACTORY.create(),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(5, true),
@@ -186,7 +192,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.BINARY_TREE_FACTORY.create(5,3,7,2,4,6,8),
+                BinarySearchTreeAlgorithm.BINARY_TREE_FACTORY.create(5,3,7,2,4,6,8),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(2, false)
@@ -197,7 +203,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.BINARY_TREE_FACTORY.create(5,3,7,2,4,6,8),
+                BinarySearchTreeAlgorithm.BINARY_TREE_FACTORY.create(5,3,7,2,4,6,8),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(7, false),
@@ -220,8 +226,17 @@ public class TreeAlgorithmsTest {
         final Deque<TreeOperation<Integer>> operations,
         final List<String> expectedStructures
     ) {
-        final BinaryTreeSteps<Integer> steps = BinarySearchTreeAlgorithm.bstree(tree, operations);
-        Assert.assertEquals(steps.stream().map(Pair::toString).toList(), expectedStructures);
+        final SearchTreeSteps<Integer> steps =
+            BinarySearchTreeAlgorithm.INSTANCE.apply(
+                new SearchTreeProblem(tree, operations, BinarySearchTreeAlgorithm.BINARY_TREE_FACTORY)
+            );
+        Assert.assertEquals(
+            steps
+            .stream()
+            .map(treeAndStep -> String.format("(%s,%s)", treeAndStep.tree().toString(), treeAndStep.step().toString()))
+            .toList(),
+            expectedStructures
+        );
     }
 
     @DataProvider
@@ -327,23 +342,23 @@ public class TreeAlgorithmsTest {
         final List<TreeOperation<Integer>> operations,
         final List<Pair<String, String>> expectedList
     ) {
-        final BTreeSteps<Integer> steps = new BTreeSteps<Integer>();
+        final SearchTreeSteps<Integer> steps = new SearchTreeSteps<Integer>();
         for (final TreeOperation<Integer> operation : operations) {
             if (operation.add) {
                 steps.addAll(tree.addWithSteps(operation.value));
             } else {
                 steps.addAll(tree.removeWithSteps(operation.value));
             }
-            tree = steps.getLast().x;
+            tree = (BTree<Integer>)steps.getLast().tree();
         }
         Assert.assertEquals(steps.size(), expectedList.size());
-        final Iterator<BTreeAndStep<Integer>> stepIterator = steps.iterator();
+        final Iterator<SearchTreeAndStep<Integer>> stepIterator = steps.iterator();
         final Iterator<Pair<String, String>> expectedIterator = expectedList.iterator();
         while (stepIterator.hasNext()) {
-            final BTreeAndStep<Integer> step = stepIterator.next();
+            final SearchTreeAndStep<Integer> step = stepIterator.next();
             final Pair<String, String> expected = expectedIterator.next();
-            Assert.assertEquals(step.x.toString(), expected.x);
-            Assert.assertEquals(step.y.toString(), expected.y);
+            Assert.assertEquals(step.tree().toString(), expected.x);
+            Assert.assertEquals(step.step().toString(), expected.y);
         }
     }
 
@@ -351,12 +366,12 @@ public class TreeAlgorithmsTest {
     public Object[][] rbtreeData() {
         return new Object[][] {
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(),
                 new ArrayDeque<TreeOperation<Integer>>(Arrays.asList(new TreeOperation<Integer>(1, true))),
                 List.of("((,R(1),),ADD1)", "((,B(1),),COLOR1)")
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(5, true),
@@ -382,7 +397,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4,6,8),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4,6,8),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(2, false)
@@ -393,7 +408,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4,6,8),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4,6,8),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(7, false),
@@ -408,7 +423,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(5,3,7,2,4),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(7, false)
@@ -421,7 +436,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(5,3,7,4),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(5,3,7,4),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(7, false)
@@ -436,7 +451,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(6,3,7,4),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(6,3,7,4),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(5, true)
@@ -449,7 +464,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(7,3,8,4,5),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(7,3,8,4,5),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(6, true)
@@ -461,7 +476,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(7,6,5,4,3,2),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(7,6,5,4,3,2),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(1, true)
@@ -474,7 +489,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(9),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(9),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(9, false)
@@ -485,7 +500,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(10,8,12,7,9,11,13,6,5),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(10,8,12,7,9,11,13,6,5),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(4, true)
@@ -499,7 +514,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(
                     new ArrayDeque<TreeOperation<Integer>>(
                         List.of(
                             new TreeOperation<Integer>(6, true),
@@ -532,7 +547,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(3,5),
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(3,5),
                 new ArrayDeque<TreeOperation<Integer>>(
                     Arrays.asList(
                         new TreeOperation<Integer>(4, true)
@@ -546,7 +561,7 @@ public class TreeAlgorithmsTest {
                 )
             },
             {
-                TreeAlgorithms.RED_BLACK_TREE_FACTORY.create(
+                RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY.create(
                     new ArrayDeque<TreeOperation<Integer>>(
                         List.of(
                             new TreeOperation<Integer>(5, true),
@@ -578,8 +593,17 @@ public class TreeAlgorithmsTest {
         final Deque<TreeOperation<Integer>> operations,
         final List<String> expectedStructures
     ) {
-        final BinaryTreeSteps<Integer> steps = RedBlackTreeAlgorithm.redBlackTree(tree, operations);
-        Assert.assertEquals(steps.stream().map(Pair::toString).toList(), expectedStructures);
+        final SearchTreeSteps<Integer> steps =
+            RedBlackTreeAlgorithm.INSTANCE.apply(
+                new SearchTreeProblem(tree, operations, RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY)
+            );
+        Assert.assertEquals(
+            steps
+            .stream()
+            .map(treeAndStep -> String.format("(%s,%s)", treeAndStep.tree().toString(), treeAndStep.step().toString()))
+            .toList(),
+            expectedStructures
+        );
     }
 
 }

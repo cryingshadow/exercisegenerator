@@ -6,6 +6,14 @@ public class Grid<V> extends LinkedHashMap<GridCoordinates, Vertex<V>> {
 
     private static final long serialVersionUID = -482672823105338439L;
 
+    public Grid() {
+        super();
+    }
+
+    public Grid(final Map<GridCoordinates, Vertex<V>> grid) {
+        super(grid);
+    }
+
     public boolean logicallyEquals(final Grid<V> other) {
         if (!this.keySet().equals(other.keySet())) {
             return false;

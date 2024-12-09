@@ -4,28 +4,33 @@ import java.io.*;
 import java.util.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class TopologicSort implements AlgorithmImplementation {
+public class TopologicSort implements GridGraphAlgorithm<List<String>> {
 
     public static final TopologicSort INSTANCE = new TopologicSort();
 
     private TopologicSort() {}
 
     @Override
+    public List<String> apply(final GridGraph graph) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not yet implemented!");
+    }
+
+    @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         boolean fail;
         final GridGraph graph = new GridGraph();
-        final int[][] sparseAdjacencyMatrix = GraphAlgorithms.parseOrGenerateGridGraph(input.options);
+        final int[][] sparseAdjacencyMatrix = GridGraphAlgorithm.parseOrGenerateGridGraph(input.options);
         do {
             try {
                 fail = false;
                 final boolean writeText = true; // TODO check whether this can be removed
-                final Optional<BufferedWriter> optionalWriterSpace = Algorithm.getOptionalSpaceWriter(input);
                 graph.createGraph(sparseAdjacencyMatrix);
-                graph.printTopologicalOrder(optionalWriterSpace, input.solutionWriter, false, writeText);
+                graph.printTopologicalOrder(input.exerciseWriter, input.solutionWriter, false, writeText);
             } catch (final IOException e) {
                 //System.out.println("Caught cycle-exception.");
                 fail = true;
@@ -54,6 +59,26 @@ public class TopologicSort implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public void printExercise(
+        final GridGraph problem,
+        final List<String> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void printSolution(
+        final GridGraph problem,
+        final List<String> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
     }
 
 }

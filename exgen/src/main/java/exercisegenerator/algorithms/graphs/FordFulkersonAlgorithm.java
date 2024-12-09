@@ -10,7 +10,14 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class FordFulkersonAlgorithm implements AlgorithmImplementation {
+public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleStep>> {
+
+    private static record FordFulkersonConfiguration(double multiplier, boolean twoColumns) {}
+
+    private static record GraphWithHighlights(
+        Graph<String, FlowPair> graph,
+        Set<FordFulkersonPathStep<String, FlowPair>> highlights
+    ) {}
 
     public static final FordFulkersonAlgorithm INSTANCE = new FordFulkersonAlgorithm();
 
@@ -39,7 +46,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         final Map<Vertex<String>, VertexGridPosition> positions =
             new LinkedHashMap<Vertex<String>, VertexGridPosition>();
         final GridCoordinates startPos = new GridCoordinates(0, 0);
-        GraphAlgorithms.addVertex(
+        GraphAlgorithm.addVertexWithGridLayout(
             source,
             graph,
             new Pair<GridCoordinates, Boolean>(startPos, true),
@@ -48,14 +55,14 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         );
         if (numOfVertices == 0) {
             final Vertex<String> sink = new Vertex<String>(Optional.of("t"));
-            GraphAlgorithms.addVertex(
+            GraphAlgorithm.addVertexWithGridLayout(
                 sink,
                 graph,
                 new Pair<GridCoordinates, Boolean>(new GridCoordinates(1, 0), false),
                 grid,
                 positions
             );
-            final int value = GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT);
+            final int value = GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT);
             graph.addEdge(source, Optional.of(new FlowPair(0, value)), sink);
             graph.setGrid(grid);
             return graph;
@@ -278,10 +285,10 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
             for (int yPos = curMinYPos; yPos <= curMaxYPos; yPos++) {
                 // at least one edge from previous level
                 final Vertex<String> vertex =
-                    new Vertex<String>(Optional.of(GraphAlgorithms.toStringLabel(letter++)));
+                    new Vertex<String>(Optional.of(GraphAlgorithm.toLetterLabel(letter++)));
                 final boolean hasDiagonals = (xPos + yPos) % 2 == 0;
                 final GridCoordinates pos = new GridCoordinates(xPos, yPos);
-                GraphAlgorithms.addVertex(
+                GraphAlgorithm.addVertexWithGridLayout(
                     vertex,
                     graph,
                     new Pair<GridCoordinates, Boolean>(pos, hasDiagonals),
@@ -309,10 +316,10 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         Optional.of(
                             new FlowPair(
                                 0,
-                                GraphAlgorithms.randomEdgeValue(
+                                GraphAlgorithm.randomEdgeValue(
                                     prevXPos == 0 ?
                                         FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT :
-                                            GraphAlgorithms.DEFAULT_EDGE_ROOT
+                                            GraphAlgorithm.DEFAULT_EDGE_ROOT
                                 )
                             )
                         ),
@@ -325,7 +332,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                                 Optional.of(
                                     new FlowPair(
                                         0,
-                                        GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT)
+                                        GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT)
                                     )
                                 ),
                                 vertex
@@ -338,10 +345,10 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         Optional.of(
                             new FlowPair(
                                 0,
-                                GraphAlgorithms.randomEdgeValue(
+                                GraphAlgorithm.randomEdgeValue(
                                     prevXPos == 0 ?
                                         FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT :
-                                            GraphAlgorithms.DEFAULT_EDGE_ROOT
+                                            GraphAlgorithm.DEFAULT_EDGE_ROOT
                                 )
                             )
                         ),
@@ -355,7 +362,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         graph.addEdge(
                             north,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                                new FlowPair(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
                             ),
                             vertex
                         );
@@ -364,7 +371,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         graph.addEdge(
                             vertex,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                                new FlowPair(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
                             ),
                             north
                         );
@@ -399,7 +406,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                     graph.addEdge(
                         previousVertex,
                         Optional.of(
-                            new FlowPair(0, GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                            new FlowPair(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
                         ),
                         nextVertex
                     );
@@ -409,7 +416,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                         graph.addEdge(
                             previousVertex,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithms.randomEdgeValue(GraphAlgorithms.DEFAULT_EDGE_ROOT))
+                                new FlowPair(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
                             ),
                             nextVertex
                         );
@@ -424,7 +431,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         if ((xPos + yPos) % 2 != 0) {
             yPos++;
         }
-        GraphAlgorithms.addVertex(
+        GraphAlgorithm.addVertexWithGridLayout(
             sink,
             graph,
             new Pair<GridCoordinates, Boolean>(new GridCoordinates(xPos, yPos), true),
@@ -450,7 +457,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 Optional.of(
                     new FlowPair(
                         0,
-                        GraphAlgorithms.randomEdgeValue(FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT)
+                        GraphAlgorithm.randomEdgeValue(FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT)
                     )
                 ),
                 sink
@@ -470,258 +477,42 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         return graph;
     }
 
-    /**
-     * Prints exercise and solution for the Ford-Fulkerson method. Uses the Edmonds-Karp Algorithm for selecting
-     * augmenting paths.
-     * @param graph The flow network.
-     * @param source The source vertex.
-     * @param sink The sink vertex.
-     * @param multiplier Multiplier for vertex distances.
-     * @param twocolumns True if residual graphs and flow networks should be displayed in two columns.
-     * @param mode Preprint mode.
-     * @param exWriter The writer to send the exercise output to.
-     * @param solWriter The writer to send the solution output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static <V> void fordFulkerson(
-        final Graph<V, FlowPair> graph,
-        final Vertex<V> source,
-        final Vertex<V> sink,
-        final double multiplier,
-        final boolean twocolumns,
-        final Parameters options,
-        final BufferedWriter exWriter,
-        final BufferedWriter solWriter
-    ) throws IOException {
-        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
-        exWriter.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
-        exWriter.write(source.label.isEmpty() ? "" : source.label.get().toString());
-        exWriter.write(" und Senke ");
-        exWriter.write(sink.label.isEmpty() ? "" : sink.label.get().toString());
-        exWriter.write(":\\\\");
-        Main.newLine(exWriter);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exWriter);
-        graph.printTikZ(GraphPrintMode.ALL, multiplier, null, exWriter);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exWriter);
-        Main.newLine(exWriter);
-        exWriter.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der");
-        exWriter.write(" \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
-        exWriter.write(FordFulkersonAlgorithm.EACH_RESIDUAL_GRAPH);
-        exWriter.write(" sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. ");
-        exWriter.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an.");
-        switch (mode) {
-            case ALWAYS:
-            case SOLUTION_SPACE:
-                exWriter.write(
-                    " Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl "
-                );
-                exWriter.write("solcher Schritte \\\"ubereinstimmen.\\\\[2ex]");
-                break;
-            case NEVER:
-                // do nothing
-        }
-        Main.newLine(exWriter);
-        int step = 1;
-        switch (mode) {
-            case SOLUTION_SPACE:
-                LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exWriter);
-                // fall-through
-            case ALWAYS:
-                if (twocolumns) {
-                    exWriter.write("\\begin{longtable}{cc}");
-                    Main.newLine(exWriter);
-                }
-                break;
-            case NEVER:
-                // do nothing
-        }
-        if (twocolumns) {
-            solWriter.write("\\begin{longtable}{cc}");
-            Main.newLine(solWriter);
-        }
-        while (true) {
-            final Graph<V, Integer> residualGraph = FordFulkersonAlgorithm.computeResidualGraph(graph);
-            final List<Vertex<V>> path = FordFulkersonAlgorithm.selectAugmentingPath(residualGraph, source, sink);
-            switch (mode) {
-                case ALWAYS:
-                case SOLUTION_SPACE:
-                    LaTeXUtils.printSamePageBeginning(
-                        step,
-                        twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
-                        exWriter
-                    );
-                    exWriter.write(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME);
-                    exWriter.write(":\\\\[2ex]");
-                    Main.newLine(exWriter);
-                    break;
-                case NEVER:
-                    // do nothing
-            }
-            LaTeXUtils.printSamePageBeginning(
-                step++,
-                twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
-                solWriter
-            );
-            solWriter.write(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME);
-            solWriter.write(":\\\\[2ex]");
-            Main.newLine(solWriter);
-            final Set<Pair<Vertex<V>, Edge<Integer, V>>> toHighlightResidual;
-            switch (Main.TEXT_VERSION) {
-                case ABRAHAM:
-                    toHighlightResidual = FordFulkersonAlgorithm.toEdges(residualGraph, path);
-                    break;
-                case GENERAL:
-                    toHighlightResidual = null;
-                    break;
-                default:
-                    throw new IllegalStateException("Unkown text version!");
-            }
-            switch (mode) {
-                case ALWAYS:
-                case SOLUTION_SPACE:
-                    residualGraph.printTikZ(GraphPrintMode.NO_EDGES, multiplier, toHighlightResidual, exWriter);
-                    LaTeXUtils.printSamePageEnd(exWriter);
-                    if (twocolumns) {
-                        exWriter.write(" & ");
-                    } else {
-                        Main.newLine(exWriter);
-                    }
-                    break;
-                case NEVER:
-                    // do nothing
-            }
-            residualGraph.printTikZ(GraphPrintMode.ALL, multiplier, toHighlightResidual, solWriter);
-            LaTeXUtils.printSamePageEnd(solWriter);
-            if (twocolumns) {
-                solWriter.write(" & ");
-            } else {
-                Main.newLine(solWriter);
-            }
-            if (path == null) {
-                break;
-            }
-            final Set<Pair<Vertex<V>, Edge<FlowPair, V>>> toHighlightFlow =
-                FordFulkersonAlgorithm.addFlow(graph, path);
-            switch (mode) {
-                case ALWAYS:
-                case SOLUTION_SPACE:
-                    LaTeXUtils.printSamePageBeginning(
-                        step,
-                        twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
-                        exWriter
-                    );
-                    exWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
-                    Main.newLine(exWriter);
-                    graph.printTikZ(GraphPrintMode.NO_EDGE_LABELS, multiplier, null, exWriter);
-                    LaTeXUtils.printSamePageEnd(exWriter);
-                    if (twocolumns) {
-                        exWriter.write("\\\\");
-                    }
-                    Main.newLine(exWriter);
-                    break;
-                case NEVER:
-                    // do nothing
-            }
-            LaTeXUtils.printSamePageBeginning(
-                step++,
-                twocolumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
-                solWriter
-            );
-            solWriter.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
-            Main.newLine(solWriter);
-            graph.printTikZ(GraphPrintMode.ALL, multiplier, toHighlightFlow, solWriter);
-            LaTeXUtils.printSamePageEnd(solWriter);
-            if (twocolumns) {
-                solWriter.write("\\\\");
-            }
-            Main.newLine(solWriter);
-        }
-        int flow = 0;
-        final List<Edge<FlowPair, V>> list = graph.getAdjacencyList(source);
-        if (list != null) {
-            for (final Edge<FlowPair, V> edge : list) {
-                flow += edge.label.get().x;
-            }
-        }
-        switch (mode) {
-            case ALWAYS:
-            case SOLUTION_SPACE:
-                if (twocolumns) {
-                    exWriter.write("\\end{longtable}");
-                    Main.newLine(exWriter);
-                }
-                Main.newLine(exWriter);
-                Main.newLine(exWriter);
-                exWriter.write("\\vspace*{1ex}");
-                Main.newLine(exWriter);
-                Main.newLine(exWriter);
-                exWriter.write("Der maximale Fluss hat den Wert: ");
-                Main.newLine(exWriter);
-                if (mode == PreprintMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exWriter);
-                }
-                Main.newLine(exWriter);
-                break;
-            case NEVER:
-                // do nothing
-        }
-        if (twocolumns) {
-            solWriter.write("\\end{longtable}");
-            Main.newLine(solWriter);
-        }
-        Main.newLine(solWriter);
-        Main.newLine(solWriter);
-        solWriter.write("\\vspace*{1ex}");
-        Main.newLine(solWriter);
-        Main.newLine(solWriter);
-        solWriter.write("Der maximale Fluss hat den Wert: " + flow);
-        Main.newLine(solWriter);
-        Main.newLine(solWriter);
-    }
-
-    /**
-     * Adds the maximal flow along the specified path in the specified flow network and returns the set of edges used
-     * to add the flow.
-     * @param graph The flow network to add a flow to.
-     * @param path The path along which the flow is to be be added.
-     * @return The set of edges whose flow has been modified.
-     * @throws IOException If some error occurs during output.
-     */
-    private static <V> Set<Pair<Vertex<V>, Edge<FlowPair, V>>> addFlow(
-        final Graph<V, FlowPair> graph,
-        final List<Vertex<V>> path
-    ) throws IOException {
-        final Integer min = FordFulkersonAlgorithm.computeMinEdge(graph, path);
-        final Iterator<Vertex<V>> it = path.iterator();
-        Vertex<V> from;
-        Vertex<V> to = it.next();
-        final Set<Pair<Vertex<V>, Edge<FlowPair, V>>> toHighlight =
-            new LinkedHashSet<Pair<Vertex<V>, Edge<FlowPair, V>>>();
+    private static GraphWithHighlights computeGraphWithFlow(
+        final Graph<String, FlowPair> inputGraph,
+        final List<Vertex<String>> flowPath
+    ) {
+        final Graph<String, FlowPair> graph = inputGraph.copy(pair -> new FlowPair(pair.x, pair.y));
+        final Integer min = FordFulkersonAlgorithm.computeMinEdge(graph, flowPath);
+        final Iterator<Vertex<String>> it = flowPath.iterator();
+        Vertex<String> from;
+        Vertex<String> to = it.next();
+        final Set<FordFulkersonPathStep<String, FlowPair>> toHighlight =
+            new LinkedHashSet<FordFulkersonPathStep<String, FlowPair>>();
         while (it.hasNext()) {
             from = to;
             to = it.next();
             int flow = min;
-            for (final Edge<FlowPair, V> edge : graph.getEdges(from, to)) {
+            for (final Edge<FlowPair, String> edge : graph.getEdges(from, to)) {
                 final int added = Math.min(flow, edge.label.get().y - edge.label.get().x);
                 if (added > 0) {
                     flow -= added;
                     edge.label.get().x += added;
-                    toHighlight.add(new Pair<Vertex<V>, Edge<FlowPair, V>>(from, edge));
+                    toHighlight.add(new FordFulkersonPathStep<String, FlowPair>(from, edge));
                 }
             }
-            for (final Edge<FlowPair, V> edge : graph.getEdges(to, from)) {
+            for (final Edge<FlowPair, String> edge : graph.getEdges(to, from)) {
                 final int added = Math.min(flow, edge.label.get().x);
                 if (added > 0) {
                     flow -= added;
                     edge.label.get().x -= added;
-                    toHighlight.add(new Pair<Vertex<V>, Edge<FlowPair, V>>(to, edge));
+                    toHighlight.add(new FordFulkersonPathStep<String, FlowPair>(to, edge));
                 }
             }
             if (flow > 0) {
                 throw new IllegalStateException("Could not add flow!");
             }
         }
-        return toHighlight;
+        return new GraphWithHighlights(graph, toHighlight);
     }
 
     /**
@@ -751,13 +542,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         return min;
     }
 
-    /**
-     * Builds the residual graph from the specified flow network.
-     * @param graph The flow network.
-     * @return The residual graph built for the specified flow network.
-     * @throws IOException If some error occurs during output.
-     */
-    private static <V> Graph<V, Integer> computeResidualGraph(final Graph<V, FlowPair> graph) throws IOException {
+    private static <V> Graph<V, Integer> computeResidualGraph(final Graph<V, FlowPair> graph) {
         final Graph<V, Integer> res = new Graph<V, Integer>();
         for (final Vertex<V> vertex : graph.getVertices()) {
             res.addVertex(vertex);
@@ -827,31 +612,41 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         return neededVertices <= remainingVertices;
     }
 
-    private static FlowNetworkInput<String, FlowPair> generateFlowNetwork(final Parameters options) {
+    private static Set<FordFulkersonPathStep<String, Integer>> filterHighLights(
+        final Set<FordFulkersonPathStep<String, Integer>> highlights
+    ) {
+        switch (Main.TEXT_VERSION) {
+        case ABRAHAM:
+            return highlights;
+        case GENERAL:
+            return Collections.emptySet();
+        default:
+            throw new IllegalStateException("Unkown text version!");
+        }
+    };
+
+    private static FlowNetworkProblem generateFlowNetworkProblem(final Parameters options) {
         final int numOfVertices;
         if (options.containsKey(Flag.LENGTH)) {
             numOfVertices = Integer.parseInt(options.get(Flag.LENGTH));
         } else {
             numOfVertices = Main.RANDOM.nextInt(16) + 3;
         }
-        final FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
-        res.graph = FordFulkersonAlgorithm.createRandomFlowNetwork(numOfVertices);
-        res.source = res.graph.getVerticesWithLabel("s").iterator().next();
-        res.sink = res.graph.getVerticesWithLabel("t").iterator().next();
-        res.multiplier = 1.0;
-        res.twocolumns = false;
-        return res;
+        final Graph<String, FlowPair> graph = FordFulkersonAlgorithm.createRandomFlowNetwork(numOfVertices);
+        return new FlowNetworkProblem(
+            graph,
+            graph.getVerticesWithLabel("s").iterator().next(),
+            graph.getVerticesWithLabel("t").iterator().next()
+        );
     }
 
-    private static FlowNetworkInput<String, FlowPair> parseFlowNetwork(
+    private static FlowNetworkProblem parseFlowNetworkProblem(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
         final Graph<String, FlowPair> graph = Graph.create(reader, new StringLabelParser(), new FlowPairLabelParser());
         Vertex<String> source = null;
         Vertex<String> sink = null;
-        double multiplier = 1.0;
-        boolean twocolumns = false;
         if (options.containsKey(Flag.OPERATIONS)) {
             try (BufferedReader operationsReader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
                 Set<Vertex<String>> vertices = graph.getVerticesWithLabel(operationsReader.readLine().trim());
@@ -862,12 +657,30 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 if (!vertices.isEmpty()) {
                     sink = vertices.iterator().next();
                 }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+        return new FlowNetworkProblem(graph, source, sink);
+    }
+
+    private static FordFulkersonConfiguration parseOrGenerateConfiguration(
+        final FlowNetworkProblem problem,
+        final Parameters options
+    ) {
+        double multiplier = 1.0;
+        boolean twoColumns = false;
+        if (options.containsKey(Flag.OPERATIONS)) {
+            try (BufferedReader operationsReader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
+                operationsReader.readLine();
+                operationsReader.readLine();
                 final String mult = operationsReader.readLine();
                 if (mult != null && !"".equals(mult.trim())) {
                     multiplier = Double.parseDouble(mult);
                     final String twocols = operationsReader.readLine();
                     if (twocols != null && !"".equals(twocols.trim())) {
-                        twocolumns = Boolean.parseBoolean(twocols);
+                        twoColumns = Boolean.parseBoolean(twocols);
                     }
                 }
             } catch (IOException | NumberFormatException e) {
@@ -875,21 +688,61 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
                 System.exit(1);
             }
         }
-        final FlowNetworkInput<String, FlowPair> res = new FlowNetworkInput<String, FlowPair>();
-        res.graph = graph;
-        res.source = source;
-        res.sink = sink;
-        res.multiplier = multiplier;
-        res.twocolumns = twocolumns;
-        return res;
+        return new FordFulkersonConfiguration(multiplier, twoColumns);
     }
 
-    private static FlowNetworkInput<String, FlowPair> parseOrGenerateFlowNetwork(final Parameters options)
-    throws IOException {
-        return new ParserAndGenerator<FlowNetworkInput<String, FlowPair>>(
-            FordFulkersonAlgorithm::parseFlowNetwork,
-            FordFulkersonAlgorithm::generateFlowNetwork
-        ).getResult(options);
+    private static void printFordFulkersonDoubleStep(
+        final int stepNumber,
+        final FordFulkersonDoubleStep step,
+        final boolean first,
+        final boolean solution,
+        final PreprintMode mode,
+        final FordFulkersonConfiguration configuration,
+        final BufferedWriter writer
+    ) throws IOException {
+        if (!solution && mode == PreprintMode.NEVER) {
+            return;
+        }
+        if (!first) {
+            LaTeXUtils.printSamePageBeginning(
+                stepNumber,
+                configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
+                writer
+            );
+            writer.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
+            Main.newLine(writer);
+            step.flowNetwork().printTikZ(
+                solution ? GraphPrintMode.ALL : GraphPrintMode.NO_EDGE_LABELS,
+                configuration.multiplier(),
+                solution ? step.flowHighlights() : null,
+                writer
+            );
+            LaTeXUtils.printSamePageEnd(writer);
+            if (configuration.twoColumns) {
+                writer.write("\\\\");
+            }
+            Main.newLine(writer);
+        }
+        LaTeXUtils.printSamePageBeginning(
+            first ? stepNumber : stepNumber + 1,
+            configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
+            writer
+        );
+        writer.write(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME);
+        writer.write(":\\\\[2ex]");
+        Main.newLine(writer);
+        step.residualGraph().printTikZ(
+            solution ? GraphPrintMode.ALL : GraphPrintMode.NO_EDGES,
+                configuration.multiplier(),
+                FordFulkersonAlgorithm.filterHighLights(step.residualHighlights()),
+                writer
+            );
+        LaTeXUtils.printSamePageEnd(writer);
+        if (configuration.twoColumns) {
+            writer.write(" & ");
+        } else {
+            Main.newLine(writer);
+        }
     }
 
     /**
@@ -937,22 +790,22 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
      * @param path A path through this residual graph.
      * @return The set of all edges used by the specified path in the specified graph.
      */
-    private static <V> Set<Pair<Vertex<V>, Edge<Integer, V>>> toEdges(
+    private static <V> Set<FordFulkersonPathStep<V, Integer>> toEdges(
         final Graph<V, Integer> graph,
         final List<Vertex<V>> path
     ) {
         if (path == null) {
-            return null;
+            return Collections.emptySet();
         }
-        final Set<Pair<Vertex<V>, Edge<Integer, V>>> res =
-            new LinkedHashSet<Pair<Vertex<V>, Edge<Integer, V>>>();
+        final Set<FordFulkersonPathStep<V, Integer>> res =
+            new LinkedHashSet<FordFulkersonPathStep<V, Integer>>();
         final Iterator<Vertex<V>> it = path.iterator();
         Vertex<V> cur = it.next();
         while (it.hasNext()) {
             final Vertex<V> next = it.next();
             for (final Edge<Integer, V> edge : graph.getAdjacencyList(cur)) {
                 if (edge.to.equals(next)) {
-                    res.add(new Pair<Vertex<V>, Edge<Integer, V>>(cur, edge));
+                    res.add(new FordFulkersonPathStep<V, Integer>(cur, edge));
                     break;
                 }
             }
@@ -964,19 +817,36 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
     private FordFulkersonAlgorithm() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final FlowNetworkInput<String, FlowPair> flow =
-            FordFulkersonAlgorithm.parseOrGenerateFlowNetwork(input.options);
-        FordFulkersonAlgorithm.fordFulkerson(
-            flow.graph,
-            flow.source,
-            flow.sink,
-            flow.multiplier,
-            flow.twocolumns,
-            input.options,
-            input.exerciseWriter,
-            input.solutionWriter
+    public List<FordFulkersonDoubleStep> apply(final FlowNetworkProblem problem) {
+        Graph<String, FlowPair> graph = problem.graph();
+        final Vertex<String> source = problem.source();
+        final Vertex<String> sink = problem.sink();
+        Graph<String, Integer> residualGraph = FordFulkersonAlgorithm.computeResidualGraph(graph);
+        List<Vertex<String>> path = FordFulkersonAlgorithm.selectAugmentingPath(residualGraph, source, sink);
+        final List<FordFulkersonDoubleStep> result = new LinkedList<FordFulkersonDoubleStep>();
+        result.add(
+            new FordFulkersonDoubleStep(
+                graph,
+                Collections.emptySet(),
+                residualGraph,
+                FordFulkersonAlgorithm.toEdges(residualGraph, path)
+            )
         );
+        while (path != null) {
+            final GraphWithHighlights graphWithAddedFlow = FordFulkersonAlgorithm.computeGraphWithFlow(graph, path);
+            graph = graphWithAddedFlow.graph();
+            residualGraph = FordFulkersonAlgorithm.computeResidualGraph(graph);
+            path = FordFulkersonAlgorithm.selectAugmentingPath(residualGraph, source, sink);
+            result.add(
+                new FordFulkersonDoubleStep(
+                    graph,
+                    graphWithAddedFlow.highlights(),
+                    residualGraph,
+                    FordFulkersonAlgorithm.toEdges(residualGraph, path)
+                )
+            );
+        }
+        return result;
     }
 
     @Override
@@ -985,6 +855,183 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public FlowNetworkProblem parseOrGenerateProblem(final Parameters options)
+    throws IOException {
+        return new ParserAndGenerator<FlowNetworkProblem>(
+            FordFulkersonAlgorithm::parseFlowNetworkProblem,
+            FordFulkersonAlgorithm::generateFlowNetworkProblem
+        ).getResult(options);
+    }
+
+    @Override
+    public void printExercise(
+        final FlowNetworkProblem problem,
+        final List<FordFulkersonDoubleStep> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final Vertex<String> source = problem.source();
+        final Vertex<String> sink = problem.sink();
+        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        final FordFulkersonConfiguration configuration =
+            FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
+        writer.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
+        writer.write(source.label.isEmpty() ? "" : source.label.get().toString());
+        writer.write(" und Senke ");
+        writer.write(sink.label.isEmpty() ? "" : sink.label.get().toString());
+        writer.write(":\\\\");
+        Main.newLine(writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        problem.graph().printTikZ(GraphPrintMode.ALL, configuration.multiplier(), null, writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        Main.newLine(writer);
+        writer.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der");
+        writer.write(" \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
+        writer.write(FordFulkersonAlgorithm.EACH_RESIDUAL_GRAPH);
+        writer.write(" sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. ");
+        writer.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an.");
+        switch (mode) {
+        case ALWAYS:
+        case SOLUTION_SPACE:
+            writer.write(
+                " Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl "
+                );
+            writer.write("solcher Schritte \\\"ubereinstimmen.\\\\[2ex]");
+            break;
+        case NEVER:
+            // do nothing
+        }
+        Main.newLine(writer);
+        int stepNumber = 1;
+        switch (mode) {
+        case SOLUTION_SPACE:
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+            // fall-through
+        case ALWAYS:
+            if (configuration.twoColumns) {
+                writer.write("\\begin{longtable}{cc}");
+                Main.newLine(writer);
+            }
+            break;
+        case NEVER:
+            // do nothing
+        }
+        boolean first = true;
+        for (final FordFulkersonDoubleStep step : solution) {
+            if (first) {
+                first = false;
+                FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
+                    stepNumber,
+                    step,
+                    true,
+                    false,
+                    mode,
+                    configuration,
+                    writer
+                );
+                stepNumber += 1;
+            } else {
+                FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
+                    stepNumber,
+                    step,
+                    false,
+                    false,
+                    mode,
+                    configuration,
+                    writer
+                );
+                stepNumber += 2;
+            }
+        }
+        switch (mode) {
+        case ALWAYS:
+        case SOLUTION_SPACE:
+            if (configuration.twoColumns) {
+                writer.write("\\end{longtable}");
+                Main.newLine(writer);
+            }
+            Main.newLine(writer);
+            Main.newLine(writer);
+            writer.write("\\vspace*{1ex}");
+            Main.newLine(writer);
+            Main.newLine(writer);
+            writer.write("Der maximale Fluss hat den Wert: ");
+            Main.newLine(writer);
+            if (mode == PreprintMode.SOLUTION_SPACE) {
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+            }
+            Main.newLine(writer);
+            break;
+        case NEVER:
+            // do nothing
+        }
+    }
+
+    @Override
+    public void printSolution(
+        final FlowNetworkProblem problem,
+        final List<FordFulkersonDoubleStep> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        final FordFulkersonConfiguration configuration =
+            FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
+        int flow = 0;
+        final Graph<String, FlowPair> graph = solution.getLast().flowNetwork();
+        final List<Edge<FlowPair, String>> list = graph.getAdjacencyList(problem.source());
+        if (list != null) {
+            for (final Edge<FlowPair, String> edge : list) {
+                flow += edge.label.get().x;
+            }
+        }
+        if (configuration.twoColumns) {
+            writer.write("\\begin{longtable}{cc}");
+            Main.newLine(writer);
+        }
+        int stepNumber = 1;
+        boolean first = true;
+        for (final FordFulkersonDoubleStep step : solution) {
+            if (first) {
+                first = false;
+                FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
+                    stepNumber,
+                    step,
+                    true,
+                    true,
+                    mode,
+                    configuration,
+                    writer
+                );
+                stepNumber += 1;
+            } else {
+                FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
+                    stepNumber,
+                    step,
+                    false,
+                    true,
+                    mode,
+                    configuration,
+                    writer
+                );
+                stepNumber += 2;
+            }
+        }
+        if (configuration.twoColumns) {
+            writer.write("\\end{longtable}");
+            Main.newLine(writer);
+        }
+        Main.newLine(writer);
+        Main.newLine(writer);
+        writer.write("\\vspace*{1ex}");
+        Main.newLine(writer);
+        Main.newLine(writer);
+        writer.write("Der maximale Fluss hat den Wert: " + flow);
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
 }

@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.hashing;
 import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.algorithms.hashing.Hashing.*;
+import exercisegenerator.structures.hashing.*;
 
 public class QuadraticProbing implements ProbingFunction {
 

@@ -5,6 +5,7 @@ import java.util.*;
 
 import exercisegenerator.*;
 import exercisegenerator.algorithms.algebra.*;
+import exercisegenerator.algorithms.analysis.*;
 import exercisegenerator.algorithms.binary.*;
 import exercisegenerator.algorithms.coding.*;
 import exercisegenerator.algorithms.cryptography.*;
@@ -16,7 +17,6 @@ import exercisegenerator.algorithms.optimization.*;
 import exercisegenerator.algorithms.sorting.*;
 import exercisegenerator.algorithms.trees.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 
 public enum Algorithm {
 
@@ -129,7 +129,7 @@ public enum Algorithm {
             "Floyd's algorithm to find all shortest paths to all other vertices.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
-        FloydWarshallAlgorithm.INSTANCE
+        FloydAlgorithm.INSTANCE
     ),
 
     FORD_FULKERSON(
@@ -226,6 +226,26 @@ public enum Algorithm {
         VigenereDecryption.INSTANCE
     ),
 
+    GEOMETRIC_SERIES(
+        "geometricseries",
+        "Geometrische Reihe",
+        new String[] {
+            "Calculation of a geometric series."
+        },
+        GeometricSeriesAlgorithm.INSTANCE,
+        false
+    ),
+
+    GRAHAMS_SCAN(
+        "grahamsscan",
+        "Graham's Scan",
+        new String[] {
+            "Calculate the convex hull of a given pointset according to Graham's Scan.",
+            "The flag -l specifies the number of points in the pointset for generated instances."
+        },
+        GrahamsScan.INSTANCE
+    ),
+
     HASH_DIV(
         "hashDivision",
         "Hashing",
@@ -316,16 +336,6 @@ public enum Algorithm {
         HeapSort.INSTANCE
     ),
 
-    HULL(
-        "hull",
-        "Convex Hull",
-        new String[] {
-            "Calculate the convex hull of a given pointset according to Grahams' Scan.",
-            "The flag -l specifies the number of points in the pointset for generated instances."
-        },
-        ConvexHullAlgorithm.INSTANCE
-    ),
-
     INSERTIONSORT(
         "insertionsort",
         "Insertionsort",
@@ -410,7 +420,7 @@ public enum Algorithm {
             + "although they do not change the array content.",
             "The flag -l specifies the length of the array to sort for generated instances."
         },
-        MergeSort.INSTANCE
+        MergeSortWithSplitting.INSTANCE
     ),
 
     PRIM(
@@ -450,7 +460,8 @@ public enum Algorithm {
         new String[] {
             "Detection of strongly connected components." // TODO
         },
-        SCCAlgorithm.INSTANCE
+        SCCAlgorithm.INSTANCE,
+        false
     ),
 
     SELECTIONSORT(
@@ -469,7 +480,8 @@ public enum Algorithm {
         new String[] {
             "Detection of strongly connected components using Sharir's algorithm." // TODO
         },
-        SharirAlgorithm.INSTANCE
+        SharirAlgorithm.INSTANCE,
+        false
     ),
 
     SIMPLEX(
@@ -593,7 +605,8 @@ public enum Algorithm {
         new String[] {
             "Perform topological sort." // TODO
         },
-        TopologicSort.INSTANCE
+        TopologicSort.INSTANCE,
+        false
     ),
 
     WARSHALL(
@@ -603,7 +616,7 @@ public enum Algorithm {
             "Warshall's algorithm to find the transitive hull.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
-        FloydWarshallAlgorithm.INSTANCE
+        WarshallAlgorithm.INSTANCE
     );
 
     public static final int DEFAULT_CONTENT_LENGTH = 2;
@@ -614,25 +627,26 @@ public enum Algorithm {
         final String longestLeftHandSide,
         final String relation,
         final int contentLength,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
+        final boolean exercise,
+        final BufferedWriter writer
     ) throws IOException {
-        Algorithm.assignmentExercise(
-            leftHandSide,
-            rightHandSide.size(),
-            longestLeftHandSide,
-            relation,
-            contentLength,
-            exerciseWriter
-        );
-        Algorithm.assignmentSolution(
-            leftHandSide,
-            rightHandSide,
-            longestLeftHandSide,
-            relation,
-            contentLength,
-            solutionWriter
-        );
+        Algorithm.assignmentBeginning(leftHandSide, longestLeftHandSide, relation, writer);
+        if (exercise) {
+            LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(
+                rightHandSide.size(),
+                Optional.empty(),
+                contentLength,
+                writer
+            );
+        } else {
+            LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
+                rightHandSide,
+                Optional.empty(),
+                contentLength,
+                writer
+            );
+        }
+        Algorithm.assignmentEnd(writer);
     }
 
     public static Optional<Algorithm> forName(final String name) {
@@ -645,10 +659,6 @@ public enum Algorithm {
             }
         }
         return Optional.empty();
-    }
-
-    public static Optional<BufferedWriter> getOptionalSpaceWriter(final AlgorithmInput input) {
-        return input.options.containsKey(Flag.EXERCISE) ? Optional.of(input.exerciseWriter) : Optional.empty();
     }
 
     private static void assignmentBeginning(
@@ -674,32 +684,6 @@ public enum Algorithm {
         LaTeXUtils.printMinipageEnd(writer);
     }
 
-    private static void assignmentExercise(
-        final String task,
-        final int solutionLength,
-        final String longestTask,
-        final String relation,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        Algorithm.assignmentBeginning(task, longestTask, relation, writer);
-        LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(solutionLength, Optional.empty(), contentLength, writer);
-        Algorithm.assignmentEnd(writer);
-    }
-
-    private static void assignmentSolution(
-        final String task,
-        final List<? extends ItemWithTikZInformation<?>> solution,
-        final String longestTask,
-        final String relation,
-        final int contentLength,
-        final BufferedWriter writer
-    ) throws IOException {
-        Algorithm.assignmentBeginning(task, longestTask, relation, writer);
-        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(solution, Optional.empty(), contentLength, writer);
-        Algorithm.assignmentEnd(writer);
-    }
-
     private static String toLeftHandSideText(final String leftHandSide, final String relation) {
         return String.format("$%s %s {}$", leftHandSide, relation);
     }
@@ -714,7 +698,7 @@ public enum Algorithm {
      */
     public final boolean enabled;
 
-    public final AlgorithmImplementation implementation;
+    public final AlgorithmImplementation<?, ?> implementation;
 
     /**
      * The name of the algorithm for text processing.
@@ -733,7 +717,7 @@ public enum Algorithm {
         final String name,
         final String longName,
         final String[] documentation,
-        final AlgorithmImplementation implementation
+        final AlgorithmImplementation<?, ?> implementation
     ) {
         this(name, longName, documentation, implementation, true);
     }
@@ -742,7 +726,7 @@ public enum Algorithm {
         final String name,
         final String longName,
         final String[] documentation,
-        final AlgorithmImplementation implementation,
+        final AlgorithmImplementation<?, ?> implementation,
         final boolean enabled
     ) {
         this.name = name;

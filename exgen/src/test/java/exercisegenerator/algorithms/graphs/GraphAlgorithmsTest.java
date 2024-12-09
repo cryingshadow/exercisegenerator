@@ -1,25 +1,17 @@
 package exercisegenerator.algorithms.graphs;
 
 import java.util.*;
-import java.util.Optional;
 
 import org.testng.*;
 import org.testng.annotations.*;
 
-import exercisegenerator.algorithms.graphs.BellmanFordAlgorithm.*;
-import exercisegenerator.algorithms.graphs.KruskalAlgorithm.*;
-import exercisegenerator.algorithms.graphs.PrimAlgorithm.*;
 import exercisegenerator.structures.graphs.*;
 
 public class GraphAlgorithmsTest {
 
     @Test(dataProvider="bellmanFordData")
-    public void bellmanFord(
-        final Graph<String, Integer> graph,
-        final Vertex<String> start,
-        final List<BellmanFordStep<String>> expected
-    ) {
-        Assert.assertEquals(BellmanFordAlgorithm.bellmanFord(graph, start, new StringVertexComparator()), expected);
+    public void bellmanFord(final GraphProblem problem, final List<BellmanFordStep<String>> expected) {
+        Assert.assertEquals(BellmanFordAlgorithm.INSTANCE.apply(problem), expected);
     }
 
     @DataProvider
@@ -68,8 +60,11 @@ public class GraphAlgorithmsTest {
             );
         return new Object[][] {
             {
-                Graph.create(adjacencyLists1),
-                e,
+                new GraphProblem(
+                    Graph.create(adjacencyLists1),
+                    e,
+                    StringVertexComparator.INSTANCE
+                ),
                 List.of(
                     new BellmanFordStep<String>(Map.of("E", 0), Map.of()),
                     new BellmanFordStep<String>(
@@ -131,31 +126,26 @@ public class GraphAlgorithmsTest {
         adjacencyLists3.addEdge(i, 0, a);
         adjacencyLists3.addEdge(j, 0, j);
         return new Object[][] {
-            {Graph.create(adjacencyLists1), a, List.of("A")},
-            {Graph.create(adjacencyLists2), a, List.of("A", "B", "C", "D")},
-            {Graph.create(adjacencyLists3), a, List.of("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")}
+            {new GraphProblem(Graph.create(adjacencyLists1), a, StringVertexComparator.INSTANCE), List.of("A")},
+            {
+                new GraphProblem(Graph.create(adjacencyLists2), a, StringVertexComparator.INSTANCE),
+                List.of("A", "B", "C", "D")
+            },
+            {
+                new GraphProblem(Graph.create(adjacencyLists3), a, StringVertexComparator.INSTANCE),
+                List.of("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
+            }
         };
     }
 
     @Test(dataProvider="bfsData")
-    public void breadthFirstSearch(
-        final Graph<String, Integer> graph,
-        final Vertex<String> start,
-        final List<String> expected
-    ) {
-        Assert.assertEquals(
-            BreadthFirstSearch.breadthFirstSearch(graph, start, new StringVertexComparator()),
-            expected
-        );
+    public void breadthFirstSearch(final GraphProblem problem, final List<String> expected) {
+        Assert.assertEquals(BreadthFirstSearch.INSTANCE.apply(problem), expected);
     }
 
     @Test(dataProvider="dfsData")
-    public void depthFirstSearch(
-        final Graph<String, Integer> graph,
-        final Vertex<String> start,
-        final List<String> expected
-    ) {
-        Assert.assertEquals(DepthFirstSearch.depthFirstSearch(graph, start, new StringVertexComparator()), expected);
+    public void depthFirstSearch(final GraphProblem problem, final List<String> expected) {
+        Assert.assertEquals(DepthFirstSearch.INSTANCE.apply(problem), expected);
     }
 
     @DataProvider
@@ -193,19 +183,21 @@ public class GraphAlgorithmsTest {
         adjacencyLists3.addEdge(i, 0, a);
         adjacencyLists3.addEdge(j, 0, j);
         return new Object[][] {
-            {Graph.create(adjacencyLists1), a, List.of("A")},
-            {Graph.create(adjacencyLists2), a, List.of("A", "B", "C", "D")},
-            {Graph.create(adjacencyLists3), a, List.of("A", "B", "E", "F", "C", "G", "D", "I", "J", "H")}
+            {new GraphProblem(Graph.create(adjacencyLists1), a, StringVertexComparator.INSTANCE), List.of("A")},
+            {
+                new GraphProblem(Graph.create(adjacencyLists2), a, StringVertexComparator.INSTANCE),
+                List.of("A", "B", "C", "D")
+            },
+            {
+                new GraphProblem(Graph.create(adjacencyLists3), a, StringVertexComparator.INSTANCE),
+                List.of("A", "B", "E", "F", "C", "G", "D", "I", "J", "H")
+            }
         };
     }
 
     @Test(dataProvider="dijkstraData")
-    public void dijkstra(
-        final Graph<String, Integer> graph,
-        final Vertex<String> start,
-        final DijkstraTables expected
-    ) {
-        Assert.assertEquals(DijkstraAlgorithm.dijkstra(graph, start, new StringVertexComparator()), expected);
+    public void dijkstra(final GraphProblem problem, final DijkstraTables expected) {
+        Assert.assertEquals(DijkstraAlgorithm.INSTANCE.apply(problem), expected);
     }
 
     @DataProvider
@@ -234,8 +226,11 @@ public class GraphAlgorithmsTest {
         adjacencyLists1.addEdge(g, 1, d);
         return new Object[][] {
             {
-                Graph.create(adjacencyLists1),
-                e,
+                new GraphProblem(
+                    Graph.create(adjacencyLists1),
+                    e,
+                    StringVertexComparator.INSTANCE
+                ),
                 new DijkstraTables(
                     new String[][] {
                         {"\\textbf{Knoten}", "\\textbf{E}", "", "", "", "", ""},
@@ -280,11 +275,8 @@ public class GraphAlgorithmsTest {
     }
 
     @Test(dataProvider="floydData")
-    public void floyd(
-        final Graph<String, Integer> graph,
-        final Integer[][][] expected
-    ) {
-        Assert.assertEquals(FloydWarshallAlgorithm.floyd(graph, Optional.of(new StringVertexComparator())), expected);
+    public void floyd(final GraphProblem problem, final Integer[][][] expected) {
+        Assert.assertEquals(FloydAlgorithm.INSTANCE.apply(problem), expected);
     }
 
     @DataProvider
@@ -305,7 +297,7 @@ public class GraphAlgorithmsTest {
         adjacencyLists1.addEdge(e, 3, d);
         return new Object[][] {
             {
-                Graph.create(adjacencyLists1),
+                new GraphProblem(Graph.create(adjacencyLists1), null, StringVertexComparator.INSTANCE),
                 new Integer[][][] {
                     {
                         {   0,   1,null,   7,null},
@@ -354,12 +346,137 @@ public class GraphAlgorithmsTest {
         };
     }
 
-    @Test(dataProvider="kruskalData")
-    public void kruskal(
-        final Graph<String, Integer> graph,
-        final KruskalResult<String> expected
+    @Test(dataProvider="fordFulkersonData")
+    public void fordFulkerson(
+        final FlowNetworkProblem problem,
+        final List<FordFulkersonDoubleStep> expected
     ) {
-        Assert.assertEquals(KruskalAlgorithm.kruskal(graph), expected);
+        final List<FordFulkersonDoubleStep> solution = FordFulkersonAlgorithm.INSTANCE.apply(problem);
+        Assert.assertEquals(solution, expected);
+    }
+
+    @DataProvider
+    public Object[][] fordFulkersonData() {
+        final Vertex<String> a = new Vertex<String>("A");
+        final Vertex<String> b = new Vertex<String>("B");
+        final Vertex<String> c = new Vertex<String>("C");
+        final Vertex<String> d = new Vertex<String>("D");
+        final AdjacencyLists<String, FlowPair> adjacencyLists1 = new AdjacencyLists<String, FlowPair>();
+        adjacencyLists1.addEdge(a, new FlowPair(0, 4), b);
+        adjacencyLists1.addEdge(a, new FlowPair(0, 3), c);
+        adjacencyLists1.addEdge(b, new FlowPair(0, 4), c);
+        adjacencyLists1.addEdge(c, new FlowPair(0, 4), d);
+        adjacencyLists1.addEdge(b, new FlowPair(0, 3), d);
+        final AdjacencyLists<String, Integer> adjacencyLists1r = new AdjacencyLists<String, Integer>();
+        adjacencyLists1r.addEdge(a, 4, b);
+        adjacencyLists1r.addEdge(a, 3, c);
+        adjacencyLists1r.addEdge(b, 4, c);
+        adjacencyLists1r.addEdge(c, 4, d);
+        adjacencyLists1r.addEdge(b, 3, d);
+        final AdjacencyLists<String, FlowPair> adjacencyLists2 = new AdjacencyLists<String, FlowPair>();
+        adjacencyLists2.addEdge(a, new FlowPair(3, 4), b);
+        adjacencyLists2.addEdge(a, new FlowPair(0, 3), c);
+        adjacencyLists2.addEdge(b, new FlowPair(0, 4), c);
+        adjacencyLists2.addEdge(c, new FlowPair(0, 4), d);
+        adjacencyLists2.addEdge(b, new FlowPair(3, 3), d);
+        final AdjacencyLists<String, Integer> adjacencyLists2r = new AdjacencyLists<String, Integer>();
+        adjacencyLists2r.addEdge(a, 1, b);
+        adjacencyLists2r.addEdge(b, 3, a);
+        adjacencyLists2r.addEdge(a, 3, c);
+        adjacencyLists2r.addEdge(b, 4, c);
+        adjacencyLists2r.addEdge(c, 4, d);
+        adjacencyLists2r.addEdge(d, 3, b);
+        final AdjacencyLists<String, FlowPair> adjacencyLists3 = new AdjacencyLists<String, FlowPair>();
+        adjacencyLists3.addEdge(a, new FlowPair(3, 4), b);
+        adjacencyLists3.addEdge(a, new FlowPair(3, 3), c);
+        adjacencyLists3.addEdge(b, new FlowPair(0, 4), c);
+        adjacencyLists3.addEdge(c, new FlowPair(3, 4), d);
+        adjacencyLists3.addEdge(b, new FlowPair(3, 3), d);
+        final AdjacencyLists<String, Integer> adjacencyLists3r = new AdjacencyLists<String, Integer>();
+        adjacencyLists3r.addEdge(a, 1, b);
+        adjacencyLists3r.addEdge(b, 3, a);
+        adjacencyLists3r.addEdge(c, 3, a);
+        adjacencyLists3r.addEdge(b, 4, c);
+        adjacencyLists3r.addEdge(c, 1, d);
+        adjacencyLists3r.addEdge(d, 3, c);
+        adjacencyLists3r.addEdge(d, 3, b);
+        final AdjacencyLists<String, FlowPair> adjacencyLists4 = new AdjacencyLists<String, FlowPair>();
+        adjacencyLists4.addEdge(a, new FlowPair(4, 4), b);
+        adjacencyLists4.addEdge(a, new FlowPair(3, 3), c);
+        adjacencyLists4.addEdge(b, new FlowPair(1, 4), c);
+        adjacencyLists4.addEdge(c, new FlowPair(4, 4), d);
+        adjacencyLists4.addEdge(b, new FlowPair(3, 3), d);
+        final AdjacencyLists<String, Integer> adjacencyLists4r = new AdjacencyLists<String, Integer>();
+        adjacencyLists4r.addEdge(b, 4, a);
+        adjacencyLists4r.addEdge(c, 3, a);
+        adjacencyLists4r.addEdge(b, 3, c);
+        adjacencyLists4r.addEdge(c, 1, b);
+        adjacencyLists4r.addEdge(d, 4, c);
+        adjacencyLists4r.addEdge(d, 3, b);
+        final Graph<String, FlowPair> graph1 = Graph.create(adjacencyLists1);
+        final Graph<String, FlowPair> graph2 = Graph.create(adjacencyLists2);
+        final Graph<String, FlowPair> graph3 = Graph.create(adjacencyLists3);
+        final Graph<String, FlowPair> graph4 = Graph.create(adjacencyLists4);
+        final Graph<String, Integer> graph1r = Graph.create(adjacencyLists1r);
+        final Graph<String, Integer> graph2r = Graph.create(adjacencyLists2r);
+        final Graph<String, Integer> graph3r = Graph.create(adjacencyLists3r);
+        final Graph<String, Integer> graph4r = Graph.create(adjacencyLists4r);
+        return new Object[][] {
+            {
+                new FlowNetworkProblem(graph1, a, d),
+                List.of(
+                    new FordFulkersonDoubleStep(
+                        graph1,
+                        Collections.emptySet(),
+                        graph1r,
+                        Set.of(
+                            new FordFulkersonPathStep<String, Integer>(a, graph1r.getEdges(a, b).iterator().next()),
+                            new FordFulkersonPathStep<String, Integer>(b, graph1r.getEdges(b, d).iterator().next())
+                        )
+                    ),
+                    new FordFulkersonDoubleStep(
+                        graph2,
+                        Set.of(
+                            new FordFulkersonPathStep<String, FlowPair>(a, graph2.getEdges(a, b).iterator().next()),
+                            new FordFulkersonPathStep<String, FlowPair>(b, graph2.getEdges(b, d).iterator().next())
+                        ),
+                        graph2r,
+                        Set.of(
+                            new FordFulkersonPathStep<String, Integer>(a, graph2r.getEdges(a, c).iterator().next()),
+                            new FordFulkersonPathStep<String, Integer>(c, graph2r.getEdges(c, d).iterator().next())
+                        )
+                    ),
+                    new FordFulkersonDoubleStep(
+                        graph3,
+                        Set.of(
+                            new FordFulkersonPathStep<String, FlowPair>(a, graph3.getEdges(a, c).iterator().next()),
+                            new FordFulkersonPathStep<String, FlowPair>(c, graph3.getEdges(c, d).iterator().next())
+                        ),
+                        graph3r,
+                        Set.of(
+                            new FordFulkersonPathStep<String, Integer>(a, graph3r.getEdges(a, b).iterator().next()),
+                            new FordFulkersonPathStep<String, Integer>(b, graph3r.getEdges(b, c).iterator().next()),
+                            new FordFulkersonPathStep<String, Integer>(c, graph3r.getEdges(c, d).iterator().next())
+                        )
+                    ),
+                    new FordFulkersonDoubleStep(
+                        graph4,
+                        Set.of(
+                            new FordFulkersonPathStep<String, FlowPair>(a, graph4.getEdges(a, b).iterator().next()),
+                            new FordFulkersonPathStep<String, FlowPair>(b, graph4.getEdges(b, c).iterator().next()),
+                            new FordFulkersonPathStep<String, FlowPair>(c, graph4.getEdges(c, d).iterator().next())
+                        ),
+                        graph4r,
+                        Collections.emptySet()
+                    )
+                )
+            }
+        };
+    }
+
+    @Test(dataProvider="kruskalData")
+    public void kruskal(final GraphProblem problem, final KruskalResult<String> expected) {
+        Assert.assertEquals(KruskalAlgorithm.INSTANCE.apply(problem), expected);
     }
 
     @DataProvider
@@ -414,20 +531,15 @@ public class GraphAlgorithmsTest {
             );
         return new Object[][] {
             {
-                Graph.create(adjacencyLists1),
+                new GraphProblem(Graph.create(adjacencyLists1), a, StringVertexComparator.INSTANCE),
                 new KruskalResult<String>(result, Graph.create(adjacencyLists2))
             }
         };
     }
 
     @Test(dataProvider="primData")
-    public void prim(
-        final Graph<String, Integer> graph,
-        final Vertex<String> start,
-        final Optional<Comparator<Vertex<String>>> comparator,
-        final PrimResult<String> expected
-    ) {
-        Assert.assertEquals(PrimAlgorithm.prim(graph, start, comparator), expected);
+    public void prim(final GraphProblem problem, final PrimResult<String> expected) {
+        Assert.assertEquals(PrimAlgorithm.INSTANCE.apply(problem), expected);
     }
 
     @DataProvider
@@ -473,19 +585,41 @@ public class GraphAlgorithmsTest {
         adjacencyLists2.addEdge(g, 5, d);
         final PrimEntry[][] table =
             new PrimEntry[][] {
-                {PrimAlgorithm.INFINITY,PrimAlgorithm.INFINITY,PrimAlgorithm.INFINITY,PrimAlgorithm.INFINITY,new PrimEntry(0).done(),PrimAlgorithm.INFINITY,PrimAlgorithm.INFINITY},
-                {PrimAlgorithm.INFINITY,new PrimEntry(2).done(),PrimAlgorithm.INFINITY,new PrimEntry(3),null,new PrimEntry(4),new PrimEntry(9)},
-                {new PrimEntry(1).done(),null,new PrimEntry(6),new PrimEntry(3),null,new PrimEntry(4),new PrimEntry(9)},
-                {null,null,new PrimEntry(6),new PrimEntry(3).done(),null,new PrimEntry(4),new PrimEntry(9)},
-                {null,null,new PrimEntry(6),null,null,new PrimEntry(4).done(),new PrimEntry(5)},
-                {null,null,new PrimEntry(1).done(),null,null,null,new PrimEntry(5)},
-                {null,null,null,null,null,null,new PrimEntry(5).done()},
+                {
+                    PrimAlgorithm.INFINITY,
+                    PrimAlgorithm.INFINITY,
+                    PrimAlgorithm.INFINITY,
+                    PrimAlgorithm.INFINITY,
+                    new PrimEntry(0).toDone(),
+                    PrimAlgorithm.INFINITY,
+                    PrimAlgorithm.INFINITY
+                },
+                {
+                    PrimAlgorithm.INFINITY,
+                    new PrimEntry(2).toDone(),
+                    PrimAlgorithm.INFINITY,
+                    new PrimEntry(3),
+                    null,
+                    new PrimEntry(4),
+                    new PrimEntry(9)
+                },
+                {
+                    new PrimEntry(1).toDone(),
+                    null,
+                    new PrimEntry(6),
+                    new PrimEntry(3),
+                    null,
+                    new PrimEntry(4),
+                    new PrimEntry(9)
+                },
+                {null, null, new PrimEntry(6), new PrimEntry(3).toDone(), null, new PrimEntry(4), new PrimEntry(9)},
+                {null, null, new PrimEntry(6), null, null, new PrimEntry(4).toDone(), new PrimEntry(5)},
+                {null, null, new PrimEntry(1).toDone(), null, null, null, new PrimEntry(5)},
+                {null, null, null, null, null, null, new PrimEntry(5).toDone()},
             };
         return new Object[][] {
             {
-                Graph.create(adjacencyLists1),
-                e,
-                Optional.of(new StringVertexComparator()),
+                new GraphProblem(Graph.create(adjacencyLists1), e, StringVertexComparator.INSTANCE),
                 new PrimResult<String>(table, Graph.create(adjacencyLists2))
             }
         };

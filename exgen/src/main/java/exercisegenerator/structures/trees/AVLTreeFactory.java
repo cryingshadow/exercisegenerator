@@ -9,13 +9,8 @@ public class AVLTreeFactory<T extends Comparable<T>> extends BinaryTreeFactory<T
     }
 
     @Override
-    public BinaryTree<T> create() {
-        return new AVLTree<T>(Optional.empty(), this);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
-    public BinaryTree<T> create(final Optional<? extends BinaryTreeNode<T>> root) {
+    public BinaryTree<T> create(final Optional<? extends SearchTreeNode<T>> root) {
         return new AVLTree<T>((Optional<AVLTreeNode<T>>)root, this);
     }
 

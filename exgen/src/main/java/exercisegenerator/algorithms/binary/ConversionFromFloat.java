@@ -4,25 +4,10 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
-import exercisegenerator.algorithms.*;
-import exercisegenerator.algorithms.binary.BinaryNumbers.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.binary.*;
 
-public class ConversionFromFloat implements AlgorithmImplementation {
-
-    private static class BitStringFloatTask extends BinaryTask {
-        private final BitString bitString;
-        private final int exponentLength;
-        private final int mantissaLength;
-
-        private BitStringFloatTask(final BitString bitString, final int exponentLength, final int mantissaLength) {
-            this.bitString = bitString;
-            this.exponentLength = exponentLength;
-            this.mantissaLength = mantissaLength;
-        }
-    }
+public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloatTask> {
 
     public static final ConversionFromFloat INSTANCE = new ConversionFromFloat();
 
@@ -34,7 +19,7 @@ public class ConversionFromFloat implements AlgorithmImplementation {
 
     public static String fromFloat(final BitString bitString, final int exponentLength, final int mantissaLength) {
         final String sign = bitString.getFirst().isZero() ? "" : "-";
-        final int excess = BinaryNumbers.getExcess(exponentLength);
+        final int excess = BinaryNumbersAlgorithm.getExcess(exponentLength);
         final int exponent = bitString.subString(1, exponentLength + 1).toUnsignedInt() - excess;
         final BitString afterComma = bitString.subString(exponentLength + 1);
         if (exponent == excess + 1) {
@@ -67,14 +52,14 @@ public class ConversionFromFloat implements AlgorithmImplementation {
     }
 
     private static List<BitStringFloatTask> generateBitStringFloatTasks(final Parameters options) {
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
-        final int exponentLength = BinaryNumbers.getExponentLength(options);
-        final int mantissaLength = BinaryNumbers.getMantissaLength(options);
+        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
+        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
+        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
         final List<BitStringFloatTask> result = new ArrayList<BitStringFloatTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
             result.add(
                 new BitStringFloatTask(
-                    BinaryNumbers.generateBitString(exponentLength + mantissaLength + 1),
+                    BinaryNumbersAlgorithm.generateBitString(exponentLength + mantissaLength + 1),
                     exponentLength,
                     mantissaLength
                 )
@@ -87,20 +72,11 @@ public class ConversionFromFloat implements AlgorithmImplementation {
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
-        final int exponentLength = BinaryNumbers.getExponentLength(options);
-        final int mantissaLength = BinaryNumbers.getMantissaLength(options);
+        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
+        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
         return Arrays.stream(reader.readLine().split(";"))
             .map(bitstring -> new BitStringFloatTask(BitString.parse(bitstring), exponentLength, mantissaLength))
             .toList();
-    }
-
-    private static List<BitStringFloatTask> parseOrGenerateBitStringFloatTasks(
-        final Parameters options
-    ) throws IOException {
-        return new ParserAndGenerator<List<BitStringFloatTask>>(
-            ConversionFromFloat::parseBitStringFloatTasks,
-            ConversionFromFloat::generateBitStringFloatTasks
-        ).getResult(options);
     }
 
     private static void shiftOneBitLeft(final BitString beforeComma, final BitString afterComma) {
@@ -139,28 +115,11 @@ public class ConversionFromFloat implements AlgorithmImplementation {
     private ConversionFromFloat() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        BinaryNumbers.allBinaryTasks(
-            input,
-            String.format(
-                ConversionFromFloat.EXERCISE_TEXT_PATTERN_FROM_FLOAT,
-                BinaryNumbers.getExponentLength(input.options),
-                BinaryNumbers.getMantissaLength(input.options)
-            ),
-            String.format(
-                ConversionFromFloat.EXERCISE_TEXT_PATTERN_FROM_FLOAT_SINGULAR,
-                BinaryNumbers.getExponentLength(input.options),
-                BinaryNumbers.getMantissaLength(input.options)
-            ),
-            task -> new SolvedBinaryTask(
-                ConversionFromFloat.fromFloat(task.bitString, task.exponentLength, task.mantissaLength),
-                task.bitString,
-                "="
-            ),
-            ConversionFromFloat::parseOrGenerateBitStringFloatTasks,
-            BinaryNumbers::toBitStringTask,
-            BinaryNumbers::toValueSolution,
-            BinaryNumbers::getMaximumContentLength
+    public SolvedBinaryTask algorithm(final BitStringFloatTask task) {
+        return new SolvedBinaryTask(
+            task.bitString(),
+            "=",
+            ConversionFromFloat.fromFloat(task.bitString(), task.exponentLength(), task.mantissaLength())
         );
     }
 
@@ -174,6 +133,49 @@ public class ConversionFromFloat implements AlgorithmImplementation {
         result[4] = "-l";
         result[5] = "3";
         return result; //TODO
+    }
+
+    @Override
+    public String getExerciseText(final Parameters options) {
+        return String.format(
+            ConversionFromFloat.EXERCISE_TEXT_PATTERN_FROM_FLOAT,
+            BinaryNumbersAlgorithm.getExponentLength(options),
+            BinaryNumbersAlgorithm.getMantissaLength(options)
+        );
+    }
+
+    @Override
+    public String getExerciseTextSingular(final Parameters options) {
+        return String.format(
+            ConversionFromFloat.EXERCISE_TEXT_PATTERN_FROM_FLOAT_SINGULAR,
+            BinaryNumbersAlgorithm.getExponentLength(options),
+            BinaryNumbersAlgorithm.getMantissaLength(options)
+        );
+    }
+
+    @Override
+    public List<BitStringFloatTask> parseOrGenerateProblem(
+        final Parameters options
+    ) throws IOException {
+        return new ParserAndGenerator<List<BitStringFloatTask>>(
+            ConversionFromFloat::parseBitStringFloatTasks,
+            ConversionFromFloat::generateBitStringFloatTasks
+        ).getResult(options);
+    }
+
+    @Override
+    public int toContentLength(final List<SolvedBinaryTask> solvedTasks) {
+        return BinaryNumbersAlgorithm.getMaximumContentLength(solvedTasks);
+    }
+
+    @Override
+    public List<? extends ItemWithTikZInformation<?>> toSolution(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toValueSolution(solvedTask);
+    }
+
+    @Override
+    public String toTaskText(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toBitStringTask(solvedTask);
     }
 
 }

@@ -1,13 +1,12 @@
 package exercisegenerator.algorithms.binary;
 
 import java.io.*;
+import java.util.*;
 
-import exercisegenerator.algorithms.*;
-import exercisegenerator.algorithms.binary.BinaryNumbers.*;
-import exercisegenerator.structures.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
 
-public class ConversionToOnesComplement implements AlgorithmImplementation {
+public class ConversionToOnesComplement implements BinaryNumbersAlgorithm<NumberComplementTask> {
 
     public static final ConversionToOnesComplement INSTANCE = new ConversionToOnesComplement();
 
@@ -18,12 +17,12 @@ public class ConversionToOnesComplement implements AlgorithmImplementation {
         "Stellen Sie die folgende Dezimalzahl im %d-Bit Einerkomplement dar";
 
     public static BitString toOnesComplement(final int number, final int length) {
-        if (BinaryNumbers.outOfBoundsForOnesComplement(number, length)) {
+        if (BinaryNumbersAlgorithm.outOfBoundsForOnesComplement(number, length)) {
             throw new IllegalArgumentException(
                 String.format("Number is out of bounds for a %d-bit one's complement number!", length)
             );
         }
-        final BitString result = BinaryNumbers.toUnsignedBinary(number, length);
+        final BitString result = BinaryNumbersAlgorithm.toUnsignedBinary(number, length);
         if (number < 0) {
             return result.invert();
         }
@@ -33,26 +32,11 @@ public class ConversionToOnesComplement implements AlgorithmImplementation {
     private ConversionToOnesComplement() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        BinaryNumbers.allBinaryTasks(
-            input,
-            String.format(
-                ConversionToOnesComplement.EXERCISE_TEXT_PATTERN_TO_ONES,
-                BinaryNumbers.getBitLength(input.options)
-            ),
-            String.format(
-                ConversionToOnesComplement.EXERCISE_TEXT_PATTERN_TO_ONES_SINGULAR,
-                BinaryNumbers.getBitLength(input.options)
-            ),
-            task -> new SolvedBinaryTask(
-                String.valueOf(task.number),
-                ConversionToOnesComplement.toOnesComplement(task.number, task.bitLength),
-                "="
-            ),
-            BinaryNumbers::parseOrGenerateNumberComplementTasks,
-            BinaryNumbers::toValueTask,
-            BinaryNumbers::toBitStringSolution,
-            solvedTasks -> 1
+    public SolvedBinaryTask algorithm(final NumberComplementTask task) {
+        return new SolvedBinaryTask(
+            ConversionToOnesComplement.toOnesComplement(task.number(), task.bitLength()),
+            "=",
+            String.valueOf(task.number())
         );
     }
 
@@ -66,6 +50,42 @@ public class ConversionToOnesComplement implements AlgorithmImplementation {
         result[4] = "-l";
         result[5] = "3";
         return result; //TODO
+    }
+
+    @Override
+    public String getExerciseText(final Parameters options) {
+        return String.format(
+            ConversionToOnesComplement.EXERCISE_TEXT_PATTERN_TO_ONES,
+            BinaryNumbersAlgorithm.getBitLength(options)
+        );
+    }
+
+    @Override
+    public String getExerciseTextSingular(final Parameters options) {
+        return String.format(
+            ConversionToOnesComplement.EXERCISE_TEXT_PATTERN_TO_ONES_SINGULAR,
+            BinaryNumbersAlgorithm.getBitLength(options)
+        );
+    }
+
+    @Override
+    public List<NumberComplementTask> parseOrGenerateProblem(final Parameters options) throws IOException {
+        return BinaryNumbersAlgorithm.parseOrGenerateNumberComplementTasks(options);
+    }
+
+    @Override
+    public int toContentLength(final List<SolvedBinaryTask> solvedTasks) {
+        return 1;
+    }
+
+    @Override
+    public List<? extends ItemWithTikZInformation<?>> toSolution(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toBitStringSolution(solvedTask);
+    }
+
+    @Override
+    public String toTaskText(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toValueTask(solvedTask);
     }
 
 }

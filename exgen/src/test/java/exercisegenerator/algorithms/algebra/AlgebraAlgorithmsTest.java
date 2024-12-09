@@ -820,8 +820,7 @@ public class AlgebraAlgorithmsTest {
 
     @Test(dataProvider="matrixArithmeticData")
     public void matrixArithmeticTest(final MatrixTerm problem, final List<MatrixTerm> expected) {
-        final List<MatrixTerm> result = MatrixArithmeticAlgorithm.applyMatrixArithmetic(problem);
-        Assert.assertEquals(result, expected);
+        Assert.assertEquals(MatrixArithmeticAlgorithm.INSTANCE.apply(problem), expected);
     }
 
 }

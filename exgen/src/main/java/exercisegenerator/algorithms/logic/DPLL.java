@@ -6,27 +6,13 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import exercisegenerator.algorithms.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.logic.*;
 
-public class DPLL implements AlgorithmImplementation {
+public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
 
-    public static DPLLNode dpll(final Set<Clause> clauses) {
-        DPLLNode result = new DPLLNode(clauses).addLeftmost(DPLL.unitPropagation(clauses));
-        result = result.addLeftmost(DPLL.pureAssignment(result.getLeftmostClauses()));
-        final Set<Clause> latest = result.getLeftmostClauses();
-        if (latest.isEmpty() || latest.contains(Clause.EMPTY)) {
-            return result;
-        }
-        final PropositionalVariable chosen = DPLL.chooseVariable(latest);
-        final DPLLNode left = DPLL.dpll(DPLL.setTruth(chosen, true, latest));
-        if (left.isSAT()) {
-            return result.addLeftmost(Optional.of(left));
-        }
-        return result
-            .addRightToLeftmost(DPLL.dpll(DPLL.setTruth(chosen, false, latest)))
-            .addLeftmost(Optional.of(left));
-    }
+    public static final DPLL INSTANCE = new DPLL();
 
     static Set<Clause> parseClauses(final String toParse) {
         if (toParse == null || toParse.isBlank()) {
@@ -148,6 +134,26 @@ public class DPLL implements AlgorithmImplementation {
         return DPLL.deterministicAssignments(clauses, DPLL::containsUnitClause, DPLL::selectUnitLiteral);
     }
 
+    private DPLL() {}
+
+    @Override
+    public DPLLNode apply(final Set<Clause> clauses) {
+        DPLLNode result = new DPLLNode(clauses).addLeftmost(DPLL.unitPropagation(clauses));
+        result = result.addLeftmost(DPLL.pureAssignment(result.getLeftmostClauses()));
+        final Set<Clause> latest = result.getLeftmostClauses();
+        if (latest.isEmpty() || latest.contains(Clause.EMPTY)) {
+            return result;
+        }
+        final PropositionalVariable chosen = DPLL.chooseVariable(latest);
+        final DPLLNode left = this.apply(DPLL.setTruth(chosen, true, latest));
+        if (left.isSAT()) {
+            return result.addLeftmost(Optional.of(left));
+        }
+        return result
+            .addRightToLeftmost(this.apply(DPLL.setTruth(chosen, false, latest)))
+            .addLeftmost(Optional.of(left));
+    }
+
     @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         // TODO Auto-generated method stub
@@ -160,6 +166,34 @@ public class DPLL implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "3";
         return result; //TODO
+    }
+
+    @Override
+    public Set<Clause> parseOrGenerateProblem(final Parameters options) throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void printExercise(
+        final Set<Clause> problem,
+        final DPLLNode solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void printSolution(
+        final Set<Clause> problem,
+        final DPLLNode solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
+
     }
 
 }

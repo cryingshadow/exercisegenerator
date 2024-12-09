@@ -9,7 +9,7 @@ import java.util.stream.*;
 import exercisegenerator.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
-import exercisegenerator.structures.trees.btree.*;
+import exercisegenerator.structures.trees.*;
 
 public abstract class LaTeXUtils {
 

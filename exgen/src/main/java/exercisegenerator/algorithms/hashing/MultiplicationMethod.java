@@ -2,6 +2,8 @@ package exercisegenerator.algorithms.hashing;
 
 import org.apache.commons.math3.fraction.*;
 
+import exercisegenerator.structures.hashing.*;
+
 public class MultiplicationMethod implements HashFunction {
 
     private final int capacity;

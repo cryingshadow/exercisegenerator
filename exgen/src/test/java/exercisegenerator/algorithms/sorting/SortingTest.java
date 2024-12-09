@@ -9,6 +9,7 @@ import org.testng.annotations.*;
 
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.structures.sorting.*;
 
 public class SortingTest {
 
@@ -39,30 +40,33 @@ public class SortingTest {
     @Test
     public void bubblesort() {
         final int[] array = new int[] {5,7,4,8,1,3};
-        final List<List<ItemWithTikZInformation<Integer>>> expected =
-            SortingTest.toItemsLists(
-                new int[][] {
-                    {5,7,4,8,1,3},
-                    {5,4,7,8,1,3},
-                    {5,4,7,1,8,3},
-                    {5,4,7,1,3,8},
-                    {4,5,7,1,3,8},
-                    {4,5,1,7,3,8},
-                    {4,5,1,3,7,8},
-                    {4,1,5,3,7,8},
-                    {4,1,3,5,7,8},
-                    {1,4,3,5,7,8},
-                    {1,3,4,5,7,8}
-                }
+        final SortingSolution expected =
+            new SortingSolution(
+                1,
+                SortingTest.toItemsLists(
+                    new int[][] {
+                        {5,7,4,8,1,3},
+                        {5,4,7,8,1,3},
+                        {5,4,7,1,8,3},
+                        {5,4,7,1,3,8},
+                        {4,5,7,1,3,8},
+                        {4,5,1,7,3,8},
+                        {4,5,1,3,7,8},
+                        {4,1,5,3,7,8},
+                        {4,1,3,5,7,8},
+                        {1,4,3,5,7,8},
+                        {1,3,4,5,7,8}
+                    }
+                )
             );
-        Assert.assertEquals(BubbleSort.bubblesort(array), expected);
+        Assert.assertEquals(BubbleSort.INSTANCE.apply(array), expected);
     }
 
     @Test
     public void bucketsort() {
         final int[] array = new int[] {27,25,44,18,31,73};
-        final Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>> expected =
-            new Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>>(
+        final BucketSortSolution expected =
+            new BucketSortSolution(
                 new IntegerList[] {
                     new IntegerList(),
                     new IntegerList(18),
@@ -77,306 +81,30 @@ public class SortingTest {
                 },
                 SortingTest.toItemsList(new int[] {18,25,27,31,44,73})
             );
-        final Pair<IntegerList[], List<ItemWithTikZInformation<Integer>>> result =
-            BucketSort.bucketsort(array, 0, 99, 10);
-        Assert.assertEquals(result.x, expected.x);
-        Assert.assertEquals(result.y, expected.y);
+        final BucketSortSolution result = BucketSort.INSTANCE.apply(new BucketSortProblem(array, 0, 99, 10));
+        Assert.assertEquals(result.solutionArray(), expected.solutionArray());
+        Assert.assertTrue(Arrays.deepEquals(result.buckets(), expected.buckets()));
     }
 
     @Test
     public void countingsort() {
         final int[] array = new int[] {5,7,4,8,1,3};
-        final List<List<ItemWithTikZInformation<Integer>>> expected =
-            SortingTest.toItemsLists(
-                new int[][] {
-                    {5,7,4,8,1,3},
-                    {0,1,0,1,1,1,0,1,1,0},
-                    {1,3,4,5,7,8}
-                }
+        final CountingSortSolution expected =
+            new CountingSortSolution(
+                SortingTest.toItemsList(new int[] {0,1,0,1,1,1,0,1,1,0}),
+                SortingTest.toItemsList(new int[] {1,3,4,5,7,8})
             );
-        Assert.assertEquals(CountingSort.countingsort(array, 0, 9), expected);
+        Assert.assertEquals(CountingSort.INSTANCE.apply(new CountingSortProblem(array, 0, 9)), expected);
     }
 
     @Test
     public void heapsort() {
         final int[] array = new int[] {5,7,4,8,1,3};
-        final List<List<ItemWithTikZInformation<Integer>>> expected =
-            Arrays.asList(
+        final SortingSolution expected =
+            new SortingSolution(
+                1,
                 Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(8)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(8)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true)
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true)
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true)
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8))
-                )
-            );
-        Assert.assertEquals(HeapSort.heapsort(array), expected);
-    }
-
-    @Test
-    public void insertionsort() {
-        final int[] array = new int[] {5,7,4,8,1,3};
-        final List<List<ItemWithTikZInformation<Integer>>> expected =
-            SortingTest.toItemsLists(
-                new int[][] {
-                    {5,7,4,8,1,3},
-                    {5,7,4,8,1,3},
-                    {4,5,7,8,1,3},
-                    {4,5,7,8,1,3},
-                    {1,4,5,7,8,3},
-                    {1,3,4,5,7,8}
-                }
-            );
-        Assert.assertEquals(InsertionSort.insertionsort(array), expected);
-    }
-
-    @Test
-    public void mergesort() {
-        final int[] array = new int[] {5,7,4,8,1,3};
-        final List<List<ItemWithTikZInformation<Integer>>> expected =
-            SortingTest.toItemsLists(
-                new int[][] {
-                    {5,7,4,8,1,3},
-                    {5,7,4,8,1,3},
-                    {4,5,7,8,1,3},
-                    {4,5,7,1,8,3},
-                    {4,5,7,1,3,8},
-                    {1,3,4,5,7,8}
-                },
-                new boolean[][] {
-                    {false, false, false, false, false, false},
-                    {true, true, false, false, false, false},
-                    {true, true, true, false, false, false},
-                    {false, false, false, true, true, false},
-                    {false, false, false, true, true, true},
-                    {true, true, true, true, true, true}
-                }
-            );
-        Assert.assertEquals(MergeSort.mergesort(array, false), expected);
-    }
-
-    @Test
-    public void mergesortWithSplit() {
-        final int[] array = new int[] {5,7,4,8,1,3};
-        final List<List<ItemWithTikZInformation<Integer>>> expected =
-            Arrays.asList(
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3))
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true)
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1), true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true)
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1), true, true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true)
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7)),
-                    new ItemWithTikZInformation<Integer>(Optional.of(1), true, true),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true, false)
-                ),
-                Arrays.asList(
-                    new ItemWithTikZInformation<Integer>(Optional.of(1), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(3), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(4), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
-                    new ItemWithTikZInformation<Integer>(Optional.of(8), true, false)
-                )
-            );
-        Assert.assertEquals(MergeSort.mergesort(array, true), expected);
-    }
-
-    @Test(dataProvider="quicksortData")
-    public void quicksort(final int[] array, final List<List<ItemWithTikZInformation<Integer>>> expected) {
-        Assert.assertEquals(QuickSort.quicksort(array), expected);
-    }
-
-    @DataProvider
-    public Object[][] quicksortData() {
-        return new Object[][] {
-            {
-                new int[] {5,7,4,8,1,3},
-                List.of(
-                    List.of(
+                    Arrays.asList(
                         new ItemWithTikZInformation<Integer>(Optional.of(5)),
                         new ItemWithTikZInformation<Integer>(Optional.of(7)),
                         new ItemWithTikZInformation<Integer>(Optional.of(4)),
@@ -384,87 +112,380 @@ public class SortingTest {
                         new ItemWithTikZInformation<Integer>(Optional.of(1)),
                         new ItemWithTikZInformation<Integer>(Optional.of(3))
                     ),
-                    List.of(
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
                         new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3), true, true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
                         new ItemWithTikZInformation<Integer>(Optional.of(8)),
                         new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(7))
-                    ),
-                    List.of(
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
                         new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(8)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
                         new ItemWithTikZInformation<Integer>(Optional.of(4), true),
                         new ItemWithTikZInformation<Integer>(Optional.of(5)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(7), true, true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8))
                     ),
-                    List.of(
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    ),
+                    Arrays.asList(
                         new ItemWithTikZInformation<Integer>(Optional.of(1)),
                         new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8))
+                    )
+                )
+            );
+        Assert.assertEquals(HeapSort.INSTANCE.apply(array), expected);
+    }
+
+    @Test
+    public void insertionsort() {
+        final int[] array = new int[] {5,7,4,8,1,3};
+        final SortingSolution expected =
+            new SortingSolution(
+                1,
+                SortingTest.toItemsLists(
+                    new int[][] {
+                        {5,7,4,8,1,3},
+                        {5,7,4,8,1,3},
+                        {4,5,7,8,1,3},
+                        {4,5,7,8,1,3},
+                        {1,4,5,7,8,3},
+                        {1,3,4,5,7,8}
+                    }
+                )
+            );
+        Assert.assertEquals(InsertionSort.INSTANCE.apply(array), expected);
+    }
+
+    @Test
+    public void mergesort() {
+        final int[] array = new int[] {5,7,4,8,1,3};
+        final SortingSolution expected =
+            new SortingSolution(
+                1,
+                SortingTest.toItemsLists(
+                    new int[][] {
+                        {5,7,4,8,1,3},
+                        {5,7,4,8,1,3},
+                        {4,5,7,8,1,3},
+                        {4,5,7,1,8,3},
+                        {4,5,7,1,3,8},
+                        {1,3,4,5,7,8}
+                    },
+                    new boolean[][] {
+                        {false, false, false, false, false, false},
+                        {true, true, false, false, false, false},
+                        {true, true, true, false, false, false},
+                        {false, false, false, true, true, false},
+                        {false, false, false, true, true, true},
+                        {true, true, true, true, true, true}
+                    }
+                )
+            );
+        Assert.assertEquals(MergeSort.INSTANCE.apply(array), expected);
+    }
+
+    @Test
+    public void mergesortWithSplit() {
+        final int[] array = new int[] {5,7,4,8,1,3};
+        final SortingSolution expected =
+            new SortingSolution(
+                1,
+                Arrays.asList(
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
                         new ItemWithTikZInformation<Integer>(Optional.of(4), true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(5), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
                         new ItemWithTikZInformation<Integer>(Optional.of(7), true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3))
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true)
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1), true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true)
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true)
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                        new ItemWithTikZInformation<Integer>(Optional.of(1), true, true),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true, false)
+                    ),
+                    Arrays.asList(
+                        new ItemWithTikZInformation<Integer>(Optional.of(1), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(3), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(4), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(5), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(7), true, false),
+                        new ItemWithTikZInformation<Integer>(Optional.of(8), true, false)
+                    )
+                )
+            );
+        Assert.assertEquals(MergeSortWithSplitting.INSTANCE.apply(array), expected);
+    }
+
+    @Test(dataProvider="quicksortData")
+    public void quicksort(final int[] array, final SortingSolution expected) {
+        Assert.assertEquals(QuickSort.INSTANCE.apply(array), expected);
+    }
+
+    @DataProvider
+    public Object[][] quicksortData() {
+        return new Object[][] {
+            {
+                new int[] {5,7,4,8,1,3},
+                new SortingSolution(
+                    1,
+                    List.of(
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(7)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(8)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3))
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3), true, true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(8)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(7))
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(5)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(7), true, true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(5), true, true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(7), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(8), true)
+                        )
                     )
                 )
             },
             {
                 new int[] {1,2,3,4},
-                List.of(
+                new SortingSolution(
+                    1,
                     List.of(
-                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(4))
-                    ),
-                    List.of(
-                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(4), true, true)
-                    ),
-                    List.of(
-                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3), true, true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(4), true)
-                    ),
-                    List.of(
-                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(2), true, true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(4), true)
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4))
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4), true, true)
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3), true, true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4), true)
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(2), true, true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4), true)
+                        )
                     )
                 )
             },
             {
                 new int[] {4,3,2,1},
-                List.of(
+                new SortingSolution(
+                    1,
                     List.of(
-                        new ItemWithTikZInformation<Integer>(Optional.of(4)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(1))
-                    ),
-                    List.of(
-                        new ItemWithTikZInformation<Integer>(Optional.of(1), true, false),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(4))
-                    ),
-                    List.of(
-                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(2)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(4), true, true)
-                    ),
-                    List.of(
-                        new ItemWithTikZInformation<Integer>(Optional.of(1)),
-                        new ItemWithTikZInformation<Integer>(Optional.of(2), true, true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(3), true),
-                        new ItemWithTikZInformation<Integer>(Optional.of(4), true)
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(4)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(1))
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1), true, false),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4))
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(2)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4), true, true)
+                        ),
+                        List.of(
+                            new ItemWithTikZInformation<Integer>(Optional.of(1)),
+                            new ItemWithTikZInformation<Integer>(Optional.of(2), true, true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(3), true),
+                            new ItemWithTikZInformation<Integer>(Optional.of(4), true)
+                        )
                     )
                 )
             }
@@ -474,17 +495,20 @@ public class SortingTest {
     @Test
     public void selectionsort() {
         final int[] array = new int[] {5,7,4,8,1,3};
-        final List<List<ItemWithTikZInformation<Integer>>> expected =
-            SortingTest.toItemsLists(
-                new int[][] {
-                    {5,7,4,8,1,3},
-                    {1,7,4,8,5,3},
-                    {1,3,4,8,5,7},
-                    {1,3,4,5,8,7},
-                    {1,3,4,5,7,8}
-                }
+        final SortingSolution expected =
+            new SortingSolution(
+                1,
+                SortingTest.toItemsLists(
+                    new int[][] {
+                        {5,7,4,8,1,3},
+                        {1,7,4,8,5,3},
+                        {1,3,4,8,5,7},
+                        {1,3,4,5,8,7},
+                        {1,3,4,5,7,8}
+                    }
+                )
             );
-        Assert.assertEquals(SelectionSort.selectionsort(array), expected);
+        Assert.assertEquals(SelectionSort.INSTANCE.apply(array), expected);
     }
 
 }

@@ -8,10 +8,9 @@ import org.apache.commons.math3.fraction.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.algebra.*;
 
-public class LSEAlgorithm implements AlgorithmImplementation {
+public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix>> {
 
     public static final LSEAlgorithm INSTANCE = new LSEAlgorithm();
 
@@ -81,14 +80,6 @@ public class LSEAlgorithm implements AlgorithmImplementation {
         return new Matrix(coefficients, coefficients[0].length - 1);
     }
 
-    private static Matrix parseOrGenerateLinearSystemOfEquations(final Parameters options)
-    throws IOException {
-        return new ParserAndGenerator<Matrix>(
-            LSEAlgorithm::parseLinearSystemOfEquations,
-            LSEAlgorithm::generateLinearSystemOfEquations
-        ).getResult(options);
-    }
-
     private static String[] parseRows(final String firstLine, final BufferedReader reader) throws IOException {
         if (firstLine.contains(";")) {
             return firstLine.split(";");
@@ -106,8 +97,55 @@ public class LSEAlgorithm implements AlgorithmImplementation {
         return lines.toArray(result);
     }
 
-    private static void printLSEExercise(
+    private static String toParameterizedAssignment(final Matrix solvedSystem, final int variable) {
+        if (solvedSystem.separatorIndex != solvedSystem.getIndexOfLastColumn()) {
+            throw new IllegalArgumentException("Can only compute assignment for an assignment matrix!");
+        }
+        final StringBuilder result = new StringBuilder();
+        result.append(String.format("x_{%d} = ", solvedSystem.columnPositions[variable] + 1));
+        result.append(AlgebraAlgorithms.toCoefficient(solvedSystem.getLastCoefficientOfRow(variable)));
+        for (int column = variable + 1; column < solvedSystem.getIndexOfLastColumn(); column++) {
+            if (!solvedSystem.isZero(column, variable)) {
+                if (solvedSystem.isNegative(column, variable)) {
+                    result.append(" + ");
+                } else {
+                    result.append(" - ");
+                }
+                result.append(AlgebraAlgorithms.toCoefficient(solvedSystem.getCoefficient(column, variable).abs()));
+                result.append(String.format("x_{%d}", solvedSystem.columnPositions[column] + 1));
+            }
+        }
+        return result.toString();
+    }
+
+    private LSEAlgorithm() {}
+
+    @Override
+    public List<Matrix> apply(final Matrix problem) {
+        return GaussJordanAlgorithm.gaussJordan(problem);
+    }
+
+    @Override
+    public String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
+    @Override
+    public Matrix parseOrGenerateProblem(final Parameters options)
+    throws IOException {
+        return new ParserAndGenerator<Matrix>(
+            LSEAlgorithm::parseLinearSystemOfEquations,
+            LSEAlgorithm::generateLinearSystemOfEquations
+        ).getResult(options);
+    }
+
+    @Override
+    public void printExercise(
         final Matrix problem,
+        final List<Matrix> solution,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
@@ -122,7 +160,9 @@ public class LSEAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
     }
 
-    private static void printLSESolution(
+    @Override
+    public void printSolution(
+        final Matrix problem,
         final List<Matrix> solution,
         final Parameters options,
         final BufferedWriter writer
@@ -171,46 +211,6 @@ public class LSEAlgorithm implements AlgorithmImplementation {
         }
         Main.newLine(writer);
         Main.newLine(writer);
-    }
-
-    private static String toParameterizedAssignment(final Matrix solvedSystem, final int variable) {
-        if (solvedSystem.separatorIndex != solvedSystem.getIndexOfLastColumn()) {
-            throw new IllegalArgumentException("Can only compute assignment for an assignment matrix!");
-        }
-        final StringBuilder result = new StringBuilder();
-        result.append(String.format("x_{%d} = ", solvedSystem.columnPositions[variable] + 1));
-        result.append(AlgebraAlgorithms.toCoefficient(solvedSystem.getLastCoefficientOfRow(variable)));
-        for (int column = variable + 1; column < solvedSystem.getIndexOfLastColumn(); column++) {
-            if (!solvedSystem.isZero(column, variable)) {
-                if (solvedSystem.isNegative(column, variable)) {
-                    result.append(" + ");
-                } else {
-                    result.append(" - ");
-                }
-                result.append(AlgebraAlgorithms.toCoefficient(solvedSystem.getCoefficient(column, variable).abs()));
-                result.append(String.format("x_{%d}", solvedSystem.columnPositions[column] + 1));
-            }
-        }
-        return result.toString();
-    }
-
-    private LSEAlgorithm() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final Matrix problem =
-            LSEAlgorithm.parseOrGenerateLinearSystemOfEquations(input.options);
-        final List<Matrix> solution = GaussJordanAlgorithm.gaussJordan(problem);
-        LSEAlgorithm.printLSEExercise(problem, input.options, input.exerciseWriter);
-        LSEAlgorithm.printLSESolution(solution, input.options, input.solutionWriter);
-    }
-
-    @Override
-    public String[] generateTestParameters() {
-        final String[] result = new String[2];
-        result[0] = "-l";
-        result[1] = "5";
-        return result; //TODO
     }
 
 }

@@ -7,41 +7,13 @@ import java.util.stream.*;
 import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
+import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
-import exercisegenerator.util.*;
+import exercisegenerator.structures.hashing.*;
 
-abstract class Hashing {
-
-    static class HashResult {
-        final IntegerList[] result;
-        final HashStatistics statistics;
-        private HashResult(final IntegerList[] result, final HashStatistics statistics) {
-            this.result = result;
-            this.statistics = statistics;
-        }
-    }
-
-    static class HashStatistics {
-        int maxNumberOfProbingsForSameValue;
-        int numberOfCollisions;
-        private HashStatistics(
-            final int numberOfCollisions,
-            final int maxNumberOfProbingsForSameValue
-        ) {
-            this.numberOfCollisions = numberOfCollisions;
-            this.maxNumberOfProbingsForSameValue = maxNumberOfProbingsForSameValue;
-        }
-        @Override
-        public String toString() {
-            return String.format(
-                "collisions: %d, max. number of probings for same value: %d",
-                this.numberOfCollisions,
-                this.maxNumberOfProbingsForSameValue
-            );
-        }
-    }
+interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
 
     static class PrintOptions {
         private final String optionsText;
@@ -72,6 +44,8 @@ abstract class Hashing {
         }
     }
 
+    static final int[] CAPACITIES = new int[] {5, 7, 8, 11, 13, 16, 17, 19, 23, 29, 31, 32};
+
     static final String DIVISION_METHOD = "\\emphasize{Divisionsmethode}";
 
     static final String GENERAL_HASHING_EXERCISE_TEXT_END = " ein";
@@ -80,15 +54,7 @@ abstract class Hashing {
 
     static final String NO_PROBING = " \\emphasize{ohne Sondierung} (also durch Verkettung)";
 
-    static final Object PARAMETER_STRING_END = ":\\\\[2ex]";
-
-    private static final int[] CAPACITIES = new int[] {5, 7, 8, 11, 13, 16, 17, 19, 23, 29, 31, 32};
-
-    private static final int[] VALUES;
-
-    static {
-        VALUES = Stream.iterate(1, x -> x + 1).limit(Main.NUMBER_LIMIT).mapToInt(x -> x).toArray();
-    }
+    static final String PARAMETER_STRING_END = ":\\\\[2ex]";
 
     static IntegerList[] createEmptyArray(final int length) {
         final IntegerList[] result = new IntegerList[length];
@@ -98,28 +64,23 @@ abstract class Hashing {
         return result;
     }
 
-    static HashResult hashing(
-        final List<Integer> values,
-        final IntegerList[] initialHashTable,
-        final HashFunction hashFunction,
-        final Optional<ProbingFunction> optionalProbingFunction
-    ) throws HashException {
-        final int capacity = initialHashTable.length;
+    static HashResult hashing(final HashProblem problem) {
+        final int capacity = problem.initialHashTable().length;
         final IntegerList[] hashTable = Hashing.createEmptyArray(capacity);
-        Hashing.copyValues(initialHashTable, hashTable);
+        Hashing.copyValues(problem.initialHashTable(), hashTable);
         int numberOfCollisions = 0;
         int maxNumberOfProbingsForSameValue = 0;
-        if (optionalProbingFunction.isPresent()) {
-            final ProbingFunction probingFunction = optionalProbingFunction.get();
-            for (final Integer value : values) {
-                final int initialPos = hashFunction.apply(value);
+        if (problem.optionalProbingFunction().isPresent()) {
+            final ProbingFunction probingFunction = problem.optionalProbingFunction().get().probingFunction();
+            for (final Integer value : problem.values()) {
+                final int initialPos = problem.hashFunction().hashFunction().apply(value);
                 int pos = initialPos;
                 int numberOfProbings = 0;
                 while (!hashTable[pos].isEmpty()) {
                     final int offset = probingFunction.apply(++numberOfProbings);
                     pos = (initialPos + offset) % capacity;
                     if (numberOfProbings > capacity) {
-                        throw new HashException(
+                        throw new IllegalArgumentException(
                             String.format(
                                 "The array is too small or the probing constants are chosen badly: Insertion of %d failed!",
                                 value
@@ -132,8 +93,8 @@ abstract class Hashing {
                 hashTable[pos].add(value);
             }
         } else {
-            for (final Integer value : values) {
-                final Integer hashValue = hashFunction.apply(value);
+            for (final Integer value : problem.values()) {
+                final Integer hashValue = problem.hashFunction().hashFunction().apply(value);
                 if (!hashTable[hashValue].isEmpty()) {
                     numberOfCollisions++;
                 }
@@ -184,7 +145,7 @@ abstract class Hashing {
         final int numOfValues,
         final int capacity,
         final HashFunction hashFunction,
-        final Optional<ProbingFunction> optionalProbingFunction,
+        final Optional<ProbingFunctionWithParameters> optionalProbingFunction,
         final Parameters options
     ) throws IOException {
         return new ParserAndGenerator<List<Integer>>(
@@ -199,38 +160,25 @@ abstract class Hashing {
         ).getResult(options);
     }
 
-    static void printHashingExerciseAndSolution(
-        final List<Integer> values,
-        final IntegerList[] initialArray,
-        final HashResult result,
-        final PrintOptions printOptions,
-        final Parameters options,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
-    ) throws IOException {
-        Hashing.printHashingExercise(values, initialArray, result.result, printOptions, options, exerciseWriter);
-        Hashing.printHashingSolution(result, printOptions, options, solutionWriter);
-    }
+//    static String toParameterString(final int capacity) {
+//        return String.format("$m = %d$%s", capacity, Hashing.PARAMETER_STRING_END);
+//    }
+//
+//    static String toParameterString(final int capacity, final BigFraction multiplicationFactor) {
+//        return String.format(
+//            Locale.GERMANY,
+//            "$m = %d$, $c = %s$%s",
+//            capacity,
+//            AlgebraAlgorithms.toCoefficient(multiplicationFactor),
+//            Hashing.PARAMETER_STRING_END
+//        );
+//    }
 
     static String toMultiplicationMethodExerciseText(final BigFraction factor) {
         return String.format(
             Locale.GERMANY,
             "\\emphasize{Multiplikationsmethode} ($c = %s$)",
             AlgebraAlgorithms.toCoefficient(factor)
-        );
-    }
-
-    static String toParameterString(final int capacity) {
-        return String.format("$m = %d$%s", capacity, Hashing.PARAMETER_STRING_END);
-    }
-
-    static String toParameterString(final int capacity, final BigFraction multiplicationFactor) {
-        return String.format(
-            Locale.GERMANY,
-            "$m = %d$, $c = %s$%s",
-            capacity,
-            AlgebraAlgorithms.toCoefficient(multiplicationFactor),
-            Hashing.PARAMETER_STRING_END
         );
     }
 
@@ -415,7 +363,7 @@ abstract class Hashing {
         final int numberOfValues,
         final int capacity,
         final HashFunction hashFunction,
-        final Optional<ProbingFunction> optionalProbingFunction,
+        final Optional<ProbingFunctionWithParameters> optionalProbingFunction,
         final Parameters options
     ) {
         if (numberOfValues < 5 || optionalProbingFunction.isEmpty()) {
@@ -425,7 +373,7 @@ abstract class Hashing {
         final boolean multipleProbingsForSameValue = (4 & choice) > 0;
         final boolean probingOverflow = (2 & choice) > 0;
         final boolean probingForProbedValue = (1 & choice) > 0;
-        final ProbingFunction probingFunction = optionalProbingFunction.get();
+        final ProbingFunction probingFunction = optionalProbingFunction.get().probingFunction();
         final List<Integer> values = new LinkedList<Integer>();
         final List<Integer> indices = new LinkedList<Integer>();
         if (multipleProbingsForSameValue) {
@@ -471,7 +419,11 @@ abstract class Hashing {
 
     private static Optional<Integer> getRandomValueForIndex(final int index, final HashFunction hashFunction) {
         final List<Integer> candidates =
-            Arrays.stream(Hashing.VALUES).filter(value -> hashFunction.apply(value) == index).boxed().toList();
+            Stream
+            .iterate(1, x -> x + 1)
+            .limit(Main.NUMBER_LIMIT)
+            .filter(value -> hashFunction.apply(value) == index)
+            .toList();
         if (candidates.isEmpty()) {
             return Optional.empty();
         }
@@ -553,70 +505,27 @@ abstract class Hashing {
         LaTeXUtils.printTikzEnd(writer);
     }
 
-    private static void printHashingExercise(
-        final List<Integer> values,
-        final IntegerList[] initialArray,
-        final IntegerList[] result,
-        final PrintOptions printOptions,
-        final Parameters options,
-        final BufferedWriter writer
-    ) throws IOException {
-        final int capacity = result.length;
-        final int contentLength = Hashing.computeContentLength(result);
-        writer.write(
-            "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange "
+    private static PrintOptions printOptions(final HashProblem problem, final Parameters options) throws IOException {
+        return new PrintOptions(
+            problem
+            .hashFunction()
+            .exerciseText()
+            .concat(
+                problem.optionalProbingFunction().isEmpty() ?
+                    Hashing.NO_PROBING :
+                        problem.optionalProbingFunction().get().exerciseText()
+            ).concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
+            .concat(
+                problem.hashFunction().additionalHint().apply(
+                    problem.optionalProbingFunction().isEmpty() ?
+                        "" :
+                            problem.optionalProbingFunction().get().additionalProbingHint()
+                )
+            ),
+            Hashing.toParameterString(problem),
+            problem.optionalProbingFunction().isPresent(),
+            PreprintMode.parsePreprintMode(options)
         );
-        writer.write(String.valueOf(capacity));
-        writer.write(" unter Verwendung der ");
-        writer.write(printOptions.optionsText);
-        writer.write(":\\\\");
-        Main.newLine(writer);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        writer.write(values.stream().map(String::valueOf).collect(Collectors.joining(", ")));
-        writer.write(".");
-        Main.newLine(writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-        switch (printOptions.preprintMode) {
-            case ALWAYS:
-            case SOLUTION_SPACE:
-                LaTeXUtils.printVerticalProtectedSpace("2ex", writer);
-                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-                }
-                LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-                Hashing.printArray(initialArray, contentLength, printOptions.probing, writer);
-                LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
-                } else {
-                    Main.newLine(writer);
-                    Main.newLine(writer);
-                }
-                break;
-            case NEVER:
-                Main.newLine(writer);
-                Main.newLine(writer);
-        }
-    }
-
-    private static void printHashingSolution(
-        final HashResult result,
-        final PrintOptions printOptions,
-        final Parameters options,
-        final BufferedWriter writer
-    ) throws IOException {
-        final int contentLength = Hashing.computeContentLength(result.result);
-        if (Main.EMBEDDED_EXAM.equals(options.get(Flag.EXECUTION_MODE))) {
-            LaTeXUtils.printVerticalProtectedSpace("-3ex", writer);
-        }
-        writer.write(String.format("%% hashing statistics: %s", result.statistics.toString()));
-        Main.newLine(writer);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        writer.write(printOptions.parameterText);
-        Main.newLine(writer);
-        Hashing.printArray(result.result, contentLength, printOptions.probing, writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-        Main.newLine(writer);
     }
 
     private static Iterator<Integer> randomFlatteningZip(
@@ -643,5 +552,125 @@ abstract class Hashing {
 
         };
     }
+
+    private static String toParameterString(final HashProblem problem) {
+        final String result = Hashing.toParameterString(problem.hashFunction().parameters());
+        return (
+            problem.optionalProbingFunction().isEmpty() ?
+                result :
+                    String.join(
+                        ", ",
+                        result,
+                        Hashing.toParameterString(problem.optionalProbingFunction().get().parameters())
+                    )
+        ) + Hashing.PARAMETER_STRING_END;
+    }
+
+    private static String toParameterString(final Map<String, BigFraction> parameters) {
+        return parameters
+            .entrySet()
+            .stream()
+            .map(entry -> String.format("$%s = %s$", entry.getKey(), AlgebraAlgorithms.toCoefficient(entry.getValue())))
+            .collect(Collectors.joining(", "));
+    }
+
+    @Override
+    default public HashResult apply(final HashProblem problem) {
+        return Hashing.hashing(problem);
+    }
+
+    @Override
+    default public HashProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+        final int numOfValues = Hashing.parseOrGenerateNumberOfValues(options);
+        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, options);
+        final int capacity = initialHashTable.length;
+        final HashFunctionWithParameters hashFunction = this.hashFunction(capacity, options);
+        final Optional<ProbingFunctionWithParameters> optionalProbingFunction =
+            this.optionalProbingFunction(capacity, options);
+        final List<Integer> values =
+            Hashing.parseOrGenerateValues(
+                numOfValues,
+                capacity,
+                hashFunction.hashFunction(),
+                optionalProbingFunction,
+                options
+            );
+        return new HashProblem(initialHashTable, values, hashFunction, optionalProbingFunction);
+    }
+
+    @Override
+    default public void printExercise(
+        final HashProblem problem,
+        final HashResult solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final PrintOptions printOptions = Hashing.printOptions(problem, options);
+        final int capacity = solution.result().length;
+        final int contentLength = Hashing.computeContentLength(solution.result());
+        writer.write(
+            "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange "
+        );
+        writer.write(String.valueOf(capacity));
+        writer.write(" unter Verwendung der ");
+        writer.write(printOptions.optionsText);
+        writer.write(":\\\\");
+        Main.newLine(writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        writer.write(problem.values().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        writer.write(".");
+        Main.newLine(writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        switch (printOptions.preprintMode) {
+            case ALWAYS:
+            case SOLUTION_SPACE:
+                LaTeXUtils.printVerticalProtectedSpace("2ex", writer);
+                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
+                    LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+                }
+                LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+                Hashing.printArray(problem.initialHashTable(), contentLength, printOptions.probing, writer);
+                LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
+                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+                } else {
+                    Main.newLine(writer);
+                    Main.newLine(writer);
+                }
+                break;
+            case NEVER:
+                Main.newLine(writer);
+                Main.newLine(writer);
+        }
+    }
+
+    @Override
+    default public void printSolution(
+        final HashProblem problem,
+        final HashResult solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final PrintOptions printOptions = Hashing.printOptions(problem, options);
+        final int contentLength = Hashing.computeContentLength(solution.result());
+        if (Main.EMBEDDED_EXAM.equals(options.get(Flag.EXECUTION_MODE))) {
+            LaTeXUtils.printVerticalProtectedSpace("-3ex", writer);
+        }
+        writer.write(String.format("%% hashing statistics: %s", solution.statistics().toString()));
+        Main.newLine(writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        writer.write(printOptions.parameterText);
+        Main.newLine(writer);
+        Hashing.printArray(solution.result(), contentLength, printOptions.probing, writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        Main.newLine(writer);
+    }
+
+    HashFunctionWithParameters hashFunction(final int capacity, final Parameters options) throws IOException;
+
+    Optional<ProbingFunctionWithParameters> optionalProbingFunction(
+        final int capacity,
+        final Parameters options
+    ) throws IOException;
 
 }

@@ -123,8 +123,8 @@ public class HuffmanTree {
         return result.toString();
     }
 
-    public Map<Character, String> toCodeBook() {
-        final Map<Character, String> codeBook = new LinkedHashMap<Character, String>();
+    public HuffmanCodeBook toCodeBook() {
+        final HuffmanCodeBook codeBook = new HuffmanCodeBook();
         if (this.root.isPresent()) {
             this.root.get().fillCodeBook("", codeBook);
         }

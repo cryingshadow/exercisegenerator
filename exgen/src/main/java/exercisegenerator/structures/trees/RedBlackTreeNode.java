@@ -134,32 +134,32 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
 
     @SuppressWarnings("unchecked")
     @Override
-    BinaryTreeNodeSteps<T> balanceWithSteps() {
+    SearchTreeNodeSteps<T> balanceWithSteps() {
         if (this.isRedBlack()) {
-            return new BinaryTreeNodeSteps<T>(
+            return new SearchTreeNodeSteps<T>(
                 this.toggleColor().toggleMark(),
-                new BinaryTreeStep<T>(BinaryTreeStepType.COLOR, this.value)
+                new SearchTreeStep<T>(SearchTreeStepType.COLOR, this.value)
             );
         }
         if (this.isRedRoot()) {
-            return new BinaryTreeNodeSteps<T>(
+            return new SearchTreeNodeSteps<T>(
                 this.toggleColor(),
-                new BinaryTreeStep<T>(BinaryTreeStepType.COLOR, this.value)
+                new SearchTreeStep<T>(SearchTreeStepType.COLOR, this.value)
             );
         }
         if (RedBlackTreeNode.isRedBlack(this.leftChild)) {
             return this.asLeftChildren(
-                new BinaryTreeNodeSteps<T>(
+                new SearchTreeNodeSteps<T>(
                     ((RedBlackTreeNode<T>)this.leftChild.get()).toggleColor().toggleMark(),
-                    new BinaryTreeStep<T>(BinaryTreeStepType.COLOR, this.leftChild.get().value)
+                    new SearchTreeStep<T>(SearchTreeStepType.COLOR, this.leftChild.get().value)
                 )
             );
         }
         if (RedBlackTreeNode.isRedBlack(this.rightChild)) {
             return this.asRightChildren(
-                new BinaryTreeNodeSteps<T>(
+                new SearchTreeNodeSteps<T>(
                     ((RedBlackTreeNode<T>)this.rightChild.get()).toggleColor().toggleMark(),
-                    new BinaryTreeStep<T>(BinaryTreeStepType.COLOR, this.rightChild.get().value)
+                    new SearchTreeStep<T>(SearchTreeStepType.COLOR, this.rightChild.get().value)
                 )
             );
         }
@@ -167,7 +167,7 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
             if (RedBlackTreeNode.isRed(this.rightChild)) {
                 return this.addCase1();
             }
-            final BinaryTreeNodeSteps<T> result = new BinaryTreeNodeSteps<T>();
+            final SearchTreeNodeSteps<T> result = new SearchTreeNodeSteps<T>();
             final RedBlackTreeNode<T> grandParent = this.handleAddCase2Left(result);
             return grandParent.addCase3Left(result);
         }
@@ -175,7 +175,7 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
             if (RedBlackTreeNode.isRed(this.leftChild)) {
                 return this.addCase1();
             }
-            final BinaryTreeNodeSteps<T> result = new BinaryTreeNodeSteps<T>();
+            final SearchTreeNodeSteps<T> result = new SearchTreeNodeSteps<T>();
             final RedBlackTreeNode<T> grandParent = this.handleAddCase2Right(result);
             return grandParent.addCase3Right(result);
         }
@@ -186,7 +186,7 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
             if (RedBlackTreeNode.hasTwoBlackChildren(this.rightChild)) {
                 return this.removeCase2Left();
             }
-            final BinaryTreeNodeSteps<T> result = new BinaryTreeNodeSteps<T>();
+            final SearchTreeNodeSteps<T> result = new SearchTreeNodeSteps<T>();
             final RedBlackTreeNode<T> parent = this.handleRemoveCase3Left(result);
             return parent.removeCase4Left(result);
         }
@@ -197,11 +197,11 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
             if (RedBlackTreeNode.hasTwoBlackChildren(this.leftChild)) {
                 return this.removeCase2Right();
             }
-            final BinaryTreeNodeSteps<T> result = new BinaryTreeNodeSteps<T>();
+            final SearchTreeNodeSteps<T> result = new SearchTreeNodeSteps<T>();
             final RedBlackTreeNode<T> parent = this.handleRemoveCase3Right(result);
             return parent.removeCase4Right(result);
         }
-        return new BinaryTreeNodeSteps<T>();
+        return new SearchTreeNodeSteps<T>();
     }
 
     @Override
@@ -278,18 +278,18 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
         return String.format("\\node[%s]{%s};", style, this.value.toString());
     }
 
-    private BinaryTreeNodeSteps<T> addCase1() {
-        final BinaryTreeNodeSteps<T> result = new BinaryTreeNodeSteps<T>();
+    private SearchTreeNodeSteps<T> addCase1() {
+        final SearchTreeNodeSteps<T> result = new SearchTreeNodeSteps<T>();
         final BinaryTreeNode<T> newNode =
             this
             .toggleColor()
             .setLeftChild(RedBlackTreeNode.toggleColor(this.leftChild))
             .setRightChild(RedBlackTreeNode.toggleColor(this.rightChild));
         result.add(
-            new BinaryTreeNodeAndStep<T>(
-                newNode,
-                new BinaryTreeStep<T>(
-                    BinaryTreeStepType.COLOR,
+            new SearchTreeNodeAndStep<T>(
+                Optional.of(newNode),
+                new SearchTreeStep<T>(
+                    SearchTreeStepType.COLOR,
                     List.of(this.leftChild.get().value, this.value, this.rightChild.get().value)
                 )
             )
@@ -298,16 +298,19 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
         return result;
     }
 
-    private BinaryTreeNodeSteps<T> addCase3Left(final BinaryTreeNodeSteps<T> result) {
+    private SearchTreeNodeSteps<T> addCase3Left(final SearchTreeNodeSteps<T> result) {
         result.addAll(this.rotateRight());
-        final BinaryTreeNode<T> grandParent = result.getLast().x.get();
+        @SuppressWarnings("unchecked")
+        final BinaryTreeNode<T> grandParent = (BinaryTreeNode<T>)result.getLast().node().get();
         result.add(
-            new BinaryTreeNodeAndStep<T>(
-                ((RedBlackTreeNode<T>)grandParent).toggleColor().setRightChild(
-                    RedBlackTreeNode.toggleColor(grandParent.rightChild)
+            new SearchTreeNodeAndStep<T>(
+                Optional.of(
+                    ((RedBlackTreeNode<T>)grandParent).toggleColor().setRightChild(
+                        RedBlackTreeNode.toggleColor(grandParent.rightChild)
+                    )
                 ),
-                new BinaryTreeStep<T>(
-                    BinaryTreeStepType.COLOR,
+                new SearchTreeStep<T>(
+                    SearchTreeStepType.COLOR,
                     List.of(grandParent.value, grandParent.rightChild.get().value)
                 )
             )
@@ -315,16 +318,19 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
         return result;
     }
 
-    private BinaryTreeNodeSteps<T> addCase3Right(final BinaryTreeNodeSteps<T> result) {
+    private SearchTreeNodeSteps<T> addCase3Right(final SearchTreeNodeSteps<T> result) {
         result.addAll(this.rotateLeft());
-        final BinaryTreeNode<T> grandParent = result.getLast().x.get();
+        @SuppressWarnings("unchecked")
+        final BinaryTreeNode<T> grandParent = (BinaryTreeNode<T>)result.getLast().node().get();
         result.add(
-            new BinaryTreeNodeAndStep<T>(
-                ((RedBlackTreeNode<T>)grandParent).toggleColor().setLeftChild(
-                    RedBlackTreeNode.toggleColor(grandParent.leftChild)
+            new SearchTreeNodeAndStep<T>(
+                Optional.of(
+                    ((RedBlackTreeNode<T>)grandParent).toggleColor().setLeftChild(
+                        RedBlackTreeNode.toggleColor(grandParent.leftChild)
+                    )
                 ),
-                new BinaryTreeStep<T>(
-                    BinaryTreeStepType.COLOR,
+                new SearchTreeStep<T>(
+                    SearchTreeStepType.COLOR,
                     List.of(grandParent.leftChild.get().value, grandParent.value)
                 )
             )
@@ -346,27 +352,28 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
     }
 
     @SuppressWarnings("unchecked")
-    private RedBlackTreeNode<T> handleAddCase2Left(final BinaryTreeNodeSteps<T> result) {
+    private RedBlackTreeNode<T> handleAddCase2Left(final SearchTreeNodeSteps<T> result) {
         if (!RedBlackTreeNode.hasLeftRedRedConflict(this.leftChild)) {
             result.addAll(this.asLeftChildren(this.leftChild.get().rotateLeft()));
-            return (RedBlackTreeNode<T>)result.getLast().x.get();
+            return (RedBlackTreeNode<T>)result.getLast().node().get();
         }
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    private RedBlackTreeNode<T> handleAddCase2Right(final BinaryTreeNodeSteps<T> result) {
+    private RedBlackTreeNode<T> handleAddCase2Right(final SearchTreeNodeSteps<T> result) {
         if (RedBlackTreeNode.hasLeftRedRedConflict(this.rightChild)) {
             result.addAll(this.asRightChildren(this.rightChild.get().rotateRight()));
-            return (RedBlackTreeNode<T>)result.getLast().x.get();
+            return (RedBlackTreeNode<T>)result.getLast().node().get();
         }
         return this;
     }
 
-    private RedBlackTreeNode<T> handleRemoveCase3Left(final BinaryTreeNodeSteps<T> result) {
+    private RedBlackTreeNode<T> handleRemoveCase3Left(final SearchTreeNodeSteps<T> result) {
         if (RedBlackTreeNode.hasBlackRightChild(this.rightChild)) {
             result.addAll(this.asRightChildren(this.rightChild.get().rotateRight()));
-            BinaryTreeNode<T> parent = result.getLast().x.get();
+            @SuppressWarnings("unchecked")
+            BinaryTreeNode<T> parent = (BinaryTreeNode<T>)result.getLast().node().get();
             parent =
                 parent.setRightChild(
                     ((RedBlackTreeNode<T>)parent.rightChild.get().setRightChild(
@@ -374,10 +381,10 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
                     )).toggleColor()
                 );
             result.add(
-                new BinaryTreeNodeAndStep<T>(
-                    parent,
-                    new BinaryTreeStep<T>(
-                        BinaryTreeStepType.COLOR,
+                new SearchTreeNodeAndStep<T>(
+                    Optional.of(parent),
+                    new SearchTreeStep<T>(
+                        SearchTreeStepType.COLOR,
                         List.of(parent.rightChild.get().value, parent.rightChild.get().rightChild.get().value)
                     )
                 )
@@ -387,10 +394,11 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
         return this;
     }
 
-    private RedBlackTreeNode<T> handleRemoveCase3Right(final BinaryTreeNodeSteps<T> result) {
+    private RedBlackTreeNode<T> handleRemoveCase3Right(final SearchTreeNodeSteps<T> result) {
         if (RedBlackTreeNode.hasBlackLeftChild(this.leftChild)) {
             result.addAll(this.asLeftChildren(this.leftChild.get().rotateLeft()));
-            BinaryTreeNode<T> parent = result.getLast().x.get();
+            @SuppressWarnings("unchecked")
+            BinaryTreeNode<T> parent = (BinaryTreeNode<T>)result.getLast().node().get();
             parent =
                 parent.setLeftChild(
                     ((RedBlackTreeNode<T>)parent.leftChild.get().setLeftChild(
@@ -398,10 +406,10 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
                     )).toggleColor()
                 );
             result.add(
-                new BinaryTreeNodeAndStep<T>(
-                    parent,
-                    new BinaryTreeStep<T>(
-                        BinaryTreeStepType.COLOR,
+                new SearchTreeNodeAndStep<T>(
+                    Optional.of(parent),
+                    new SearchTreeStep<T>(
+                        SearchTreeStepType.COLOR,
                         List.of(parent.leftChild.get().leftChild.get().value, parent.leftChild.get().value)
                     )
                 )
@@ -428,64 +436,64 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
     }
 
     @SuppressWarnings("unchecked")
-    private BinaryTreeNodeSteps<T> removeCase1Left() {
-        final BinaryTreeNodeSteps<T> result = this.rotateLeft();
-        RedBlackTreeNode<T> parent = (RedBlackTreeNode<T>)result.getLast().x.get();
+    private SearchTreeNodeSteps<T> removeCase1Left() {
+        final SearchTreeNodeSteps<T> result = this.rotateLeft();
+        RedBlackTreeNode<T> parent = (RedBlackTreeNode<T>)result.getLast().node().get();
         parent =
             (RedBlackTreeNode<T>)parent.toggleColor().setLeftChild(RedBlackTreeNode.toggleColor(parent.leftChild));
         result.add(
-            new BinaryTreeNodeAndStep<T>(
-                parent,
-                new BinaryTreeStep<T>(
-                    BinaryTreeStepType.COLOR,
+            new SearchTreeNodeAndStep<T>(
+                Optional.of(parent),
+                new SearchTreeStep<T>(
+                    SearchTreeStepType.COLOR,
                     List.of(parent.leftChild.get().value, parent.value)
                 )
             )
         );
         result.addAll(parent.asLeftChildren(parent.leftChild.get().balanceWithSteps()));
-        result.addAll(result.getLast().x.get().balanceWithSteps());
+        result.addAll(((RedBlackTreeNode<T>)result.getLast().node().get()).balanceWithSteps());
         return result;
     }
 
     @SuppressWarnings("unchecked")
-    private BinaryTreeNodeSteps<T> removeCase1Right() {
-        final BinaryTreeNodeSteps<T> result = this.rotateRight();
-        RedBlackTreeNode<T> parent = (RedBlackTreeNode<T>)result.getLast().x.get();
+    private SearchTreeNodeSteps<T> removeCase1Right() {
+        final SearchTreeNodeSteps<T> result = this.rotateRight();
+        RedBlackTreeNode<T> parent = (RedBlackTreeNode<T>)result.getLast().node().get();
         parent =
             (RedBlackTreeNode<T>)parent.toggleColor().setRightChild(RedBlackTreeNode.toggleColor(parent.rightChild));
         result.add(
-            new BinaryTreeNodeAndStep<T>(
-                parent,
-                new BinaryTreeStep<T>(
-                    BinaryTreeStepType.COLOR,
+            new SearchTreeNodeAndStep<T>(
+                Optional.of(parent),
+                new SearchTreeStep<T>(
+                    SearchTreeStepType.COLOR,
                     List.of(parent.value, parent.rightChild.get().value)
                 )
             )
         );
         result.addAll(parent.asRightChildren(parent.rightChild.get().balanceWithSteps()));
-        result.addAll(result.getLast().x.get().balanceWithSteps());
+        result.addAll(((RedBlackTreeNode<T>)result.getLast().node().get()).balanceWithSteps());
         return result;
     }
 
-    private BinaryTreeNodeSteps<T> removeCase2Left() {
-        return new BinaryTreeNodeSteps<T>(
+    private SearchTreeNodeSteps<T> removeCase2Left() {
+        return new SearchTreeNodeSteps<T>(
             this.toggleMark().get().setLeftChild(
                 RedBlackTreeNode.toggleMark(this.leftChild)
             ).setRightChild(RedBlackTreeNode.toggleColor(this.rightChild)),
-            new BinaryTreeStep<T>(BinaryTreeStepType.COLOR, this.rightChild.get().value)
+            new SearchTreeStep<T>(SearchTreeStepType.COLOR, this.rightChild.get().value)
         );
     }
 
-    private BinaryTreeNodeSteps<T> removeCase2Right() {
-        return new BinaryTreeNodeSteps<T>(
+    private SearchTreeNodeSteps<T> removeCase2Right() {
+        return new SearchTreeNodeSteps<T>(
             this.toggleMark().get().setLeftChild(
                 RedBlackTreeNode.toggleColor(this.leftChild)
             ).setRightChild(RedBlackTreeNode.toggleMark(this.rightChild)),
-            new BinaryTreeStep<T>(BinaryTreeStepType.COLOR, this.leftChild.get().value)
+            new SearchTreeStep<T>(SearchTreeStepType.COLOR, this.leftChild.get().value)
         );
     }
 
-    private BinaryTreeNodeSteps<T> removeCase4Left(final BinaryTreeNodeSteps<T> result) {
+    private SearchTreeNodeSteps<T> removeCase4Left(final SearchTreeNodeSteps<T> result) {
         final BinaryTreeNode<T> parent =
             this.setBlack().setRightChild(
                 RedBlackTreeNode.setColor(this.rightChild, this.isBlack)
@@ -493,10 +501,10 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
             );
         final T rightRightValue = this.rightChild.get().rightChild.get().value;
         result.add(
-            new BinaryTreeNodeAndStep<T>(
-                parent,
-                new BinaryTreeStep<T>(
-                    BinaryTreeStepType.COLOR,
+            new SearchTreeNodeAndStep<T>(
+                Optional.of(parent),
+                new SearchTreeStep<T>(
+                    SearchTreeStepType.COLOR,
                     this.isBlack ?
                         List.of(rightRightValue) :
                             List.of(this.value, this.rightChild.get().value, rightRightValue)
@@ -507,7 +515,7 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
         return result;
     }
 
-    private BinaryTreeNodeSteps<T> removeCase4Right(final BinaryTreeNodeSteps<T> result) {
+    private SearchTreeNodeSteps<T> removeCase4Right(final SearchTreeNodeSteps<T> result) {
         final BinaryTreeNode<T> parent =
             this.setBlack().setLeftChild(
                 RedBlackTreeNode.setColor(this.leftChild, this.isBlack)
@@ -515,10 +523,10 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
             );
         final T leftLeftValue = this.leftChild.get().leftChild.get().value;
         result.add(
-            new BinaryTreeNodeAndStep<T>(
-                parent,
-                new BinaryTreeStep<T>(
-                    BinaryTreeStepType.COLOR,
+            new SearchTreeNodeAndStep<T>(
+                Optional.of(parent),
+                new SearchTreeStep<T>(
+                    SearchTreeStepType.COLOR,
                     this.isBlack ?
                         List.of(leftLeftValue) :
                             List.of(leftLeftValue, this.leftChild.get().value, this.value)

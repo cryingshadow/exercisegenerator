@@ -10,6 +10,7 @@ import org.testng.annotations.*;
 
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
+import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 import exercisegenerator.util.*;
 
@@ -19,20 +20,13 @@ public class MainTest {
 
     private static class BinaryInput {
         private final int currentNodeNumber;
-        private final List<String> exText;
-        private final List<String> solText;
         private final BinaryTestCase test;
+        private final List<String> text;
 
-        private BinaryInput(
-            final int currentNodeNumber,
-            final BinaryTestCase test,
-            final List<String> exText,
-            final List<String> solText
-        ) {
+        private BinaryInput(final int currentNodeNumber, final BinaryTestCase test, final List<String> text) {
             this.currentNodeNumber = currentNodeNumber;
             this.test = test;
-            this.exText = exText;
-            this.solText = solText;
+            this.text = text;
         }
     }
 
@@ -73,8 +67,83 @@ public class MainTest {
         PHANTOM_MATCH = "(\\\\phantom\\{0+\\})?";
     }
 
+    private static int addAssignmentTextAndReturnNextNodeNumber(
+        final int initalNodeNumber,
+        final String leftHandSide,
+        final String relation,
+        final List<String> rightHandSide,
+        final int contentLength,
+        final String longestLeftHandSide,
+        final boolean solution,
+        final List<String> text
+    ) {
+        int currentNodeNumber = initalNodeNumber;
+        text.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide, relation));
+        text.add("\\begin{flushright}");
+        text.add(Patterns.forAssignmentLeftHandSide(leftHandSide, relation));
+        text.add("\\end{flushright}");
+        text.add("\\end{minipage}");
+        text.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide, relation));
+        text.add("\\begin{tikzpicture}");
+        text.add(Patterns.ARRAY_STYLE);
+        if (solution) {
+            text.add(Patterns.singleNode(currentNodeNumber, rightHandSide.get(0), contentLength));
+            currentNodeNumber++;
+            for (int i = 1; i < rightHandSide.size(); i++) {
+                text.add(Patterns.rightNodeToPredecessor(currentNodeNumber, rightHandSide.get(i)));
+                currentNodeNumber++;
+            }
+        } else {
+            text.add(Patterns.singleEmptyNode(currentNodeNumber, contentLength));
+            currentNodeNumber++;
+            for (int i = 1; i < rightHandSide.size(); i++) {
+                text.add(Patterns.rightEmptyNodeToPredecessor(currentNodeNumber, contentLength));
+                currentNodeNumber++;
+            }
+        }
+        text.add("\\end{tikzpicture}");
+        text.add("\\end{minipage}");
+        return currentNodeNumber;
+    }
+
+    private static void addAssignmentTextForHuffman(
+        final List<Pair<String, String>> assignment,
+        final int longestCodeLength,
+        final String longestLeftHandSide,
+        final List<String> exText,
+        final List<String> solText
+    ) {
+        int currentNodeNumber = 0;
+        for (final Pair<String, String> pair : assignment) {
+            currentNodeNumber =
+                MainTest.addAssignmentTextAndReturnNextNodeNumber(
+                    currentNodeNumber,
+                    String.format("\\code{`%s'}", pair.x),
+                    "=",
+                    Collections.singletonList(String.format("\\code{%s}", pair.y)),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    false,
+                    exText
+                );
+        }
+        for (final Pair<String, String> pair : assignment) {
+            currentNodeNumber =
+                MainTest.addAssignmentTextAndReturnNextNodeNumber(
+                    currentNodeNumber,
+                    String.format("\\code{`%s'}", pair.x),
+                    "=",
+                    Collections.singletonList(String.format("\\code{%s}", pair.y)),
+                    longestCodeLength,
+                    longestLeftHandSide,
+                    true,
+                    solText
+                );
+        }
+    }
+
     private static void binaryTest(
-        final CheckedFunction<BinaryInput, Integer, IOException> algorithm,
+        final CheckedBiFunction<BinaryInput, Boolean, Integer, IOException> addText,
         final BinaryTestCase[] cases,
         final List<String> exText,
         final List<String> solText
@@ -87,54 +156,19 @@ public class MainTest {
                 first = false;
             } else {
                 exText.addAll(Patterns.MIDDLE_SPACE);
-                solText.addAll(Patterns.MIDDLE_SPACE);
             }
-            currentNodeNumber =
-                algorithm.apply(new BinaryInput(currentNodeNumber, test, exText, solText));
+            currentNodeNumber = addText.apply(new BinaryInput(currentNodeNumber, test, exText), false);
         }
         exText.addAll(Patterns.SOLUTION_SPACE_END);
-    }
-
-    private static int checkAssignment(
-        int currentNodeNumber,
-        final String leftHandSide,
-        final String relation,
-        final List<String> rightHandSide,
-        final int contentLength,
-        final String longestLeftHandSide,
-        final List<String> exText,
-        final List<String> solText
-    ) {
-        exText.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide, relation));
-        exText.add("\\begin{flushright}");
-        exText.add(Patterns.forAssignmentLeftHandSide(leftHandSide, relation));
-        exText.add("\\end{flushright}");
-        exText.add("\\end{minipage}");
-        exText.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide, relation));
-        exText.add("\\begin{tikzpicture}");
-        exText.add(Patterns.ARRAY_STYLE);
-        exText.add(Patterns.singleEmptyNode(currentNodeNumber++, contentLength));
-        for (int i = 1; i < rightHandSide.size(); i++) {
-            exText.add(Patterns.rightEmptyNodeToPredecessor(currentNodeNumber++, contentLength));
+        first = true;
+        for (final BinaryTestCase test : cases) {
+            if (first) {
+                first = false;
+            } else {
+                solText.addAll(Patterns.MIDDLE_SPACE);
+            }
+            currentNodeNumber = addText.apply(new BinaryInput(currentNodeNumber, test, solText), true);
         }
-        exText.add("\\end{tikzpicture}");
-        exText.add("\\end{minipage}");
-
-        solText.add(Patterns.beginMinipageForAssignmentLeftHandSide(longestLeftHandSide, relation));
-        solText.add("\\begin{flushright}");
-        solText.add(Patterns.forAssignmentLeftHandSide(leftHandSide, relation));
-        solText.add("\\end{flushright}");
-        solText.add("\\end{minipage}");
-        solText.add(Patterns.beginMinipageForAssignmentRightHandSide(longestLeftHandSide, relation));
-        solText.add("\\begin{tikzpicture}");
-        solText.add(Patterns.ARRAY_STYLE);
-        solText.add(Patterns.singleNode(currentNodeNumber++, rightHandSide.get(0), contentLength));
-        for (int i = 1; i < rightHandSide.size(); i++) {
-            solText.add(Patterns.rightNodeToPredecessor(currentNodeNumber++, rightHandSide.get(i)));
-        }
-        solText.add("\\end{tikzpicture}");
-        solText.add("\\end{minipage}");
-        return currentNodeNumber;
     }
 
     private static int checkEmptyNodeRowAndReturnNextNodeNumber(
@@ -344,7 +378,7 @@ public class MainTest {
             .findFirst()
             .get();
         MainTest.binaryTest(
-            input -> MainTest.checkAssignment(
+            (input, solution) -> MainTest.addAssignmentTextAndReturnNextNodeNumber(
                 input.currentNodeNumber,
                 Patterns.toCode(input.test.bitString),
                 relation,
@@ -359,8 +393,8 @@ public class MainTest {
                     ).max()
                     .getAsInt(),
                 longestNumber,
-                input.exText,
-                input.solText
+                solution,
+                input.text
             ),
             cases,
             exText,
@@ -408,15 +442,15 @@ public class MainTest {
             .findFirst()
             .get();
         MainTest.binaryTest(
-            input -> MainTest.checkAssignment(
+            (input, solution) -> MainTest.addAssignmentTextAndReturnNextNodeNumber(
                 input.currentNodeNumber,
                 input.test.value,
                 relation,
                 Patterns.toRightHandSide(input.test.bitString),
                 1,
                 longestNumber,
-                input.exText,
-                input.solText
+                solution,
+                input.text
             ),
             cases,
             exText,
@@ -461,7 +495,9 @@ public class MainTest {
         exText.addAll(Patterns.MIDDLE_SPACE);
         exText.addAll(
             List.of(
-                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation an:\\\\[2ex]",
+                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ",
+                "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation",
+                "an:\\\\[2ex]",
                 "\\begin{enumerate}",
                 "\\item 2 einf\\\"ugen\\\\",
                 "\\item 5 l\\\"oschen\\\\",
@@ -478,7 +514,7 @@ public class MainTest {
                 exText,
                 List.of(
                     "\\begin{minipage}[t]{7cm}",
-                    "f\\\"uge 2 ein\\\\[-2ex]",
+                    "Schritt 1: f\\\"uge 2 ein\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -488,7 +524,7 @@ public class MainTest {
                     "\\end{center}",
                     "\\end{minipage}",
                     "\\begin{minipage}[t]{7cm}",
-                    "entferne 6\\\\[-2ex]",
+                    "Schritt 2: entferne 6\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -501,7 +537,7 @@ public class MainTest {
                     "~\\\\",
                     "",
                     "\\begin{minipage}[t]{7cm}",
-                    "ersetze 5\\\\[-2ex]",
+                    "Schritt 3: ersetze 5\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -686,7 +722,9 @@ public class MainTest {
         exText.addAll(Patterns.MIDDLE_SPACE);
         exText.addAll(
             List.of(
-                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-} und \\emphasize{Ersetzungs-}Operation an:\\\\[2ex]",
+                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ",
+                "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-} und \\emphasize{Ersetzungs-}Operation",
+                "an:\\\\[2ex]",
                 "\\begin{enumerate}",
                 "\\item 2 einf\\\"ugen\\\\",
                 "\\item 5 l\\\"oschen\\\\",
@@ -703,7 +741,7 @@ public class MainTest {
                 exText,
                 List.of(
                     "\\begin{minipage}[t]{7cm}",
-                    "f\\\"uge 2 ein\\\\[-2ex]",
+                    "Schritt 1: f\\\"uge 2 ein\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -713,7 +751,7 @@ public class MainTest {
                     "\\end{center}",
                     "\\end{minipage}",
                     "\\begin{minipage}[t]{7cm}",
-                    "entferne 6\\\\[-2ex]",
+                    "Schritt 2: entferne 6\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -726,7 +764,7 @@ public class MainTest {
                     "~\\\\",
                     "",
                     "\\begin{minipage}[t]{7cm}",
-                    "ersetze 5\\\\[-2ex]",
+                    "Schritt 3: ersetze 5\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -745,7 +783,8 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "Betrachten Sie den folgenden \\emphasize{B-Baum} mit Grad $t = 2$:\\\\",
+                "Betrachten Sie den folgenden \\emphasize{B-Baum mit Grad $t = 2$}:\\\\",
+                "\\begin{minipage}[t]{\\columnwidth}",
                 "\\begin{center}",
                 "\\begin{tikzpicture}",
                 "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
@@ -753,7 +792,9 @@ public class MainTest {
                     + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                 "\\Tree [.{3,5} {1} {4} {6,7,8} ];",
                 "\\end{tikzpicture}",
-                "\\end{center}"
+                "~\\\\*\\vspace*{1ex}",
+                "\\end{center}",
+                "\\end{minipage}"
             )
         );
         exText.addAll(Patterns.MIDDLE_SPACE);
@@ -761,7 +802,7 @@ public class MainTest {
             List.of(
                 "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ",
                 "\\begin{itemize}\\item \\emphasize{Aufteilung}\\item \\emphasize{Diebstahloperation}\\item \\emphasize{Einf\\\"ugeoperation}\\item \\emphasize{L\\\"oschoperation}\\item \\emphasize{Rotation}\\item \\emphasize{Verschmelzung}\\end{itemize}",
-                "an:\\\\",
+                "an:\\\\[2ex]",
                 "\\begin{enumerate}",
                 "\\item 2 einf\\\"ugen\\\\",
                 "\\item 5 l\\\"oschen\\\\",
@@ -777,43 +818,46 @@ public class MainTest {
             MainTest.simpleComparison(
                 exText,
                 List.of(
-                    "\\begin{minipage}{\\columnwidth}",
-                    "\\vspace*{1ex}",
-                    "Schritt 1:\\\\[-2ex]",
+                    "\\begin{minipage}[t]{\\columnwidth}",
+                    "Schritt 1: f\\\"uge 2 ein\\\\[-2ex]",
                     "\\begin{center}",
-                    "f\\\"uge 2 ein\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.{3,5} {1,2} {4} {6,7,8} ];",
                     "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
                     "\\end{center}",
                     "\\end{minipage}",
-                    "\\begin{minipage}{\\columnwidth}",
-                    "\\vspace*{1ex}",
-                    "Schritt 2:\\\\[-2ex]",
+                    "",
+                    "~\\\\",
+                    "",
+                    "\\begin{minipage}[t]{\\columnwidth}",
+                    "Schritt 2: stehle Nachfolger von 5\\\\[-2ex]",
                     "\\begin{center}",
-                    "stehle Nachfolger von 5\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.{3,6} {1,2} {4} {6,7,8} ];",
                     "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
                     "\\end{center}",
                     "\\end{minipage}",
-                    "\\begin{minipage}{\\columnwidth}",
-                    "\\vspace*{1ex}",
-                    "Schritt 3:\\\\[-2ex]",
+                    "",
+                    "~\\\\",
+                    "",
+                    "\\begin{minipage}[t]{\\columnwidth}",
+                    "Schritt 3: entferne 6\\\\[-2ex]",
                     "\\begin{center}",
-                    "entferne 6\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.{3,6} {1,2} {4} {7,8} ];",
                     "\\end{tikzpicture}",
+                    "~\\\\*\\vspace*{1ex}",
                     "\\end{center}",
                     "\\end{minipage}"
                 )
@@ -1255,61 +1299,19 @@ public class MainTest {
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.add("\\textbf{Codebuch:}\\\\[2ex]");
         solText.add("\\textbf{Codebuch:}\\\\[2ex]");
-        int currentNodeNumber =
-            MainTest.checkAssignment(
-                0,
-                "\\code{`E'}",
-                "=",
-                Collections.singletonList("\\code{11}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`G'}",
-                "=",
-                Collections.singletonList("\\code{100}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`I'}",
-                "=",
-                Collections.singletonList("\\code{00}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`M'}",
-                "=",
-                Collections.singletonList("\\code{101}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`R'}",
-                "=",
-                Collections.singletonList("\\code{01}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
+        MainTest.addAssignmentTextForHuffman(
+            List.of(
+                new Pair<String, String>("E", "11"),
+                new Pair<String, String>("G", "100"),
+                new Pair<String, String>("I", "00"),
+                new Pair<String, String>("M", "101"),
+                new Pair<String, String>("R", "01")
+            ),
+            longestCodeLength,
+            longestLeftHandSide,
+            exText,
+            solText
+        );
         exText.addAll(Patterns.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
         exText.addAll(Patterns.SOLUTION_SPACE_END);
@@ -1377,61 +1379,19 @@ public class MainTest {
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.add("\\textbf{Codebuch:}\\\\[2ex]");
         solText.add("\\textbf{Codebuch:}\\\\[2ex]");
-        int currentNodeNumber =
-            MainTest.checkAssignment(
-                0,
-                "\\code{`\\%'}",
-                "=",
-                Collections.singletonList("\\code{00}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`\\&'}",
-                "=",
-                Collections.singletonList("\\code{11}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`\\textbackslash{}'}",
-                "=",
-                Collections.singletonList("\\code{100}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`\\textasciicircum{}'}",
-                "=",
-                Collections.singletonList("\\code{01}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`\\_'}",
-                "=",
-                Collections.singletonList("\\code{101}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
+        MainTest.addAssignmentTextForHuffman(
+            List.of(
+                new Pair<String, String>("\\%", "00"),
+                new Pair<String, String>("\\&", "11"),
+                new Pair<String, String>("\\textbackslash{}", "100"),
+                new Pair<String, String>("\\textasciicircum{}", "01"),
+                new Pair<String, String>("\\_", "101")
+            ),
+            longestCodeLength,
+            longestLeftHandSide,
+            exText,
+            solText
+        );
         exText.addAll(Patterns.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
         exText.addAll(Patterns.SOLUTION_SPACE_END);
@@ -1501,94 +1461,22 @@ public class MainTest {
         exText.add("\\begin{multicols}{2}");
         solText.add("\\textbf{Codebuch:}");
         solText.add("\\begin{multicols}{2}");
-        int currentNodeNumber =
-            MainTest.checkAssignment(
-                0,
-                "\\code{`A'}",
-                "=",
-                Collections.singletonList("\\code{01}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`B'}",
-                "=",
-                Collections.singletonList("\\code{10}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`E'}",
-                "=",
-                Collections.singletonList("\\code{000}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`H'}",
-                "=",
-                Collections.singletonList("\\code{00100}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`I'}",
-                "=",
-                Collections.singletonList("\\code{00101}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`N'}",
-                "=",
-                Collections.singletonList("\\code{00110}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`R'}",
-                "=",
-                Collections.singletonList("\\code{11}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
-        currentNodeNumber =
-            MainTest.checkAssignment(
-                currentNodeNumber,
-                "\\code{`T'}",
-                "=",
-                Collections.singletonList("\\code{00111}"),
-                longestCodeLength,
-                longestLeftHandSide,
-                exText,
-                solText
-            );
+        MainTest.addAssignmentTextForHuffman(
+            List.of(
+                new Pair<String, String>("A", "01"),
+                new Pair<String, String>("B", "10"),
+                new Pair<String, String>("E", "000"),
+                new Pair<String, String>("H", "00100"),
+                new Pair<String, String>("I", "00101"),
+                new Pair<String, String>("N", "00110"),
+                new Pair<String, String>("R", "11"),
+                new Pair<String, String>("T", "00111")
+            ),
+            longestCodeLength,
+            longestLeftHandSide,
+            exText,
+            solText
+        );
         exText.add("\\end{multicols}");
         solText.add("\\end{multicols}");
         exText.addAll(Patterns.MIDDLE_SPACE);
@@ -3277,7 +3165,9 @@ public class MainTest {
         exText.addAll(Patterns.MIDDLE_SPACE);
         exText.addAll(
             List.of(
-                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die entstehenden B\\\"aume nach jeder \\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Umf\\\"arbe-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation an:\\\\[2ex]",
+                "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ",
+                "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Umf\\\"arbe-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation",
+                "an:\\\\[2ex]",
                 "\\begin{enumerate}",
                 "\\item 2 einf\\\"ugen\\\\",
                 "\\item 5 l\\\"oschen\\\\",
@@ -3294,7 +3184,7 @@ public class MainTest {
                 exText,
                 List.of(
                     "\\begin{minipage}[t]{7cm}",
-                    "f\\\"uge 2 ein\\\\[-2ex]",
+                    "Schritt 1: f\\\"uge 2 ein\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -3304,7 +3194,7 @@ public class MainTest {
                     "\\end{center}",
                     "\\end{minipage}",
                     "\\begin{minipage}[t]{7cm}",
-                    "entferne 6\\\\[-2ex]",
+                    "Schritt 2: entferne 6\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
@@ -3317,7 +3207,7 @@ public class MainTest {
                     "~\\\\",
                     "",
                     "\\begin{minipage}[t]{7cm}",
-                    "ersetze 5\\\\[-2ex]",
+                    "Schritt 3: ersetze 5\\\\[-2ex]",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",

@@ -6,7 +6,6 @@ import java.util.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.binary.*;
 import exercisegenerator.structures.coding.*;
 
@@ -52,7 +51,7 @@ public class CodingAlgorithmsTest {
 
     @Test(dataProvider="decodeHammingData")
     public void decodeHammingTest(final String message, final String expected) throws IOException {
-        Assert.assertEquals(HammingDecoding.decodeHamming(BitString.parse(message)).toString(), expected);
+        Assert.assertEquals(HammingDecoding.INSTANCE.apply(BitString.parse(message)).toString(), expected);
     }
 
     @Test
@@ -89,9 +88,11 @@ public class CodingAlgorithmsTest {
         codeBook.put('z', "01000");
         final HuffmanTree tree = new HuffmanTree(codeBook);
         final String result =
-            HuffmanDecoding.decodeHuffman(
-                "10110000111100001010000111100011110110000010101110000100100111100101001110010110011100011111010101010111101101111001110111111001001001100011001111010101011111000101110110111100000010000011110100101001111001011101111101000011011100100101110101111100000111110010001101010",
-                tree
+            HuffmanDecoding.INSTANCE.apply(
+                new HuffmanCode(
+                    "10110000111100001010000111100011110110000010101110000100100111100101001110010110011100011111010101010111101101111001110111111001001001100011001111010101011111000101110110111100000010000011110100101001111001011101111101000011011100100101110101111100000111110010001101010",
+                    tree
+                )
             );
         Assert.assertEquals(result, "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern.");
     }
@@ -122,17 +123,19 @@ public class CodingAlgorithmsTest {
 
     @Test(dataProvider="encodeHammingData")
     public void encodeHammingTest(final String message, final String expected) throws IOException {
-        Assert.assertEquals(HammingEncoding.encodeHamming(BitString.parse(message)).toString(), expected);
+        Assert.assertEquals(HammingEncoding.INSTANCE.apply(BitString.parse(message)).toString(), expected);
     }
 
     @Test
     public void encodeHuffmanTest() throws IOException {
-        final Pair<HuffmanTree, String> result =
-            HuffmanEncoding.encodeHuffman(
-                "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern.",
-                CodingAlgorithms.BINARY_ALPHABET
+        final HuffmanCode result =
+            HuffmanEncoding.INSTANCE.apply(
+                new HuffmanProblem(
+                    "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern.",
+                    CodingAlgorithms.BINARY_ALPHABET
+                )
             );
-        final Map<Character, String> codeBook = result.x.toCodeBook();
+        final Map<Character, String> codeBook = result.tree().toCodeBook();
         Assert.assertEquals(codeBook.size(), 29);
         Assert.assertEquals(codeBook.get(' '), "011");
         Assert.assertEquals(codeBook.get('.'), "101010");
@@ -164,7 +167,7 @@ public class CodingAlgorithmsTest {
         Assert.assertEquals(codeBook.get('y'), "00001");
         Assert.assertEquals(codeBook.get('z'), "01000");
         Assert.assertEquals(
-            result.y,
+            result.message(),
             "101100 001 1110 0001 01000 011 110001 1110 110000 0101 011 10000 10010 011 110010 10011 10010 110011 10001 1111 0101 0101 011 110110 1111 001 110111 1110 01001 001 10001 10011 110101 0101 1111 0001 011 101101 1110 00000 10000 011 110100 10100 1111 001 011 101111 10100 001 101110 01001 011 101011 1110 00001 1111 001 0001 101010"
         );
     }

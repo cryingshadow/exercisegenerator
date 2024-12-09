@@ -4,29 +4,30 @@ import java.io.*;
 import java.util.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class SCCAlgorithm implements AlgorithmImplementation {
+public class SCCAlgorithm implements GridGraphAlgorithm<List<List<String>>> {
 
     public static final SCCAlgorithm INSTANCE = new SCCAlgorithm();
 
     private SCCAlgorithm() {}
 
     @Override
+    public List<List<String>> apply(final GridGraph graph) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not yet implemented!");
+    }
+
+    @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final Optional<BufferedWriter> optionalWriterSpace = Algorithm.getOptionalSpaceWriter(input);
-        final GridGraph graph = new GridGraph();
-        graph.createGraph(GraphAlgorithms.parseOrGenerateGridGraph(input.options));
-        if (optionalWriterSpace.isPresent()) {
-            final BufferedWriter writerSpace = optionalWriterSpace.get();
-            writerSpace.write("Geben Sie alle \\emphasize{starken Zusammenhangskomponenten} im folgenden Graph an. ");
-            writerSpace.write("F\\\"ur jede dieser starken Zusammenhangskomponenten reicht es die Menge der Knoten ");
-            writerSpace.write("anzugeben, die darin auftreten.");
-            Main.newLine(writerSpace);
-            graph.printGraph(writerSpace, false);
-        }
+        final GridGraph graph = this.parseOrGenerateProblem(null);
+        input.exerciseWriter.write("Geben Sie alle \\emphasize{starken Zusammenhangskomponenten} im folgenden Graph an. ");
+        input.exerciseWriter.write("F\\\"ur jede dieser starken Zusammenhangskomponenten reicht es die Menge der Knoten ");
+        input.exerciseWriter.write("anzugeben, die darin auftreten.");
+        Main.newLine(input.exerciseWriter);
+        graph.printGraph(input.exerciseWriter, false);
         graph.printSCCs(input.solutionWriter, false, false);
         Main.newLine(input.solutionWriter);
     }
@@ -37,6 +38,26 @@ public class SCCAlgorithm implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public void printExercise(
+        final GridGraph problem,
+        final List<List<String>> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void printSolution(
+        final GridGraph problem,
+        final List<List<String>> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
     }
 
 }

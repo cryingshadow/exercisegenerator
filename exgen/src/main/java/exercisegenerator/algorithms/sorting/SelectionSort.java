@@ -1,18 +1,29 @@
 package exercisegenerator.algorithms.sorting;
 
-import java.io.*;
 import java.util.*;
 
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.util.*;
 
-public class SelectionSort implements AlgorithmImplementation {
+public class SelectionSort implements Sorting {
 
     public static final SelectionSort INSTANCE = new SelectionSort();
 
-    public static List<List<ItemWithTikZInformation<Integer>>> selectionsort(final int[] initialArray) {
+    private SelectionSort() {}
+
+    @Override
+    public String additionalExerciseText() {
+        return "";
+    }
+
+    @Override
+    public String algorithmName() {
+        return Algorithm.SELECTIONSORT.longName;
+    }
+
+    @Override
+    public SortingSolution apply(final int[] initialArray) {
         final List<List<ItemWithTikZInformation<Integer>>> result =
             new ArrayList<List<ItemWithTikZInformation<Integer>>>();
         result.add(Sorting.toTikZItems(initialArray));
@@ -29,21 +40,7 @@ public class SelectionSort implements AlgorithmImplementation {
                 result.add(Sorting.toTikZItems(array));
             }
         }
-        return result;
-    }
-
-    private SelectionSort() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        Sorting.sort(
-            input,
-            Algorithm.SELECTIONSORT.longName,
-            "Swap-Operation",
-            "",
-            SelectionSort::selectionsort,
-            Sorting::printSolution
-        );
+        return new SortingSolution(Sorting.getMaximumContentLength(initialArray), result);
     }
 
     @Override
@@ -52,6 +49,11 @@ public class SelectionSort implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public String operation() {
+        return "Swap-Operation";
     }
 
 }

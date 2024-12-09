@@ -6,105 +6,15 @@ import java.util.*;
 import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.algebra.*;
-import exercisegenerator.algorithms.hashing.Hashing.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
-import exercisegenerator.util.*;
+import exercisegenerator.structures.hashing.*;
 
-public class HashingDivisionQuadratic implements AlgorithmImplementation {
+public class HashingDivisionQuadratic implements Hashing {
 
     public static final HashingDivisionQuadratic INSTANCE = new HashingDivisionQuadratic();
 
-    private static String toAdditionalHint(
-        final int length,
-        final BigFraction linearProbingFactor,
-        final BigFraction quadraticProbingFactor,
-        final int length2
-    ) {
-        return Main.TEXT_VERSION == TextVersion.ABRAHAM ?
-            String.format(
-                " ($f(n,i) = ((n \\mod %d) + \\lfloor %s \\cdot i + %s \\cdot i^2\\rfloor) \\mod %d$)",
-                length,
-                AlgebraAlgorithms.toCoefficient(linearProbingFactor),
-                AlgebraAlgorithms.toCoefficient(quadraticProbingFactor),
-                length2
-            ) :
-                "";
-    }
-
-    private static String toParameterString(
-        final int capacity,
-        final BigFraction linearProbingFactor,
-        final BigFraction quadraticProbingFactor
-    ) {
-        return String.format(
-            "$m = %d$, $c_1 = %s$, $c_2 = %s$%s",
-            capacity,
-            AlgebraAlgorithms.toCoefficient(linearProbingFactor),
-            AlgebraAlgorithms.toCoefficient(quadraticProbingFactor),
-            Hashing.PARAMETER_STRING_END
-        );
-    }
-
     private HashingDivisionQuadratic() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final int numOfValues = Hashing.parseOrGenerateNumberOfValues(input.options);
-        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
-        final int capacity = initialHashTable.length;
-        final HashFunction hashFunction = new DivisionMethod(capacity);
-        final ProbingFactors probingFactors = Hashing.parseOrGenerateProbingFactors(capacity, input.options);
-        final ProbingFunction probingFunction = new QuadraticProbing(probingFactors);
-        final List<Integer> values =
-            Hashing.parseOrGenerateValues(
-                numOfValues,
-                capacity,
-                hashFunction,
-                Optional.of(probingFunction),
-                input.options
-            );
-        try {
-            final HashResult result =
-                Hashing.hashing(values, initialHashTable, hashFunction, Optional.of(probingFunction));
-            Hashing.printHashingExerciseAndSolution(
-                values,
-                initialHashTable,
-                result,
-                new PrintOptions(
-                    Hashing.DIVISION_METHOD
-                    .concat(
-                        Hashing.toQuadraticProbingText(
-                            probingFactors.linearProbingFactor,
-                            probingFactors.quadraticProbingFactor
-                        )
-                    ).concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
-                    .concat(
-                        HashingDivisionQuadratic.toAdditionalHint(
-                            initialHashTable.length,
-                            probingFactors.linearProbingFactor,
-                            probingFactors.quadraticProbingFactor,
-                            initialHashTable.length
-                        )
-                    ),
-                    HashingDivisionQuadratic.toParameterString(
-                        initialHashTable.length,
-                        probingFactors.linearProbingFactor,
-                        probingFactors.quadraticProbingFactor
-                    ),
-                    true,
-                    PreprintMode.parsePreprintMode(input.options)
-                ),
-                input.options,
-                input.exerciseWriter,
-                input.solutionWriter
-            );
-        } catch (final HashException e) {
-            throw new IOException(e);
-        }
-    }
 
     @Override
     public String[] generateTestParameters() {
@@ -112,6 +22,44 @@ public class HashingDivisionQuadratic implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public HashFunctionWithParameters hashFunction(final int capacity, final Parameters options) throws IOException {
+        return new HashFunctionWithParameters(
+            new DivisionMethod(capacity),
+            Hashing.DIVISION_METHOD,
+            Map.of("m", new BigFraction(capacity)),
+            text -> Main.TEXT_VERSION == TextVersion.ABRAHAM ?
+                String.format(" ($f(n,i) = (n + %s) \\mod %d$)", text, capacity) :
+                    ""
+        );
+    }
+
+    @Override
+    public Optional<ProbingFunctionWithParameters> optionalProbingFunction(
+        final int capacity,
+        final Parameters options
+    ) throws IOException {
+        final ProbingFactors probingFactors = Hashing.parseOrGenerateProbingFactors(capacity, options);
+        final Map<String, BigFraction> parameters = new LinkedHashMap<String, BigFraction>();
+        parameters.put("c_1", probingFactors.linearProbingFactor);
+        parameters.put("c_2", probingFactors.quadraticProbingFactor);
+        return Optional.of(
+            new ProbingFunctionWithParameters(
+                new QuadraticProbing(probingFactors),
+                Hashing.toQuadraticProbingText(
+                    probingFactors.linearProbingFactor,
+                    probingFactors.quadraticProbingFactor
+                ),
+                parameters,
+                String.format(
+                    "\\lfloor %s \\cdot i + %s \\cdot i^2\\rfloor",
+                    AlgebraAlgorithms.toCoefficient(probingFactors.linearProbingFactor),
+                    AlgebraAlgorithms.toCoefficient(probingFactors.quadraticProbingFactor)
+                )
+            )
+        );
     }
 
 }

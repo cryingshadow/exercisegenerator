@@ -9,13 +9,8 @@ public class RedBlackTreeFactory<T extends Comparable<T>> extends BinaryTreeFact
     }
 
     @Override
-    public BinaryTree<T> create() {
-        return new RedBlackTree<T>(Optional.empty(), this);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
-    public BinaryTree<T> create(final Optional<? extends BinaryTreeNode<T>> root) {
+    public BinaryTree<T> create(final Optional<? extends SearchTreeNode<T>> root) {
         return new RedBlackTree<T>((Optional<RedBlackTreeNode<T>>)root, this);
     }
 

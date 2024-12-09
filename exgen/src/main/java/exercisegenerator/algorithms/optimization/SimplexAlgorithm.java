@@ -9,27 +9,13 @@ import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.algebra.*;
 import exercisegenerator.structures.optimization.*;
 import exercisegenerator.util.*;
 
-public class SimplexAlgorithm implements AlgorithmImplementation {
+public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem, SimplexSolution> {
 
     public static final SimplexAlgorithm INSTANCE = new SimplexAlgorithm();
-
-    public static SimplexSolution simplex(final SimplexProblem problem) {
-        final List<SimplexTableau> tableaus = new LinkedList<SimplexTableau>();
-        SimplexTableau tableau = SimplexAlgorithm.simplexInitializeTableau(problem);
-        tableaus.add(tableau);
-        SimplexAnswer answer = SimplexAlgorithm.simplexComputeAnswer(tableau);
-        while (answer == SimplexAnswer.INCOMPLETE) {
-            tableau = SimplexAlgorithm.simplexStep(tableau);
-            tableaus.add(tableau);
-            answer = SimplexAlgorithm.simplexComputeAnswer(tableau);
-        }
-        return new SimplexSolution(tableaus, answer);
-    }
 
     static SimplexAnswer simplexComputeAnswer(final SimplexTableau tableau) {
         final Matrix matrix = tableau.problem.conditions;
@@ -74,13 +60,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         return target;
     }
 
-    private static SimplexProblem parseOrGenerateSimplexProblem(final Parameters options) throws IOException {
-        return new ParserAndGenerator<SimplexProblem>(
-            SimplexAlgorithm::parseSimplexProblem,
-            SimplexAlgorithm::generateSimplexProblem
-        ).getResult(options);
-    }
-
     private static SimplexProblem parseSimplexProblem(
         final BufferedReader reader,
         final Parameters options
@@ -110,59 +89,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             target[i] = AlgebraAlgorithms.parseRationalNumber(numbers[i]);
         }
         return target;
-    }
-
-    private static void printSimplexExercise(
-        final SimplexProblem problem,
-        final SimplexSolution solution,
-        final Parameters options,
-        final BufferedWriter writer
-    ) throws IOException {
-        writer.write("Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\");
-        Main.newLine(writer);
-        SimplexAlgorithm.printSimplexProblem(problem, writer);
-        writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
-        writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale Belegung ");
-        writer.write(String.format("f\\\"ur die Variablen $%s_{1}", AlgebraAlgorithms.VARIABLE_NAME));
-        for (int index = 1; index < problem.target.length; index++) {
-            writer.write(String.format(", %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, index + 1));
-        }
-        writer.write("$ an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.");
-        Main.newLine(writer);
-        Main.newLine(writer);
-        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
-        switch (mode) {
-        case SOLUTION_SPACE:
-            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-            // fall-through
-        case ALWAYS:
-            writer.write("{\\renewcommand{\\arraystretch}{1.5}");
-            Main.newLine(writer);
-            for (final SimplexTableau tableau : solution.tableaus) {
-                Main.newLine(writer);
-                LaTeXUtils.printTable(
-                    SimplexAlgorithm.toSimplexTableau(tableau, false),
-                    Optional.empty(),
-                    SimplexAlgorithm::simplexTableColumnDefinition,
-                    true,
-                    0,
-                    writer
-                );
-            }
-            Main.newLine(writer);
-            writer.write("\\renewcommand{\\arraystretch}{1}}");
-            Main.newLine(writer);
-            LaTeXUtils.printVerticalProtectedSpace(writer);
-            writer.write("Ergebnis:");
-            Main.newLine(writer);
-            if (mode == PreprintMode.SOLUTION_SPACE) {
-                LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
-            }
-            Main.newLine(writer);
-            break;
-        default:
-            //do nothing
-        }
     }
 
     private static void printSimplexProblem(final SimplexProblem problem, final BufferedWriter writer)
@@ -209,64 +135,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
             writer.write(String.format(", %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, index + 1));
         }
         writer.write(" \\geq 0$\\\\[2ex]");
-        Main.newLine(writer);
-    }
-
-    private static void printSimplexSolution(
-        final SimplexProblem problem,
-        final SimplexSolution solution,
-        final Parameters options,
-        final BufferedWriter writer
-    ) throws IOException {
-        writer.write("{\\renewcommand{\\arraystretch}{1.5}");
-        Main.newLine(writer);
-        for (final SimplexTableau tableau : solution.tableaus) {
-            Main.newLine(writer);
-            LaTeXUtils.printTable(
-                SimplexAlgorithm.toSimplexTableau(tableau, true),
-                Optional.empty(),
-                SimplexAlgorithm::simplexTableColumnDefinition,
-                true,
-                0,
-                writer
-            );
-        }
-        Main.newLine(writer);
-        writer.write("\\renewcommand{\\arraystretch}{1}}");
-        Main.newLine(writer);
-        LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("Ergebnis: ");
-        switch (solution.answer) {
-        case UNBOUNDED:
-            writer.write("unbeschr\\\"ankt, da wir eine Pivot-Spalte mit nicht-positiven Koeffizienten haben");
-            break;
-        case UNSOLVABLE:
-            writer.write(
-                "unl\\\"osbar, da wir eine Pivot-Zeile mit negativem Limit, aber nicht-negativen Koeffizienten haben"
-            );
-            break;
-        default:
-            final SimplexTableau lastTableau = solution.tableaus.get(solution.tableaus.size() - 1);
-            writer.write(
-                String.format(
-                    "$%s_{1}^* = %s$",
-                    AlgebraAlgorithms.VARIABLE_NAME,
-                    AlgebraAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(0, lastTableau))
-                )
-            );
-            for (int i = 1; i < lastTableau.problem.target.length; i++) {
-                writer.write(
-                    String.format(
-                        ", $%s_{%d}^* = %s$",
-                        AlgebraAlgorithms.VARIABLE_NAME,
-                        i + 1,
-                        AlgebraAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(i, lastTableau))
-                    )
-                );
-            }
-            break;
-        }
-        Main.newLine(writer);
         Main.newLine(writer);
     }
 
@@ -605,11 +473,17 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
     private SimplexAlgorithm() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final SimplexProblem problem = SimplexAlgorithm.parseOrGenerateSimplexProblem(input.options);
-        final SimplexSolution solution = SimplexAlgorithm.simplex(problem);
-        SimplexAlgorithm.printSimplexExercise(problem, solution, input.options, input.exerciseWriter);
-        SimplexAlgorithm.printSimplexSolution(problem, solution, input.options, input.solutionWriter);
+    public SimplexSolution apply(final SimplexProblem problem) {
+        final List<SimplexTableau> tableaus = new LinkedList<SimplexTableau>();
+        SimplexTableau tableau = SimplexAlgorithm.simplexInitializeTableau(problem);
+        tableaus.add(tableau);
+        SimplexAnswer answer = SimplexAlgorithm.simplexComputeAnswer(tableau);
+        while (answer == SimplexAnswer.INCOMPLETE) {
+            tableau = SimplexAlgorithm.simplexStep(tableau);
+            tableaus.add(tableau);
+            answer = SimplexAlgorithm.simplexComputeAnswer(tableau);
+        }
+        return new SimplexSolution(tableaus, answer);
     }
 
     @Override
@@ -618,6 +492,127 @@ public class SimplexAlgorithm implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public SimplexProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+        return new ParserAndGenerator<SimplexProblem>(
+            SimplexAlgorithm::parseSimplexProblem,
+            SimplexAlgorithm::generateSimplexProblem
+        ).getResult(options);
+    }
+
+    @Override
+    public void printExercise(
+        final SimplexProblem problem,
+        final SimplexSolution solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\");
+        Main.newLine(writer);
+        SimplexAlgorithm.printSimplexProblem(problem, writer);
+        writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
+        writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale Belegung ");
+        writer.write(String.format("f\\\"ur die Variablen $%s_{1}", AlgebraAlgorithms.VARIABLE_NAME));
+        for (int index = 1; index < problem.target.length; index++) {
+            writer.write(String.format(", %s_{%d}", AlgebraAlgorithms.VARIABLE_NAME, index + 1));
+        }
+        writer.write("$ an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.");
+        Main.newLine(writer);
+        Main.newLine(writer);
+        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        switch (mode) {
+        case SOLUTION_SPACE:
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+            // fall-through
+        case ALWAYS:
+            writer.write("{\\renewcommand{\\arraystretch}{1.5}");
+            Main.newLine(writer);
+            for (final SimplexTableau tableau : solution.tableaus) {
+                Main.newLine(writer);
+                LaTeXUtils.printTable(
+                    SimplexAlgorithm.toSimplexTableau(tableau, false),
+                    Optional.empty(),
+                    SimplexAlgorithm::simplexTableColumnDefinition,
+                    true,
+                    0,
+                    writer
+                );
+            }
+            Main.newLine(writer);
+            writer.write("\\renewcommand{\\arraystretch}{1}}");
+            Main.newLine(writer);
+            LaTeXUtils.printVerticalProtectedSpace(writer);
+            writer.write("Ergebnis:");
+            Main.newLine(writer);
+            if (mode == PreprintMode.SOLUTION_SPACE) {
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
+            }
+            Main.newLine(writer);
+            break;
+        default:
+            //do nothing
+        }
+    }
+
+    @Override
+    public void printSolution(
+        final SimplexProblem problem,
+        final SimplexSolution solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("{\\renewcommand{\\arraystretch}{1.5}");
+        Main.newLine(writer);
+        for (final SimplexTableau tableau : solution.tableaus) {
+            Main.newLine(writer);
+            LaTeXUtils.printTable(
+                SimplexAlgorithm.toSimplexTableau(tableau, true),
+                Optional.empty(),
+                SimplexAlgorithm::simplexTableColumnDefinition,
+                true,
+                0,
+                writer
+            );
+        }
+        Main.newLine(writer);
+        writer.write("\\renewcommand{\\arraystretch}{1}}");
+        Main.newLine(writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("Ergebnis: ");
+        switch (solution.answer) {
+        case UNBOUNDED:
+            writer.write("unbeschr\\\"ankt, da wir eine Pivot-Spalte mit nicht-positiven Koeffizienten haben");
+            break;
+        case UNSOLVABLE:
+            writer.write(
+                "unl\\\"osbar, da wir eine Pivot-Zeile mit negativem Limit, aber nicht-negativen Koeffizienten haben"
+            );
+            break;
+        default:
+            final SimplexTableau lastTableau = solution.tableaus.get(solution.tableaus.size() - 1);
+            writer.write(
+                String.format(
+                    "$%s_{1}^* = %s$",
+                    AlgebraAlgorithms.VARIABLE_NAME,
+                    AlgebraAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(0, lastTableau))
+                )
+            );
+            for (int i = 1; i < lastTableau.problem.target.length; i++) {
+                writer.write(
+                    String.format(
+                        ", $%s_{%d}^* = %s$",
+                        AlgebraAlgorithms.VARIABLE_NAME,
+                        i + 1,
+                        AlgebraAlgorithms.toCoefficient(SimplexAlgorithm.simplexGetCurrentValue(i, lastTableau))
+                    )
+                );
+            }
+            break;
+        }
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
 }

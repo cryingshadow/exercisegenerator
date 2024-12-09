@@ -8,10 +8,9 @@ import org.apache.commons.math3.fraction.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.algebra.*;
 
-public class MatrixInversionAlgorithm implements AlgorithmImplementation {
+public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix>> {
 
     public static final MatrixInversionAlgorithm INSTANCE = new MatrixInversionAlgorithm();
 
@@ -55,16 +54,36 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation {
         return AlgebraAlgorithms.parseMatrix(text);
     }
 
-    private static Matrix parseOrGenerateMatrix(final Parameters options)
-    throws IOException {
+    private MatrixInversionAlgorithm() {}
+
+    @Override
+    public List<Matrix> apply(final Matrix problem) {
+        if (problem.getNumberOfColumns() != problem.getNumberOfRows()) {
+            throw new IllegalArgumentException("Inversion is only applicable to quadratic matrices!");
+        }
+        return GaussJordanAlgorithm.gaussJordan(this.addIdentityMatrix(problem));
+    }
+
+    @Override
+    public String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-d";
+        result[1] = "4";
+        return result;
+    }
+
+    @Override
+    public Matrix parseOrGenerateProblem(final Parameters options) throws IOException {
         return new ParserAndGenerator<Matrix>(
             MatrixInversionAlgorithm::parseMatrix,
             MatrixInversionAlgorithm::generateMatrix
         ).getResult(options);
     }
 
-    private static void printMatrixInversionExercise(
+    @Override
+    public void printExercise(
         final Matrix problem,
+        final List<Matrix> solution,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
@@ -79,7 +98,9 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
     }
 
-    private static void printMatrixInversionSolution(
+    @Override
+    public void printSolution(
+        final Matrix problem,
         final List<Matrix> solution,
         final Parameters options,
         final BufferedWriter writer
@@ -103,27 +124,6 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation {
         }
         Main.newLine(writer);
         Main.newLine(writer);
-    }
-
-    private MatrixInversionAlgorithm() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final Matrix problem = MatrixInversionAlgorithm.parseOrGenerateMatrix(input.options);
-        if (problem.getNumberOfColumns() != problem.getNumberOfRows()) {
-            throw new IllegalArgumentException("Inversion is only applicable to quadratic matrices!");
-        }
-        final List<Matrix> solution = GaussJordanAlgorithm.gaussJordan(this.addIdentityMatrix(problem));
-        MatrixInversionAlgorithm.printMatrixInversionExercise(problem, input.options, input.exerciseWriter);
-        MatrixInversionAlgorithm.printMatrixInversionSolution(solution, input.options, input.solutionWriter);
-    }
-
-    @Override
-    public String[] generateTestParameters() {
-        final String[] result = new String[2];
-        result[0] = "-d";
-        result[1] = "4";
-        return result;
     }
 
     private Matrix addIdentityMatrix(final Matrix problem) {

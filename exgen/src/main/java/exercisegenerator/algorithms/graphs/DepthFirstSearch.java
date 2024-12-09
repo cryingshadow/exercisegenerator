@@ -5,64 +5,47 @@ import java.util.*;
 import java.util.stream.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class DepthFirstSearch implements AlgorithmImplementation {
+public class DepthFirstSearch implements GraphAlgorithm<List<String>> {
 
     public static final DepthFirstSearch INSTANCE = new DepthFirstSearch();
 
-    public static <V, E> List<V> depthFirstSearch(
-        final Graph<V, E> graph,
-        final Vertex<V> start,
-        final Comparator<Vertex<V>> comparator
-    ) {
-        return DepthFirstSearch.depthFirstSearch(graph, start, comparator, new LinkedHashSet<Vertex<V>>());
-    }
-
-    private static <V, E> List<V> depthFirstSearch(
-        final Graph<V, E> graph,
-        final Vertex<V> vertex,
-        final Comparator<Vertex<V>> comparator,
-        final Set<Vertex<V>> used
+    private static List<String> depthFirstSearch(
+        final Graph<String, Integer> graph,
+        final Vertex<String> vertex,
+        final Comparator<Vertex<String>> comparator,
+        final Set<Vertex<String>> used
     ) {
         if (used.contains(vertex)) {
             return Collections.emptyList();
         }
         used.add(vertex);
-        final List<V> result = new LinkedList<V>();
+        final List<String> result = new LinkedList<String>();
         result.add(vertex.label.get());
-        final List<Vertex<V>> nextVertices = new ArrayList<Vertex<V>>(graph.getAdjacentVertices(vertex));
+        final List<Vertex<String>> nextVertices = new ArrayList<Vertex<String>>(graph.getAdjacentVertices(vertex));
         Collections.sort(nextVertices, comparator);
-        for (final Vertex<V> nextVertex : nextVertices) {
+        for (final Vertex<String> nextVertex : nextVertices) {
             result.addAll(DepthFirstSearch.depthFirstSearch(graph, nextVertex, comparator, used));
         }
         return result;
     }
 
     private static String depthFirstSearchTask(final String start) {
-        return GraphAlgorithms.searchTask("Tiefensuche", start);
+        return GraphAlgorithm.searchTask("Tiefensuche", start);
     }
 
     private DepthFirstSearch() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final Pair<Graph<String, Integer>, Vertex<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
-        final List<String> result = DepthFirstSearch.depthFirstSearch(pair.x, pair.y, new StringVertexComparator());
-        GraphAlgorithms.printGraphExercise(
-            pair.x,
-            DepthFirstSearch.depthFirstSearchTask(pair.y.label.get()),
-            GraphAlgorithms.parseDistanceFactor(input.options),
-            GraphPrintMode.NO_EDGE_LABELS,
-            input.exerciseWriter
+    public List<String> apply(final GraphProblem problem) {
+        return DepthFirstSearch.depthFirstSearch(
+            problem.graph(),
+            problem.startNode(),
+            problem.comparator(),
+            new LinkedHashSet<Vertex<String>>()
         );
-        Main.newLine(input.exerciseWriter);
-        input.solutionWriter.write(result.stream().collect(Collectors.joining(", ")));
-        Main.newLine(input.solutionWriter);
-        Main.newLine(input.solutionWriter);
     }
 
     @Override
@@ -71,6 +54,35 @@ public class DepthFirstSearch implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public void printExercise(
+        final GraphProblem problem,
+        final List<String> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        GraphAlgorithm.printGraphExercise(
+            problem.graph(),
+            DepthFirstSearch.depthFirstSearchTask(problem.startNode().label.get()),
+            GraphAlgorithm.parseDistanceFactor(options),
+            GraphPrintMode.NO_EDGE_LABELS,
+            writer
+        );
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolution(
+        final GraphProblem problem,
+        final List<String> solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write(solution.stream().collect(Collectors.joining(", ")));
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
 }

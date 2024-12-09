@@ -5,38 +5,12 @@ import java.util.*;
 
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
-import exercisegenerator.algorithms.sorting.Sorting.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.util.*;
 
-public class HeapSort implements AlgorithmImplementation {
+public class HeapSort implements Sorting {
 
     public static final HeapSort INSTANCE = new HeapSort();
-
-    public static List<List<ItemWithTikZInformation<Integer>>> heapsort(final int[] initialArray) {
-        final List<List<ItemWithTikZInformation<Integer>>> result =
-            new ArrayList<List<ItemWithTikZInformation<Integer>>>();
-        result.add(Sorting.toTikZItems(initialArray));
-        final int[] array = ArrayUtils.copy(initialArray);
-        final boolean[] separate = new boolean[array.length - 1];
-        Arrays.fill(separate, false);
-        for (int i = array.length / 2; i > 0; i--) {
-            HeapSort.heapify(array, i, array.length, separate, result);
-        }
-        for (int i = array.length - 1; i > 0; i--) {
-            ArrayUtils.swap(array, 0, i);
-            if (i < separate.length) {
-                separate[i] = false;
-            }
-            if (i > 0) { // TODO check whether 1 is better here
-                separate[i - 1] = true;
-            }
-            result.add(Sorting.toTikZItems(array, separate));
-            HeapSort.heapify(array, 1, i, separate, result);
-        }
-        return result;
-    }
 
     private static int getSeparationIndex(final List<ItemWithTikZInformation<Integer>> list) {
         int result = -1;
@@ -49,11 +23,6 @@ public class HeapSort implements AlgorithmImplementation {
         return result;
     }
 
-    /**
-     * Establishes the heap property on the branch starting at index <code>from</code> when interpreting the array up
-     * to index <code>to</code> as a heap by sinking the element at index <code>from</code> as far as necessary.
-     * Moreover, the current state of the array is added to the solution after each swap operation.
-     */
     private static void heapify(
         final int[] array,
         final int from,
@@ -76,32 +45,28 @@ public class HeapSort implements AlgorithmImplementation {
         }
     }
 
-    private static void printSolutionWithTrees(final SortingSolution solutionData) throws IOException {
+    private static void printSolutionWithTrees(
+        final SortingSolution solutionData,
+        final BufferedWriter writer
+    ) throws IOException {
         int step = 0;
-        for (final List<ItemWithTikZInformation<Integer>> list : solutionData.solution) {
-            LaTeXUtils.printSamePageBeginning(step++, LaTeXUtils.COL_WIDTH, solutionData.writer);
-            HeapSort.printTree(list, solutionData.writer);
-            LaTeXUtils.printProtectedNewline(solutionData.writer);
-            LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, solutionData.writer);
+        for (final List<ItemWithTikZInformation<Integer>> list : solutionData.solution()) {
+            LaTeXUtils.printSamePageBeginning(step++, LaTeXUtils.COL_WIDTH, writer);
+            HeapSort.printTree(list, writer);
+            LaTeXUtils.printProtectedNewline(writer);
+            LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
             LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
                 list,
                 Optional.empty(),
-                solutionData.contentLength,
-                solutionData.writer
+                solutionData.contentLength(),
+                writer
             );
-            LaTeXUtils.printTikzEnd(solutionData.writer);
-            LaTeXUtils.printSamePageEnd(solutionData.writer);
-            HeapSort.printVerticalSpaceForStep(step, solutionData.writer);
+            LaTeXUtils.printTikzEnd(writer);
+            LaTeXUtils.printSamePageEnd(writer);
+            HeapSort.printVerticalSpaceForStep(step, writer);
         }
     }
 
-    /**
-     * Prints the specified array interpreted as binary tree up to the specified index.
-     * @param array The array.
-     * @param to The index to which the tree should be printed.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     private static void printTree(
         final List<ItemWithTikZInformation<Integer>> list,
         final BufferedWriter writer
@@ -123,15 +88,6 @@ public class HeapSort implements AlgorithmImplementation {
         LaTeXUtils.printTikzEnd(writer);
     }
 
-    /**
-     * Prints the specified array interpreted as binary tree from the specified start index (i.e., it prints the
-     * subtree starting with the element at the specified start index) to the specified end index.
-     * @param array The array.
-     * @param start The start index.
-     * @param end The end index.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     private static void printTree(
         final List<ItemWithTikZInformation<Integer>> list,
         final int start,
@@ -152,12 +108,6 @@ public class HeapSort implements AlgorithmImplementation {
         }
     }
 
-    /**
-     * Prints vertical space
-     * @param step The next evaluation step.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     private static void printVerticalSpaceForStep(final int step, final BufferedWriter writer) throws IOException {
         if (step % 3 == 0) {
             Main.newLine(writer);
@@ -170,17 +120,38 @@ public class HeapSort implements AlgorithmImplementation {
     private HeapSort() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        Sorting.sort(
-            input,
-            Algorithm.HEAPSORT.longName,
-            "Swap-Operation",
-            "",
-            HeapSort::heapsort,
-            Algorithm.HEAPSORT_TREE.name.equals(input.options.get(Flag.ALGORITHM)) ?
-                HeapSort::printSolutionWithTrees :
-                    Sorting::printSolution
-        );
+    public String additionalExerciseText() {
+        return "";
+    }
+
+    @Override
+    public String algorithmName() {
+        return Algorithm.HEAPSORT.longName;
+    }
+
+    @Override
+    public SortingSolution apply(final int[] initialArray) {
+        final List<List<ItemWithTikZInformation<Integer>>> result =
+            new ArrayList<List<ItemWithTikZInformation<Integer>>>();
+        result.add(Sorting.toTikZItems(initialArray));
+        final int[] array = ArrayUtils.copy(initialArray);
+        final boolean[] separate = new boolean[array.length - 1];
+        Arrays.fill(separate, false);
+        for (int i = array.length / 2; i > 0; i--) {
+            HeapSort.heapify(array, i, array.length, separate, result);
+        }
+        for (int i = array.length - 1; i > 0; i--) {
+            ArrayUtils.swap(array, 0, i);
+            if (i < separate.length) {
+                separate[i] = false;
+            }
+            if (i > 0) { // TODO check whether 1 is better here
+                separate[i - 1] = true;
+            }
+            result.add(Sorting.toTikZItems(array, separate));
+            HeapSort.heapify(array, 1, i, separate, result);
+        }
+        return new SortingSolution(Sorting.getMaximumContentLength(initialArray), result);
     }
 
     @Override
@@ -189,6 +160,25 @@ public class HeapSort implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public String operation() {
+        return "Swap-Operation";
+    }
+
+    @Override
+    public void printSolution(
+        final int[] problem,
+        final SortingSolution solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        if (Algorithm.HEAPSORT_TREE.name.equals(options.get(Flag.ALGORITHM))) {
+            HeapSort.printSolutionWithTrees(solution, writer);
+        } else {
+            Sorting.super.printSolution(problem, solution, options, writer);
+        }
     }
 
 }

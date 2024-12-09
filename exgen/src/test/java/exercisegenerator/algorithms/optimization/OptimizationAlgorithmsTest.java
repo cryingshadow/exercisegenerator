@@ -133,7 +133,7 @@ public class OptimizationAlgorithmsTest {
 
     @Test(dataProvider="knapsackData")
     public void knapsackTest(final KnapsackProblem problem, final int[][] expected) {
-        final int[][] result = KnapsackAlgorithm.knapsack(problem);
+        final int[][] result = KnapsackAlgorithm.INSTANCE.apply(problem);
         Assert.assertTrue(
             Arrays.deepEquals(result, expected),
             String.format("\nExpected: %s\nActual:   %s\n", Arrays.deepToString(expected), Arrays.deepToString(result))
@@ -164,7 +164,7 @@ public class OptimizationAlgorithmsTest {
 
     @Test(dataProvider="lcsData")
     public void lcsTest(final LCSProblem problem, final int[][] expected) {
-        final int[][] result = LCSAlgorithm.lcs(problem);
+        final int[][] result = LCSAlgorithm.INSTANCE.apply(problem);
         Assert.assertTrue(
             Arrays.deepEquals(result, expected),
             String.format("\nExpected: %s\nActual:   %s\n", Arrays.deepToString(expected), Arrays.deepToString(result))
@@ -466,7 +466,7 @@ public class OptimizationAlgorithmsTest {
 
     @Test(dataProvider="simplexData")
     public void simplexTest(final SimplexProblem problem, final SimplexSolution expected) {
-        final SimplexSolution result = SimplexAlgorithm.simplex(problem);
+        final SimplexSolution result = SimplexAlgorithm.INSTANCE.apply(problem);
         Assert.assertEquals(result, expected);
     }
 

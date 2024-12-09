@@ -6,10 +6,9 @@ import java.util.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.optimization.*;
 
-public class LCSAlgorithm implements AlgorithmImplementation {
+public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]> {
 
     public static final LCSAlgorithm INSTANCE = new LCSAlgorithm();
 
@@ -26,32 +25,6 @@ public class LCSAlgorithm implements AlgorithmImplementation {
         }
         return List.of(DPDirection.UPLEFT);
     };
-
-    public static int[][] lcs(final LCSProblem problem) {
-        final int rows = problem.word1.length();
-        final int columns = problem.word2.length();
-        final int[][] result = new int[rows + 1][columns + 1];
-        result[0][0] = 0;
-        for (int column = 1; column <= columns; column++) {
-            result[0][column] = 0;
-        }
-        for (int row = 1; row <= rows; row++) {
-            result[row][0] = 0;
-        }
-        for (int row = 1; row <= rows; row++) {
-            for (int column = 1; column <= columns; column++) {
-                final int valueAbove = result[row - 1][column];
-                final int valueLeft = result[row][column - 1];
-                final int max = Math.max(valueLeft, valueAbove);
-                if (problem.word1.charAt(row - 1) == problem.word2.charAt(column - 1)) {
-                    result[row][column] = Math.max(max, result[row - 1][column - 1] + 1);
-                } else {
-                    result[row][column] = max;
-                }
-            }
-        }
-        return result;
-    }
 
     private static LCSProblem generateLCSProblem(final Parameters options) {
         final int length1 = LCSAlgorithm.parseOrGenerateLengthOfWords(options);
@@ -125,13 +98,6 @@ public class LCSAlgorithm implements AlgorithmImplementation {
         return null;
     }
 
-    private static LCSProblem parseOrGenerateLCSProblem(final Parameters options) throws IOException {
-        return new ParserAndGenerator<LCSProblem>(
-            LCSAlgorithm::parseLCSProblem,
-            LCSAlgorithm::generateLCSProblem
-        ).getResult(options);
-    }
-
     private static int parseOrGenerateLengthOfWords(final Parameters options) {
         if (options.containsKey(Flag.LENGTH)) {
             final int result = Integer.parseInt(options.get(Flag.LENGTH));
@@ -142,13 +108,60 @@ public class LCSAlgorithm implements AlgorithmImplementation {
         return Main.RANDOM.nextInt(8) + 3;
     }
 
-    private static void printLCSExercise(
+    private LCSAlgorithm() {}
+
+    @Override
+    public int[][] apply(final LCSProblem problem) {
+        final int rows = problem.word1.length();
+        final int columns = problem.word2.length();
+        final int[][] result = new int[rows + 1][columns + 1];
+        result[0][0] = 0;
+        for (int column = 1; column <= columns; column++) {
+            result[0][column] = 0;
+        }
+        for (int row = 1; row <= rows; row++) {
+            result[row][0] = 0;
+        }
+        for (int row = 1; row <= rows; row++) {
+            for (int column = 1; column <= columns; column++) {
+                final int valueAbove = result[row - 1][column];
+                final int valueLeft = result[row][column - 1];
+                final int max = Math.max(valueLeft, valueAbove);
+                if (problem.word1.charAt(row - 1) == problem.word2.charAt(column - 1)) {
+                    result[row][column] = Math.max(max, result[row - 1][column - 1] + 1);
+                } else {
+                    result[row][column] = max;
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
+    @Override
+    public LCSProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+        return new ParserAndGenerator<LCSProblem>(
+            LCSAlgorithm::parseLCSProblem,
+            LCSAlgorithm::generateLCSProblem
+        ).getResult(options);
+    }
+
+    @Override
+    public void printExercise(
         final LCSProblem problem,
-        final int[][] table,
+        final int[][] solution,
         final Parameters options,
-        final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
+        final LengthConfiguration configuration =
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(options, 3);
         writer.write("Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilfolge} der Folgen \\code{");
         writer.write(problem.word1);
         writer.write("} und \\code{");
@@ -165,7 +178,7 @@ public class LCSAlgorithm implements AlgorithmImplementation {
             // fall-through
         case ALWAYS:
             OptimizationAlgorithms.printDPTable(
-                table,
+                solution,
                 i -> problem.rowHeading(i),
                 i -> problem.columnHeading(i),
                 Optional.empty(),
@@ -189,18 +202,20 @@ public class LCSAlgorithm implements AlgorithmImplementation {
         }
     }
 
-    private static void printLCSSolution(
+    @Override
+    public void printSolution(
         final LCSProblem problem,
-        final int[][] table,
+        final int[][] solution,
         final Parameters options,
-        final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
+        final LengthConfiguration configuration =
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(options, 3);
         writer.write("Die Tabelle wird vom Algorithmus wie folgt gef\\\"ullt:");
         Main.newLine(writer);
         Main.newLine(writer);
         OptimizationAlgorithms.printDPTable(
-            table,
+            solution,
             i -> problem.rowHeading(i),
             i -> problem.columnHeading(i),
             Optional.of(LCSAlgorithm.TRACEBACK),
@@ -213,29 +228,9 @@ public class LCSAlgorithm implements AlgorithmImplementation {
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         Main.newLine(writer);
         writer.write("L\\\"angste gemeinsame Teilfolge: ");
-        writer.write(LCSAlgorithm.lcs(problem, table));
+        writer.write(LCSAlgorithm.lcs(problem, solution));
         Main.newLine(writer);
         Main.newLine(writer);
-    }
-
-    private LCSAlgorithm() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final LCSProblem problem = LCSAlgorithm.parseOrGenerateLCSProblem(input.options);
-        final LengthConfiguration configuration =
-            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(input.options, 3);
-        final int[][] table = LCSAlgorithm.lcs(problem);
-        LCSAlgorithm.printLCSExercise(problem, table, input.options, configuration, input.exerciseWriter);
-        LCSAlgorithm.printLCSSolution(problem, table, input.options, configuration, input.solutionWriter);
-    }
-
-    @Override
-    public String[] generateTestParameters() {
-        final String[] result = new String[2];
-        result[0] = "-l";
-        result[1] = "5";
-        return result; //TODO
     }
 
 }

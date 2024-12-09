@@ -1,5 +1,7 @@
 package exercisegenerator.algorithms.hashing;
 
+import exercisegenerator.structures.hashing.*;
+
 public class DivisionMethod implements HashFunction {
 
     private final int capacity;

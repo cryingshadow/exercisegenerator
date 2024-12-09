@@ -6,111 +6,15 @@ import java.util.*;
 import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.algebra.*;
-import exercisegenerator.algorithms.hashing.Hashing.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
-import exercisegenerator.util.*;
+import exercisegenerator.structures.hashing.*;
 
-public class HashingMultiplicationQuadratic implements AlgorithmImplementation {
+public class HashingMultiplicationQuadratic implements Hashing {
 
     public static final HashingMultiplicationQuadratic INSTANCE = new HashingMultiplicationQuadratic();
 
-    private static String toAdditionalHint(
-        final int capacity,
-        final BigFraction multiplicationFactor,
-        final BigFraction linearProbingFactor,
-        final BigFraction quadraticProbingFactor
-    ) {
-        return Main.TEXT_VERSION == TextVersion.ABRAHAM ?
-            String.format(
-                Locale.GERMANY,
-                " ($f(n,i) = \\left \\lfloor{%d \\cdot ( n \\cdot %s \\mod 1 )}\\right \\rfloor + \\lfloor %s \\cdot i + %s \\cdot i^2\\rfloor $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet",
-                capacity,
-                AlgebraAlgorithms.toCoefficient(multiplicationFactor),
-                AlgebraAlgorithms.toCoefficient(linearProbingFactor),
-                AlgebraAlgorithms.toCoefficient(quadraticProbingFactor)
-            ):
-                "";
-    }
-
-    private static String toParameterString(
-        final int capacity,
-        final BigFraction multiplicationFactor,
-        final BigFraction linearProbingFactor,
-        final BigFraction quadraticProbingFactor
-    ) {
-        return String.format(
-            Locale.GERMANY,
-            "$m = %d$, $c = %s$, $c_1 = %s$, $c_2 = %s$%s",
-            capacity,
-            AlgebraAlgorithms.toCoefficient(multiplicationFactor),
-            AlgebraAlgorithms.toCoefficient(linearProbingFactor),
-            AlgebraAlgorithms.toCoefficient(quadraticProbingFactor),
-            Hashing.PARAMETER_STRING_END
-        );
-    }
-
     private HashingMultiplicationQuadratic() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final int numOfValues = Hashing.parseOrGenerateNumberOfValues(input.options);
-        final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, input.options);
-        final int capacity = initialHashTable.length;
-        final ProbingFactors probingFactors = Hashing.parseOrGenerateProbingFactors(capacity, input.options);
-        final BigFraction factor = Hashing.parseOrGenerateMultiplicationFactor(input.options);
-        final HashFunction hashFunction = new MultiplicationMethod(capacity, factor);
-        final ProbingFunction probingFunction = new QuadraticProbing(probingFactors);
-        final List<Integer> values =
-            Hashing.parseOrGenerateValues(
-                numOfValues,
-                capacity,
-                hashFunction,
-                Optional.of(probingFunction),
-                input.options
-            );
-        try {
-            final HashResult result =
-                Hashing.hashing(values, initialHashTable, hashFunction, Optional.of(probingFunction));
-            Hashing.printHashingExerciseAndSolution(
-                values,
-                initialHashTable,
-                result,
-                new PrintOptions(
-                    Hashing.toMultiplicationMethodExerciseText(factor)
-                    .concat(
-                        Hashing.toQuadraticProbingText(
-                            probingFactors.linearProbingFactor,
-                            probingFactors.quadraticProbingFactor
-                        )
-                    ).concat(Hashing.GENERAL_HASHING_EXERCISE_TEXT_END)
-                    .concat(
-                        HashingMultiplicationQuadratic.toAdditionalHint(
-                            initialHashTable.length,
-                            factor,
-                            probingFactors.linearProbingFactor,
-                            probingFactors.quadraticProbingFactor
-                        )
-                    ),
-                    HashingMultiplicationQuadratic.toParameterString(
-                        initialHashTable.length,
-                        factor,
-                        probingFactors.linearProbingFactor,
-                        probingFactors.quadraticProbingFactor
-                    ),
-                    true,
-                    PreprintMode.parsePreprintMode(input.options)
-                ),
-                input.options,
-                input.exerciseWriter,
-                input.solutionWriter
-            );
-        } catch (final HashException e) {
-            throw new IOException(e);
-        }
-    }
 
     @Override
     public String[] generateTestParameters() {
@@ -118,6 +22,55 @@ public class HashingMultiplicationQuadratic implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public HashFunctionWithParameters hashFunction(final int capacity, final Parameters options) throws IOException {
+        final BigFraction factor = Hashing.parseOrGenerateMultiplicationFactor(options);
+        final Map<String, BigFraction> parameters = new LinkedHashMap<String, BigFraction>();
+        parameters.put("m", new BigFraction(capacity));
+        parameters.put("c", factor);
+        return new HashFunctionWithParameters(
+            new MultiplicationMethod(capacity, factor),
+            Hashing.toMultiplicationMethodExerciseText(factor),
+            parameters,
+            text -> Main.TEXT_VERSION == TextVersion.ABRAHAM ?
+                String.format(
+                    Locale.GERMANY,
+                    " ($f(n,i) = \\left \\lfloor{%d \\cdot ( n \\cdot %s \\mod 1 )}\\right \\rfloor + %s $), wobei $x \\mod 1$ den Nachkommateil von $x$ bezeichnet",
+                    capacity,
+                    AlgebraAlgorithms.toCoefficient(factor),
+                    text
+                ) :
+                    ""
+        );
+    }
+
+    @Override
+    public Optional<ProbingFunctionWithParameters> optionalProbingFunction(
+        final int capacity,
+        final Parameters options
+    ) throws IOException {
+        final ProbingFactors probingFactors = Hashing.parseOrGenerateProbingFactors(capacity, options);
+        final Map<String, BigFraction> parameters = new LinkedHashMap<String, BigFraction>();
+        parameters.put("c_1", probingFactors.linearProbingFactor);
+        parameters.put("c_2", probingFactors.quadraticProbingFactor);
+        return Optional.of(
+            new ProbingFunctionWithParameters(
+                new QuadraticProbing(probingFactors),
+                Hashing.toQuadraticProbingText(
+                    probingFactors.linearProbingFactor,
+                    probingFactors.quadraticProbingFactor
+                ),
+                parameters,
+                String.format(
+                    "\\lfloor %s \\cdot i + %s \\cdot i^2\\rfloor \\mod %d",
+                    AlgebraAlgorithms.toCoefficient(probingFactors.linearProbingFactor),
+                    AlgebraAlgorithms.toCoefficient(probingFactors.quadraticProbingFactor),
+                    capacity
+                )
+            )
+        );
     }
 
 }

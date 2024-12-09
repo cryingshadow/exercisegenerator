@@ -1,13 +1,12 @@
 package exercisegenerator.algorithms.binary;
 
 import java.io.*;
+import java.util.*;
 
-import exercisegenerator.algorithms.*;
-import exercisegenerator.algorithms.binary.BinaryNumbers.*;
-import exercisegenerator.structures.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
 
-public class ConversionToTwosComplement implements AlgorithmImplementation {
+public class ConversionToTwosComplement implements BinaryNumbersAlgorithm<NumberComplementTask> {
 
     public static final ConversionToTwosComplement INSTANCE = new ConversionToTwosComplement();
 
@@ -23,7 +22,7 @@ public class ConversionToTwosComplement implements AlgorithmImplementation {
                 String.format("Number is out of bounds for a %d-bit two's complement number!", length)
             );
         }
-        final BitString result = BinaryNumbers.toUnsignedBinary(number, length);
+        final BitString result = BinaryNumbersAlgorithm.toUnsignedBinary(number, length);
         if (number < 0) {
             return result.invert().increment();
         }
@@ -38,26 +37,11 @@ public class ConversionToTwosComplement implements AlgorithmImplementation {
     private ConversionToTwosComplement() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        BinaryNumbers.allBinaryTasks(
-            input,
-            String.format(
-                ConversionToTwosComplement.EXERCISE_TEXT_PATTERN_TO_TWOS,
-                BinaryNumbers.getBitLength(input.options)
-            ),
-            String.format(
-                ConversionToTwosComplement.EXERCISE_TEXT_PATTERN_TO_TWOS_SINGULAR,
-                BinaryNumbers.getBitLength(input.options)
-            ),
-            task -> new SolvedBinaryTask(
-                String.valueOf(task.number),
-                ConversionToTwosComplement.toTwosComplement(task.number, task.bitLength),
-                "="
-            ),
-            BinaryNumbers::parseOrGenerateNumberComplementTasks,
-            BinaryNumbers::toValueTask,
-            BinaryNumbers::toBitStringSolution,
-            numbers -> 1
+    public SolvedBinaryTask algorithm(final NumberComplementTask task) {
+        return new SolvedBinaryTask(
+            ConversionToTwosComplement.toTwosComplement(task.number(), task.bitLength()),
+            "=",
+            String.valueOf(task.number())
         );
     }
 
@@ -73,4 +57,39 @@ public class ConversionToTwosComplement implements AlgorithmImplementation {
         return result; //TODO
     }
 
+    @Override
+    public String getExerciseText(final Parameters options) {
+        return String.format(
+            ConversionToTwosComplement.EXERCISE_TEXT_PATTERN_TO_TWOS,
+            BinaryNumbersAlgorithm.getBitLength(options)
+        );
+    }
+
+    @Override
+    public String getExerciseTextSingular(final Parameters options) {
+        return String.format(
+            ConversionToTwosComplement.EXERCISE_TEXT_PATTERN_TO_TWOS_SINGULAR,
+            BinaryNumbersAlgorithm.getBitLength(options)
+        );
+    }
+
+    @Override
+    public List<NumberComplementTask> parseOrGenerateProblem(final Parameters options) throws IOException {
+        return BinaryNumbersAlgorithm.parseOrGenerateNumberComplementTasks(options);
+    }
+
+    @Override
+    public int toContentLength(final List<SolvedBinaryTask> solvedTasks) {
+        return 1;
+    }
+
+    @Override
+    public List<? extends ItemWithTikZInformation<?>> toSolution(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toBitStringSolution(solvedTask);
+    }
+
+    @Override
+    public String toTaskText(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toValueTask(solvedTask);
+    }
 }

@@ -1,18 +1,29 @@
 package exercisegenerator.algorithms.sorting;
 
-import java.io.*;
 import java.util.*;
 
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.util.*;
 
-public class InsertionSort implements AlgorithmImplementation {
+public class InsertionSort implements Sorting {
 
     public static final InsertionSort INSTANCE = new InsertionSort();
 
-    public static List<List<ItemWithTikZInformation<Integer>>> insertionsort(final int[] initialArray) {
+    private InsertionSort() {}
+
+    @Override
+    public String additionalExerciseText() {
+        return "";
+    }
+
+    @Override
+    public String algorithmName() {
+        return Algorithm.INSERTIONSORT.longName;
+    }
+
+    @Override
+    public SortingSolution apply(final int[] initialArray) {
         final List<List<ItemWithTikZInformation<Integer>>> result =
             new ArrayList<List<ItemWithTikZInformation<Integer>>>();
         result.add(Sorting.toTikZItems(initialArray));
@@ -27,21 +38,7 @@ public class InsertionSort implements AlgorithmImplementation {
             array[j] = insert;
             result.add(Sorting.toTikZItems(array));
         }
-        return result;
-    }
-
-    private InsertionSort() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        Sorting.sort(
-            input,
-            Algorithm.INSERTIONSORT.longName,
-            "Iteration der \\\"au\\ss{}eren Schleife",
-            "",
-            InsertionSort::insertionsort,
-            Sorting::printSolution
-        );
+        return new SortingSolution(Sorting.getMaximumContentLength(initialArray), result);
     }
 
     @Override
@@ -50,6 +47,11 @@ public class InsertionSort implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public String operation() {
+        return "Iteration der \\\"au\\ss{}eren Schleife";
     }
 
 }

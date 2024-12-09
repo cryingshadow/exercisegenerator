@@ -1,13 +1,12 @@
 package exercisegenerator.algorithms.binary;
 
 import java.io.*;
+import java.util.*;
 
-import exercisegenerator.algorithms.*;
-import exercisegenerator.algorithms.binary.BinaryNumbers.*;
-import exercisegenerator.structures.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
 
-public class ConversionFromTwosComplement implements AlgorithmImplementation {
+public class ConversionFromTwosComplement implements BinaryNumbersAlgorithm<BitString> {
 
     public static final ConversionFromTwosComplement INSTANCE = new ConversionFromTwosComplement();
 
@@ -27,27 +26,8 @@ public class ConversionFromTwosComplement implements AlgorithmImplementation {
     private ConversionFromTwosComplement() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        BinaryNumbers.allBinaryTasks(
-            input,
-            String.format(
-                ConversionFromTwosComplement.EXERCISE_TEXT_PATTERN_FROM_TWOS,
-                BinaryNumbers.getBitLength(input.options)
-            ),
-            String.format(
-                ConversionFromTwosComplement.EXERCISE_TEXT_PATTERN_FROM_TWOS_SINGULAR,
-                BinaryNumbers.getBitLength(input.options)
-            ),
-            task -> new SolvedBinaryTask(
-                String.valueOf(ConversionFromTwosComplement.fromTwosComplement(task.bitString)),
-                task.bitString,
-                "="
-            ),
-            BinaryNumbers::parseOrGenerateBitStringValueTasks,
-            BinaryNumbers::toBitStringTask,
-            BinaryNumbers::toValueSolution,
-            BinaryNumbers::getMaximumContentLength
-        );
+    public SolvedBinaryTask algorithm(final BitString task) {
+        return new SolvedBinaryTask(task, "=", String.valueOf(ConversionFromTwosComplement.fromTwosComplement(task)));
     }
 
     @Override
@@ -60,6 +40,42 @@ public class ConversionFromTwosComplement implements AlgorithmImplementation {
         result[4] = "-l";
         result[5] = "3";
         return result; //TODO
+    }
+
+    @Override
+    public String getExerciseText(final Parameters options) {
+        return String.format(
+            ConversionFromTwosComplement.EXERCISE_TEXT_PATTERN_FROM_TWOS,
+            BinaryNumbersAlgorithm.getBitLength(options)
+        );
+    }
+
+    @Override
+    public String getExerciseTextSingular(final Parameters options) {
+        return String.format(
+            ConversionFromTwosComplement.EXERCISE_TEXT_PATTERN_FROM_TWOS_SINGULAR,
+            BinaryNumbersAlgorithm.getBitLength(options)
+        );
+    }
+
+    @Override
+    public List<BitString> parseOrGenerateProblem(final Parameters options) throws IOException {
+        return BinaryNumbersAlgorithm.parseOrGenerateBitStringValueTasks(options);
+    }
+
+    @Override
+    public int toContentLength(final List<SolvedBinaryTask> solvedTasks) {
+        return BinaryNumbersAlgorithm.getMaximumContentLength(solvedTasks);
+    }
+
+    @Override
+    public List<? extends ItemWithTikZInformation<?>> toSolution(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toValueSolution(solvedTask);
+    }
+
+    @Override
+    public String toTaskText(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toBitStringTask(solvedTask);
     }
 
 }

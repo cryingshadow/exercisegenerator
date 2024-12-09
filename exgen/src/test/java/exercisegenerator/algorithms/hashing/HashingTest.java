@@ -1,40 +1,30 @@
 package exercisegenerator.algorithms.hashing;
 
+import java.io.*;
 import java.util.*;
+import java.util.Optional;
 
 import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
-import exercisegenerator.algorithms.hashing.Hashing.*;
+import exercisegenerator.io.Parameters;
 import exercisegenerator.structures.*;
-import exercisegenerator.util.*;
+import exercisegenerator.structures.hashing.*;
 
 public class HashingTest {
 
-    private static class HashingTestData {
-        private final IntegerList[] expectedResult;
-        private final CheckedSupplier<HashResult, HashException> hashingMethod;
-
-        private HashingTestData(
-            final CheckedSupplier<HashResult, HashException> hashingMethod,
-            final IntegerList[] expectedResult
-        ) {
-            this.hashingMethod = hashingMethod;
-            this.expectedResult = expectedResult;
-        }
-    }
-
     @DataProvider
-    public static Object[][] testData() {
-        final HashFunction div7 = new DivisionMethod(7);
+    public static Object[][] testData() throws IOException {
+        final Parameters options = new Parameters();
+        final HashFunctionWithParameters div7 = HashingDivisionOpen.INSTANCE.hashFunction(7, options);
         return new Object[][] {
-            {new HashingTestData(
-                () -> Hashing.hashing(
-                    Arrays.asList(7,4,3,8,1),
+            {
+                new HashProblem(
                     Hashing.createEmptyArray(11),
-                    new DivisionMethod(11),
-                    java.util.Optional.empty()
+                    Arrays.asList(7,4,3,8,1),
+                    HashingDivisionOpen.INSTANCE.hashFunction(11, options),
+                    Optional.empty()
                 ),
                 new IntegerList[] {
                     new IntegerList(),
@@ -49,13 +39,13 @@ public class HashingTest {
                     new IntegerList(),
                     new IntegerList()
                 }
-            )},
-            {new HashingTestData(
-                () -> Hashing.hashing(
-                    Arrays.asList(7,4,3,8,1),
+            },
+            {
+                new HashProblem(
                     Hashing.createEmptyArray(7),
+                    Arrays.asList(7,4,3,8,1),
                     div7,
-                    java.util.Optional.empty()
+                    Optional.empty()
                 ),
                 new IntegerList[] {
                     new IntegerList(7),
@@ -66,13 +56,13 @@ public class HashingTest {
                     new IntegerList(),
                     new IntegerList()
                 }
-            )},
-            {new HashingTestData(
-                () -> Hashing.hashing(
-                    Arrays.asList(7,4,3,8,1),
+            },
+            {
+                new HashProblem(
                     Hashing.createEmptyArray(7),
+                    Arrays.asList(7,4,3,8,1),
                     div7,
-                    java.util.Optional.of(LinearProbing.INSTANCE)
+                    Optional.of(new ProbingFunctionWithParameters(LinearProbing.INSTANCE, "", Map.of(), ""))
                 ),
                 new IntegerList[] {
                     new IntegerList(7),
@@ -83,13 +73,13 @@ public class HashingTest {
                     new IntegerList(),
                     new IntegerList()
                 }
-            )},
-            {new HashingTestData(
-                () -> Hashing.hashing(
-                    Arrays.asList(7,4,3,8,1,2),
+            },
+            {
+                new HashProblem(
                     Hashing.createEmptyArray(7),
+                    Arrays.asList(7,4,3,8,1,2),
                     div7,
-                    java.util.Optional.of(LinearProbing.INSTANCE)
+                    Optional.of(new ProbingFunctionWithParameters(LinearProbing.INSTANCE, "", Map.of(), ""))
                 ),
                 new IntegerList[] {
                     new IntegerList(7),
@@ -100,13 +90,20 @@ public class HashingTest {
                     new IntegerList(2),
                     new IntegerList()
                 }
-            )},
-            {new HashingTestData(
-                () -> Hashing.hashing(
-                    Arrays.asList(7,4,3,8,1,2),
+            },
+            {
+                new HashProblem(
                     Hashing.createEmptyArray(7),
+                    Arrays.asList(7,4,3,8,1,2),
                     div7,
-                    java.util.Optional.of(new QuadraticProbing(new BigFraction(3), new BigFraction(7)))
+                    Optional.of(
+                        new ProbingFunctionWithParameters(
+                            new QuadraticProbing(new BigFraction(3), new BigFraction(7)),
+                            "",
+                            Map.of(),
+                            ""
+                        )
+                    )
                 ),
                 new IntegerList[] {
                     new IntegerList(7),
@@ -117,13 +114,20 @@ public class HashingTest {
                     new IntegerList(),
                     new IntegerList(1)
                 }
-            )},
-            {new HashingTestData(
-                () -> Hashing.hashing(
-                    Arrays.asList(7,4,3,8,1,2),
+            },
+            {
+                new HashProblem(
                     Hashing.createEmptyArray(7),
+                    Arrays.asList(7,4,3,8,1,2),
                     div7,
-                    java.util.Optional.of(new QuadraticProbing(new BigFraction(5), new BigFraction(2)))
+                    Optional.of(
+                        new ProbingFunctionWithParameters(
+                            new QuadraticProbing(new BigFraction(5), new BigFraction(2)),
+                            "",
+                            Map.of(),
+                            ""
+                        )
+                    )
                 ),
                 new IntegerList[] {
                     new IntegerList(7),
@@ -134,13 +138,18 @@ public class HashingTest {
                     new IntegerList(1),
                     new IntegerList()
                 }
-            )},
-            {new HashingTestData(
-                () -> Hashing.hashing(
-                    Arrays.asList(7,4,3,8,1),
+            },
+            {
+                new HashProblem(
                     Hashing.createEmptyArray(7),
-                    new MultiplicationMethod(7, new BigFraction(3, 10)),
-                    java.util.Optional.empty()
+                    Arrays.asList(7,4,3,8,1),
+                    new HashFunctionWithParameters(
+                        new MultiplicationMethod(7, new BigFraction(3, 10)),
+                        "",
+                        Map.of(),
+                        text -> ""
+                    ),
+                    Optional.empty()
                 ),
                 new IntegerList[] {
                     new IntegerList(7),
@@ -151,13 +160,25 @@ public class HashingTest {
                     new IntegerList(),
                     new IntegerList(3)
                 }
-            )},
-            {new HashingTestData(
-                () -> Hashing.hashing(
-                    Arrays.asList(7,4,3,8,1),
+            },
+            {
+                new HashProblem(
                     Hashing.createEmptyArray(7),
-                    new MultiplicationMethod(7, new BigFraction(1, 2)),
-                    java.util.Optional.of(new QuadraticProbing(new BigFraction(3), new BigFraction(2)))
+                    Arrays.asList(7,4,3,8,1),
+                    new HashFunctionWithParameters(
+                        new MultiplicationMethod(7, BigFraction.ONE_HALF),
+                        "",
+                        Map.of(),
+                        text -> ""
+                    ),
+                    Optional.of(
+                        new ProbingFunctionWithParameters(
+                            new QuadraticProbing(new BigFraction(3), new BigFraction(2)),
+                            "",
+                            Map.of(),
+                            ""
+                        )
+                    )
                 ),
                 new IntegerList[] {
                     new IntegerList(4),
@@ -168,7 +189,7 @@ public class HashingTest {
                     new IntegerList(8),
                     new IntegerList()
                 }
-            )}
+            }
         };
     }
 
@@ -195,46 +216,79 @@ public class HashingTest {
 
 
     @Test(dataProvider = "testData")
-    public void hashing(final HashingTestData data) throws HashException {
-        Assert.assertTrue(HashingTest.equalHashResult(data.hashingMethod.get().result, data.expectedResult));
+    public void hashing(final HashProblem problem, final IntegerList[] expected) {
+        Assert.assertTrue(HashingTest.equalHashResult(Hashing.hashing(problem).result(), expected));
     }
 
     @Test
-    public void hashingWithException() throws HashException {
+    public void hashingWithException() {
+        final Parameters options = new Parameters();
         Assert.assertThrows(
-            HashException.class,
+            IllegalArgumentException.class,
             () -> Hashing.hashing(
-                List.of(1, 2, 3, 4, 5, 6),
-                Hashing.createEmptyArray(5),
-                new DivisionMethod(5),
-                java.util.Optional.of(LinearProbing.INSTANCE)
+                new HashProblem(
+                    Hashing.createEmptyArray(5),
+                    List.of(1, 2, 3, 4, 5, 6),
+                    HashingDivisionOpen.INSTANCE.hashFunction(5, options),
+                    Optional.of(new ProbingFunctionWithParameters(LinearProbing.INSTANCE, "", Map.of(), ""))
+                )
             )
         );
         Assert.assertThrows(
-            HashException.class,
+            IllegalArgumentException.class,
             () -> Hashing.hashing(
-                List.of(1, 2, 3, 4, 5, 6),
-                Hashing.createEmptyArray(5),
-                new MultiplicationMethod(5, BigFraction.ONE_HALF),
-                java.util.Optional.of(LinearProbing.INSTANCE)
+                new HashProblem(
+                    Hashing.createEmptyArray(5),
+                    List.of(1, 2, 3, 4, 5, 6),
+                    new HashFunctionWithParameters(
+                        new MultiplicationMethod(5, BigFraction.ONE_HALF),
+                        "",
+                        Map.of(),
+                        text -> ""
+                    ),
+                    Optional.of(new ProbingFunctionWithParameters(LinearProbing.INSTANCE, "", Map.of(), ""))
+                )
             )
         );
         Assert.assertThrows(
-            HashException.class,
+            IllegalArgumentException.class,
             () -> Hashing.hashing(
-                List.of(1, 2, 3, 4, 5, 6),
-                Hashing.createEmptyArray(5),
-                new DivisionMethod(5),
-                java.util.Optional.of(new QuadraticProbing(BigFraction.ONE, BigFraction.ONE))
+                new HashProblem(
+                    Hashing.createEmptyArray(5),
+                    List.of(1, 2, 3, 4, 5, 6),
+                    HashingDivisionOpen.INSTANCE.hashFunction(5, options),
+                    Optional.of(
+                        new ProbingFunctionWithParameters(
+                            new QuadraticProbing(BigFraction.ONE, BigFraction.ONE),
+                            "",
+                            Map.of(),
+                            ""
+                        )
+                    )
+                )
             )
         );
         Assert.assertThrows(
-            HashException.class,
+            IllegalArgumentException.class,
             () -> Hashing.hashing(
-                List.of(1, 2, 3, 4, 5, 6),
-                Hashing.createEmptyArray(5),
-                new MultiplicationMethod(5, BigFraction.ONE_HALF),
-                java.util.Optional.of(new QuadraticProbing(BigFraction.ONE, BigFraction.ONE))
+                new HashProblem(
+                    Hashing.createEmptyArray(5),
+                    List.of(1, 2, 3, 4, 5, 6),
+                    new HashFunctionWithParameters(
+                        new MultiplicationMethod(5, BigFraction.ONE_HALF),
+                        "",
+                        Map.of(),
+                        text -> ""
+                    ),
+                    Optional.of(
+                        new ProbingFunctionWithParameters(
+                            new QuadraticProbing(BigFraction.ONE, BigFraction.ONE),
+                            "",
+                            Map.of(),
+                            ""
+                        )
+                    )
+                )
             )
         );
     }

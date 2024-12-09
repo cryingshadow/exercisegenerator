@@ -53,8 +53,14 @@ public class AdjacencyLists<V, E> extends LinkedHashMap<Vertex<V>, List<Edge<E, 
             }
             for (int i = 0; i < edgeList.size(); i++) {
                 final Edge<E, V> edge = edgeList.get(i);
-                final Edge<E, V> otherEdge = otherEdgeList.get(i);
-                if (!edge.logicallyEquals(otherEdge)) {
+                boolean found = false;
+                for (int j = 0; !found && j < otherEdgeList.size(); j++) {
+                    final Edge<E, V> otherEdge = otherEdgeList.get(j);
+                    if (edge.logicallyEquals(otherEdge)) {
+                        found = true;
+                    }
+                }
+                if (!found) {
                     return false;
                 }
             }

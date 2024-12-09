@@ -1,18 +1,16 @@
 package exercisegenerator.algorithms.sorting;
 
-import java.io.*;
 import java.util.*;
 
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.util.*;
 
-public class MergeSort implements AlgorithmImplementation {
+public class MergeSort implements Sorting {
 
     public static final MergeSort INSTANCE = new MergeSort();
 
-    public static List<List<ItemWithTikZInformation<Integer>>> mergesort(
+    static SortingSolution mergesort(
         final int[] initialArray,
         final boolean printSplitting
     ) {
@@ -25,17 +23,9 @@ public class MergeSort implements AlgorithmImplementation {
         Arrays.fill(mark, false);
         result.add(Sorting.toTikZItems(initialArray, separate, mark));
         MergeSort.mergesort(array, 0, array.length - 1, separate, mark, printSplitting, result);
-        return result;
+        return new SortingSolution(Sorting.getMaximumContentLength(initialArray), result);
     }
 
-    /**
-     * Merges two sorted array parts (between start and middle and between middle + 1 and end) to one sorted array part
-     * (from start to end).
-     * @param array The array.
-     * @param start The start index.
-     * @param middle The middle index.
-     * @param end The end index.
-     */
     private static void merge(final int[] array, final int start, final int middle, final int end) {
         final int[] copy = new int[end - start + 1];
         int i = 0;
@@ -83,19 +73,21 @@ public class MergeSort implements AlgorithmImplementation {
         result.add(Sorting.toTikZItems(array, separate, mark));
     }
 
-    private MergeSort() {}
+    protected MergeSort() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final boolean split = Algorithm.MERGESORT_SPLIT.name.equals(input.options.get(Flag.ALGORITHM));
-        Sorting.sort(
-            input,
-            split ? Algorithm.MERGESORT_SPLIT.longName : Algorithm.MERGESORT.longName,
-            "Merge-Operation",
-            "",
-            (array) -> MergeSort.mergesort(array, split),
-            Sorting::printSolution
-        );
+    public String additionalExerciseText() {
+        return "";
+    }
+
+    @Override
+    public String algorithmName() {
+        return Algorithm.MERGESORT.longName;
+    }
+
+    @Override
+    public SortingSolution apply(final int[] initialArray) {
+        return MergeSort.mergesort(initialArray, false);
     }
 
     @Override
@@ -104,6 +96,11 @@ public class MergeSort implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public String operation() {
+        return "Merge-Operation";
     }
 
 }

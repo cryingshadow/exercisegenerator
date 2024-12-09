@@ -1,29 +1,16 @@
 package exercisegenerator.algorithms.trees;
 
-import java.io.*;
-import java.util.*;
-
-import exercisegenerator.algorithms.*;
-import exercisegenerator.structures.*;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.trees.*;
 
-public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
+public class RedBlackTreeAlgorithm implements SearchTreeAlgorithm {
 
     public static final RedBlackTreeAlgorithm INSTANCE = new RedBlackTreeAlgorithm();
 
-    public static <T extends Comparable<T>> BinaryTreeSteps<T> redBlackTree(
-        final RedBlackTree<T> tree,
-        final Deque<TreeOperation<T>> tasks
-    ) {
-        return TreeAlgorithms.binaryTreeAlgorithm(tree, tasks);
-    }
+    static final RedBlackTreeFactory<Integer> RED_BLACK_TREE_FACTORY =
+        new RedBlackTreeFactory<Integer>(new RedBlackTreeNodeFactory<Integer>());
 
     private RedBlackTreeAlgorithm() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        TreeAlgorithms.treeAlgorithm(input, TreeAlgorithms.RED_BLACK_TREE_FACTORY, TreeAlgorithms::binaryTreeAlgorithm);
-    }
 
     @Override
     public String[] generateTestParameters() {
@@ -31,6 +18,11 @@ public class RedBlackTreeAlgorithm implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public RedBlackTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters options) {
+        return RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY;
     }
 
 }

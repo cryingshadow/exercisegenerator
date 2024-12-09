@@ -1,18 +1,29 @@
 package exercisegenerator.algorithms.sorting;
 
-import java.io.*;
 import java.util.*;
 
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.util.*;
 
-public class BubbleSort implements AlgorithmImplementation {
+public class BubbleSort implements Sorting {
 
     public static final BubbleSort INSTANCE = new BubbleSort();
 
-    public static List<List<ItemWithTikZInformation<Integer>>> bubblesort(final int[] initialArray) {
+    private BubbleSort() {}
+
+    @Override
+    public String additionalExerciseText() {
+        return "";
+    }
+
+    @Override
+    public String algorithmName() {
+        return Algorithm.BUBBLESORT.longName;
+    }
+
+    @Override
+    public SortingSolution apply(final int[] initialArray) {
         final List<List<ItemWithTikZInformation<Integer>>> result =
             new ArrayList<List<ItemWithTikZInformation<Integer>>>();
         result.add(Sorting.toTikZItems(initialArray));
@@ -29,21 +40,7 @@ public class BubbleSort implements AlgorithmImplementation {
             }
             unsortedLength = lowestIndexNotSwapped;
         }
-        return result;
-    }
-
-    private BubbleSort() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        Sorting.sort(
-            input,
-            Algorithm.BUBBLESORT.longName,
-            "Swap-Operation",
-            "",
-            BubbleSort::bubblesort,
-            Sorting::printSolution
-        );
+        return new SortingSolution(Sorting.getMaximumContentLength(initialArray), result);
     }
 
     @Override
@@ -52,6 +49,11 @@ public class BubbleSort implements AlgorithmImplementation {
         result[0] = "-l";
         result[1] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public String operation() {
+        return "Swap-Operation";
     }
 
 }

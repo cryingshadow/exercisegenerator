@@ -2,10 +2,11 @@ package exercisegenerator.structures.graphs;
 
 import java.util.*;
 
-/**
- * String node comparator based on String.compareTo.
- */
 public class StringVertexComparator implements Comparator<Vertex<String>> {
+
+    public static StringVertexComparator INSTANCE = new StringVertexComparator();
+
+    private StringVertexComparator() {}
 
     @Override
     public int compare(final Vertex<String> o1, final Vertex<String> o2) {

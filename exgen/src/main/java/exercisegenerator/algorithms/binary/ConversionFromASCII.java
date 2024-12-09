@@ -4,21 +4,10 @@ import java.io.*;
 import java.util.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
-import exercisegenerator.algorithms.binary.BinaryNumbers.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.binary.*;
 
-public class ConversionFromASCII implements AlgorithmImplementation {
-
-    private static class ASCIIBitStringTask extends BinaryTask {
-        private final String character;
-
-        private ASCIIBitStringTask(final String character) {
-            this.character = character;
-        }
-    }
+public class ConversionFromASCII implements BinaryNumbersAlgorithm<String> {
 
     public static final ConversionFromASCII INSTANCE = new ConversionFromASCII();
 
@@ -36,50 +25,30 @@ public class ConversionFromASCII implements AlgorithmImplementation {
         return String.valueOf((char)(Main.RANDOM.nextInt(95) + 32));
     }
 
-    private static List<ASCIIBitStringTask> generateASCIIBitStringTasks(final Parameters options) {
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
-        final List<ASCIIBitStringTask> result = new ArrayList<ASCIIBitStringTask>(numOfTasks);
+    private static List<String> generateASCIIBitStringTasks(final Parameters options) {
+        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
+        final List<String> result = new ArrayList<String>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
-            result.add(new ASCIIBitStringTask(ConversionFromASCII.generateASCII()));
+            result.add(ConversionFromASCII.generateASCII());
         }
         return result;
     }
 
-    private static List<ASCIIBitStringTask> parseASCIIBitStringTasks(
+    private static List<String> parseASCIIBitStringTasks(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
-        return Arrays.stream(reader.readLine().split(";"))
-            .map(character -> new ASCIIBitStringTask(character))
-            .toList();
-    }
-
-    private static List<ASCIIBitStringTask> parseOrGenerateASCIIBitStringTasks(
-        final Parameters options
-    ) throws IOException {
-        return new ParserAndGenerator<List<ASCIIBitStringTask>>(
-            ConversionFromASCII::parseASCIIBitStringTasks,
-            ConversionFromASCII::generateASCIIBitStringTasks
-        ).getResult(options);
+        return Arrays.asList(reader.readLine().split(";"));
     }
 
     private ConversionFromASCII() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        BinaryNumbers.allBinaryTasks(
-            input,
-            ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII,
-            ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII_SINGULAR,
-            task -> new SolvedBinaryTask(
-                task.character,
-                ConversionFromASCII.fromASCII(task.character.charAt(0)),
-                "="
-            ),
-            ConversionFromASCII::parseOrGenerateASCIIBitStringTasks,
-            BinaryNumbers::toValueTask,
-            BinaryNumbers::toBitStringSolution,
-            solvedTask -> 1
+    public SolvedBinaryTask algorithm(final String task) {
+        return new SolvedBinaryTask(
+            ConversionFromASCII.fromASCII(task.charAt(0)),
+            "=",
+            task
         );
     }
 
@@ -93,6 +62,41 @@ public class ConversionFromASCII implements AlgorithmImplementation {
         result[4] = "-l";
         result[5] = "3";
         return result; //TODO
+    }
+
+    @Override
+    public String getExerciseText(final Parameters options) {
+        return ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII;
+    }
+
+    @Override
+    public String getExerciseTextSingular(final Parameters options) {
+        return ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII_SINGULAR;
+    }
+
+    @Override
+    public List<String> parseOrGenerateProblem(
+        final Parameters options
+    ) throws IOException {
+        return new ParserAndGenerator<List<String>>(
+            ConversionFromASCII::parseASCIIBitStringTasks,
+            ConversionFromASCII::generateASCIIBitStringTasks
+        ).getResult(options);
+    }
+
+    @Override
+    public int toContentLength(final List<SolvedBinaryTask> solvedTasks) {
+        return 1;
+    }
+
+    @Override
+    public List<? extends ItemWithTikZInformation<?>> toSolution(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toBitStringSolution(solvedTask);
+    }
+
+    @Override
+    public String toTaskText(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toValueTask(solvedTask);
     }
 
 }

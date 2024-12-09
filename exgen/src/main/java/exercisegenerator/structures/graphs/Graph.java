@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 import java.util.Map.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import exercisegenerator.io.*;
@@ -208,6 +209,21 @@ public class Graph<V, E> {
         return false;
     }
 
+    public Graph<V, E> copy(final Function<E, E> labelCopy) {
+        final Graph<V, E> result = this.nodeCopy();
+        for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
+            for (final Edge<E, V> edge : entry.getValue()) {
+                result.addEdge(
+                    entry.getKey(),
+                    edge.label.isEmpty() ? Optional.empty() : Optional.of(labelCopy.apply(edge.label.get())),
+                    edge.to
+                );
+            }
+        }
+        result.grid = this.grid;
+        return result;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(final Object o) {
@@ -301,7 +317,7 @@ public class Graph<V, E> {
     public void printTikZ(
         final GraphPrintMode printMode,
         final double multiplier,
-        final Set<Pair<Vertex<V>, Edge<E, V>>> toHighlight,
+        final Set<FordFulkersonPathStep<V, E>> toHighlight,
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printTikzBeginning(
@@ -346,7 +362,7 @@ public class Graph<V, E> {
                     for (final Edge<E, V> edge : entry.getValue()) {
                         if (
                             toHighlight != null
-                            && toHighlight.contains(new Pair<Vertex<V>, Edge<E, V>>(fromVertex, edge))
+                            && toHighlight.contains(new FordFulkersonPathStep<V, E>(fromVertex, edge))
                         ) {
                             if (printEdgeLabels) {
                                 LaTeXUtils.printEdge(
@@ -401,6 +417,13 @@ public class Graph<V, E> {
 
     public void setGrid(final Optional<Grid<V>> newGrid) {
         this.grid = newGrid;
+    }
+
+    @Override
+    public String toString() {
+        return this.grid.isEmpty() ?
+            this.adjacencyLists.toString() :
+                String.format("(%s, %s)", this.adjacencyLists.toString(), this.grid.get().toString());
     }
 
     /**

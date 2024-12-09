@@ -5,25 +5,11 @@ import java.math.*;
 import java.util.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
-import exercisegenerator.algorithms.binary.BinaryNumbers.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.binary.*;
 
-public class ConversionToFloat implements AlgorithmImplementation {
-
-    private static class NumberFloatTask extends BinaryTask {
-        private final int exponentLength;
-        private final int mantissaLength;
-        private final String number;
-
-        private NumberFloatTask(final String number, final int exponentLength, final int mantissaLength) {
-            this.number = number;
-            this.exponentLength = exponentLength;
-            this.mantissaLength = mantissaLength;
-        }
-    }
+public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask> {
 
     public static final ConversionToFloat INSTANCE = new ConversionToFloat();
 
@@ -46,7 +32,7 @@ public class ConversionToFloat implements AlgorithmImplementation {
             return ConversionToFloat.toInfitiny(exponentLength, mantissaLength, result);
         }
         final int numBeforeComma = Integer.parseInt(parts[0]);
-        final int excess = BinaryNumbers.getExcess(exponentLength);
+        final int excess = BinaryNumbersAlgorithm.getExcess(exponentLength);
         if (Math.abs(numBeforeComma) > 0) {
             return ConversionToFloat.toFloatForNonNegativeExponent(
                 parts,
@@ -86,9 +72,9 @@ public class ConversionToFloat implements AlgorithmImplementation {
         final int excess,
         final BitString result
     ) {
-        final BitString bitsBefore = BinaryNumbers.toUnsignedBinary(numBefore, 0);
+        final BitString bitsBefore = BinaryNumbersAlgorithm.toUnsignedBinary(numBefore, 0);
         final int mantissaBitsFromBefore = bitsBefore.size() - 1;
-        final BitString exponent = BinaryNumbers.toUnsignedBinary(mantissaBitsFromBefore + excess, exponentLength);
+        final BitString exponent = BinaryNumbersAlgorithm.toUnsignedBinary(mantissaBitsFromBefore + excess, exponentLength);
         result.append(exponent);
         final Iterator<Bit> iterator = bitsBefore.iterator();
         iterator.next();
@@ -120,14 +106,14 @@ public class ConversionToFloat implements AlgorithmImplementation {
     }
 
     private static BitString fillUpWithZeros(final BitString result, final int bitsToFill) {
-        result.append(BinaryNumbers.toUnsignedBinary(0, bitsToFill));
+        result.append(BinaryNumbersAlgorithm.toUnsignedBinary(0, bitsToFill));
         return result;
     }
 
     private static List<NumberFloatTask> generateNumberFloatTasks(final Parameters options) {
-        final int numOfTasks = BinaryNumbers.generateNumOfTasks(options);
-        final int exponentLength = BinaryNumbers.getExponentLength(options);
-        final int mantissaLength = BinaryNumbers.getMantissaLength(options);
+        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
+        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
+        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
         final List<NumberFloatTask> result = new ArrayList<NumberFloatTask>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
             result.add(
@@ -158,15 +144,15 @@ public class ConversionToFloat implements AlgorithmImplementation {
 
     private static boolean outOfBoundsForFloat(final int numBefore, final int exponentLength) {
         final int bitLength = ((int)Math.pow(2, exponentLength - 1)) + 1;
-        return BinaryNumbers.outOfBoundsForOnesComplement(numBefore, bitLength);
+        return BinaryNumbersAlgorithm.outOfBoundsForOnesComplement(numBefore, bitLength);
     }
 
     private static List<NumberFloatTask> parseNumberFloatTasks(
         final BufferedReader reader,
         final Parameters options
     ) throws IOException {
-        final int exponentLength = BinaryNumbers.getExponentLength(options);
-        final int mantissaLength = BinaryNumbers.getMantissaLength(options);
+        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
+        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
         return Arrays.stream(reader.readLine().split(";"))
             .map(n -> new NumberFloatTask(n, exponentLength, mantissaLength))
             .toList();
@@ -177,14 +163,6 @@ public class ConversionToFloat implements AlgorithmImplementation {
             new BigInteger(numberAfterComma),
             -numberAfterComma.length()
         );
-    }
-
-    private static List<NumberFloatTask> parseOrGenerateNumberFloatTasks(final Parameters options)
-    throws IOException {
-        return new ParserAndGenerator<List<NumberFloatTask>>(
-            ConversionToFloat::parseNumberFloatTasks,
-            ConversionToFloat::generateNumberFloatTasks
-        ).getResult(options);
     }
 
     private static BitString toFloatForNegativeExponent(
@@ -211,7 +189,7 @@ public class ConversionToFloat implements AlgorithmImplementation {
             ConversionToFloat.fillUpWithZeros(result, exponentLength - exponent);
             result.add(Bit.ONE);
         } else {
-            result.append(BinaryNumbers.toUnsignedBinary(exponent, exponentLength));
+            result.append(BinaryNumbersAlgorithm.toUnsignedBinary(exponent, exponentLength));
         }
         ConversionToFloat.appendMantissa(
             nextBitAndNumberWithLeadingZeros.y,
@@ -260,28 +238,11 @@ public class ConversionToFloat implements AlgorithmImplementation {
     private ConversionToFloat() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        BinaryNumbers.allBinaryTasks(
-            input,
-            String.format(
-                ConversionToFloat.EXERCISE_TEXT_PATTERN_TO_FLOAT,
-                BinaryNumbers.getExponentLength(input.options),
-                BinaryNumbers.getMantissaLength(input.options)
-            ),
-            String.format(
-                ConversionToFloat.EXERCISE_TEXT_PATTERN_TO_FLOAT_SINGULAR,
-                BinaryNumbers.getExponentLength(input.options),
-                BinaryNumbers.getMantissaLength(input.options)
-            ),
-            task -> new SolvedBinaryTask(
-                task.number,
-                ConversionToFloat.toFloat(task.number, task.exponentLength, task.mantissaLength),
-                "\\to"
-            ),
-            ConversionToFloat::parseOrGenerateNumberFloatTasks,
-            BinaryNumbers::toValueTask,
-            BinaryNumbers::toBitStringSolution,
-            solvedTasks -> 1
+    public SolvedBinaryTask algorithm(final NumberFloatTask task) {
+        return new SolvedBinaryTask(
+            ConversionToFloat.toFloat(task.number(), task.exponentLength(), task.mantissaLength()),
+            "\\to",
+            task.number()
         );
     }
 
@@ -295,6 +256,47 @@ public class ConversionToFloat implements AlgorithmImplementation {
         result[4] = "-l";
         result[5] = "3";
         return result; //TODO
+    }
+
+    @Override
+    public String getExerciseText(final Parameters options) {
+        return String.format(
+            ConversionToFloat.EXERCISE_TEXT_PATTERN_TO_FLOAT,
+            BinaryNumbersAlgorithm.getExponentLength(options),
+            BinaryNumbersAlgorithm.getMantissaLength(options)
+        );
+    }
+
+    @Override
+    public String getExerciseTextSingular(final Parameters options) {
+        return String.format(
+            ConversionToFloat.EXERCISE_TEXT_PATTERN_TO_FLOAT_SINGULAR,
+            BinaryNumbersAlgorithm.getExponentLength(options),
+            BinaryNumbersAlgorithm.getMantissaLength(options)
+        );
+    }
+
+    @Override
+    public List<NumberFloatTask> parseOrGenerateProblem(final Parameters options) throws IOException {
+        return new ParserAndGenerator<List<NumberFloatTask>>(
+            ConversionToFloat::parseNumberFloatTasks,
+            ConversionToFloat::generateNumberFloatTasks
+        ).getResult(options);
+    }
+
+    @Override
+    public int toContentLength(final List<SolvedBinaryTask> solvedTasks) {
+        return 1;
+    }
+
+    @Override
+    public List<? extends ItemWithTikZInformation<?>> toSolution(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toBitStringSolution(solvedTask);
+    }
+
+    @Override
+    public String toTaskText(final SolvedBinaryTask solvedTask) {
+        return BinaryNumbersAlgorithm.toValueTask(solvedTask);
     }
 
 }

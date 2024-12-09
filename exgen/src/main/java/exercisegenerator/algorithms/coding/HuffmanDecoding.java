@@ -11,15 +11,16 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.coding.*;
 
-public class HuffmanDecoding implements AlgorithmImplementation {
+public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, String> {
 
     public static final HuffmanDecoding INSTANCE = new HuffmanDecoding();
 
     private static final String CODE_BOOK_FORMAT_ERROR_MESSAGE =
         "The specified code book does not match the expected format (entries of the form 'S':\"C\" for a symbol S and a code C, separated by commas)!";
 
-    public static String decodeHuffman(final String targetText, final HuffmanTree tree) {
-        return tree.decode(targetText);
+    private static HuffmanCode generateHuffmanCode(final Parameters options) {
+        final HuffmanCodeBook codeBook = HuffmanDecoding.parseCodeBook(options);
+        return new HuffmanCode(HuffmanDecoding.generateTargetText(codeBook, options), new HuffmanTree(codeBook));
     }
 
     private static String generateTargetText(final Map<Character, String> codeBook, final Parameters options) {
@@ -32,7 +33,7 @@ public class HuffmanDecoding implements AlgorithmImplementation {
         return result.toString();
     }
 
-    private static Map<Character, String> parseCodeBook(final Parameters options) {
+    private static HuffmanCodeBook parseCodeBook(final Parameters options) {
         final String input = options.get(Flag.OPERATIONS);
         final Pattern pattern = Pattern.compile("'.':\"[^\"]+\"");
         if (!input.matches("'.':\"[^\"]+\"(,'.':\"[^\"]+\")*")) {
@@ -45,17 +46,26 @@ public class HuffmanDecoding implements AlgorithmImplementation {
                     assignment.charAt(1),
                     assignment.substring(5, assignment.length() - 1)
                 );
-            }).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            }).collect(
+                Collectors.toMap(
+                    Pair::getKey,
+                    Pair::getValue,
+                    (x, y) -> {
+                        throw new IllegalArgumentException("Codebook has multiple entries for same key!");
+                    },
+                    HuffmanCodeBook::new
+                )
+            );
     }
 
-    private static String parseOrGenerateTargetText(
-        final Map<Character, String> codeBook,
+    private static HuffmanCode parseHuffmanCode(
+        final BufferedReader reader,
         final Parameters options
     ) throws IOException {
-        return new ParserAndGenerator<String>(
-            CodingAlgorithms::parseInputText,
-            flags -> HuffmanDecoding.generateTargetText(codeBook, flags)
-        ).getResult(options);
+        return new HuffmanCode(
+            CodingAlgorithms.parseInputText(reader, options),
+            new HuffmanTree(HuffmanDecoding.parseCodeBook(options))
+        );
     }
 
     private static void printCodeBookForDecoding(final Map<Character, String> codeBook, final BufferedWriter writer)
@@ -76,45 +86,11 @@ public class HuffmanDecoding implements AlgorithmImplementation {
         LaTeXUtils.printEnd("align*", writer);
     }
 
-    private static void printExerciseAndSolutionForHuffmanDecoding(
-        final String targetText,
-        final Map<Character, String> codeBook,
-        final String result,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
-    ) throws IOException {
-        exerciseWriter.write(
-            "Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen Codebuch:\\\\[2ex]"
-        );
-        Main.newLine(exerciseWriter);
-        exerciseWriter.write(LaTeXUtils.codeseq(LaTeXUtils.escapeForLaTeX(targetText)));
-        Main.newLine(exerciseWriter);
-        LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
-        HuffmanDecoding.printCodeBookForDecoding(codeBook, exerciseWriter);
-        LaTeXUtils.printVerticalProtectedSpace("-3ex", exerciseWriter);
-        exerciseWriter.write("\\textbf{Quelltext:}\\\\[2ex]");
-        Main.newLine(exerciseWriter);
-        Main.newLine(exerciseWriter);
-
-        solutionWriter.write(LaTeXUtils.code(result));
-        Main.newLine(solutionWriter);
-        Main.newLine(solutionWriter);
-    }
-
     private HuffmanDecoding() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final Map<Character, String> codeBook = HuffmanDecoding.parseCodeBook(input.options);
-        final String targetText = HuffmanDecoding.parseOrGenerateTargetText(codeBook, input.options);
-        final String result = HuffmanDecoding.decodeHuffman(targetText, new HuffmanTree(codeBook));
-        HuffmanDecoding.printExerciseAndSolutionForHuffmanDecoding(
-            targetText,
-            codeBook,
-            result,
-            input.exerciseWriter,
-            input.solutionWriter
-        );
+    public String apply(final HuffmanCode problem) {
+        return problem.tree().decode(problem.message());
     }
 
     @Override
@@ -125,6 +101,47 @@ public class HuffmanDecoding implements AlgorithmImplementation {
         result[2] = "-l";
         result[3] = "5";
         return result; //TODO
+    }
+
+    @Override
+    public HuffmanCode parseOrGenerateProblem(final Parameters options) throws IOException {
+        return new ParserAndGenerator<HuffmanCode>(
+            HuffmanDecoding::parseHuffmanCode,
+            HuffmanDecoding::generateHuffmanCode
+        ).getResult(options);
+    }
+
+    @Override
+    public void printExercise(
+        final HuffmanCode problem,
+        final String solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write(
+            "Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen Codebuch:\\\\[2ex]"
+        );
+        Main.newLine(writer);
+        writer.write(LaTeXUtils.codeseq(LaTeXUtils.escapeForLaTeX(problem.message())));
+        Main.newLine(writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        HuffmanDecoding.printCodeBookForDecoding(problem.tree().toCodeBook(), writer);
+        LaTeXUtils.printVerticalProtectedSpace("-3ex", writer);
+        writer.write("\\textbf{Quelltext:}\\\\[2ex]");
+        Main.newLine(writer);
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolution(
+        final HuffmanCode problem,
+        final String solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write(LaTeXUtils.code(solution));
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
 }

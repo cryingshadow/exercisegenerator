@@ -218,11 +218,6 @@ public class GridGraph {
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
     }
 
-    /**
-     * Prints all SCCs in the graph of this exercise.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public void printSCCs(final BufferedWriter writer, final boolean withSingletons, final boolean write)
     throws IOException {
         final int[] sccs = this.findSCCs(writer, write);
@@ -274,26 +269,23 @@ public class GridGraph {
      * @throws IOException If some error occurs during output.
      */
     public void printTopologicalOrder(
-        final Optional<BufferedWriter> optionalExerciseWriter,
+        final BufferedWriter exerciseWriter,
         final BufferedWriter solutionWriter,
         final boolean withSingletons,
         final boolean withText
     ) throws IOException {
         final Integer[] vertexValues = this.topologicSort();
-        if (optionalExerciseWriter.isPresent()) {
-            final BufferedWriter exerciseWriter = optionalExerciseWriter.get();
-            if (withText) {
-                exerciseWriter.write(
-                    "Bestimmen Sie eine \\emphasize{topologische Sortierung} unter Verwendung des in "
-                    + "der Vorlesung vorgestellten Algorithmus f\"ur den folgenden Graphen. Im gesamten "
-                    + "Algorithmus werden Knoten in aufsteigender Reihenfolge ihrer Schl\\\"ussel ber\\\"ucksichtigt."
-                    + " Als Ergebnis geben Sie die Liste der Knotenschl\\\"ussel in aufsteigender Reihenfolge der "
-                    + "Topologiewerte an."
-                );
-                Main.newLine(exerciseWriter);
-            }
-            this.printGraph(exerciseWriter, false);
+        if (withText) {
+            exerciseWriter.write(
+                "Bestimmen Sie eine \\emphasize{topologische Sortierung} unter Verwendung des in "
+                + "der Vorlesung vorgestellten Algorithmus f\"ur den folgenden Graphen. Im gesamten "
+                + "Algorithmus werden Knoten in aufsteigender Reihenfolge ihrer Schl\\\"ussel ber\\\"ucksichtigt."
+                + " Als Ergebnis geben Sie die Liste der Knotenschl\\\"ussel in aufsteigender Reihenfolge der "
+                + "Topologiewerte an."
+            );
+            Main.newLine(exerciseWriter);
         }
+        this.printGraph(exerciseWriter, false);
         solutionWriter.write("Der gegebene Graph hat die folgende topologische Sortierung:\\\\");
         Main.newLine(solutionWriter);
         Main.newLine(solutionWriter);

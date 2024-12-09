@@ -6,23 +6,11 @@ import java.util.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.algebra.*;
 
-public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
+public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<MatrixTerm, List<MatrixTerm>> {
 
     public static final MatrixArithmeticAlgorithm INSTANCE = new MatrixArithmeticAlgorithm();
-
-    public static List<MatrixTerm> applyMatrixArithmetic(final MatrixTerm term) {
-        final List<MatrixTerm> solution = new LinkedList<MatrixTerm>();
-        solution.add(term);
-        MatrixTerm currentTerm = term;
-        while (currentTerm.isCompound()) {
-            currentTerm = MatrixArithmeticAlgorithm.evaluateOneStep(currentTerm);
-            solution.add(currentTerm);
-        }
-        return solution;
-    }
 
     private static MatrixTerm evaluateOneStep(final MatrixTerm term) {
         if (term.isDirectlyEvaluable()) {
@@ -240,14 +228,6 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
         return MatrixArithmeticAlgorithm.parseMatrixTerm(MatrixArithmeticAlgorithm.parseMatrix(toParse));
     }
 
-    private static MatrixTerm parseOrGenerateMatrixTerm(final Parameters options)
-    throws IOException {
-        return new ParserAndGenerator<MatrixTerm>(
-            MatrixArithmeticAlgorithm::parseMatrixTerm,
-            MatrixArithmeticAlgorithm::generateMatrixTerm
-        ).getResult(options);
-    }
-
     private static int parseOrGenerateNumberOfMatrices(final Parameters options) {
         if (options.containsKey(Flag.LENGTH)) {
             final int result = Integer.parseInt(options.get(Flag.LENGTH));
@@ -287,8 +267,48 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
         throw new IllegalArgumentException("Only addition and multiplication operations are allowed!");
     }
 
-    private static void printMatrixArithmeticExercise(
+    private static boolean startsMatrix(final String line) {
+        final String[] split = line.split(" ");
+        return split.length > 1 && split[0].matches("-?\\d.*");
+    }
+
+    private MatrixArithmeticAlgorithm() {}
+
+    @Override
+    public List<MatrixTerm> apply(final MatrixTerm term) {
+        final List<MatrixTerm> solution = new LinkedList<MatrixTerm>();
+        solution.add(term);
+        MatrixTerm currentTerm = term;
+        while (currentTerm.isCompound()) {
+            currentTerm = MatrixArithmeticAlgorithm.evaluateOneStep(currentTerm);
+            solution.add(currentTerm);
+        }
+        return solution;
+    }
+
+    @Override
+    public String[] generateTestParameters() {
+        final String[] result = new String[4];
+        result[0] = "-l";
+        result[1] = "2";
+        result[2] = "-d";
+        result[3] = "3";
+        return result;
+    }
+
+    @Override
+    public MatrixTerm parseOrGenerateProblem(final Parameters options)
+    throws IOException {
+        return new ParserAndGenerator<MatrixTerm>(
+            MatrixArithmeticAlgorithm::parseMatrixTerm,
+            MatrixArithmeticAlgorithm::generateMatrixTerm
+        ).getResult(options);
+    }
+
+    @Override
+    public void printExercise(
         final MatrixTerm problem,
+        final List<MatrixTerm> solution,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
@@ -301,7 +321,9 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
         Main.newLine(writer);
     }
 
-    private static void printMatrixArithmeticSolution(
+    @Override
+    public void printSolution(
+        final MatrixTerm problem,
         final List<MatrixTerm> solution,
         final Parameters options,
         final BufferedWriter writer
@@ -323,32 +345,6 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation {
         writer.write("\\end{align*}");
         Main.newLine(writer);
         Main.newLine(writer);
-    }
-
-    private static boolean startsMatrix(final String line) {
-        final String[] split = line.split(" ");
-        return split.length > 1 && split[0].matches("-?\\d.*");
-    }
-
-    private MatrixArithmeticAlgorithm() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final MatrixTerm problem =
-            MatrixArithmeticAlgorithm.parseOrGenerateMatrixTerm(input.options);
-        final List<MatrixTerm> solution = MatrixArithmeticAlgorithm.applyMatrixArithmetic(problem);
-        MatrixArithmeticAlgorithm.printMatrixArithmeticExercise(problem, input.options, input.exerciseWriter);
-        MatrixArithmeticAlgorithm.printMatrixArithmeticSolution(solution, input.options, input.solutionWriter);
-    }
-
-    @Override
-    public String[] generateTestParameters() {
-        final String[] result = new String[4];
-        result[0] = "-l";
-        result[1] = "2";
-        result[2] = "-d";
-        result[3] = "3";
-        return result;
     }
 
 }

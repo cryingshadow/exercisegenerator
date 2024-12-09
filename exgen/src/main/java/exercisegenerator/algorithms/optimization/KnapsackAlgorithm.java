@@ -6,29 +6,11 @@ import java.util.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.optimization.*;
 
-public class KnapsackAlgorithm implements AlgorithmImplementation {
+public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProblem, int[][]> {
 
     public static final KnapsackAlgorithm INSTANCE = new KnapsackAlgorithm();
-
-    public static int[][] knapsack(final KnapsackProblem problem) {
-        final int[][] result = new int[problem.weights.length + 1][problem.capacity + 1];
-        for (int item = 0; item < problem.weights.length; item++) {
-            for (int remainingCapacity = 1; remainingCapacity <= problem.capacity; remainingCapacity++) {
-                final int weight = problem.weights[item];
-                final int valueOut = result[item][remainingCapacity];
-                if (weight > remainingCapacity) {
-                    result[item + 1][remainingCapacity] = valueOut;
-                } else {
-                    final int valueIn = result[item][remainingCapacity - weight] + problem.values[item];
-                    result[item + 1][remainingCapacity] = Math.max(valueOut, valueIn);
-                }
-            }
-        }
-        return result;
-    }
 
     static DPTracebackFunction traceback(final int[] weights) {
         return position -> {
@@ -100,14 +82,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         );
     }
 
-    private static KnapsackProblem parseOrGenerateKnapsackProblem(final Parameters options)
-    throws IOException {
-        return new ParserAndGenerator<KnapsackProblem>(
-            KnapsackAlgorithm::parseKnapsackProblem,
-            KnapsackAlgorithm::generateKnapsackProblem
-        ).getResult(options);
-    }
-
     private static int parseOrGenerateNumberOfItems(final Parameters options) {
         if (options.containsKey(Flag.LENGTH)) {
             final int result = Integer.parseInt(options.get(Flag.LENGTH));
@@ -118,13 +92,55 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         return Main.RANDOM.nextInt(4) + 3;
     }
 
-    private static void printKnapsackExercise(
+    private static int[] toIntArray(final String line) {
+        return Arrays.stream(line.split(",")).mapToInt(Integer::parseInt).toArray();
+    }
+
+    private KnapsackAlgorithm() {}
+
+    @Override
+    public int[][] apply(final KnapsackProblem problem) {
+        final int[][] result = new int[problem.weights.length + 1][problem.capacity + 1];
+        for (int item = 0; item < problem.weights.length; item++) {
+            for (int remainingCapacity = 1; remainingCapacity <= problem.capacity; remainingCapacity++) {
+                final int weight = problem.weights[item];
+                final int valueOut = result[item][remainingCapacity];
+                if (weight > remainingCapacity) {
+                    result[item + 1][remainingCapacity] = valueOut;
+                } else {
+                    final int valueIn = result[item][remainingCapacity - weight] + problem.values[item];
+                    result[item + 1][remainingCapacity] = Math.max(valueOut, valueIn);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
+    @Override
+    public KnapsackProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+        return new ParserAndGenerator<KnapsackProblem>(
+            KnapsackAlgorithm::parseKnapsackProblem,
+            KnapsackAlgorithm::generateKnapsackProblem
+        ).getResult(options);
+    }
+
+    @Override
+    public void printExercise(
         final KnapsackProblem problem,
         final int[][] solution,
         final Parameters options,
-        final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
+        final LengthConfiguration configuration =
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(options, 2);
         final int numberOfItems = problem.weights.length;
         writer.write("Gegeben sei ein Rucksack mit ");
         writer.write(String.format("\\emphasize{maximaler Tragkraft} %d ", problem.capacity));
@@ -187,13 +203,15 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         }
     }
 
-    private static void printKnapsackSolution(
+    @Override
+    public void printSolution(
         final KnapsackProblem problem,
         final int[][] solution,
         final Parameters options,
-        final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
+        final LengthConfiguration configuration =
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(options, 2);
         writer.write("Die Tabelle wird vom Algorithmus wie folgt gef\\\"ullt:");
         Main.newLine(writer);
         Main.newLine(writer);
@@ -218,30 +236,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation {
         writer.write(String.valueOf(solution[solution.length - 1][solution[0].length - 1]));
         Main.newLine(writer);
         Main.newLine(writer);
-    }
-
-    private static int[] toIntArray(final String line) {
-        return Arrays.stream(line.split(",")).mapToInt(Integer::parseInt).toArray();
-    }
-
-    private KnapsackAlgorithm() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final KnapsackProblem problem = KnapsackAlgorithm.parseOrGenerateKnapsackProblem(input.options);
-        final LengthConfiguration configuration =
-            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(input.options, 2);
-        final int[][] table = KnapsackAlgorithm.knapsack(problem);
-        KnapsackAlgorithm.printKnapsackExercise(problem, table, input.options, configuration, input.exerciseWriter);
-        KnapsackAlgorithm.printKnapsackSolution(problem, table, input.options, configuration, input.solutionWriter);
-    }
-
-    @Override
-    public String[] generateTestParameters() {
-        final String[] result = new String[2];
-        result[0] = "-l";
-        result[1] = "5";
-        return result; //TODO
     }
 
 }

@@ -10,17 +10,9 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.coding.*;
 
-public class HuffmanEncoding implements AlgorithmImplementation {
+public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, HuffmanCode> {
 
     public static final HuffmanEncoding INSTANCE = new HuffmanEncoding();
-
-    public static Pair<HuffmanTree, String> encodeHuffman(
-        final String sourceText,
-        final List<Character> targetAlphabet
-    ) {
-        final HuffmanTree tree = new HuffmanTree(sourceText, targetAlphabet);
-        return new Pair<HuffmanTree, String>(tree, tree.toEncoder().encode(sourceText));
-    }
 
     private static List<Character> generateAlphabet(final int alphabetSize) {
         final List<Character> biggestAlphabet = new ArrayList<Character>();
@@ -69,41 +61,19 @@ public class HuffmanEncoding implements AlgorithmImplementation {
         return CodingAlgorithms.BINARY_ALPHABET;
     }
 
-    private static void printCode(
-        final String code,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
-    ) throws IOException {
-        exerciseWriter.write("\\textbf{Code:}\\\\");
-        Main.newLine(exerciseWriter);
-        solutionWriter.write("\\textbf{Code:}\\\\");
-        Main.newLine(solutionWriter);
-        solutionWriter.write(
-            Arrays.stream(LaTeXUtils.escapeForLaTeX(code).split(" "))
-                .map(LaTeXUtils::code)
-                .collect(Collectors.joining(" "))
-        );
-        Main.newLine(solutionWriter);
-    }
-
     private static void printCodeBookForEncoding(
         final Map<Character, String> codeBook,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
+        final boolean exercise,
+        final BufferedWriter writer
     ) throws IOException {
         final boolean big = codeBook.size() > 7;
-        exerciseWriter.write("\\textbf{Codebuch:}");
-        solutionWriter.write("\\textbf{Codebuch:}");
+        writer.write("\\textbf{Codebuch:}");
         if (big) {
-            Main.newLine(exerciseWriter);
-            Main.newLine(solutionWriter);
-            LaTeXUtils.beginMulticols(2, exerciseWriter);
-            LaTeXUtils.beginMulticols(2, solutionWriter);
+            Main.newLine(writer);
+            LaTeXUtils.beginMulticols(2, writer);
         } else {
-            exerciseWriter.write("\\\\[2ex]");
-            solutionWriter.write("\\\\[2ex]");
-            Main.newLine(exerciseWriter);
-            Main.newLine(solutionWriter);
+            writer.write("\\\\[2ex]");
+            Main.newLine(writer);
         }
         final int contentLength = codeBook.values().stream().mapToInt(String::length).max().getAsInt();
         for (final Pair<Character, String> assignment : CodingAlgorithms.toSortedList(codeBook)) {
@@ -117,75 +87,91 @@ public class HuffmanEncoding implements AlgorithmImplementation {
                 "\\code{`M'}",
                 "=",
                 contentLength,
-                exerciseWriter,
-                solutionWriter
+                exercise,
+                writer
             );
         }
         if (big) {
-            LaTeXUtils.endMulticols(exerciseWriter);
-            LaTeXUtils.endMulticols(solutionWriter);
+            LaTeXUtils.endMulticols(writer);
         }
-    }
-
-    private static void printExerciseAndSolutionForHuffmanEncoding(
-        final String sourceText,
-        final List<Character> targetAlphabet,
-        final Pair<HuffmanTree, String> result,
-        final Parameters options,
-        final BufferedWriter exerciseWriter,
-        final BufferedWriter solutionWriter
-    ) throws IOException {
-        exerciseWriter.write("Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{");
-        exerciseWriter.write(
-            LaTeXUtils.escapeForLaTeX(targetAlphabet.stream().map(String::valueOf).collect(Collectors.joining(",")))
-        );
-        exerciseWriter.write("\\}$ und den folgenden Eingabetext:\\\\");
-        Main.newLine(exerciseWriter);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, exerciseWriter);
-        exerciseWriter.write(LaTeXUtils.escapeForLaTeX(sourceText));
-        Main.newLine(exerciseWriter);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, exerciseWriter);
-        LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
-        exerciseWriter.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
-        Main.newLine(exerciseWriter);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, exerciseWriter);
-        HuffmanEncoding.printCodeBookForEncoding(result.x.toCodeBook(), exerciseWriter, solutionWriter);
-        LaTeXUtils.printVerticalProtectedSpace(exerciseWriter);
-        LaTeXUtils.printVerticalProtectedSpace(solutionWriter);
-        HuffmanEncoding.printCode(result.y, exerciseWriter, solutionWriter);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, exerciseWriter);
-        LaTeXUtils.printVerticalProtectedSpace(solutionWriter);
-        solutionWriter.write("\\resizebox{\\textwidth}{!}{");
-        Main.newLine(solutionWriter);
-        LaTeXUtils.printTikzBeginning(TikZStyle.TREE, solutionWriter);
-        result.x.toTikZ(solutionWriter);
-        LaTeXUtils.printTikzEnd(solutionWriter);
-        solutionWriter.write("}");
-        Main.newLine(solutionWriter);
-        Main.newLine(solutionWriter);
     }
 
     private HuffmanEncoding() {}
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final String sourceText = HuffmanEncoding.parseOrGenerateSourceText(input.options);
-        final List<Character> targetAlphabet = HuffmanEncoding.parseOrGenerateTargetAlphabet(input.options);
-        final Pair<HuffmanTree, String> result = HuffmanEncoding.encodeHuffman(sourceText, targetAlphabet);
-        HuffmanEncoding.printExerciseAndSolutionForHuffmanEncoding(
-            sourceText,
-            targetAlphabet,
-            result,
-            input.options,
-            input.exerciseWriter,
-            input.solutionWriter
-        );
+    public HuffmanCode apply(final HuffmanProblem problem) {
+        final HuffmanTree tree = new HuffmanTree(problem.message(), problem.alphabet());
+        return new HuffmanCode(tree.toEncoder().encode(problem.message()), tree);
     }
 
     @Override
     public String[] generateTestParameters() {
         final String[] result = new String[0];
         return result;
+    }
+
+    @Override
+    public HuffmanProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+        return new HuffmanProblem(
+            HuffmanEncoding.parseOrGenerateSourceText(options),
+            HuffmanEncoding.parseOrGenerateTargetAlphabet(options)
+        );
+    }
+
+    @Override
+    public void printExercise(
+        final HuffmanProblem problem,
+        final HuffmanCode solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{");
+        writer.write(
+            LaTeXUtils.escapeForLaTeX(problem.alphabet().stream().map(String::valueOf).collect(Collectors.joining(",")))
+        );
+        writer.write("\\}$ und den folgenden Eingabetext:\\\\");
+        Main.newLine(writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        writer.write(LaTeXUtils.escapeForLaTeX(problem.message()));
+        Main.newLine(writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
+        Main.newLine(writer);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        HuffmanEncoding.printCodeBookForEncoding(solution.tree().toCodeBook(), true, writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("\\textbf{Code:}\\\\");
+        Main.newLine(writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+    }
+
+    @Override
+    public void printSolution(
+        final HuffmanProblem problem,
+        final HuffmanCode solution,
+        final Parameters options,
+        final BufferedWriter writer
+    ) throws IOException {
+        HuffmanEncoding.printCodeBookForEncoding(solution.tree().toCodeBook(), false, writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("\\textbf{Code:}\\\\");
+        Main.newLine(writer);
+        writer.write(
+            Arrays.stream(LaTeXUtils.escapeForLaTeX(solution.message()).split(" "))
+                .map(LaTeXUtils::code)
+                .collect(Collectors.joining(" "))
+        );
+        Main.newLine(writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("\\resizebox{\\textwidth}{!}{");
+        Main.newLine(writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
+        solution.tree().toTikZ(writer);
+        LaTeXUtils.printTikzEnd(writer);
+        writer.write("}");
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
 }

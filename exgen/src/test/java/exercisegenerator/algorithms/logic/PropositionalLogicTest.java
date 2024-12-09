@@ -70,7 +70,7 @@ public class PropositionalLogicTest {
 
     @Test(dataProvider="dpllData")
     public void dpllTest(final Set<Clause> clauses, final DPLLNode expected) {
-        Assert.assertEquals(DPLL.dpll(clauses), expected);
+        Assert.assertEquals(DPLL.INSTANCE.apply(clauses), expected);
     }
 
     @DataProvider
@@ -113,7 +113,7 @@ public class PropositionalLogicTest {
 
     @Test(dataProvider="fromTruthTableData")
     public void fromTruthTableTest(final TruthTable truthTable, final PropositionalFormula formula) {
-        Assert.assertEquals(ConversionFromTruthTable.fromTruthTable(truthTable), formula);
+        Assert.assertEquals(ConversionFromTruthTable.INSTANCE.apply(truthTable), formula);
     }
 
     @DataProvider
@@ -159,7 +159,7 @@ public class PropositionalLogicTest {
 
     @Test(dataProvider="toCNFData")
     public void toCNFTest(final PropositionalFormula formula, final List<PropositionalFormula> expected) {
-        Assert.assertEquals(ConversionToCNF.toCNF(formula), expected);
+        Assert.assertEquals(ConversionToCNF.INSTANCE.apply(formula), expected);
     }
 
     @DataProvider
@@ -196,7 +196,7 @@ public class PropositionalLogicTest {
 
     @Test(dataProvider="toDNFData")
     public void toDNFTest(final PropositionalFormula formula, final List<PropositionalFormula> expected) {
-        Assert.assertEquals(ConversionToDNF.toDNF(formula), expected);
+        Assert.assertEquals(ConversionToDNF.INSTANCE.apply(formula), expected);
     }
 
     @DataProvider
@@ -237,7 +237,7 @@ public class PropositionalLogicTest {
 
     @Test(dataProvider="toTruthTableData")
     public void toTruthTableTest(final PropositionalFormula formula, final TruthTable truthTable) {
-        Assert.assertEquals(ConversionToTruthTable.toTruthTable(formula), truthTable);
+        Assert.assertEquals(ConversionToTruthTable.INSTANCE.apply(formula), truthTable);
     }
 
 }

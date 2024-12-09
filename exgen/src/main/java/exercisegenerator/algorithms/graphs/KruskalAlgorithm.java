@@ -5,66 +5,38 @@ import java.util.*;
 import java.util.stream.*;
 
 import exercisegenerator.*;
-import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class KruskalAlgorithm implements AlgorithmImplementation {
-
-    static class KruskalResult<V> {
-
-        final List<UndirectedEdge<V, Integer>> edges;
-
-        final Graph<V, Integer> tree;
-
-        KruskalResult(final List<UndirectedEdge<V, Integer>> edges, final Graph<V, Integer> tree) {
-            this.edges = edges;
-            this.tree = tree;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public boolean equals(final Object o) {
-            if (o instanceof KruskalResult) {
-                final KruskalResult<V> other = (KruskalResult<V>)o;
-                return this.edges.equals(other.edges) && this.tree.logicallyEquals(other.tree);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.edges.hashCode() * this.tree.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return String.format("(%s, %s)", this.edges.toString(), this.tree.toString());
-        }
-
-    }
+public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
 
     public static final KruskalAlgorithm INSTANCE = new KruskalAlgorithm();
 
-    public static <V> KruskalResult<V> kruskal(final Graph<V, Integer> graph) {
-        final List<UndirectedEdge<V, Integer>> result = new ArrayList<UndirectedEdge<V, Integer>>();
-        final Graph<V, Integer> tree = graph.nodeCopy();
-        final LinkedList<UndirectedEdge<V, Integer>> edges =
+    private KruskalAlgorithm() {}
+
+    @Override
+    public KruskalResult<String> apply(final GraphProblem problem) {
+        final Graph<String, Integer> graph = problem.graph();
+        final List<UndirectedEdge<String, Integer>> result = new ArrayList<UndirectedEdge<String, Integer>>();
+        final Graph<String, Integer> tree = graph.nodeCopy();
+        final LinkedList<UndirectedEdge<String, Integer>> edges =
             graph
             .getAllUndirectedEdges()
             .stream()
             .sorted(
-                new Comparator<UndirectedEdge<V, Integer>>() {
+                new Comparator<UndirectedEdge<String, Integer>>() {
                     @Override
-                    public int compare(final UndirectedEdge<V, Integer> edge1, final UndirectedEdge<V, Integer> edge2) {
+                    public int compare(
+                        final UndirectedEdge<String, Integer> edge1,
+                        final UndirectedEdge<String, Integer> edge2
+                    ) {
                         return edge1.label.get().compareTo(edge2.label.get());
                     }
                 }
             ).collect(Collectors.toCollection(LinkedList::new));
-        final UnionFind<Vertex<V>> components = new UnionFind<Vertex<V>>();
+        final UnionFind<Vertex<String>> components = new UnionFind<Vertex<String>>();
         while (!edges.isEmpty()) {
-            final UndirectedEdge<V, Integer> edge = edges.removeFirst();
+            final UndirectedEdge<String, Integer> edge = edges.removeFirst();
             if (!components.connected(edge.from, edge.to)) {
                 result.add(edge);
                 tree.addEdge(edge.from, edge.label, edge.to);
@@ -73,19 +45,28 @@ public class KruskalAlgorithm implements AlgorithmImplementation {
                 components.union(edge.from, edge.to);
             }
         }
-        return new KruskalResult<V>(result, tree);
+        return new KruskalResult<String>(result, tree);
     }
 
-    private static void printExercise(
-        final Graph<String, Integer> graph,
-        final int numberOfEdges,
+    @Override
+    public String[] generateTestParameters() {
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
+    }
+
+    @Override
+    public void printExercise(
+        final GraphProblem problem,
+        final KruskalResult<String> solution,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
-        GraphAlgorithms.printGraphExercise(
-            graph,
+        GraphAlgorithm.printGraphExercise(
+            problem.graph(),
             "F\\\"uhren Sie den \\emphasize{Algorithmus von Kruskal} auf diesem Graphen aus.",
-            GraphAlgorithms.parseDistanceFactor(options),
+            GraphAlgorithm.parseDistanceFactor(options),
             GraphPrintMode.UNDIRECTED,
             writer
         );
@@ -94,23 +75,24 @@ public class KruskalAlgorithm implements AlgorithmImplementation {
         writer.write("an:\\\\[2ex]");
         Main.newLine(writer);
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        writer.write(String.format("Kantenreihenfolge:\\\\[%dex]", numberOfEdges * 4));
+        writer.write(String.format("Kantenreihenfolge:\\\\[%dex]", solution.edges.size() * 4));
         Main.newLine(writer);
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
         LaTeXUtils.printSolutionSpaceEnd(Optional.of("10ex"), options, writer);
     }
 
-    private static void printSolution(
-        final List<UndirectedEdge<String, Integer>> edges,
-        final Graph<String, Integer> tree,
+    @Override
+    public void printSolution(
+        final GraphProblem problem,
+        final KruskalResult<String> solution,
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Kantenreihenfolge:\\\\[-2ex]");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
-        for (final UndirectedEdge<String, Integer> edge : edges) {
+        for (final UndirectedEdge<String, Integer> edge : solution.edges) {
             writer.write(LaTeXUtils.ITEM);
             writer.write(" ");
             writer.write(edge.toString());
@@ -120,33 +102,9 @@ public class KruskalAlgorithm implements AlgorithmImplementation {
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        tree.printTikZ(GraphPrintMode.UNDIRECTED, GraphAlgorithms.parseDistanceFactor(options), null, writer);
+        solution.tree.printTikZ(GraphPrintMode.UNDIRECTED, GraphAlgorithm.parseDistanceFactor(options), null, writer);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         Main.newLine(writer);
-    }
-
-    private KruskalAlgorithm() {}
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final Pair<Graph<String, Integer>, Vertex<String>> pair = GraphAlgorithms.parseOrGenerateGraph(input.options);
-        final Graph<String, Integer> graph = pair.x;
-        final KruskalResult<String> result = KruskalAlgorithm.kruskal(graph);
-        KruskalAlgorithm.printExercise(
-            graph,
-            result.edges.size(),
-            input.options,
-            input.exerciseWriter
-        );
-        KruskalAlgorithm.printSolution(result.edges, result.tree, input.options, input.solutionWriter);
-    }
-
-    @Override
-    public String[] generateTestParameters() {
-        final String[] result = new String[2];
-        result[0] = "-l";
-        result[1] = "5";
-        return result; //TODO
     }
 
 }
