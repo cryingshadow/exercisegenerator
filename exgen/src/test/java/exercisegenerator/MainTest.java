@@ -476,6 +476,26 @@ public class MainTest {
     private final List<File> tmpFiles = new LinkedList<File>();
 
     @Test
+    public void arithmeticSum() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.ARITHMETIC_SUM.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "5;10;1000",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Berechnen Sie:",
+                    "\\[\\sum\\limits_{i = 1}^{1000} \\left(5 + (i - 1) \\cdot 10\\right)\\]"
+                ),
+                List.of(
+                    "\\[\\sum\\limits_{i = 1}^{1000} \\left(5 + (i - 1) \\cdot 10\\right) = \\frac{1000 \\cdot \\left(2 \\cdot 5 + (1000 - 1) \\cdot 10\\right)}{2} = 5000000\\]"
+                )
+            )
+        );
+    }
+
+    @Test
     public void avltree() throws IOException {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
@@ -1939,10 +1959,10 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Berechnen Sie den Wert der Reihe oder begründen Sie, warum sie nicht konvergiert:",
-                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(1000 \\cdot (\\frac{24}{25})^{i - 1}\\right)\\]"
+                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(1000 \\cdot \\left(\\frac{24}{25}\\right)^{i - 1}\\right)\\]"
                 ),
                 List.of(
-                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(1000 \\cdot (\\frac{24}{25})^{i - 1}\\right) = \\frac{1000}{1 - \\frac{24}{25}} = 25000\\]"
+                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(1000 \\cdot \\left(\\frac{24}{25}\\right)^{i - 1}\\right) = \\frac{1000}{1 - \\frac{24}{25}} = 25000\\]"
                 )
             )
         );
@@ -1959,10 +1979,10 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Berechnen Sie den Wert der Reihe oder begründen Sie, warum sie nicht konvergiert:",
-                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(-20 \\cdot (\\frac{13}{5})^{i - 1}\\right)\\]"
+                    "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(-20 \\cdot \\left(\\frac{13}{5}\\right)^{i - 1}\\right)\\]"
                 ),
                 List.of(
-                    "Die Reihe divergiert bestimmt gegen $-\\infty$, da $\\lim\\limits_{i \\to \\infty} \\left(-20 \\cdot (\\frac{13}{5})^{i - 1}\\right) \\neq 0$."
+                    "Die Reihe divergiert bestimmt gegen $-\\infty$, da $\\lim\\limits_{i \\to \\infty} \\left(-20 \\cdot \\left(\\frac{13}{5}\\right)^{i - 1}\\right) \\neq 0$."
                 )
             )
         );

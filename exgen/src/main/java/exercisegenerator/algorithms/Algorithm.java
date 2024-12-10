@@ -20,6 +20,15 @@ import exercisegenerator.io.*;
 
 public enum Algorithm {
 
+    ARITHMETIC_SUM(
+        "arithmeticsum",
+        "Arithmetische Summe",
+        new String[] {
+            "Calculation of an arithmetic sum."
+        },
+        ArithmeticSumAlgorithm.INSTANCE
+    ),
+
     AVLTREE(
         "avltree",
         "AVL-Baum",

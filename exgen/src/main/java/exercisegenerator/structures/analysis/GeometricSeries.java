@@ -17,7 +17,7 @@ public record GeometricSeries(BigFraction factor, BigFraction base) {
         return this.factor().compareTo(BigFraction.ONE) == 0 ?
             String.format("\\left(%s\\right)^{i - 1}", LaTeXUtils.toCoefficient(this.base())) :
                 String.format(
-                    "\\left(%s \\cdot (%s)^{i - 1}\\right)",
+                    "\\left(%s \\cdot \\left(%s\\right)^{i - 1}\\right)",
                     LaTeXUtils.toCoefficient(this.factor()),
                     LaTeXUtils.toCoefficient(this.base())
                 );
