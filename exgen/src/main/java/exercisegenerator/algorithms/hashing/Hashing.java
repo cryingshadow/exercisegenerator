@@ -555,15 +555,14 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
 
     private static String toParameterString(final HashProblem problem) {
         final String result = Hashing.toParameterString(problem.hashFunction().parameters());
-        return (
-            problem.optionalProbingFunction().isEmpty() ?
-                result :
-                    String.join(
-                        ", ",
-                        result,
-                        Hashing.toParameterString(problem.optionalProbingFunction().get().parameters())
-                    )
-        ) + Hashing.PARAMETER_STRING_END;
+        if (problem.optionalProbingFunction().isEmpty()) {
+            return result + Hashing.PARAMETER_STRING_END;
+        }
+        final String probingPart = Hashing.toParameterString(problem.optionalProbingFunction().get().parameters());
+        if (probingPart.isBlank()) {
+            return result + Hashing.PARAMETER_STRING_END;
+        }
+        return String.format("%s, %s%s", result, probingPart, Hashing.PARAMETER_STRING_END);
     }
 
     private static String toParameterString(final Map<String, BigFraction> parameters) {
