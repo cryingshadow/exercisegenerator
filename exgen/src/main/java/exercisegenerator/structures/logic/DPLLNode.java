@@ -1,6 +1,7 @@
 package exercisegenerator.structures.logic;
 
 import java.util.*;
+import java.util.stream.*;
 
 public record DPLLNode(Set<Clause> clauses, Optional<DPLLNode> left, Optional<DPLLNode> right) {
 
@@ -57,6 +58,41 @@ public record DPLLNode(Set<Clause> clauses, Optional<DPLLNode> left, Optional<DP
         return this.clauses.isEmpty()
             || this.left.isPresent() && this.left.get().isSAT()
             || this.right.isPresent() && this.right.get().isSAT();
+    }
+
+    private String toStringRecursive() {
+        final StringBuilder result = new StringBuilder();
+        if (this.left.isEmpty() && this.right.isEmpty()) {
+            result.append(" ");
+            result.append(this.clausesToString());
+        } else {
+            result.append(" [.");
+            result.append(this.clausesToString());
+            if (this.left.isPresent()) {
+                result.append(this.left.get().toStringRecursive());
+            }
+            if (this.right.isPresent()) {
+                result.append(this.right.get().toStringRecursive());
+            }
+            result.append(" ]");
+        }
+        return result.toString();
+    }
+
+    private String clausesToString() {
+        return String.format(
+            "$\\{%s\\}$",
+            this.clauses().stream().map(Clause::toString).collect(Collectors.joining(","))
+        );
+    }
+
+    @Override
+    public String toString() {
+        if (this.left.isEmpty() && this.right.isEmpty()) {
+            return String.format("\\Tree [.%s ];", this.clausesToString());
+        } else {
+            return "\\Tree" + this.toStringRecursive();
+        }
     }
 
 }

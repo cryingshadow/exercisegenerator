@@ -40,10 +40,10 @@ public class PropositionalLogicTest {
             {
                 DPLL.parseClauses("{!A,B},{!B,C},{!C,!A},{A,!C},{C,!B},{B,A}"),
                 new DPLLNode(
-                    DPLL.parseClauses("{!A,B},{!B,C},{!C,!A},{A,!C},{C,!B},{B,A}"),
+                    DPLL.parseClauses("{!A,B},{!B,C},{!C,!A},{A,!C},{B,A}"),
                     Optional.of(
                         new DPLLNode(
-                            DPLL.parseClauses("{B},{!B,C},{!C},{C,!B}"),
+                            DPLL.parseClauses("{B},{!B,C},{!C}"),
                             Optional.of(
                                 new DPLLNode(
                                     DPLL.parseClauses("{C},{!C}"),
@@ -54,7 +54,7 @@ public class PropositionalLogicTest {
                     ),
                     Optional.of(
                         new DPLLNode(
-                            DPLL.parseClauses("{!B,C},{!C},{C,!B},{B}"),
+                            DPLL.parseClauses("{!B,C},{!C},{B}"),
                             Optional.of(
                                 new DPLLNode(
                                     DPLL.parseClauses("{C},{!C}"),

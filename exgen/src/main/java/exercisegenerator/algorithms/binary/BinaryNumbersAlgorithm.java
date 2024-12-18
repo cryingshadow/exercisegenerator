@@ -30,10 +30,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
     }
 
     static int generateNumOfTasks(final Parameters options) {
-        if (options.containsKey(Flag.LENGTH)) {
-            return Integer.parseInt(options.get(Flag.LENGTH));
-        }
-        return 3;
+        return AlgorithmImplementation.parseOrGenerateLength(3, 3, options);
     }
 
     static int getBitLength(final Parameters options) {

@@ -16,9 +16,13 @@ public enum TikZStyle {
         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]"
     ),
 
+    CLAUSE_SET("[node distance=0.5 and 1]"),
+
     EDGE_HIGHLIGHT_STYLE("[p, bend right = 10, very thick, red]"),
 
     EDGE_STYLE("[p, bend right = 10]"),
+
+    EMPTY(""),
 
     GRAPH(
         "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, "

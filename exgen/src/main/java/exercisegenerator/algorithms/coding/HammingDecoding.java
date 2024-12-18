@@ -13,7 +13,7 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, BitSt
     public static final HammingDecoding INSTANCE = new HammingDecoding();
 
     private static BitString generateHammingCode(final Parameters options) {
-        final int length = Integer.parseInt(options.getOrDefault(Flag.LENGTH, "7"));
+        final int length = AlgorithmImplementation.parseOrGenerateLength(7, 7, options);
         final int messageLength = HammingDecoding.hammingCodeLengthToMessageLength(length);
         final BitString message = CodingAlgorithms.generateHammingMessage(messageLength);
         final BitString result = HammingEncoding.INSTANCE.apply(message);

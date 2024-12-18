@@ -276,12 +276,7 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
 
     private static ArrayList<Pair<Double, Double>> generateConvexHullProblem(final Parameters options) {
         final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
-        final int numOfPoints;
-        if (options.containsKey(Flag.LENGTH)) {
-            numOfPoints = Integer.parseInt(options.get(Flag.LENGTH));
-        } else {
-            numOfPoints = Main.RANDOM.nextInt(16) + 5;
-        }
+        final int numOfPoints = GrahamsScan.parseOrGenerateNumberOfPoints(options);
         for (int i = 0; i < numOfPoints; ++i) {
             input.add(new Pair<Double,Double>((double)Main.RANDOM.nextInt(11), (double)Main.RANDOM.nextInt(11)));
         }
@@ -325,10 +320,7 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
     }
 
     private static int parseOrGenerateNumberOfPoints(final Parameters options) {
-        if (options.containsKey(Flag.LENGTH)) {
-            return Integer.parseInt(options.get(Flag.LENGTH));
-        }
-        return Main.RANDOM.nextInt(16) + 5;
+        return AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
     }
 
     private static List<Point> parsePointSet(final BufferedReader reader, final Parameters options) throws IOException {

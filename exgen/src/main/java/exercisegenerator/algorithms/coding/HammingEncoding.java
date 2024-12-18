@@ -22,7 +22,7 @@ public class HammingEncoding implements AlgorithmImplementation<BitString, BitSt
     }
 
     private static BitString generateHammingMessage(final Parameters options) {
-        final int length = Integer.parseInt(options.getOrDefault(Flag.LENGTH, "4"));
+        final int length = AlgorithmImplementation.parseOrGenerateLength(4, 4, options);
         return CodingAlgorithms.generateHammingMessage(length);
     }
 

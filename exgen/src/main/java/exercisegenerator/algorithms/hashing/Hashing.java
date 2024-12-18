@@ -316,10 +316,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     }
 
     private static Integer generateNumberOfValues(final Parameters options) {
-        return
-            options.containsKey(Flag.LENGTH) ?
-                Integer.parseInt(options.get(Flag.LENGTH)) :
-                    Main.RANDOM.nextInt(11) + 5;
+        return AlgorithmImplementation.parseOrGenerateLength(5, 15, options);
     }
 
     private static ProbingFactors generateProbingFactors(final int capacity, final Parameters options) {

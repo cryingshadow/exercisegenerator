@@ -131,6 +131,16 @@ public enum Algorithm {
         DijkstraAlgorithm.INSTANCE
     ),
 
+    DPLL(
+        "dpll",
+        "DPLL-Algorithmus",
+        new String[] {
+            "DPLL algorithm to check satisfiability of a set of clauses.",
+            "The flag -l specifies how many variables will be used in the generated set."
+        },
+        exercisegenerator.algorithms.logic.DPLL.INSTANCE
+    ),
+
     FLOYD(
         "floyd",
         "Floyd Algorithmus",

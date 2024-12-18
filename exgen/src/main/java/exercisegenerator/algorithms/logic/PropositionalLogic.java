@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import exercisegenerator.*;
+import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.logic.*;
@@ -29,7 +30,7 @@ abstract class PropositionalLogic {
 
     static List<String> generateVariables(final Parameters options) {
         final List<String> variables = new ArrayList<String>();
-        final int size = Integer.parseInt(options.getOrDefault(Flag.LENGTH, "3"));
+        final int size = AlgorithmImplementation.parseOrGenerateLength(3, 4, options);
         if (size > 26) {
             throw new IllegalArgumentException("Formulas with more than 26 variables are overkill, really!");
         }
@@ -331,10 +332,8 @@ abstract class PropositionalLogic {
                 if (!PropositionalLogic.isInNF(child, shouldBeCNF)) {
                     return false;
                 }
-            } else {
-                if (!PropositionalLogic.isJunctionOfLiterals(child, !shouldBeCNF)) {
-                    return false;
-                }
+            } else if (!PropositionalLogic.isJunctionOfLiterals(child, !shouldBeCNF)) {
+                return false;
             }
         }
         return true;

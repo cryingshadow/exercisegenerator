@@ -82,12 +82,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
     }
 
     private static Deque<TreeOperation<Integer>> generateTasks(final Parameters options) {
-        final int length;
-        if (options.containsKey(Flag.LENGTH)) {
-            length = Integer.parseInt(options.get(Flag.LENGTH));
-        } else {
-            length = Main.RANDOM.nextInt(16) + 5;
-        }
+        final int length = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
         final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         final List<Integer> in = new ArrayList<Integer>();
         for (int i = 0; i < length; i++) {

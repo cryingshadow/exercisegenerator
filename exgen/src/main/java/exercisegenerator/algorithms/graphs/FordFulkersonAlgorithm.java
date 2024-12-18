@@ -626,12 +626,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
     };
 
     private static FlowNetworkProblem generateFlowNetworkProblem(final Parameters options) {
-        final int numOfVertices;
-        if (options.containsKey(Flag.LENGTH)) {
-            numOfVertices = Integer.parseInt(options.get(Flag.LENGTH));
-        } else {
-            numOfVertices = Main.RANDOM.nextInt(16) + 3;
-        }
+        final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(3, 18, options);
         final Graph<String, FlowPair> graph = FordFulkersonAlgorithm.createRandomFlowNetwork(numOfVertices);
         return new FlowNetworkProblem(
             graph,

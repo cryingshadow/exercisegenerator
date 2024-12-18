@@ -1280,6 +1280,46 @@ public class MainTest {
     }
 
     @Test
+    public void dpll() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.DPLL.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "{!A,B},{!B,C},{!C,!A},{A,!C},{B,A}"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende Klauselmenge erfüllbar ist:",
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[node distance=0.5 and 1]",
+                    "\\node (start) {$\\{$};",
+                    "\\node (c1) [below right=of start.south west,anchor=south west] {$\\{A,\\neg C\\}$,};",
+                    "\\node (c2) [below=of c1.south west,anchor=south west] {$\\{\\neg B,C\\}$,};",
+                    "\\node (c3) [below=of c2.south west,anchor=south west] {$\\{\\neg A,B\\}$,};",
+                    "\\node (c4) [below=of c3.south west,anchor=south west] {$\\{B,A\\}$,};",
+                    "\\node (c5) [below=of c4.south west,anchor=south west] {$\\{\\neg C,\\neg A\\}$};",
+                    "\\node (end) [below left=of c5.south west,anchor=south west] {$\\}$};",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "Geben Sie dazu auch den zugehörigen DPLL-Baum an."
+                ),
+                List.of(
+                    "\\begin{center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+                        + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
+                        + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree [.$\\{\\{A,\\neg C\\},\\{\\neg B,C\\},\\{\\neg A,B\\},\\{B,A\\},\\{\\neg C,\\neg A\\}\\}$ [.$\\{\\{B\\},\\{\\neg C\\},\\{\\neg B,C\\}\\}$ [.$\\{\\{\\neg C\\},\\{C\\}\\}$ $\\{\\{\\}\\}$ ] ] [.$\\{\\{B\\},\\{\\neg C\\},\\{\\neg B,C\\}\\}$ [.$\\{\\{\\neg C\\},\\{C\\}\\}$ $\\{\\{\\}\\}$ ] ] ]",
+                    "\\end{tikzpicture}",
+                    "\\end{center}",
+                    "Ergebnis: unerfüllbar"
+                )
+            )
+        );
+    }
+
+    @Test
     public void encodeHamming() throws IOException {
         this.harness(
             new String[] {

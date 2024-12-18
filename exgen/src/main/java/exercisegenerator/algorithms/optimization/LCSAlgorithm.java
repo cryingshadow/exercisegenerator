@@ -99,13 +99,8 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
     }
 
     private static int parseOrGenerateLengthOfWords(final Parameters options) {
-        if (options.containsKey(Flag.LENGTH)) {
-            final int result = Integer.parseInt(options.get(Flag.LENGTH));
-            if (result > 0) {
-                return result;
-            }
-        }
-        return Main.RANDOM.nextInt(8) + 3;
+        final int result = AlgorithmImplementation.parseOrGenerateLength(3, 10, options);
+        return result > 0 ? result : Main.RANDOM.nextInt(8) + 3;
     }
 
     private LCSAlgorithm() {}

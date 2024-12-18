@@ -55,12 +55,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
     }
 
     private static int[] generateArray(final Parameters options, final int lowestInt, final int highestInt) {
-        final int length;
-        if (options.containsKey(Flag.LENGTH)) {
-            length = Integer.parseInt(options.get(Flag.LENGTH));
-        } else {
-            length = Main.RANDOM.nextInt(16) + 5;
-        }
+        final int length = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
         final int[] array = new int[length];
         final int range = highestInt - lowestInt + 1;
         for (int i = 0; i < array.length; i++) {

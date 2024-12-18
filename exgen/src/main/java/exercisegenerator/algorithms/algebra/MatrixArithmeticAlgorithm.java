@@ -229,15 +229,8 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
     }
 
     private static int parseOrGenerateNumberOfMatrices(final Parameters options) {
-        if (options.containsKey(Flag.LENGTH)) {
-            final int result = Integer.parseInt(options.get(Flag.LENGTH));
-            if (result > 1) {
-                return result;
-            } else {
-                return 2;
-            }
-        }
-        return Main.RANDOM.nextInt(3) + 2;
+        final int result = AlgorithmImplementation.parseOrGenerateLength(2, 4, options);
+        return result > 1 ? result : 2;
     }
 
     private static List<Object> parseParanthesis(final List<Object> toParse) {

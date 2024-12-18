@@ -258,12 +258,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
 
     private static GraphProblem generateGraphProblem(final Parameters options) {
         final String algorithmName = options.get(Flag.ALGORITHM);
-        final int numOfVertices;
-        if (options.containsKey(Flag.LENGTH)) {
-            numOfVertices = Integer.parseInt(options.get(Flag.LENGTH));
-        } else {
-            numOfVertices = Main.RANDOM.nextInt(16) + 5;
-        }
+        final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
         final Graph<String, Integer> graph =
             GraphAlgorithm.createRandomGraph(
                 numOfVertices,

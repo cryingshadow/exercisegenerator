@@ -16,4 +16,9 @@ public record Literal(PropositionalVariable variable, boolean negative) {
         return this.variable.hashCode() * 7 + (this.negative ? 101 : 23);
     }
 
+    @Override
+    public String toString() {
+        return this.negative() ? "\\neg " + this.variable().name : this.variable().name;
+    }
+
 }

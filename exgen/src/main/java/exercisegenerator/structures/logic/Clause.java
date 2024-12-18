@@ -37,4 +37,9 @@ public class Clause extends LinkedHashSet<Literal> {
         return Optional.of(this);
     }
 
+    @Override
+    public String toString() {
+        return String.format("\\{%s\\}", this.stream().map(Literal::toString).collect(Collectors.joining(",")));
+    }
+
 }

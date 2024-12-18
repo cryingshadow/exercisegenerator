@@ -5,6 +5,7 @@ import java.math.*;
 import java.util.*;
 
 import exercisegenerator.*;
+import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.binary.*;
@@ -41,10 +42,7 @@ abstract class CodingAlgorithms {
     }
 
     static int parseOrGenerateTextLength(final Parameters options) {
-        if (options.containsKey(Flag.LENGTH)) {
-            return Integer.parseInt(options.get(Flag.LENGTH));
-        }
-        return Main.RANDOM.nextInt(16) + 5;
+        return AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
     }
 
     static BitString toIndexBits(final int index, final int numOfParityBits) {

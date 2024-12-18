@@ -5,9 +5,9 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.logic.*;
 
 public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
@@ -76,12 +76,41 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
         return result;
     }
 
+    private static Clause generateClause(final List<PropositionalVariable> variables) {
+        final int numberOfLiterals = Main.RANDOM.nextInt(10) + 1;
+        return Stream.generate(() -> DPLL.generateLiteral(variables))
+            .limit(numberOfLiterals)
+            .collect(Collectors.toCollection(Clause::new));
+    }
+
+    private static Set<Clause> generateClauseSet(final Parameters options) {
+        final int numberOfVariables = AlgorithmImplementation.parseOrGenerateLength(2, 10, options);
+        final List<PropositionalVariable> variables =
+            Stream.iterate(65, x -> x + 1)
+            .limit(numberOfVariables)
+            .map(x -> new PropositionalVariable(Character.toString(x)))
+            .toList();
+        final int numberOfClauses = Main.RANDOM.nextInt(16) + 5;
+        return Stream.generate(() -> DPLL.generateClause(variables)).limit(numberOfClauses).collect(Collectors.toSet());
+    }
+
+    private static Literal generateLiteral(final List<PropositionalVariable> variables) {
+        return new Literal(variables.get(Main.RANDOM.nextInt(variables.size())), Main.RANDOM.nextBoolean());
+    }
+
     private static Clause parseClause(final String toParse) {
         if (toParse == null || toParse.isBlank()) {
             return new Clause();
         }
         final String[] literals = toParse.replaceAll("\\s", "").split(",");
         return Arrays.stream(literals).map(DPLL::parseLiteral).collect(Collectors.toCollection(Clause::new));
+    }
+
+    private static Set<Clause> parseClauseSet(
+        final BufferedReader reader,
+        final Parameters options
+    ) throws IOException {
+        return DPLL.parseClauses(reader.readLine());
     }
 
     private static Literal parseLiteral(final String toParse) {
@@ -155,12 +184,6 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
     }
 
     @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -170,8 +193,10 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
 
     @Override
     public Set<Clause> parseOrGenerateProblem(final Parameters options) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ParserAndGenerator<Set<Clause>>(
+            DPLL::parseClauseSet,
+            DPLL::generateClauseSet
+        ).getResult(options);
     }
 
     @Override
@@ -181,8 +206,48 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
-
+        writer.write(
+            "Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende Klauselmenge erfüllbar ist:"
+        );
+        Main.newLine(writer);
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        if (problem.isEmpty()) {
+            writer.write("$\\{\\}$");
+            Main.newLine(writer);
+        } else {
+            LaTeXUtils.printTikzBeginning(TikZStyle.CLAUSE_SET, writer);
+            writer.write("\\node (start) {$\\{$};");
+            Main.newLine(writer);
+            final Iterator<Clause> iterator = problem.iterator();
+            writer.write("\\node (c1) [below right=of start.south west,anchor=south west] {$");
+            writer.write(iterator.next().toString());
+            writer.write("$");
+            int i = 2;
+            while (iterator.hasNext()) {
+                writer.write(",};");
+                Main.newLine(writer);
+                writer.write("\\node (c");
+                writer.write(String.valueOf(i));
+                writer.write(") [below=of c");
+                writer.write(String.valueOf(i - 1));
+                writer.write(".south west,anchor=south west] {$");
+                writer.write(iterator.next().toString());
+                writer.write("$");
+                i++;
+            }
+            writer.write("};");
+            Main.newLine(writer);
+            writer.write("\\node (end) [below left=of c");
+            writer.write(String.valueOf(i - 1));
+            writer.write(".south west,anchor=south west] {$\\}$};");
+            Main.newLine(writer);
+            LaTeXUtils.printTikzEnd(writer);
+        }
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+//        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("Geben Sie dazu auch den zugehörigen DPLL-Baum an.");
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
     @Override
@@ -192,8 +257,31 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
         final Parameters options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
-
+        final int numberOfLiterals = problem.stream().mapToInt(Clause::size).sum();
+        final boolean big = numberOfLiterals > 10;
+        if (big) {
+            LaTeXUtils.resizeboxBeginning("\\columnwidth", "!", writer);
+        } else {
+            LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        }
+        LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writer);
+        writer.write(solution.toString());
+        Main.newLine(writer);
+        LaTeXUtils.printTikzEnd(writer);
+        if (big) {
+            LaTeXUtils.resizeboxEnd(writer);
+            LaTeXUtils.printVerticalProtectedSpace(writer);
+        } else {
+            LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        }
+        writer.write("Ergebnis: ");
+        if (solution.isSAT()) {
+            writer.write("erfüllbar");
+        } else {
+            writer.write("unerfüllbar");
+        }
+        Main.newLine(writer);
+        Main.newLine(writer);
     }
 
 }

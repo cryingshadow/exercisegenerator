@@ -6,6 +6,7 @@ import java.util.*;
 import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
+import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.algebra.*;
 
@@ -33,15 +34,8 @@ public abstract class AlgebraAlgorithms {
     }
 
     public static int parseOrGenerateNumberOfVariables(final Parameters options) {
-        if (options.containsKey(Flag.LENGTH)) {
-            final int result = Integer.parseInt(options.get(Flag.LENGTH));
-            if (result > 1) {
-                return result;
-            } else {
-                return 2;
-            }
-        }
-        return Main.RANDOM.nextInt(3) + 2;
+        final int result = AlgorithmImplementation.parseOrGenerateLength(2, 4, options);
+        return result > 1 ? result : 2;
     }
 
     public static BigFraction parseRationalNumber(final String number) {
