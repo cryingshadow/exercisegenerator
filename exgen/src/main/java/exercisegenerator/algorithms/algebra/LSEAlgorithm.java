@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -52,7 +53,7 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
         return rank;
     }
 
-    private static Matrix generateLinearSystemOfEquations(final Parameters options) {
+    private static Matrix generateLinearSystemOfEquations(final Parameters<Flag> options) {
         final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
         final int numberOfEquations = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
         final BigFraction[][] coefficients =
@@ -62,7 +63,7 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
 
     private static Matrix parseLinearSystemOfEquations(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final String line = reader.readLine();
         final String[] rows = LSEAlgorithm.parseRows(line, reader);
@@ -134,7 +135,7 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
     }
 
     @Override
-    public Matrix parseOrGenerateProblem(final Parameters options)
+    public Matrix parseOrGenerateProblem(final Parameters<Flag> options)
     throws IOException {
         return new ParserAndGenerator<Matrix>(
             LSEAlgorithm::parseLinearSystemOfEquations,
@@ -146,7 +147,7 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
     public void printExercise(
         final Matrix problem,
         final List<Matrix> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Gegeben sei das folgende \\emphasize{lineare Gleichungssystem}:\\\\[2ex]");
@@ -164,7 +165,7 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
     public void printSolution(
         final Matrix problem,
         final List<Matrix> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("{\\renewcommand{\\arraystretch}{1.2}");

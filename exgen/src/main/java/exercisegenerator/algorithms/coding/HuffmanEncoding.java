@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -29,7 +30,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         return result;
     }
 
-    private static String generateSourceText(final Parameters options) {
+    private static String generateSourceText(final Parameters<Flag> options) {
         final int alphabetSize = HuffmanEncoding.parseOrGenerateAlphabetSize(options);
         final int textLength = CodingAlgorithms.parseOrGenerateTextLength(options);
         final List<Character> alphabet = HuffmanEncoding.generateAlphabet(alphabetSize);
@@ -40,21 +41,21 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         return result.toString();
     }
 
-    private static int parseOrGenerateAlphabetSize(final Parameters options) {
+    private static int parseOrGenerateAlphabetSize(final Parameters<Flag> options) {
         if (options.containsKey(Flag.DEGREE)) {
             return Integer.parseInt(options.get(Flag.DEGREE));
         }
         return Main.RANDOM.nextInt(6) + 5;
     }
 
-    private static String parseOrGenerateSourceText(final Parameters options) throws IOException {
+    private static String parseOrGenerateSourceText(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<String>(
             CodingAlgorithms::parseInputText,
             HuffmanEncoding::generateSourceText
         ).getResult(options);
     }
 
-    private static List<Character> parseOrGenerateTargetAlphabet(final Parameters options) throws IOException {
+    private static List<Character> parseOrGenerateTargetAlphabet(final Parameters<Flag> options) throws IOException {
         if (options.containsKey(Flag.OPERATIONS)) {
             return options.get(Flag.OPERATIONS).chars().mapToObj(c -> (char)c).toList();
         }
@@ -111,7 +112,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     }
 
     @Override
-    public HuffmanProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    public HuffmanProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new HuffmanProblem(
             HuffmanEncoding.parseOrGenerateSourceText(options),
             HuffmanEncoding.parseOrGenerateTargetAlphabet(options)
@@ -122,7 +123,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     public void printExercise(
         final HuffmanProblem problem,
         final HuffmanCode solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{");
@@ -150,7 +151,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     public void printSolution(
         final HuffmanProblem problem,
         final HuffmanCode solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         HuffmanEncoding.printCodeBookForEncoding(solution.tree().toCodeBook(), false, writer);

@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -29,11 +30,11 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         return result;
     }
 
-    static int generateNumOfTasks(final Parameters options) {
+    static int generateNumOfTasks(final Parameters<Flag> options) {
         return AlgorithmImplementation.parseOrGenerateLength(3, 3, options);
     }
 
-    static int getBitLength(final Parameters options) {
+    static int getBitLength(final Parameters<Flag> options) {
         return Integer.parseInt(options.get(Flag.CAPACITY));
     }
 
@@ -41,11 +42,11 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         return ((int)Math.pow(2, exponentLength - 1)) - 1;
     }
 
-    static int getExponentLength(final Parameters options) {
+    static int getExponentLength(final Parameters<Flag> options) {
         return Integer.parseInt(options.get(Flag.DEGREE));
     }
 
-    static int getMantissaLength(final Parameters options) {
+    static int getMantissaLength(final Parameters<Flag> options) {
         return Integer.parseInt(options.get(Flag.CAPACITY));
     }
 
@@ -59,7 +60,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
 
     static List<BitString> parseBitStringValueTasks(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return Arrays.stream(reader.readLine().split(";"))
             .map(BitString::parse)
@@ -67,7 +68,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
     }
 
     static List<BitString> parseOrGenerateBitStringValueTasks(
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return new ParserAndGenerator<List<BitString>>(
             BinaryNumbersAlgorithm::parseBitStringValueTasks,
@@ -75,7 +76,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         ).getResult(options);
     }
 
-    static List<NumberComplementTask> parseOrGenerateNumberComplementTasks(final Parameters options)
+    static List<NumberComplementTask> parseOrGenerateNumberComplementTasks(final Parameters<Flag> options)
     throws IOException {
         return new ParserAndGenerator<List<NumberComplementTask>>(
             BinaryNumbersAlgorithm::parseNumberComplementTasks,
@@ -120,7 +121,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         return LaTeXUtils.escapeForLaTeX(solvedTask.value()).replaceAll(" ", "\\\\textvisiblespace{}");
     }
 
-    private static boolean algorithmUsesOnesComplement(final Parameters options) {
+    private static boolean algorithmUsesOnesComplement(final Parameters<Flag> options) {
         switch (Algorithm.forName(options.get(Flag.ALGORITHM)).get()) {
         case TO_ONES_COMPLEMENT:
         case FROM_ONES_COMPLEMENT:
@@ -130,7 +131,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         }
     }
 
-    private static List<BitString> generateBitStringValueTasks(final Parameters options) {
+    private static List<BitString> generateBitStringValueTasks(final Parameters<Flag> options) {
         final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
         final int bitLength = BinaryNumbersAlgorithm.getBitLength(options);
         final List<BitString> result = new ArrayList<BitString>(numOfTasks);
@@ -140,7 +141,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         return result;
     }
 
-    private static List<NumberComplementTask> generateNumberComplementTasks(final Parameters options) {
+    private static List<NumberComplementTask> generateNumberComplementTasks(final Parameters<Flag> options) {
         final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
         final int bitLength = BinaryNumbersAlgorithm.getBitLength(options);
         final List<NumberComplementTask> result = new ArrayList<NumberComplementTask>(numOfTasks);
@@ -171,7 +172,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
 
     private static List<NumberComplementTask> parseNumberComplementTasks(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final int bitLength = BinaryNumbersAlgorithm.getBitLength(options);
         return Arrays.stream(reader.readLine().split(";"))
@@ -188,7 +189,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
     default public void printExercise(
         final List<T> problem,
         final List<SolvedBinaryTask> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write(problem.size() == 1 ? this.getExerciseTextSingular(options) : this.getExerciseText(options));
@@ -203,7 +204,7 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
     default public void printSolution(
         final List<T> problem,
         final List<SolvedBinaryTask> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         this.printAssignments(solution, false, writer);
@@ -212,9 +213,9 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
 
     SolvedBinaryTask algorithm(T task);
 
-    String getExerciseText(Parameters options);
+    String getExerciseText(Parameters<Flag> options);
 
-    String getExerciseTextSingular(Parameters options);
+    String getExerciseTextSingular(Parameters<Flag> options);
 
     int toContentLength(List<SolvedBinaryTask> solvedTasks);
 

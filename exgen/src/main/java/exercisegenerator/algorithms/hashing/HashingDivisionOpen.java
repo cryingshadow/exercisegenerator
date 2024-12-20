@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.hashing.*;
@@ -24,7 +25,10 @@ public class HashingDivisionOpen implements Hashing {
     }
 
     @Override
-    public HashFunctionWithParameters hashFunction(final int capacity, final Parameters options) throws IOException {
+    public HashFunctionWithParameters hashFunction(
+        final int capacity,
+        final Parameters<Flag> options
+    ) throws IOException {
         return new HashFunctionWithParameters(
             new DivisionMethod(capacity),
             Hashing.DIVISION_METHOD,
@@ -36,7 +40,7 @@ public class HashingDivisionOpen implements Hashing {
     @Override
     public Optional<ProbingFunctionWithParameters> optionalProbingFunction(
         final int capacity,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return Optional.empty();
     }

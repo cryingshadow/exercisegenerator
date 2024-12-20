@@ -1,5 +1,6 @@
 package exercisegenerator.algorithms.trees;
 
+import clit.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.trees.*;
 
@@ -18,7 +19,7 @@ public class BTreeAlgorithm implements SearchTreeAlgorithm {
     }
 
     @Override
-    public BTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters options) {
+    public BTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters<Flag> options) {
         return new BTreeFactory<Integer>(
             options.containsKey(Flag.DEGREE) ? Integer.parseInt(options.get(Flag.DEGREE)) : 2
         );

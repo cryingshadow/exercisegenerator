@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
 
@@ -51,7 +52,7 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
         );
     }
 
-    private static List<BitStringFloatTask> generateBitStringFloatTasks(final Parameters options) {
+    private static List<BitStringFloatTask> generateBitStringFloatTasks(final Parameters<Flag> options) {
         final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
         final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
         final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
@@ -70,7 +71,7 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
 
     private static List<BitStringFloatTask> parseBitStringFloatTasks(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
         final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
@@ -136,7 +137,7 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
     }
 
     @Override
-    public String getExerciseText(final Parameters options) {
+    public String getExerciseText(final Parameters<Flag> options) {
         return String.format(
             ConversionFromFloat.EXERCISE_TEXT_PATTERN_FROM_FLOAT,
             BinaryNumbersAlgorithm.getExponentLength(options),
@@ -145,7 +146,7 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
     }
 
     @Override
-    public String getExerciseTextSingular(final Parameters options) {
+    public String getExerciseTextSingular(final Parameters<Flag> options) {
         return String.format(
             ConversionFromFloat.EXERCISE_TEXT_PATTERN_FROM_FLOAT_SINGULAR,
             BinaryNumbersAlgorithm.getExponentLength(options),
@@ -155,7 +156,7 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
 
     @Override
     public List<BitStringFloatTask> parseOrGenerateProblem(
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return new ParserAndGenerator<List<BitStringFloatTask>>(
             ConversionFromFloat::parseBitStringFloatTasks,

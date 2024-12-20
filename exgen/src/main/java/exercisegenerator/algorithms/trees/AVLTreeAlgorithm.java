@@ -1,5 +1,6 @@
 package exercisegenerator.algorithms.trees;
 
+import clit.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.trees.*;
 
@@ -21,7 +22,7 @@ public class AVLTreeAlgorithm implements SearchTreeAlgorithm {
     }
 
     @Override
-    public AVLTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters options) {
+    public AVLTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters<Flag> options) {
         return AVLTreeAlgorithm.AVL_TREE_FACTORY;
     }
 

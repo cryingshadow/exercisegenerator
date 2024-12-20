@@ -4,6 +4,7 @@ import java.io.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.algebra.*;
@@ -14,7 +15,7 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
 
     public static final ArithmeticSumAlgorithm INSTANCE = new ArithmeticSumAlgorithm();
 
-    private static ArithmeticSum generateProblem(final Parameters options) throws IOException {
+    private static ArithmeticSum generateProblem(final Parameters<Flag> options) throws IOException {
         return new ArithmeticSum(
             new BigFraction(Main.RANDOM.nextInt(2002) - 1001),
             new BigFraction(Main.RANDOM.nextInt(2002) - 1001, Main.RANDOM.nextInt(100) + 1),
@@ -24,7 +25,7 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
 
     private static ArithmeticSum parseProblem(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final String[] split = reader.readLine().split(";");
         if (split.length != 3) {
@@ -48,7 +49,7 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
     }
 
     @Override
-    public ArithmeticSum parseOrGenerateProblem(final Parameters options) throws IOException {
+    public ArithmeticSum parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<ArithmeticSum>(
             ArithmeticSumAlgorithm::parseProblem,
             ArithmeticSumAlgorithm::generateProblem
@@ -59,7 +60,7 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
     public void printExercise(
         final ArithmeticSum problem,
         final ArithmeticSum solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Berechnen Sie:");
@@ -75,7 +76,7 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
     public void printSolution(
         final ArithmeticSum problem,
         final ArithmeticSum solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("\\[");

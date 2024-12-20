@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -28,7 +29,7 @@ abstract class PropositionalLogic {
             PropositionalLogic::simplifyChildRecursively
         );
 
-    static List<String> generateVariables(final Parameters options) {
+    static List<String> generateVariables(final Parameters<Flag> options) {
         final List<String> variables = new ArrayList<String>();
         final int size = AlgorithmImplementation.parseOrGenerateLength(3, 4, options);
         if (size > 26) {
@@ -40,7 +41,7 @@ abstract class PropositionalLogic {
         return variables;
     }
 
-    static PropositionalFormula parseOrGenerateFormula(final Parameters options) throws IOException {
+    static PropositionalFormula parseOrGenerateFormula(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<PropositionalFormula>(
             PropositionalLogic::parseFormula,
             PropositionalLogic::generateFormula
@@ -262,7 +263,7 @@ abstract class PropositionalLogic {
         return Optional.empty();
     }
 
-    private static PropositionalFormula generateFormula(final Parameters options) {
+    private static PropositionalFormula generateFormula(final Parameters<Flag> options) {
         final List<String> variables = PropositionalLogic.generateVariables(options);
         final List<PropositionalFormula> formulas = new ArrayList<PropositionalFormula>();
         for (final String name : variables) {
@@ -402,7 +403,7 @@ abstract class PropositionalLogic {
 
     private static PropositionalFormula parseFormula(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         try {
             return PropositionalFormula.parse(reader.readLine());

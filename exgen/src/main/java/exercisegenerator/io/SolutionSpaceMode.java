@@ -2,30 +2,20 @@ package exercisegenerator.io;
 
 import java.io.*;
 
-/**
- * Modes for printing solution space.
- */
-public enum PreprintMode {
+import clit.*;
 
-    /**
-     * Always print solution space.
-     */
+public enum SolutionSpaceMode {
+
     ALWAYS("always"),
 
-    /**
-     * Don't print solution space.
-     */
     NEVER("never"),
 
-    /**
-     * Surround the solution space with the solutionSpace command.
-     */
     SOLUTION_SPACE("solutionSpace");
 
-    public static PreprintMode parsePreprintMode(final Parameters options) throws IOException {
+    public static SolutionSpaceMode parsePreprintMode(final Parameters<Flag> options) throws IOException {
         if (options.containsKey(Flag.PREPRINT_MODE)) {
             final String modeText = options.get(Flag.PREPRINT_MODE);
-            for (final PreprintMode mode : PreprintMode.values()) {
+            for (final SolutionSpaceMode mode : SolutionSpaceMode.values()) {
                 if (mode.text.equals(modeText)) {
                     return mode;
                 }
@@ -36,7 +26,7 @@ public enum PreprintMode {
 
     public final String text;
 
-    private PreprintMode(final String text) {
+    private SolutionSpaceMode(final String text) {
         this.text = text;
     }
 

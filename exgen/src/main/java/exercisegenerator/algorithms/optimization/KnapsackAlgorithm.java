@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.optimization;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -33,7 +34,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         };
     }
 
-    private static KnapsackProblem generateKnapsackProblem(final Parameters options) {
+    private static KnapsackProblem generateKnapsackProblem(final Parameters<Flag> options) {
         final int numberOfItems = KnapsackAlgorithm.parseOrGenerateNumberOfItems(options);
         final int[] weights = new int[numberOfItems];
         for (int i = 0; i < weights.length; i++) {
@@ -65,7 +66,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
 
     private static KnapsackProblem parseKnapsackProblem(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final String errorMessage =
             "You need to provide the same number of weights and values together with a capacity. The three parts need "
@@ -82,7 +83,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         );
     }
 
-    private static int parseOrGenerateNumberOfItems(final Parameters options) {
+    private static int parseOrGenerateNumberOfItems(final Parameters<Flag> options) {
         final int result = AlgorithmImplementation.parseOrGenerateLength(3, 6, options);
         return result > 0 ? result : Main.RANDOM.nextInt(4) + 3;
     }
@@ -120,7 +121,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
     }
 
     @Override
-    public KnapsackProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    public KnapsackProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<KnapsackProblem>(
             KnapsackAlgorithm::parseKnapsackProblem,
             KnapsackAlgorithm::generateKnapsackProblem
@@ -131,7 +132,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
     public void printExercise(
         final KnapsackProblem problem,
         final int[][] solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final LengthConfiguration configuration =
@@ -165,7 +166,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         writer.write("und die mitzunehmenden Gegenst\\\"ande an.");
         Main.newLine(writer);
         Main.newLine(writer);
-        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         switch (mode) {
         case SOLUTION_SPACE:
             LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
@@ -188,7 +189,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
             Main.newLine(writer);
             writer.write("Wert:");
             Main.newLine(writer);
-            if (mode == PreprintMode.SOLUTION_SPACE) {
+            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
                 LaTeXUtils.printSolutionSpaceEnd(Optional.of("3ex"), options, writer);
             }
             Main.newLine(writer);
@@ -202,7 +203,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
     public void printSolution(
         final KnapsackProblem problem,
         final int[][] solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final LengthConfiguration configuration =

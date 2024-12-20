@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -14,7 +15,7 @@ import exercisegenerator.structures.trees.*;
 interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem, SearchTreeSteps<Integer>> {
 
     static Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> generateConstructionAndTasks(
-        final Parameters options
+        final Parameters<Flag> options
     ) {
         return new Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>(
             SearchTreeAlgorithm.generateTasks(options),
@@ -24,7 +25,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
 
     static Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> parseConstructionAndTasks(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final String[] parts = reader.readLine().split(";");
         if (parts.length != 2) {
@@ -38,7 +39,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
 
     static Deque<TreeOperation<Integer>> parseOrGenerateConstruction(
         final String line,
-        final Parameters options
+        final Parameters<Flag> options
     ) {
         final String[] parts = line.split(";");
         if (parts.length == 2) {
@@ -57,7 +58,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         return SearchTreeAlgorithm.parseOperations(nums);
     }
 
-    static Deque<TreeOperation<Integer>> parseOrGenerateTasks(final Parameters options)
+    static Deque<TreeOperation<Integer>> parseOrGenerateTasks(final Parameters<Flag> options)
     throws IOException {
         return new ParserAndGenerator<Deque<TreeOperation<Integer>>>(
             SearchTreeAlgorithm::parseTasks,
@@ -65,7 +66,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         ).getResult(options);
     }
 
-    private static Deque<TreeOperation<Integer>> generateConstruction(final Parameters options) {
+    private static Deque<TreeOperation<Integer>> generateConstruction(final Parameters<Flag> options) {
         final int length = Main.RANDOM.nextInt(20) + 1;
         final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         final List<Integer> in = new ArrayList<Integer>();
@@ -81,7 +82,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         return deque;
     }
 
-    private static Deque<TreeOperation<Integer>> generateTasks(final Parameters options) {
+    private static Deque<TreeOperation<Integer>> generateTasks(final Parameters<Flag> options) {
         final int length = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
         final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         final List<Integer> in = new ArrayList<Integer>();
@@ -117,7 +118,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         return deque;
     }
 
-    private static Deque<TreeOperation<Integer>> parseTasks(final BufferedReader reader, final Parameters options)
+    private static Deque<TreeOperation<Integer>> parseTasks(final BufferedReader reader, final Parameters<Flag> options)
     throws IOException {
         final String[] nums = reader.readLine().split(",");
         return SearchTreeAlgorithm.parseOperations(nums);
@@ -196,7 +197,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
     }
 
     @Override
-    default public SearchTreeProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    default public SearchTreeProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         final Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> constructionAndTasks =
             new ParserAndGenerator<Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>>(
                 SearchTreeAlgorithm::parseConstructionAndTasks,
@@ -210,7 +211,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
     default public void printExercise(
         final SearchTreeProblem problem,
         final SearchTreeSteps<Integer> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final SearchTree<Integer> tree = problem.tree();
@@ -306,7 +307,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
     default public void printSolution(
         final SearchTreeProblem problem,
         final SearchTreeSteps<Integer> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         int stepNumber = 1;
@@ -324,6 +325,6 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         Main.newLine(writer);
     }
 
-    SearchTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters options);
+    SearchTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters<Flag> options);
 
 }

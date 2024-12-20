@@ -2,6 +2,7 @@ package exercisegenerator.algorithms.graphs;
 
 import java.io.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -9,7 +10,7 @@ import exercisegenerator.structures.graphs.*;
 
 interface GridGraphAlgorithm<S> extends AlgorithmImplementation<GridGraph, S> {
 
-    static int[][] parseOrGenerateGridGraph(final Parameters options) throws IOException {
+    static int[][] parseOrGenerateGridGraph(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<int[][]>(
             GridGraphAlgorithm::parseGridGraph,
             GridGraphAlgorithm::generateGridGraph
@@ -67,7 +68,7 @@ interface GridGraphAlgorithm<S> extends AlgorithmImplementation<GridGraph, S> {
      * @param writerSpace The writer for the tree to start with (the one reached after the <code>construction</code>
      *                    operations). May be null if this tree should not be displayed separately.
      */
-    private static int[][] generateGridGraph(final Parameters options) {
+    private static int[][] generateGridGraph(final Parameters<Flag> options) {
         final GridGraph graph = new GridGraph();
         final int[][] sparseAdjacencyMatrix =
             new int[graph.numOfVerticesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
@@ -147,7 +148,10 @@ interface GridGraphAlgorithm<S> extends AlgorithmImplementation<GridGraph, S> {
         return sparseAdjacencyMatrix;
     }
 
-    private static int[][] parseGridGraph(final BufferedReader reader, final Parameters options) throws IOException {
+    private static int[][] parseGridGraph(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
         final GridGraph graph = new GridGraph();
         final int[][] sparseAdjacencyMatrix =
             new int[graph.numOfVerticesInSparseAdjacencyMatrix()][graph.numOfNeighborsInSparseAdjacencyMatrix()];
@@ -190,7 +194,7 @@ interface GridGraphAlgorithm<S> extends AlgorithmImplementation<GridGraph, S> {
     }
 
     @Override
-    default public GridGraph parseOrGenerateProblem(final Parameters options) throws IOException {
+    default public GridGraph parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         final GridGraph graph = new GridGraph();
         graph.createGraph(GridGraphAlgorithm.parseOrGenerateGridGraph(options));
         return graph;

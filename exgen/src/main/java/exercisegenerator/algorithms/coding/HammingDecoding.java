@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.coding;
 import java.io.*;
 import java.math.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -12,7 +13,7 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, BitSt
 
     public static final HammingDecoding INSTANCE = new HammingDecoding();
 
-    private static BitString generateHammingCode(final Parameters options) {
+    private static BitString generateHammingCode(final Parameters<Flag> options) {
         final int length = AlgorithmImplementation.parseOrGenerateLength(7, 7, options);
         final int messageLength = HammingDecoding.hammingCodeLengthToMessageLength(length);
         final BitString message = CodingAlgorithms.generateHammingMessage(messageLength);
@@ -86,7 +87,7 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, BitSt
     }
 
     @Override
-    public BitString parseOrGenerateProblem(final Parameters options) throws IOException {
+    public BitString parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<BitString>(
             BitString::parse,
             HammingDecoding::generateHammingCode
@@ -97,7 +98,7 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, BitSt
     public void printExercise(
         final BitString problem,
         final BitString solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Dekodieren Sie den folgenden \\emphasize{Hamming-Code}:\\\\[2ex]");
@@ -111,7 +112,7 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, BitSt
     public void printSolution(
         final BitString problem,
         final BitString solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write(LaTeXUtils.codeseq(solution.toString()));

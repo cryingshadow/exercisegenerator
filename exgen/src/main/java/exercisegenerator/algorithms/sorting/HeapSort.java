@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.sorting;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -171,7 +172,7 @@ public class HeapSort implements Sorting {
     public void printSolution(
         final int[] problem,
         final SortingSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         if (Algorithm.HEAPSORT_TREE.name.equals(options.get(Flag.ALGORITHM))) {

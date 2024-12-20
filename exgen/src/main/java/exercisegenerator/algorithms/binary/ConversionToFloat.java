@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
@@ -110,7 +111,7 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
         return result;
     }
 
-    private static List<NumberFloatTask> generateNumberFloatTasks(final Parameters options) {
+    private static List<NumberFloatTask> generateNumberFloatTasks(final Parameters<Flag> options) {
         final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
         final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
         final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
@@ -149,7 +150,7 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
 
     private static List<NumberFloatTask> parseNumberFloatTasks(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
         final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
@@ -259,7 +260,7 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
     }
 
     @Override
-    public String getExerciseText(final Parameters options) {
+    public String getExerciseText(final Parameters<Flag> options) {
         return String.format(
             ConversionToFloat.EXERCISE_TEXT_PATTERN_TO_FLOAT,
             BinaryNumbersAlgorithm.getExponentLength(options),
@@ -268,7 +269,7 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
     }
 
     @Override
-    public String getExerciseTextSingular(final Parameters options) {
+    public String getExerciseTextSingular(final Parameters<Flag> options) {
         return String.format(
             ConversionToFloat.EXERCISE_TEXT_PATTERN_TO_FLOAT_SINGULAR,
             BinaryNumbersAlgorithm.getExponentLength(options),
@@ -277,7 +278,7 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
     }
 
     @Override
-    public List<NumberFloatTask> parseOrGenerateProblem(final Parameters options) throws IOException {
+    public List<NumberFloatTask> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<List<NumberFloatTask>>(
             ConversionToFloat::parseNumberFloatTasks,
             ConversionToFloat::generateNumberFloatTasks

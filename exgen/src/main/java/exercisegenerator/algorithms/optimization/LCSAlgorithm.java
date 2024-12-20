@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.optimization;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -26,7 +27,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         return List.of(DPDirection.UPLEFT);
     };
 
-    private static LCSProblem generateLCSProblem(final Parameters options) {
+    private static LCSProblem generateLCSProblem(final Parameters<Flag> options) {
         final int length1 = LCSAlgorithm.parseOrGenerateLengthOfWords(options);
         final int length2 = LCSAlgorithm.parseOrGenerateLengthOfWords(options);
         final String word1 = LCSAlgorithm.generateRandomString(length1);
@@ -70,7 +71,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         return result.toString();
     }
 
-    private static LCSProblem parseLCSProblem(final BufferedReader reader, final Parameters options)
+    private static LCSProblem parseLCSProblem(final BufferedReader reader, final Parameters<Flag> options)
     throws IOException {
         String wordA = null;
         String wordB = null;
@@ -98,7 +99,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         return null;
     }
 
-    private static int parseOrGenerateLengthOfWords(final Parameters options) {
+    private static int parseOrGenerateLengthOfWords(final Parameters<Flag> options) {
         final int result = AlgorithmImplementation.parseOrGenerateLength(3, 10, options);
         return result > 0 ? result : Main.RANDOM.nextInt(8) + 3;
     }
@@ -141,7 +142,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
     }
 
     @Override
-    public LCSProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    public LCSProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<LCSProblem>(
             LCSAlgorithm::parseLCSProblem,
             LCSAlgorithm::generateLCSProblem
@@ -152,7 +153,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
     public void printExercise(
         final LCSProblem problem,
         final int[][] solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final LengthConfiguration configuration =
@@ -166,7 +167,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         writer.write("Algorithmus bestimmte l\\\"angste gemeinsame Teilfolge an.");
         Main.newLine(writer);
         Main.newLine(writer);
-        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         switch (mode) {
         case SOLUTION_SPACE:
             LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
@@ -187,7 +188,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
             Main.newLine(writer);
             writer.write("L\\\"angste gemeinsame Teilfolge:");
             Main.newLine(writer);
-            if (mode == PreprintMode.SOLUTION_SPACE) {
+            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
                 LaTeXUtils.printSolutionSpaceEnd(Optional.of("3ex"), options, writer);
             }
             Main.newLine(writer);
@@ -201,7 +202,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
     public void printSolution(
         final LCSProblem problem,
         final int[][] solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final LengthConfiguration configuration =

@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.sorting;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -14,7 +15,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
     }
 
     static int[] parseOrGenerateArray(
-        final Parameters flags,
+        final Parameters<Flag> flags,
         final int lowestInt,
         final int highestInt
     ) throws IOException {
@@ -54,7 +55,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
         return result;
     }
 
-    private static int[] generateArray(final Parameters options, final int lowestInt, final int highestInt) {
+    private static int[] generateArray(final Parameters<Flag> options, final int lowestInt, final int highestInt) {
         final int length = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
         final int[] array = new int[length];
         final int range = highestInt - lowestInt + 1;
@@ -64,7 +65,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
         return array;
     }
 
-    private static int[] parseArray(final BufferedReader reader, final Parameters options)
+    private static int[] parseArray(final BufferedReader reader, final Parameters<Flag> options)
     throws IOException {
         final String[] numbers = reader.readLine().split(",");
         final int[] array = new int[numbers.length];
@@ -75,7 +76,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
     }
 
     @Override
-    default public int[] parseOrGenerateProblem(final Parameters options) throws IOException {
+    default public int[] parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return Sorting.parseOrGenerateArray(options, 0, Main.NUMBER_LIMIT - 1);
     }
 
@@ -109,7 +110,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
     default public void printExercise(
         final int[] problem,
         final SortingSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Sortieren Sie das folgende Array mithilfe von ");
@@ -149,7 +150,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
     default public void printSolution(
         final int[] problem,
         final SortingSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);

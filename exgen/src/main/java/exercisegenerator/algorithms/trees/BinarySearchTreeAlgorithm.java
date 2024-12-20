@@ -1,5 +1,6 @@
 package exercisegenerator.algorithms.trees;
 
+import clit.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.trees.*;
 
@@ -21,7 +22,7 @@ public class BinarySearchTreeAlgorithm implements SearchTreeAlgorithm {
     }
 
     @Override
-    public BinaryTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters options) {
+    public BinaryTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters<Flag> options) {
         return BinarySearchTreeAlgorithm.BINARY_TREE_FACTORY;
     }
 

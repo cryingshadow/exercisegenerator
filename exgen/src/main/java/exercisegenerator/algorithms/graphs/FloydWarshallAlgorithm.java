@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.graphs;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
@@ -27,12 +28,14 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
         "F\\\"uhren Sie den \\emphasize{Algorithmus von %s} auf diesem Graphen aus. F\\\"ullen Sie dazu die "
         + "nachfolgenden Tabellen aus.\\\\[2ex]";
 
-    private static LayoutConfiguration generateLayoutConfiguration(final Parameters options) {
+    private static LayoutConfiguration generateLayoutConfiguration(final Parameters<Flag> options) {
         return new LayoutConfiguration();
     }
 
-    private static LayoutConfiguration parseLayoutConfiguration(final BufferedReader reader, final Parameters options)
-    throws IOException {
+    private static LayoutConfiguration parseLayoutConfiguration(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
         final String line = reader.readLine();
         if (line.startsWith("!")) {
             try {
@@ -44,7 +47,9 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
         return FloydWarshallAlgorithm.generateLayoutConfiguration(options);
     }
 
-    private static LayoutConfiguration parseOrGenerateLayoutConfiguration(final Parameters options) throws IOException {
+    private static LayoutConfiguration parseOrGenerateLayoutConfiguration(
+        final Parameters<Flag> options
+    ) throws IOException {
         return new ParserAndGenerator<LayoutConfiguration>(
             FloydWarshallAlgorithm::parseLayoutConfiguration,
             FloydWarshallAlgorithm::generateLayoutConfiguration
@@ -109,7 +114,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     default public void printExercise(
         final GraphProblem problem,
         final T[][][] solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
@@ -140,7 +145,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     default public void printSolution(
         final GraphProblem problem,
         final T[][][] solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);

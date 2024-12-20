@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.hashing.*;
@@ -24,7 +25,10 @@ public class HashingMultiplicationLinear implements Hashing {
     }
 
     @Override
-    public HashFunctionWithParameters hashFunction(final int capacity, final Parameters options) throws IOException {
+    public HashFunctionWithParameters hashFunction(
+        final int capacity,
+        final Parameters<Flag> options
+    ) throws IOException {
         final BigFraction factor = Hashing.parseOrGenerateMultiplicationFactor(options);
         final Map<String, BigFraction> parameters = new LinkedHashMap<String, BigFraction>();
         parameters.put("m", new BigFraction(capacity));
@@ -47,7 +51,7 @@ public class HashingMultiplicationLinear implements Hashing {
     @Override
     public Optional<ProbingFunctionWithParameters> optionalProbingFunction(
         final int capacity,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return Optional.of(
             new ProbingFunctionWithParameters(

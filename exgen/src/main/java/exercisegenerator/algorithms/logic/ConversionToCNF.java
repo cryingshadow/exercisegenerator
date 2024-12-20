@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.logic;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -28,7 +29,7 @@ public class ConversionToCNF implements AlgorithmImplementation<PropositionalFor
     }
 
     @Override
-    public PropositionalFormula parseOrGenerateProblem(final Parameters options) throws IOException {
+    public PropositionalFormula parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return PropositionalLogic.parseOrGenerateFormula(options);
     }
 
@@ -36,7 +37,7 @@ public class ConversionToCNF implements AlgorithmImplementation<PropositionalFor
     public void printExercise(
         final PropositionalFormula problem,
         final List<PropositionalFormula> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Geben Sie eine zur folgenden aussagenlogischen Formel ");
@@ -50,7 +51,7 @@ public class ConversionToCNF implements AlgorithmImplementation<PropositionalFor
     public void printSolution(
         final PropositionalFormula problem,
         final List<PropositionalFormula> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         PropositionalLogic.printFormulaEquivalencesSolution(solution, writer);

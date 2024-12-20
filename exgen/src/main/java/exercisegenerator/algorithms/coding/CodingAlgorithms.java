@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -36,12 +37,12 @@ abstract class CodingAlgorithms {
         return true;
     }
 
-    static String parseInputText(final BufferedReader reader, final Parameters options)
+    static String parseInputText(final BufferedReader reader, final Parameters<Flag> options)
     throws IOException {
         return reader.readLine();
     }
 
-    static int parseOrGenerateTextLength(final Parameters options) {
+    static int parseOrGenerateTextLength(final Parameters<Flag> options) {
         return AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
     }
 

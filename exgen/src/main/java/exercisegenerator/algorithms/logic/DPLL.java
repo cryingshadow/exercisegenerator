@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -83,7 +84,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
             .collect(Collectors.toCollection(Clause::new));
     }
 
-    private static Set<Clause> generateClauseSet(final Parameters options) {
+    private static Set<Clause> generateClauseSet(final Parameters<Flag> options) {
         final int numberOfVariables = AlgorithmImplementation.parseOrGenerateLength(2, 10, options);
         final List<PropositionalVariable> variables =
             Stream.iterate(65, x -> x + 1)
@@ -108,7 +109,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
 
     private static Set<Clause> parseClauseSet(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return DPLL.parseClauses(reader.readLine());
     }
@@ -192,7 +193,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
     }
 
     @Override
-    public Set<Clause> parseOrGenerateProblem(final Parameters options) throws IOException {
+    public Set<Clause> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<Set<Clause>>(
             DPLL::parseClauseSet,
             DPLL::generateClauseSet
@@ -203,7 +204,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
     public void printExercise(
         final Set<Clause> problem,
         final DPLLNode solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write(
@@ -254,7 +255,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
     public void printSolution(
         final Set<Clause> problem,
         final DPLLNode solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final int numberOfLiterals = problem.stream().mapToInt(Clause::size).sum();

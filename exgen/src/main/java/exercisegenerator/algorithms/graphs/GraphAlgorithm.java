@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.Map.*;
 import java.util.stream.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -100,7 +101,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         return vertices;
     }
 
-    static double parseDistanceFactor(final Parameters options) {
+    static double parseDistanceFactor(final Parameters<Flag> options) {
         return Double.parseDouble(options.getOrDefault(Flag.DEGREE, "1.0"));
     }
 
@@ -256,7 +257,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         return graph;
     }
 
-    private static GraphProblem generateGraphProblem(final Parameters options) {
+    private static GraphProblem generateGraphProblem(final Parameters<Flag> options) {
         final String algorithmName = options.get(Flag.ALGORITHM);
         final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
         final Graph<String, Integer> graph =
@@ -271,7 +272,10 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         );
     }
 
-    private static Vertex<String> generateStartVertex(final Graph<String, Integer> graph, final Parameters options) {
+    private static Vertex<String> generateStartVertex(
+        final Graph<String, Integer> graph,
+        final Parameters<Flag> options
+    ) {
         final Set<Vertex<String>> vertices = graph.getVerticesWithLabel("A");
         if (!vertices.isEmpty()) {
             return vertices.iterator().next();
@@ -294,7 +298,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
 
     private static GraphProblem parseGraphProblem(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final Graph<String, Integer> graph = Graph.create(reader, new StringLabelParser(), new IntLabelParser());
         return new GraphProblem(
@@ -306,7 +310,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
 
     private static Vertex<String> parseOrGenerateStartVertex(
         final Graph<String, Integer> graph,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         Vertex<String> vertex = null;
         if (options.containsKey(Flag.OPERATIONS)) {
@@ -364,7 +368,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
     }
 
     @Override
-    default public GraphProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    default public GraphProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<GraphProblem>(
             GraphAlgorithm::parseGraphProblem,
             GraphAlgorithm::generateGraphProblem

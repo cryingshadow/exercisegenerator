@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.binary;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
 
@@ -58,7 +59,7 @@ public class ConversionToTwosComplement implements BinaryNumbersAlgorithm<Number
     }
 
     @Override
-    public String getExerciseText(final Parameters options) {
+    public String getExerciseText(final Parameters<Flag> options) {
         return String.format(
             ConversionToTwosComplement.EXERCISE_TEXT_PATTERN_TO_TWOS,
             BinaryNumbersAlgorithm.getBitLength(options)
@@ -66,7 +67,7 @@ public class ConversionToTwosComplement implements BinaryNumbersAlgorithm<Number
     }
 
     @Override
-    public String getExerciseTextSingular(final Parameters options) {
+    public String getExerciseTextSingular(final Parameters<Flag> options) {
         return String.format(
             ConversionToTwosComplement.EXERCISE_TEXT_PATTERN_TO_TWOS_SINGULAR,
             BinaryNumbersAlgorithm.getBitLength(options)
@@ -74,7 +75,7 @@ public class ConversionToTwosComplement implements BinaryNumbersAlgorithm<Number
     }
 
     @Override
-    public List<NumberComplementTask> parseOrGenerateProblem(final Parameters options) throws IOException {
+    public List<NumberComplementTask> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return BinaryNumbersAlgorithm.parseOrGenerateNumberComplementTasks(options);
     }
 

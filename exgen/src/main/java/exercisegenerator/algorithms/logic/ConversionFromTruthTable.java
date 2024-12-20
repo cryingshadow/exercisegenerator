@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.logic;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -12,7 +13,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
 
     public static final ConversionFromTruthTable INSTANCE = new ConversionFromTruthTable();
 
-    private static TruthTable generateTruthTable(final Parameters options) {
+    private static TruthTable generateTruthTable(final Parameters<Flag> options) {
         final List<String> variables = PropositionalLogic.generateVariables(options);
         final boolean[] truthValues = new boolean[(int)Math.pow(2, variables.size())];
         for (int i = 0; i < truthValues.length; i++) {
@@ -24,7 +25,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
 
     private static TruthTable parseTruthTable(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         try {
             return TruthTable.parse(reader.readLine());
@@ -109,7 +110,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
     }
 
     @Override
-    public TruthTable parseOrGenerateProblem(final Parameters options) throws IOException {
+    public TruthTable parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<TruthTable>(
             ConversionFromTruthTable::parseTruthTable,
             ConversionFromTruthTable::generateTruthTable
@@ -120,7 +121,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
     public void printExercise(
         final TruthTable problem,
         final PropositionalFormula solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\");
@@ -133,7 +134,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
     public void printSolution(
         final TruthTable problem,
         final PropositionalFormula solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printVerticalProtectedSpace("-10ex", writer);

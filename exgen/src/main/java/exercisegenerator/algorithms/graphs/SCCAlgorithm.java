@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.graphs;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
@@ -44,7 +45,7 @@ public class SCCAlgorithm implements GridGraphAlgorithm<List<List<String>>> {
     public void printExercise(
         final GridGraph problem,
         final List<List<String>> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         // TODO Auto-generated method stub
@@ -54,7 +55,7 @@ public class SCCAlgorithm implements GridGraphAlgorithm<List<List<String>>> {
     public void printSolution(
         final GridGraph problem,
         final List<List<String>> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         // TODO Auto-generated method stub

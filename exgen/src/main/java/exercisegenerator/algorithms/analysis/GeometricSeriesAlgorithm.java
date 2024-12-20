@@ -4,6 +4,7 @@ import java.io.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.algebra.*;
@@ -14,7 +15,7 @@ public class GeometricSeriesAlgorithm implements AlgorithmImplementation<Geometr
 
     public static final GeometricSeriesAlgorithm INSTANCE = new GeometricSeriesAlgorithm();
 
-    private static GeometricSeries generateProblem(final Parameters options) throws IOException {
+    private static GeometricSeries generateProblem(final Parameters<Flag> options) throws IOException {
         return new GeometricSeries(
             new BigFraction(Main.RANDOM.nextInt(10001) + 1),
             new BigFraction(Main.RANDOM.nextInt(202) - 101, Main.RANDOM.nextInt(100) + 1)
@@ -23,7 +24,7 @@ public class GeometricSeriesAlgorithm implements AlgorithmImplementation<Geometr
 
     private static GeometricSeries parseProblem(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final String[] split = reader.readLine().split(";");
         if (split.length != 2) {
@@ -46,7 +47,7 @@ public class GeometricSeriesAlgorithm implements AlgorithmImplementation<Geometr
     }
 
     @Override
-    public GeometricSeries parseOrGenerateProblem(final Parameters options) throws IOException {
+    public GeometricSeries parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<GeometricSeries>(
             GeometricSeriesAlgorithm::parseProblem,
             GeometricSeriesAlgorithm::generateProblem
@@ -57,7 +58,7 @@ public class GeometricSeriesAlgorithm implements AlgorithmImplementation<Geometr
     public void printExercise(
         final GeometricSeries problem,
         final GeometricSeries solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Berechnen Sie den Wert der Reihe oder begründen Sie, warum sie nicht konvergiert:");
@@ -73,7 +74,7 @@ public class GeometricSeriesAlgorithm implements AlgorithmImplementation<Geometr
     public void printSolution(
         final GeometricSeries problem,
         final GeometricSeries solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         if (problem.converges()) {

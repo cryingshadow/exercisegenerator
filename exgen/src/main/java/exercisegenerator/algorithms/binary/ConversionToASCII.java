@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
 
@@ -24,7 +25,7 @@ public class ConversionToASCII implements BinaryNumbersAlgorithm<BitString> {
         return (char)ConversionFromTwosComplement.fromTwosComplement(bitString);
     }
 
-    private static List<BitString> generateBitStringASCIITasks(final Parameters options) {
+    private static List<BitString> generateBitStringASCIITasks(final Parameters<Flag> options) {
         final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
         final int bitLength = 8;
         final List<BitString> result = new ArrayList<BitString>(numOfTasks);
@@ -60,17 +61,17 @@ public class ConversionToASCII implements BinaryNumbersAlgorithm<BitString> {
     }
 
     @Override
-    public String getExerciseText(final Parameters options) {
+    public String getExerciseText(final Parameters<Flag> options) {
         return ConversionToASCII.EXERCISE_TEXT_TO_ASCII;
     }
 
     @Override
-    public String getExerciseTextSingular(final Parameters options) {
+    public String getExerciseTextSingular(final Parameters<Flag> options) {
         return ConversionToASCII.EXERCISE_TEXT_TO_ASCII_SINGULAR;
     }
 
     @Override
-    public List<BitString> parseOrGenerateProblem(final Parameters options) throws IOException {
+    public List<BitString> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<List<BitString>>(
             BinaryNumbersAlgorithm::parseBitStringValueTasks,
             ConversionToASCII::generateBitStringASCIITasks

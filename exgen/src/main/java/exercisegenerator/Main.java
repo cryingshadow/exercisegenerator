@@ -3,6 +3,7 @@ package exercisegenerator;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
@@ -48,7 +49,7 @@ public class Main {
         );
     }
 
-    public static boolean embeddedExam(final Parameters options) {
+    public static boolean embeddedExam(final Parameters<Flag> options) {
         return Main.EMBEDDED_EXAM.equals(options.get(Flag.EXECUTION_MODE));
     }
 
@@ -84,7 +85,7 @@ public class Main {
             System.out.println("The number of arguments must be even (flag/value pairs)!");
             return;
         }
-        final Parameters options;
+        final Parameters<Flag> options;
         try {
             options = Main.parseFlags(args);
         } catch (final Exception e) {
@@ -112,7 +113,7 @@ public class Main {
                 final int numberOfExercises = Integer.parseInt(options.get(Flag.NUMBER));
                 for (int i = 0; i < numberOfExercises; i++) {
                     final Algorithm algorithm = algorithms.get(Main.RANDOM.nextInt(algorithms.size()));
-                    final Parameters singleAlgorithmOptions =
+                    final Parameters<Flag> singleAlgorithmOptions =
                         Main.parseFlags(
                             Main.toCLIArguments(algorithm, algorithm.implementation.generateTestParameters(), options)
                         );
@@ -149,19 +150,19 @@ public class Main {
         writer.write(Main.lineSeparator);
     }
 
-    public static boolean standalone(final Parameters options) {
+    public static boolean standalone(final Parameters<Flag> options) {
         return options.getOrDefault(Flag.EXECUTION_MODE, Main.STANDALONE).equals(Main.STANDALONE);
     }
 
-    private static BufferedWriter getExerciseWriter(final Parameters options) throws IOException {
+    private static BufferedWriter getExerciseWriter(final Parameters<Flag> options) throws IOException {
         return Main.getWriterByFlag(options, Flag.EXERCISE);
     }
 
-    private static BufferedWriter getSolutionWriter(final Parameters options) throws IOException {
+    private static BufferedWriter getSolutionWriter(final Parameters<Flag> options) throws IOException {
         return Main.getWriterByFlag(options, Flag.TARGET);
     }
 
-    private static BufferedWriter getWriterByFlag(final Parameters options, final Flag flag) throws IOException {
+    private static BufferedWriter getWriterByFlag(final Parameters<Flag> options, final Flag flag) throws IOException {
         return
             new BufferedWriter(
                 options.containsKey(flag) ?
@@ -182,7 +183,7 @@ public class Main {
         );
         for (final Flag flag : Flag.values()) {
             text.add("");
-            text.add(flag.shortName);
+            text.add("-" + flag.shortName);
             text.add(flag.docu);
         }
         String[] res = new String[text.size()];
@@ -209,38 +210,13 @@ public class Main {
         return result;
     }
 
-    private static Parameters parseFlags(final String[] args) throws Exception {
-        final Parameters res = new Parameters();
-        outer: for (int i = 0; i < args.length - 1; i += 2) {
-            final String option = args[i];
-            for (final Flag flag : Flag.values()) {
-                if (!flag.shortName.equals(option)) {
-                    continue;
-                }
-                if (res.containsKey(flag)) {
-                    throw new Exception(flag.longName + " flag must not be specified more than once!");
-                }
-                switch (flag) {
-                    case SOURCE:
-                        if (res.containsKey(Flag.INPUT)) {
-                            throw new Exception("Input must not be specified by a file and a string together!");
-                        }
-                        break;
-                    case INPUT:
-                        if (res.containsKey(Flag.SOURCE)) {
-                            throw new Exception("Input must not be specified by a file and a string together!");
-                        }
-                        break;
-                    default:
-                        // do nothing
-                }
-                res.put(flag, args[i + 1]);
-                continue outer;
-            }
-            throw new Exception("Unknown option specified (" + option + ")!");
-        }
+    private static Parameters<Flag> parseFlags(final String[] args) throws Exception {
+        final Parameters<Flag> res = new CLITamer<Flag>(Flag.class).parse(args);
         if (!res.containsKey(Flag.ALGORITHM)) {
             throw new Exception("No algorithm specified!");
+        }
+        if (res.containsKey(Flag.INPUT) && res.containsKey(Flag.SOURCE)) {
+            throw new Exception("Input must not be specified by a file and a string together!");
         }
         if (res.containsKey(Flag.NUMBER)) {
             if (
@@ -300,7 +276,7 @@ public class Main {
     private static String[] toCLIArguments(
         final Algorithm alg,
         final String[] generatedOptions,
-        final Parameters options
+        final Parameters<Flag> options
     ) {
         final int numOfAddedParameters = 6;
         final String[] result = new String[generatedOptions.length + numOfAddedParameters];

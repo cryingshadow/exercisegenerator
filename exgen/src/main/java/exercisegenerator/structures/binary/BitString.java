@@ -5,6 +5,7 @@ import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
+import clit.*;
 import exercisegenerator.io.*;
 
 public class BitString extends LinkedList<Bit> {
@@ -15,7 +16,7 @@ public class BitString extends LinkedList<Bit> {
         return BitString.parse(BitString.toBitLength(value.toString(2), bitLength));
     }
 
-    public static BitString parse(final BufferedReader reader, final Parameters options) throws IOException {
+    public static BitString parse(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
         return BitString.parse(reader.readLine());
     }
 

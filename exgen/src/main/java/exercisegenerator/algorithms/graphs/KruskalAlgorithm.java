@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
@@ -60,7 +61,7 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
     public void printExercise(
         final GraphProblem problem,
         final KruskalResult<String> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         GraphAlgorithm.printGraphExercise(
@@ -86,7 +87,7 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
     public void printSolution(
         final GraphProblem problem,
         final KruskalResult<String> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Kantenreihenfolge:\\\\[-2ex]");

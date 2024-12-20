@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.sorting;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -24,7 +25,9 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
         return result;
     }
 
-    private static int[] parseOrGenerateLimits(final Parameters options) throws FileNotFoundException, IOException {
+    private static int[] parseOrGenerateLimits(
+        final Parameters<Flag> options
+    ) throws FileNotFoundException, IOException {
         if (options.containsKey(Flag.CAPACITY)) {
             return CountingSort.parseLimits(options.get(Flag.CAPACITY));
         } else if (options.containsKey(Flag.SOURCE)) {
@@ -74,7 +77,7 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
     }
 
     @Override
-    public CountingSortProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    public CountingSortProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         final int[] limits = CountingSort.parseOrGenerateLimits(options);
         final int lowestValue = limits[0];
         final int highestValue = limits[1];
@@ -86,7 +89,7 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
     public void printExercise(
         final CountingSortProblem problem,
         final CountingSortSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final int contentLength = Sorting.getMaximumContentLength(problem.initialArray());
@@ -129,7 +132,7 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
     public void printSolution(
         final CountingSortProblem problem,
         final CountingSortSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final int contentLength = Sorting.getMaximumContentLength(problem.initialArray());

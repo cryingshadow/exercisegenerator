@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.graphs;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
@@ -107,7 +108,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
     public void printExercise(
         final GraphProblem problem,
         final PrimResult<String> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final List<Vertex<String>> vertices = new ArrayList<Vertex<String>>(problem.graph().getVertices());
@@ -134,7 +135,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
     public void printSolution(
         final GraphProblem problem,
         final PrimResult<String> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final List<Vertex<String>> vertices = new ArrayList<Vertex<String>>(problem.graph().getVertices());

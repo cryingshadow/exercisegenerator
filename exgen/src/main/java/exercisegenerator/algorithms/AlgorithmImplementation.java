@@ -3,13 +3,14 @@ package exercisegenerator.algorithms;
 import java.io.*;
 import java.util.function.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 
 public interface AlgorithmImplementation<P, S> extends Function<P, S> {
 
-    static int parseOrGenerateLength(final int lowest, final int highest, final Parameters options) {
+    static int parseOrGenerateLength(final int lowest, final int highest, final Parameters<Flag> options) {
         if (options.containsKey(Flag.LENGTH)) {
             return Integer.parseInt(options.get(Flag.LENGTH));
         }
@@ -25,19 +26,19 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
 
     String[] generateTestParameters();
 
-    P parseOrGenerateProblem(final Parameters options) throws IOException;
+    P parseOrGenerateProblem(final Parameters<Flag> options) throws IOException;
 
     void printExercise(
         final P problem,
         final S solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException;
 
     void printSolution(
         final P problem,
         final S solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException;
 

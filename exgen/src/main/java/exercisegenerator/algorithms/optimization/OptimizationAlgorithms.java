@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.function.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.optimization.*;
@@ -33,13 +34,13 @@ public abstract class OptimizationAlgorithms {
         }
     }
 
-    static LengthConfiguration generateLengthConfiguration(final Parameters options) {
+    static LengthConfiguration generateLengthConfiguration(final Parameters<Flag> options) {
         return new LengthConfiguration();
     }
 
     static LengthConfiguration parseLengthConfiguration(
         final BufferedReader reader,
-        final Parameters options,
+        final Parameters<Flag> options,
         final int lineNumber
     ) throws IOException {
         for (int i = 1; i < lineNumber; i++) {
@@ -58,7 +59,7 @@ public abstract class OptimizationAlgorithms {
     }
 
     static LengthConfiguration parseOrGenerateLengthConfiguration(
-        final Parameters options,
+        final Parameters<Flag> options,
         final int lineNumber
     ) throws IOException {
         return new ParserAndGenerator<LengthConfiguration>(
@@ -72,7 +73,7 @@ public abstract class OptimizationAlgorithms {
         final Function<Integer, String> rowHeading,
         final Function<Integer, String> columnHeading,
         final Optional<DPTracebackFunction> traceback,
-        final Parameters options,
+        final Parameters<Flag> options,
         final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {

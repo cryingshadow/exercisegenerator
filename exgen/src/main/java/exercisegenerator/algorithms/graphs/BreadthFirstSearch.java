@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
@@ -51,7 +52,7 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
     public void printExercise(
         final GraphProblem problem,
         final List<String> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         GraphAlgorithm.printGraphExercise(
@@ -68,7 +69,7 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
     public void printSolution(
         final GraphProblem problem,
         final List<String> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write(solution.stream().collect(Collectors.joining(", ")));

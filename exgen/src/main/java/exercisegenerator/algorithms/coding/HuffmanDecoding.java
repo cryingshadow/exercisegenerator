@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.stream.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -18,12 +19,12 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
     private static final String CODE_BOOK_FORMAT_ERROR_MESSAGE =
         "The specified code book does not match the expected format (entries of the form 'S':\"C\" for a symbol S and a code C, separated by commas)!";
 
-    private static HuffmanCode generateHuffmanCode(final Parameters options) {
+    private static HuffmanCode generateHuffmanCode(final Parameters<Flag> options) {
         final HuffmanCodeBook codeBook = HuffmanDecoding.parseCodeBook(options);
         return new HuffmanCode(HuffmanDecoding.generateTargetText(codeBook, options), new HuffmanTree(codeBook));
     }
 
-    private static String generateTargetText(final Map<Character, String> codeBook, final Parameters options) {
+    private static String generateTargetText(final Map<Character, String> codeBook, final Parameters<Flag> options) {
         final int length = CodingAlgorithms.parseOrGenerateTextLength(options);
         final StringBuilder result = new StringBuilder();
         final List<String> samples = new ArrayList<String>(codeBook.values());
@@ -33,7 +34,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
         return result.toString();
     }
 
-    private static HuffmanCodeBook parseCodeBook(final Parameters options) {
+    private static HuffmanCodeBook parseCodeBook(final Parameters<Flag> options) {
         final String input = options.get(Flag.OPERATIONS);
         final Pattern pattern = Pattern.compile("'.':\"[^\"]+\"");
         if (!input.matches("'.':\"[^\"]+\"(,'.':\"[^\"]+\")*")) {
@@ -60,7 +61,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
 
     private static HuffmanCode parseHuffmanCode(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return new HuffmanCode(
             CodingAlgorithms.parseInputText(reader, options),
@@ -104,7 +105,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
     }
 
     @Override
-    public HuffmanCode parseOrGenerateProblem(final Parameters options) throws IOException {
+    public HuffmanCode parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<HuffmanCode>(
             HuffmanDecoding::parseHuffmanCode,
             HuffmanDecoding::generateHuffmanCode
@@ -115,7 +116,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
     public void printExercise(
         final HuffmanCode problem,
         final String solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write(
@@ -136,7 +137,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
     public void printSolution(
         final HuffmanCode problem,
         final String solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write(LaTeXUtils.code(solution));

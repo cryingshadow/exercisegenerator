@@ -8,6 +8,7 @@ import java.util.stream.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
@@ -23,9 +24,9 @@ public abstract class LaTeXUtils {
 
     public static final String ITEM = "\\item";
 
-    public static final String TWO_COL_WIDTH = "8cm";
-
     public static final String MATH_VARIABLE_NAME = "x";
+
+    public static final String TWO_COL_WIDTH = "8cm";
 
     private static final int MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW = 17;
 
@@ -363,7 +364,7 @@ public abstract class LaTeXUtils {
 
     public static void printSolutionSpaceBeginning(
         final Optional<String> protectedSpace,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         if (Main.standalone(options)) {
@@ -383,7 +384,7 @@ public abstract class LaTeXUtils {
 
     public static void printSolutionSpaceEnd(
         final Optional<String> protectedSpace,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         if (Main.standalone(options)) {

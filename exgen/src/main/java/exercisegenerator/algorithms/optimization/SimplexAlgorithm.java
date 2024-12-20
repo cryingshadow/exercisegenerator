@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.algebra.*;
@@ -43,7 +44,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         );
     }
 
-    private static SimplexProblem generateSimplexProblem(final Parameters options) {
+    private static SimplexProblem generateSimplexProblem(final Parameters<Flag> options) {
         final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
         final int numberOfInequalities = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
         final BigFraction[] target = SimplexAlgorithm.generateTargetFunction(numberOfVariables);
@@ -62,7 +63,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
 
     private static SimplexProblem parseSimplexProblem(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final String line = reader.readLine();
         final String[] rows = line.split(";");
@@ -495,7 +496,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     }
 
     @Override
-    public SimplexProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    public SimplexProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<SimplexProblem>(
             SimplexAlgorithm::parseSimplexProblem,
             SimplexAlgorithm::generateSimplexProblem
@@ -506,7 +507,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     public void printExercise(
         final SimplexProblem problem,
         final SimplexSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\");
@@ -521,7 +522,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         writer.write("$ an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.");
         Main.newLine(writer);
         Main.newLine(writer);
-        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         switch (mode) {
         case SOLUTION_SPACE:
             LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
@@ -546,7 +547,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             LaTeXUtils.printVerticalProtectedSpace(writer);
             writer.write("Ergebnis:");
             Main.newLine(writer);
-            if (mode == PreprintMode.SOLUTION_SPACE) {
+            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
                 LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
             }
             Main.newLine(writer);
@@ -560,7 +561,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     public void printSolution(
         final SimplexProblem problem,
         final SimplexSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("{\\renewcommand{\\arraystretch}{1.5}");

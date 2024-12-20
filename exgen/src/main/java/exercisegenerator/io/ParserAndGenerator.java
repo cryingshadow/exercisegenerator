@@ -2,23 +2,24 @@ package exercisegenerator.io;
 
 import java.io.*;
 
+import clit.*;
 import exercisegenerator.util.*;
 
 public class ParserAndGenerator<T> {
 
-    private final CheckedFunction<Parameters, T, IOException> generator;
+    private final CheckedFunction<Parameters<Flag>, T, IOException> generator;
 
-    private final CheckedBiFunction<BufferedReader, Parameters, T, IOException> parser;
+    private final CheckedBiFunction<BufferedReader, Parameters<Flag>, T, IOException> parser;
 
     public ParserAndGenerator(
-        final CheckedBiFunction<BufferedReader, Parameters, T, IOException> parser,
-        final CheckedFunction<Parameters, T, IOException> generator
+        final CheckedBiFunction<BufferedReader, Parameters<Flag>, T, IOException> parser,
+        final CheckedFunction<Parameters<Flag>, T, IOException> generator
     ) {
         this.parser = parser;
         this.generator = generator;
     }
 
-    public T getResult(final Parameters options) throws IOException {
+    public T getResult(final Parameters<Flag> options) throws IOException {
         if (options.containsKey(Flag.SOURCE)) {
             try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
                 return this.parser.apply(reader, options);

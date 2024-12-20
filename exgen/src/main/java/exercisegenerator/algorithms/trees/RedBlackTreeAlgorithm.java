@@ -1,5 +1,6 @@
 package exercisegenerator.algorithms.trees;
 
+import clit.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.trees.*;
 
@@ -21,7 +22,7 @@ public class RedBlackTreeAlgorithm implements SearchTreeAlgorithm {
     }
 
     @Override
-    public RedBlackTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters options) {
+    public RedBlackTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters<Flag> options) {
         return RedBlackTreeAlgorithm.RED_BLACK_TREE_FACTORY;
     }
 

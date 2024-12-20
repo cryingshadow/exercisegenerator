@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -25,7 +26,7 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
         return result;
     }
 
-    private static Matrix generateMatrix(final Parameters options) {
+    private static Matrix generateMatrix(final Parameters<Flag> options) {
         return AlgebraAlgorithms.generateQuadraticMatrix(AlgebraAlgorithms.parseOrGenerateDimensionOfMatrices(options));
     }
 
@@ -44,7 +45,7 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
         return true;
     }
 
-    private static Matrix parseMatrix(final BufferedReader reader, final Parameters options) throws IOException {
+    private static Matrix parseMatrix(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
         final List<String> text = new LinkedList<String>();
         String line = reader.readLine();
         while (line != null && !line.isBlank()) {
@@ -73,7 +74,7 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
     }
 
     @Override
-    public Matrix parseOrGenerateProblem(final Parameters options) throws IOException {
+    public Matrix parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<Matrix>(
             MatrixInversionAlgorithm::parseMatrix,
             MatrixInversionAlgorithm::generateMatrix
@@ -84,7 +85,7 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
     public void printExercise(
         final Matrix problem,
         final List<Matrix> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Invertieren Sie die folgende Matrix mithilfe des \\emphasize{Gau\\ss{}-Jordan-Algorithmus} oder");
@@ -102,7 +103,7 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
     public void printSolution(
         final Matrix problem,
         final List<Matrix> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         for (final Matrix matrix : solution) {

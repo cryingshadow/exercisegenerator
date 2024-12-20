@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.binary;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
@@ -25,7 +26,7 @@ public class ConversionFromASCII implements BinaryNumbersAlgorithm<String> {
         return String.valueOf((char)(Main.RANDOM.nextInt(95) + 32));
     }
 
-    private static List<String> generateASCIIBitStringTasks(final Parameters options) {
+    private static List<String> generateASCIIBitStringTasks(final Parameters<Flag> options) {
         final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
         final List<String> result = new ArrayList<String>(numOfTasks);
         for (int i = 0; i < numOfTasks; i++) {
@@ -36,7 +37,7 @@ public class ConversionFromASCII implements BinaryNumbersAlgorithm<String> {
 
     private static List<String> parseASCIIBitStringTasks(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return Arrays.asList(reader.readLine().split(";"));
     }
@@ -65,18 +66,18 @@ public class ConversionFromASCII implements BinaryNumbersAlgorithm<String> {
     }
 
     @Override
-    public String getExerciseText(final Parameters options) {
+    public String getExerciseText(final Parameters<Flag> options) {
         return ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII;
     }
 
     @Override
-    public String getExerciseTextSingular(final Parameters options) {
+    public String getExerciseTextSingular(final Parameters<Flag> options) {
         return ConversionFromASCII.EXERCISE_TEXT_FROM_ASCII_SINGULAR;
     }
 
     @Override
     public List<String> parseOrGenerateProblem(
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return new ParserAndGenerator<List<String>>(
             ConversionFromASCII::parseASCIIBitStringTasks,

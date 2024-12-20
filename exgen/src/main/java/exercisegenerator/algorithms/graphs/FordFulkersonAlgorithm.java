@@ -4,13 +4,15 @@ import java.io.*;
 import java.util.*;
 import java.util.Map.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleStep>> {
+public class FordFulkersonAlgorithm
+implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleStep>> {
 
     private static record FordFulkersonConfiguration(double multiplier, boolean twoColumns) {}
 
@@ -625,7 +627,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
         }
     };
 
-    private static FlowNetworkProblem generateFlowNetworkProblem(final Parameters options) {
+    private static FlowNetworkProblem generateFlowNetworkProblem(final Parameters<Flag> options) {
         final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(3, 18, options);
         final Graph<String, FlowPair> graph = FordFulkersonAlgorithm.createRandomFlowNetwork(numOfVertices);
         return new FlowNetworkProblem(
@@ -637,7 +639,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
 
     private static FlowNetworkProblem parseFlowNetworkProblem(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final Graph<String, FlowPair> graph = Graph.create(reader, new StringLabelParser(), new FlowPairLabelParser());
         Vertex<String> source = null;
@@ -662,7 +664,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
 
     private static FordFulkersonConfiguration parseOrGenerateConfiguration(
         final FlowNetworkProblem problem,
-        final Parameters options
+        final Parameters<Flag> options
     ) {
         double multiplier = 1.0;
         boolean twoColumns = false;
@@ -691,11 +693,11 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
         final FordFulkersonDoubleStep step,
         final boolean first,
         final boolean solution,
-        final PreprintMode mode,
+        final SolutionSpaceMode mode,
         final FordFulkersonConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
-        if (!solution && mode == PreprintMode.NEVER) {
+        if (!solution && mode == SolutionSpaceMode.NEVER) {
             return;
         }
         if (!first) {
@@ -853,7 +855,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
     }
 
     @Override
-    public FlowNetworkProblem parseOrGenerateProblem(final Parameters options)
+    public FlowNetworkProblem parseOrGenerateProblem(final Parameters<Flag> options)
     throws IOException {
         return new ParserAndGenerator<FlowNetworkProblem>(
             FordFulkersonAlgorithm::parseFlowNetworkProblem,
@@ -865,12 +867,12 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
     public void printExercise(
         final FlowNetworkProblem problem,
         final List<FordFulkersonDoubleStep> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final Vertex<String> source = problem.source();
         final Vertex<String> sink = problem.sink();
-        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         final FordFulkersonConfiguration configuration =
             FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
         writer.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
@@ -955,7 +957,7 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
             Main.newLine(writer);
             writer.write("Der maximale Fluss hat den Wert: ");
             Main.newLine(writer);
-            if (mode == PreprintMode.SOLUTION_SPACE) {
+            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
                 LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
             }
             Main.newLine(writer);
@@ -969,10 +971,10 @@ public class FordFulkersonAlgorithm implements AlgorithmImplementation<FlowNetwo
     public void printSolution(
         final FlowNetworkProblem problem,
         final List<FordFulkersonDoubleStep> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         final FordFulkersonConfiguration configuration =
             FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
         int flow = 0;

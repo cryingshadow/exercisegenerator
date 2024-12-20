@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.sorting;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -30,7 +31,7 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
         return result;
     }
 
-    private static int[] parseOrGenerateLimitsAndBuckets(final Parameters options) throws IOException {
+    private static int[] parseOrGenerateLimitsAndBuckets(final Parameters<Flag> options) throws IOException {
         if (options.containsKey(Flag.CAPACITY)) {
             return BucketSort.parseLimitsAndBuckets(options.get(Flag.CAPACITY));
         } else if (options.containsKey(Flag.SOURCE)) {
@@ -83,7 +84,7 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
     }
 
     @Override
-    public BucketSortProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    public BucketSortProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         final int[] limitsAndBuckets = BucketSort.parseOrGenerateLimitsAndBuckets(options);
         final int lowestValue = limitsAndBuckets[0];
         final int highestValue = limitsAndBuckets[1];
@@ -100,7 +101,7 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
     public void printExercise(
         final BucketSortProblem problem,
         final BucketSortSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Sortieren Sie das folgende Array mit ganzen Zahlen von ");
@@ -129,7 +130,7 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
     public void printSolution(
         final BucketSortProblem problem,
         final BucketSortSolution solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final int contentLength = Sorting.getMaximumContentLength(problem.initialArray());

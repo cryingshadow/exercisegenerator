@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.logic;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -36,7 +37,7 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
     }
 
     @Override
-    public PropositionalFormula parseOrGenerateProblem(final Parameters options) throws IOException {
+    public PropositionalFormula parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return PropositionalLogic.parseOrGenerateFormula(options);
     }
 
@@ -44,7 +45,7 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
     public void printExercise(
         final PropositionalFormula problem,
         final TruthTable solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\");
@@ -60,7 +61,7 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
     public void printSolution(
         final PropositionalFormula problem,
         final TruthTable solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printVerticalProtectedSpace("-6ex", writer);

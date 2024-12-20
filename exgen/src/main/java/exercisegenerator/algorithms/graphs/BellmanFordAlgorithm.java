@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.graphs;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
@@ -122,7 +123,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
     public void printExercise(
         final GraphProblem problem,
         final List<BellmanFordStep<String>> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final List<Vertex<String>> vertices =
@@ -145,7 +146,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
     public void printSolution(
         final GraphProblem problem,
         final List<BellmanFordStep<String>> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final List<Vertex<String>> vertices =

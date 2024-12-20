@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -33,7 +34,7 @@ public abstract class AlgebraAlgorithms {
         return Main.RANDOM.nextInt(5) + 2;
     }
 
-    public static int parseOrGenerateNumberOfVariables(final Parameters options) {
+    public static int parseOrGenerateNumberOfVariables(final Parameters<Flag> options) {
         final int result = AlgorithmImplementation.parseOrGenerateLength(2, 4, options);
         return result > 1 ? result : 2;
     }
@@ -134,9 +135,9 @@ public abstract class AlgebraAlgorithms {
         return result;
     }
 
-    static int parseOrGenerateDimensionOfMatrices(final Parameters options) {
+    static int parseOrGenerateDimensionOfMatrices(final Parameters<Flag> options) {
         if (options.containsKey(Flag.DEGREE)) {
-            final int result = Integer.parseInt(options.get(Flag.DEGREE));
+            final int result = options.getAsInt(Flag.DEGREE);
             if (result > 1) {
                 return result;
             } else {

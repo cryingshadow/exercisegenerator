@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.algorithms.algebra.*;
@@ -18,14 +19,14 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     static class PrintOptions {
         private final String optionsText;
         private final String parameterText;
-        private final PreprintMode preprintMode;
+        private final SolutionSpaceMode preprintMode;
         private final boolean probing;
 
         PrintOptions(
             final String optionsText,
             final String parameterText,
             final boolean probing,
-            final PreprintMode preprintMode
+            final SolutionSpaceMode preprintMode
         ) {
             this.optionsText = optionsText;
             this.parameterText = parameterText;
@@ -104,7 +105,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         return new HashResult(hashTable, new HashStatistics(numberOfCollisions, maxNumberOfProbingsForSameValue));
     }
 
-    static IntegerList[] parseOrGenerateInitialArray(final int numberOfValues, final Parameters options)
+    static IntegerList[] parseOrGenerateInitialArray(final int numberOfValues, final Parameters<Flag> options)
     throws IOException {
         if (!options.containsKey(Flag.OPERATIONS)) {
             return Hashing.createEmptyArray(Hashing.parseOrGenerateCapacity(numberOfValues, options));
@@ -117,14 +118,14 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
             ).toArray(IntegerList[]::new);
     }
 
-    static BigFraction parseOrGenerateMultiplicationFactor(final Parameters options) throws IOException {
+    static BigFraction parseOrGenerateMultiplicationFactor(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<BigFraction>(
             Hashing::parseMultiplicationFactor,
             flags -> Hashing.getRandomFactorBetweenZeroAndOne()
         ).getResult(options);
     }
 
-    static Integer parseOrGenerateNumberOfValues(final Parameters options) throws IOException {
+    static Integer parseOrGenerateNumberOfValues(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<Integer>(
             Hashing::parseNumberOfValues,
             Hashing::generateNumberOfValues
@@ -133,7 +134,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
 
     static ProbingFactors parseOrGenerateProbingFactors(
         final int capacity,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return new ParserAndGenerator<ProbingFactors>(
             (reader, flags) -> Hashing.parseProbingFactors(reader, flags),
@@ -146,7 +147,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         final int capacity,
         final HashFunction hashFunction,
         final Optional<ProbingFunctionWithParameters> optionalProbingFunction,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         return new ParserAndGenerator<List<Integer>>(
             Hashing::parseValues,
@@ -305,7 +306,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         }
     }
 
-    private static int generateCapacity(final int numberOfValues, final Parameters options) {
+    private static int generateCapacity(final int numberOfValues, final Parameters<Flag> options) {
         final int length = (int)(numberOfValues * 1.25);
         final List<Integer> candidates =
             Arrays.stream(Hashing.CAPACITIES).filter(value -> value >= length).boxed().toList();
@@ -315,11 +316,11 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         return candidates.get(Main.RANDOM.nextInt(candidates.size()));
     }
 
-    private static Integer generateNumberOfValues(final Parameters options) {
+    private static Integer generateNumberOfValues(final Parameters<Flag> options) {
         return AlgorithmImplementation.parseOrGenerateLength(5, 15, options);
     }
 
-    private static ProbingFactors generateProbingFactors(final int capacity, final Parameters options) {
+    private static ProbingFactors generateProbingFactors(final int capacity, final Parameters<Flag> options) {
         if (Hashing.isPowerOf2(capacity)) {
             return new ProbingFactors(BigFraction.ONE_HALF, BigFraction.ONE_HALF);
         }
@@ -361,7 +362,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         final int capacity,
         final HashFunction hashFunction,
         final Optional<ProbingFunctionWithParameters> optionalProbingFunction,
-        final Parameters options
+        final Parameters<Flag> options
     ) {
         if (numberOfValues < 5 || optionalProbingFunction.isEmpty()) {
             return Hashing.generateRandomValues(numberOfValues, hashFunction, Collections.emptyList()).toList();
@@ -431,25 +432,25 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         return Integer.numberOfLeadingZeros(capacity) + Integer.numberOfTrailingZeros(capacity) == 31;
     }
 
-    private static int parseCapacity(final BufferedReader reader, final Parameters options)
+    private static int parseCapacity(final BufferedReader reader, final Parameters<Flag> options)
     throws NumberFormatException, IOException {
         return Integer.parseInt(reader.readLine().split(",")[0]);
     }
 
-    private static BigFraction parseMultiplicationFactor(final BufferedReader reader, final Parameters options)
+    private static BigFraction parseMultiplicationFactor(final BufferedReader reader, final Parameters<Flag> options)
     throws NumberFormatException, IOException {
         return AlgebraAlgorithms.parseRationalNumber(reader.readLine().split(",")[1]);
     }
 
     private static Integer parseNumberOfValues(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         reader.readLine();
         return (int)Arrays.stream(reader.readLine().split(",")).count();
     }
 
-    private static int parseOrGenerateCapacity(final int numberOfValues, final Parameters options)
+    private static int parseOrGenerateCapacity(final int numberOfValues, final Parameters<Flag> options)
     throws IOException {
         return new ParserAndGenerator<Integer>(
             Hashing::parseCapacity,
@@ -457,14 +458,14 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         ).getResult(options);
     }
 
-    private static int parseOrGenerateChoice(final Parameters options) {
+    private static int parseOrGenerateChoice(final Parameters<Flag> options) {
         if (options.containsKey(Flag.CAPACITY)) {
-            return Integer.parseInt(options.get(Flag.CAPACITY));
+            return options.getAsInt(Flag.CAPACITY);
         }
         return Main.RANDOM.nextInt(7) + 1;
     }
 
-    private static ProbingFactors parseProbingFactors(final BufferedReader reader, final Parameters options)
+    private static ProbingFactors parseProbingFactors(final BufferedReader reader, final Parameters<Flag> options)
     throws IOException {
         final String[] parameters = reader.readLine().split(",");
         return new ProbingFactors(
@@ -475,7 +476,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
 
     private static List<Integer> parseValues(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         reader.readLine();
         return Arrays.stream(reader.readLine().split(",")).map(Integer::parseInt).toList();
@@ -502,7 +503,10 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         LaTeXUtils.printTikzEnd(writer);
     }
 
-    private static PrintOptions printOptions(final HashProblem problem, final Parameters options) throws IOException {
+    private static PrintOptions printOptions(
+        final HashProblem problem,
+        final Parameters<Flag> options
+    ) throws IOException {
         return new PrintOptions(
             problem
             .hashFunction()
@@ -521,7 +525,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
             ),
             Hashing.toParameterString(problem),
             problem.optionalProbingFunction().isPresent(),
-            PreprintMode.parsePreprintMode(options)
+            SolutionSpaceMode.parsePreprintMode(options)
         );
     }
 
@@ -576,7 +580,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     }
 
     @Override
-    default public HashProblem parseOrGenerateProblem(final Parameters options) throws IOException {
+    default public HashProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         final int numOfValues = Hashing.parseOrGenerateNumberOfValues(options);
         final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, options);
         final int capacity = initialHashTable.length;
@@ -598,7 +602,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     default public void printExercise(
         final HashProblem problem,
         final HashResult solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final PrintOptions printOptions = Hashing.printOptions(problem, options);
@@ -621,13 +625,13 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
             case ALWAYS:
             case SOLUTION_SPACE:
                 LaTeXUtils.printVerticalProtectedSpace("2ex", writer);
-                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
+                if (printOptions.preprintMode == SolutionSpaceMode.SOLUTION_SPACE) {
                     LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
                 }
                 LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
                 Hashing.printArray(problem.initialHashTable(), contentLength, printOptions.probing, writer);
                 LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-                if (printOptions.preprintMode == PreprintMode.SOLUTION_SPACE) {
+                if (printOptions.preprintMode == SolutionSpaceMode.SOLUTION_SPACE) {
                     LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
                 } else {
                     Main.newLine(writer);
@@ -644,7 +648,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     default public void printSolution(
         final HashProblem problem,
         final HashResult solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final PrintOptions printOptions = Hashing.printOptions(problem, options);
@@ -662,11 +666,11 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         Main.newLine(writer);
     }
 
-    HashFunctionWithParameters hashFunction(final int capacity, final Parameters options) throws IOException;
+    HashFunctionWithParameters hashFunction(final int capacity, final Parameters<Flag> options) throws IOException;
 
     Optional<ProbingFunctionWithParameters> optionalProbingFunction(
         final int capacity,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException;
 
 }

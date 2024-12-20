@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.algebra;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -44,7 +45,7 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
         return null;
     }
 
-    private static MatrixTerm generateMatrixTerm(final Parameters options) {
+    private static MatrixTerm generateMatrixTerm(final Parameters<Flag> options) {
         final int numberOfMatrices = MatrixArithmeticAlgorithm.parseOrGenerateNumberOfMatrices(options);
         final int dimensionOfMatrices = AlgebraAlgorithms.parseOrGenerateDimensionOfMatrices(options);
         final List<MatrixTerm> terms = new ArrayList<MatrixTerm>();
@@ -180,7 +181,7 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
 
     private static MatrixTerm parseMatrixTerm(
         final BufferedReader reader,
-        final Parameters options
+        final Parameters<Flag> options
     ) throws IOException {
         final List<Object> text = new ArrayList<Object>();
         String line = reader.readLine();
@@ -228,7 +229,7 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
         return MatrixArithmeticAlgorithm.parseMatrixTerm(MatrixArithmeticAlgorithm.parseMatrix(toParse));
     }
 
-    private static int parseOrGenerateNumberOfMatrices(final Parameters options) {
+    private static int parseOrGenerateNumberOfMatrices(final Parameters<Flag> options) {
         final int result = AlgorithmImplementation.parseOrGenerateLength(2, 4, options);
         return result > 1 ? result : 2;
     }
@@ -290,7 +291,7 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
     }
 
     @Override
-    public MatrixTerm parseOrGenerateProblem(final Parameters options)
+    public MatrixTerm parseOrGenerateProblem(final Parameters<Flag> options)
     throws IOException {
         return new ParserAndGenerator<MatrixTerm>(
             MatrixArithmeticAlgorithm::parseMatrixTerm,
@@ -302,7 +303,7 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
     public void printExercise(
         final MatrixTerm problem,
         final List<MatrixTerm> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Berechnen Sie das Ergebnis der folgenden Matrix-Operationen:\\\\[2ex]");
@@ -318,7 +319,7 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
     public void printSolution(
         final MatrixTerm problem,
         final List<MatrixTerm> solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("\\begin{align*}");

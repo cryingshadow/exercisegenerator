@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -21,7 +22,7 @@ public class HammingEncoding implements AlgorithmImplementation<BitString, BitSt
         return result;
     }
 
-    private static BitString generateHammingMessage(final Parameters options) {
+    private static BitString generateHammingMessage(final Parameters<Flag> options) {
         final int length = AlgorithmImplementation.parseOrGenerateLength(4, 4, options);
         return CodingAlgorithms.generateHammingMessage(length);
     }
@@ -73,7 +74,7 @@ public class HammingEncoding implements AlgorithmImplementation<BitString, BitSt
     }
 
     @Override
-    public BitString parseOrGenerateProblem(final Parameters options) throws IOException {
+    public BitString parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<BitString>(
             BitString::parse,
             HammingEncoding::generateHammingMessage
@@ -81,8 +82,12 @@ public class HammingEncoding implements AlgorithmImplementation<BitString, BitSt
     }
 
     @Override
-    public void printExercise(final BitString problem, final BitString solution, final Parameters options, final BufferedWriter writer)
-        throws IOException {
+    public void printExercise(
+        final BitString problem,
+        final BitString solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write(
             "Geben Sie den \\emphasize{Hamming-Code} f\\\"ur die folgende bin\\\"are Nachricht an:\\\\[2ex]"
         );
@@ -93,8 +98,12 @@ public class HammingEncoding implements AlgorithmImplementation<BitString, BitSt
     }
 
     @Override
-    public void printSolution(final BitString problem, final BitString solution, final Parameters options, final BufferedWriter writer)
-        throws IOException {
+    public void printSolution(
+        final BitString problem,
+        final BitString solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write(LaTeXUtils.codeseq(solution.toString()));
         Main.newLine(writer);
         Main.newLine(writer);

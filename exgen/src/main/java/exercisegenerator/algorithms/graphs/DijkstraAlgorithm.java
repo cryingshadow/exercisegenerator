@@ -3,6 +3,7 @@ package exercisegenerator.algorithms.graphs;
 import java.io.*;
 import java.util.*;
 
+import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
@@ -196,10 +197,10 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
     public void printExercise(
         final GraphProblem problem,
         final DijkstraTables solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final PreprintMode mode = PreprintMode.parsePreprintMode(options);
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         GraphAlgorithm.printGraphExercise(
             problem.graph(),
             String.format(DijkstraAlgorithm.DIJKSTRA_PATTERN,  problem.startNode().label.get().toString()),
@@ -242,7 +243,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
                 );
                 LaTeXUtils.printArrayStretch(1.0, writer);
                 LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-                if (mode == PreprintMode.SOLUTION_SPACE) {
+                if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
                     LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
                 } else {
                     Main.newLine(writer);
@@ -258,7 +259,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
     public void printSolution(
         final GraphProblem problem,
         final DijkstraTables solution,
-        final Parameters options,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);

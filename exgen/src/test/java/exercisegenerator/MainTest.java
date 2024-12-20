@@ -2325,7 +2325,7 @@ public class MainTest {
             new String[] {
                 "-a", Algorithm.KNAPSACK.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-p", PreprintMode.SOLUTION_SPACE.text,
+                "-p", SolutionSpaceMode.SOLUTION_SPACE.text,
                 "-i", "4,3,3;3,2,2;7"
             },
             MainTest.simpleComparison(
@@ -2469,7 +2469,7 @@ public class MainTest {
             new String[] {
                 "-a", Algorithm.LCS.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-p", PreprintMode.SOLUTION_SPACE.text,
+                "-p", SolutionSpaceMode.SOLUTION_SPACE.text,
                 "-i", "TEST\nME"
             },
             MainTest.simpleComparison(
@@ -3326,7 +3326,7 @@ public class MainTest {
             new String[] {
                 "-a", Algorithm.SIMPLEX.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-p", PreprintMode.SOLUTION_SPACE.text,
+                "-p", SolutionSpaceMode.SOLUTION_SPACE.text,
                 "-i", "1,1;1,0,5;0,1,7/2;2,-1,0"
             },
             MainTest.simpleComparison(

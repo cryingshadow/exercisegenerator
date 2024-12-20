@@ -8,15 +8,16 @@ import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
-import exercisegenerator.io.Parameters;
+import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.hashing.*;
+import clit.Parameters;
 
 public class HashingTest {
 
     @DataProvider
     public static Object[][] testData() throws IOException {
-        final Parameters options = new Parameters();
+        final Parameters<Flag> options = new Parameters<Flag>();
         final HashFunctionWithParameters div7 = HashingDivisionOpen.INSTANCE.hashFunction(7, options);
         return new Object[][] {
             {
@@ -222,7 +223,7 @@ public class HashingTest {
 
     @Test
     public void hashingWithException() {
-        final Parameters options = new Parameters();
+        final Parameters<Flag> options = new Parameters<Flag>();
         Assert.assertThrows(
             IllegalArgumentException.class,
             () -> Hashing.hashing(
