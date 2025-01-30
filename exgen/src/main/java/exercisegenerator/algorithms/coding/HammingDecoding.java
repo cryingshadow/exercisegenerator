@@ -8,8 +8,9 @@ import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
+import exercisegenerator.structures.coding.*;
 
-public class HammingDecoding implements AlgorithmImplementation<BitString, BitString> {
+public class HammingDecoding implements AlgorithmImplementation<BitString, HammingDecodingResult> {
 
     public static final HammingDecoding INSTANCE = new HammingDecoding();
 
@@ -60,24 +61,24 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, BitSt
     private HammingDecoding() {}
 
     @Override
-    public BitString apply(final BitString message) {
+    public HammingDecodingResult apply(final BitString message) {
         final int codeLength = message.size();
         if (!CodingAlgorithms.isPositiveIntegerPowerOfTwo(codeLength + 1)) {
             throw new IllegalArgumentException("Code length must be one less than a power of two!");
         }
         final int numOfParityBits = HammingDecoding.log2(codeLength + 1);
-        final BitString error = new BitString();
+        final BitString checksum = new BitString();
         for (int i = 0; i < numOfParityBits; i++) {
-            error.addFirst(Bit.fromBoolean(HammingDecoding.oddOnes(message, i, numOfParityBits)));
+            checksum.addFirst(Bit.fromBoolean(HammingDecoding.oddOnes(message, i, numOfParityBits)));
         }
         final BitString result = new BitString(message);
-        if (!error.isZero()) {
-            result.invertBit(error.toUnsignedInt() - 1);
+        if (!checksum.isZero()) {
+            result.invertBit(checksum.toUnsignedInt() - 1);
         }
         for (int i = numOfParityBits - 1; i >= 0; i--) {
             result.remove(BigInteger.TWO.pow(i).intValue() - 1);
         }
-        return result;
+        return new HammingDecodingResult(result, checksum);
     }
 
     @Override
@@ -97,7 +98,7 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, BitSt
     @Override
     public void printExercise(
         final BitString problem,
-        final BitString solution,
+        final HammingDecodingResult solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
@@ -111,11 +112,14 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, BitSt
     @Override
     public void printSolution(
         final BitString problem,
-        final BitString solution,
+        final HammingDecodingResult solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write(LaTeXUtils.codeseq(solution.toString()));
+        writer.write(LaTeXUtils.codeseq(solution.result().toString()));
+        writer.write(" (Pr\\\"ufsumme: ");
+        writer.write(LaTeXUtils.codeseq(solution.checksum().toString()));
+        writer.write(")");
         Main.newLine(writer);
         Main.newLine(writer);
     }

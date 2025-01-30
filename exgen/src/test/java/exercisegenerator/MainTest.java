@@ -1053,7 +1053,7 @@ public class MainTest {
                     "Dekodieren Sie den folgenden \\emphasize{Hamming-Code}:\\\\[2ex]",
                     "\\codeseq{100110110101111}"
                 ),
-                List.of("\\codeseq{00010101111}")
+                List.of("\\codeseq{00010101111} (Pr\\\"ufsumme: \\codeseq{0101})")
             )
         );
 
