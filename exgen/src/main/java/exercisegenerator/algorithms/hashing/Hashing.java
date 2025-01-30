@@ -324,10 +324,15 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         if (Hashing.isPowerOf2(capacity)) {
             return new ProbingFactors(BigFraction.ONE_HALF, BigFraction.ONE_HALF);
         }
-        return new ProbingFactors(
-            new BigFraction(Main.RANDOM.nextInt(11)),
-            new BigFraction(Main.RANDOM.nextInt(10) + 1)
-        );
+        int linearFactor;
+        do {
+            linearFactor = Main.RANDOM.nextInt(11);
+        } while (linearFactor == capacity);
+        int quadraticFactor;
+        do {
+            quadraticFactor = Main.RANDOM.nextInt(10) + 1;
+        } while (quadraticFactor == capacity);
+        return new ProbingFactors(new BigFraction(linearFactor), new BigFraction(quadraticFactor));
     }
 
     private static int generateRandomValue() {
