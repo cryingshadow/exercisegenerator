@@ -1294,11 +1294,11 @@ public class MainTest {
                     "\\begin{tikzpicture}",
                     "[node distance=0.5 and 1]",
                     "\\node (start) {$\\{$};",
-                    "\\node (c1) [below right=of start.south west,anchor=south west] {$\\{A,\\neg C\\}$,};",
-                    "\\node (c2) [below=of c1.south west,anchor=south west] {$\\{\\neg B,C\\}$,};",
+                    "\\node (c1) [below right=of start.south west,anchor=south west] {$\\{A,B\\}$,};",
+                    "\\node (c2) [below=of c1.south west,anchor=south west] {$\\{A,\\neg C\\}$,};",
                     "\\node (c3) [below=of c2.south west,anchor=south west] {$\\{\\neg A,B\\}$,};",
-                    "\\node (c4) [below=of c3.south west,anchor=south west] {$\\{B,A\\}$,};",
-                    "\\node (c5) [below=of c4.south west,anchor=south west] {$\\{\\neg C,\\neg A\\}$};",
+                    "\\node (c4) [below=of c3.south west,anchor=south west] {$\\{\\neg A,\\neg C\\}$,};",
+                    "\\node (c5) [below=of c4.south west,anchor=south west] {$\\{\\neg B,C\\}$};",
                     "\\node (end) [below left=of c5.south west,anchor=south west] {$\\}$};",
                     "\\end{tikzpicture}",
                     "\\end{center}",
@@ -1310,7 +1310,7 @@ public class MainTest {
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
-                    "\\Tree [.$\\{\\{A,\\neg C\\},\\{\\neg B,C\\},\\{\\neg A,B\\},\\{B,A\\},\\{\\neg C,\\neg A\\}\\}$ [.$\\{\\{B\\},\\{\\neg C\\},\\{\\neg B,C\\}\\}$ [.$\\{\\{\\neg C\\},\\{C\\}\\}$ $\\{\\{\\}\\}$ ] ] [.$\\{\\{B\\},\\{\\neg C\\},\\{\\neg B,C\\}\\}$ [.$\\{\\{\\neg C\\},\\{C\\}\\}$ $\\{\\{\\}\\}$ ] ] ]",
+                    "\\Tree [.$\\{\\{A,B\\},\\{A,\\neg C\\},\\{\\neg A,B\\},\\{\\neg A,\\neg C\\},\\{\\neg B,C\\}\\}$ [.$\\{\\{B\\},\\{\\neg B,C\\},\\{\\neg C\\}\\}$ [.$\\{\\{C\\},\\{\\neg C\\}\\}$ $\\{\\{\\}\\}$ ] ] [.$\\{\\{B\\},\\{\\neg B,C\\},\\{\\neg C\\}\\}$ [.$\\{\\{C\\},\\{\\neg C\\}\\}$ $\\{\\{\\}\\}$ ] ] ]",
                     "\\end{tikzpicture}",
                     "\\end{center}",
                     "Ergebnis: unerfüllbar"

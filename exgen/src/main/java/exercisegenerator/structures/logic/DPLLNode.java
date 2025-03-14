@@ -3,19 +3,19 @@ package exercisegenerator.structures.logic;
 import java.util.*;
 import java.util.stream.*;
 
-public record DPLLNode(Set<Clause> clauses, Optional<DPLLNode> left, Optional<DPLLNode> right) {
+public record DPLLNode(ClauseSet clauses, Optional<DPLLNode> left, Optional<DPLLNode> right) {
 
-    public DPLLNode(final Set<Clause> clauses, final Optional<DPLLNode> left, final Optional<DPLLNode> right) {
+    public DPLLNode(final ClauseSet clauses, final Optional<DPLLNode> left, final Optional<DPLLNode> right) {
         this.clauses = clauses;
         this.left = left;
         this.right = right;
     }
 
-    public DPLLNode(final Set<Clause> clauses) {
+    public DPLLNode(final ClauseSet clauses) {
         this(clauses, Optional.empty(), Optional.empty());
     }
 
-    public DPLLNode(final Set<Clause> clauses, final Optional<DPLLNode> left) {
+    public DPLLNode(final ClauseSet clauses, final Optional<DPLLNode> left) {
         this(clauses, left, Optional.empty());
     }
 
@@ -33,7 +33,7 @@ public record DPLLNode(Set<Clause> clauses, Optional<DPLLNode> left, Optional<DP
         return new DPLLNode(this.clauses, Optional.of(this.left().get().addRightToLeftmost(node)), this.right);
     }
 
-    public Set<Clause> getLeftmostClauses() {
+    public ClauseSet getLeftmostClauses() {
         if (this.left.isEmpty()) {
             return this.clauses;
         }

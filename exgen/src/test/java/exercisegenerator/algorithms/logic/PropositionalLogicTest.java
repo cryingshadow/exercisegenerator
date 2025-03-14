@@ -14,26 +14,26 @@ public class PropositionalLogicTest {
     @DataProvider
     public Object[][] dpllData() throws PropositionalFormulaParseException {
         return new Object[][] {
-            {Collections.emptySet(), new DPLLNode(Collections.emptySet())},
-            {Set.of(Clause.EMPTY), new DPLLNode(Set.of(Clause.EMPTY))},
+            {ClauseSet.EMPTY, new DPLLNode(ClauseSet.EMPTY)},
+            {ClauseSet.FALSE, new DPLLNode(ClauseSet.FALSE)},
             {
                 DPLL.parseClauses("{A}"),
-                new DPLLNode(DPLL.parseClauses("{A}"), Optional.of(new DPLLNode(Collections.emptySet())))
+                new DPLLNode(DPLL.parseClauses("{A}"), Optional.of(new DPLLNode(ClauseSet.EMPTY)))
             },
             {
                 DPLL.parseClauses("{!A}"),
-                new DPLLNode(DPLL.parseClauses("{!A}"), Optional.of(new DPLLNode(Collections.emptySet())))
+                new DPLLNode(DPLL.parseClauses("{!A}"), Optional.of(new DPLLNode(ClauseSet.EMPTY)))
             },
             {
                 DPLL.parseClauses("{A},{!A}"),
-                new DPLLNode(DPLL.parseClauses("{A},{!A}"), Optional.of(new DPLLNode(Set.of(Clause.EMPTY))))
+                new DPLLNode(DPLL.parseClauses("{A},{!A}"), Optional.of(new DPLLNode(ClauseSet.FALSE)))
             },
             {
                 DPLL.parseClauses("{A},{!B}"),
                 new DPLLNode(
                     DPLL.parseClauses("{A},{!B}"),
                     Optional.of(
-                        new DPLLNode(DPLL.parseClauses("{!B}"), Optional.of(new DPLLNode(Collections.emptySet())))
+                        new DPLLNode(DPLL.parseClauses("{!B}"), Optional.of(new DPLLNode(ClauseSet.EMPTY)))
                     )
                 )
             },
@@ -47,7 +47,7 @@ public class PropositionalLogicTest {
                             Optional.of(
                                 new DPLLNode(
                                     DPLL.parseClauses("{C},{!C}"),
-                                    Optional.of(new DPLLNode(Set.of(Clause.EMPTY)))
+                                    Optional.of(new DPLLNode(ClauseSet.FALSE))
                                 )
                             )
                         )
@@ -58,7 +58,7 @@ public class PropositionalLogicTest {
                             Optional.of(
                                 new DPLLNode(
                                     DPLL.parseClauses("{C},{!C}"),
-                                    Optional.of(new DPLLNode(Set.of(Clause.EMPTY)))
+                                    Optional.of(new DPLLNode(ClauseSet.FALSE))
                                  )
                             )
                         )
@@ -69,7 +69,7 @@ public class PropositionalLogicTest {
     }
 
     @Test(dataProvider="dpllData")
-    public void dpllTest(final Set<Clause> clauses, final DPLLNode expected) {
+    public void dpllTest(final ClauseSet clauses, final DPLLNode expected) {
         Assert.assertEquals(DPLL.INSTANCE.apply(clauses), expected);
     }
 

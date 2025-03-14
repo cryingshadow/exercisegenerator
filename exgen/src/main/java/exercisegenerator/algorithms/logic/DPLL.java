@@ -11,13 +11,13 @@ import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.logic.*;
 
-public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
+public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
 
     public static final DPLL INSTANCE = new DPLL();
 
-    static Set<Clause> parseClauses(final String toParse) {
+    static ClauseSet parseClauses(final String toParse) {
         if (toParse == null || toParse.isBlank()) {
-            return Collections.emptySet();
+            return ClauseSet.EMPTY;
         }
         final Set<String> clauses = new LinkedHashSet<String>();
         final int length = toParse.length();
@@ -32,14 +32,14 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
                 break;
             }
         }
-        return clauses.stream().map(DPLL::parseClause).collect(Collectors.toSet());
+        return clauses.stream().map(DPLL::parseClause).collect(Collectors.toCollection(ClauseSet::new));
     }
 
-    private static PropositionalVariable chooseVariable(final Set<Clause> clauses) {
+    private static PropositionalVariable chooseVariable(final ClauseSet clauses) {
         return clauses.stream().flatMap(Clause::stream).map(Literal::variable).findAny().get();
     }
 
-    private static boolean containsPureLiteral(final Set<Clause> clauses) {
+    private static boolean containsPureLiteral(final ClauseSet clauses) {
         final Set<PropositionalVariable> positive = new LinkedHashSet<PropositionalVariable>();
         final Set<PropositionalVariable> negative = new LinkedHashSet<PropositionalVariable>();
         for (final Clause clause : clauses) {
@@ -55,17 +55,17 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
             || negative.stream().filter(v -> !positive.contains(v)).findAny().isPresent();
     }
 
-    private static boolean containsUnitClause(final Set<Clause> clauses) {
+    private static boolean containsUnitClause(final ClauseSet clauses) {
         return clauses.stream().anyMatch(clause -> clause.size() == 1);
     }
 
     private static Optional<DPLLNode> deterministicAssignments(
-        final Set<Clause> clauses,
-        final Predicate<Set<Clause>> assignmentApplicable,
-        final Function<Set<Clause>, Literal> assignmentSelection
+        final ClauseSet clauses,
+        final Predicate<ClauseSet> assignmentApplicable,
+        final Function<ClauseSet, Literal> assignmentSelection
     ) {
         Optional<DPLLNode> result = Optional.empty();
-        Set<Clause> currentClauses = clauses;
+        ClauseSet currentClauses = clauses;
         while (assignmentApplicable.test(currentClauses)) {
             final Literal literal = assignmentSelection.apply(currentClauses);
             currentClauses = DPLL.setTruth(literal.variable(), !literal.negative(), currentClauses);
@@ -84,7 +84,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
             .collect(Collectors.toCollection(Clause::new));
     }
 
-    private static Set<Clause> generateClauseSet(final Parameters<Flag> options) {
+    private static ClauseSet generateClauseSet(final Parameters<Flag> options) {
         final int numberOfVariables = AlgorithmImplementation.parseOrGenerateLength(2, 10, options);
         final List<PropositionalVariable> variables =
             Stream.iterate(65, x -> x + 1)
@@ -92,7 +92,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
             .map(x -> new PropositionalVariable(Character.toString(x)))
             .toList();
         final int numberOfClauses = Main.RANDOM.nextInt(16) + 5;
-        return Stream.generate(() -> DPLL.generateClause(variables)).limit(numberOfClauses).collect(Collectors.toSet());
+        return Stream.generate(() -> DPLL.generateClause(variables)).limit(numberOfClauses).collect(Collectors.toCollection(ClauseSet::new));
     }
 
     private static Literal generateLiteral(final List<PropositionalVariable> variables) {
@@ -107,7 +107,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
         return Arrays.stream(literals).map(DPLL::parseLiteral).collect(Collectors.toCollection(Clause::new));
     }
 
-    private static Set<Clause> parseClauseSet(
+    private static ClauseSet parseClauseSet(
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
@@ -121,11 +121,11 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
         return new Literal(new PropositionalVariable(toParse), false);
     }
 
-    private static Optional<DPLLNode> pureAssignment(final Set<Clause> clauses) {
+    private static Optional<DPLLNode> pureAssignment(final ClauseSet clauses) {
         return DPLL.deterministicAssignments(clauses, DPLL::containsPureLiteral, DPLL::selectPureLiteral);
     }
 
-    private static Literal selectPureLiteral(final Set<Clause> clauses) {
+    private static Literal selectPureLiteral(final ClauseSet clauses) {
         final Set<PropositionalVariable> positive = new LinkedHashSet<PropositionalVariable>();
         final Set<PropositionalVariable> negative = new LinkedHashSet<PropositionalVariable>();
         for (final Clause clause : clauses) {
@@ -144,33 +144,33 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
         return new Literal(negative.stream().filter(v -> !positive.contains(v)).findAny().get(), true);
     }
 
-    private static Literal selectUnitLiteral(final Set<Clause> clauses) {
+    private static Literal selectUnitLiteral(final ClauseSet clauses) {
         return clauses.stream().filter(clause -> clause.size() == 1).findAny().get().getFirst();
     }
 
-    private static Set<Clause> setTruth(
+    private static ClauseSet setTruth(
         final PropositionalVariable chosen,
         final boolean truth,
-        final Set<Clause> clauses
+        final ClauseSet clauses
     ) {
         return clauses.stream()
             .map(clause -> clause.setTruth(chosen, truth))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(ClauseSet::new));
     }
 
-    private static Optional<DPLLNode> unitPropagation(final Set<Clause> clauses) {
+    private static Optional<DPLLNode> unitPropagation(final ClauseSet clauses) {
         return DPLL.deterministicAssignments(clauses, DPLL::containsUnitClause, DPLL::selectUnitLiteral);
     }
 
     private DPLL() {}
 
     @Override
-    public DPLLNode apply(final Set<Clause> clauses) {
+    public DPLLNode apply(final ClauseSet clauses) {
         DPLLNode result = new DPLLNode(clauses).addLeftmost(DPLL.unitPropagation(clauses));
         result = result.addLeftmost(DPLL.pureAssignment(result.getLeftmostClauses()));
-        final Set<Clause> latest = result.getLeftmostClauses();
+        final ClauseSet latest = result.getLeftmostClauses();
         if (latest.isEmpty() || latest.contains(Clause.EMPTY)) {
             return result;
         }
@@ -193,8 +193,8 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
     }
 
     @Override
-    public Set<Clause> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<Set<Clause>>(
+    public ClauseSet parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
+        return new ParserAndGenerator<ClauseSet>(
             DPLL::parseClauseSet,
             DPLL::generateClauseSet
         ).getResult(options);
@@ -202,7 +202,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
 
     @Override
     public void printExercise(
-        final Set<Clause> problem,
+        final ClauseSet problem,
         final DPLLNode solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
@@ -253,7 +253,7 @@ public class DPLL implements AlgorithmImplementation<Set<Clause>, DPLLNode> {
 
     @Override
     public void printSolution(
-        final Set<Clause> problem,
+        final ClauseSet problem,
         final DPLLNode solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
