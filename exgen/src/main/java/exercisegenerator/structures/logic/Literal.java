@@ -22,8 +22,8 @@ public record Literal(PropositionalVariable variable, boolean negative) implemen
     }
 
     @Override
-    public int compareTo(Literal o) {
-        int result = this.variable().name.compareTo(o.variable().name);
+    public int compareTo(final Literal o) {
+        final int result = this.variable().name.compareTo(o.variable().name);
         if (result != 0) {
             return result;
         }

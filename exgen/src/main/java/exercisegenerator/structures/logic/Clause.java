@@ -23,6 +23,27 @@ public class Clause extends TreeSet<Literal> implements Comparable<Clause> {
         super(literals.toList());
     }
 
+    @Override
+    public int compareTo(final Clause o) {
+        final Iterator<Literal> i1 = this.iterator();
+        final Iterator<Literal> i2 = o.iterator();
+        while (i1.hasNext() && i2.hasNext()) {
+            final Literal l1 = i1.next();
+            final Literal l2 = i2.next();
+            final int result = l1.compareTo(l2);
+            if (result != 0) {
+                return result;
+            }
+        }
+        if (i1.hasNext()) {
+            return 1;
+        }
+        if (i2.hasNext()) {
+            return -1;
+        }
+        return 0;
+    }
+
     public Optional<Clause> setTruth(final PropositionalVariable variable, final boolean truth) {
         if (this.stream().anyMatch(literal -> variable.equals(literal.variable()))) {
             if (this.stream().anyMatch(literal -> variable.equals(literal.variable()) && truth != literal.negative())) {
@@ -40,27 +61,6 @@ public class Clause extends TreeSet<Literal> implements Comparable<Clause> {
     @Override
     public String toString() {
         return String.format("\\{%s\\}", this.stream().map(Literal::toString).collect(Collectors.joining(",")));
-    }
-
-    @Override
-    public int compareTo(Clause o) {
-        Iterator<Literal> i1 = this.iterator();
-        Iterator<Literal> i2 = o.iterator();
-        while (i1.hasNext() && i2.hasNext()) {
-            Literal l1 = i1.next();
-            Literal l2 = i2.next();
-            int result = l1.compareTo(l2);
-            if (result != 0) {
-                return result;
-            }
-        }
-        if (i1.hasNext()) {
-            return 1;
-        }
-        if (i2.hasNext()) {
-            return -1;
-        }
-        return 0;
     }
 
 }
