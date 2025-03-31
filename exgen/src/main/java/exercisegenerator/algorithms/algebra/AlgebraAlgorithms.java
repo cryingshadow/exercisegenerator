@@ -56,8 +56,8 @@ public abstract class AlgebraAlgorithms {
             throw new NumberFormatException(String.format("Number %s contains more than one slash!", number));
         }
         return parts.length == 1 ?
-            new BigFraction(Integer.parseInt(parts[0])) :
-                new BigFraction(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+            new BigFraction(Integer.parseInt(parts[0].strip())) :
+                new BigFraction(Integer.parseInt(parts[0].strip()), Integer.parseInt(parts[1].strip()));
     }
 
     public static void printMatrixAsInequalitiesOrEquations(

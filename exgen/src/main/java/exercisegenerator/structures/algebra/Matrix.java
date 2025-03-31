@@ -107,6 +107,44 @@ public class Matrix implements MatrixTerm {
         return 666 + this.coefficients.hashCode() * 2 + this.columnPositions.hashCode() * 3;
     }
 
+    public Matrix insertColumnsAtIndex(final List<BigFraction[]> columns, final int firstIndex) {
+        final int additionalColumns = columns.size();
+        final BigFraction[][] coefficients =
+            new BigFraction[this.getNumberOfRows()][this.getNumberOfColumns() + additionalColumns];
+        for (int column = 0; column < this.getNumberOfColumns(); column++) {
+            final int columnIndex = column < firstIndex ? column : column + additionalColumns;
+            for (int row = 0; row < this.getNumberOfRows(); row++) {
+                coefficients[row][columnIndex] = this.getCoefficient(column, row);
+            }
+        }
+        for (int columnIndex = firstIndex; columnIndex < additionalColumns + firstIndex; columnIndex++) {
+            final BigFraction[] column = columns.get(columnIndex - firstIndex);
+            for (int row = 0; row < this.getNumberOfRows(); row++) {
+                coefficients[row][columnIndex] = column[row];
+            }
+        }
+        return new Matrix(coefficients, this.columnPositions, this.separatorIndex);
+    }
+
+    public Matrix insertRowsAtIndex(final List<BigFraction[]> rows, final int firstIndex) {
+        final int additionalRows = rows.size();
+        final BigFraction[][] coefficients =
+            new BigFraction[this.getNumberOfRows() + additionalRows][this.getNumberOfColumns()];
+        for (int row = 0; row < this.getNumberOfRows(); row++) {
+            final int rowIndex = row < firstIndex ? row : row + additionalRows;
+            for (int column = 0; column < this.getNumberOfColumns(); column++) {
+                coefficients[rowIndex][column] = this.getCoefficient(column, row);
+            }
+        }
+        for (int rowIndex = firstIndex; rowIndex < additionalRows + firstIndex; rowIndex++) {
+            final BigFraction[] row = rows.get(rowIndex - firstIndex);
+            for (int column = 0; column < this.getNumberOfColumns(); column++) {
+                coefficients[rowIndex][column] = row[column];
+            }
+        }
+        return new Matrix(coefficients, this.columnPositions, this.separatorIndex);
+    }
+
     @Override
     public boolean isCompound() {
         return false;

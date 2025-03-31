@@ -106,8 +106,10 @@ public enum Flag implements clit.Parameter {
         "v",
         "Variant of the algorithm",
         "Triggers the variant of the given algorithm. The following variants of algorithms are available: \n"
-        + "    -a [avltree|btree|rbtree] -v 0: Generates examples where nodes get inserted and deleted.\n"
-        + "    -a [avltree|btree|rbtree] -v 1: Generates examples where nodes get only inserted.\n"
+            + "    -a [avltree|btree|rbtree] -v 0: Generates examples where nodes get inserted and deleted.\n"
+            + "    -a [avltree|btree|rbtree] -v 1: Generates examples where nodes get only inserted.\n"
+            + "    -a simplex -v 0: Generates examples without integral conditions.\n"
+            + "    -a simplex -v 1: Generates examples with integral conditions.\n"
     ),
 
     WINDOWS("w", "Windows line separators", "Forced use of Windows (true) or Unix (false) line separators.");

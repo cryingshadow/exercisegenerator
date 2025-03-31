@@ -3,44 +3,45 @@ package exercisegenerator.structures.optimization;
 import java.util.*;
 import java.util.stream.*;
 
-public class SimplexSolution {
+import org.apache.commons.math3.fraction.*;
 
-    public final SimplexAnswer answer;
-
-    public final List<SimplexTableau> tableaus;
-
-    public SimplexSolution(final List<SimplexTableau> tableaus, final SimplexAnswer answer) {
-        this.tableaus = tableaus;
-        this.answer = answer;
-    }
+public record SimplexSolution(List<List<SimplexTableau>> branches, SimplexAnswer answer) {
 
     @Override
     public boolean equals(final Object o) {
         if (o instanceof SimplexSolution) {
             final SimplexSolution other = (SimplexSolution)o;
-            return this.answer.equals(other.answer) && this.tableaus.equals(other.tableaus);
+            return this.answer().equals(other.answer()) && this.branches().equals(other.branches());
         }
         return false;
     }
 
-    public double[] getOptimalAssignment() {
-        if (this.answer == SimplexAnswer.SOLVED) {
-
+    public Optional<List<BigFraction>> getOptimalResult() {
+        Optional<List<BigFraction>> bestResult = Optional.empty();
+        for (final List<SimplexTableau> branch : this.branches()) {
+            final Optional<List<BigFraction>> currentResult = branch.getLast().getResult();
+            if (currentResult.isPresent()) {
+                if (bestResult.isEmpty() || bestResult.get().getLast().compareTo(currentResult.get().getLast()) < 0) {
+                    bestResult = currentResult;
+                }
+            }
         }
-        return null;
+        return bestResult;
     }
 
     @Override
     public int hashCode() {
-        return 3 * this.answer.hashCode() + 2 * this.tableaus.hashCode() + 23;
+        return 3 * this.answer().hashCode() + 2 * this.branches().hashCode() + 23;
     }
 
     @Override
     public String toString() {
         return String.format(
             "%s\n\n%s",
-            this.tableaus.stream().map(SimplexTableau::toString).collect(Collectors.joining("\n\n")),
-            this.answer.toString()
+            this.branches().stream()
+            .map(branch -> branch.stream().map(SimplexTableau::toString).collect(Collectors.joining("\n\n")))
+            .collect(Collectors.joining("\n\n----------\n\n")),
+            this.answer().toString()
         );
     }
 
