@@ -5,7 +5,9 @@ import java.util.stream.*;
 
 import org.apache.commons.math3.fraction.*;
 
-public record SimplexSolution(List<List<SimplexTableau>> branches, SimplexAnswer answer) {
+import exercisegenerator.structures.*;
+
+public record SimplexSolution(List<Pair<SimplexProblem, List<SimplexTableau>>> branches, SimplexAnswer answer) {
 
     @Override
     public boolean equals(final Object o) {
@@ -18,8 +20,8 @@ public record SimplexSolution(List<List<SimplexTableau>> branches, SimplexAnswer
 
     public Optional<List<BigFraction>> getOptimalResult() {
         Optional<List<BigFraction>> bestResult = Optional.empty();
-        for (final List<SimplexTableau> branch : this.branches()) {
-            final Optional<List<BigFraction>> currentResult = branch.getLast().getResult();
+        for (final Pair<SimplexProblem, List<SimplexTableau>> branch : this.branches()) {
+            final Optional<List<BigFraction>> currentResult = branch.y.getLast().getResult();
             if (currentResult.isPresent()) {
                 if (bestResult.isEmpty() || bestResult.get().getLast().compareTo(currentResult.get().getLast()) < 0) {
                     bestResult = currentResult;
@@ -39,7 +41,7 @@ public record SimplexSolution(List<List<SimplexTableau>> branches, SimplexAnswer
         return String.format(
             "%s\n\n%s",
             this.branches().stream()
-            .map(branch -> branch.stream().map(SimplexTableau::toString).collect(Collectors.joining("\n\n")))
+            .map(branch -> branch.y.stream().map(SimplexTableau::toString).collect(Collectors.joining("\n\n")))
             .collect(Collectors.joining("\n\n----------\n\n")),
             this.answer().toString()
         );

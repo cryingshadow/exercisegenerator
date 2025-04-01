@@ -123,7 +123,23 @@ public class Matrix implements MatrixTerm {
                 coefficients[row][columnIndex] = column[row];
             }
         }
-        return new Matrix(coefficients, this.columnPositions, this.separatorIndex);
+        final int[] columnPositions = new int[coefficients[0].length];
+        for (int column = 0; column < columnPositions.length; column++) {
+            if (column < firstIndex) {
+                columnPositions[column] =
+                    this.columnPositions[column] < firstIndex ?
+                        this.columnPositions[column] :
+                            this.columnPositions[column] + additionalColumns;
+            } else if (column > firstIndex + additionalColumns) {
+                columnPositions[column] =
+                    this.columnPositions[column - additionalColumns] < firstIndex ?
+                        this.columnPositions[column - additionalColumns] :
+                            this.columnPositions[column - additionalColumns] + additionalColumns;
+            } else {
+                columnPositions[column] = column;
+            }
+        }
+        return new Matrix(coefficients, columnPositions, this.separatorIndex + additionalColumns);
     }
 
     public Matrix insertRowsAtIndex(final List<BigFraction[]> rows, final int firstIndex) {
@@ -212,6 +228,51 @@ public class Matrix implements MatrixTerm {
                 } else {
                     coefficients[row][col] = this.coefficients[row][col];
                 }
+            }
+        }
+        return new Matrix(coefficients, this.columnPositions, this.separatorIndex);
+    }
+
+    public Matrix removeColumnsFromIndex(final int numberOfColumns, final int firstIndex) {
+        final BigFraction[][] coefficients =
+            new BigFraction[this.getNumberOfRows()][this.getNumberOfColumns() - numberOfColumns];
+        for (int column = 0; column < coefficients[0].length; column++) {
+            final int columnIndex = column < firstIndex ? column : column + numberOfColumns;
+            for (int row = 0; row < this.getNumberOfRows(); row++) {
+                coefficients[row][column] = this.getCoefficient(columnIndex, row);
+            }
+        }
+        final int newSeparatorIndex =
+            this.separatorIndex - numberOfColumns + Math.max(0, firstIndex + numberOfColumns - this.separatorIndex);
+        final int[] columnPositions = new int[newSeparatorIndex];
+        final List<Integer> removedPositions = new LinkedList<Integer>();
+        for (int index = firstIndex; index < firstIndex + numberOfColumns; index++) {
+            removedPositions.add(this.columnPositions[index]);
+        }
+        for (int column = 0; column < columnPositions.length; column++) {
+            if (column < firstIndex) {
+                columnPositions[column] = this.columnPositions[column];
+            } else {
+                columnPositions[column] = this.columnPositions[column + numberOfColumns];
+            }
+            int reduce = 0;
+            for (final Integer removed : removedPositions) {
+                if (removed <= columnPositions[column]) {
+                    reduce++;
+                }
+            }
+            columnPositions[column] -= reduce;
+        }
+        return new Matrix(coefficients, columnPositions, this.separatorIndex - numberOfColumns);
+    }
+
+    public Matrix removeRowsFromIndex(final int numberOfRows, final int firstIndex) {
+        final BigFraction[][] coefficients =
+            new BigFraction[this.getNumberOfRows() - numberOfRows][this.getNumberOfColumns()];
+        for (int row = 0; row < coefficients.length; row++) {
+            final int rowIndex = row < firstIndex ? row : row + numberOfRows;
+            for (int column = 0; column < this.getNumberOfColumns(); column++) {
+                coefficients[row][column] = this.getCoefficient(column, rowIndex);
             }
         }
         return new Matrix(coefficients, this.columnPositions, this.separatorIndex);

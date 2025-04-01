@@ -8,6 +8,7 @@ import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.structures.*;
 import exercisegenerator.structures.algebra.*;
 import exercisegenerator.structures.optimization.*;
 
@@ -176,112 +177,168 @@ public class OptimizationAlgorithmsTest {
         final BigFraction[] target1 = new BigFraction[] {new BigFraction(2), new BigFraction(3)};
         final BigFraction[] target2 = new BigFraction[] {new BigFraction(1), new BigFraction(1)};
         final BigFraction[] target3 = new BigFraction[] {new BigFraction(1), new BigFraction(2), new BigFraction(3)};
+        final SimplexProblem problem1 =
+            new SimplexProblem(
+                target1,
+                new Matrix(
+                    new BigFraction[][] {
+                        {new BigFraction(1),new BigFraction(0),new BigFraction(18,5)},
+                        {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
+                        {new BigFraction(1),new BigFraction(1),new BigFraction(4)},
+                        {new BigFraction(2),new BigFraction(1),new BigFraction(15,2)},
+                        {new BigFraction(0),new BigFraction(1),new BigFraction(2)}
+                    },
+                    2
+                ),
+                List.of()
+            );
+        final SimplexProblem problem2 =
+            new SimplexProblem(
+                target2,
+                new Matrix(
+                    new BigFraction[][] {
+                        {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
+                        {new BigFraction(-1),new BigFraction(-1),new BigFraction(-2)},
+                        {new BigFraction(2),new BigFraction(1),new BigFraction(7)}
+                    },
+                    2
+                ),
+                List.of()
+            );
+        final SimplexProblem problem3 =
+            new SimplexProblem(
+                target2,
+                new Matrix(
+                    new BigFraction[][] {
+                        {new BigFraction(-2),new BigFraction(1),new BigFraction(1)},
+                        {new BigFraction(1),new BigFraction(-2),new BigFraction(1)}
+                    },
+                    2
+                ),
+                List.of()
+            );
+        final SimplexProblem problem4 =
+            new SimplexProblem(
+                target2,
+                new Matrix(
+                    new BigFraction[][] {
+                        {new BigFraction(1),new BigFraction(-1),new BigFraction(-1)},
+                        {new BigFraction(-1),new BigFraction(2),new BigFraction(-1)}
+                    },
+                    2
+                ),
+                List.of()
+            );
+        final SimplexProblem problem5 =
+            new SimplexProblem(
+                target3,
+                new Matrix(
+                    new BigFraction[][] {
+                        {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(3)},
+                        {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(4)},
+                        {new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(5)},
+                        {new BigFraction(2),new BigFraction(1),new BigFraction(3),new BigFraction(10)}
+                    },
+                    3
+                ),
+                List.of(0,1,2)
+            );
         return new Object[][] {
             {
-                new SimplexProblem(
-                    target1,
-                    new Matrix(
-                        new BigFraction[][] {
-                            {new BigFraction(1),new BigFraction(0),new BigFraction(18,5)},
-                            {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
-                            {new BigFraction(1),new BigFraction(1),new BigFraction(4)},
-                            {new BigFraction(2),new BigFraction(1),new BigFraction(15,2)},
-                            {new BigFraction(0),new BigFraction(1),new BigFraction(2)}
-                        },
-                        2
-                    ),
-                    List.of()
-                ),
+                problem1,
                 new SimplexSolution(
                     List.of(
-                        List.of(
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target1,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
-                                            {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
-                                            {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
-                                            {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(15,2)},
-                                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                            {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                        },
-                                        7
+                        new Pair<SimplexProblem, List<SimplexTableau>>(
+                            problem1,
+                            List.of(
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target1,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
+                                                {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
+                                                {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
+                                                {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(15,2)},
+                                                {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                                {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            7
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
+                                    new int[] {2,3,4,5,6},
+                                    new BigFraction[] {null,new BigFraction(5,2),new BigFraction(4),new BigFraction(15,2),new BigFraction(2)},
+                                    4,
+                                    1
                                 ),
-                                new int[] {2,3,4,5,6},
-                                new BigFraction[] {null,new BigFraction(5,2),new BigFraction(4),new BigFraction(15,2),new BigFraction(2)},
-                                4,
-                                1
-                            ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target1,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
-                                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
-                                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(2)},
-                                            {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(11,2)},
-                                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
-                                            {new BigFraction(0),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3),new BigFraction(6)},
-                                            {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-3),new BigFraction(0)}
-                                        },
-                                        7
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target1,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(18,5)},
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(2)},
+                                                {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(11,2)},
+                                                {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
+                                                {new BigFraction(0),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3),new BigFraction(6)},
+                                                {new BigFraction(2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-3),new BigFraction(0)}
+                                            },
+                                            7
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
+                                    new int[] {2,3,4,5,1},
+                                    new BigFraction[] {new BigFraction(18,5),new BigFraction(1),new BigFraction(2),new BigFraction(11,4),null},
+                                    1,
+                                    0
                                 ),
-                                new int[] {2,3,4,5,1},
-                                new BigFraction[] {new BigFraction(18,5),new BigFraction(1),new BigFraction(2),new BigFraction(11,4),null},
-                                1,
-                                0
-                            ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target1,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(13,5)},
-                                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction( 3),new BigFraction(7,2)},
-                                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(2)},
-                                            {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(8)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0)}
-                                        },
-                                        7
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target1,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(13,5)},
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(1)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction( 3),new BigFraction(7,2)},
+                                                {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(2)},
+                                                {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(8)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0)}
+                                            },
+                                            7
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
+                                    new int[] {2,0,4,5,1},
+                                    new BigFraction[] {new BigFraction(13,10),null,new BigFraction(1),new BigFraction(7,6),new BigFraction(2)},
+                                    2,
+                                    6
                                 ),
-                                new int[] {2,0,4,5,1},
-                                new BigFraction[] {new BigFraction(13,10),null,new BigFraction(1),new BigFraction(7,6),new BigFraction(2)},
-                                2,
-                                6
-                            ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target1,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction(3,5)},
-                                            {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(-3),new BigFraction(1),new BigFraction(0),new BigFraction(1,2)},
-                                            {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(1)},
-                                            {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(9)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                        },
-                                        7
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target1,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(0),new BigFraction(3,5)},
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(-3),new BigFraction(1),new BigFraction(0),new BigFraction(1,2)},
+                                                {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(1)},
+                                                {new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(9)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            7
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
-                                ),
-                                new int[] {2,0,6,5,1},
-                                null,
-                                -1,
-                                -1
+                                    new int[] {2,0,6,5,1},
+                                    null,
+                                    -1,
+                                    -1
+                                )
                             )
                         )
                     ),
@@ -289,80 +346,72 @@ public class OptimizationAlgorithmsTest {
                 )
             },
             {
-                new SimplexProblem(
-                    target2,
-                    new Matrix(
-                        new BigFraction[][] {
-                            {new BigFraction(1),new BigFraction(2),new BigFraction(5)},
-                            {new BigFraction(-1),new BigFraction(-1),new BigFraction(-2)},
-                            {new BigFraction(2),new BigFraction(1),new BigFraction(7)}
-                        },
-                        2
-                    ),
-                    List.of()
-                ),
+                problem2,
                 new SimplexSolution(
                     List.of(
-                        List.of(
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target2,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(1),new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
-                                            {new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-2)},
-                                            {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(7)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                            {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                        },
-                                        5
+                        new Pair<SimplexProblem, List<SimplexTableau>>(
+                            problem2,
+                            List.of(
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target2,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(1),new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
+                                                {new BigFraction(-1),new BigFraction(-1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-2)},
+                                                {new BigFraction(2),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(7)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                                {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            5
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
+                                    new int[] {2,3,4},
+                                    new BigFraction[] {new BigFraction(5),null,new BigFraction(7,2)},
+                                    2,
+                                    0
                                 ),
-                                new int[] {2,3,4},
-                                new BigFraction[] {new BigFraction(5),null,new BigFraction(7,2)},
-                                2,
-                                0
-                            ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target2,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(0),new BigFraction(3,2),new BigFraction(1),new BigFraction(0),new BigFraction(-1,2),new BigFraction(3,2)},
-                                            {new BigFraction(0),new BigFraction(-1,2),new BigFraction(0),new BigFraction(1),new BigFraction(1,2),new BigFraction(3,2)},
-                                            {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
-                                            {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
-                                            {new BigFraction(0),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(-1,2),new BigFraction(0)}
-                                        },
-                                        5
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target2,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(0),new BigFraction(3,2),new BigFraction(1),new BigFraction(0),new BigFraction(-1,2),new BigFraction(3,2)},
+                                                {new BigFraction(0),new BigFraction(-1,2),new BigFraction(0),new BigFraction(1),new BigFraction(1,2),new BigFraction(3,2)},
+                                                {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
+                                                {new BigFraction(1),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(1,2),new BigFraction(7,2)},
+                                                {new BigFraction(0),new BigFraction(1,2),new BigFraction(0),new BigFraction(0),new BigFraction(-1,2),new BigFraction(0)}
+                                            },
+                                            5
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
+                                    new int[] {2,3,0},
+                                    new BigFraction[] {new BigFraction(1),null,new BigFraction(7)},
+                                    0,
+                                    1
                                 ),
-                                new int[] {2,3,0},
-                                new BigFraction[] {new BigFraction(1),null,new BigFraction(7)},
-                                0,
-                                1
-                            ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target2,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(0),new BigFraction(1),new BigFraction(2,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(1)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(1,3),new BigFraction(1),new BigFraction(1,3),new BigFraction(2)},
-                                            {new BigFraction(1),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(2,3),new BigFraction(3)},
-                                            {new BigFraction(1),new BigFraction(1),new BigFraction(1,3),new BigFraction(0),new BigFraction(1,3),new BigFraction(4)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0)}
-                                        },
-                                        5
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target2,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(0),new BigFraction(1),new BigFraction(2,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(1)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(1,3),new BigFraction(1),new BigFraction(1,3),new BigFraction(2)},
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(2,3),new BigFraction(3)},
+                                                {new BigFraction(1),new BigFraction(1),new BigFraction(1,3),new BigFraction(0),new BigFraction(1,3),new BigFraction(4)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0),new BigFraction(-1,3),new BigFraction(0)}
+                                            },
+                                            5
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
-                                ),
-                                new int[] {1,3,0},
-                                null,
-                                -1,
-                                -1
+                                    new int[] {1,3,0},
+                                    null,
+                                    -1,
+                                    -1
+                                )
                             )
                         )
                     ),
@@ -370,57 +419,50 @@ public class OptimizationAlgorithmsTest {
                 )
             },
             {
-                new SimplexProblem(
-                    target2,
-                    new Matrix(
-                        new BigFraction[][] {
-                            {new BigFraction(-2),new BigFraction(1),new BigFraction(1)},
-                            {new BigFraction(1),new BigFraction(-2),new BigFraction(1)}
-                        },
-                        2
-                    ),
-                    List.of()
-                ),
+                problem3,
                 new SimplexSolution(
                     List.of(
-                        List.of(
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target2,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(-2),new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction(1)},
-                                            {new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
-                                            {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                            {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                        },
-                                        4
+                        new Pair<SimplexProblem, List<SimplexTableau>>(
+                            problem3,
+                            List.of(
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target2,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(-2),new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction(1)},
+                                                {new BigFraction( 1),new BigFraction(-2),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
+                                                {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                                {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            4
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
+                                    new int[] {2,3},
+                                    new BigFraction[] {null,new BigFraction(1)},
+                                    1,
+                                    0
                                 ),
-                                new int[] {2,3},
-                                new BigFraction[] {null,new BigFraction(1)},
-                                1,
-                                0
-                            ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target2,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(0),new BigFraction(-3),new BigFraction(1),new BigFraction( 2),new BigFraction(3)},
-                                            {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
-                                            {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
-                                            {new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(-1),new BigFraction(0)}
-                                        },
-                                        4
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target2,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(0),new BigFraction(-3),new BigFraction(1),new BigFraction( 2),new BigFraction(3)},
+                                                {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                                {new BigFraction(1),new BigFraction(-2),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                                {new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(-1),new BigFraction(0)}
+                                            },
+                                            4
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
-                                ),
-                                new int[] {2,0},
-                                new BigFraction[] {null,null},
-                                -1,
-                                1
+                                    new int[] {2,0},
+                                    new BigFraction[] {null,null},
+                                    -1,
+                                    1
+                                )
                             )
                         )
                     ),
@@ -428,57 +470,50 @@ public class OptimizationAlgorithmsTest {
                 )
             },
             {
-                new SimplexProblem(
-                    target2,
-                    new Matrix(
-                        new BigFraction[][] {
-                            {new BigFraction(1),new BigFraction(-1),new BigFraction(-1)},
-                            {new BigFraction(-1),new BigFraction(2),new BigFraction(-1)}
-                        },
-                        2
-                    ),
-                    List.of()
-                ),
+                problem4,
                 new SimplexSolution(
                     List.of(
-                        List.of(
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target2,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction( 1),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-1)},
-                                            {new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(1),new BigFraction(-1)},
-                                            {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                            {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                        },
-                                        4
+                        new Pair<SimplexProblem, List<SimplexTableau>>(
+                            problem4,
+                            List.of(
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target2,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction( 1),new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-1)},
+                                                {new BigFraction(-1),new BigFraction( 2),new BigFraction(0),new BigFraction(1),new BigFraction(-1)},
+                                                {new BigFraction( 0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                                {new BigFraction( 1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            4
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
+                                    new int[] {2,3},
+                                    new BigFraction[] {null,null},
+                                    -1,
+                                    1
                                 ),
-                                new int[] {2,3},
-                                new BigFraction[] {null,null},
-                                -1,
-                                1
-                            ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target2,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
-                                            {new BigFraction( 1),new BigFraction(0),new BigFraction( 2),new BigFraction(1),new BigFraction(-3)},
-                                            {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
-                                            {new BigFraction( 2),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0)}
-                                        },
-                                        4
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target2,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
+                                                {new BigFraction( 1),new BigFraction(0),new BigFraction( 2),new BigFraction(1),new BigFraction(-3)},
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
+                                                {new BigFraction( 2),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            4
+                                        ),
+                                        List.of()
                                     ),
-                                    List.of()
-                                ),
-                                new int[] {1,3},
-                                null,
-                                -1,
-                                -1
+                                    new int[] {1,3},
+                                    null,
+                                    -1,
+                                    -1
+                                )
                             )
                         )
                     ),
@@ -486,105 +521,215 @@ public class OptimizationAlgorithmsTest {
                 )
             },
             {
-                new SimplexProblem(
-                    target3,
-                    new Matrix(
-                        new BigFraction[][] {
-                            {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(3)},
-                            {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(4)},
-                            {new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(5)},
-                            {new BigFraction(2),new BigFraction(1),new BigFraction(3),new BigFraction(10)}
-                        },
-                        3
-                    ),
-                    List.of(0,1,2)
-                ),
+                problem5,
                 new SimplexSolution(
                     List.of(
-                        List.of(
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target3,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
-                                            {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
-                                            {new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(5)},
-                                            {new BigFraction(2),new BigFraction(1),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(10)},
-                                            {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
-                                            {new BigFraction(1),new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                        },
-                                        7
-                                    ),
-                                    List.of(0,1,2)
+                        new Pair<SimplexProblem, List<SimplexTableau>>(
+                            new SimplexProblem(
+                                target3,
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(3)},
+                                        {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(4)},
+                                        {new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(5)},
+                                        {new BigFraction(2),new BigFraction(1),new BigFraction(3),new BigFraction(10)},
+                                        {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(2)}
+                                    },
+                                    3
                                 ),
-                                new int[] {3,4,5,6},
-                                new BigFraction[] {new BigFraction(3),null,new BigFraction(5),new BigFraction(10,3)},
-                                0,
-                                2
+                                List.of(0,1,2)
                             ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target3,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
-                                            {new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
-                                            {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(2)},
-                                            {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
-                                            {new BigFraction( 3),new BigFraction(0),new BigFraction(3),new BigFraction( 3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(9)},
-                                            {new BigFraction(-2),new BigFraction(2),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
-                                        },
-                                        7
+                            List.of(
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target3,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                                                {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
+                                                {new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(5)},
+                                                {new BigFraction(2),new BigFraction(1),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(10)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                                {new BigFraction(1),new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            7
+                                        ),
+                                        List.of(0,1,2)
                                     ),
-                                    List.of(0,1,2)
+                                    new int[] {3,4,5,6},
+                                    new BigFraction[] {new BigFraction(3),null,new BigFraction(5),new BigFraction(10,3)},
+                                    0,
+                                    2
                                 ),
-                                new int[] {2,4,5,6},
-                                new BigFraction[] {null,new BigFraction(4),new BigFraction(2),new BigFraction(1)},
-                                3,
-                                1
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target3,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                                                {new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(2)},
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(1)},
+                                                {new BigFraction( 3),new BigFraction(0),new BigFraction(3),new BigFraction( 3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(9)},
+                                                {new BigFraction(-2),new BigFraction(2),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            7
+                                        ),
+                                        List.of(0,1,2)
+                                    ),
+                                    new int[] {2,4,5,6},
+                                    new BigFraction[] {null,new BigFraction(4),new BigFraction(2),new BigFraction(1)},
+                                    3,
+                                    1
+                                ),
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target3,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction( 0),new BigFraction(3)},
+                                                {new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction( 3),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(3)},
+                                                {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(1)},
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
+                                                {new BigFraction( 1),new BigFraction(2),new BigFraction(3),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(11)},
+                                                {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0)}
+                                            },
+                                            7
+                                        ),
+                                        List.of(0,1,2)
+                                    ),
+                                    new int[] {2,4,5,1},
+                                    new BigFraction[] {new BigFraction(3),new BigFraction(1),new BigFraction(1,2),null},
+                                    2,
+                                    3
+                                ),
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target3,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-1,2),new BigFraction( 1,2),new BigFraction(5,2)},
+                                                {new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-3,2),new BigFraction( 1,2),new BigFraction(3,2)},
+                                                {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 1,2),new BigFraction(-1,2),new BigFraction(1,2)},
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction( 3,2),new BigFraction(-1,2),new BigFraction(5,2)},
+                                                {new BigFraction( 1),new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction( 3,2),new BigFraction( 1,2),new BigFraction(25,2)},
+                                                {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-3,2),new BigFraction(-1,2),new BigFraction(0)}
+                                            },
+                                            7
+                                        ),
+                                        List.of(0,1,2)
+                                    ),
+                                    new int[] {2,4,3,1},
+                                    null,
+                                    -1,
+                                    -1
+                                ),
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target3,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(1),new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                                                {new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
+                                                {new BigFraction(0),new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
+                                                {new BigFraction(2),new BigFraction(1),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(10)},
+                                                {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
+                                                {new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                                {new BigFraction(1),new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            8
+                                        ),
+                                        List.of(0,1,2)
+                                    ),
+                                    new int[] {3,4,5,6,7},
+                                    new BigFraction[] {new BigFraction(3),null,new BigFraction(5),new BigFraction(10,3),null},
+                                    0,
+                                    2
+                                ),
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target3,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                                                {new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(2)},
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(1)},
+                                                {new BigFraction( 0),new BigFraction(1),new BigFraction(0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(2)},
+                                                {new BigFraction( 3),new BigFraction(0),new BigFraction(3),new BigFraction( 3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(9)},
+                                                {new BigFraction(-2),new BigFraction(2),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            8
+                                        ),
+                                        List.of(0,1,2)
+                                    ),
+                                    new int[] {2,4,5,6,7},
+                                    new BigFraction[] {null,new BigFraction(4),new BigFraction(2),new BigFraction(1),new BigFraction(2)},
+                                    3,
+                                    1
+                                ),
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target3,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction( 0),new BigFraction(0),new BigFraction(3)},
+                                                {new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction( 3),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(0),new BigFraction(3)},
+                                                {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(0),new BigFraction(1)},
+                                                {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(0),new BigFraction(1)},
+                                                {new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(0),new BigFraction(-1),new BigFraction(1),new BigFraction(1)},
+                                                {new BigFraction( 1),new BigFraction(2),new BigFraction(3),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(11)},
+                                                {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            8
+                                        ),
+                                        List.of(0,1,2)
+                                    ),
+                                    new int[] {2,4,5,1,7},
+                                    new BigFraction[] {new BigFraction(3),new BigFraction(1),new BigFraction(1,2),null,new BigFraction(1,3)},
+                                    4,
+                                    3
+                                )
+                            )
+                        ),
+                        new Pair<SimplexProblem, List<SimplexTableau>>(
+                            new SimplexProblem(
+                                target3,
+                                new Matrix(
+                                    new BigFraction[][] {
+                                        {new BigFraction(1),new BigFraction( 0),new BigFraction(1),new BigFraction(3)},
+                                        {new BigFraction(1),new BigFraction( 1),new BigFraction(0),new BigFraction(4)},
+                                        {new BigFraction(0),new BigFraction( 1),new BigFraction(1),new BigFraction(5)},
+                                        {new BigFraction(2),new BigFraction( 1),new BigFraction(3),new BigFraction(10)},
+                                        {new BigFraction(0),new BigFraction(-1),new BigFraction(0),new BigFraction(-3)}
+                                    },
+                                    3
+                                ),
+                                List.of(0,1,2)
                             ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target3,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction( 0),new BigFraction(3)},
-                                            {new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction( 3),new BigFraction(1),new BigFraction(0),new BigFraction(-1),new BigFraction(3)},
-                                            {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(0),new BigFraction(1),new BigFraction(-1),new BigFraction(1)},
-                                            {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction( 1),new BigFraction(1)},
-                                            {new BigFraction( 1),new BigFraction(2),new BigFraction(3),new BigFraction(-3),new BigFraction(0),new BigFraction(0),new BigFraction( 2),new BigFraction(11)},
-                                            {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction( 3),new BigFraction(0),new BigFraction(0),new BigFraction(-2),new BigFraction(0)}
-                                        },
-                                        7
+                            List.of(
+                                new SimplexTableau(
+                                    new SimplexProblem(
+                                        target3,
+                                        new Matrix(
+                                            new BigFraction[][] {
+                                                {new BigFraction(1),new BigFraction( 0),new BigFraction(1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(3)},
+                                                {new BigFraction(1),new BigFraction( 1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(4)},
+                                                {new BigFraction(0),new BigFraction( 1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(5)},
+                                                {new BigFraction(2),new BigFraction( 1),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(10)},
+                                                {new BigFraction(0),new BigFraction(-1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-3)},
+                                                {new BigFraction(0),new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)},
+                                                {new BigFraction(1),new BigFraction( 2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0)}
+                                            },
+                                            8
+                                        ),
+                                        List.of(0,1,2)
                                     ),
-                                    List.of(0,1,2)
-                                ),
-                                new int[] {2,4,5,1},
-                                new BigFraction[] {new BigFraction(3),new BigFraction(1),new BigFraction(1,2),null},
-                                2,
-                                3
-                            ),
-                            new SimplexTableau(
-                                new SimplexProblem(
-                                    target3,
-                                    new Matrix(
-                                        new BigFraction[][] {
-                                            {new BigFraction( 1),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(-1,2),new BigFraction( 1,2),new BigFraction(5,2)},
-                                            {new BigFraction( 2),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(-3,2),new BigFraction( 1,2),new BigFraction(3,2)},
-                                            {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction( 1,2),new BigFraction(-1,2),new BigFraction(1,2)},
-                                            {new BigFraction(-1),new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction( 3,2),new BigFraction(-1,2),new BigFraction(5,2)},
-                                            {new BigFraction( 1),new BigFraction(2),new BigFraction(3),new BigFraction(0),new BigFraction(0),new BigFraction( 3,2),new BigFraction( 1,2),new BigFraction(25,2)},
-                                            {new BigFraction( 0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(0),new BigFraction(-3,2),new BigFraction(-1,2),new BigFraction(0)}
-                                        },
-                                        7
-                                    ),
-                                    List.of(0,1,2)
-                                ),
-                                new int[] {2,4,3,1},
-                                null,
-                                -1,
-                                -1
+                                    new int[] {3,4,5,6,7},
+                                    new BigFraction[] {new BigFraction(3),null,new BigFraction(5),new BigFraction(10,3)},
+                                    0,
+                                    2
+                                )
                             )
                         )
                     ),

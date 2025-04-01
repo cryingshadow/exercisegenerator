@@ -504,24 +504,25 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
 
     @Override
     public SimplexSolution apply(final SimplexProblem problem) {
-        final List<List<SimplexTableau>> branches = new LinkedList<List<SimplexTableau>>();
+        final List<Pair<SimplexProblem, List<SimplexTableau>>> branches =
+            new LinkedList<Pair<SimplexProblem, List<SimplexTableau>>>();
         SimplexTableau tableau = SimplexAlgorithm.simplexInitializeTableau(problem);
         final List<SimplexTableau> firstBranch = new LinkedList<SimplexTableau>();
         firstBranch.add(tableau);
-        branches.add(firstBranch);
+        branches.add(new Pair<SimplexProblem, List<SimplexTableau>>(problem, firstBranch));
         int branchIndex = 0;
         while (branchIndex < branches.size()) {
-            final List<SimplexTableau> branch = branches.get(branchIndex);
-            tableau = branch.getLast();
+            final Pair<SimplexProblem, List<SimplexTableau>> branch = branches.get(branchIndex);
+            tableau = branch.y.getLast();
             SimplexAnswer answer = SimplexAlgorithm.simplexComputeAnswer(tableau);
             while (answer == SimplexAnswer.INCOMPLETE) {
                 tableau = SimplexAlgorithm.simplexStep(tableau);
-                branch.add(tableau);
+                branch.y.add(tableau);
                 answer = SimplexAlgorithm.simplexComputeAnswer(tableau);
             }
             final Optional<Pair<Integer, BigFraction>> violation = tableau.getIntegralViolation();
             if (violation.isPresent() && (answer == SimplexAnswer.SOLVED || answer == SimplexAnswer.UNBOUNDED)) {
-                this.branchAndCut(tableau, violation.get(), branch, branches);
+                this.branchAndCut(tableau, violation.get(), branch, branchIndex, branches);
             } else {
                 branchIndex++;
             }
@@ -574,14 +575,14 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             writer.write("{\\renewcommand{\\arraystretch}{1.5}");
             Main.newLine(writer);
             boolean first = true;
-            for (final List<SimplexTableau> branch : solution.branches()) {
+            for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
                 if (first) {
                     first = false;
                 } else {
                     Main.newLine(writer);
                     writer.write("Neuer Zweig:\\\\[2ex]");
                 }
-                for (final SimplexTableau tableau : branch) {
+                for (final SimplexTableau tableau : branch.y) {
                     Main.newLine(writer);
                     LaTeXUtils.printTable(
                         SimplexAlgorithm.toSimplexTableau(tableau, false),
@@ -619,14 +620,14 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         writer.write("{\\renewcommand{\\arraystretch}{1.5}");
         Main.newLine(writer);
         boolean first = true;
-        for (final List<SimplexTableau> branch : solution.branches()) {
+        for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
             if (first) {
                 first = false;
             } else {
                 Main.newLine(writer);
                 writer.write("Neuer Zweig:\\\\[2ex]");
             }
-            for (final SimplexTableau tableau : branch) {
+            for (final SimplexTableau tableau : branch.y) {
                 Main.newLine(writer);
                 LaTeXUtils.printTable(
                     SimplexAlgorithm.toSimplexTableau(tableau, true),
@@ -702,87 +703,32 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     private void branchAndCut(
         final SimplexTableau tableau,
         final Pair<Integer, BigFraction> violation,
-        final List<SimplexTableau> branch,
-        final List<List<SimplexTableau>> branches
+        final Pair<SimplexProblem, List<SimplexTableau>> branch,
+        final int branchIndex,
+        final List<Pair<SimplexProblem, List<SimplexTableau>>> branches
     ) {
-        //need to start all over
         final SimplexProblem problem = tableau.problem();
-        final Matrix matrix = problem.conditions();
         final List<BigFraction[]> cuttingHyperPlanes = this.computeCuttingHyperPlanes(problem);
         final Pair<List<BigFraction[]>, List<BigFraction[]>> branchRows =
-            this.branchAndBound(cuttingHyperPlanes, violation, matrix.getNumberOfColumns());
-        final int firstNewRowIndex = matrix.getNumberOfRows() - 2;
-        final int additionalRows = branchRows.x.size();
-        final List<BigFraction[]> newBaseColumns =
-            this.branchAndCutComputeNewBaseColmuns(matrix.getNumberOfRows(), additionalRows, firstNewRowIndex);
-        final Matrix smaller =
-            matrix.insertRowsAtIndex(branchRows.x, firstNewRowIndex)
-            .insertColumnsAtIndex(newBaseColumns, firstNewRowIndex + problem.target().length);
-        final Matrix bigger =
-            matrix.insertRowsAtIndex(branchRows.y, firstNewRowIndex)
-            .insertColumnsAtIndex(newBaseColumns, firstNewRowIndex + problem.target().length);
-        final int[] extendedBaseVariables =
-            this.branchAndCutExtendBase(tableau.baseVariables(), newBaseColumns.size(), problem.target().length);
-        final int pivotColumnSmaller = SimplexAlgorithm.simplexSelectPivotColumn(smaller);
-        final BigFraction[] quotientsSmaller = SimplexAlgorithm.simplexComputeQuotients(smaller, pivotColumnSmaller);
-        final int pivotColumnBigger = SimplexAlgorithm.simplexSelectPivotColumn(bigger);
-        final BigFraction[] quotientsBigger = SimplexAlgorithm.simplexComputeQuotients(bigger, pivotColumnBigger);
-        branch.add(
-            new SimplexTableau(
-                new SimplexProblem(
-                    problem.target(),
-                    smaller,
-                    problem.integral()
-                ),
-                extendedBaseVariables,
-                quotientsSmaller,
-                SimplexAlgorithm.simplexSelectPivotRow(quotientsSmaller),
-                pivotColumnSmaller
-            )
-        );
+            this.branchAndBound(cuttingHyperPlanes, violation, problem.target().length + 1);
+        final Matrix originalMatrix = branch.x.conditions();
+        final SimplexProblem smaller =
+            new SimplexProblem(
+                problem.target(),
+                originalMatrix.insertRowsAtIndex(branchRows.x, originalMatrix.getNumberOfRows()),
+                problem.integral()
+            );
+        final SimplexProblem bigger =
+            new SimplexProblem(
+                problem.target(),
+                originalMatrix.insertRowsAtIndex(branchRows.y, originalMatrix.getNumberOfRows()),
+                problem.integral()
+            );
+        branch.y.add(SimplexAlgorithm.simplexInitializeTableau(smaller));
         final List<SimplexTableau> nextBranch = new LinkedList<SimplexTableau>();
-        nextBranch.add(
-            new SimplexTableau(
-                new SimplexProblem(
-                    problem.target(),
-                    bigger,
-                    problem.integral()
-                ),
-                extendedBaseVariables,
-                quotientsBigger,
-                SimplexAlgorithm.simplexSelectPivotRow(quotientsBigger),
-                pivotColumnBigger
-            )
-        );
-        branches.add(nextBranch);
-    }
-
-    private List<BigFraction[]> branchAndCutComputeNewBaseColmuns(
-        final int numberOfRows,
-        final int additionalRows,
-        final int firstNewRowIndex
-    ) {
-        final ArrayList<BigFraction[]> newBaseColumns = new ArrayList<BigFraction[]>();
-        for (int i = 0; i < additionalRows; i++) {
-            final BigFraction[] baseColumn = new BigFraction[numberOfRows + additionalRows];
-            Arrays.fill(baseColumn, BigFraction.ZERO);
-            baseColumn[firstNewRowIndex + i] = BigFraction.ONE;
-            newBaseColumns.add(baseColumn);
-        }
-        return newBaseColumns;
-    }
-
-    private int[] branchAndCutExtendBase(
-        final int[] baseVariables,
-        final int numberOfAdditionalBaseVariables,
-        final int numberOfTargetVariables
-    ) {
-        final int[] extendedBaseVariables = new int[baseVariables.length + numberOfAdditionalBaseVariables];
-        System.arraycopy(baseVariables, 0, extendedBaseVariables, 0, baseVariables.length);
-        for (int i = baseVariables.length; i < extendedBaseVariables.length; i++) {
-            extendedBaseVariables[i] = i + numberOfTargetVariables;
-        }
-        return extendedBaseVariables;
+        nextBranch.add(SimplexAlgorithm.simplexInitializeTableau(bigger));
+        branches.set(branchIndex, new Pair<SimplexProblem, List<SimplexTableau>>(smaller, branch.y));
+        branches.add(new Pair<SimplexProblem, List<SimplexTableau>>(bigger, nextBranch));
     }
 
     private List<BigFraction[]> computeCuttingHyperPlanes(final SimplexProblem problem) {
@@ -809,10 +755,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         }
     }
 
-    private SimplexAnswer simplexComputeAnswer(final List<List<SimplexTableau>> branches) {
+    private SimplexAnswer simplexComputeAnswer(final List<Pair<SimplexProblem, List<SimplexTableau>>> branches) {
         SimplexAnswer answer = SimplexAnswer.UNSOLVABLE;
-        for (final List<SimplexTableau> branch : branches) {
-            answer = this.simplexBestAnswer(answer, SimplexAlgorithm.simplexComputeAnswer(branch.getLast()));
+        for (final Pair<SimplexProblem, List<SimplexTableau>> branch : branches) {
+            answer = this.simplexBestAnswer(answer, SimplexAlgorithm.simplexComputeAnswer(branch.y.getLast()));
         }
         return answer;
     }
