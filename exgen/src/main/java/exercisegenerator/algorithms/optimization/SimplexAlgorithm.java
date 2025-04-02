@@ -75,6 +75,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return target;
     }
 
+    private static boolean isBig(final SimplexTableau tableau) {
+        return tableau.problem().conditions().getNumberOfColumns() > 8;
+    }
+
     private static List<Integer> parseIntegralConditions(final String line) {
         final String[] numbers = line.split(",");
         final List<Integer> result = new LinkedList<Integer>();
@@ -584,6 +588,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 }
                 for (final SimplexTableau tableau : branch.y) {
                     Main.newLine(writer);
+                    final boolean big = SimplexAlgorithm.isBig(tableau);
+                    if (big) {
+                        LaTeXUtils.resizeboxBeginning("0.9\\textwidth", "!", writer);
+                    }
                     LaTeXUtils.printTable(
                         SimplexAlgorithm.toSimplexTableau(tableau, false),
                         Optional.empty(),
@@ -592,6 +600,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                         0,
                         writer
                     );
+                    if (big) {
+                        LaTeXUtils.resizeboxEnd(writer);
+                    }
                 }
             }
             Main.newLine(writer);
@@ -629,6 +640,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             }
             for (final SimplexTableau tableau : branch.y) {
                 Main.newLine(writer);
+                final boolean big = SimplexAlgorithm.isBig(tableau);
+                if (big) {
+                    LaTeXUtils.resizeboxBeginning("0.9\\textwidth", "!", writer);
+                }
                 LaTeXUtils.printTable(
                     SimplexAlgorithm.toSimplexTableau(tableau, true),
                     Optional.empty(),
@@ -637,6 +652,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                     0,
                     writer
                 );
+                if (big) {
+                    LaTeXUtils.resizeboxEnd(writer);
+                }
             }
         }
         Main.newLine(writer);
