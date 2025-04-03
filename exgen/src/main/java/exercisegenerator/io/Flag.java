@@ -59,9 +59,12 @@ public enum Flag implements clit.Parameter {
      */
     INPUT("i", "Input", "Specify the input for an algorithm from the command line."),
 
-    /**
-     * Length used for several purposes. Its use depends on the algorithm.
-     */
+    KEYVALUE(
+        "k",
+        "KeyValue",
+        "Used to specify additional parameters as comma-separated key-value pairs. Its use depends on the chosen algorithm."
+    ),
+
     LENGTH(
         "l",
         "Length",

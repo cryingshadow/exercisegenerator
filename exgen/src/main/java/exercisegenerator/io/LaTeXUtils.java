@@ -88,6 +88,18 @@ public abstract class LaTeXUtils {
         return String.format("\\{%s\\}", elements.map(x -> x.toString()).collect(Collectors.joining(",")));
     }
 
+    public static void printAdjustboxBeginning(final BufferedWriter writer, final String... parameters) throws IOException {
+        writer.write("\\begin{adjustbox}{");
+        writer.write(Arrays.stream(parameters).collect(Collectors.joining(",")));
+        writer.write("}");
+        Main.newLine(writer);
+    }
+
+    public static void printAdjustboxEnd(final BufferedWriter writer) throws IOException {
+        writer.write("\\end{adjustbox}");
+        Main.newLine(writer);
+    }
+
     public static void printArrayStretch(final double stretch, final BufferedWriter writer) throws IOException {
         writer.write("\\renewcommand{\\arraystretch}{" + stretch + "}");
         Main.newLine(writer);
@@ -197,6 +209,8 @@ public abstract class LaTeXUtils {
         writer.write("\\usepackage{seqsplit}");
         Main.newLine(writer);
         writer.write("\\usepackage{multicol}");
+        Main.newLine(writer);
+        writer.write("\\usepackage{adjustbox}");
         Main.newLine(writer);
         writer.write("\\usepackage[output-decimal-marker={,}]{siunitx}");
         Main.newLine(writer);

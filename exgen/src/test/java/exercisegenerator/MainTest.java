@@ -256,6 +256,7 @@ public class MainTest {
                 "\\usepackage{enumitem}",
                 "\\usepackage{seqsplit}",
                 "\\usepackage{multicol}",
+                "\\usepackage{adjustbox}",
                 "\\usepackage[output-decimal-marker={,}]{siunitx}",
                 "",
                 "\\newcolumntype{C}[1]{>{\\centering\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}",

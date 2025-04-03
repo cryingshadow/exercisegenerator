@@ -75,10 +75,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return target;
     }
 
-    private static boolean isBig(final SimplexTableau tableau) {
-        return tableau.problem().conditions().getNumberOfColumns() > 8;
-    }
-
     private static List<Integer> parseIntegralConditions(final String line) {
         final String[] numbers = line.split(",");
         final List<Integer> result = new LinkedList<Integer>();
@@ -88,6 +84,19 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             }
         }
         return result;
+    }
+
+    private static int[] parsePagebreakCounters(final String keyValues, final String key) {
+        final Optional<String> pagebreaks =
+            Arrays.stream(keyValues.split(",")).filter(entry -> entry.startsWith(key)).findAny();
+        if (pagebreaks.isEmpty()) {
+            return new int[] {};
+        }
+        return Arrays.stream(pagebreaks.get().split("=")[1].split("\\|")).mapToInt(Integer::parseInt).toArray();
+    }
+
+    private static int[] parsePagebreakCountersForExercise(final String keyValues) {
+        return SimplexAlgorithm.parsePagebreakCounters(keyValues, "exercisebreaks=");
     }
 
     private static SimplexProblem parseSimplexProblem(
@@ -184,6 +193,23 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         }
         writer.write("[2ex]");
         Main.newLine(writer);
+    }
+
+    private static void printTableau(
+        final SimplexTableau tableau,
+        final boolean withSolution,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=0.9\\textwidth", "center");
+        LaTeXUtils.printTable(
+            SimplexAlgorithm.toSimplexTableau(tableau, withSolution),
+            Optional.empty(),
+            SimplexAlgorithm::simplexTableColumnDefinition,
+            true,
+            0,
+            writer
+        );
+        LaTeXUtils.printAdjustboxEnd(writer);
     }
 
     private static void simplexBaseSwap(
@@ -550,30 +576,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         ).getResult(options);
     }
 
-    private static void printTableau(
-        SimplexTableau tableau,
-        boolean withSolution,
-        BufferedWriter writer
-    ) throws IOException {
-        final boolean big = SimplexAlgorithm.isBig(tableau);
-        if (big) {
-            LaTeXUtils.resizeboxBeginning("0.9\\textwidth", "!", writer);
-        }
-        LaTeXUtils.printMinipageBeginning("\\columnwidth", writer);
-        LaTeXUtils.printTable(
-            SimplexAlgorithm.toSimplexTableau(tableau, withSolution),
-            Optional.empty(),
-            SimplexAlgorithm::simplexTableColumnDefinition,
-            true,
-            0,
-            writer
-        );
-        LaTeXUtils.printMinipageEnd(writer);
-        if (big) {
-            LaTeXUtils.resizeboxEnd(writer);
-        }
-    }
-    
     @Override
     public void printExercise(
         final SimplexProblem problem,
@@ -603,6 +605,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             writer.write("{\\renewcommand{\\arraystretch}{1.5}");
             Main.newLine(writer);
             boolean first = true;
+            final int[] pagebreakCounters = SimplexAlgorithm.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
+            int tableaus = 0;
+            int counterIndex = 0;
             for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
                 if (first) {
                     first = false;
@@ -612,8 +617,15 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 }
                 for (final SimplexTableau tableau : branch.y) {
                     Main.newLine(writer);
-                    LaTeXUtils.printVerticalSpace("0.5ex", writer);
-                    printTableau(tableau, false, writer);
+                    if (counterIndex < pagebreakCounters.length && tableaus >= pagebreakCounters[counterIndex]) {
+                        writer.write("\\newpage");
+                        Main.newLine(writer);
+                        Main.newLine(writer);
+                        tableaus = 0;
+                        counterIndex++;
+                    }
+                    SimplexAlgorithm.printTableau(tableau, false, writer);
+                    tableaus++;
                 }
             }
             Main.newLine(writer);
@@ -642,6 +654,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         writer.write("{\\renewcommand{\\arraystretch}{1.5}");
         Main.newLine(writer);
         boolean first = true;
+        final int[] pagebreakCounters = this.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+        int tableaus = 0;
+        int counterIndex = 0;
         for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
             if (first) {
                 first = false;
@@ -651,8 +666,15 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             }
             for (final SimplexTableau tableau : branch.y) {
                 Main.newLine(writer);
-                LaTeXUtils.printVerticalSpace("0.5ex", writer);
-                printTableau(tableau, true, writer);
+                if (counterIndex < pagebreakCounters.length && tableaus >= pagebreakCounters[counterIndex]) {
+                    writer.write("\\newpage");
+                    Main.newLine(writer);
+                    Main.newLine(writer);
+                    tableaus = 0;
+                    counterIndex++;
+                }
+                SimplexAlgorithm.printTableau(tableau, true, writer);
+                tableaus++;
             }
         }
         Main.newLine(writer);
@@ -751,6 +773,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         // TODO Auto-generated method stub
         final List<BigFraction[]> result = new LinkedList<BigFraction[]>();
         return result;
+    }
+
+    private int[] parsePagebreakCountersForSolution(final String keyValues) {
+        return SimplexAlgorithm.parsePagebreakCounters(keyValues, "solutionbreaks=");
     }
 
     private SimplexAnswer simplexBestAnswer(final SimplexAnswer answer1, final SimplexAnswer answer2) {
