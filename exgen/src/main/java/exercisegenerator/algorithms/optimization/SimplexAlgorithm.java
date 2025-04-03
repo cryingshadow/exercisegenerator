@@ -550,6 +550,30 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         ).getResult(options);
     }
 
+    private static void printTableau(
+        SimplexTableau tableau,
+        boolean withSolution,
+        BufferedWriter writer
+    ) throws IOException {
+        final boolean big = SimplexAlgorithm.isBig(tableau);
+        if (big) {
+            LaTeXUtils.resizeboxBeginning("0.9\\textwidth", "!", writer);
+        }
+        LaTeXUtils.printMinipageBeginning("\\columnwidth", writer);
+        LaTeXUtils.printTable(
+            SimplexAlgorithm.toSimplexTableau(tableau, withSolution),
+            Optional.empty(),
+            SimplexAlgorithm::simplexTableColumnDefinition,
+            true,
+            0,
+            writer
+        );
+        LaTeXUtils.printMinipageEnd(writer);
+        if (big) {
+            LaTeXUtils.resizeboxEnd(writer);
+        }
+    }
+    
     @Override
     public void printExercise(
         final SimplexProblem problem,
@@ -584,25 +608,12 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                     first = false;
                 } else {
                     Main.newLine(writer);
-                    writer.write("Neuer Zweig:\\\\[2ex]");
+                    writer.write("Neuer Zweig:\\\\");
                 }
                 for (final SimplexTableau tableau : branch.y) {
                     Main.newLine(writer);
-                    final boolean big = SimplexAlgorithm.isBig(tableau);
-                    if (big) {
-                        LaTeXUtils.resizeboxBeginning("0.9\\textwidth", "!", writer);
-                    }
-                    LaTeXUtils.printTable(
-                        SimplexAlgorithm.toSimplexTableau(tableau, false),
-                        Optional.empty(),
-                        SimplexAlgorithm::simplexTableColumnDefinition,
-                        true,
-                        0,
-                        writer
-                    );
-                    if (big) {
-                        LaTeXUtils.resizeboxEnd(writer);
-                    }
+                    LaTeXUtils.printVerticalSpace("0.5ex", writer);
+                    printTableau(tableau, false, writer);
                 }
             }
             Main.newLine(writer);
@@ -640,21 +651,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             }
             for (final SimplexTableau tableau : branch.y) {
                 Main.newLine(writer);
-                final boolean big = SimplexAlgorithm.isBig(tableau);
-                if (big) {
-                    LaTeXUtils.resizeboxBeginning("0.9\\textwidth", "!", writer);
-                }
-                LaTeXUtils.printTable(
-                    SimplexAlgorithm.toSimplexTableau(tableau, true),
-                    Optional.empty(),
-                    SimplexAlgorithm::simplexTableColumnDefinition,
-                    true,
-                    0,
-                    writer
-                );
-                if (big) {
-                    LaTeXUtils.resizeboxEnd(writer);
-                }
+                LaTeXUtils.printVerticalSpace("0.5ex", writer);
+                printTableau(tableau, true, writer);
             }
         }
         Main.newLine(writer);

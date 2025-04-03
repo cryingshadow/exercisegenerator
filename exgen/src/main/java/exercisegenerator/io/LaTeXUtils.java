@@ -590,6 +590,13 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
     }
 
+    public static void printVerticalSpace(final String space, final BufferedWriter writer) throws IOException {
+        Main.newLine(writer);
+        writer.write(String.format("\\vspace{%s}", space));
+        Main.newLine(writer);
+        Main.newLine(writer);
+    }
+
     /**
      * Prints a colum of nodes with the contents of the array.
      * @param array The array of values.
