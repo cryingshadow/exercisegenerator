@@ -27,18 +27,7 @@ public record SimplexProblem(BigFraction[] target, Matrix conditions, List<Integ
     @Override
     public String toString() {
         final StringBuilder matrixString = new StringBuilder();
-        for (int row = 0; row < this.conditions().getNumberOfRows(); row++) {
-            boolean first = true;
-            for (int column = 0; column < this.conditions().getNumberOfColumns(); column++) {
-                if (first) {
-                    first = false;
-                } else {
-                    matrixString.append(", ");
-                }
-                matrixString.append(this.conditions().getCoefficient(column, row));
-            }
-            matrixString.append("\n");
-        }
+        matrixString.append(this.conditions().toString());
         if (!this.integral().isEmpty()) {
             matrixString.append(String.format("Integral indices: %s\n", this.integral().toString()));
         }

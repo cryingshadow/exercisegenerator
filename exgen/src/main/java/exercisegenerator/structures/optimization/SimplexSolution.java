@@ -41,8 +41,10 @@ public record SimplexSolution(List<Pair<SimplexProblem, List<SimplexTableau>>> b
         return String.format(
             "%s\n\n%s",
             this.branches().stream()
-            .map(branch -> branch.y.stream().map(SimplexTableau::toString).collect(Collectors.joining("\n\n")))
-            .collect(Collectors.joining("\n\n----------\n\n")),
+            .map(branch ->
+                branch.x.toString()
+                + branch.y.stream().map(SimplexTableau::toString).collect(Collectors.joining("\n\n"))
+            ).collect(Collectors.joining("\n\n----------\n\n")),
             this.answer().toString()
         );
     }

@@ -139,7 +139,11 @@ public class Matrix implements MatrixTerm {
                 columnPositions[column] = column;
             }
         }
-        return new Matrix(coefficients, columnPositions, this.separatorIndex + additionalColumns);
+        return new Matrix(
+            coefficients,
+            columnPositions,
+            firstIndex < this.separatorIndex ? this.separatorIndex + additionalColumns: this.separatorIndex
+        );
     }
 
     public Matrix insertRowsAtIndex(final List<BigFraction[]> rows, final int firstIndex) {

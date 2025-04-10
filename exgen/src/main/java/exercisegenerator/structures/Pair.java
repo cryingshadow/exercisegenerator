@@ -2,33 +2,14 @@ package exercisegenerator.structures;
 
 import java.util.*;
 
-/**
- * A simple pair extending Map.Entry.
- * @param <X> The type of the first component.
- * @param <Y> The type of the second component.
- */
 public class Pair<X, Y> implements Map.Entry<X, Y>, java.io.Serializable {
 
-    /**
-     * For serialization.
-     */
     private static final long serialVersionUID = 6914181682796480167L;
 
-    /**
-     * The first component.
-     */
     public X x;
 
-    /**
-     * The second component.
-     */
     public Y y;
 
-    /**
-     * Creates a pair with the two specified components.
-     * @param key The first component.
-     * @param value The second component.
-     */
     public Pair(final X key, final Y value) {
         this.x = key;
         this.y = value;
@@ -82,10 +63,6 @@ public class Pair<X, Y> implements Map.Entry<X, Y>, java.io.Serializable {
         return result;
     }
 
-    /**
-     * @param key The first component to set.
-     * @return The first component previously stored in this pair.
-     */
     public X setKey(final X key) {
         final X old = this.x;
         this.x = key;
