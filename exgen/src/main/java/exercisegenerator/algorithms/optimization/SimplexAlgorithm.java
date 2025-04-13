@@ -86,19 +86,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return result;
     }
 
-    private static int[] parsePagebreakCounters(final String keyValues, final String key) {
-        final Optional<String> pagebreaks =
-            Arrays.stream(keyValues.split(",")).filter(entry -> entry.startsWith(key)).findAny();
-        if (pagebreaks.isEmpty()) {
-            return new int[] {};
-        }
-        return Arrays.stream(pagebreaks.get().split("=")[1].split("\\|")).mapToInt(Integer::parseInt).toArray();
-    }
-
-    private static int[] parsePagebreakCountersForExercise(final String keyValues) {
-        return SimplexAlgorithm.parsePagebreakCounters(keyValues, "exercisebreaks=");
-    }
-
     private static SimplexProblem parseSimplexProblem(
         final BufferedReader reader,
         final Parameters<Flag> options
@@ -605,7 +592,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             writer.write("{\\renewcommand{\\arraystretch}{1.5}");
             Main.newLine(writer);
             boolean first = true;
-            final int[] pagebreakCounters = SimplexAlgorithm.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
+            final int[] pagebreakCounters =
+                LaTeXUtils.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
             int tableaus = 0;
             int counterIndex = 0;
             for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
@@ -654,7 +642,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         writer.write("{\\renewcommand{\\arraystretch}{1.5}");
         Main.newLine(writer);
         boolean first = true;
-        final int[] pagebreakCounters = this.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+        final int[] pagebreakCounters =
+            LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
         int tableaus = 0;
         int counterIndex = 0;
         for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
@@ -773,10 +762,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         // TODO Auto-generated method stub
         final List<BigFraction[]> result = new LinkedList<BigFraction[]>();
         return result;
-    }
-
-    private int[] parsePagebreakCountersForSolution(final String keyValues) {
-        return SimplexAlgorithm.parsePagebreakCounters(keyValues, "solutionbreaks=");
     }
 
     private SimplexAnswer simplexBestAnswer(final SimplexAnswer answer1, final SimplexAnswer answer2) {

@@ -1306,14 +1306,17 @@ public class MainTest {
                     "Geben Sie dazu auch den zugehörigen DPLL-Baum an."
                 ),
                 List.of(
-                    "\\begin{center}",
+                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.$\\{\\{A,B\\},\\{A,\\neg C\\},\\{\\neg A,B\\},\\{\\neg A,\\neg C\\},\\{\\neg B,C\\}\\}$ [.$\\{\\{B\\},\\{\\neg B,C\\},\\{\\neg C\\}\\}$ [.$\\{\\{C\\},\\{\\neg C\\}\\}$ $\\{\\{\\}\\}$ ] ] [.$\\{\\{B\\},\\{\\neg B,C\\},\\{\\neg C\\}\\}$ [.$\\{\\{C\\},\\{\\neg C\\}\\}$ $\\{\\{\\}\\}$ ] ] ]",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
                     "Ergebnis: unerfüllbar"
                 )
             )

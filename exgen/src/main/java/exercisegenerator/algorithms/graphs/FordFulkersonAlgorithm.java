@@ -641,7 +641,10 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        final Graph<String, FlowPair> graph = Graph.create(reader, new StringLabelParser(), new FlowPairLabelParser());
+        final Graph<String, FlowPair> graph =
+            options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 1 ?
+                FordFulkersonAlgorithm.parsePositionedGraph(reader) :
+                    Graph.create(reader, new StringLabelParser(), new FlowPairLabelParser());
         Vertex<String> source = null;
         Vertex<String> sink = null;
         if (options.containsKey(Flag.OPERATIONS)) {
@@ -686,6 +689,30 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             }
         }
         return new FordFulkersonConfiguration(multiplier, twoColumns);
+    }
+
+    private static Graph<String, FlowPair> parsePositionedGraph(final BufferedReader reader) throws IOException {
+        final AdjacencyLists<String, FlowPair> adjacencyLists = new AdjacencyLists<String, FlowPair>();
+        final Grid<String> grid = new Grid<String>();
+        final Map<String, Vertex<String>> nodeMap = new LinkedHashMap<String, Vertex<String>>();
+        final String[] nodes = reader.readLine().split(";");
+        for (final String node : nodes) {
+            final String[] nodeParts = node.split(",");
+            final Vertex<String> vertex = new Vertex<String>(nodeParts[0]);
+            adjacencyLists.put(vertex, new ArrayList<Edge<FlowPair, String>>());
+            grid.put(new GridCoordinates(Integer.parseInt(nodeParts[1]), Integer.parseInt(nodeParts[2])), vertex);
+            nodeMap.put(nodeParts[0], vertex);
+        }
+        final String[] edges = reader.readLine().split(";");
+        for (final String edge : edges) {
+            final String[] edgeParts = edge.split(",");
+            adjacencyLists.addEdge(
+                nodeMap.get(edgeParts[0]),
+                new FlowPair(0, Integer.parseInt(edgeParts[2])),
+                nodeMap.get(edgeParts[1])
+            );
+        }
+        return Graph.create(adjacencyLists, grid);
     }
 
     private static void printFordFulkersonDoubleStep(
@@ -991,7 +1018,18 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         }
         int stepNumber = 1;
         boolean first = true;
+        final int[] pagebreakCounters =
+            LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+        int doubleSteps = 0;
+        int counterIndex = 0;
         for (final FordFulkersonDoubleStep step : solution) {
+            if (counterIndex < pagebreakCounters.length && doubleSteps >= pagebreakCounters[counterIndex]) {
+                writer.write("\\newpage");
+                Main.newLine(writer);
+                Main.newLine(writer);
+                doubleSteps = 0;
+                counterIndex++;
+            }
             if (first) {
                 first = false;
                 FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
@@ -1016,6 +1054,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                 );
                 stepNumber += 2;
             }
+            doubleSteps++;
         }
         if (configuration.twoColumns) {
             writer.write("\\end{longtable}");

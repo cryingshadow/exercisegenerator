@@ -113,6 +113,8 @@ public enum Flag implements clit.Parameter {
             + "    -a [avltree|btree|rbtree] -v 1: Generates examples where nodes get only inserted.\n"
             + "    -a simplex -v 0: Generates examples without integral conditions.\n"
             + "    -a simplex -v 1: Generates examples with integral conditions.\n"
+            + "    -a fordfulkerson -v 0: Parses flow networks as grid graphs.\n"
+            + "    -a fordfulkerson -v 1: Parses flow networks as positioned graphs.\n"
     ),
 
     WINDOWS("w", "Windows line separators", "Forced use of Windows (true) or Unix (false) line separators.");

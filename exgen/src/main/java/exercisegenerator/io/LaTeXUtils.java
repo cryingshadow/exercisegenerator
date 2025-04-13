@@ -88,6 +88,14 @@ public abstract class LaTeXUtils {
         return String.format("\\{%s\\}", elements.map(x -> x.toString()).collect(Collectors.joining(",")));
     }
 
+    public static int[] parsePagebreakCountersForExercise(final String keyValues) {
+        return LaTeXUtils.parsePagebreakCounters(keyValues, "exercisebreaks=");
+    }
+
+    public static int[] parsePagebreakCountersForSolution(final String keyValues) {
+        return LaTeXUtils.parsePagebreakCounters(keyValues, "solutionbreaks=");
+    }
+
     public static void printAdjustboxBeginning(final BufferedWriter writer, final String... parameters) throws IOException {
         writer.write("\\begin{adjustbox}{");
         writer.write(Arrays.stream(parameters).collect(Collectors.joining(",")));
@@ -860,6 +868,15 @@ public abstract class LaTeXUtils {
             }
         }
         return remainingCols;
+    }
+
+    private static int[] parsePagebreakCounters(final String keyValues, final String key) {
+        final Optional<String> pagebreaks =
+            Arrays.stream(keyValues.split(",")).filter(entry -> entry.startsWith(key)).findAny();
+        if (pagebreaks.isEmpty()) {
+            return new int[] {};
+        }
+        return Arrays.stream(pagebreaks.get().split("=")[1].split("\\|")).mapToInt(Integer::parseInt).toArray();
     }
 
     private static void printElse(final BufferedWriter writer) throws IOException {

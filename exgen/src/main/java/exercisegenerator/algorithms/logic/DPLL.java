@@ -245,7 +245,6 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
             LaTeXUtils.printTikzEnd(writer);
         }
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-//        LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Geben Sie dazu auch den zugehörigen DPLL-Baum an.");
         Main.newLine(writer);
         Main.newLine(writer);
@@ -258,23 +257,13 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final int numberOfLiterals = problem.stream().mapToInt(Clause::size).sum();
-        final boolean big = numberOfLiterals > 10;
-        if (big) {
-            LaTeXUtils.resizeboxBeginning("\\columnwidth", "!", writer);
-        } else {
-            LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        }
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
         LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writer);
         writer.write(solution.toString());
         Main.newLine(writer);
         LaTeXUtils.printTikzEnd(writer);
-        if (big) {
-            LaTeXUtils.resizeboxEnd(writer);
-            LaTeXUtils.printVerticalProtectedSpace(writer);
-        } else {
-            LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-        }
+        LaTeXUtils.printAdjustboxEnd(writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Ergebnis: ");
         if (solution.isSAT()) {
             writer.write("erfüllbar");
