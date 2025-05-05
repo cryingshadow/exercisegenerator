@@ -2,7 +2,6 @@ package exercisegenerator.algorithms.optimization;
 
 import java.io.*;
 import java.util.*;
-import java.util.function.*;
 
 import clit.*;
 import exercisegenerator.*;
@@ -14,11 +13,13 @@ public abstract class OptimizationAlgorithms {
     static void fillDPSolutionTable(
         final String[][] tableWithArrows,
         final int[][] solution,
+        final int rowHeadings,
+        final int columnHeadings,
         final DPTracebackFunction traceback
     ) {
         for (int i = 0; i < solution.length; i++) {
             for (int j = 0; j < solution[i].length; j++) {
-                tableWithArrows[i + 1][2 * j + 1] = String.valueOf(solution[i][j]);
+                tableWithArrows[i + columnHeadings][2 * j + rowHeadings] = String.valueOf(solution[i][j]);
             }
         }
         int i = solution.length - 1;
@@ -26,7 +27,7 @@ public abstract class OptimizationAlgorithms {
         List<DPDirection> directions = traceback.apply(new DPPosition(solution, i, j));
         while (!directions.isEmpty()) {
             for (final DPDirection direction : directions) {
-                tableWithArrows[i + 1][2 * j + 2] = direction.symbol;
+                tableWithArrows[i + columnHeadings][2 * j + rowHeadings + 1] = direction.symbol;
                 i -= direction.verticalDiff;
                 j -= direction.horizontalDiff;
             }
@@ -70,8 +71,8 @@ public abstract class OptimizationAlgorithms {
 
     static void printDPTable(
         final int[][] solution,
-        final Function<Integer, String> rowHeading,
-        final Function<Integer, String> columnHeading,
+        final DPHeading rowHeading,
+        final DPHeading columnHeading,
         final Optional<DPTracebackFunction> traceback,
         final Parameters<Flag> options,
         final LengthConfiguration configuration,
@@ -86,9 +87,10 @@ public abstract class OptimizationAlgorithms {
         LaTeXUtils.printTable(
             OptimizationAlgorithms.toDPSolutionTable(solution, rowHeading, columnHeading, traceback),
             Optional.empty(),
-            cols -> OptimizationAlgorithms.dpTableColumnDefinition(configuration, cols),
+            cols -> OptimizationAlgorithms.dpTableColumnDefinition(configuration, rowHeading.count(), cols),
             true,
             0,
+            rowHeading.count(),
             writer
         );
         Main.newLine(writer);
@@ -102,37 +104,53 @@ public abstract class OptimizationAlgorithms {
 
     static String[][] toDPSolutionTable(
         final int[][] solution,
-        final Function<Integer, String> rowHeading,
-        final Function<Integer, String> columnHeading,
+        final DPHeading rowHeading,
+        final DPHeading columnHeading,
         final Optional<DPTracebackFunction> optionalTraceback
     ) {
-        final String[][] tableWithArrows = new String[solution.length + 1][2 * solution[0].length + 1];
-        tableWithArrows[0][0] = "${}^*$";
+        final String[][] tableWithArrows =
+            new String[solution.length + columnHeading.count()][2 * solution[0].length + rowHeading.count()];
+        for (int row = 0; row < columnHeading.count() - 1; row++) {
+            tableWithArrows[row][rowHeading.count() - 1] = columnHeading.titles().apply(row);
+        }
         for (int row = 0; row < solution.length; row++) {
-            final String heading = rowHeading.apply(row);
-            tableWithArrows[row + 1][0] =
-                Optional.ofNullable(heading).map(String::isBlank).orElse(true) ? "" : LaTeXUtils.bold(heading);
+            final List<String> headings = rowHeading.headings().apply(row);
+            for (int column = 0; column < rowHeading.count(); column++) {
+                tableWithArrows[row + columnHeading.count()][column] = headings.get(column);
+            }
+        }
+        for (int column = 0; column < rowHeading.count() - 1; column++) {
+            tableWithArrows[columnHeading.count() - 1][column] = rowHeading.titles().apply(column);
         }
         for (int column = 0; column < solution[0].length; column++) {
-            final String heading = columnHeading.apply(column);
-            tableWithArrows[0][2 * column + 1] =
-                Optional.ofNullable(heading).map(String::isBlank).orElse(true) ? "" : LaTeXUtils.bold(heading);
+            final List<String> headings = columnHeading.headings().apply(column);
+            for (int row = 0; row < columnHeading.count(); row++) {
+                tableWithArrows[row][2 * column + rowHeading.count()] = headings.get(row);
+            }
         }
+        tableWithArrows[columnHeading.count() - 1][rowHeading.count() - 1] = "${}^*$";
         if (optionalTraceback.isPresent()) {
             OptimizationAlgorithms.fillDPSolutionTable(
                 tableWithArrows,
                 solution,
+                rowHeading.count(),
+                columnHeading.count(),
                 optionalTraceback.get()
             );
         }
         return tableWithArrows;
     }
 
-    private static String dpTableColumnDefinition(final LengthConfiguration configuration, final int cols) {
+    private static String dpTableColumnDefinition(
+        final LengthConfiguration configuration,
+        final int rowHeaders,
+        final int columns
+    ) {
         return String.format(
-            "|C{%s}|*{%d}{C{%s}C{%s}|}",
+            "|*{%d}{C{%s}|}*{%d}{C{%s}C{%s}|}",
+            rowHeaders,
             configuration.headerColLength,
-            cols / 2,
+            columns / 2,
             configuration.numberLength,
             configuration.arrowLength
         );

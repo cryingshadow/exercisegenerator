@@ -35,10 +35,10 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
             LaTeXUtils.printTable(
                 BellmanFordAlgorithm.toTable(step, vertices, fill),
                 Optional.empty(),
-                cols -> String.format("|c|*{%d}{C{%s}|}", cols - 1, columnWidth),
+                cols -> String.format("|c|*{%d}{C{%s}|}", cols, columnWidth),
                 true,
                 6,
-                true,
+                1,
                 writer
             );
         }

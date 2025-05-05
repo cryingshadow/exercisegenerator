@@ -175,8 +175,8 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         case ALWAYS:
             OptimizationAlgorithms.printDPTable(
                 solution,
-                i -> problem.rowHeading(i),
-                i -> problem.columnHeading(i),
+                new DPHeading(i -> problem.rowHeading(i)),
+                new DPHeading(i -> problem.columnHeading(i)),
                 Optional.empty(),
                 options,
                 configuration,
@@ -212,8 +212,8 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         Main.newLine(writer);
         OptimizationAlgorithms.printDPTable(
             solution,
-            i -> problem.rowHeading(i),
-            i -> problem.columnHeading(i),
+            new DPHeading(i -> problem.rowHeading(i)),
+            new DPHeading(i -> problem.columnHeading(i)),
             Optional.of(LCSAlgorithm.TRACEBACK),
             options,
             configuration,

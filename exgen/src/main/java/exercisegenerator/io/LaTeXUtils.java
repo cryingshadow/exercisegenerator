@@ -38,15 +38,15 @@ public abstract class LaTeXUtils {
     }
 
     public static String bold(final String text) {
-        return String.format("\\textbf{%s}", text);
+        return Optional.ofNullable(text).map(String::isBlank).orElse(true) ? "" : String.format("\\textbf{%s}", text);
     }
 
     public static String code(final String text) {
-        return String.format("\\code{%s}", text);
+        return Optional.ofNullable(text).map(String::isBlank).orElse(true) ? "" : String.format("\\code{%s}", text);
     }
 
     public static String codeseq(final String text) {
-        return String.format("\\codeseq{%s}", text);
+        return Optional.ofNullable(text).map(String::isBlank).orElse(true) ? "" : String.format("\\codeseq{%s}", text);
     }
 
     public static Function<Integer, String> defaultColumnDefinition(final String width) {
@@ -430,7 +430,18 @@ public abstract class LaTeXUtils {
         final Function<Integer, String> columnDefinition,
         final boolean transpose,
         final int breakAtColumn,
-        final boolean titleColumn,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printTable(table, optionalColor, columnDefinition, transpose, breakAtColumn, 0, writer);
+    }
+
+    public static void printTable(
+        final String[][] table,
+        final Optional<String[][]> optionalColor,
+        final Function<Integer, String> columnDefinition,
+        final boolean transpose,
+        final int breakAtColumn,
+        final int titleColumns,
         final BufferedWriter writer
     ) throws IOException {
         final int allCols = (transpose ? table[0].length : table.length);
@@ -438,12 +449,10 @@ public abstract class LaTeXUtils {
         boolean firstColumnBlock = true;
         do {
             final int cols =
-                LaTeXUtils.computeNumberOfColumns(remainingCols, breakAtColumn, titleColumn, firstColumnBlock);
-//                remainingCols > breakAtColumn && breakAtColumn > 0 ? breakAtColumn : remainingCols;
-//                LaTeXUtils.computeNumberOfColumns(remainingCols, breakAtColumn, titleColumn, firstRow);
+                LaTeXUtils.computeNumberOfColumns(remainingCols, breakAtColumn, titleColumns, firstColumnBlock);
             final int rows = (transpose ? table.length : table[0].length);
             writer.write("\\begin{tabular}{");
-            writer.write(columnDefinition.apply(titleColumn && !firstColumnBlock ? cols + 1 : cols));
+            writer.write(columnDefinition.apply(!firstColumnBlock ? cols : cols - titleColumns));
             writer.write("}");
             Main.newLine(writer);
             writer.write("\\hline");
@@ -454,9 +463,11 @@ public abstract class LaTeXUtils {
                 for (int col = startCol; col < startCol + cols; col++) {
                     if (first) {
                         first = false;
-                        if (titleColumn && !firstColumnBlock) {
-                            LaTeXUtils.writeTableCell(0, row, transpose, optionalColor, table, writer);
-                            writer.write(" & ");
+                        if (!firstColumnBlock) {
+                            for (int column = 0; column < titleColumns; column++) {
+                                LaTeXUtils.writeTableCell(column, row, transpose, optionalColor, table, writer);
+                                writer.write(" & ");
+                            }
                         }
                     } else {
                         writer.write(" & ");
@@ -471,17 +482,6 @@ public abstract class LaTeXUtils {
             remainingCols -= cols;
             firstColumnBlock = false;
         } while (remainingCols > 0);
-    }
-
-    public static void printTable(
-        final String[][] table,
-        final Optional<String[][]> optionalColor,
-        final Function<Integer, String> columnDefinition,
-        final boolean transpose,
-        final int breakAtColumn,
-        final BufferedWriter writer
-    ) throws IOException {
-        LaTeXUtils.printTable(table, optionalColor, columnDefinition, transpose, breakAtColumn, false, writer);
     }
 
     /**
@@ -857,12 +857,12 @@ public abstract class LaTeXUtils {
     private static int computeNumberOfColumns(
         final int remainingCols,
         final int breakAtColumn,
-        final boolean titleColumn,
+        final int titleColumns,
         final boolean firstColumnBlock
     ) {
         if (remainingCols > breakAtColumn && breakAtColumn > 0) {
-            if (titleColumn && !firstColumnBlock) {
-                return breakAtColumn - 1;
+            if (!firstColumnBlock) {
+                return breakAtColumn - titleColumns;
             } else {
                 return breakAtColumn;
             }

@@ -92,6 +92,27 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         return Arrays.stream(line.split(",")).mapToInt(Integer::parseInt).toArray();
     }
 
+    private static DPHeading toKnapsackRowHeading(final int[] weights, final int[] values) {
+        return new DPHeading(
+            3,
+            i -> {
+                switch (i) {
+                case 0:
+                    return "$\\mathbf{w_i}$";
+                case 1:
+                    return "$\\mathbf{v_i}$";
+                default:
+                    return "";
+                }
+            },
+            i -> List.of(
+                i == 0 ? "" : String.valueOf(weights[i - 1]),
+                i == 0 ? "" : String.valueOf(values[i - 1]),
+                LaTeXUtils.bold(String.valueOf(i))
+            )
+        );
+    }
+
     private KnapsackAlgorithm() {}
 
     @Override
@@ -174,8 +195,8 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         case ALWAYS:
             OptimizationAlgorithms.printDPTable(
                 solution,
-                i -> i.toString(),
-                i -> i.toString(),
+                KnapsackAlgorithm.toKnapsackRowHeading(problem.weights, problem.values),
+                new DPHeading(i -> LaTeXUtils.bold(i.toString())),
                 Optional.empty(),
                 options,
                 configuration,
@@ -213,8 +234,8 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         Main.newLine(writer);
         OptimizationAlgorithms.printDPTable(
             solution,
-            i -> i.toString(),
-            i -> i.toString(),
+            KnapsackAlgorithm.toKnapsackRowHeading(problem.weights, problem.values),
+            new DPHeading(i -> LaTeXUtils.bold(i.toString())),
             Optional.of(KnapsackAlgorithm.traceback(problem.weights)),
             options,
             configuration,

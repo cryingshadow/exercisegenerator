@@ -8,6 +8,7 @@ import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.algebra.*;
 import exercisegenerator.structures.optimization.*;
@@ -16,6 +17,8 @@ public class OptimizationAlgorithmsTest {
 
     @DataProvider
     public Object[][] dpData() {
+        final int[] weights = new int[] {2,1,3};
+        final int[] values = new int[] {7,4,6};
         return new Object[][] {
             {
                 new int[][] {
@@ -23,8 +26,16 @@ public class OptimizationAlgorithmsTest {
                     {0,1,1},
                     {0,1,2}
                 },
-                (Function<Integer,String>)i -> i.toString(),
-                (Function<Integer,String>)i -> i.toString(),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> i.toString(),
+                    (Function<Integer,List<String>>)i -> List.of(LaTeXUtils.bold(i.toString()))
+                ),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> i.toString(),
+                    (Function<Integer,List<String>>)i -> List.of(LaTeXUtils.bold(i.toString()))
+                ),
                 Optional.of(KnapsackAlgorithm.traceback(new int[] {1,1})),
                 new String[][] {
                     {"${}^*$", "\\textbf{0}", null, "\\textbf{1}", null, "\\textbf{2}", null},
@@ -39,8 +50,16 @@ public class OptimizationAlgorithmsTest {
                     {0,1,1},
                     {0,1,2}
                 },
-                (Function<Integer,String>)i -> i.toString(),
-                (Function<Integer,String>)i -> i.toString(),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> i.toString(),
+                    (Function<Integer,List<String>>)i -> List.of(LaTeXUtils.bold(i.toString()))
+                ),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> i.toString(),
+                    (Function<Integer,List<String>>)i -> List.of(LaTeXUtils.bold(i.toString()))
+                ),
                 Optional.of(KnapsackAlgorithm.traceback(new int[] {1,2})),
                 new String[][] {
                     {"${}^*$", "\\textbf{0}", null, "\\textbf{1}", null, "\\textbf{2}", null},
@@ -55,8 +74,16 @@ public class OptimizationAlgorithmsTest {
                     {0,1,1},
                     {0,1,1}
                 },
-                (Function<Integer,String>)i -> i.toString(),
-                (Function<Integer,String>)i -> i.toString(),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> i.toString(),
+                    (Function<Integer,List<String>>)i -> List.of(LaTeXUtils.bold(i.toString()))
+                ),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> i.toString(),
+                    (Function<Integer,List<String>>)i -> List.of(LaTeXUtils.bold(i.toString()))
+                ),
                 Optional.of(KnapsackAlgorithm.traceback(new int[] {1,3})),
                 new String[][] {
                     {"${}^*$", "\\textbf{0}", null, "\\textbf{1}", null, "\\textbf{2}", null},
@@ -71,14 +98,69 @@ public class OptimizationAlgorithmsTest {
                     {0,1,1},
                     {0,1,1}
                 },
-                (Function<Integer,String>)i -> i == 0 ? "" : String.valueOf("AB".charAt(i - 1)),
-                (Function<Integer,String>)i -> i == 0 ? "" : String.valueOf("AC".charAt(i - 1)),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> i.toString(),
+                    (Function<Integer,List<String>>)i ->
+                        List.of(i == 0 ? "" : LaTeXUtils.bold(String.valueOf("AB".charAt(i - 1))))
+                ),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> i.toString(),
+                    (Function<Integer,List<String>>)i ->
+                        List.of(i == 0 ? "" : LaTeXUtils.bold(String.valueOf("AC".charAt(i - 1))))
+                ),
                 Optional.of(LCSAlgorithm.TRACEBACK),
                 new String[][] {
                     {"${}^*$", "", null, "\\textbf{A}", null, "\\textbf{C}", null},
                     {"", "0", null, "0", null, "0", null},
                     {"\\textbf{A}", "0", null, "1", "$\\nwarrow$", "1", "$\\leftarrow$"},
                     {"\\textbf{B}", "0", null, "1", null, "1", "$\\uparrow$"}
+                }
+            },
+            {
+                new int[][] {
+                    {3,2,1,0},
+                    {4,5,6,7},
+                    {-1,-2,-3,-4}
+                },
+                new DPHeading(
+                    3,
+                    (Function<Integer,String>)i -> {
+                        switch (i) {
+                        case 0:
+                            return "$\\mathbf{w_i}$";
+                        case 1:
+                            return "$\\mathbf{v_i}$";
+                        default:
+                            return "";
+                        }
+                    },
+                    (Function<Integer,List<String>>)i ->
+                        List.of(
+                            String.valueOf(weights[i]),
+                            String.valueOf(values[i]),
+                            LaTeXUtils.bold(String.valueOf(i))
+                        )
+                ),
+                new DPHeading(
+                    1,
+                    (Function<Integer,String>)i -> "",
+                    (Function<Integer,List<String>>)i -> List.of(LaTeXUtils.bold(i.toString()))
+                ),
+                Optional.of(
+                    new DPTracebackFunction() {
+                        @Override
+                        public List<DPDirection> apply(final DPPosition position) {
+                            return List.of();
+                        }
+                    }
+                ),
+                new String[][] {
+                    {"$\\mathbf{w_i}$", "$\\mathbf{v_i}$", "${}^*$", "\\textbf{0}", null, "\\textbf{1}", null, "\\textbf{2}", null, "\\textbf{3}", null},
+                    {"2", "7", "\\textbf{0}", "3", null, "2", null, "1", null, "0", null},
+                    {"1", "4", "\\textbf{1}", "4", null, "5", null, "6", null, "7", null},
+                    {"3", "6", "\\textbf{2}", "-1", null, "-2", null, "-3", null, "-4", null}
                 }
             }
         };
@@ -87,8 +169,8 @@ public class OptimizationAlgorithmsTest {
     @Test(dataProvider="dpData")
     public void dpTableTest(
         final int[][] solution,
-        final Function<Integer, String> rowHeading,
-        final Function<Integer, String> columnHeading,
+        final DPHeading rowHeading,
+        final DPHeading columnHeading,
         final Optional<DPTracebackFunction> optionalTraceback,
         final String[][] expected
     ) {
