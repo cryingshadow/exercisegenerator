@@ -182,9 +182,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
                 configuration,
                 writer
             );
-            writer.write("${}^*$ Folge 1/Folge 2");
-            Main.newLine(writer);
-            LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+            writer.write("${}^*$ Folge 1/Folge 2\\\\[2ex]");
             Main.newLine(writer);
             writer.write("L\\\"angste gemeinsame Teilfolge:");
             Main.newLine(writer);
@@ -219,9 +217,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
             configuration,
             writer
         );
-        writer.write("${}^*$ Folge 1/Folge 2");
-        Main.newLine(writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        writer.write("${}^*$ Folge 1/Folge 2\\\\[2ex]");
         Main.newLine(writer);
         writer.write("L\\\"angste gemeinsame Teilfolge: ");
         writer.write(LCSAlgorithm.lcs(problem, solution));

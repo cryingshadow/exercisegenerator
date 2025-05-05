@@ -157,7 +157,11 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         final BufferedWriter writer
     ) throws IOException {
         final LengthConfiguration configuration =
-            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(options, 2);
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(
+                options,
+                2,
+                parameters -> new LengthConfiguration("7mm", "5mm", "7mm")
+            );
         final int numberOfItems = problem.weights.length;
         writer.write("Gegeben sei ein Rucksack mit ");
         writer.write(String.format("\\emphasize{maximaler Tragkraft} %d ", problem.capacity));
@@ -202,9 +206,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
                 configuration,
                 writer
             );
-            writer.write("${}^*$ Gegenstand/Kapazit\\\"at");
-            Main.newLine(writer);
-            LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+            writer.write("${}^*$ Gegenstand/Kapazit\\\"at\\\\[2ex]");
             Main.newLine(writer);
             writer.write("Gegenst\\\"ande:\\\\[2ex]");
             Main.newLine(writer);
@@ -228,7 +230,11 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         final BufferedWriter writer
     ) throws IOException {
         final LengthConfiguration configuration =
-            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(options, 2);
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(
+                options,
+                2,
+                parameters -> new LengthConfiguration("7mm", "5mm", "7mm")
+            );
         writer.write("Die Tabelle wird vom Algorithmus wie folgt gef\\\"ullt:");
         Main.newLine(writer);
         Main.newLine(writer);
@@ -241,9 +247,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
             configuration,
             writer
         );
-        writer.write("${}^*$ Gegenstand/Kapazit\\\"at");
-        Main.newLine(writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        writer.write("${}^*$ Gegenstand/Kapazit\\\"at\\\\[2ex]");
         Main.newLine(writer);
         writer.write("Gegenst\\\"ande: $");
         writer.write(LaTeXUtils.mathematicalSet(KnapsackAlgorithm.knapsackItems(problem, solution)));

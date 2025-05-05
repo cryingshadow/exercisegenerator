@@ -7,6 +7,7 @@ import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.optimization.*;
+import exercisegenerator.util.*;
 
 public abstract class OptimizationAlgorithms {
 
@@ -42,18 +43,19 @@ public abstract class OptimizationAlgorithms {
     static LengthConfiguration parseLengthConfiguration(
         final BufferedReader reader,
         final Parameters<Flag> options,
-        final int lineNumber
+        final int lineNumber,
+        final CheckedFunction<Parameters<Flag>, LengthConfiguration, IOException> generateLengthConfiguration
     ) throws IOException {
         for (int i = 1; i < lineNumber; i++) {
             reader.readLine();
         }
         final String line = reader.readLine();
         if (line == null) {
-            return new LengthConfiguration();
+            return generateLengthConfiguration.apply(options);
         }
         final String[] parts = line.strip().split(";");
         if (parts.length != 3) {
-            return new LengthConfiguration();
+            return generateLengthConfiguration.apply(options);
         }
         return new LengthConfiguration(parts[0], parts[1], parts[2]);
 
@@ -63,9 +65,26 @@ public abstract class OptimizationAlgorithms {
         final Parameters<Flag> options,
         final int lineNumber
     ) throws IOException {
-        return new ParserAndGenerator<LengthConfiguration>(
-            (reader, flags) -> OptimizationAlgorithms.parseLengthConfiguration(reader, flags, lineNumber),
+        return OptimizationAlgorithms.parseOrGenerateLengthConfiguration(
+            options,
+            lineNumber,
             OptimizationAlgorithms::generateLengthConfiguration
+        );
+    }
+
+    static LengthConfiguration parseOrGenerateLengthConfiguration(
+        final Parameters<Flag> options,
+        final int lineNumber,
+        final CheckedFunction<Parameters<Flag>, LengthConfiguration, IOException> generateLengthConfiguration
+    ) throws IOException {
+        return new ParserAndGenerator<LengthConfiguration>(
+            (reader, flags) -> OptimizationAlgorithms.parseLengthConfiguration(
+                reader,
+                flags,
+                lineNumber,
+                generateLengthConfiguration
+            ),
+            generateLengthConfiguration
         ).getResult(options);
     }
 
@@ -78,10 +97,7 @@ public abstract class OptimizationAlgorithms {
         final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        if (solution[0].length > 6) {
-            LaTeXUtils.resizeboxBeginning("0.9\\textwidth", "!", writer);
-        }
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=0.9\\textwidth", "center");
         writer.write("{\\Large");
         Main.newLine(writer);
         LaTeXUtils.printTable(
@@ -93,12 +109,9 @@ public abstract class OptimizationAlgorithms {
             rowHeading.count(),
             writer
         );
-        Main.newLine(writer);
-        if (solution[0].length > 6) {
-            LaTeXUtils.resizeboxEnd(writer);
-        }
         writer.write("}");
         Main.newLine(writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
         Main.newLine(writer);
     }
 
@@ -149,10 +162,10 @@ public abstract class OptimizationAlgorithms {
         return String.format(
             "|*{%d}{C{%s}|}*{%d}{C{%s}C{%s}|}",
             rowHeaders,
-            configuration.headerColLength,
+            configuration.headerColLength(),
             columns / 2,
-            configuration.numberLength,
-            configuration.arrowLength
+            configuration.numberLength(),
+            configuration.arrowLength()
         );
     }
 
