@@ -18,15 +18,6 @@ public class GenerateCompileTest {
 
     private static final Algorithm ONLY = null;
 
-    private static Process buildAndStartProcess(final String fileName, final File testDir) throws IOException {
-        return new ProcessBuilder(
-            "pdflatex",
-            fileName,
-            "-interaction=nonstopmode",
-            "-halt-on-error"
-        ).inheritIO().directory(testDir).start();
-    }
-
     private static void cleanUp(final File testDir) {
         for (final File file : testDir.listFiles()) {
             file.delete();
@@ -82,8 +73,8 @@ public class GenerateCompileTest {
                         solFile
                     )
                 );
-                final Process processExercise = GenerateCompileTest.buildAndStartProcess(exFileName, testDir);
-                final Process processSolution = GenerateCompileTest.buildAndStartProcess(solFileName, testDir);
+                final Process processExercise = Main.buildAndStartPDFLaTeXProcess(exFileName, testDir);
+                final Process processSolution = Main.buildAndStartPDFLaTeXProcess(solFileName, testDir);
                 processes.add(
                     new Pair<Process, String>(
                         processExercise,

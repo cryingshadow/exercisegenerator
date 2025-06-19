@@ -53,7 +53,8 @@ public enum Algorithm {
         "bfs",
         "Breadth-First-Search",
         new String[] {
-            "Breadth first search from a start vertex."
+            "Breadth first search from a start vertex.",
+            "The flag -l specifies how many vertices will be added to the graph for generated instances."
         },
         BreadthFirstSearch.INSTANCE
     ),
@@ -116,7 +117,8 @@ public enum Algorithm {
         "dfs",
         "Depth-First-Search",
         new String[] {
-            "Depth first search from a start vertex."
+            "Depth first search from a start vertex.",
+            "The flag -l specifies how many operations should be performed on the tree for generated instances."
         },
         DepthFirstSearch.INSTANCE
     ),
@@ -388,7 +390,8 @@ public enum Algorithm {
         "lcs",
         "LCS Problem Solved With Dynamic programming",
         new String[] {
-            "LCS problem solved with dynamic programming."
+            "LCS problem solved with dynamic programming.",
+            "You can specify the (same) length of the two words with the -l flag."
         },
         LCSAlgorithm.INSTANCE
     ),
@@ -397,7 +400,8 @@ public enum Algorithm {
         "lse",
         "Linear System of Equations",
         new String[] {
-            "Solves a linear system of equations over rational numbers using the Gauß-Jordan-Algorithm."
+            "Solves a linear system of equations over rational numbers using the Gauß-Jordan-Algorithm.",
+            "You can specify the number of variables with the -l flag."
         },
         LSEAlgorithm.INSTANCE
     ),
@@ -679,6 +683,93 @@ public enum Algorithm {
         return Optional.empty();
     }
 
+    public static List<Algorithm> getEnabledAlgorithms() {
+        return Arrays.stream(Algorithm.values()).filter(algorithm -> algorithm.enabled).toList();
+    }
+
+    public static Set<Flag> getOptionalParameters(final Algorithm algorithm) {
+        switch (algorithm) {
+        case AVLTREE:
+        case BELLMAN_FORD:
+        case BFS:
+        case BIN_SEARCH_TREE:
+        case BUBBLESORT:
+        case DFS:
+        case DIJKSTRA:
+        case DPLL:
+        case FLOYD:
+        case FORD_FULKERSON:
+        case FROM_ASCII:
+        case FROM_FLOAT:
+        case FROM_HAMMING:
+        case FROM_HUFFMAN:
+        case FROM_ONES_COMPLEMENT:
+        case FROM_TRUTH_TABLE:
+        case FROM_TWOS_COMPLEMENT:
+        case GRAHAMS_SCAN:
+        case HASH_DIV:
+        case HASH_DIV_LIN:
+        case HASH_DIV_QUAD:
+        case HASH_MULT:
+        case HASH_MULT_LIN:
+        case HASH_MULT_QUAD:
+        case HEAPSORT:
+        case HEAPSORT_TREE:
+        case INSERTIONSORT:
+        case KNAPSACK:
+        case KRUSKAL:
+        case LCS:
+        case LSE:
+        case MERGESORT:
+        case MERGESORT_SPLIT:
+        case PRIM:
+        case QUICKSORT:
+        case RED_BLACK_TREE:
+        case SELECTIONSORT:
+        case SIMPLEX:
+        case TO_ASCII:
+        case TO_CNF:
+        case TO_DNF:
+        case TO_FLOAT:
+        case TO_HAMMING:
+        case TO_ONES_COMPLEMENT:
+        case TO_TRUTH_TABLE:
+        case TO_TWOS_COMPLEMENT:
+        case TO_VIGENERE:
+        case WARSHALL:
+            return Set.of(Flag.LENGTH);
+        case BTREE:
+        case MATRIX_ARITHMETIC:
+            return Set.of(Flag.LENGTH, Flag.DEGREE);
+        case BUCKETSORT:
+        case COUNTINGSORT:
+            return Set.of(Flag.LENGTH, Flag.CAPACITY);
+        case MATRIX_INVERSION:
+            return Set.of(Flag.DEGREE);
+        case TO_HUFFMAN:
+            return Set.of(Flag.LENGTH, Flag.DEGREE, Flag.OPERATIONS);
+        default:
+            return Set.of();
+        }
+    }
+
+    public static Set<Flag> getRequiredParameters(final Algorithm algorithm) {
+        switch (algorithm) {
+        case FROM_FLOAT:
+        case TO_FLOAT:
+            return Set.of(Flag.CAPACITY, Flag.DEGREE);
+        case FROM_HUFFMAN:
+            return Set.of(Flag.OPERATIONS);
+        case FROM_ONES_COMPLEMENT:
+        case FROM_TWOS_COMPLEMENT:
+        case TO_ONES_COMPLEMENT:
+        case TO_TWOS_COMPLEMENT:
+            return Set.of(Flag.CAPACITY);
+        default:
+            return Set.of();
+        }
+    }
+
     private static void assignmentBeginning(
         final String leftHandSide,
         final String longestLeftHandSide,
@@ -706,31 +797,16 @@ public enum Algorithm {
         return String.format("$%s %s {}$", leftHandSide, relation);
     }
 
-    /**
-     * The documentation for this algorithm.
-     */
     public final String[] documentation;
 
-    /**
-     * Flag indicating whether the algorithm is enabled in student mode.
-     */
     public final boolean enabled;
 
     public final AlgorithmImplementation<?, ?> implementation;
 
-    /**
-     * The name of the algorithm for text processing.
-     */
     public final String longName;
 
-    /**
-     * The name of the algorithm.
-     */
     public final String name;
 
-    /**
-     * Creates an enabled Algorithm.
-     */
     private Algorithm(
         final String name,
         final String longName,

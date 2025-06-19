@@ -7,6 +7,7 @@ import clit.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
+import exercisegenerator.view.*;
 
 public class Main {
 
@@ -26,7 +27,7 @@ public class Main {
 
     private static final String[] HELP;
 
-    private static final String VERSION = "2.0.1";
+    private static final String VERSION = "4.0.0";
 
     static {
         RANDOM = new Random();
@@ -42,56 +43,27 @@ public class Main {
     public static String algorithmNames() {
         return String.join(
             ", ",
-            Arrays.stream(Algorithm.values())
-                .filter(alg -> alg.enabled)
-                .map(alg -> alg.name)
-                .toList()
+            Algorithm.getEnabledAlgorithms()
+            .stream()
+            .map(alg -> alg.name)
+            .toList()
         );
+    }
+
+    public static Process buildAndStartPDFLaTeXProcess(final String fileName, final File directory) throws IOException {
+        return new ProcessBuilder(
+            "pdflatex",
+            fileName,
+            "-interaction=nonstopmode",
+            "-halt-on-error"
+        ).inheritIO().directory(directory).start();
     }
 
     public static boolean embeddedExam(final Parameters<Flag> options) {
         return Main.EMBEDDED_EXAM.equals(options.get(Flag.EXECUTION_MODE));
     }
 
-    /**
-     * Reads an input from a source file, executes the specified algorithm on this input, and outputs the solution in
-     * LaTeX code to the specified target file(s).
-     * @param args The program arguments as flag/value pairs. The following flags are currently implemented:<br>
-     *             -s : Source file containing the input. Must not be specified together with -i, but one of them must
-     *                  be specified.<br>
-     *             -i : Input directly specified as a String. Must not be specified together with -s, but one of them
-     *                  must be specified.<br>
-     *             -t : Target file to store the LaTeX code in. If not specified, the solution is sent to the standard
-     *                  output.<br>
-     *             -p : File to store LaTeX code for a pre-print where to solve an exercise. E.g., for sorting this
-     *                  might be the input array followed by a number of empty arrays. If not set, no pre-print will be
-     *                  generated.<br>
-     *             -a : The algorithm to apply to the input. Must be specified.<br>
-     *             -v : The variant of the algorithm.<br>
-     *             -l : Additional lines for pre-prints. Defaults to 0 if not set. Ignored if -p is not set.<br>
-     *             -d : Degree (e.g., of a B-tree).<br>
-     *             -o : File containing operations used to construct a start structure.
-     */
-    public static void main(final String[] args) {
-        if (args == null || args.length < 1) {
-            System.out.println("You need to provide arguments! Type -h for help.");
-            return;
-        }
-        if (Main.isHelpMode(args)) {
-            Main.showHelp(args);
-            return;
-        }
-        if (args.length % 2 != 0) {
-            System.out.println("The number of arguments must be even (flag/value pairs)!");
-            return;
-        }
-        final Parameters<Flag> options;
-        try {
-            options = Main.parseFlags(args);
-        } catch (final Exception e) {
-            System.out.println(e.getMessage());
-            return;
-        }
+    public static void main(final Parameters<Flag> options) throws Exception {
         if (options.containsKey(Flag.WINDOWS)) {
             final boolean useWindowsLineSeparators = Boolean.parseBoolean(options.get(Flag.WINDOWS));
             Main.lineSeparator = useWindowsLineSeparators ? "\r\n" : "\n";
@@ -126,6 +98,14 @@ public class Main {
                     algorithm.implementation.executeAlgorithm(
                         new AlgorithmInput(exerciseWriter, solutionWriter, singleAlgorithmOptions)
                     );
+                    Main.newLine(exerciseWriter);
+                    exerciseWriter.write("\\pagebreak");
+                    Main.newLine(exerciseWriter);
+                    Main.newLine(exerciseWriter);
+                    Main.newLine(solutionWriter);
+                    solutionWriter.write("\\pagebreak");
+                    Main.newLine(solutionWriter);
+                    Main.newLine(solutionWriter);
                 }
             } else {
                 final Optional<Algorithm> algorithm = Algorithm.forName(options.get(Flag.ALGORITHM));
@@ -141,6 +121,24 @@ public class Main {
                 LaTeXUtils.printLaTeXEnd(exerciseWriter);
                 LaTeXUtils.printLaTeXEnd(solutionWriter);
             }
+        }
+    }
+
+    public static void main(final String[] args) {
+        if (args == null || args.length < 1) {
+            new MainFrame(Main.VERSION).setVisible(true);
+            return;
+        }
+        if (Main.isHelpMode(args)) {
+            Main.showHelp(args);
+            return;
+        }
+        if (args.length % 2 != 0) {
+            System.out.println("The number of arguments must be even (flag/value pairs)!");
+            return;
+        }
+        try {
+            Main.main(Main.parseFlags(args));
         } catch (final Exception e) {
             e.printStackTrace();
         }
