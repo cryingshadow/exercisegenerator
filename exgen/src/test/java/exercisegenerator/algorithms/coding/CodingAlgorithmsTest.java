@@ -134,14 +134,22 @@ public class CodingAlgorithmsTest {
 
     @Test
     public void encodeHuffmanTest() throws IOException {
-        final HuffmanCode result =
+        final HuffmanSolution result =
             HuffmanEncoding.INSTANCE.apply(
                 new HuffmanProblem(
                     "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern.",
                     CodingAlgorithms.BINARY_ALPHABET
                 )
             );
-        final Map<Character, String> codeBook = result.tree().toCodeBook();
+        final Map<Character, String> codeBook = result.code().tree().toCodeBook();
+        Assert.assertEquals(result.trees().size(), 28);
+        List<HuffmanNode> oldIteration = result.trees().getFirst();
+        Assert.assertEquals(oldIteration.size(), 29);
+        for (int i = 1; i < result.trees().size(); i++) {
+            final List<HuffmanNode> newIteration = result.trees().get(i);
+            Assert.assertEquals(oldIteration.size() - newIteration.size(), 1);
+            oldIteration = newIteration;
+        }
         Assert.assertEquals(codeBook.size(), 29);
         Assert.assertEquals(codeBook.get(' '), "011");
         Assert.assertEquals(codeBook.get('.'), "101010");
@@ -173,7 +181,7 @@ public class CodingAlgorithmsTest {
         Assert.assertEquals(codeBook.get('y'), "00001");
         Assert.assertEquals(codeBook.get('z'), "01000");
         Assert.assertEquals(
-            result.message(),
+            result.code().message(),
             "101100 001 1110 0001 01000 011 110001 1110 110000 0101 011 10000 10010 011 110010 10011 10010 110011 10001 1111 0101 0101 011 110110 1111 001 110111 1110 01001 001 10001 10011 110101 0101 1111 0001 011 101101 1110 00000 10000 011 110100 10100 1111 001 011 101111 10100 001 101110 01001 011 101011 1110 00001 1111 001 0001 101010"
         );
     }

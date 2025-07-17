@@ -8,15 +8,32 @@ import exercisegenerator.structures.*;
 
 public class HuffmanTree {
 
-    private static Optional<HuffmanNode> buildHuffmanTree(
+    public static HuffmanSolution toHuffmanTree(final String sourceText, final List<Character> targetAlphabet) {
+        final List<List<HuffmanNode>> trees =
+            HuffmanTree.buildHuffmanTree(
+                targetAlphabet,
+                HuffmanTree.toRootNodes(HuffmanTree.countFrequencies(sourceText))
+            );
+        final HuffmanTree tree =
+            trees.isEmpty() ?
+                new HuffmanTree(Optional.empty()) :
+                    new HuffmanTree(Optional.of(trees.removeLast().getFirst()));
+        return new HuffmanSolution(trees, new HuffmanCode(tree.toEncoder().encode(sourceText), tree));
+    }
+
+    private static List<List<HuffmanNode>> buildHuffmanTree(
         final List<Character> targetAlphabet,
         final List<HuffmanNode> roots
     ) {
         if (roots.isEmpty()) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
+        final List<List<HuffmanNode>> result = new LinkedList<List<HuffmanNode>>();
         final PriorityQueue<HuffmanNode> queue = new PriorityQueue<HuffmanNode>(roots);
         while (queue.size() > 1) {
+            final List<HuffmanNode> currentTrees = new ArrayList<HuffmanNode>(queue);
+            Collections.sort(currentTrees);
+            result.add(currentTrees);
             final Map<Character, HuffmanNode> children = new LinkedHashMap<Character, HuffmanNode>();
             int frequency = 0;
             for (final Character symbol : targetAlphabet) {
@@ -29,7 +46,8 @@ public class HuffmanTree {
             }
             queue.offer(new HuffmanInnerNode(frequency, children));
         }
-        return Optional.of(queue.poll());
+        result.add(List.of(queue.poll()));
+        return result;
     }
 
     private static Map<Character, Integer> countFrequencies(final String sourceText) {
@@ -95,16 +113,7 @@ public class HuffmanTree {
         this.root = Optional.of(result.y);
     }
 
-    public HuffmanTree(final String sourceText, final List<Character> targetAlphabet) {
-        this(
-            HuffmanTree.buildHuffmanTree(
-                targetAlphabet,
-                HuffmanTree.toRootNodes(HuffmanTree.countFrequencies(sourceText))
-            )
-        );
-    }
-
-    private HuffmanTree(final Optional<HuffmanNode> root) {
+    public HuffmanTree(final Optional<HuffmanNode> root) {
         this.root = root;
     }
 

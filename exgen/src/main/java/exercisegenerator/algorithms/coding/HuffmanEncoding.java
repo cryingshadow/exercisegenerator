@@ -11,7 +11,7 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.coding.*;
 
-public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, HuffmanCode> {
+public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, HuffmanSolution> {
 
     public static final HuffmanEncoding INSTANCE = new HuffmanEncoding();
 
@@ -100,9 +100,8 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     private HuffmanEncoding() {}
 
     @Override
-    public HuffmanCode apply(final HuffmanProblem problem) {
-        final HuffmanTree tree = new HuffmanTree(problem.message(), problem.alphabet());
-        return new HuffmanCode(tree.toEncoder().encode(problem.message()), tree);
+    public HuffmanSolution apply(final HuffmanProblem problem) {
+        return HuffmanTree.toHuffmanTree(problem.message(), problem.alphabet());
     }
 
     @Override
@@ -122,7 +121,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     @Override
     public void printExercise(
         final HuffmanProblem problem,
-        final HuffmanCode solution,
+        final HuffmanSolution solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
@@ -140,7 +139,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         writer.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
         Main.newLine(writer);
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        HuffmanEncoding.printCodeBookForEncoding(solution.tree().toCodeBook(), true, writer);
+        HuffmanEncoding.printCodeBookForEncoding(solution.code().tree().toCodeBook(), true, writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("\\textbf{Code:}\\\\");
         Main.newLine(writer);
@@ -150,28 +149,39 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     @Override
     public void printSolution(
         final HuffmanProblem problem,
-        final HuffmanCode solution,
+        final HuffmanSolution solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanEncoding.printCodeBookForEncoding(solution.tree().toCodeBook(), false, writer);
+        HuffmanEncoding.printCodeBookForEncoding(solution.code().tree().toCodeBook(), false, writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("\\textbf{Code:}\\\\");
         Main.newLine(writer);
         writer.write(
-            Arrays.stream(LaTeXUtils.escapeForLaTeX(solution.message()).split(" "))
+            Arrays.stream(LaTeXUtils.escapeForLaTeX(solution.code().message()).split(" "))
                 .map(LaTeXUtils::code)
                 .collect(Collectors.joining(" "))
         );
         Main.newLine(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("\\resizebox{\\textwidth}{!}{");
+        writer.write("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
         Main.newLine(writer);
+        for (final List<HuffmanNode> trees : solution.trees()) {
+            LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+            for (final HuffmanNode root : trees) {
+                LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
+                new HuffmanTree(Optional.of(root)).toTikZ(writer);
+                LaTeXUtils.printTikzEnd(writer);
+            }
+            LaTeXUtils.printAdjustboxEnd(writer);
+            writer.write("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
+            Main.newLine(writer);
+        }
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
         LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
-        solution.tree().toTikZ(writer);
+        solution.code().tree().toTikZ(writer);
         LaTeXUtils.printTikzEnd(writer);
-        writer.write("}");
-        Main.newLine(writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
         Main.newLine(writer);
     }
 
