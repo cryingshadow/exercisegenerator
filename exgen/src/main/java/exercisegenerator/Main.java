@@ -3,6 +3,8 @@ package exercisegenerator;
 import java.io.*;
 import java.util.*;
 
+import com.google.gson.*;
+
 import clit.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
@@ -14,6 +16,8 @@ public class Main {
     public static final String EMBEDDED;
 
     public static final String EMBEDDED_EXAM;
+
+    public static final Gson GSON;
 
     public static String lineSeparator;
 
@@ -31,6 +35,7 @@ public class Main {
 
     static {
         RANDOM = new Random();
+        GSON = new Gson();
         NUMBER_LIMIT = 100;
         EMBEDDED = "embedded";
         EMBEDDED_EXAM = "embeddedExam";

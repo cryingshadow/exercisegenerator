@@ -537,6 +537,88 @@ public class GraphAlgorithmsTest {
         };
     }
 
+    @Test(dataProvider="petriPlaceIndexData")
+    public void petriPlaceIndex(final int transitionIndex, final boolean from, final int expected) {
+        Assert.assertEquals(PetriNetAlgorithm.computePlaceIndex(transitionIndex, from), expected);
+    }
+
+    @Test(dataProvider="petriPlaceIndexCoordinatesData")
+    public void petriPlaceIndexCoordinates(final int placeIndex, final int expectedX, final int expectedY) {
+        Assert.assertEquals(PetriNetAlgorithm.computeXforPlace(placeIndex), expectedX);
+        Assert.assertEquals(PetriNetAlgorithm.computeYforPlace(placeIndex), expectedY);
+    }
+
+    @DataProvider
+    public Object[][] petriPlaceIndexCoordinatesData() {
+        return new Object[][] {
+            {0, 0, 8},
+            {1, 4, 8},
+            {2, 4, 4},
+            {3, 0, 4},
+            {4, 8, 8},
+            {5, 8, 4},
+            {6, 8, 0},
+            {7, 4, 0},
+            {8, 0, 0}
+        };
+    }
+
+    @DataProvider
+    public Object[][] petriPlaceIndexData() {
+        return new Object[][] {
+            {0, true, 0},
+            {0, false, 1},
+            {1, true, 1},
+            {1, false, 0},
+            {2, true, 0},
+            {2, false, 3},
+            {3, true, 3},
+            {3, false, 0},
+            {4, true, 1},
+            {4, false, 2},
+            {5, true, 2},
+            {5, false, 1},
+            {6, true, 2},
+            {6, false, 3},
+            {7, true, 3},
+            {7, false, 2},
+            {8, true, 1},
+            {8, false, 4},
+            {9, true, 4},
+            {9, false, 1},
+            {10, true, 2},
+            {10, false, 5},
+            {11, true, 5},
+            {11, false, 2},
+            {12, true, 2},
+            {12, false, 7},
+            {13, true, 7},
+            {13, false, 2},
+            {14, true, 3},
+            {14, false, 8},
+            {15, true, 8},
+            {15, false, 3},
+            {16, true, 4},
+            {16, false, 5},
+            {17, true, 5},
+            {17, false, 4},
+            {18, true, 5},
+            {18, false, 6},
+            {19, true, 6},
+            {19, false, 5},
+            {20, true, 6},
+            {20, false, 7},
+            {21, true, 7},
+            {21, false, 6},
+            {22, true, 7},
+            {22, false, 8},
+            {23, true, 8},
+            {23, false, 7},
+            {24, true, 4},
+            {24, false, 9}
+        };
+    }
+
     @Test(dataProvider="primData")
     public void prim(final GraphProblem problem, final PrimResult<String> expected) {
         Assert.assertEquals(PrimAlgorithm.INSTANCE.apply(problem), expected);
