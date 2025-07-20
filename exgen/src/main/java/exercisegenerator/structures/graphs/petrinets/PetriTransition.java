@@ -1,4 +1,4 @@
-package exercisegenerator.structures.graphs;
+package exercisegenerator.structures.graphs.petrinets;
 
 import java.util.*;
 
