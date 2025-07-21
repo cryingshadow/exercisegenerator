@@ -74,10 +74,50 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
         final PetriTransition transition,
         final PetriMarking nextTokens,
         final List<PetriMarking> used,
-        final CoverabilityGraph result
+        final CoverabilityGraph graph
     ) {
-        // TODO Auto-generated method stub
-        return null;
+        final PetriMarking result = new PetriMarking(nextTokens);
+        for (final PetriMarking existingTokens : used) {
+            if (result.strictlyCovers(existingTokens) && this.isReachable(existingTokens, tokens, graph)) {
+                for (final Map.Entry<Integer, Optional<Integer>> entry : existingTokens.entrySet()) {
+                    final Optional<Integer> resultValue = result.get(entry.getKey());
+                    if (resultValue.isPresent() && resultValue.get() > entry.getValue().get()) {
+                        result.put(entry.getKey(), Optional.empty());
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean isReachable(
+        final PetriMarking from,
+        final PetriMarking to,
+        final CoverabilityGraph graph
+    ) {
+        if (from.equals(to)) {
+            return true;
+        }
+        final Vertex<PetriMarking> start = graph.getVerticesWithLabel(from).iterator().next();
+        final List<PetriMarking> used = new LinkedList<PetriMarking>();
+        final Queue<Vertex<PetriMarking>> queue = new LinkedList<Vertex<PetriMarking>>();
+        queue.offer(start);
+        used.add(from);
+        while (!queue.isEmpty()) {
+            final Vertex<PetriMarking> current = queue.poll();
+            for (final Vertex<PetriMarking> next : graph.getAdjacentVertices(current)) {
+                final PetriMarking tokens = next.label.get();
+                if (used.contains(tokens)) {
+                    continue;
+                }
+                if (to.equals(tokens)) {
+                    return true;
+                }
+                used.add(tokens);
+                queue.offer(next);
+            }
+        }
+        return false;
     }
 
 }

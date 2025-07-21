@@ -8,13 +8,6 @@ import exercisegenerator.io.*;
 
 public class PetriNet {
 
-    private static Optional<Integer> omegaSum(final Optional<Integer> oldValue, final Optional<Integer> newValue) {
-        if (oldValue.isEmpty() || newValue.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(oldValue.get() + newValue.get());
-    }
-
     private final PetriPlace[] places;
 
     private final List<PetriTransition> transitions;
@@ -51,10 +44,10 @@ public class PetriNet {
     public PetriMarking fireTransition(final PetriMarking tokens, final PetriTransition transition) {
         final PetriMarking result = new PetriMarking(tokens);
         for (final Map.Entry<Integer, Integer> fromEntry : transition.from().entrySet()) {
-            result.merge(fromEntry.getKey(), Optional.of(-fromEntry.getValue()), PetriNet::omegaSum);
+            result.merge(fromEntry.getKey(), Optional.of(-fromEntry.getValue()), PetriMarking::omegaSum);
         }
         for (final Map.Entry<Integer, Integer> toEntry : transition.to().entrySet()) {
-            result.merge(toEntry.getKey(), Optional.of(toEntry.getValue()), PetriNet::omegaSum);
+            result.merge(toEntry.getKey(), Optional.of(toEntry.getValue()), PetriMarking::omegaSum);
         }
         return result;
     }
