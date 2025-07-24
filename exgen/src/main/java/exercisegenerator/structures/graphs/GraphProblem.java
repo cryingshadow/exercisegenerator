@@ -3,7 +3,7 @@ package exercisegenerator.structures.graphs;
 import java.util.*;
 
 public record GraphProblem(
-    Graph<String, Integer> graph,
+    GraphWithLayout<String, Integer> graphWithLayout,
     Vertex<String> startNode,
     Comparator<Vertex<String>> comparator
 ) {}

@@ -8,6 +8,7 @@ import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.layout.*;
 
 public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
 
@@ -33,7 +34,7 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
             used.add(vertex);
             result.add(vertex.label.get());
             final List<Vertex<String>> nextVertices =
-                new ArrayList<Vertex<String>>(problem.graph().getAdjacentVertices(vertex));
+                new ArrayList<Vertex<String>>(problem.graphWithLayout().graph().getAdjacentVertices(vertex));
             Collections.sort(nextVertices, problem.comparator());
             queue.addAll(nextVertices);
         }
@@ -55,11 +56,16 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
+        final GraphWithLayout<String, Integer> graphWithLayout = problem.graphWithLayout();
         GraphAlgorithm.printGraphExercise(
-            problem.graph(),
+            GraphAlgorithm.stretch(
+                new GraphWithLayout<String, Integer>(
+                    graphWithLayout.graph(),
+                    ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDrawEdgeLabels(false)
+                ),
+                GraphAlgorithm.parseDistanceFactor(options)
+            ),
             BreadthFirstSearch.breadthFirstSearchTask(problem.startNode().label.get()),
-            GraphAlgorithm.parseDistanceFactor(options),
-            GraphPrintMode.NO_EDGE_LABELS,
             writer
         );
         Main.newLine(writer);

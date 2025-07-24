@@ -2,7 +2,6 @@ package exercisegenerator.algorithms.graphs;
 
 import java.io.*;
 import java.util.*;
-import java.util.Map.*;
 import java.util.stream.*;
 
 import clit.*;
@@ -11,84 +10,85 @@ import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.layout.*;
 
 public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem, S> {
 
     static final int DEFAULT_EDGE_ROOT = 3;
 
-    static VertexGridPosition addVertexWithGridLayout(
-        final Vertex<String> vertex,
-        final Graph<String, ?> graph,
-        final Pair<GridCoordinates, Boolean> pos,
-        final Map<GridCoordinates, Vertex<String>> grid,
-        final Map<Vertex<String>, VertexGridPosition> positions
-    ) {
-        graph.addVertex(vertex);
-        grid.put(pos.x, vertex);
-        final int x = pos.x.x;
-        final int y = pos.x.y;
-        final VertexGridPosition gridPos = new VertexGridPosition(pos.x.x, pos.x.y, pos.y);
-        positions.put(vertex, gridPos);
-        GridCoordinates nextPos = new GridCoordinates(x, y - 1);
-        Vertex<String> nextVertex = grid.get(nextPos);
-        if (nextVertex != null) {
-            final VertexGridPosition nextGridPos = positions.get(nextVertex);
-            gridPos.north = nextGridPos;
-            nextGridPos.south = gridPos;
-        }
-        nextPos = new GridCoordinates(x + 1, y);
-        nextVertex = grid.get(nextPos);
-        if (nextVertex != null) {
-            final VertexGridPosition nextGridPos = positions.get(nextVertex);
-            gridPos.east = nextGridPos;
-            nextGridPos.west = gridPos;
-        }
-        nextPos = new GridCoordinates(x, y + 1);
-        nextVertex = grid.get(nextPos);
-        if (nextVertex != null) {
-            final VertexGridPosition nextGridPos = positions.get(nextVertex);
-            gridPos.south = nextGridPos;
-            nextGridPos.north = gridPos;
-        }
-        nextPos = new GridCoordinates(x - 1, y);
-        nextVertex = grid.get(nextPos);
-        if (nextVertex != null) {
-            final VertexGridPosition nextGridPos = positions.get(nextVertex);
-            gridPos.west = nextGridPos;
-            nextGridPos.east = gridPos;
-        }
-        if (pos.y) {
-            nextPos = new GridCoordinates(x + 1, y - 1);
-            nextVertex = grid.get(nextPos);
-            if (nextVertex != null) {
-                final VertexGridPosition nextGridPos = positions.get(nextVertex);
-                gridPos.northeast = nextGridPos;
-                nextGridPos.southwest = gridPos;
-            }
-            nextPos = new GridCoordinates(x + 1, y + 1);
-            nextVertex = grid.get(nextPos);
-            if (nextVertex != null) {
-                final VertexGridPosition nextGridPos = positions.get(nextVertex);
-                gridPos.southeast = nextGridPos;
-                nextGridPos.northwest = gridPos;
-            }
-            nextPos = new GridCoordinates(x - 1, y + 1);
-            nextVertex = grid.get(nextPos);
-            if (nextVertex != null) {
-                final VertexGridPosition nextGridPos = positions.get(nextVertex);
-                gridPos.southwest = nextGridPos;
-                nextGridPos.northeast = gridPos;
-            }
-            nextPos = new GridCoordinates(x - 1, y - 1);
-            nextVertex = grid.get(nextPos);
-            if (nextVertex != null) {
-                final VertexGridPosition nextGridPos = positions.get(nextVertex);
-                gridPos.northwest = nextGridPos;
-                nextGridPos.southeast = gridPos;
-            }
-        }
-        return gridPos;
-    }
+//    static VertexGridPosition addVertexWithGridLayout(
+//        final Vertex<String> vertex,
+//        final Graph<String, ?> graph,
+//        final Pair<GridCoordinates, Boolean> pos,
+//        final Map<GridCoordinates, Vertex<String>> grid,
+//        final Map<Vertex<String>, VertexGridPosition> positions
+//    ) {
+//        graph.addVertex(vertex);
+//        grid.put(pos.x, vertex);
+//        final int x = pos.x.x;
+//        final int y = pos.x.y;
+//        final VertexGridPosition gridPos = new VertexGridPosition(pos.x.x, pos.x.y, pos.y);
+//        positions.put(vertex, gridPos);
+//        GridCoordinates nextPos = new GridCoordinates(x, y - 1);
+//        Vertex<String> nextVertex = grid.get(nextPos);
+//        if (nextVertex != null) {
+//            final VertexGridPosition nextGridPos = positions.get(nextVertex);
+//            gridPos.north = nextGridPos;
+//            nextGridPos.south = gridPos;
+//        }
+//        nextPos = new GridCoordinates(x + 1, y);
+//        nextVertex = grid.get(nextPos);
+//        if (nextVertex != null) {
+//            final VertexGridPosition nextGridPos = positions.get(nextVertex);
+//            gridPos.east = nextGridPos;
+//            nextGridPos.west = gridPos;
+//        }
+//        nextPos = new GridCoordinates(x, y + 1);
+//        nextVertex = grid.get(nextPos);
+//        if (nextVertex != null) {
+//            final VertexGridPosition nextGridPos = positions.get(nextVertex);
+//            gridPos.south = nextGridPos;
+//            nextGridPos.north = gridPos;
+//        }
+//        nextPos = new GridCoordinates(x - 1, y);
+//        nextVertex = grid.get(nextPos);
+//        if (nextVertex != null) {
+//            final VertexGridPosition nextGridPos = positions.get(nextVertex);
+//            gridPos.west = nextGridPos;
+//            nextGridPos.east = gridPos;
+//        }
+//        if (pos.y) {
+//            nextPos = new GridCoordinates(x + 1, y - 1);
+//            nextVertex = grid.get(nextPos);
+//            if (nextVertex != null) {
+//                final VertexGridPosition nextGridPos = positions.get(nextVertex);
+//                gridPos.northeast = nextGridPos;
+//                nextGridPos.southwest = gridPos;
+//            }
+//            nextPos = new GridCoordinates(x + 1, y + 1);
+//            nextVertex = grid.get(nextPos);
+//            if (nextVertex != null) {
+//                final VertexGridPosition nextGridPos = positions.get(nextVertex);
+//                gridPos.southeast = nextGridPos;
+//                nextGridPos.northwest = gridPos;
+//            }
+//            nextPos = new GridCoordinates(x - 1, y + 1);
+//            nextVertex = grid.get(nextPos);
+//            if (nextVertex != null) {
+//                final VertexGridPosition nextGridPos = positions.get(nextVertex);
+//                gridPos.southwest = nextGridPos;
+//                nextGridPos.northeast = gridPos;
+//            }
+//            nextPos = new GridCoordinates(x - 1, y - 1);
+//            nextVertex = grid.get(nextPos);
+//            if (nextVertex != null) {
+//                final VertexGridPosition nextGridPos = positions.get(nextVertex);
+//                gridPos.northwest = nextGridPos;
+//                nextGridPos.southeast = gridPos;
+//            }
+//        }
+//        return gridPos;
+//    }
 
     static <V> List<Vertex<V>> getSortedListOfVertices(
         final Graph<V, Integer> graph,
@@ -106,17 +106,15 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
     }
 
     static void printGraphExercise(
-        final Graph<String, Integer> graph,
+        final GraphWithLayout<String, Integer> graphWithLayout,
         final String task,
-        final double distanceFactor,
-        final GraphPrintMode mode,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Betrachten Sie den folgenden Graphen:\\\\");
         Main.newLine(writer);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        graph.printTikZ(mode, distanceFactor, null, writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+        graphWithLayout.graph().printTikZ(graphWithLayout.layout(), writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
         Main.newLine(writer);
         writer.write(task);
         Main.newLine(writer);
@@ -145,6 +143,29 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         );
     }
 
+    static GraphWithLayout<String, Integer> stretch(
+        final GraphWithLayout<String, Integer> graphWithLayout,
+        final double factor
+    ) {
+        if (factor == 1.0) {
+            return graphWithLayout;
+        }
+        return new GraphWithLayout<String, Integer>(
+            graphWithLayout.graph(),
+            ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).stretch(factor)
+        );
+    }
+
+    static <V, E> GridGraphLayout<V, E> stretch(
+        final GridGraphLayout<V, E> graphLayout,
+        final double factor
+    ) {
+        if (factor == 1.0) {
+            return graphLayout;
+        }
+        return graphLayout.stretch(factor);
+    }
+
     static String toLetterLabel(final int num) {
         int val = num;
         int rem = val % 26;
@@ -159,57 +180,54 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         return res;
     }
 
-    private static Graph<String, Integer> createRandomGraph(final int numOfVertices, final boolean undirected) {
+    private static GraphWithLayout<String, Integer> createRandomGraphWithGridLayout(
+        final int numOfVertices,
+        final boolean directed
+    ) {
         if (numOfVertices < 0) {
             throw new IllegalArgumentException("Number of vertices must not be negative!");
         }
         final Graph<String, Integer> graph = new Graph<String, Integer>();
-        final Grid<String> grid = new Grid<String>();
+        final GridGraphLayout.GridGraphLayoutBuilder<String, Integer> layoutBuilder =
+            GridGraphLayout.<String, Integer>builder().setDirected(directed);
         if (numOfVertices == 0) {
-            graph.setGrid(grid);
-            return graph;
+            return new GraphWithLayout<String, Integer>(graph, layoutBuilder.build());
         }
-        final Map<Vertex<String>, VertexGridPosition> positions =
-            new LinkedHashMap<Vertex<String>, VertexGridPosition>();
         final Vertex<String> start = new Vertex<String>(Optional.of("A"));
-        final GridCoordinates startPos = new GridCoordinates(0, 0);
-        final boolean startDiagonal = Main.RANDOM.nextBoolean();
-        GraphAlgorithm.addVertexWithGridLayout(
-            start,
-            graph,
-            new Pair<GridCoordinates, Boolean>(startPos, startDiagonal),
-            grid,
-            positions
-        );
+        graph.addVertex(start);
+        layoutBuilder.addVertex(start, new Coordinates2D<Integer>(0, 0));
         final List<Vertex<String>> verticesWithFreeNeighbors = new ArrayList<Vertex<String>>();
         verticesWithFreeNeighbors.add(start);
         for (int letter = 1; letter < numOfVertices; letter++) {
             final Vertex<String> nextVertex =
                 verticesWithFreeNeighbors.get(Main.RANDOM.nextInt(verticesWithFreeNeighbors.size()));
-            final VertexGridPosition nextPos = positions.get(nextVertex);
-            final Pair<GridCoordinates, Boolean> toAddPos = nextPos.randomFreePosition();
             final Vertex<String> toAddVertex =
                 new Vertex<String>(Optional.of(GraphAlgorithm.toLetterLabel(letter)));
-            final VertexGridPosition gridPos = GraphAlgorithm.addVertexWithGridLayout(toAddVertex, graph, toAddPos, grid, positions);
+            graph.addVertex(toAddVertex);
+            final List<Coordinates2D<Integer>> free = layoutBuilder.getFreePositions(nextVertex);
+            final Coordinates2D<Integer> toAddPos = free.get(Main.RANDOM.nextInt(free.size()));
+            layoutBuilder.addVertex(toAddVertex, toAddPos);
             final int value = GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT);
             graph.addEdge(nextVertex, Optional.of(value), toAddVertex);
-            if (undirected) {
+            if (!directed) {
                 graph.addEdge(toAddVertex, Optional.of(value), nextVertex);
             }
-            final List<Pair<GridCoordinates, Boolean>> existing = gridPos.getExistingPositions();
             final List<Pair<Vertex<String>, Vertex<String>>> freeVertexPairs =
                 new ArrayList<Pair<Vertex<String>, Vertex<String>>>();
-            for (final Pair<GridCoordinates, Boolean> other : existing) {
-                final Vertex<String> otherVertex = grid.get(other.x);
-                if (otherVertex.equals(nextVertex)) {
-                    if (!undirected) {
-                        freeVertexPairs.add(new Pair<Vertex<String>, Vertex<String>>(toAddVertex, otherVertex));
+            final List<Vertex<String>> neighbours = layoutBuilder.getSurroundingVertices(toAddPos);
+            for (final Vertex<String> neighbour : neighbours) {
+                if (neighbour.equals(nextVertex)) {
+                    if (directed) {
+                        freeVertexPairs.add(new Pair<Vertex<String>, Vertex<String>>(toAddVertex, neighbour));
                     }
                 } else {
-                    freeVertexPairs.add(new Pair<Vertex<String>, Vertex<String>>(toAddVertex, otherVertex));
-                    if (!undirected) {
-                        freeVertexPairs.add(new Pair<Vertex<String>, Vertex<String>>(otherVertex, toAddVertex));
+                    freeVertexPairs.add(new Pair<Vertex<String>, Vertex<String>>(toAddVertex, neighbour));
+                    if (directed) {
+                        freeVertexPairs.add(new Pair<Vertex<String>, Vertex<String>>(neighbour, toAddVertex));
                     }
+                }
+                if (layoutBuilder.getFreePositions(neighbour).isEmpty()) {
+                    verticesWithFreeNeighbors.remove(neighbour);
                 }
             }
             for (
@@ -221,53 +239,28 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
                 final Pair<Vertex<String>, Vertex<String>> pair = freeVertexPairs.remove(pairIndex);
                 final int nextValue = GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT);
                 graph.addEdge(pair.x, Optional.of(nextValue), pair.y);
-                if (undirected) {
+                if (!directed) {
                     graph.addEdge(pair.y, Optional.of(nextValue), pair.x);
                 }
             }
-            for (final Pair<GridCoordinates, Boolean> neighborPos : existing) {
-                final Vertex<String> neighborVertex = grid.get(neighborPos.x);
-                if (!positions.get(neighborVertex).hasFreePosition()) {
-                    verticesWithFreeNeighbors.remove(neighborVertex);
-                }
-            }
-            if (gridPos.hasFreePosition()) {
+            if (!layoutBuilder.getFreePositions(toAddVertex).isEmpty()) {
                 verticesWithFreeNeighbors.add(toAddVertex);
             }
         }
-        // adjust grid (non-negative coordinates, sum of coordinates even -> has diagonals
-        int minX = 0;
-        int minY = 0;
-        for (final GridCoordinates pair : grid.keySet()) {
-            minX = Math.min(minX, pair.x);
-            minY = Math.min(minY, pair.y);
-        }
-        if (
-            (startDiagonal && (startPos.x - minX + startPos.y - minY) % 2 == 1)
-            || (!startDiagonal && (startPos.x - minX + startPos.y - minY) % 2 == 0)
-        ) {
-            minX--;
-        }
-        final Grid<String> newGrid = new Grid<String>();
-        for (final Entry<GridCoordinates, Vertex<String>> entry : grid.entrySet()) {
-            final GridCoordinates key = entry.getKey();
-            newGrid.put(new GridCoordinates(key.x - minX, key.y - minY), entry.getValue());
-        }
-        graph.setGrid(newGrid);
-        return graph;
+        return new GraphWithLayout<String, Integer>(graph, layoutBuilder.build());
     }
 
     private static GraphProblem generateGraphProblem(final Parameters<Flag> options) {
         final String algorithmName = options.get(Flag.ALGORITHM);
         final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
-        final Graph<String, Integer> graph =
-            GraphAlgorithm.createRandomGraph(
+        final GraphWithLayout<String, Integer> graphWithLayout =
+            GraphAlgorithm.createRandomGraphWithGridLayout(
                 numOfVertices,
-                GraphAlgorithm.isUndirectedGraphAlgorithm(algorithmName)
+                !GraphAlgorithm.isUndirectedGraphAlgorithm(algorithmName)
             );
         return new GraphProblem(
-            graph,
-            GraphAlgorithm.generateStartVertex(graph, options),
+            graphWithLayout,
+            GraphAlgorithm.generateStartVertex(graphWithLayout.graph(), options),
             StringVertexComparator.INSTANCE
         );
     }
@@ -300,10 +293,11 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        final Graph<String, Integer> graph = Graph.create(reader, new StringLabelParser(), new IntLabelParser());
+        final GraphWithLayout<String, Integer> graphWithLayout =
+            Graph.create(reader, new StringLabelParser(), new IntLabelParser());
         return new GraphProblem(
-            graph,
-            GraphAlgorithm.parseOrGenerateStartVertex(graph, options),
+            graphWithLayout,
+            GraphAlgorithm.parseOrGenerateStartVertex(graphWithLayout.graph(), options),
             StringVertexComparator.INSTANCE
         );
     }

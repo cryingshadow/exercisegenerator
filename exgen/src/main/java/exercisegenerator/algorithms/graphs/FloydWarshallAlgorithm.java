@@ -98,7 +98,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
 
     private static String[] toLabels(final GraphProblem problem) {
         final List<Vertex<String>> vertices =
-            GraphAlgorithm.getSortedListOfVertices(problem.graph(), problem.comparator());
+            GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
         return vertices.stream().map(v -> v.label.get()).toArray(String[]::new);
     }
 
@@ -119,10 +119,8 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     ) throws IOException {
         final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
         GraphAlgorithm.printGraphExercise(
-            problem.graph(),
+            GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options)),
             String.format(FloydWarshallAlgorithm.FLOYD_WARSHALL_PATTERN, this.getName()),
-            GraphAlgorithm.parseDistanceFactor(options),
-            GraphPrintMode.ALL,
             writer
         );
         LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
@@ -166,7 +164,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
 
     @Override
     default T[][][] apply(final GraphProblem problem) {
-        final Graph<String, Integer> graph = problem.graph();
+        final Graph<String, Integer> graph = problem.graphWithLayout().graph();
         final List<Vertex<String>> vertices = GraphAlgorithm.getSortedListOfVertices(graph, problem.comparator());
         final int size = vertices.size();
         final T[][][] tables = this.createTable(size + 1, size, size);

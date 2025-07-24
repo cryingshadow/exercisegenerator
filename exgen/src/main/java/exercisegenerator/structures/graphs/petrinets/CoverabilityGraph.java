@@ -1,11 +1,10 @@
 package exercisegenerator.structures.graphs.petrinets;
 
 import java.io.*;
-import java.util.*;
 
 import exercisegenerator.*;
-import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.layout.*;
 
 public class CoverabilityGraph extends Graph<PetriMarking, String> {
 
@@ -19,12 +18,10 @@ public class CoverabilityGraph extends Graph<PetriMarking, String> {
 
     @Override
     public void printTikZ(
-        final GraphPrintMode printMode,
-        final double multiplier,
-        final Set<FordFulkersonPathStep<PetriMarking, String>> toHighlight,
+        final GraphLayout<PetriMarking, String> layout,
         final BufferedWriter writer
     ) throws IOException {
-        super.printTikZ(printMode, multiplier, toHighlight, writer);
+        super.printTikZ(layout, writer);
         writer.write(String.format("\\draw[->,thick] ($(%s)+(-0.5,0.5)$) -- (%s);", this.start.id, this.start.id));
         Main.newLine(writer);
     }

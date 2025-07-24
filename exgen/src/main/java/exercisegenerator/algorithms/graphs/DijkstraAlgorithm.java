@@ -125,7 +125,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
     @Override
     public DijkstraTables apply(final GraphProblem problem) {
         final Vertex<String> start = problem.startNode();
-        final Graph<String, Integer> graph = problem.graph();
+        final Graph<String, Integer> graph = problem.graphWithLayout().graph();
         final List<Vertex<String>> vertices = GraphAlgorithm.getSortedListOfVertices(graph, problem.comparator());
         vertices.remove(start);
         vertices.add(0, start);
@@ -202,10 +202,8 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
     ) throws IOException {
         final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         GraphAlgorithm.printGraphExercise(
-            problem.graph(),
+            GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options)),
             String.format(DijkstraAlgorithm.DIJKSTRA_PATTERN,  problem.startNode().label.get().toString()),
-            GraphAlgorithm.parseDistanceFactor(options),
-            GraphPrintMode.ALL,
             writer
         );
         switch (mode) {

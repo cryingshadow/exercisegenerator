@@ -56,7 +56,7 @@ public enum TikZStyle {
         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]"
     );
 
-    final String style;
+    public final String style;
 
     private TikZStyle(final String s) {
         this.style = s;

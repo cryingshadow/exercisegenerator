@@ -7,6 +7,7 @@ import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.layout.*;
 
 public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
 
@@ -53,10 +54,12 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
 
     @Override
     public PrimResult<String> apply(final GraphProblem problem) {
-        final List<Vertex<String>> vertices = new ArrayList<Vertex<String>>(problem.graph().getVertices());
+        final Graph<String, Integer> originalGraph = problem.graphWithLayout().graph();
+        final List<Vertex<String>> vertices =
+            new ArrayList<Vertex<String>>(originalGraph.getVertices());
         Collections.sort(vertices, problem.comparator());
         final int numberOfVertices = vertices.size();
-        final Graph<String, Integer> tree = problem.graph().nodeCopy();
+        final Graph<String, Integer> tree = originalGraph.nodeCopy();
         int recentlyAdded = vertices.indexOf(problem.startNode());
         final int[] parents = new int[numberOfVertices];
         final PrimEntry[][] table = new PrimEntry[numberOfVertices][numberOfVertices];
@@ -65,7 +68,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
             parents[i] = -1;
         }
         for (int i = 1; i < numberOfVertices; i++) {
-            for (final Edge<Integer, String> edge : problem.graph().getAdjacencyList(vertices.get(recentlyAdded))) {
+            for (final Edge<Integer, String> edge : originalGraph.getAdjacencyList(vertices.get(recentlyAdded))) {
                 final int toIndex = vertices.indexOf(edge.to);
                 final PrimEntry toEntry = table[i - 1][toIndex];
                 if (toEntry != null && !toEntry.done() && toEntry.compareTo(edge.label.get()) > 0) {
@@ -90,10 +93,12 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
             final Vertex<String> to = vertices.get(minIndex);
             tree.addEdge(from, Optional.of(min), to);
             tree.addEdge(to, Optional.of(min), from);
-            tree.setGrid(problem.graph().getGrid());
             recentlyAdded = minIndex;
         }
-        return new PrimResult<String>(table, tree);
+        return new PrimResult<String>(
+            table,
+            new GraphWithLayout<>(tree, problem.graphWithLayout().layout())
+        );
     }
 
     @Override
@@ -111,13 +116,19 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final List<Vertex<String>> vertices = new ArrayList<Vertex<String>>(problem.graph().getVertices());
+        final GraphWithLayout<String, Integer> graphWithLayout = problem.graphWithLayout();
+        final List<Vertex<String>> vertices =
+            new ArrayList<Vertex<String>>(graphWithLayout.graph().getVertices());
         Collections.sort(vertices, problem.comparator());
         GraphAlgorithm.printGraphExercise(
-            problem.graph(),
+            GraphAlgorithm.stretch(
+                new GraphWithLayout<String, Integer>(
+                    graphWithLayout.graph(),
+                    ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDirected(false)
+                ),
+                GraphAlgorithm.parseDistanceFactor(options)
+            ),
             String.format(PrimAlgorithm.PRIM_PATTERN, problem.startNode().label.get()),
-            GraphAlgorithm.parseDistanceFactor(options),
-            GraphPrintMode.UNDIRECTED,
             writer
         );
         writer.write(
@@ -138,13 +149,20 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final List<Vertex<String>> vertices = new ArrayList<Vertex<String>>(problem.graph().getVertices());
+        final List<Vertex<String>> vertices =
+            new ArrayList<Vertex<String>>(problem.graphWithLayout().graph().getVertices());
         Collections.sort(vertices, problem.comparator());
         PrimAlgorithm.printTable(solution.table(), vertices, true, writer);
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        solution.tree().printTikZ(GraphPrintMode.UNDIRECTED, GraphAlgorithm.parseDistanceFactor(options), null, writer);
+        solution.treeWithLayout().graph().printTikZ(
+            GraphAlgorithm.stretch(
+                ((GridGraphLayout<String, Integer>)solution.treeWithLayout().layout()).setDirected(false),
+                GraphAlgorithm.parseDistanceFactor(options)
+            ),
+            writer
+        );
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         Main.newLine(writer);
     }

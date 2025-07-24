@@ -8,6 +8,7 @@ import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.layout.*;
 
 public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
 
@@ -17,7 +18,7 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
 
     @Override
     public KruskalResult<String> apply(final GraphProblem problem) {
-        final Graph<String, Integer> graph = problem.graph();
+        final Graph<String, Integer> graph = problem.graphWithLayout().graph();
         final List<UndirectedEdge<String, Integer>> result = new ArrayList<UndirectedEdge<String, Integer>>();
         final Graph<String, Integer> tree = graph.nodeCopy();
         final LinkedList<UndirectedEdge<String, Integer>> edges =
@@ -42,11 +43,13 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
                 result.add(edge);
                 tree.addEdge(edge.from, edge.label, edge.to);
                 tree.addEdge(edge.to, edge.label, edge.from);
-                tree.setGrid(graph.getGrid());
                 components.union(edge.from, edge.to);
             }
         }
-        return new KruskalResult<String>(result, tree);
+        return new KruskalResult<String>(
+            result,
+            new GraphWithLayout<String, Integer>(tree, problem.graphWithLayout().layout())
+        );
     }
 
     @Override
@@ -64,11 +67,16 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
+        final GraphWithLayout<String, Integer> graphWithLayout = problem.graphWithLayout();
         GraphAlgorithm.printGraphExercise(
-            problem.graph(),
+            GraphAlgorithm.stretch(
+                new GraphWithLayout<String, Integer>(
+                    graphWithLayout.graph(),
+                    ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDirected(false)
+                ),
+                GraphAlgorithm.parseDistanceFactor(options)
+            ),
             "F\\\"uhren Sie den \\emphasize{Algorithmus von Kruskal} auf diesem Graphen aus.",
-            GraphAlgorithm.parseDistanceFactor(options),
-            GraphPrintMode.UNDIRECTED,
             writer
         );
         writer.write("Geben Sie dazu die Kanten in der Reihenfolge an, in der sie vom Algorithmus zum minimalen ");
@@ -103,7 +111,13 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        solution.tree.printTikZ(GraphPrintMode.UNDIRECTED, GraphAlgorithm.parseDistanceFactor(options), null, writer);
+        solution.treeWithLayout.graph().printTikZ(
+            GraphAlgorithm.stretch(
+                ((GridGraphLayout<String, Integer>)solution.treeWithLayout.layout()).setDirected(false),
+                GraphAlgorithm.parseDistanceFactor(options)
+            ),
+            writer
+        );
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         Main.newLine(writer);
     }

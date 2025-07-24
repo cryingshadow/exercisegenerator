@@ -7,6 +7,7 @@ import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.layout.*;
 import exercisegenerator.structures.graphs.petrinets.*;
 
 public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<CoverabilityGraph> {
@@ -66,7 +67,7 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        solution.printTikZ(GraphPrintMode.ALL, 1, null, writer);
+        solution.printTikZ(new ForceGraphLayout<PetriMarking, String>(solution), writer);
     }
 
     private PetriMarking addOmegas(

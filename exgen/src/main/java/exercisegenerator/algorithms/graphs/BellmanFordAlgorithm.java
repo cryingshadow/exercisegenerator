@@ -81,7 +81,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
     @Override
     public List<BellmanFordStep<String>> apply(final GraphProblem problem) {
         final List<Vertex<String>> vertices =
-            GraphAlgorithm.getSortedListOfVertices(problem.graph(), problem.comparator());
+            GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
         final int numberOfVertices = vertices.size();
         final List<BellmanFordStep<String>> result = new LinkedList<BellmanFordStep<String>>();
         final Map<String, Integer> distances = new LinkedHashMap<String, Integer>();
@@ -96,7 +96,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
                 if (!distances.containsKey(fromLabel)) {
                     continue;
                 }
-                for (final Edge<Integer, String> edge : problem.graph().getAdjacencyList(from)) {
+                for (final Edge<Integer, String> edge : problem.graphWithLayout().graph().getAdjacencyList(from)) {
                     final int newDistance = distances.get(from.label.get()) + edge.label.get();
                     final String toLabel = edge.to.label.get();
                     if (!distances.containsKey(toLabel) || newDistance < distances.get(toLabel)) {
@@ -127,12 +127,10 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final BufferedWriter writer
     ) throws IOException {
         final List<Vertex<String>> vertices =
-            GraphAlgorithm.getSortedListOfVertices(problem.graph(), problem.comparator());
+            GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
         GraphAlgorithm.printGraphExercise(
-            problem.graph(),
-            String.format(BellmanFordAlgorithm.BELLMAN_FORD_PATTERN,  problem.startNode().label.get()),
-            GraphAlgorithm.parseDistanceFactor(options),
-            GraphPrintMode.ALL,
+            GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options)),
+            String.format(BellmanFordAlgorithm.BELLMAN_FORD_PATTERN, problem.startNode().label.get()),
             writer
         );
         writer.write("F\\\"ullen Sie dazu die nachfolgenden Tabellen aus:\\\\[2ex]");
@@ -150,7 +148,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final BufferedWriter writer
     ) throws IOException {
         final List<Vertex<String>> vertices =
-            GraphAlgorithm.getSortedListOfVertices(problem.graph(), problem.comparator());
+            GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
         BellmanFordAlgorithm.printTables(vertices, solution, true, writer);
         Main.newLine(writer);
     }

@@ -9,6 +9,7 @@ import exercisegenerator.io.*;
 /**
  * Programm for creating planar graphs with vertex positions according to a grid.
  */
+@Deprecated
 public class GridGraph {
 
     /**

@@ -8,6 +8,7 @@ import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.layout.*;
 
 public class DepthFirstSearch implements GraphAlgorithm<List<String>> {
 
@@ -42,7 +43,7 @@ public class DepthFirstSearch implements GraphAlgorithm<List<String>> {
     @Override
     public List<String> apply(final GraphProblem problem) {
         return DepthFirstSearch.depthFirstSearch(
-            problem.graph(),
+            problem.graphWithLayout().graph(),
             problem.startNode(),
             problem.comparator(),
             new LinkedHashSet<Vertex<String>>()
@@ -64,11 +65,16 @@ public class DepthFirstSearch implements GraphAlgorithm<List<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
+        final GraphWithLayout<String, Integer> graphWithLayout = problem.graphWithLayout();
         GraphAlgorithm.printGraphExercise(
-            problem.graph(),
+            GraphAlgorithm.stretch(
+                new GraphWithLayout<String, Integer>(
+                    graphWithLayout.graph(),
+                    ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDrawEdgeLabels(false)
+                ),
+                GraphAlgorithm.parseDistanceFactor(options)
+            ),
             DepthFirstSearch.depthFirstSearchTask(problem.startNode().label.get()),
-            GraphAlgorithm.parseDistanceFactor(options),
-            GraphPrintMode.NO_EDGE_LABELS,
             writer
         );
         Main.newLine(writer);

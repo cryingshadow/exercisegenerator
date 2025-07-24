@@ -11,7 +11,6 @@ import org.apache.commons.math3.fraction.*;
 import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.structures.*;
-import exercisegenerator.structures.graphs.*;
 import exercisegenerator.structures.trees.*;
 
 public abstract class LaTeXUtils {
@@ -126,32 +125,6 @@ public abstract class LaTeXUtils {
         } else {
             writer.write("\\Tree " + tree.toString() + ";");
         }
-        Main.newLine(writer);
-    }
-
-    public static <E> void printEdge(
-        final TikZStyle style,
-        final BigInteger from,
-        final Optional<E> label,
-        final BigInteger to,
-        final BufferedWriter writer
-    ) throws IOException {
-        final StringBuilder res = new StringBuilder();
-        res.append("\\draw");
-        res.append(style.style);
-        res.append(" (n");
-        res.append(from.toString());
-        res.append(") to ");
-        if (label.isPresent()) {
-            res.append("node[auto, swap] {");
-            res.append(label.get().toString());
-            res.append("} ");
-        }
-        res.append("(n");
-        res.append(to.toString());
-        res.append(")");
-        res.append(";");
-        writer.write(res.toString());
         Main.newLine(writer);
     }
 
@@ -505,32 +478,6 @@ public abstract class LaTeXUtils {
      */
     public static void printTikzEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{tikzpicture}");
-        Main.newLine(writer);
-    }
-
-    /**
-     * Prints a String representation of the specified node suitable for TikZ output to the specified writer.
-     * @param node The node to print.
-     * @param style The node style (may be empty, but not null).
-     * @param position The position of the node (may be empty, but not null).
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static <N> void printVertex (
-        final Vertex<N> node,
-        final String style,
-        final String position,
-        final BufferedWriter writer
-    ) throws IOException {
-        writer.write(
-            String.format(
-                "\\node%s (n%s) %s{%s};",
-                style,
-                node.id.toString(),
-                position,
-                node.label.isEmpty() ? "" : node.label.get().toString()
-            )
-        );
         Main.newLine(writer);
     }
 

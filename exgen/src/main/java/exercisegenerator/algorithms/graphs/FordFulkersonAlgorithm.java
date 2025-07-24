@@ -10,6 +10,9 @@ import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.flownetwork.*;
+import exercisegenerator.structures.graphs.layout.*;
+import exercisegenerator.structures.graphs.layout.GridGraphLayout.*;
 
 public class FordFulkersonAlgorithm
 implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleStep>> {
@@ -17,57 +20,42 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
     private static record FordFulkersonConfiguration(double multiplier, boolean twoColumns) {}
 
     private static record GraphWithHighlights(
-        Graph<String, FlowPair> graph,
-        Set<FordFulkersonPathStep<String, FlowPair>> highlights
+        Graph<String, FlowAndCapacity> graph,
+        Set<FordFulkersonPathStep<String, FlowAndCapacity>> highlights
     ) {}
 
     public static final FordFulkersonAlgorithm INSTANCE = new FordFulkersonAlgorithm();
 
-    /**
-     * The default value being probably close to the edge values adjacent to source/sink vertices.
-     */
     static final int DEFAULT_SOURCE_SINK_ROOT = 7;
 
     private static final String EACH_RESIDUAL_GRAPH = "\\emphasize{jedes Restnetzwerk (auch das initiale)}";
 
     private static final String RESIDUAL_GRAPH_NAME = "Restnetzwerk";
 
-    /**
-     * @param numOfVertices The number of vertices (excluding source and sink) in the returned flow network.
-     * @return A random flow network with <code>numOfVertices</code> vertices labeled with Strings (each vertex has a
-     *         unique label and the source is labeled with s and the sink is labeled with t) and edges labeled with
-     *         pairs of Integers (the current flow and the capacity - the current flow will be set to 0).
-     */
-    public static Graph<String, FlowPair> createRandomFlowNetwork(final int numOfVertices) {
-        if (numOfVertices < 0) {
+    public static GraphWithLayout<String, FlowAndCapacity> createRandomFlowNetwork(final int numOfInnerVertices) {
+        if (numOfInnerVertices < 0) {
             throw new IllegalArgumentException("Number of vertices must not be negative!");
         }
-        final Graph<String, FlowPair> graph = new Graph<String, FlowPair>();
-        final Grid<String> grid = new Grid<String>();
+        final Graph<String, FlowAndCapacity> graph = new Graph<String, FlowAndCapacity>();
+//        final Grid<String> grid = new Grid<String>();
+        final Map<Coordinates2D<Integer>, Vertex<String>> verticesAtPositions =
+            new LinkedHashMap<Coordinates2D<Integer>, Vertex<String>>();
         final Vertex<String> source = new Vertex<String>(Optional.of("s"));
-        final Map<Vertex<String>, VertexGridPosition> positions =
-            new LinkedHashMap<Vertex<String>, VertexGridPosition>();
-        final GridCoordinates startPos = new GridCoordinates(0, 0);
-        GraphAlgorithm.addVertexWithGridLayout(
-            source,
-            graph,
-            new Pair<GridCoordinates, Boolean>(startPos, true),
-            grid,
-            positions
-        );
-        if (numOfVertices == 0) {
+//        final Map<Vertex<String>, VertexGridPosition> positions =
+//            new LinkedHashMap<Vertex<String>, VertexGridPosition>();
+        graph.addVertex(source);
+        final Coordinates2D<Integer> startPos = new Coordinates2D<Integer>(0, 0);
+        verticesAtPositions.put(startPos, source);
+        if (numOfInnerVertices == 0) {
             final Vertex<String> sink = new Vertex<String>(Optional.of("t"));
-            GraphAlgorithm.addVertexWithGridLayout(
-                sink,
-                graph,
-                new Pair<GridCoordinates, Boolean>(new GridCoordinates(1, 0), false),
-                grid,
-                positions
-            );
+            graph.addVertex(sink);
+            final GridGraphLayoutBuilder<String, FlowAndCapacity> layoutBuilder =
+                GridGraphLayout.<String, FlowAndCapacity>builder().setDirected(true);
+            layoutBuilder.addVertex(source, startPos);
+            layoutBuilder.addVertex(sink, new Coordinates2D<Integer>(1, 0));
             final int value = GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT);
-            graph.addEdge(source, Optional.of(new FlowPair(0, value)), sink);
-            graph.setGrid(grid);
-            return graph;
+            graph.addEdge(source, Optional.of(new FlowAndCapacity(0, value)), sink);
+            return new GraphWithLayout<>(graph, layoutBuilder.build());
         }
         int xPos = 1;
         int minYPos = 0;
@@ -75,7 +63,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         int curMaxYPos = 0;
         int prevMinYPos;
         int prevMaxYPos;
-        int remainingVertices = numOfVertices;
+        int remainingVertices = numOfInnerVertices;
         int letter = 0;
         // not all vertices can have diagonals: reduce only possible at every second step
         while (remainingVertices > 0) {
@@ -125,7 +113,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                     if (maxDiagonal) {
                         options.add(reduceMin + reduceMax);
                         if (
-                            FordFulkersonAlgorithm.enoughVertices(
+                            FordFulkersonAlgorithm.enoughVerticesForLevel(
                                 remainingVertices,
                                 prevMinYPos - 1,
                                 prevMaxYPos + 1,
@@ -150,14 +138,14 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                             options.add(expandMin + expandMax);
                         } else {
                             final boolean justExpandMax =
-                                FordFulkersonAlgorithm.enoughVertices(
+                                FordFulkersonAlgorithm.enoughVerticesForLevel(
                                     remainingVertices,
                                     prevMinYPos,
                                     prevMaxYPos + 1,
                                     xPos
                                 );
                             final boolean justExpandMin =
-                                FordFulkersonAlgorithm.enoughVertices(
+                                FordFulkersonAlgorithm.enoughVerticesForLevel(
                                     remainingVertices,
                                     prevMinYPos - 1,
                                     prevMaxYPos,
@@ -191,7 +179,12 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                                 options.add(expandMin + keepMax);
                                 options.add(expandMin + keepMax);
                             } else if (
-                                FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)
+                                FordFulkersonAlgorithm.enoughVerticesForLevel(
+                                    remainingVertices,
+                                    prevMinYPos,
+                                    prevMaxYPos,
+                                    xPos
+                                )
                             ) {
                                 options.add(keepMin + reduceMax);
                                 options.add(reduceMin + keepMax);
@@ -199,7 +192,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                                 options.add(keepMin + keepMax);
                             } else {
                                 if (
-                                    FordFulkersonAlgorithm.enoughVertices(
+                                    FordFulkersonAlgorithm.enoughVerticesForLevel(
                                         remainingVertices,
                                         prevMinYPos + 1,
                                         prevMaxYPos,
@@ -209,7 +202,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                                     options.add(reduceMin + keepMax);
                                 }
                                 if (
-                                    FordFulkersonAlgorithm.enoughVertices(
+                                    FordFulkersonAlgorithm.enoughVerticesForLevel(
                                         remainingVertices,
                                         prevMinYPos,
                                         prevMaxYPos - 1,
@@ -223,7 +216,12 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                     } else {
                         options.add(reduceMin + keepMax);
                         if (
-                            FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos - 1, prevMaxYPos, xPos)
+                            FordFulkersonAlgorithm.enoughVerticesForLevel(
+                                remainingVertices,
+                                prevMinYPos - 1,
+                                prevMaxYPos,
+                                xPos
+                            )
                         ) {
                             options.add(keepMin + keepMax);
                             options.add(keepMin + keepMax);
@@ -231,7 +229,12 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                             options.add(expandMin + keepMax);
                             options.add(expandMin + keepMax);
                         } else if (
-                            FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)
+                            FordFulkersonAlgorithm.enoughVerticesForLevel(
+                                remainingVertices,
+                                prevMinYPos,
+                                prevMaxYPos,
+                                xPos
+                            )
                         ) {
                             options.add(keepMin + keepMax);
                             options.add(keepMin + keepMax);
@@ -239,14 +242,21 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                     }
                 } else if (maxDiagonal) {
                     options.add(keepMin + reduceMax);
-                    if (FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos + 1, xPos)) {
+                    if (
+                        FordFulkersonAlgorithm.enoughVerticesForLevel(
+                            remainingVertices,
+                            prevMinYPos,
+                            prevMaxYPos + 1,
+                            xPos
+                        )
+                    ) {
                         options.add(keepMin + keepMax);
                         options.add(keepMin + keepMax);
                         options.add(keepMin + expandMax);
                         options.add(keepMin + expandMax);
                         options.add(keepMin + expandMax);
                     } else if (
-                        FordFulkersonAlgorithm.enoughVertices(remainingVertices, prevMinYPos, prevMaxYPos, xPos)
+                        FordFulkersonAlgorithm.enoughVerticesForLevel(remainingVertices, prevMinYPos, prevMaxYPos, xPos)
                     ) {
                         options.add(keepMin + keepMax);
                         options.add(keepMin + keepMax);
@@ -289,25 +299,21 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                 final Vertex<String> vertex =
                     new Vertex<String>(Optional.of(GraphAlgorithm.toLetterLabel(letter++)));
                 final boolean hasDiagonals = (xPos + yPos) % 2 == 0;
-                final GridCoordinates pos = new GridCoordinates(xPos, yPos);
-                GraphAlgorithm.addVertexWithGridLayout(
-                    vertex,
-                    graph,
-                    new Pair<GridCoordinates, Boolean>(pos, hasDiagonals),
-                    grid,
-                    positions
-                );
+                final Coordinates2D<Integer> pos = new Coordinates2D<Integer>(xPos, yPos);
+                graph.addVertex(vertex);
+                verticesAtPositions.put(pos, vertex);
                 if (hasDiagonals) {
                     final List<Vertex<String>> existing = new ArrayList<Vertex<String>>();
-                    Vertex<String> previousVertex = grid.get(new GridCoordinates(prevXPos, yPos - 1));
+                    Vertex<String> previousVertex =
+                        verticesAtPositions.get(new Coordinates2D<Integer>(prevXPos, yPos - 1));
                     if (previousVertex != null) {
                         existing.add(previousVertex);
                     }
-                    previousVertex =  grid.get(new GridCoordinates(prevXPos, yPos));
+                    previousVertex =  verticesAtPositions.get(new Coordinates2D<Integer>(prevXPos, yPos));
                     if (previousVertex != null) {
                         existing.add(previousVertex);
                     }
-                    previousVertex =  grid.get(new GridCoordinates(prevXPos, yPos + 1));
+                    previousVertex =  verticesAtPositions.get(new Coordinates2D<Integer>(prevXPos, yPos + 1));
                     if (previousVertex != null) {
                         existing.add(previousVertex);
                     }
@@ -316,7 +322,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                     graph.addEdge(
                         previousVertex,
                         Optional.of(
-                            new FlowPair(
+                            new FlowAndCapacity(
                                 0,
                                 GraphAlgorithm.randomEdgeValue(
                                     prevXPos == 0 ?
@@ -332,7 +338,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                             graph.addEdge(
                                 otherVertex,
                                 Optional.of(
-                                    new FlowPair(
+                                    new FlowAndCapacity(
                                         0,
                                         GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT)
                                     )
@@ -343,9 +349,9 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                     }
                 } else {
                     graph.addEdge(
-                        grid.get(new GridCoordinates(prevXPos, yPos)),
+                        verticesAtPositions.get(new Coordinates2D<Integer>(prevXPos, yPos)),
                         Optional.of(
-                            new FlowPair(
+                            new FlowAndCapacity(
                                 0,
                                 GraphAlgorithm.randomEdgeValue(
                                     prevXPos == 0 ?
@@ -359,12 +365,12 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                 }
                 if (yPos > curMinYPos) {
                     // north-south edges
-                    final Vertex<String> north = grid.get(new GridCoordinates(xPos, yPos - 1));
+                    final Vertex<String> north = verticesAtPositions.get(new Coordinates2D<Integer>(xPos, yPos - 1));
                     if (Main.RANDOM.nextBoolean()) {
                         graph.addEdge(
                             north,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
+                                new FlowAndCapacity(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
                             ),
                             vertex
                         );
@@ -373,7 +379,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                         graph.addEdge(
                             vertex,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
+                                new FlowAndCapacity(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
                             ),
                             north
                         );
@@ -382,19 +388,20 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             }
             // at least one edge for each vertex on previous level to current level
             outer: for (int prevYPos = prevMinYPos; prevYPos <= prevMaxYPos; prevYPos++) {
-                final Vertex<String> previousVertex = grid.get(new GridCoordinates(prevXPos, prevYPos));
+                final Vertex<String> previousVertex =
+                    verticesAtPositions.get(new Coordinates2D<Integer>(prevXPos, prevYPos));
                 final boolean prevDiagonals = (prevXPos + prevYPos) % 2 == 0;
                 if (prevDiagonals) {
                     final List<Vertex<String>> existing = new ArrayList<Vertex<String>>();
-                    Vertex<String> nextVertex = grid.get(new GridCoordinates(xPos, prevYPos - 1));
+                    Vertex<String> nextVertex = verticesAtPositions.get(new Coordinates2D<Integer>(xPos, prevYPos - 1));
                     if (nextVertex != null) {
                         existing.add(nextVertex);
                     }
-                    nextVertex =  grid.get(new GridCoordinates(xPos, prevYPos));
+                    nextVertex =  verticesAtPositions.get(new Coordinates2D<Integer>(xPos, prevYPos));
                     if (nextVertex != null) {
                         existing.add(nextVertex);
                     }
-                    nextVertex =  grid.get(new GridCoordinates(xPos, prevYPos + 1));
+                    nextVertex =  verticesAtPositions.get(new Coordinates2D<Integer>(xPos, prevYPos + 1));
                     if (nextVertex != null) {
                         existing.add(nextVertex);
                     }
@@ -408,17 +415,18 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                     graph.addEdge(
                         previousVertex,
                         Optional.of(
-                            new FlowPair(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
+                            new FlowAndCapacity(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
                         ),
                         nextVertex
                     );
                 } else {
-                    final Vertex<String> nextVertex = grid.get(new GridCoordinates(xPos, prevYPos));
+                    final Vertex<String> nextVertex =
+                        verticesAtPositions.get(new Coordinates2D<Integer>(xPos, prevYPos));
                     if (graph.getEdges(previousVertex, nextVertex).isEmpty()) {
                         graph.addEdge(
                             previousVertex,
                             Optional.of(
-                                new FlowPair(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
+                                new FlowAndCapacity(0, GraphAlgorithm.randomEdgeValue(GraphAlgorithm.DEFAULT_EDGE_ROOT))
                             ),
                             nextVertex
                         );
@@ -433,23 +441,18 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         if ((xPos + yPos) % 2 != 0) {
             yPos++;
         }
-        GraphAlgorithm.addVertexWithGridLayout(
-            sink,
-            graph,
-            new Pair<GridCoordinates, Boolean>(new GridCoordinates(xPos, yPos), true),
-            grid,
-            positions
-        );
+        graph.addVertex(sink);
+        verticesAtPositions.put(new Coordinates2D<Integer>(xPos, yPos), sink);
         final List<Vertex<String>> existing = new ArrayList<Vertex<String>>();
-        Vertex<String> previousVertex = grid.get(new GridCoordinates(xPos - 1, yPos - 1));
+        Vertex<String> previousVertex = verticesAtPositions.get(new Coordinates2D<Integer>(xPos - 1, yPos - 1));
         if (previousVertex != null) {
             existing.add(previousVertex);
         }
-        previousVertex =  grid.get(new GridCoordinates(xPos - 1, yPos));
+        previousVertex =  verticesAtPositions.get(new Coordinates2D<Integer>(xPos - 1, yPos));
         if (previousVertex != null) {
             existing.add(previousVertex);
         }
-        previousVertex =  grid.get(new GridCoordinates(xPos - 1, yPos + 1));
+        previousVertex =  verticesAtPositions.get(new Coordinates2D<Integer>(xPos - 1, yPos + 1));
         if (previousVertex != null) {
             existing.add(previousVertex);
         }
@@ -457,7 +460,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             graph.addEdge(
                 otherVertex,
                 Optional.of(
-                    new FlowPair(
+                    new FlowAndCapacity(
                         0,
                         GraphAlgorithm.randomEdgeValue(FordFulkersonAlgorithm.DEFAULT_SOURCE_SINK_ROOT)
                     )
@@ -470,44 +473,65 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         if (minYPos % 2 != 0) {
             xAdd++;
         }
-        final Grid<String> newGrid = new Grid<String>();
-        for (final Entry<GridCoordinates, Vertex<String>> entry : grid.entrySet()) {
-            final GridCoordinates key = entry.getKey();
-            newGrid.put(new GridCoordinates(key.x + xAdd, key.y - minYPos), entry.getValue());
+        final GridGraphLayoutBuilder<String, FlowAndCapacity> layoutBuilder =
+            GridGraphLayout.<String, FlowAndCapacity>builder().setDirected(true);
+        for (final Entry<Coordinates2D<Integer>, Vertex<String>> entry : verticesAtPositions.entrySet()) {
+            final Coordinates2D<Integer> key = entry.getKey();
+            layoutBuilder.addVertex(entry.getValue(), new Coordinates2D<Integer>(key.x() + xAdd, key.y() - minYPos));
         }
-        graph.setGrid(newGrid);
-        return graph;
+        return new GraphWithLayout<String, FlowAndCapacity>(graph, layoutBuilder.build());
     }
 
     private static GraphWithHighlights computeGraphWithFlow(
-        final Graph<String, FlowPair> inputGraph,
+        final Graph<String, FlowAndCapacity> inputGraph,
         final List<Vertex<String>> flowPath
     ) {
-        final Graph<String, FlowPair> graph = inputGraph.copy(pair -> new FlowPair(pair.x, pair.y));
+        final Graph<String, FlowAndCapacity> graph =
+            inputGraph.copy(pair -> new FlowAndCapacity(pair.flow(), pair.capacity()));
         final Integer min = FordFulkersonAlgorithm.computeMinEdge(graph, flowPath);
         final Iterator<Vertex<String>> it = flowPath.iterator();
         Vertex<String> from;
         Vertex<String> to = it.next();
-        final Set<FordFulkersonPathStep<String, FlowPair>> toHighlight =
-            new LinkedHashSet<FordFulkersonPathStep<String, FlowPair>>();
+        final Set<FordFulkersonPathStep<String, FlowAndCapacity>> toHighlight =
+            new LinkedHashSet<FordFulkersonPathStep<String, FlowAndCapacity>>();
         while (it.hasNext()) {
             from = to;
             to = it.next();
             int flow = min;
-            for (final Edge<FlowPair, String> edge : graph.getEdges(from, to)) {
-                final int added = Math.min(flow, edge.label.get().y - edge.label.get().x);
+            for (final Edge<FlowAndCapacity, String> edge : graph.getEdges(from, to)) {
+                final int added = Math.min(flow, edge.label.get().capacity() - edge.label.get().flow());
                 if (added > 0) {
                     flow -= added;
-                    edge.label.get().x += added;
-                    toHighlight.add(new FordFulkersonPathStep<String, FlowPair>(from, edge));
+                    final FlowAndCapacity currentLabel = edge.label.get();
+                    graph.replaceEdgeLabel(
+                        from,
+                        new FlowAndCapacity(currentLabel.flow() + added, currentLabel.capacity()),
+                        to
+                    );
+                    toHighlight.add(
+                        new FordFulkersonPathStep<String, FlowAndCapacity>(
+                            from,
+                            graph.getEdges(from, to).iterator().next()
+                        )
+                    );
                 }
             }
-            for (final Edge<FlowPair, String> edge : graph.getEdges(to, from)) {
-                final int added = Math.min(flow, edge.label.get().x);
+            for (final Edge<FlowAndCapacity, String> edge : graph.getEdges(to, from)) {
+                final int added = Math.min(flow, edge.label.get().flow());
                 if (added > 0) {
                     flow -= added;
-                    edge.label.get().x -= added;
-                    toHighlight.add(new FordFulkersonPathStep<String, FlowPair>(to, edge));
+                    final FlowAndCapacity currentLabel = edge.label.get();
+                    graph.replaceEdgeLabel(
+                        to,
+                        new FlowAndCapacity(currentLabel.flow() - added, currentLabel.capacity()),
+                        from
+                    );
+                    toHighlight.add(
+                        new FordFulkersonPathStep<String, FlowAndCapacity>(
+                            to,
+                            graph.getEdges(to, from).iterator().next()
+                        )
+                    );
                 }
             }
             if (flow > 0) {
@@ -522,7 +546,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
      * @param path A path in the specified flow network from source to sink.
      * @return The minimal remaining edge value along the path (i.e., the maximal flow along the path).
      */
-    private static <V> Integer computeMinEdge(final Graph<V, FlowPair> graph, final List<Vertex<V>> path) {
+    private static <V> Integer computeMinEdge(final Graph<V, FlowAndCapacity> graph, final List<Vertex<V>> path) {
         Integer min = null;
         final Iterator<Vertex<V>> it = path.iterator();
         Vertex<V> from;
@@ -531,11 +555,11 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             from = to;
             to = it.next();
             int flow = 0;
-            for (final Edge<FlowPair, V> edge : graph.getEdges(from, to)) {
-                flow += edge.label.get().y - edge.label.get().x;
+            for (final Edge<FlowAndCapacity, V> edge : graph.getEdges(from, to)) {
+                flow += edge.label.get().capacity() - edge.label.get().flow();
             }
-            for (final Edge<FlowPair, V> edge : graph.getEdges(to, from)) {
-                flow += edge.label.get().x;
+            for (final Edge<FlowAndCapacity, V> edge : graph.getEdges(to, from)) {
+                flow += edge.label.get().flow();
             }
             if (min == null || min > flow) {
                 min = flow;
@@ -544,17 +568,17 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         return min;
     }
 
-    private static <V> Graph<V, Integer> computeResidualGraph(final Graph<V, FlowPair> graph) {
+    private static <V> Graph<V, Integer> computeResidualGraph(final Graph<V, FlowAndCapacity> graph) {
         final Graph<V, Integer> res = new Graph<V, Integer>();
         for (final Vertex<V> vertex : graph.getVertices()) {
             res.addVertex(vertex);
-            final List<Edge<FlowPair, V>> list = graph.getAdjacencyList(vertex);
+            final List<Edge<FlowAndCapacity, V>> list = graph.getAdjacencyList(vertex);
             if (list == null) {
                 continue;
             }
-            for (final Edge<FlowPair, V> edge : list) {
+            for (final Edge<FlowAndCapacity, V> edge : list) {
                 final Vertex<V> target = edge.to;
-                final Integer back = edge.label.get().x;
+                final Integer back = edge.label.get().flow();
                 if (back > 0) {
                     final Set<Edge<Integer, V>> backEdges = res.getEdges(target, vertex);
                     if (backEdges.isEmpty()) {
@@ -564,7 +588,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                         res.replaceEdgeLabel(target, backEdge.label.get() + back, vertex);
                     }
                 }
-                final Integer forth = edge.label.get().y - back;
+                final Integer forth = edge.label.get().capacity() - back;
                 if (forth > 0) {
                     final Set<Edge<Integer, V>> forthEdges = res.getEdges(vertex, target);
                     if (forthEdges.isEmpty()) {
@@ -576,28 +600,19 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                 }
             }
         }
-        res.setGrid(graph.getGrid());
         return res;
     }
 
-    /**
-     * @param remainingVertices The number of vertices yet to be added.
-     * @param minYPos The minimal y position in the current level.
-     * @param maxYPos The maximal y position in the current level.
-     * @param xPos The x position of the current level.
-     * @return True if there are at least as many vertices to be added as minimally needed when starting the current level
-     *         with the specified parameters (by reducing whenever possible). False otherwise.
-     */
-    private static boolean enoughVertices(
+    private static boolean enoughVerticesForLevel(
         final int remainingVertices,
-        final int minYPos,
-        final int maxYPos,
-        final int xPos
+        final int minYPosOfLevel,
+        final int maxYPosOfLevel,
+        final int xPosOfLevel
     ) {
-        int neededVertices = maxYPos - minYPos + 1;
-        int itMinY = minYPos;
-        int itMaxY = maxYPos;
-        int itX = xPos;
+        int neededVertices = maxYPosOfLevel - minYPosOfLevel + 1;
+        int itMinY = minYPosOfLevel;
+        int itMaxY = maxYPosOfLevel;
+        int itX = xPosOfLevel;
         while (true) {
             if ((itMinY + itX) % 2 == 0) {
                 itMinY++;
@@ -628,12 +643,13 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
     };
 
     private static FlowNetworkProblem generateFlowNetworkProblem(final Parameters<Flag> options) {
-        final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(3, 18, options);
-        final Graph<String, FlowPair> graph = FordFulkersonAlgorithm.createRandomFlowNetwork(numOfVertices);
+        final int numOfInnerVertices = AlgorithmImplementation.parseOrGenerateLength(3, 18, options);
+        final GraphWithLayout<String, FlowAndCapacity> graphWithLayout =
+            FordFulkersonAlgorithm.createRandomFlowNetwork(numOfInnerVertices);
         return new FlowNetworkProblem(
-            graph,
-            graph.getVerticesWithLabel("s").iterator().next(),
-            graph.getVerticesWithLabel("t").iterator().next()
+            graphWithLayout,
+            graphWithLayout.graph().getVerticesWithLabel("s").iterator().next(),
+            graphWithLayout.graph().getVerticesWithLabel("t").iterator().next()
         );
     }
 
@@ -641,12 +657,13 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        final Graph<String, FlowPair> graph =
+        final GraphWithLayout<String, FlowAndCapacity> graphWithLayout =
             options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 1 ?
                 FordFulkersonAlgorithm.parsePositionedGraph(reader) :
-                    Graph.create(reader, new StringLabelParser(), new FlowPairLabelParser());
-        Vertex<String> source = null;
-        Vertex<String> sink = null;
+                    Graph.create(reader, new StringLabelParser(), new FlowAndCapacityLabelParser());
+        final Graph<String, FlowAndCapacity> graph = graphWithLayout.graph();
+        Vertex<String> source = graph.getVerticesWithLabel("s").iterator().next();
+        Vertex<String> sink = graph.getVerticesWithLabel("t").iterator().next();
         if (options.containsKey(Flag.OPERATIONS)) {
             try (BufferedReader operationsReader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
                 Set<Vertex<String>> vertices = graph.getVerticesWithLabel(operationsReader.readLine().trim());
@@ -662,7 +679,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                 System.exit(1);
             }
         }
-        return new FlowNetworkProblem(graph, source, sink);
+        return new FlowNetworkProblem(graphWithLayout, source, sink);
     }
 
     private static FordFulkersonConfiguration parseOrGenerateConfiguration(
@@ -691,16 +708,22 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         return new FordFulkersonConfiguration(multiplier, twoColumns);
     }
 
-    private static Graph<String, FlowPair> parsePositionedGraph(final BufferedReader reader) throws IOException {
-        final AdjacencyLists<String, FlowPair> adjacencyLists = new AdjacencyLists<String, FlowPair>();
-        final Grid<String> grid = new Grid<String>();
+    private static GraphWithLayout<String, FlowAndCapacity> parsePositionedGraph(
+        final BufferedReader reader
+    ) throws IOException {
+        final AdjacencyLists<String, FlowAndCapacity> adjacencyLists = new AdjacencyLists<String, FlowAndCapacity>();
+        final GridGraphLayoutBuilder<String, FlowAndCapacity> layoutBuilder =
+            GridGraphLayout.<String, FlowAndCapacity>builder().setDirected(true);
         final Map<String, Vertex<String>> nodeMap = new LinkedHashMap<String, Vertex<String>>();
         final String[] nodes = reader.readLine().split(";");
         for (final String node : nodes) {
             final String[] nodeParts = node.split(",");
             final Vertex<String> vertex = new Vertex<String>(nodeParts[0]);
-            adjacencyLists.put(vertex, new ArrayList<Edge<FlowPair, String>>());
-            grid.put(new GridCoordinates(Integer.parseInt(nodeParts[1]), Integer.parseInt(nodeParts[2])), vertex);
+            adjacencyLists.put(vertex, new ArrayList<Edge<FlowAndCapacity, String>>());
+            layoutBuilder.addVertex(
+                vertex,
+                new Coordinates2D<Integer>(Integer.parseInt(nodeParts[1]), Integer.parseInt(nodeParts[2]))
+            );
             nodeMap.put(nodeParts[0], vertex);
         }
         final String[] edges = reader.readLine().split(";");
@@ -708,11 +731,11 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             final String[] edgeParts = edge.split(",");
             adjacencyLists.addEdge(
                 nodeMap.get(edgeParts[0]),
-                new FlowPair(0, Integer.parseInt(edgeParts[2])),
+                new FlowAndCapacity(0, Integer.parseInt(edgeParts[2])),
                 nodeMap.get(edgeParts[1])
             );
         }
-        return Graph.create(adjacencyLists, grid);
+        return new GraphWithLayout<String, FlowAndCapacity>(Graph.create(adjacencyLists), layoutBuilder.build());
     }
 
     private static void printFordFulkersonDoubleStep(
@@ -735,12 +758,23 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             );
             writer.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
             Main.newLine(writer);
-            step.flowNetwork().printTikZ(
-                solution ? GraphPrintMode.ALL : GraphPrintMode.NO_EDGE_LABELS,
-                configuration.multiplier(),
-                solution ? step.flowHighlights() : null,
-                writer
-            );
+            GridGraphLayout<String, FlowAndCapacity> layout =
+                GraphAlgorithm.stretch(
+                    (GridGraphLayout<String, FlowAndCapacity>)step.flowNetworkWithLayout().layout(),
+                    configuration.multiplier()
+                );
+            if (solution) {
+                layout =
+                    layout.highlight(
+                        step.flowHighlights()
+                        .stream()
+                        .map(s -> new Pair<Vertex<String>, Edge<FlowAndCapacity, String>>(s.startNode(), s.edge()))
+                        .toList()
+                    );
+            } else {
+                layout = layout.setDrawEdgeLabels(false);
+            }
+            step.flowNetworkWithLayout().graph().printTikZ(layout, writer);
             LaTeXUtils.printSamePageEnd(writer);
             if (configuration.twoColumns) {
                 writer.write("\\\\");
@@ -755,12 +789,23 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         writer.write(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME);
         writer.write(":\\\\[2ex]");
         Main.newLine(writer);
-        step.residualGraph().printTikZ(
-            solution ? GraphPrintMode.ALL : GraphPrintMode.NO_EDGES,
-                configuration.multiplier(),
-                FordFulkersonAlgorithm.filterHighLights(step.residualHighlights()),
-                writer
+        GridGraphLayout<String, Integer> layout =
+            GraphAlgorithm.stretch(
+                (GridGraphLayout<String, Integer>)step.residualGraphWithLayout().layout(),
+                configuration.multiplier()
             );
+        if (solution) {
+            layout =
+                layout.highlight(
+                    FordFulkersonAlgorithm.filterHighLights(step.residualHighlights())
+                    .stream()
+                    .map(s -> new Pair<Vertex<String>, Edge<Integer, String>>(s.startNode(), s.edge()))
+                    .toList()
+                );
+        } else {
+            layout = layout.setDrawEdges(false);
+        }
+        step.residualGraphWithLayout().graph().printTikZ(layout, writer);
         LaTeXUtils.printSamePageEnd(writer);
         if (configuration.twoColumns) {
             writer.write(" & ");
@@ -842,7 +887,10 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
 
     @Override
     public List<FordFulkersonDoubleStep> apply(final FlowNetworkProblem problem) {
-        Graph<String, FlowPair> graph = problem.graph();
+        Graph<String, FlowAndCapacity> graph = problem.graphWithLayout().graph();
+        final GridGraphLayout<String, FlowAndCapacity> layout =
+            (GridGraphLayout<String, FlowAndCapacity>)problem.graphWithLayout().layout();
+        final GridGraphLayout<String, Integer> residualLayout = layout.convertEdgeLabelType();
         final Vertex<String> source = problem.source();
         final Vertex<String> sink = problem.sink();
         Graph<String, Integer> residualGraph = FordFulkersonAlgorithm.computeResidualGraph(graph);
@@ -850,9 +898,9 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         final List<FordFulkersonDoubleStep> result = new LinkedList<FordFulkersonDoubleStep>();
         result.add(
             new FordFulkersonDoubleStep(
-                graph,
+                problem.graphWithLayout(),
                 Collections.emptySet(),
-                residualGraph,
+                new GraphWithLayout<String, Integer>(residualGraph, residualLayout),
                 FordFulkersonAlgorithm.toEdges(residualGraph, path)
             )
         );
@@ -863,9 +911,9 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             path = FordFulkersonAlgorithm.selectAugmentingPath(residualGraph, source, sink);
             result.add(
                 new FordFulkersonDoubleStep(
-                    graph,
+                    new GraphWithLayout<String, FlowAndCapacity>(graph, layout),
                     graphWithAddedFlow.highlights(),
-                    residualGraph,
+                    new GraphWithLayout<String, Integer>(residualGraph, residualLayout),
                     FordFulkersonAlgorithm.toEdges(residualGraph, path)
                 )
             );
@@ -908,9 +956,15 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         writer.write(sink.label.isEmpty() ? "" : sink.label.get().toString());
         writer.write(":\\\\");
         Main.newLine(writer);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        problem.graph().printTikZ(GraphPrintMode.ALL, configuration.multiplier(), null, writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+        problem.graphWithLayout().graph().printTikZ(
+            GraphAlgorithm.stretch(
+                (GridGraphLayout<String, FlowAndCapacity>)problem.graphWithLayout().layout(),
+                configuration.multiplier()
+            ),
+            writer
+        );
+        LaTeXUtils.printAdjustboxEnd(writer);
         Main.newLine(writer);
         writer.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der");
         writer.write(" \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
@@ -1005,11 +1059,11 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         final FordFulkersonConfiguration configuration =
             FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
         int flow = 0;
-        final Graph<String, FlowPair> graph = solution.getLast().flowNetwork();
-        final List<Edge<FlowPair, String>> list = graph.getAdjacencyList(problem.source());
+        final Graph<String, FlowAndCapacity> graph = solution.getLast().flowNetworkWithLayout().graph();
+        final List<Edge<FlowAndCapacity, String>> list = graph.getAdjacencyList(problem.source());
         if (list != null) {
-            for (final Edge<FlowPair, String> edge : list) {
-                flow += edge.label.get().x;
+            for (final Edge<FlowAndCapacity, String> edge : list) {
+                flow += edge.label.get().flow();
             }
         }
         if (configuration.twoColumns) {

@@ -6,6 +6,8 @@ import org.testng.*;
 import org.testng.annotations.*;
 
 import exercisegenerator.structures.graphs.*;
+import exercisegenerator.structures.graphs.flownetwork.*;
+import exercisegenerator.structures.graphs.layout.*;
 
 public class GraphAlgorithmsTest {
 
@@ -61,7 +63,10 @@ public class GraphAlgorithmsTest {
         return new Object[][] {
             {
                 new GraphProblem(
-                    Graph.create(adjacencyLists1),
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists1),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
                     e,
                     StringVertexComparator.INSTANCE
                 ),
@@ -126,13 +131,37 @@ public class GraphAlgorithmsTest {
         adjacencyLists3.addEdge(i, 0, a);
         adjacencyLists3.addEdge(j, 0, j);
         return new Object[][] {
-            {new GraphProblem(Graph.create(adjacencyLists1), a, StringVertexComparator.INSTANCE), List.of("A")},
             {
-                new GraphProblem(Graph.create(adjacencyLists2), a, StringVertexComparator.INSTANCE),
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists1),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
+                    a,
+                    StringVertexComparator.INSTANCE
+                ),
+                List.of("A")
+            },
+            {
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists2),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
+                    a,
+                    StringVertexComparator.INSTANCE
+                ),
                 List.of("A", "B", "C", "D")
             },
             {
-                new GraphProblem(Graph.create(adjacencyLists3), a, StringVertexComparator.INSTANCE),
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists3),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
+                    a,
+                    StringVertexComparator.INSTANCE
+                ),
                 List.of("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
             }
         };
@@ -183,13 +212,37 @@ public class GraphAlgorithmsTest {
         adjacencyLists3.addEdge(i, 0, a);
         adjacencyLists3.addEdge(j, 0, j);
         return new Object[][] {
-            {new GraphProblem(Graph.create(adjacencyLists1), a, StringVertexComparator.INSTANCE), List.of("A")},
             {
-                new GraphProblem(Graph.create(adjacencyLists2), a, StringVertexComparator.INSTANCE),
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists1),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
+                    a,
+                    StringVertexComparator.INSTANCE
+                ),
+                List.of("A")
+            },
+            {
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists2),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
+                    a,
+                    StringVertexComparator.INSTANCE
+                ),
                 List.of("A", "B", "C", "D")
             },
             {
-                new GraphProblem(Graph.create(adjacencyLists3), a, StringVertexComparator.INSTANCE),
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists3),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
+                    a,
+                    StringVertexComparator.INSTANCE
+                ),
                 List.of("A", "B", "E", "F", "C", "G", "D", "I", "J", "H")
             }
         };
@@ -227,7 +280,10 @@ public class GraphAlgorithmsTest {
         return new Object[][] {
             {
                 new GraphProblem(
-                    Graph.create(adjacencyLists1),
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists1),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
                     e,
                     StringVertexComparator.INSTANCE
                 ),
@@ -297,7 +353,14 @@ public class GraphAlgorithmsTest {
         adjacencyLists1.addEdge(e, 3, d);
         return new Object[][] {
             {
-                new GraphProblem(Graph.create(adjacencyLists1), null, StringVertexComparator.INSTANCE),
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists1),
+                        new DummyGraphLayout<String, Integer>()
+                    ),
+                    null,
+                    StringVertexComparator.INSTANCE
+                ),
                 new Integer[][][] {
                     {
                         {   0,   1,null,   7,null},
@@ -361,24 +424,24 @@ public class GraphAlgorithmsTest {
         final Vertex<String> b = new Vertex<String>("B");
         final Vertex<String> c = new Vertex<String>("C");
         final Vertex<String> d = new Vertex<String>("D");
-        final AdjacencyLists<String, FlowPair> adjacencyLists1 = new AdjacencyLists<String, FlowPair>();
-        adjacencyLists1.addEdge(a, new FlowPair(0, 4), b);
-        adjacencyLists1.addEdge(a, new FlowPair(0, 3), c);
-        adjacencyLists1.addEdge(b, new FlowPair(0, 4), c);
-        adjacencyLists1.addEdge(c, new FlowPair(0, 4), d);
-        adjacencyLists1.addEdge(b, new FlowPair(0, 3), d);
+        final AdjacencyLists<String, FlowAndCapacity> adjacencyLists1 = new AdjacencyLists<String, FlowAndCapacity>();
+        adjacencyLists1.addEdge(a, new FlowAndCapacity(0, 4), b);
+        adjacencyLists1.addEdge(a, new FlowAndCapacity(0, 3), c);
+        adjacencyLists1.addEdge(b, new FlowAndCapacity(0, 4), c);
+        adjacencyLists1.addEdge(c, new FlowAndCapacity(0, 4), d);
+        adjacencyLists1.addEdge(b, new FlowAndCapacity(0, 3), d);
         final AdjacencyLists<String, Integer> adjacencyLists1r = new AdjacencyLists<String, Integer>();
         adjacencyLists1r.addEdge(a, 4, b);
         adjacencyLists1r.addEdge(a, 3, c);
         adjacencyLists1r.addEdge(b, 4, c);
         adjacencyLists1r.addEdge(c, 4, d);
         adjacencyLists1r.addEdge(b, 3, d);
-        final AdjacencyLists<String, FlowPair> adjacencyLists2 = new AdjacencyLists<String, FlowPair>();
-        adjacencyLists2.addEdge(a, new FlowPair(3, 4), b);
-        adjacencyLists2.addEdge(a, new FlowPair(0, 3), c);
-        adjacencyLists2.addEdge(b, new FlowPair(0, 4), c);
-        adjacencyLists2.addEdge(c, new FlowPair(0, 4), d);
-        adjacencyLists2.addEdge(b, new FlowPair(3, 3), d);
+        final AdjacencyLists<String, FlowAndCapacity> adjacencyLists2 = new AdjacencyLists<String, FlowAndCapacity>();
+        adjacencyLists2.addEdge(a, new FlowAndCapacity(3, 4), b);
+        adjacencyLists2.addEdge(a, new FlowAndCapacity(0, 3), c);
+        adjacencyLists2.addEdge(b, new FlowAndCapacity(0, 4), c);
+        adjacencyLists2.addEdge(c, new FlowAndCapacity(0, 4), d);
+        adjacencyLists2.addEdge(b, new FlowAndCapacity(3, 3), d);
         final AdjacencyLists<String, Integer> adjacencyLists2r = new AdjacencyLists<String, Integer>();
         adjacencyLists2r.addEdge(a, 1, b);
         adjacencyLists2r.addEdge(b, 3, a);
@@ -386,12 +449,12 @@ public class GraphAlgorithmsTest {
         adjacencyLists2r.addEdge(b, 4, c);
         adjacencyLists2r.addEdge(c, 4, d);
         adjacencyLists2r.addEdge(d, 3, b);
-        final AdjacencyLists<String, FlowPair> adjacencyLists3 = new AdjacencyLists<String, FlowPair>();
-        adjacencyLists3.addEdge(a, new FlowPair(3, 4), b);
-        adjacencyLists3.addEdge(a, new FlowPair(3, 3), c);
-        adjacencyLists3.addEdge(b, new FlowPair(0, 4), c);
-        adjacencyLists3.addEdge(c, new FlowPair(3, 4), d);
-        adjacencyLists3.addEdge(b, new FlowPair(3, 3), d);
+        final AdjacencyLists<String, FlowAndCapacity> adjacencyLists3 = new AdjacencyLists<String, FlowAndCapacity>();
+        adjacencyLists3.addEdge(a, new FlowAndCapacity(3, 4), b);
+        adjacencyLists3.addEdge(a, new FlowAndCapacity(3, 3), c);
+        adjacencyLists3.addEdge(b, new FlowAndCapacity(0, 4), c);
+        adjacencyLists3.addEdge(c, new FlowAndCapacity(3, 4), d);
+        adjacencyLists3.addEdge(b, new FlowAndCapacity(3, 3), d);
         final AdjacencyLists<String, Integer> adjacencyLists3r = new AdjacencyLists<String, Integer>();
         adjacencyLists3r.addEdge(a, 1, b);
         adjacencyLists3r.addEdge(b, 3, a);
@@ -400,12 +463,12 @@ public class GraphAlgorithmsTest {
         adjacencyLists3r.addEdge(c, 1, d);
         adjacencyLists3r.addEdge(d, 3, c);
         adjacencyLists3r.addEdge(d, 3, b);
-        final AdjacencyLists<String, FlowPair> adjacencyLists4 = new AdjacencyLists<String, FlowPair>();
-        adjacencyLists4.addEdge(a, new FlowPair(4, 4), b);
-        adjacencyLists4.addEdge(a, new FlowPair(3, 3), c);
-        adjacencyLists4.addEdge(b, new FlowPair(1, 4), c);
-        adjacencyLists4.addEdge(c, new FlowPair(4, 4), d);
-        adjacencyLists4.addEdge(b, new FlowPair(3, 3), d);
+        final AdjacencyLists<String, FlowAndCapacity> adjacencyLists4 = new AdjacencyLists<String, FlowAndCapacity>();
+        adjacencyLists4.addEdge(a, new FlowAndCapacity(4, 4), b);
+        adjacencyLists4.addEdge(a, new FlowAndCapacity(3, 3), c);
+        adjacencyLists4.addEdge(b, new FlowAndCapacity(1, 4), c);
+        adjacencyLists4.addEdge(c, new FlowAndCapacity(4, 4), d);
+        adjacencyLists4.addEdge(b, new FlowAndCapacity(3, 3), d);
         final AdjacencyLists<String, Integer> adjacencyLists4r = new AdjacencyLists<String, Integer>();
         adjacencyLists4r.addEdge(b, 4, a);
         adjacencyLists4r.addEdge(c, 3, a);
@@ -413,46 +476,49 @@ public class GraphAlgorithmsTest {
         adjacencyLists4r.addEdge(c, 1, b);
         adjacencyLists4r.addEdge(d, 4, c);
         adjacencyLists4r.addEdge(d, 3, b);
-        final Graph<String, FlowPair> graph1 = Graph.create(adjacencyLists1);
-        final Graph<String, FlowPair> graph2 = Graph.create(adjacencyLists2);
-        final Graph<String, FlowPair> graph3 = Graph.create(adjacencyLists3);
-        final Graph<String, FlowPair> graph4 = Graph.create(adjacencyLists4);
+        final Graph<String, FlowAndCapacity> graph1 = Graph.create(adjacencyLists1);
+        final Graph<String, FlowAndCapacity> graph2 = Graph.create(adjacencyLists2);
+        final Graph<String, FlowAndCapacity> graph3 = Graph.create(adjacencyLists3);
+        final Graph<String, FlowAndCapacity> graph4 = Graph.create(adjacencyLists4);
         final Graph<String, Integer> graph1r = Graph.create(adjacencyLists1r);
         final Graph<String, Integer> graph2r = Graph.create(adjacencyLists2r);
         final Graph<String, Integer> graph3r = Graph.create(adjacencyLists3r);
         final Graph<String, Integer> graph4r = Graph.create(adjacencyLists4r);
+        final GridGraphLayout<String, FlowAndCapacity> layout =
+            GridGraphLayout.<String, FlowAndCapacity>builder().build();
+        final GraphLayout<String, Integer> residualLayout = layout.convertEdgeLabelType();
         return new Object[][] {
             {
-                new FlowNetworkProblem(graph1, a, d),
+                new FlowNetworkProblem(new GraphWithLayout<>(graph1, layout), a, d),
                 List.of(
                     new FordFulkersonDoubleStep(
-                        graph1,
+                        new GraphWithLayout<String, FlowAndCapacity>(graph1, layout),
                         Collections.emptySet(),
-                        graph1r,
+                        new GraphWithLayout<String, Integer>(graph1r, residualLayout),
                         Set.of(
                             new FordFulkersonPathStep<String, Integer>(a, graph1r.getEdges(a, b).iterator().next()),
                             new FordFulkersonPathStep<String, Integer>(b, graph1r.getEdges(b, d).iterator().next())
                         )
                     ),
                     new FordFulkersonDoubleStep(
-                        graph2,
+                        new GraphWithLayout<String, FlowAndCapacity>(graph2, layout),
                         Set.of(
-                            new FordFulkersonPathStep<String, FlowPair>(a, graph2.getEdges(a, b).iterator().next()),
-                            new FordFulkersonPathStep<String, FlowPair>(b, graph2.getEdges(b, d).iterator().next())
+                            new FordFulkersonPathStep<String, FlowAndCapacity>(a, graph2.getEdges(a, b).iterator().next()),
+                            new FordFulkersonPathStep<String, FlowAndCapacity>(b, graph2.getEdges(b, d).iterator().next())
                         ),
-                        graph2r,
+                        new GraphWithLayout<String, Integer>(graph2r, residualLayout),
                         Set.of(
                             new FordFulkersonPathStep<String, Integer>(a, graph2r.getEdges(a, c).iterator().next()),
                             new FordFulkersonPathStep<String, Integer>(c, graph2r.getEdges(c, d).iterator().next())
                         )
                     ),
                     new FordFulkersonDoubleStep(
-                        graph3,
+                        new GraphWithLayout<String, FlowAndCapacity>(graph3, layout),
                         Set.of(
-                            new FordFulkersonPathStep<String, FlowPair>(a, graph3.getEdges(a, c).iterator().next()),
-                            new FordFulkersonPathStep<String, FlowPair>(c, graph3.getEdges(c, d).iterator().next())
+                            new FordFulkersonPathStep<String, FlowAndCapacity>(a, graph3.getEdges(a, c).iterator().next()),
+                            new FordFulkersonPathStep<String, FlowAndCapacity>(c, graph3.getEdges(c, d).iterator().next())
                         ),
-                        graph3r,
+                        new GraphWithLayout<String, Integer>(graph3r, residualLayout),
                         Set.of(
                             new FordFulkersonPathStep<String, Integer>(a, graph3r.getEdges(a, b).iterator().next()),
                             new FordFulkersonPathStep<String, Integer>(b, graph3r.getEdges(b, c).iterator().next()),
@@ -460,13 +526,13 @@ public class GraphAlgorithmsTest {
                         )
                     ),
                     new FordFulkersonDoubleStep(
-                        graph4,
+                        new GraphWithLayout<String, FlowAndCapacity>(graph4, layout),
                         Set.of(
-                            new FordFulkersonPathStep<String, FlowPair>(a, graph4.getEdges(a, b).iterator().next()),
-                            new FordFulkersonPathStep<String, FlowPair>(b, graph4.getEdges(b, c).iterator().next()),
-                            new FordFulkersonPathStep<String, FlowPair>(c, graph4.getEdges(c, d).iterator().next())
+                            new FordFulkersonPathStep<String, FlowAndCapacity>(a, graph4.getEdges(a, b).iterator().next()),
+                            new FordFulkersonPathStep<String, FlowAndCapacity>(b, graph4.getEdges(b, c).iterator().next()),
+                            new FordFulkersonPathStep<String, FlowAndCapacity>(c, graph4.getEdges(c, d).iterator().next())
                         ),
-                        graph4r,
+                        new GraphWithLayout<String, Integer>(graph4r, residualLayout),
                         Collections.emptySet()
                     )
                 )
@@ -529,10 +595,21 @@ public class GraphAlgorithmsTest {
                 new UndirectedEdge<String, Integer>(e, 4, f),
                 new UndirectedEdge<String, Integer>(d, 5, g)
             );
+        final GraphLayout<String, Integer> layout = new DummyGraphLayout<String, Integer>();
         return new Object[][] {
             {
-                new GraphProblem(Graph.create(adjacencyLists1), a, StringVertexComparator.INSTANCE),
-                new KruskalResult<String>(result, Graph.create(adjacencyLists2))
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists1),
+                        layout
+                    ),
+                    a,
+                    StringVertexComparator.INSTANCE
+                ),
+                new KruskalResult<String>(
+                    result,
+                    new GraphWithLayout<String, Integer>(Graph.create(adjacencyLists2), layout)
+                )
             }
         };
     }
@@ -699,10 +776,21 @@ public class GraphAlgorithmsTest {
                 {null, null, new PrimEntry(1).toDone(), null, null, null, new PrimEntry(5)},
                 {null, null, null, null, null, null, new PrimEntry(5).toDone()},
             };
+            final GraphLayout<String, Integer> layout = new DummyGraphLayout<String, Integer>();
         return new Object[][] {
             {
-                new GraphProblem(Graph.create(adjacencyLists1), e, StringVertexComparator.INSTANCE),
-                new PrimResult<String>(table, Graph.create(adjacencyLists2))
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer>(
+                        Graph.create(adjacencyLists1),
+                        layout
+                    ),
+                    e,
+                    StringVertexComparator.INSTANCE
+                ),
+                new PrimResult<String>(
+                    table,
+                    new GraphWithLayout<String, Integer>(Graph.create(adjacencyLists2), layout)
+                )
             }
         };
     }

@@ -1,4 +1,6 @@
-package exercisegenerator.structures.graphs;
+package exercisegenerator.structures.graphs.flownetwork;
+
+import exercisegenerator.structures.graphs.*;
 
 public record FordFulkersonPathStep<V, E>(Vertex<V> startNode, Edge<E, V> edge) {
 
