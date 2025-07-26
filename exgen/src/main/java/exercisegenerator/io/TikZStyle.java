@@ -18,14 +18,26 @@ public enum TikZStyle {
 
     CLAUSE_SET("[node distance=0.5 and 1]"),
 
-    EDGE_HIGHLIGHT_STYLE("[p, bend right = 10, very thick, red]"),
+    COVERABILITY_GRAPH(
+        "[node/.style={rectangle,rounded corners,draw=black,thin,inner sep=5pt}, "
+        + "endnode/.style={rectangle,rounded corners,draw=black,thin,inner sep=5pt}, "
+        + ">=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]"
+    ),
 
-    EDGE_STYLE("[p, bend right = 10]"),
+    EDGE_HIGHLIGHT_STYLE("[p, bend left = 10, very thick, red]"),
+
+    EDGE_STYLE("[p, bend left = 10]"),
 
     EMPTY(""),
 
+    FORCE_GRAPH(
+        "[node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, "
+        + ">=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]"
+    ),
+
     GRAPH(
-        "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, "
+        "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, "
+        + "endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, "
         + "p/.style={->, thin, shorten <=2pt, shorten >=2pt}]"
     ),
 
@@ -47,7 +59,7 @@ public enum TikZStyle {
 
     SYM_GRAPH(
         "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, "
-        + "p/.style={thin}]"
+        + "endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]"
     ),
 
     TREE(

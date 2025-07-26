@@ -12,14 +12,22 @@ import exercisegenerator.structures.graphs.petrinets.*;
 
 public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<CoverabilityGraph> {
 
+    public static final PetriNetCoverabilityAlgorithm INSTANCE = new PetriNetCoverabilityAlgorithm();
+
+    private PetriNetCoverabilityAlgorithm() {}
+
     @Override
     public CoverabilityGraph apply(final PetriNetInput input) {
         final PetriNet net = new PetriNet(input);
-        final CoverabilityGraph result = new CoverabilityGraph(new Vertex<PetriMarking>(input.tokens()));
+        final PetriMarking firstTokens = net.getZeroMarking();
+        for (final Map.Entry<Integer, Integer> entry : input.tokens().entrySet()) {
+            firstTokens.merge(entry.getKey(), Optional.of(entry.getValue()), PetriMarking::omegaSum);
+        }
+        final CoverabilityGraph result = new CoverabilityGraph(new Vertex<PetriMarking>(firstTokens));
         final List<PetriMarking> used = new LinkedList<PetriMarking>();
-        used.add(input.tokens());
+        used.add(firstTokens);
         final Queue<PetriMarking> queue = new LinkedList<PetriMarking>();
-        queue.offer(input.tokens());
+        queue.offer(firstTokens);
         while (!queue.isEmpty()) {
             final PetriMarking tokens = queue.poll();
             for (final PetriTransition transition : net.activeTransitions(tokens)) {
@@ -50,10 +58,12 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Betrachten Sie das folgende Petrinetz:\\[2ex]");
+        writer.write("Betrachten Sie das folgende Petrinetz:\\\\[2ex]");
         Main.newLine(writer);
         final PetriNet net = new PetriNet(problem);
-        net.toTikz(problem.tokens(), writer);
+        LaTeXUtils.printDefaultAdjustboxBeginning(writer);
+        net.toTikz(PetriMarking.create(problem.tokens()), writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Geben Sie einen Abdeckungsgraphen zu diesem Petrinetz an.");
         Main.newLine(writer);
@@ -67,7 +77,13 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        solution.printTikZ(new ForceGraphLayout<PetriMarking, String>(solution), writer);
+        LaTeXUtils.printDefaultAdjustboxBeginning(writer);
+        solution.printTikZ(
+            new ForceGraphLayout<PetriMarking, String>(solution, TikZStyle.COVERABILITY_GRAPH, 4, 1, 12, 12),
+            writer
+        );
+        LaTeXUtils.printAdjustboxEnd(writer);
+        Main.newLine(writer);
     }
 
     private PetriMarking addOmegas(

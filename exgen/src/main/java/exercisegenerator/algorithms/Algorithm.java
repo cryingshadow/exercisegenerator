@@ -113,6 +113,15 @@ public enum Algorithm {
         CountingSort.INSTANCE
     ),
 
+    COVERABILITY(
+        "coverability",
+        "Coverability-Graph",
+        new String[] {
+            "Computes the coverability graph for a given petri net."
+        },
+        PetriNetCoverabilityAlgorithm.INSTANCE
+    ),
+
     DFS(
         "dfs",
         "Depth-First-Search",

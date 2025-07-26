@@ -1,5 +1,6 @@
 package exercisegenerator.structures.graphs.layout;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -8,7 +9,7 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class GridGraphLayout<V, E> implements GraphLayout<V, E> {
+public class GridGraphLayout<V, E> implements GraphLayout<V, E, Integer> {
 
     public static class GridGraphLayoutBuilder<V, E> {
 
@@ -159,9 +160,14 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E> {
         );
     }
 
+//    @Override
+//    public TikZStyle graphStyle() {
+//        return this.directed ? TikZStyle.GRAPH : TikZStyle.SYM_GRAPH;
+//    }
+
     @Override
-    public TikZStyle graphStyle() {
-        return this.directed ? TikZStyle.GRAPH : TikZStyle.SYM_GRAPH;
+    public Coordinates2D<Integer> getPosition(final Vertex<V> vertex) {
+        return this.nodeCoordinates.get(vertex);
     }
 
     public GridGraphLayout<V, E> highlight(final Collection<Pair<Vertex<V>, Edge<E, V>>> edges) {
@@ -180,6 +186,20 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E> {
             this.drawEdges,
             this.drawEdgeLabels
         );
+    }
+
+    @Override
+    public void printTikZ(final Graph<V, E> graph, final BufferedWriter writer) throws IOException {
+        LaTeXUtils.printTikzBeginning(this.directed ? TikZStyle.GRAPH : TikZStyle.SYM_GRAPH, writer);
+        for (final Vertex<V> vertex : graph.getVertices()) {
+            writer.write(this.toTikZ(vertex, graph.isStartVertex(vertex), graph.isEndVertex(vertex)));
+        }
+        for (final Pair<Vertex<V>, List<Edge<E, V>>> entry : graph.getEdges()) {
+            for (final Edge<E, V> edge : entry.getValue()) {
+                writer.write(this.toTikZ(entry.getKey(), edge));
+            }
+        }
+        LaTeXUtils.printTikzEnd(writer);
     }
 
     public GridGraphLayout<V, E> setDirected(final boolean directed) {
@@ -223,22 +243,22 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E> {
         );
     }
 
-    @Override
-    public String toTikZ(final Vertex<V> vertex) {
+    protected String toTikZ(final Vertex<V> vertex, final boolean startVertex, final boolean endVertex) {
         final Coordinates2D<Integer> coordinates = this.nodeCoordinates.get(vertex);
+        final String id = vertex.id.toString();
         return String.format(
-            "\\node[node] (n%s) at (%d,%d) {%s};%s",
-            vertex.id.toString(),
+            "\\node[%s] (n%s) at (%d,%d) {%s};%s",
+            endVertex ? "endnode" : "node",
+            id,
             coordinates.x(),
             coordinates.y(),
             vertex.label.map(label -> label.toString()).orElse(""),
-            Main.lineSeparator
+            startVertex ? GraphLayout.startNodeDecoration(id) : Main.lineSeparator
         );
     }
 
-    @Override
-    public String toTikZ(final Vertex<V> from, final Edge<E, V> edge) {
-        if (!this.drawEdges || !this.directed && edge.to.id.compareTo(from.id) < 0) {
+    private String toTikZ(final Vertex<V> from, final Edge<E, V> edge) {
+        if (!this.drawEdges || !this.directed && edge.to().id.compareTo(from.id) < 0) {
             return "";
         }
         final String style =
@@ -253,17 +273,11 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E> {
                             TikZStyle.SYM_EDGE_HIGHLIGHT_STYLE :
                                 TikZStyle.SYM_EDGE_STYLE
                     ).style;
-        final String edgeLabel =
-            this.drawEdgeLabels ?
-                edge.label.map(label -> String.format("node[auto, swap] {%s} ", label.toString())).orElse("") :
-                    "";
-        return String.format(
-            "\\draw%s (n%s) to %s(n%s);%s",
+        return GraphLayout.edgeFormat(
             style,
             from.id.toString(),
-            edgeLabel,
-            edge.to.id.toString(),
-            Main.lineSeparator
+            this.drawEdgeLabels && edge.label().isPresent() ? List.of(edge.label().get()) : List.of(),
+            edge.to().id.toString()
         );
     }
 

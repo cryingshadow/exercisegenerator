@@ -97,8 +97,8 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
                     continue;
                 }
                 for (final Edge<Integer, String> edge : problem.graphWithLayout().graph().getAdjacencyList(from)) {
-                    final int newDistance = distances.get(from.label.get()) + edge.label.get();
-                    final String toLabel = edge.to.label.get();
+                    final int newDistance = distances.get(from.label.get()) + edge.label().get();
+                    final String toLabel = edge.to().label.get();
                     if (!distances.containsKey(toLabel) || newDistance < distances.get(toLabel)) {
                         distances.put(toLabel, newDistance);
                         predecessors.put(toLabel, fromLabel);

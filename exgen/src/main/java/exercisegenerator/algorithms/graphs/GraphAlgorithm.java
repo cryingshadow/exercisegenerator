@@ -106,7 +106,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
     }
 
     static void printGraphExercise(
-        final GraphWithLayout<String, Integer> graphWithLayout,
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout,
         final String task,
         final BufferedWriter writer
     ) throws IOException {
@@ -143,14 +143,14 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         );
     }
 
-    static GraphWithLayout<String, Integer> stretch(
-        final GraphWithLayout<String, Integer> graphWithLayout,
+    static GraphWithLayout<String, Integer, Integer> stretch(
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout,
         final double factor
     ) {
         if (factor == 1.0) {
             return graphWithLayout;
         }
-        return new GraphWithLayout<String, Integer>(
+        return new GraphWithLayout<String, Integer, Integer>(
             graphWithLayout.graph(),
             ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).stretch(factor)
         );
@@ -180,7 +180,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         return res;
     }
 
-    private static GraphWithLayout<String, Integer> createRandomGraphWithGridLayout(
+    private static GraphWithLayout<String, Integer, Integer> createRandomGraphWithGridLayout(
         final int numOfVertices,
         final boolean directed
     ) {
@@ -191,7 +191,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         final GridGraphLayout.GridGraphLayoutBuilder<String, Integer> layoutBuilder =
             GridGraphLayout.<String, Integer>builder().setDirected(directed);
         if (numOfVertices == 0) {
-            return new GraphWithLayout<String, Integer>(graph, layoutBuilder.build());
+            return new GraphWithLayout<String, Integer, Integer>(graph, layoutBuilder.build());
         }
         final Vertex<String> start = new Vertex<String>(Optional.of("A"));
         graph.addVertex(start);
@@ -247,13 +247,13 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
                 verticesWithFreeNeighbors.add(toAddVertex);
             }
         }
-        return new GraphWithLayout<String, Integer>(graph, layoutBuilder.build());
+        return new GraphWithLayout<String, Integer, Integer>(graph, layoutBuilder.build());
     }
 
     private static GraphProblem generateGraphProblem(final Parameters<Flag> options) {
         final String algorithmName = options.get(Flag.ALGORITHM);
         final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
-        final GraphWithLayout<String, Integer> graphWithLayout =
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout =
             GraphAlgorithm.createRandomGraphWithGridLayout(
                 numOfVertices,
                 !GraphAlgorithm.isUndirectedGraphAlgorithm(algorithmName)
@@ -293,7 +293,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        final GraphWithLayout<String, Integer> graphWithLayout =
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout =
             Graph.create(reader, new StringLabelParser(), new IntLabelParser());
         return new GraphProblem(
             graphWithLayout,

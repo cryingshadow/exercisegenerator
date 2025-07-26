@@ -1,6 +1,7 @@
 package exercisegenerator.algorithms.graphs;
 
 import java.util.*;
+import java.util.Optional;
 
 import org.testng.*;
 import org.testng.annotations.*;
@@ -8,6 +9,7 @@ import org.testng.annotations.*;
 import exercisegenerator.structures.graphs.*;
 import exercisegenerator.structures.graphs.flownetwork.*;
 import exercisegenerator.structures.graphs.layout.*;
+import exercisegenerator.structures.graphs.petrinets.*;
 
 public class GraphAlgorithmsTest {
 
@@ -63,9 +65,9 @@ public class GraphAlgorithmsTest {
         return new Object[][] {
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists1),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     e,
                     StringVertexComparator.INSTANCE
@@ -133,9 +135,9 @@ public class GraphAlgorithmsTest {
         return new Object[][] {
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists1),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     a,
                     StringVertexComparator.INSTANCE
@@ -144,9 +146,9 @@ public class GraphAlgorithmsTest {
             },
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists2),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     a,
                     StringVertexComparator.INSTANCE
@@ -155,9 +157,9 @@ public class GraphAlgorithmsTest {
             },
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists3),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     a,
                     StringVertexComparator.INSTANCE
@@ -170,6 +172,130 @@ public class GraphAlgorithmsTest {
     @Test(dataProvider="bfsData")
     public void breadthFirstSearch(final GraphProblem problem, final List<String> expected) {
         Assert.assertEquals(BreadthFirstSearch.INSTANCE.apply(problem), expected);
+    }
+
+    @Test(dataProvider="coverabilityGraphData")
+    public void coverabilityGraph(final PetriNetInput input, final CoverabilityGraph expected) {
+        Assert.assertTrue(PetriNetCoverabilityAlgorithm.INSTANCE.apply(input).logicallyEquals(expected));
+    }
+
+    @DataProvider
+    public Object[][] coverabilityGraphData() {
+        final PetriPlace place1 = new PetriPlace("Spring", 0, 0, 135);
+        final PetriPlace place2 = new PetriPlace("Summer", 2, 0, 135);
+        final PetriPlace place3 = new PetriPlace("Fall", 2, 2, 135);
+        final PetriPlace place4 = new PetriPlace("Winter", 0, 2, 135);
+        final List<PetriPlace> places = List.of(place1, place2, place3, place4);
+        final PetriTransition transition1 = new PetriTransition("t1", 1, 0, Map.of(0,1), Map.of(1,1));
+        final PetriTransition transition2 = new PetriTransition("t2", 2, 1, Map.of(1,1), Map.of(2,1));
+        final PetriTransition transition3 = new PetriTransition("t3", 1, 2, Map.of(2,1), Map.of(3,1));
+        final PetriTransition transition4 = new PetriTransition("t4", 0, 1, Map.of(3,1), Map.of(0,1));
+        final PetriTransition transition4b = new PetriTransition("t4", 0, 1, Map.of(3,1), Map.of(0,2));
+        final List<PetriTransition> transitions = List.of(transition1, transition2, transition3, transition4);
+        final List<PetriTransition> transitionsb = List.of(transition1, transition2, transition3, transition4b);
+        final Map<Integer, Integer> empty = new LinkedHashMap<Integer, Integer>();
+        final Map<Integer, Integer> zeroPure = new LinkedHashMap<Integer, Integer>();
+        zeroPure.put(0, 0);
+        zeroPure.put(1, 0);
+        zeroPure.put(2, 0);
+        zeroPure.put(3, 0);
+        final PetriMarking zero = new PetriMarking();
+        zero.put(0, Optional.of(0));
+        zero.put(1, Optional.of(0));
+        zero.put(2, Optional.of(0));
+        zero.put(3, Optional.of(0));
+        final Map<Integer, Integer> one1Pure = new LinkedHashMap<Integer, Integer>();
+        one1Pure.put(0, 1);
+        one1Pure.put(1, 0);
+        one1Pure.put(2, 0);
+        one1Pure.put(3, 0);
+        final PetriMarking one1 = new PetriMarking();
+        one1.put(0, Optional.of(1));
+        one1.put(1, Optional.of(0));
+        one1.put(2, Optional.of(0));
+        one1.put(3, Optional.of(0));
+        final PetriMarking one2 = new PetriMarking();
+        one2.put(0, Optional.of(0));
+        one2.put(1, Optional.of(1));
+        one2.put(2, Optional.of(0));
+        one2.put(3, Optional.of(0));
+        final PetriMarking one3 = new PetriMarking();
+        one3.put(0, Optional.of(0));
+        one3.put(1, Optional.of(0));
+        one3.put(2, Optional.of(1));
+        one3.put(3, Optional.of(0));
+        final PetriMarking one4 = new PetriMarking();
+        one4.put(0, Optional.of(0));
+        one4.put(1, Optional.of(0));
+        one4.put(2, Optional.of(0));
+        one4.put(3, Optional.of(1));
+        final Vertex<PetriMarking> vertex1 = new Vertex<PetriMarking>(one1);
+        final Vertex<PetriMarking> vertex2 = new Vertex<PetriMarking>(one2);
+        final Vertex<PetriMarking> vertex3 = new Vertex<PetriMarking>(one3);
+        final Vertex<PetriMarking> vertex4 = new Vertex<PetriMarking>(one4);
+        final CoverabilityGraph graph1 = new CoverabilityGraph(vertex1);
+        graph1.addVertex(vertex2);
+        graph1.addVertex(vertex3);
+        graph1.addVertex(vertex4);
+        graph1.addEdge(vertex1, Optional.of(transition1.label()), vertex2);
+        graph1.addEdge(vertex2, Optional.of(transition2.label()), vertex3);
+        graph1.addEdge(vertex3, Optional.of(transition3.label()), vertex4);
+        graph1.addEdge(vertex4, Optional.of(transition4.label()), vertex1);
+        final PetriMarking inf1 = new PetriMarking();
+        inf1.put(0, Optional.empty());
+        inf1.put(1, Optional.of(0));
+        inf1.put(2, Optional.of(0));
+        inf1.put(3, Optional.of(0));
+        final PetriMarking inf2 = new PetriMarking();
+        inf2.put(0, Optional.empty());
+        inf2.put(1, Optional.empty());
+        inf2.put(2, Optional.of(0));
+        inf2.put(3, Optional.of(0));
+        final PetriMarking inf3 = new PetriMarking();
+        inf3.put(0, Optional.empty());
+        inf3.put(1, Optional.empty());
+        inf3.put(2, Optional.empty());
+        inf3.put(3, Optional.of(0));
+        final PetriMarking inf4 = new PetriMarking();
+        inf4.put(0, Optional.empty());
+        inf4.put(1, Optional.empty());
+        inf4.put(2, Optional.empty());
+        inf4.put(3, Optional.empty());
+        final Vertex<PetriMarking> vertex5 = new Vertex<PetriMarking>(inf1);
+        final Vertex<PetriMarking> vertex6 = new Vertex<PetriMarking>(inf2);
+        final Vertex<PetriMarking> vertex7 = new Vertex<PetriMarking>(inf3);
+        final Vertex<PetriMarking> vertex8 = new Vertex<PetriMarking>(inf4);
+        final CoverabilityGraph graph2 = new CoverabilityGraph(vertex1);
+        graph2.addVertex(vertex2);
+        graph2.addVertex(vertex3);
+        graph2.addVertex(vertex4);
+        graph2.addVertex(vertex5);
+        graph2.addVertex(vertex6);
+        graph2.addVertex(vertex7);
+        graph2.addVertex(vertex8);
+        graph2.addEdge(vertex1, Optional.of(transition1.label()), vertex2);
+        graph2.addEdge(vertex2, Optional.of(transition2.label()), vertex3);
+        graph2.addEdge(vertex3, Optional.of(transition3.label()), vertex4);
+        graph2.addEdge(vertex4, Optional.of(transition4.label()), vertex5);
+        graph2.addEdge(vertex5, Optional.of(transition1.label()), vertex6);
+        graph2.addEdge(vertex6, Optional.of(transition1.label()), vertex6);
+        graph2.addEdge(vertex6, Optional.of(transition2.label()), vertex7);
+        graph2.addEdge(vertex7, Optional.of(transition1.label()), vertex7);
+        graph2.addEdge(vertex7, Optional.of(transition2.label()), vertex7);
+        graph2.addEdge(vertex7, Optional.of(transition3.label()), vertex8);
+        graph2.addEdge(vertex8, Optional.of(transition1.label()), vertex8);
+        graph2.addEdge(vertex8, Optional.of(transition2.label()), vertex8);
+        graph2.addEdge(vertex8, Optional.of(transition3.label()), vertex8);
+        graph2.addEdge(vertex8, Optional.of(transition4.label()), vertex8);
+        return new Object[][] {
+            {
+                new PetriNetInput(List.of(), List.of(), empty),
+                new CoverabilityGraph(new Vertex<PetriMarking>(PetriMarking.create(empty)))
+            },
+            {new PetriNetInput(places, transitions, zeroPure), new CoverabilityGraph(new Vertex<PetriMarking>(zero))},
+            {new PetriNetInput(places, transitions, one1Pure), graph1},
+            {new PetriNetInput(places, transitionsb, one1Pure), graph2}
+        };
     }
 
     @Test(dataProvider="dfsData")
@@ -214,9 +340,9 @@ public class GraphAlgorithmsTest {
         return new Object[][] {
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists1),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     a,
                     StringVertexComparator.INSTANCE
@@ -225,9 +351,9 @@ public class GraphAlgorithmsTest {
             },
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists2),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     a,
                     StringVertexComparator.INSTANCE
@@ -236,9 +362,9 @@ public class GraphAlgorithmsTest {
             },
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists3),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     a,
                     StringVertexComparator.INSTANCE
@@ -280,9 +406,9 @@ public class GraphAlgorithmsTest {
         return new Object[][] {
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists1),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     e,
                     StringVertexComparator.INSTANCE
@@ -354,9 +480,9 @@ public class GraphAlgorithmsTest {
         return new Object[][] {
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists1),
-                        new DummyGraphLayout<String, Integer>()
+                        new DummyGraphLayout<String, Integer, Integer>()
                     ),
                     null,
                     StringVertexComparator.INSTANCE
@@ -486,39 +612,39 @@ public class GraphAlgorithmsTest {
         final Graph<String, Integer> graph4r = Graph.create(adjacencyLists4r);
         final GridGraphLayout<String, FlowAndCapacity> layout =
             GridGraphLayout.<String, FlowAndCapacity>builder().build();
-        final GraphLayout<String, Integer> residualLayout = layout.convertEdgeLabelType();
+        final GraphLayout<String, Integer, Integer> residualLayout = layout.convertEdgeLabelType();
         return new Object[][] {
             {
                 new FlowNetworkProblem(new GraphWithLayout<>(graph1, layout), a, d),
                 List.of(
                     new FordFulkersonDoubleStep(
-                        new GraphWithLayout<String, FlowAndCapacity>(graph1, layout),
+                        new GraphWithLayout<String, FlowAndCapacity, Integer>(graph1, layout),
                         Collections.emptySet(),
-                        new GraphWithLayout<String, Integer>(graph1r, residualLayout),
+                        new GraphWithLayout<String, Integer, Integer>(graph1r, residualLayout),
                         Set.of(
                             new FordFulkersonPathStep<String, Integer>(a, graph1r.getEdges(a, b).iterator().next()),
                             new FordFulkersonPathStep<String, Integer>(b, graph1r.getEdges(b, d).iterator().next())
                         )
                     ),
                     new FordFulkersonDoubleStep(
-                        new GraphWithLayout<String, FlowAndCapacity>(graph2, layout),
+                        new GraphWithLayout<String, FlowAndCapacity, Integer>(graph2, layout),
                         Set.of(
                             new FordFulkersonPathStep<String, FlowAndCapacity>(a, graph2.getEdges(a, b).iterator().next()),
                             new FordFulkersonPathStep<String, FlowAndCapacity>(b, graph2.getEdges(b, d).iterator().next())
                         ),
-                        new GraphWithLayout<String, Integer>(graph2r, residualLayout),
+                        new GraphWithLayout<String, Integer, Integer>(graph2r, residualLayout),
                         Set.of(
                             new FordFulkersonPathStep<String, Integer>(a, graph2r.getEdges(a, c).iterator().next()),
                             new FordFulkersonPathStep<String, Integer>(c, graph2r.getEdges(c, d).iterator().next())
                         )
                     ),
                     new FordFulkersonDoubleStep(
-                        new GraphWithLayout<String, FlowAndCapacity>(graph3, layout),
+                        new GraphWithLayout<String, FlowAndCapacity, Integer>(graph3, layout),
                         Set.of(
                             new FordFulkersonPathStep<String, FlowAndCapacity>(a, graph3.getEdges(a, c).iterator().next()),
                             new FordFulkersonPathStep<String, FlowAndCapacity>(c, graph3.getEdges(c, d).iterator().next())
                         ),
-                        new GraphWithLayout<String, Integer>(graph3r, residualLayout),
+                        new GraphWithLayout<String, Integer, Integer>(graph3r, residualLayout),
                         Set.of(
                             new FordFulkersonPathStep<String, Integer>(a, graph3r.getEdges(a, b).iterator().next()),
                             new FordFulkersonPathStep<String, Integer>(b, graph3r.getEdges(b, c).iterator().next()),
@@ -526,13 +652,13 @@ public class GraphAlgorithmsTest {
                         )
                     ),
                     new FordFulkersonDoubleStep(
-                        new GraphWithLayout<String, FlowAndCapacity>(graph4, layout),
+                        new GraphWithLayout<String, FlowAndCapacity, Integer>(graph4, layout),
                         Set.of(
                             new FordFulkersonPathStep<String, FlowAndCapacity>(a, graph4.getEdges(a, b).iterator().next()),
                             new FordFulkersonPathStep<String, FlowAndCapacity>(b, graph4.getEdges(b, c).iterator().next()),
                             new FordFulkersonPathStep<String, FlowAndCapacity>(c, graph4.getEdges(c, d).iterator().next())
                         ),
-                        new GraphWithLayout<String, Integer>(graph4r, residualLayout),
+                        new GraphWithLayout<String, Integer, Integer>(graph4r, residualLayout),
                         Collections.emptySet()
                     )
                 )
@@ -595,11 +721,11 @@ public class GraphAlgorithmsTest {
                 new UndirectedEdge<String, Integer>(e, 4, f),
                 new UndirectedEdge<String, Integer>(d, 5, g)
             );
-        final GraphLayout<String, Integer> layout = new DummyGraphLayout<String, Integer>();
+        final GraphLayout<String, Integer, Integer> layout = new DummyGraphLayout<String, Integer, Integer>();
         return new Object[][] {
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists1),
                         layout
                     ),
@@ -608,7 +734,7 @@ public class GraphAlgorithmsTest {
                 ),
                 new KruskalResult<String>(
                     result,
-                    new GraphWithLayout<String, Integer>(Graph.create(adjacencyLists2), layout)
+                    new GraphWithLayout<String, Integer, Integer>(Graph.create(adjacencyLists2), layout)
                 )
             }
         };
@@ -776,11 +902,11 @@ public class GraphAlgorithmsTest {
                 {null, null, new PrimEntry(1).toDone(), null, null, null, new PrimEntry(5)},
                 {null, null, null, null, null, null, new PrimEntry(5).toDone()},
             };
-            final GraphLayout<String, Integer> layout = new DummyGraphLayout<String, Integer>();
+            final GraphLayout<String, Integer, Integer> layout = new DummyGraphLayout<String, Integer, Integer>();
         return new Object[][] {
             {
                 new GraphProblem(
-                    new GraphWithLayout<String, Integer>(
+                    new GraphWithLayout<String, Integer, Integer>(
                         Graph.create(adjacencyLists1),
                         layout
                     ),
@@ -789,7 +915,7 @@ public class GraphAlgorithmsTest {
                 ),
                 new PrimResult<String>(
                     table,
-                    new GraphWithLayout<String, Integer>(Graph.create(adjacencyLists2), layout)
+                    new GraphWithLayout<String, Integer, Integer>(Graph.create(adjacencyLists2), layout)
                 )
             }
         };

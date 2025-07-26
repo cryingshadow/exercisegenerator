@@ -128,6 +128,10 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
     }
 
+    public static void printDefaultAdjustboxBeginning(final BufferedWriter writer) throws IOException {
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+    }
+
     public static String printEmptyArrayAndReturnLeftmostNodesName(
         final int length,
         final Optional<String> below,
@@ -175,7 +179,7 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         writer.write("\\usetikzlibrary{arrows,shapes.misc,shapes.arrows,shapes.multipart,shapes.geometric,chains,");
         writer.write("matrix,positioning,scopes,decorations.pathmorphing,decorations.pathreplacing,shadows,calc,");
-        writer.write("trees,backgrounds}");
+        writer.write("trees,backgrounds,petri}");
         Main.newLine(writer);
         writer.write("\\usepackage{tikz-qtree}");
         Main.newLine(writer);

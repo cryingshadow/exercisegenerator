@@ -83,15 +83,15 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
         final Integer[] distances
     ) {
         for (final Edge<Integer, V> edge : graph.getAdjacencyList(currentVertex)) {
-            final Integer toVertexId = vertexIds.get(edge.to);
+            final Integer toVertexId = vertexIds.get(edge.to());
             if (
                 toVertexId != null
                 && (
                     distances[toVertexId] == null
-                    || distances[toVertexId] > distances[currentVertexId] + edge.label.get()
+                    || distances[toVertexId] > distances[currentVertexId] + edge.label().get()
                 )
             ) {
-                distances[toVertexId] = distances[currentVertexId] + edge.label.get();
+                distances[toVertexId] = distances[currentVertexId] + edge.label().get();
             }
         }
     }

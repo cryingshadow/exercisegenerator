@@ -5,5 +5,5 @@ import java.util.*;
 public record PetriNetInput(
     List<PetriPlace> places,
     List<PetriTransition> transitions,
-    PetriMarking tokens
+    Map<Integer, Integer> tokens
 ) {}

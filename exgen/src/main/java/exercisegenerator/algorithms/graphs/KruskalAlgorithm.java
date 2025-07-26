@@ -48,7 +48,7 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
         }
         return new KruskalResult<String>(
             result,
-            new GraphWithLayout<String, Integer>(tree, problem.graphWithLayout().layout())
+            new GraphWithLayout<String, Integer, Integer>(tree, problem.graphWithLayout().layout())
         );
     }
 
@@ -67,10 +67,10 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final GraphWithLayout<String, Integer> graphWithLayout = problem.graphWithLayout();
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout = problem.graphWithLayout();
         GraphAlgorithm.printGraphExercise(
             GraphAlgorithm.stretch(
-                new GraphWithLayout<String, Integer>(
+                new GraphWithLayout<String, Integer, Integer>(
                     graphWithLayout.graph(),
                     ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDirected(false)
                 ),

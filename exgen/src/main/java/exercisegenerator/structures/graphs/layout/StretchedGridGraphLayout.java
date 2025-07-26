@@ -89,16 +89,18 @@ public class StretchedGridGraphLayout<V, E> extends GridGraphLayout<V, E> {
     }
 
     @Override
-    public String toTikZ(final Vertex<V> vertex) {
+    public String toTikZ(final Vertex<V> vertex, final boolean startVertex, final boolean endVertex) {
         final Coordinates2D<Integer> coordinates = this.nodeCoordinates.get(vertex);
+        final String id = vertex.id.toString();
         return String.format(
             Locale.US,
-            "\\node[node] (n%s) at (%.2f,%.2f) {%s};%s",
-            vertex.id.toString(),
+            "\\node[%s] (n%s) at (%.2f,%.2f) {%s};%s",
+            endVertex ? "endnode" : "node",
+            id,
             coordinates.x() * this.factor,
             coordinates.y() * this.factor,
             vertex.label.map(label -> label.toString()).orElse(""),
-            Main.lineSeparator
+            startVertex ? GraphLayout.startNodeDecoration(id) : Main.lineSeparator
         );
     }
 

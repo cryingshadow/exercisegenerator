@@ -56,10 +56,10 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final GraphWithLayout<String, Integer> graphWithLayout = problem.graphWithLayout();
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout = problem.graphWithLayout();
         GraphAlgorithm.printGraphExercise(
             GraphAlgorithm.stretch(
-                new GraphWithLayout<String, Integer>(
+                new GraphWithLayout<String, Integer, Integer>(
                     graphWithLayout.graph(),
                     ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDrawEdgeLabels(false)
                 ),

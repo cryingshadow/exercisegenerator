@@ -52,6 +52,14 @@ public class PetriNet {
         return result;
     }
 
+    public PetriMarking getZeroMarking() {
+        final PetriMarking result = new PetriMarking();
+        for (int i = 0; i < this.places.length; i++) {
+            result.put(i, Optional.of(0));
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         final StringBuilder result = new StringBuilder();

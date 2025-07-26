@@ -32,7 +32,7 @@ public class FloydAlgorithm implements FloydWarshallAlgorithm<Integer> {
         }
         final Set<Edge<Integer, String>> edges = graph.getEdges(vertices.get(from), vertices.get(to));
         if (!edges.isEmpty()) {
-            return edges.iterator().next().label.get();
+            return edges.iterator().next().label().get();
         }
         return null;
     }

@@ -46,7 +46,7 @@ public class Graph<V, E> {
      * @throws IOException If some error occurs during input, the input does not comply to the expected format, or if
      *                     we have an edge adjacent to a non-existing vertex.
      */
-    public static <V, E> GraphWithLayout<V, E> create(
+    public static <V, E> GraphWithLayout<V, E, Integer> create(
         final BufferedReader reader,
         final LabelParser<V> vertexParser,
         final LabelParser<E> edgeParser
@@ -155,7 +155,7 @@ public class Graph<V, E> {
                 list.add(new Edge<E, V>(pair.x, verticesAtPositions.get(pair.y)));
             }
         }
-        return new GraphWithLayout<V, E>(graph, layoutBuilder.build());
+        return new GraphWithLayout<V, E, Integer>(graph, layoutBuilder.build());
     }
 
     public static<V, E> Graph<V, E> create(final Map<Vertex<V>, ? extends List<Edge<E, V>>> adjacencyLists) {
@@ -210,12 +210,24 @@ public class Graph<V, E> {
 
     private AdjacencyLists<V, E> adjacencyLists;
 
+    private final Set<Vertex<V>> endVertices;
+
+    private final Set<Vertex<V>> startVertices;
+
     public Graph() {
         this.adjacencyLists = new AdjacencyLists<V, E>();
+        this.startVertices = new LinkedHashSet<Vertex<V>>();
+        this.endVertices = new LinkedHashSet<Vertex<V>>();
     }
 
-    private Graph(final AdjacencyLists<V, E> adjacencyLists) {
+    private Graph(
+        final AdjacencyLists<V, E> adjacencyLists,
+        final Set<Vertex<V>> startVertices,
+        final Set<Vertex<V>> endVertices
+    ) {
         this.adjacencyLists = adjacencyLists;
+        this.startVertices = startVertices;
+        this.endVertices = endVertices;
     }
 
     public void addEdge(final Vertex<V> from, final Optional<E> label, final Vertex<V> to) {
@@ -237,8 +249,8 @@ public class Graph<V, E> {
             for (final Edge<E, V> edge : entry.getValue()) {
                 result.addEdge(
                     entry.getKey(),
-                    edge.label.isEmpty() ? Optional.empty() : Optional.of(labelCopy.apply(edge.label.get())),
-                    edge.to
+                    edge.label().isEmpty() ? Optional.empty() : Optional.of(labelCopy.apply(edge.label().get())),
+                    edge.to()
                 );
             }
         }
@@ -264,7 +276,7 @@ public class Graph<V, E> {
     }
 
     public List<Vertex<V>> getAdjacentVertices(final Vertex<V> vertex) {
-        return this.getAdjacencyList(vertex).stream().map(edge -> edge.to).toList();
+        return this.getAdjacencyList(vertex).stream().map(edge -> edge.to()).toList();
     }
 
     public List<UndirectedEdge<V, E>> getAllUndirectedEdges() {
@@ -274,12 +286,22 @@ public class Graph<V, E> {
         for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
             for (final Edge<E, V> edge : entry.getValue()) {
                 final Pair<BigInteger,BigInteger> reverseVertexPair =
-                    new Pair<BigInteger,BigInteger>(edge.to.id, entry.getKey().id);
+                    new Pair<BigInteger,BigInteger>(edge.to().id, entry.getKey().id);
                 if (!finishedVertexPairs.contains(reverseVertexPair)) {
-                    result.add(new UndirectedEdge<V, E>(entry.getKey(), edge.label, edge.to));
-                    finishedVertexPairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id, edge.to.id));
+                    result.add(new UndirectedEdge<V, E>(entry.getKey(), edge.label(), edge.to()));
+                    finishedVertexPairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id, edge.to().id));
                 }
             }
+        }
+        return result;
+    }
+
+    public List<Pair<Vertex<V>, List<Edge<E, V>>>> getEdges() {
+        final List<Pair<Vertex<V>, List<Edge<E, V>>>> result = new ArrayList<Pair<Vertex<V>, List<Edge<E, V>>>>();
+        for (final Map.Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
+            result.add(
+                new Pair<Vertex<V>, List<Edge<E, V>>>(entry.getKey(), new ArrayList<Edge<E, V>>(entry.getValue()))
+            );
         }
         return result;
     }
@@ -289,7 +311,7 @@ public class Graph<V, E> {
         final List<Edge<E, V>> list = this.adjacencyLists.get(from);
         if (list != null) {
             for (final Edge<E, V> edge : list) {
-                if (to.equals(edge.to)) {
+                if (to.equals(edge.to())) {
                     res.add(edge);
                 }
             }
@@ -316,6 +338,14 @@ public class Graph<V, E> {
         return this.adjacencyLists.hashCode() * 3;
     }
 
+    public boolean isEndVertex(final Vertex<V> vertex) {
+        return this.endVertices.contains(vertex);
+    }
+
+    public boolean isStartVertex(final Vertex<V> vertex) {
+        return this.startVertices.contains(vertex);
+    }
+
     public boolean logicallyEquals(final Graph<V,E> other) {
         return this.adjacencyLists.logicallyEquals(other.adjacencyLists);
     }
@@ -325,23 +355,18 @@ public class Graph<V, E> {
         for (final Vertex<V> vertex : this.adjacencyLists.keySet()) {
             emptyLists.put(vertex, new ArrayList<Edge<E,V>>());
         }
-        return new Graph<V, E>(emptyLists);
+        return new Graph<V, E>(
+            emptyLists,
+            new LinkedHashSet<Vertex<V>>(this.startVertices),
+            new LinkedHashSet<Vertex<V>>(this.endVertices)
+        );
     }
 
-    public void printTikZ(
-        final GraphLayout<V, E> layout,
+    public <T extends Number> void printTikZ(
+        final GraphLayout<V, E, T> layout,
         final BufferedWriter writer
     ) throws IOException {
-        LaTeXUtils.printTikzBeginning(layout.graphStyle(), writer);
-        for (final Vertex<V> vertex : this.adjacencyLists.keySet()) {
-            writer.write(layout.toTikZ(vertex));
-        }
-        for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
-            for (final Edge<E, V> edge : entry.getValue()) {
-                writer.write(layout.toTikZ(entry.getKey(), edge));
-            }
-        }
-        LaTeXUtils.printTikzEnd(writer);
+        layout.printTikZ(this, writer);
     }
 
     public void replaceEdgeLabel(final Vertex<V> from, final E label, final Vertex<V> to) {
@@ -351,9 +376,13 @@ public class Graph<V, E> {
             .adjacencyLists
             .get(from)
             .stream()
-            .map(edge -> edge.to.equals(to) ? new Edge<E, V>(Optional.of(label), to) : edge)
+            .map(edge -> edge.to().equals(to) ? new Edge<E, V>(Optional.of(label), to) : edge)
             .collect(Collectors.toCollection(ArrayList::new))
         );
+    }
+
+    public void setStartVertex(final Vertex<V> vertex) {
+        this.startVertices.add(vertex);
     }
 
     @Override

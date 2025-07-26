@@ -6,11 +6,11 @@ public class KruskalResult<V> {
 
     public final List<UndirectedEdge<V, Integer>> edges;
 
-    public final GraphWithLayout<V, Integer> treeWithLayout;
+    public final GraphWithLayout<V, Integer, Integer> treeWithLayout;
 
     public KruskalResult(
         final List<UndirectedEdge<V, Integer>> edges,
-        final GraphWithLayout<V, Integer> treeWithLayout
+        final GraphWithLayout<V, Integer, Integer> treeWithLayout
     ) {
         this.edges = edges;
         this.treeWithLayout = treeWithLayout;

@@ -69,10 +69,10 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
         }
         for (int i = 1; i < numberOfVertices; i++) {
             for (final Edge<Integer, String> edge : originalGraph.getAdjacencyList(vertices.get(recentlyAdded))) {
-                final int toIndex = vertices.indexOf(edge.to);
+                final int toIndex = vertices.indexOf(edge.to());
                 final PrimEntry toEntry = table[i - 1][toIndex];
-                if (toEntry != null && !toEntry.done() && toEntry.compareTo(edge.label.get()) > 0) {
-                    table[i][toIndex] = new PrimEntry(edge.label.get());
+                if (toEntry != null && !toEntry.done() && toEntry.compareTo(edge.label().get()) > 0) {
+                    table[i][toIndex] = new PrimEntry(edge.label().get());
                     parents[toIndex] = recentlyAdded;
                 }
             }
@@ -116,13 +116,13 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final GraphWithLayout<String, Integer> graphWithLayout = problem.graphWithLayout();
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout = problem.graphWithLayout();
         final List<Vertex<String>> vertices =
             new ArrayList<Vertex<String>>(graphWithLayout.graph().getVertices());
         Collections.sort(vertices, problem.comparator());
         GraphAlgorithm.printGraphExercise(
             GraphAlgorithm.stretch(
-                new GraphWithLayout<String, Integer>(
+                new GraphWithLayout<String, Integer, Integer>(
                     graphWithLayout.graph(),
                     ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDirected(false)
                 ),

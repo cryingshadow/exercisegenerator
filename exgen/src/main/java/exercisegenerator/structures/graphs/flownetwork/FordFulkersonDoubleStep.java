@@ -5,9 +5,9 @@ import java.util.*;
 import exercisegenerator.structures.graphs.*;
 
 public record FordFulkersonDoubleStep(
-    GraphWithLayout<String, FlowAndCapacity> flowNetworkWithLayout,
+    GraphWithLayout<String, FlowAndCapacity, Integer> flowNetworkWithLayout,
     Set<FordFulkersonPathStep<String, FlowAndCapacity>> flowHighlights,
-    GraphWithLayout<String, Integer> residualGraphWithLayout,
+    GraphWithLayout<String, Integer, Integer> residualGraphWithLayout,
     Set<FordFulkersonPathStep<String, Integer>> residualHighlights
 ) {
 

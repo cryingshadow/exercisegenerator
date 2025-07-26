@@ -2,7 +2,7 @@ package exercisegenerator.structures.graphs;
 
 import java.util.*;
 
-public record PrimResult<V>(PrimEntry[][] table, GraphWithLayout<V, Integer> treeWithLayout) {
+public record PrimResult<V>(PrimEntry[][] table, GraphWithLayout<V, Integer, Integer> treeWithLayout) {
 
     @Override
     @SuppressWarnings("unchecked")

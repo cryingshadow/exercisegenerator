@@ -1,23 +1,19 @@
 package exercisegenerator.structures.graphs.layout;
 
-import exercisegenerator.io.*;
+import java.io.*;
+
 import exercisegenerator.structures.graphs.*;
 
-public final class DummyGraphLayout<V, E> implements GraphLayout<V, E> {
+public final class DummyGraphLayout<V, E, T extends Number> implements GraphLayout<V, E, T> {
 
     @Override
-    public TikZStyle graphStyle() {
-        return TikZStyle.EMPTY;
+    public Coordinates2D<T> getPosition(final Vertex<V> vertex) {
+        return null;
     }
 
     @Override
-    public String toTikZ(final Vertex<V> vertex) {
-        return "";
-    }
-
-    @Override
-    public String toTikZ(final Vertex<V> from, final Edge<E, V> edge) {
-        return "";
+    public void printTikZ(final Graph<V, E> graph, final BufferedWriter writer) throws IOException {
+        // do nothing
     }
 
 }
