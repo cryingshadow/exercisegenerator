@@ -13,6 +13,108 @@ public class ForceGraphLayout<V, E> implements GraphLayout<V, E, Double> {
 
     private static final double TEMPERATURE_FACTOR = 4.0;
 
+//  private static final double DELTA = 0.001;
+//
+//  private static final Comparator<Coordinates2D<Double>> DISTANCE_COMPARATOR =
+//      new Comparator<Coordinates2D<Double>>() {
+//
+//          @Override
+//          public int compare(final Coordinates2D<Double> v1, final Coordinates2D<Double> v2) {
+//              return Double.compare(v1.euclidianSize(), v2.euclidianSize());
+//          }
+//
+//  };
+//
+//    private static Coordinates2D<Double> computeDistanceVector(
+//        final Coordinates2D<Double> from,
+//        final Coordinates2D<Double> to,
+//        final double averageVertexWidth,
+//        final double averageVertexHeight
+//    ) {
+//        final double halfWidth = averageVertexWidth / 2;
+//        final double halfHeight = averageVertexHeight / 2;
+//        final double fromNorth = from.y() + halfHeight;
+//        final double fromEast = from.x() + halfWidth;
+//        final double fromSouth = from.y() - halfHeight;
+//        final double fromWest = from.x() - halfWidth;
+//        final double toNorth = to.y() + halfHeight;
+//        final double toEast = to.x() + halfWidth;
+//        final double toSouth = to.y() - halfHeight;
+//        final double toWest = to.x() - halfWidth;
+//        if (
+//            (fromNorth <= toNorth && fromNorth >= toSouth && fromEast >= toWest && fromEast <= toEast)
+//            || (fromNorth <= toNorth && fromNorth >= toSouth && fromWest >= toWest && fromWest <= toEast)
+//            || (fromSouth <= toNorth && fromSouth >= toSouth && fromEast >= toWest && fromEast <= toEast)
+//            || (fromSouth <= toNorth && fromSouth >= toSouth && fromWest >= toWest && fromWest <= toEast)
+//        ) {
+//            return new Coordinates2D<Double>(0.0, 0.0);
+//        }
+//        final Coordinates2D<Double> vector = to.minus(from);
+//        final List<Optional<Coordinates2D<Double>>> fromIntersections =
+//            List.of(
+//                ForceGraphLayout.computeIntersection(from, vector, fromNorth, false),
+//                ForceGraphLayout.computeIntersection(from, vector, fromEast, true),
+//                ForceGraphLayout.computeIntersection(from, vector, fromSouth, false),
+//                ForceGraphLayout.computeIntersection(from, vector, fromWest, true)
+//            );
+//        final List<Optional<Coordinates2D<Double>>> toIntersections =
+//            List.of(
+//                ForceGraphLayout.computeIntersection(from, vector, toNorth, false),
+//                ForceGraphLayout.computeIntersection(from, vector, toEast, true),
+//                ForceGraphLayout.computeIntersection(from, vector, toSouth, false),
+//                ForceGraphLayout.computeIntersection(from, vector, toWest, true)
+//            );
+//        final List<Coordinates2D<Double>> fromIntersectionsWithin =
+//            fromIntersections.stream()
+//            .filter(
+//                coordinates ->
+//                coordinates.isPresent()
+//                && coordinates.get().y() <= fromNorth + ForceGraphLayout.DELTA
+//                && coordinates.get().y() >= fromSouth - ForceGraphLayout.DELTA
+//                && coordinates.get().x() <= fromEast + ForceGraphLayout.DELTA
+//                && coordinates.get().x() >= fromWest - ForceGraphLayout.DELTA
+//            ).map(Optional::get)
+//            .toList();
+//        final List<Coordinates2D<Double>> toIntersectionsWithin =
+//            toIntersections.stream()
+//            .filter(
+//                coordinates ->
+//                coordinates.isPresent()
+//                && coordinates.get().y() <= toNorth + ForceGraphLayout.DELTA
+//                && coordinates.get().y() >= toSouth - ForceGraphLayout.DELTA
+//                && coordinates.get().x() <= toEast + ForceGraphLayout.DELTA
+//                && coordinates.get().x() >= toWest - ForceGraphLayout.DELTA
+//            ).map(Optional::get)
+//            .toList();
+//        final List<Coordinates2D<Double>> fromIntersectionCandidates =
+//            fromIntersectionsWithin.isEmpty() ? List.of(from) : fromIntersectionsWithin;
+//        final List<Coordinates2D<Double>> toIntersectionCandidates =
+//            toIntersectionsWithin.isEmpty() ? List.of(to) : toIntersectionsWithin;
+//        final List<Coordinates2D<Double>> distances = new LinkedList<Coordinates2D<Double>>();
+//        for (final Coordinates2D<Double> fromIntersection : fromIntersectionCandidates) {
+//            for (final Coordinates2D<Double> toIntersection : toIntersectionCandidates) {
+//                distances.add(toIntersection.minus(fromIntersection));
+//            }
+//        }
+//        return Collections.min(distances, ForceGraphLayout.DISTANCE_COMPARATOR);
+//    }
+//
+//    private static Optional<Coordinates2D<Double>> computeIntersection(
+//        final Coordinates2D<Double> from,
+//        final Coordinates2D<Double> vector,
+//        final double axisValue,
+//        final boolean horizontalAxis
+//    ) {
+//        if (horizontalAxis) {
+//            return vector.x() == 0.0 ?
+//                Optional.empty() :
+//                    Optional.of(vector.multiply((axisValue - from.x()) / vector.x()).plus(from));
+//        }
+//        return vector.y() == 0.0 ?
+//            Optional.empty() :
+//                Optional.of(vector.multiply((axisValue - from.y()) / vector.y()).plus(from));
+//    }
+
     private final TikZStyle graphStyle;
 
     private final double optimalDistance;
