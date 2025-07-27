@@ -122,13 +122,23 @@ public class PetriNet {
             for (final Map.Entry<Integer, Integer> fromEntry : transition.from().entrySet()) {
                 Main.newLine(writer);
                 writer.write(
-                    String.format("  edge[pre] node[auto] {%d} (p%d)", fromEntry.getValue(), fromEntry.getKey())
+                    String.format(
+                        "  edge[pre%s] node[auto] {%d} (p%d)",
+                        transition.to().containsKey(fromEntry.getKey()) ? ", bend left = 10" : "",
+                        fromEntry.getValue(),
+                        fromEntry.getKey()
+                    )
                 );
             }
             for (final Map.Entry<Integer, Integer> toEntry : transition.to().entrySet()) {
                 Main.newLine(writer);
                 writer.write(
-                    String.format("  edge[post] node[auto,swap] {%d} (p%d)", toEntry.getValue(), toEntry.getKey())
+                    String.format(
+                        "  edge[post%s] node[auto,swap] {%d} (p%d)",
+                        transition.from().containsKey(toEntry.getKey()) ? ", bend right = 10" : "",
+                        toEntry.getValue(),
+                        toEntry.getKey()
+                    )
                 );
             }
             writer.write(";");
