@@ -52,7 +52,7 @@ public record Coordinates2D<T extends Number>(T x, T y) {
         );
     }
 
-    public double euclidianSize() {
+    public double euclideanSize() {
         final double x = this.x().doubleValue();
         final double y = this.y().doubleValue();
         return Math.sqrt(x * x + y * y);

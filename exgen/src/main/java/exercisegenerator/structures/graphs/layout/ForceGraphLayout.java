@@ -20,7 +20,7 @@ public class ForceGraphLayout<V, E> implements GraphLayout<V, E, Double> {
 //
 //          @Override
 //          public int compare(final Coordinates2D<Double> v1, final Coordinates2D<Double> v2) {
-//              return Double.compare(v1.euclidianSize(), v2.euclidianSize());
+//              return Double.compare(v1.euclideanSize(), v2.euclideanSize());
 //          }
 //
 //  };
@@ -243,7 +243,7 @@ public class ForceGraphLayout<V, E> implements GraphLayout<V, E, Double> {
         final Map<Vertex<V>, Coordinates2D<Double>> displacement
     ) {
         final Coordinates2D<Double> distance = this.vertexPositions.get(from).minus(this.vertexPositions.get(to));
-        final double size = distance.euclidianSize();
+        final double size = distance.euclideanSize();
         if (size != 0.0) {
             final Coordinates2D<Double> force = distance.multiply(this.attractiveForce(size) / size);
             displacement.merge(from, force.negate(), Coordinates2D::plus);
@@ -259,7 +259,7 @@ public class ForceGraphLayout<V, E> implements GraphLayout<V, E, Double> {
     ) {
         final Coordinates2D<Double> distance =
             new Coordinates2D<Double>(width / 2, height / 2).minus(this.vertexPositions.get(vertex));
-        final double size = distance.euclidianSize();
+        final double size = distance.euclideanSize();
         if (size != 0.0) {
             displacement.merge(vertex, distance.multiply(this.attractiveForce(size) / (2 * size)), Coordinates2D::plus);
         }
@@ -275,7 +275,7 @@ public class ForceGraphLayout<V, E> implements GraphLayout<V, E, Double> {
     ) {
         final Coordinates2D<Double> pos = this.vertexPositions.get(vertex);
         final Coordinates2D<Double> disp = displacement.getOrDefault(vertex, new Coordinates2D<Double>(0.0, 0.0));
-        final double size = disp.euclidianSize();
+        final double size = disp.euclideanSize();
         if (iteration < 5) {
             this.vertexPositions.put(vertex, pos.plus(disp));
         } else {
@@ -304,7 +304,7 @@ public class ForceGraphLayout<V, E> implements GraphLayout<V, E, Double> {
         final Coordinates2D<Double> pos1 = this.vertexPositions.get(vertex);
         final Coordinates2D<Double> pos2 = this.vertexPositions.get(other);
         final Coordinates2D<Double> distance = pos1.minus(pos2);
-        final double size = distance.euclidianSize();
+        final double size = distance.euclideanSize();
         if (size != 0.0) {
             displacement.merge(vertex, distance.multiply(this.repulsiveForce(size) / size), Coordinates2D::plus);
         }
