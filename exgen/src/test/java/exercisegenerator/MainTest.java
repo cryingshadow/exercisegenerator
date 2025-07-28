@@ -1059,7 +1059,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie das folgende Petrinetz:\\\\[2ex]",
+                    "Betrachten Sie das folgende Petrinetz $N$:\\\\[2ex]",
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "",
@@ -1084,7 +1084,7 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Geben Sie einen Abdeckungsgraphen zu diesem Petrinetz an."
+                    "Geben Sie einen Abdeckungsgraphen zu $N$ an."
                 ),
                 List.of(
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",

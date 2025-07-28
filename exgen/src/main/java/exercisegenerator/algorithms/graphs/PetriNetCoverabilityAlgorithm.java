@@ -58,14 +58,14 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Betrachten Sie das folgende Petrinetz:\\\\[2ex]");
+        writer.write("Betrachten Sie das folgende Petrinetz $N$:\\\\[2ex]");
         Main.newLine(writer);
         final PetriNet net = new PetriNet(problem);
         LaTeXUtils.printDefaultAdjustboxBeginning(writer);
         net.toTikz(PetriMarking.create(problem.tokens()), writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("Geben Sie einen Abdeckungsgraphen zu diesem Petrinetz an.");
+        writer.write("Geben Sie einen Abdeckungsgraphen zu $N$ an.");
         Main.newLine(writer);
         Main.newLine(writer);
     }
