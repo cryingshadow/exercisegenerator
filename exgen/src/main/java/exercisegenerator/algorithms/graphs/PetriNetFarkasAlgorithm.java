@@ -132,7 +132,7 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
         Main.newLine(writer);
         final PetriNet net = new PetriNet(problem);
         LaTeXUtils.printDefaultAdjustboxBeginning(writer);
-        net.toTikz(PetriMarking.create(problem.tokens()), writer);
+        net.toTikz(new PetriMarking(), writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Berechnen Sie eine minimale Basis der P-Invarianten von $N$ mithilfe des ");

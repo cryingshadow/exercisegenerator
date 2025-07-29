@@ -252,18 +252,20 @@ public class Matrix implements MatrixTerm {
 
     public Matrix reduceToBase() {
         Matrix result = this;
+        int rank = 0;
         for (int column = 0; column < result.getNumberOfColumns(); column++) {
-            final int firstNonZeroRow = result.findFirstNonZeroEntryFromIndex(column);
+            final int firstNonZeroRow = result.findFirstNonZeroEntryFromIndex(rank, column);
             if (firstNonZeroRow < 0) {
                 continue;
             }
-            if (firstNonZeroRow > column) {
-                result = result.swapRows(column, firstNonZeroRow);
+            if (firstNonZeroRow > rank) {
+                result = result.swapRows(rank, firstNonZeroRow);
             }
-            result = result.multiplyRow(column, result.getCoefficient(column, column).reciprocal());
-            for (int row = column + 1; row < result.getNumberOfRows(); row++) {
-                result = result.addRow(row, column, result.getCoefficient(column, row).negate());
+            result = result.multiplyRow(rank, result.getCoefficient(column, rank).reciprocal());
+            for (int row = rank + 1; row < result.getNumberOfRows(); row++) {
+                result = result.addRow(row, rank, result.getCoefficient(column, row).negate());
             }
+            rank++;
         }
         for (int row = result.getNumberOfRows() - 1; row >= 1; row--) {
             if (result.isZeroRow(row)) {
@@ -429,8 +431,8 @@ public class Matrix implements MatrixTerm {
         return res.toString();
     }
 
-    private int findFirstNonZeroEntryFromIndex(final int column) {
-        for (int row = column; row < this.getNumberOfRows(); row++) {
+    private int findFirstNonZeroEntryFromIndex(final int rank, final int column) {
+        for (int row = rank; row < this.getNumberOfRows(); row++) {
             if (this.getCoefficient(column, row).compareTo(BigFraction.ZERO) != 0) {
                 return row;
             }

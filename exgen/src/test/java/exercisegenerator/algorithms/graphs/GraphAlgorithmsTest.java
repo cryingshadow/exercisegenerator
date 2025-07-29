@@ -483,6 +483,15 @@ public class GraphAlgorithmsTest {
 
     @DataProvider
     public Object[][] farkasData() {
+        final PetriPlace p1 = new PetriPlace("p1", 0, 4, 180);
+        final PetriPlace p2 = new PetriPlace("p2", 8, 4, 0);
+        final PetriPlace p3 = new PetriPlace("p3", 8, 8, 90);
+        final PetriPlace p4 = new PetriPlace("p4", 4, 0, 270);
+        final PetriPlace p5 = new PetriPlace("p5", 4, 8, 90);
+        final PetriTransition t1 = new PetriTransition("t1", 2, 6, Map.of(0, 1, 4, 1), Map.of(1, 1, 3, 1));
+        final PetriTransition t2 = new PetriTransition("t2", 2, 2, Map.of(1, 1), Map.of(0, 1));
+        final PetriTransition t3 = new PetriTransition("t3", 6, 6, Map.of(1, 1), Map.of(0, 1, 2, 1));
+        final PetriTransition t4 = new PetriTransition("t4", 6, 2, Map.of(0, 1, 3, 1), Map.of(1, 1, 4, 1));
         return new Object[][] {
             {GraphAlgorithmsTest.PETRI_NETS.get(0), List.of(new Matrix(0, 0, 0))},
             {
@@ -569,6 +578,63 @@ public class GraphAlgorithmsTest {
                         new BigFraction[][] {},
                         new int[] {0, 1, 2, 3, 4, 5, 6, 7},
                         4
+                    )
+                )
+            },
+            {
+                new PetriNetInput(List.of(p1, p2, p3, p4, p5), List.of(t1, t2, t3, t4), Map.of()),
+                List.of(
+                    new Matrix(
+                        new int[][] {
+                            {-1, 1, 1,-1, 1, 0, 0, 0, 0},
+                            { 1,-1,-1, 1, 0, 1, 0, 0, 0},
+                            { 0, 0, 1, 0, 0, 0, 1, 0, 0},
+                            { 1, 0, 0,-1, 0, 0, 0, 1, 0},
+                            {-1, 0, 0, 1, 0, 0, 0, 0, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 1, 0, 0, 0, 1, 0, 0},
+                            { 0, 0, 0, 0, 1, 1, 0, 0, 0},
+                            { 0, 1, 1,-2, 1, 0, 0, 1, 0},
+                            { 0,-1,-1, 2, 0, 1, 0, 0, 1},
+                            { 0, 0, 0, 0, 0, 0, 0, 1, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 1, 0, 0, 0, 1, 0, 0},
+                            { 0, 0, 0, 0, 1, 1, 0, 0, 0},
+                            { 0, 0, 0, 0, 0, 0, 0, 1, 1},
+                            { 0, 0, 0, 0, 1, 1, 0, 1, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 0, 0, 1, 1, 0, 0, 0},
+                            { 0, 0, 0, 0, 0, 0, 0, 1, 1},
+                            { 0, 0, 0, 0, 1, 1, 0, 1, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 0, 0, 1, 1, 0, 0, 0},
+                            { 0, 0, 0, 0, 0, 0, 0, 1, 1},
+                            { 0, 0, 0, 0, 1, 1, 0, 1, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            {1, 1, 0, 0, 0},
+                            {0, 0, 0, 1, 1}
+                        },
+                        5
                     )
                 )
             }
