@@ -569,11 +569,6 @@ public class GraphAlgorithmsTest {
                         new BigFraction[][] {},
                         new int[] {0, 1, 2, 3, 4, 5, 6, 7},
                         4
-                    ),
-                    new Matrix(
-                        new BigFraction[][] {},
-                        new int[] {0, 1, 2, 3, 4, 5, 6, 7},
-                        4
                     )
                 )
             }

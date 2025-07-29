@@ -71,6 +71,9 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
         final int numberOfTransitions = incidence.getNumberOfColumns();
         final int numberOfColumns = numberOfPlaces + numberOfTransitions;
         for (int column = 0; column < numberOfTransitions; column++) {
+            if (current.getNumberOfRows() == 0) {
+                break;
+            }
             final List<Integer> negative = new LinkedList<Integer>();
             final List<Integer> positive = new LinkedList<Integer>();
             for (int row = 0; row < current.getNumberOfRows(); row++) {
@@ -106,9 +109,7 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
             }
             result.add(current);
         }
-        if (current.getNumberOfRows() == 0) {
-            result.add(current);
-        } else {
+        if (current.getNumberOfRows() > 0) {
             current = current.removeColumnsFromIndex(numberOfTransitions, 0);
             result.add(current.setSeparatorIndex(current.getNumberOfColumns()).reduceToBase());
         }
@@ -134,9 +135,8 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
         net.toTikz(PetriMarking.create(problem.tokens()), writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write(
-            "Berechnen Sie eine Basis der P-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}."
-        );
+        writer.write("Berechnen Sie eine minimale Basis der P-Invarianten von $N$ mithilfe des ");
+        writer.write("\\emphasize{Algorithmus von Farkas}.");
         Main.newLine(writer);
         Main.newLine(writer);
     }
