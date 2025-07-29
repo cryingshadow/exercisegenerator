@@ -173,22 +173,11 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
         Main.newLine(writer);
         writer.write("\\begin{enumerate}");
         Main.newLine(writer);
-        Matrix lastMatrix = null;
         for (final Matrix matrix : solution) {
-            writer.write(String.format("\\item $\\left(\\begin{array}{*{%d}c|c}", matrix.getIndexOfLastColumn()));
+            writer.write("\\item $");
+            writer.write(matrix.toLaTeX());
+            writer.write("$");
             Main.newLine(writer);
-            for (int row = 0; row < matrix.getNumberOfRows(); row++) {
-                writer.write(LaTeXUtils.toCoefficient(matrix.getCoefficient(0, row)));
-                for (int column = 1; column < matrix.getNumberOfColumns(); column++) {
-                    writer.write(" & ");
-                    writer.write(LaTeXUtils.toCoefficient(matrix.getCoefficient(column, row)));
-                }
-                writer.write("\\\\");
-                Main.newLine(writer);
-            }
-            writer.write("\\end{array}\\right)$");
-            Main.newLine(writer);
-            lastMatrix = matrix;
         }
         writer.write("\\end{enumerate}");
         Main.newLine(writer);
@@ -197,6 +186,7 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
         Main.newLine(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Ergebnis: ");
+        final Matrix lastMatrix = solution.getLast();
         final BigFraction[] assignment = LSEAlgorithm.computeAssignment(lastMatrix);
         if (LSEAlgorithm.assignmentHasConflict(assignment, lastMatrix)) {
             writer.write("unl\\\"osbar");

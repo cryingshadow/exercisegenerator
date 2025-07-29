@@ -18,7 +18,11 @@ public class Matrix implements MatrixTerm {
     private final BigFraction[][] coefficients;
 
     public Matrix(final BigFraction[][] coefficients, final int separatorIndex) {
-        this(coefficients, IntStream.range(0, coefficients[0].length - 1).toArray(), separatorIndex);
+        this(
+            coefficients,
+            IntStream.range(0, coefficients.length == 0 ? 0 : coefficients[0].length).toArray(),
+            separatorIndex
+        );
     }
 
     public Matrix(final BigFraction[][] coefficients, final int[] columnPositions, final int separatorIndex) {
@@ -95,7 +99,7 @@ public class Matrix implements MatrixTerm {
     }
 
     public int getNumberOfColumns() {
-        return this.coefficients[0].length;
+        return this.coefficients.length == 0 ? 0 : this.coefficients[0].length;
     }
 
     public int getNumberOfRows() {
@@ -123,7 +127,7 @@ public class Matrix implements MatrixTerm {
                 coefficients[row][columnIndex] = column[row];
             }
         }
-        final int[] columnPositions = new int[coefficients[0].length];
+        final int[] columnPositions = new int[coefficients.length == 0 ? 0 : coefficients[0].length];
         for (int column = 0; column < columnPositions.length; column++) {
             if (column < firstIndex) {
                 columnPositions[column] =
@@ -223,6 +227,15 @@ public class Matrix implements MatrixTerm {
         return true;
     }
 
+    public boolean isZeroRow(final int row) {
+        for (int column = 0; column < this.getNumberOfColumns(); column++) {
+            if (this.getCoefficient(column, row).compareTo(BigFraction.ZERO) != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public Matrix multiplyRow(final int rowIndex, final BigFraction factor) {
         final BigFraction[][] coefficients = new BigFraction[this.getNumberOfRows()][this.getNumberOfColumns()];
         for (int row = 0; row < this.getNumberOfRows(); row++) {
@@ -237,18 +250,40 @@ public class Matrix implements MatrixTerm {
         return new Matrix(coefficients, this.columnPositions, this.separatorIndex);
     }
 
+    public Matrix reduceToBase() {
+        Matrix result = this;
+        for (int column = 0; column < result.getNumberOfColumns(); column++) {
+            final int firstNonZeroRow = result.findFirstNonZeroEntryFromIndex(column);
+            if (firstNonZeroRow < 0) {
+                continue;
+            }
+            if (firstNonZeroRow > column) {
+                result = result.swapRows(column, firstNonZeroRow);
+            }
+            result = result.multiplyRow(column, result.getCoefficient(column, column).reciprocal());
+            for (int row = column + 1; row < result.getNumberOfRows(); row++) {
+                result = result.addRow(row, column, result.getCoefficient(column, row).negate());
+            }
+        }
+        for (int row = result.getNumberOfRows() - 1; row >= 1; row--) {
+            if (result.isZeroRow(row)) {
+                result = result.removeRowsFromIndex(1, row);
+            }
+        }
+        return result;
+    }
+
     public Matrix removeColumnsFromIndex(final int numberOfColumns, final int firstIndex) {
         final BigFraction[][] coefficients =
             new BigFraction[this.getNumberOfRows()][this.getNumberOfColumns() - numberOfColumns];
-        for (int column = 0; column < coefficients[0].length; column++) {
+        final int newNumberOfColumns = coefficients.length == 0 ? 0 : coefficients[0].length;
+        for (int column = 0; column < newNumberOfColumns; column++) {
             final int columnIndex = column < firstIndex ? column : column + numberOfColumns;
             for (int row = 0; row < this.getNumberOfRows(); row++) {
                 coefficients[row][column] = this.getCoefficient(columnIndex, row);
             }
         }
-        final int newSeparatorIndex =
-            this.separatorIndex - numberOfColumns + Math.max(0, firstIndex + numberOfColumns - this.separatorIndex);
-        final int[] columnPositions = new int[newSeparatorIndex];
+        final int[] columnPositions = new int[newNumberOfColumns];
         final List<Integer> removedPositions = new LinkedList<Integer>();
         for (int index = firstIndex; index < firstIndex + numberOfColumns; index++) {
             removedPositions.add(this.columnPositions[index]);
@@ -284,6 +319,10 @@ public class Matrix implements MatrixTerm {
 
     public void setCoefficient(final int column, final int row, final BigFraction coefficient) {
         this.coefficients[row][column] = coefficient;
+    }
+
+    public Matrix setSeparatorIndex(final int separatorIndex) {
+        return new Matrix(this.coefficients, this.columnPositions, separatorIndex);
     }
 
     public Matrix swapColumns(final int col1, final int col2) {
@@ -388,6 +427,15 @@ public class Matrix implements MatrixTerm {
             res.append("\n");
         }
         return res.toString();
+    }
+
+    private int findFirstNonZeroEntryFromIndex(final int column) {
+        for (int row = column; row < this.getNumberOfRows(); row++) {
+            if (this.getCoefficient(column, row).compareTo(BigFraction.ZERO) != 0) {
+                return row;
+            }
+        }
+        return -1;
     }
 
 }

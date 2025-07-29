@@ -486,7 +486,7 @@ public class AlgebraAlgorithmsTest {
                             {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(-3,4),new BigFraction(5,4),new BigFraction(1,2)},
                             {new BigFraction(0),new BigFraction(10),new BigFraction(0),new BigFraction(-8),new BigFraction(0),new BigFraction(6)}
                         },
-                        new int[] {0,2,1,3,4},
+                        new int[] {0,2,1,3,4,5},
                         5
                     ),
                     new Matrix(
@@ -494,7 +494,7 @@ public class AlgebraAlgorithmsTest {
                             {new BigFraction(1),new BigFraction(2),new BigFraction(0),new BigFraction(-3,4),new BigFraction(5,4),new BigFraction(1,2)},
                             {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-4,5),new BigFraction(0),new BigFraction(3,5)}
                         },
-                        new int[] {0,2,1,3,4},
+                        new int[] {0,2,1,3,4,5},
                         5
                     ),
                     new Matrix(
@@ -502,7 +502,7 @@ public class AlgebraAlgorithmsTest {
                             {new BigFraction(1),new BigFraction(0),new BigFraction(0),new BigFraction(17,20),new BigFraction(5,4),new BigFraction(-7,10)},
                             {new BigFraction(0),new BigFraction(1),new BigFraction(0),new BigFraction(-4,5),new BigFraction(0),new BigFraction(3,5)}
                         },
-                        new int[] {0,2,1,3,4},
+                        new int[] {0,2,1,3,4,5},
                         5
                     )
                 )

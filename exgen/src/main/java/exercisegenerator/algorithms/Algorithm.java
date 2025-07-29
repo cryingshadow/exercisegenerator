@@ -152,6 +152,15 @@ public enum Algorithm {
         exercisegenerator.algorithms.logic.DPLL.INSTANCE
     ),
 
+    FARKAS(
+        "farkas",
+        "Farkas-Algorithmus",
+        new String[] {
+            "Computes the algorithm of Farkas to compute a minimal p-invariant base for a given petri net."
+        },
+        PetriNetFarkasAlgorithm.INSTANCE
+    ),
+
     FLOYD(
         "floyd",
         "Floyd Algorithmus",

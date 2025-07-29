@@ -3,8 +3,11 @@ package exercisegenerator.structures.graphs.petrinets;
 import java.io.*;
 import java.util.*;
 
+import org.apache.commons.math3.fraction.*;
+
 import exercisegenerator.*;
 import exercisegenerator.io.*;
+import exercisegenerator.structures.algebra.*;
 
 public class PetriNet {
 
@@ -56,6 +59,23 @@ public class PetriNet {
         final PetriMarking result = new PetriMarking();
         for (int i = 0; i < this.places.length; i++) {
             result.put(i, Optional.of(0));
+        }
+        return result;
+    }
+
+    public Matrix toIncidenceMatrix() {
+        final int numberOfTransitions = this.transitions.size();
+        final Matrix result = new Matrix(numberOfTransitions, this.places.length, numberOfTransitions);
+        int column = 0;
+        for (final PetriTransition transition : this.transitions) {
+            for (int row = 0; row < this.places.length; row++) {
+                result.setCoefficient(
+                    column,
+                    row,
+                    new BigFraction(transition.to().getOrDefault(row, 0) - transition.from().getOrDefault(row, 0))
+                );
+            }
+            column++;
         }
         return result;
     }

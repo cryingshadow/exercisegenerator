@@ -3,15 +3,52 @@ package exercisegenerator.algorithms.graphs;
 import java.util.*;
 import java.util.Optional;
 
+import org.apache.commons.math3.fraction.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import exercisegenerator.structures.algebra.*;
 import exercisegenerator.structures.graphs.*;
 import exercisegenerator.structures.graphs.flownetwork.*;
 import exercisegenerator.structures.graphs.layout.*;
 import exercisegenerator.structures.graphs.petrinets.*;
 
 public class GraphAlgorithmsTest {
+
+    private static final List<PetriNetInput> PETRI_NETS;
+
+    static {
+        final PetriPlace place1 = new PetriPlace("Spring", 0, 0, 135);
+        final PetriPlace place2 = new PetriPlace("Summer", 2, 0, 135);
+        final PetriPlace place3 = new PetriPlace("Fall", 2, 2, 135);
+        final PetriPlace place4 = new PetriPlace("Winter", 0, 2, 135);
+        final List<PetriPlace> places = List.of(place1, place2, place3, place4);
+        final PetriTransition transition1 = new PetriTransition("t1", 1, 0, Map.of(0,1), Map.of(1,1));
+        final PetriTransition transition2 = new PetriTransition("t2", 2, 1, Map.of(1,1), Map.of(2,1));
+        final PetriTransition transition3 = new PetriTransition("t3", 1, 2, Map.of(2,1), Map.of(3,1));
+        final PetriTransition transition4 = new PetriTransition("t4", 0, 1, Map.of(3,1), Map.of(0,1));
+        final PetriTransition transition4b = new PetriTransition("t4", 0, 1, Map.of(3,1), Map.of(0,2));
+        final List<PetriTransition> transitions = List.of(transition1, transition2, transition3, transition4);
+        final List<PetriTransition> transitionsb = List.of(transition1, transition2, transition3, transition4b);
+        final Map<Integer, Integer> empty = new LinkedHashMap<Integer, Integer>();
+        final Map<Integer, Integer> zeroPure = new LinkedHashMap<Integer, Integer>();
+        zeroPure.put(0, 0);
+        zeroPure.put(1, 0);
+        zeroPure.put(2, 0);
+        zeroPure.put(3, 0);
+        final Map<Integer, Integer> one1Pure = new LinkedHashMap<Integer, Integer>();
+        one1Pure.put(0, 1);
+        one1Pure.put(1, 0);
+        one1Pure.put(2, 0);
+        one1Pure.put(3, 0);
+        PETRI_NETS =
+            List.of(
+                new PetriNetInput(List.of(), List.of(), empty),
+                new PetriNetInput(places, transitions, zeroPure),
+                new PetriNetInput(places, transitions, one1Pure),
+                new PetriNetInput(places, transitionsb, one1Pure)
+            );
+    }
 
     @Test(dataProvider="bellmanFordData")
     public void bellmanFord(final GraphProblem problem, final List<BellmanFordStep<String>> expected) {
@@ -181,18 +218,6 @@ public class GraphAlgorithmsTest {
 
     @DataProvider
     public Object[][] coverabilityGraphData() {
-        final PetriPlace place1 = new PetriPlace("Spring", 0, 0, 135);
-        final PetriPlace place2 = new PetriPlace("Summer", 2, 0, 135);
-        final PetriPlace place3 = new PetriPlace("Fall", 2, 2, 135);
-        final PetriPlace place4 = new PetriPlace("Winter", 0, 2, 135);
-        final List<PetriPlace> places = List.of(place1, place2, place3, place4);
-        final PetriTransition transition1 = new PetriTransition("t1", 1, 0, Map.of(0,1), Map.of(1,1));
-        final PetriTransition transition2 = new PetriTransition("t2", 2, 1, Map.of(1,1), Map.of(2,1));
-        final PetriTransition transition3 = new PetriTransition("t3", 1, 2, Map.of(2,1), Map.of(3,1));
-        final PetriTransition transition4 = new PetriTransition("t4", 0, 1, Map.of(3,1), Map.of(0,1));
-        final PetriTransition transition4b = new PetriTransition("t4", 0, 1, Map.of(3,1), Map.of(0,2));
-        final List<PetriTransition> transitions = List.of(transition1, transition2, transition3, transition4);
-        final List<PetriTransition> transitionsb = List.of(transition1, transition2, transition3, transition4b);
         final Map<Integer, Integer> empty = new LinkedHashMap<Integer, Integer>();
         final Map<Integer, Integer> zeroPure = new LinkedHashMap<Integer, Integer>();
         zeroPure.put(0, 0);
@@ -204,11 +229,6 @@ public class GraphAlgorithmsTest {
         zero.put(1, Optional.of(0));
         zero.put(2, Optional.of(0));
         zero.put(3, Optional.of(0));
-        final Map<Integer, Integer> one1Pure = new LinkedHashMap<Integer, Integer>();
-        one1Pure.put(0, 1);
-        one1Pure.put(1, 0);
-        one1Pure.put(2, 0);
-        one1Pure.put(3, 0);
         final PetriMarking one1 = new PetriMarking();
         one1.put(0, Optional.of(1));
         one1.put(1, Optional.of(0));
@@ -237,10 +257,10 @@ public class GraphAlgorithmsTest {
         graph1.addVertex(vertex2);
         graph1.addVertex(vertex3);
         graph1.addVertex(vertex4);
-        graph1.addEdge(vertex1, Optional.of(transition1.label()), vertex2);
-        graph1.addEdge(vertex2, Optional.of(transition2.label()), vertex3);
-        graph1.addEdge(vertex3, Optional.of(transition3.label()), vertex4);
-        graph1.addEdge(vertex4, Optional.of(transition4.label()), vertex1);
+        graph1.addEdge(vertex1, Optional.of("t1"), vertex2);
+        graph1.addEdge(vertex2, Optional.of("t2"), vertex3);
+        graph1.addEdge(vertex3, Optional.of("t3"), vertex4);
+        graph1.addEdge(vertex4, Optional.of("t4"), vertex1);
         final PetriMarking inf1 = new PetriMarking();
         inf1.put(0, Optional.empty());
         inf1.put(1, Optional.of(0));
@@ -273,28 +293,28 @@ public class GraphAlgorithmsTest {
         graph2.addVertex(vertex6);
         graph2.addVertex(vertex7);
         graph2.addVertex(vertex8);
-        graph2.addEdge(vertex1, Optional.of(transition1.label()), vertex2);
-        graph2.addEdge(vertex2, Optional.of(transition2.label()), vertex3);
-        graph2.addEdge(vertex3, Optional.of(transition3.label()), vertex4);
-        graph2.addEdge(vertex4, Optional.of(transition4.label()), vertex5);
-        graph2.addEdge(vertex5, Optional.of(transition1.label()), vertex6);
-        graph2.addEdge(vertex6, Optional.of(transition1.label()), vertex6);
-        graph2.addEdge(vertex6, Optional.of(transition2.label()), vertex7);
-        graph2.addEdge(vertex7, Optional.of(transition1.label()), vertex7);
-        graph2.addEdge(vertex7, Optional.of(transition2.label()), vertex7);
-        graph2.addEdge(vertex7, Optional.of(transition3.label()), vertex8);
-        graph2.addEdge(vertex8, Optional.of(transition1.label()), vertex8);
-        graph2.addEdge(vertex8, Optional.of(transition2.label()), vertex8);
-        graph2.addEdge(vertex8, Optional.of(transition3.label()), vertex8);
-        graph2.addEdge(vertex8, Optional.of(transition4.label()), vertex8);
+        graph2.addEdge(vertex1, Optional.of("t1"), vertex2);
+        graph2.addEdge(vertex2, Optional.of("t2"), vertex3);
+        graph2.addEdge(vertex3, Optional.of("t3"), vertex4);
+        graph2.addEdge(vertex4, Optional.of("t4"), vertex5);
+        graph2.addEdge(vertex5, Optional.of("t1"), vertex6);
+        graph2.addEdge(vertex6, Optional.of("t1"), vertex6);
+        graph2.addEdge(vertex6, Optional.of("t2"), vertex7);
+        graph2.addEdge(vertex7, Optional.of("t1"), vertex7);
+        graph2.addEdge(vertex7, Optional.of("t2"), vertex7);
+        graph2.addEdge(vertex7, Optional.of("t3"), vertex8);
+        graph2.addEdge(vertex8, Optional.of("t1"), vertex8);
+        graph2.addEdge(vertex8, Optional.of("t2"), vertex8);
+        graph2.addEdge(vertex8, Optional.of("t3"), vertex8);
+        graph2.addEdge(vertex8, Optional.of("t4"), vertex8);
         return new Object[][] {
             {
-                new PetriNetInput(List.of(), List.of(), empty),
+                GraphAlgorithmsTest.PETRI_NETS.get(0),
                 new CoverabilityGraph(new Vertex<PetriMarking>(PetriMarking.create(empty)))
             },
-            {new PetriNetInput(places, transitions, zeroPure), new CoverabilityGraph(new Vertex<PetriMarking>(zero))},
-            {new PetriNetInput(places, transitions, one1Pure), graph1},
-            {new PetriNetInput(places, transitionsb, one1Pure), graph2}
+            {GraphAlgorithmsTest.PETRI_NETS.get(1), new CoverabilityGraph(new Vertex<PetriMarking>(zero))},
+            {GraphAlgorithmsTest.PETRI_NETS.get(2), graph1},
+            {GraphAlgorithmsTest.PETRI_NETS.get(3), graph2}
         };
     }
 
@@ -451,6 +471,110 @@ public class GraphAlgorithmsTest {
                         {null,       null,       null,       null,       null,       null, "black!20"}
                     },
                     true
+                )
+            }
+        };
+    }
+
+    @Test(dataProvider="farkasData")
+    public void farkas(final PetriNetInput input, final List<Matrix> expected) {
+        Assert.assertEquals(PetriNetFarkasAlgorithm.INSTANCE.apply(input), expected);
+    }
+
+    @DataProvider
+    public Object[][] farkasData() {
+        return new Object[][] {
+            {GraphAlgorithmsTest.PETRI_NETS.get(0), List.of(new Matrix(0, 0, 0))},
+            {
+                GraphAlgorithmsTest.PETRI_NETS.get(1),
+                List.of(
+                    new Matrix(
+                        new int[][] {
+                            {-1, 0, 0, 1, 1, 0, 0, 0},
+                            { 1,-1, 0, 0, 0, 1, 0, 0},
+                            { 0, 1,-1, 0, 0, 0, 1, 0},
+                            { 0, 0, 1,-1, 0, 0, 0, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 1,-1, 0, 0, 0, 1, 0},
+                            { 0, 0, 1,-1, 0, 0, 0, 1},
+                            { 0,-1, 0, 1, 1, 1, 0, 0}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 1,-1, 0, 0, 0, 1},
+                            { 0, 0,-1, 1, 1, 1, 1, 0}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 0, 0, 1, 1, 1, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 0, 0, 1, 1, 1, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 1, 1, 1, 1}
+                        },
+                        4
+                    )
+                )
+            },
+            {
+                GraphAlgorithmsTest.PETRI_NETS.get(3),
+                List.of(
+                    new Matrix(
+                        new int[][] {
+                            {-1, 0, 0, 2, 1, 0, 0, 0},
+                            { 1,-1, 0, 0, 0, 1, 0, 0},
+                            { 0, 1,-1, 0, 0, 0, 1, 0},
+                            { 0, 0, 1,-1, 0, 0, 0, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 1,-1, 0, 0, 0, 1, 0},
+                            { 0, 0, 1,-1, 0, 0, 0, 1},
+                            { 0,-1, 0, 2, 1, 1, 0, 0}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 1,-1, 0, 0, 0, 1},
+                            { 0, 0,-1, 2, 1, 1, 1, 0}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new int[][] {
+                            { 0, 0, 0, 1, 1, 1, 1, 1}
+                        },
+                        4
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {},
+                        new int[] {0, 1, 2, 3, 4, 5, 6, 7},
+                        4
+                    ),
+                    new Matrix(
+                        new BigFraction[][] {},
+                        new int[] {0, 1, 2, 3, 4, 5, 6, 7},
+                        4
+                    )
                 )
             }
         };
