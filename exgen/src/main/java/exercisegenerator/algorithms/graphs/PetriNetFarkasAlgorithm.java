@@ -12,9 +12,7 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.algebra.*;
 import exercisegenerator.structures.graphs.petrinets.*;
 
-public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
-
-    public static final PetriNetFarkasAlgorithm INSTANCE = new PetriNetFarkasAlgorithm();
+public abstract class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
 
     private static final Comparator<BigInteger> COMPARATOR =
         new Comparator<BigInteger>() {
@@ -25,6 +23,13 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
             }
 
         };
+
+    private static int computeRankUpToRow(final Matrix matrix, final int rowLimit) {
+        return
+            matrix.removeRowsFromIndex(matrix.getNumberOfRows() - rowLimit - 1, rowLimit + 1)
+            .reduceToBase()
+            .getNumberOfRows();
+    }
 
     private static BigInteger gcd(final BigFraction[] row) {
         return PetriNetFarkasAlgorithm.gcd(
@@ -48,13 +53,26 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
         );
     }
 
-    private PetriNetFarkasAlgorithm() {}
+    private static Matrix removeDependentRows(final Matrix matrix) {
+        Matrix result = matrix;
+        int row = 0;
+        while (row < result.getNumberOfRows()) {
+            if (PetriNetFarkasAlgorithm.computeRankUpToRow(result, row) <= row) {
+                result = result.removeRowsFromIndex(1, row);
+            } else {
+                row++;
+            }
+        }
+        return result;
+    }
+
+    protected PetriNetFarkasAlgorithm() {}
 
     @Override
     public List<Matrix> apply(final PetriNetInput input) {
         final PetriNet net = new PetriNet(input);
         final List<Matrix> result = new LinkedList<Matrix>();
-        final Matrix incidence = net.toIncidenceMatrix();
+        final Matrix incidence = this.getIncidenceMatrix(net);
         if (incidence.getNumberOfRows() == 0) {
             return List.of(incidence);
         }
@@ -111,7 +129,9 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
         }
         if (current.getNumberOfRows() > 0) {
             current = current.removeColumnsFromIndex(numberOfTransitions, 0);
-            result.add(current.setSeparatorIndex(current.getNumberOfColumns()).reduceToBase());
+            result.add(
+                PetriNetFarkasAlgorithm.removeDependentRows(current.setSeparatorIndex(current.getNumberOfColumns()))
+            );
         }
         return result;
     }
@@ -135,8 +155,9 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
         net.toTikz(new PetriMarking(), writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("Berechnen Sie eine minimale Basis der P-Invarianten von $N$ mithilfe des ");
-        writer.write("\\emphasize{Algorithmus von Farkas}.");
+        writer.write("Berechnen Sie eine minimale Basis der ");
+        writer.write(this.kindOfInvariant());
+        writer.write("-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}.");
         Main.newLine(writer);
         Main.newLine(writer);
     }
@@ -166,5 +187,9 @@ public class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Matrix>> {
         Main.newLine(writer);
         Main.newLine(writer);
     }
+
+    protected abstract Matrix getIncidenceMatrix(final PetriNet net);
+
+    protected abstract String kindOfInvariant();
 
 }

@@ -431,6 +431,16 @@ public class Matrix implements MatrixTerm {
         return res.toString();
     }
 
+    public Matrix transpose() {
+        final BigFraction[][] newCoefficients = new BigFraction[this.getNumberOfColumns()][this.getNumberOfRows()];
+        for (int row = 0; row < this.getNumberOfRows(); row++) {
+            for (int column = 0; column < this.getNumberOfColumns(); column++) {
+                newCoefficients[column][row] = this.getCoefficient(column, row);
+            }
+        }
+        return new Matrix(newCoefficients, this.getNumberOfRows());
+    }
+
     private int findFirstNonZeroEntryFromIndex(final int rank, final int column) {
         for (int row = rank; row < this.getNumberOfRows(); row++) {
             if (this.getCoefficient(column, row).compareTo(BigFraction.ZERO) != 0) {

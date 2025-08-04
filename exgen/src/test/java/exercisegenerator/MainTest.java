@@ -2189,10 +2189,10 @@ public class MainTest {
     }
 
     @Test
-    public void farkas() throws IOException {
+    public void farkasPlace() throws IOException {
         this.harness(
             new String[] {
-                "-a", Algorithm.FARKAS.name,
+                "-a", Algorithm.FARKAS_PLACE.name,
                 "-x", Main.EMBEDDED_EXAM,
                 "-i", "{\"places\": [{\"label\": \"spring\", \"x\": 0, \"y\": 0, \"labelDegree\": 135}, "
                     + "{\"label\": \"summer\", \"x\": 2, \"y\": 0, \"labelDegree\": 135}, "
@@ -2251,6 +2251,87 @@ public class MainTest {
                     "\\item $\\left(\\begin{array}{*{4}c|*{4}c}",
                     "0 & 0 & 1 & -1 & 0 & 0 & 0 & 1\\\\",
                     "0 & 0 & -1 & 1 & 1 & 1 & 1 & 0\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{4}c|*{4}c}",
+                    "0 & 0 & 0 & 0 & 1 & 1 & 1 & 1\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{4}c|*{4}c}",
+                    "0 & 0 & 0 & 0 & 1 & 1 & 1 & 1\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{4}c}",
+                    "1 & 1 & 1 & 1\\\\",
+                    "\\end{array}\\right)$",
+                    "\\end{enumerate}",
+                    "",
+                    "\\renewcommand{\\arraystretch}{1}}"
+                )
+            )
+        );
+    }
+
+    @Test
+    public void farkasTransition() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.FARKAS_TRANSITION.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "{\"places\": [{\"label\": \"spring\", \"x\": 0, \"y\": 0, \"labelDegree\": 135}, "
+                    + "{\"label\": \"summer\", \"x\": 2, \"y\": 0, \"labelDegree\": 135}, "
+                    + "{\"label\": \"fall\", \"x\": 2, \"y\": 2, \"labelDegree\": 135}, "
+                    + "{\"label\": \"winter\", \"x\": 0, \"y\": 2, \"labelDegree\": 135}], "
+                    + "\"transitions\": [{\"label\": \"t1\", \"x\": 1, \"y\": 0, \"from\": {0: 1}, \"to\": {1: 1}}, "
+                    + "{\"label\": \"t2\", \"x\": 2, \"y\": 1, \"from\": {1: 1}, \"to\": {2: 1}}, "
+                    + "{\"label\": \"t3\", \"x\": 1, \"y\": 2, \"from\": {2: 1}, \"to\": {3: 1}}, "
+                    + "{\"label\": \"t4\", \"x\": 0, \"y\": 1, \"from\": {3: 1}, \"to\": {0: 1}}], "
+                    + "\"tokens\": {}}",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Betrachten Sie das folgende Petrinetz $N$:\\\\[2ex]",
+                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{tikzpicture}",
+                    "",
+                    "\\node[place,label=135:spring,tokens=0] (p0) at (0,0) {};",
+                    "\\node[place,label=135:summer,tokens=0] (p1) at (2,0) {};",
+                    "\\node[place,label=135:fall,tokens=0] (p2) at (2,2) {};",
+                    "\\node[place,label=135:winter,tokens=0] (p3) at (0,2) {};",
+                    "\\node[transition] (t0) at (1,0) {t1}",
+                    "  edge[pre] node[auto] {1} (p0)",
+                    "  edge[post] node[auto,swap] {1} (p1);",
+                    "\\node[transition] (t1) at (2,1) {t2}",
+                    "  edge[pre] node[auto] {1} (p1)",
+                    "  edge[post] node[auto,swap] {1} (p2);",
+                    "\\node[transition] (t2) at (1,2) {t3}",
+                    "  edge[pre] node[auto] {1} (p2)",
+                    "  edge[post] node[auto,swap] {1} (p3);",
+                    "\\node[transition] (t3) at (0,1) {t4}",
+                    "  edge[pre] node[auto] {1} (p3)",
+                    "  edge[post] node[auto,swap] {1} (p0);",
+                    "\\end{tikzpicture}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "Berechnen Sie eine minimale Basis der T-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}."
+                ),
+                List.of(
+                    "{\\renewcommand{\\arraystretch}{1.2}",
+                    "",
+                    "\\begin{enumerate}",
+                    "\\item $\\left(\\begin{array}{*{4}c|*{4}c}",
+                    "-1 & 1 & 0 & 0 & 1 & 0 & 0 & 0\\\\",
+                    "0 & -1 & 1 & 0 & 0 & 1 & 0 & 0\\\\",
+                    "0 & 0 & -1 & 1 & 0 & 0 & 1 & 0\\\\",
+                    "1 & 0 & 0 & -1 & 0 & 0 & 0 & 1\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{4}c|*{4}c}",
+                    "0 & -1 & 1 & 0 & 0 & 1 & 0 & 0\\\\",
+                    "0 & 0 & -1 & 1 & 0 & 0 & 1 & 0\\\\",
+                    "0 & 1 & 0 & -1 & 1 & 0 & 0 & 1\\\\",
+                    "\\end{array}\\right)$",
+                    "\\item $\\left(\\begin{array}{*{4}c|*{4}c}",
+                    "0 & 0 & -1 & 1 & 0 & 0 & 1 & 0\\\\",
+                    "0 & 0 & 1 & -1 & 1 & 1 & 0 & 1\\\\",
                     "\\end{array}\\right)$",
                     "\\item $\\left(\\begin{array}{*{4}c|*{4}c}",
                     "0 & 0 & 0 & 0 & 1 & 1 & 1 & 1\\\\",

@@ -152,13 +152,22 @@ public enum Algorithm {
         exercisegenerator.algorithms.logic.DPLL.INSTANCE
     ),
 
-    FARKAS(
-        "farkas",
+    FARKAS_PLACE(
+        "farkasplace",
         "Farkas-Algorithmus",
         new String[] {
-            "Computes the algorithm of Farkas to compute a minimal p-invariant base for a given petri net."
+            "Uses the algorithm of Farkas to compute a minimal p-invariant base for a given petri net."
         },
-        PetriNetFarkasAlgorithm.INSTANCE
+        PetriNetFarkasPlaceInvariantsAlgorithm.INSTANCE
+    ),
+
+    FARKAS_TRANSITION(
+        "farkastransition",
+        "Farkas-Algorithmus",
+        new String[] {
+            "Uses the algorithm of Farkas to compute a minimal t-invariant base for a given petri net."
+        },
+        PetriNetFarkasTransitionInvariantsAlgorithm.INSTANCE
     ),
 
     FLOYD(
