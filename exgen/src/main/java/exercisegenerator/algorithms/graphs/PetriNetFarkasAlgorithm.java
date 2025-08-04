@@ -155,7 +155,7 @@ public abstract class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Mat
         net.toTikz(new PetriMarking(), writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("Berechnen Sie eine minimale Basis der ");
+        writer.write("Berechnen Sie eine Basis der ");
         writer.write(this.kindOfInvariant());
         writer.write("-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}.");
         Main.newLine(writer);

@@ -2231,7 +2231,7 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Berechnen Sie eine minimale Basis der P-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}."
+                    "Berechnen Sie eine Basis der P-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}."
                 ),
                 List.of(
                     "{\\renewcommand{\\arraystretch}{1.2}",
@@ -2312,7 +2312,7 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Berechnen Sie eine minimale Basis der T-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}."
+                    "Berechnen Sie eine Basis der T-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}."
                 ),
                 List.of(
                     "{\\renewcommand{\\arraystretch}{1.2}",
