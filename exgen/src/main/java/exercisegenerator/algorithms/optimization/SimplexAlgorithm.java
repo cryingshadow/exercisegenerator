@@ -40,6 +40,31 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return SimplexAnswer.SOLVED;
     }
 
+    private static int computeNumberOfAutomaticCells(final int numVars, final int numInequalities, final int numTableaus) {
+        final int columnSize = numInequalities + 2;
+        return (numVars + numInequalities * 3 + numInequalities * columnSize) * numTableaus
+            + numVars * columnSize
+            + columnSize
+            - numTableaus;
+    }
+
+    private static int computeNumberOfComputeCells(final int numVars, final int numInequalities, final int numTableaus) {
+        final int columnSize = numInequalities + 2;
+        return (numVars * columnSize + columnSize + numInequalities) * (numTableaus - 1);
+    }
+
+    private static int computeNumberOfInequalities(final SimplexSolution solution) {
+        return solution.branches().getFirst().x.conditions().getNumberOfRows();
+    }
+
+    private static int computeNumberOfTableaus(final SimplexSolution solution) {
+        return solution.branches().stream().map(pair -> pair.y.size()).reduce(0, Integer::sum);
+    }
+
+    private static int computeNumberOfVariables(final SimplexSolution solution) {
+        return solution.branches().getFirst().x.target().length;
+    }
+
     private static List<Integer> generateIntegralConditions(final int numberOfVariables, final Parameters<Flag> options) {
         if (options.getOrDefault(Flag.VARIANT, "").equals("1") ) {
             return IntStream.range(0, numberOfVariables)
@@ -123,6 +148,18 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return target;
     }
 
+    private static void printCommentLine(
+        final String key,
+        final String value,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("%");
+        writer.write(key);
+        writer.write(": ");
+        writer.write(value);
+        Main.newLine(writer);
+    }
+
     private static void printSimplexProblem(final SimplexProblem problem, final BufferedWriter writer)
     throws IOException {
         writer.write("Maximiere $z(\\mathbf{x}) = ");
@@ -180,6 +217,22 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         }
         writer.write("[2ex]");
         Main.newLine(writer);
+    }
+
+    private static void printStatisticsAsComment(
+        final SimplexSolution solution,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int numVars = SimplexAlgorithm.computeNumberOfVariables(solution);
+        final int numInequalities = SimplexAlgorithm.computeNumberOfInequalities(solution);
+        final int numTableaus = SimplexAlgorithm.computeNumberOfTableaus(solution);
+        final int numAutomatic = SimplexAlgorithm.computeNumberOfAutomaticCells(numVars, numInequalities, numTableaus);
+        final int numCompute = SimplexAlgorithm.computeNumberOfComputeCells(numVars, numInequalities, numTableaus);
+        SimplexAlgorithm.printCommentLine("Anzahl Variablen", String.valueOf(numVars), writer);
+        SimplexAlgorithm.printCommentLine("Anzahl Ungleichungen", String.valueOf(numInequalities), writer);
+        SimplexAlgorithm.printCommentLine("Anzahl Tableaus", String.valueOf(numTableaus), writer);
+        SimplexAlgorithm.printCommentLine("Anzahl automatischer Zellen", String.valueOf(numAutomatic), writer);
+        SimplexAlgorithm.printCommentLine("Anzahl berechneter Zellen", String.valueOf(numCompute), writer);
     }
 
     private static void printTableau(
@@ -703,6 +756,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             break;
         }
         Main.newLine(writer);
+        Main.newLine(writer);
+        SimplexAlgorithm.printStatisticsAsComment(solution, writer);
         Main.newLine(writer);
     }
 

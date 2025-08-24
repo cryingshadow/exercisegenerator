@@ -5168,7 +5168,13 @@ public class MainTest {
                 "",
                 "\\vspace*{1ex}",
                 "",
-                "Ergebnis: $x_{1}^* = \\frac{7}{4}$, $x_{2}^* = \\frac{7}{2}$, $z(\\mathbf{x}^*) = \\frac{21}{4}$"
+                "Ergebnis: $x_{1}^* = \\frac{7}{4}$, $x_{2}^* = \\frac{7}{2}$, $z(\\mathbf{x}^*) = \\frac{21}{4}$",
+                "",
+                "%Anzahl Variablen: 2",
+                "%Anzahl Ungleichungen: 3",
+                "%Anzahl Tableaus: 3",
+                "%Anzahl automatischer Zellen: 90",
+                "%Anzahl berechneter Zellen: 36"
             )
         );
     }
