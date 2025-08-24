@@ -24,6 +24,12 @@ public enum TikZStyle {
         + ">=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]"
     ),
 
+    DPLLTREE(
+        "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+        + "sibling distance=10pt, level distance=45pt, edge from parent/.style="
+        + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]"
+    ),
+
     EDGE_HIGHLIGHT_STYLE("[p, bend left = 10, very thick, red]"),
 
     EDGE_STYLE("[p, bend left = 10]"),

@@ -59,20 +59,32 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         return clauses.stream().anyMatch(clause -> clause.size() == 1);
     }
 
-    private static Optional<DPLLNode> deterministicAssignments(
+    private static Optional<DPLLAssignment> deterministicAssignments(
         final ClauseSet clauses,
         final Predicate<ClauseSet> assignmentApplicable,
         final Function<ClauseSet, Literal> assignmentSelection
     ) {
-        Optional<DPLLNode> result = Optional.empty();
+        Optional<DPLLAssignment> result = Optional.empty();
         ClauseSet currentClauses = clauses;
         while (assignmentApplicable.test(currentClauses)) {
             final Literal literal = assignmentSelection.apply(currentClauses);
             currentClauses = DPLL.setTruth(literal.variable(), !literal.negative(), currentClauses);
             result =
                 result.isEmpty() ?
-                    Optional.of(new DPLLNode(currentClauses)) :
-                        Optional.of(result.get().addLeftmost(Optional.of(new DPLLNode(currentClauses))));
+                    Optional.of(
+                        new DPLLAssignment(literal.variable(), !literal.negative(), new DPLLNode(currentClauses))
+                    ) :
+                        Optional.of(
+                            result.get().addLeftmost(
+                                Optional.of(
+                                    new DPLLAssignment(
+                                        literal.variable(),
+                                        !literal.negative(),
+                                        new DPLLNode(currentClauses)
+                                    )
+                                )
+                            )
+                        );
         }
         return result;
     }
@@ -121,7 +133,7 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         return new Literal(new PropositionalVariable(toParse), false);
     }
 
-    private static Optional<DPLLNode> pureAssignment(final ClauseSet clauses) {
+    private static Optional<DPLLAssignment> pureAssignment(final ClauseSet clauses) {
         return DPLL.deterministicAssignments(clauses, DPLL::containsPureLiteral, DPLL::selectPureLiteral);
     }
 
@@ -160,7 +172,7 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
             .collect(Collectors.toCollection(ClauseSet::new));
     }
 
-    private static Optional<DPLLNode> unitPropagation(final ClauseSet clauses) {
+    private static Optional<DPLLAssignment> unitPropagation(final ClauseSet clauses) {
         return DPLL.deterministicAssignments(clauses, DPLL::containsUnitClause, DPLL::selectUnitLiteral);
     }
 
@@ -177,11 +189,11 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         final PropositionalVariable chosen = DPLL.chooseVariable(latest);
         final DPLLNode left = this.apply(DPLL.setTruth(chosen, true, latest));
         if (left.isSAT()) {
-            return result.addLeftmost(Optional.of(left));
+            return result.addLeftmost(Optional.of(new DPLLAssignment(chosen, true, left)));
         }
         return result
-            .addRightToLeftmost(this.apply(DPLL.setTruth(chosen, false, latest)))
-            .addLeftmost(Optional.of(left));
+            .addRightToLeftmost(new DPLLAssignment(chosen, false, this.apply(DPLL.setTruth(chosen, false, latest))))
+            .addLeftmost(Optional.of(new DPLLAssignment(chosen, true, left)));
     }
 
     @Override
@@ -258,7 +270,7 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
-        LaTeXUtils.printTikzBeginning(TikZStyle.BTREE, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.DPLLTREE, writer);
         writer.write(solution.toString());
         Main.newLine(writer);
         LaTeXUtils.printTikzEnd(writer);

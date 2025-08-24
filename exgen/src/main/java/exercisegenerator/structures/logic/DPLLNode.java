@@ -3,9 +3,15 @@ package exercisegenerator.structures.logic;
 import java.util.*;
 import java.util.stream.*;
 
-public record DPLLNode(ClauseSet clauses, Optional<DPLLNode> left, Optional<DPLLNode> right) {
+import exercisegenerator.*;
 
-    public DPLLNode(final ClauseSet clauses, final Optional<DPLLNode> left, final Optional<DPLLNode> right) {
+public record DPLLNode(ClauseSet clauses, Optional<DPLLAssignment> left, Optional<DPLLAssignment> right) {
+
+    public DPLLNode(
+        final ClauseSet clauses,
+        final Optional<DPLLAssignment> left,
+        final Optional<DPLLAssignment> right
+    ) {
         this.clauses = clauses;
         this.left = left;
         this.right = right;
@@ -15,18 +21,18 @@ public record DPLLNode(ClauseSet clauses, Optional<DPLLNode> left, Optional<DPLL
         this(clauses, Optional.empty(), Optional.empty());
     }
 
-    public DPLLNode(final ClauseSet clauses, final Optional<DPLLNode> left) {
+    public DPLLNode(final ClauseSet clauses, final Optional<DPLLAssignment> left) {
         this(clauses, left, Optional.empty());
     }
 
-    public DPLLNode addLeftmost(final Optional<DPLLNode> node) {
+    public DPLLNode addLeftmost(final Optional<DPLLAssignment> assignment) {
         if (this.left.isEmpty()) {
-            return new DPLLNode(this.clauses, node, this.right);
+            return new DPLLNode(this.clauses, assignment, this.right);
         }
-        return new DPLLNode(this.clauses, Optional.of(this.left().get().addLeftmost(node)), this.right);
+        return new DPLLNode(this.clauses, Optional.of(this.left().get().addLeftmost(assignment)), this.right);
     }
 
-    public DPLLNode addRightToLeftmost(final DPLLNode node) {
+    public DPLLNode addRightToLeftmost(final DPLLAssignment node) {
         if (this.left.isEmpty()) {
             return new DPLLNode(this.clauses, this.left, Optional.of(node));
         }
@@ -37,44 +43,33 @@ public record DPLLNode(ClauseSet clauses, Optional<DPLLNode> left, Optional<DPLL
         if (this.left.isEmpty()) {
             return this.clauses;
         }
-        return this.left.get().getLeftmostClauses();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o instanceof DPLLNode) {
-            final DPLLNode other = (DPLLNode)o;
-            return this.clauses.equals(other.clauses) && this.left.equals(other.left) && this.right.equals(other.right);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.clauses.hashCode() * 3 + this.left.hashCode() * 5 + this.right.hashCode() * 7;
+        return this.left.get().successor().getLeftmostClauses();
     }
 
     public boolean isSAT() {
         return this.clauses.isEmpty()
-            || this.left.isPresent() && this.left.get().isSAT()
-            || this.right.isPresent() && this.right.get().isSAT();
+            || this.left.isPresent() && this.left.get().successor().isSAT()
+            || this.right.isPresent() && this.right.get().successor().isSAT();
     }
 
-    private String toStringRecursive() {
+    String toStringRecursive(final int level) {
         final StringBuilder result = new StringBuilder();
+        result.append(Main.lineSeparator);
+        result.append("  ".repeat(level));
         if (this.left.isEmpty() && this.right.isEmpty()) {
-            result.append(" ");
             result.append(this.clausesToString());
         } else {
-            result.append(" [.");
+            result.append("[.");
             result.append(this.clausesToString());
             if (this.left.isPresent()) {
-                result.append(this.left.get().toStringRecursive());
+                result.append(this.left.get().toStringRecursive(true, level));
             }
             if (this.right.isPresent()) {
-                result.append(this.right.get().toStringRecursive());
+                result.append(this.right.get().toStringRecursive(false, level));
             }
-            result.append(" ]");
+            result.append(Main.lineSeparator);
+            result.append("  ".repeat(level));
+            result.append("]");
         }
         return result.toString();
     }
@@ -91,7 +86,7 @@ public record DPLLNode(ClauseSet clauses, Optional<DPLLNode> left, Optional<DPLL
         if (this.left.isEmpty() && this.right.isEmpty()) {
             return String.format("\\Tree [.%s ];", this.clausesToString());
         } else {
-            return "\\Tree" + this.toStringRecursive();
+            return "\\Tree" + this.toStringRecursive(1);
         }
     }
 

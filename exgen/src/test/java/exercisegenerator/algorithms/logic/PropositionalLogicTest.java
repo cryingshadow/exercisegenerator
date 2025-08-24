@@ -13,27 +13,46 @@ public class PropositionalLogicTest {
 
     @DataProvider
     public Object[][] dpllData() throws PropositionalFormulaParseException {
+        final PropositionalVariable a = new PropositionalVariable("A");
+        final PropositionalVariable b = new PropositionalVariable("B");
+        final PropositionalVariable c = new PropositionalVariable("C");
         return new Object[][] {
             {ClauseSet.EMPTY, new DPLLNode(ClauseSet.EMPTY)},
             {ClauseSet.FALSE, new DPLLNode(ClauseSet.FALSE)},
             {
                 DPLL.parseClauses("{A}"),
-                new DPLLNode(DPLL.parseClauses("{A}"), Optional.of(new DPLLNode(ClauseSet.EMPTY)))
+                new DPLLNode(
+                    DPLL.parseClauses("{A}"),
+                    Optional.of(new DPLLAssignment(a, true, new DPLLNode(ClauseSet.EMPTY)))
+                )
             },
             {
                 DPLL.parseClauses("{!A}"),
-                new DPLLNode(DPLL.parseClauses("{!A}"), Optional.of(new DPLLNode(ClauseSet.EMPTY)))
+                new DPLLNode(
+                    DPLL.parseClauses("{!A}"),
+                    Optional.of(new DPLLAssignment(a, false, new DPLLNode(ClauseSet.EMPTY)))
+                )
             },
             {
                 DPLL.parseClauses("{A},{!A}"),
-                new DPLLNode(DPLL.parseClauses("{A},{!A}"), Optional.of(new DPLLNode(ClauseSet.FALSE)))
+                new DPLLNode(
+                    DPLL.parseClauses("{A},{!A}"),
+                    Optional.of(new DPLLAssignment(a, true, new DPLLNode(ClauseSet.FALSE)))
+                )
             },
             {
                 DPLL.parseClauses("{A},{!B}"),
                 new DPLLNode(
                     DPLL.parseClauses("{A},{!B}"),
                     Optional.of(
-                        new DPLLNode(DPLL.parseClauses("{!B}"), Optional.of(new DPLLNode(ClauseSet.EMPTY)))
+                        new DPLLAssignment(
+                            a,
+                            true,
+                            new DPLLNode(
+                                DPLL.parseClauses("{!B}"),
+                                Optional.of(new DPLLAssignment(b, false, new DPLLNode(ClauseSet.EMPTY)))
+                            )
+                        )
                     )
                 )
             },
@@ -42,24 +61,40 @@ public class PropositionalLogicTest {
                 new DPLLNode(
                     DPLL.parseClauses("{!A,B},{!B,C},{!C,!A},{A,!C},{B,A}"),
                     Optional.of(
-                        new DPLLNode(
-                            DPLL.parseClauses("{B},{!B,C},{!C}"),
-                            Optional.of(
-                                new DPLLNode(
-                                    DPLL.parseClauses("{C},{!C}"),
-                                    Optional.of(new DPLLNode(ClauseSet.FALSE))
+                        new DPLLAssignment(
+                            a,
+                            true,
+                            new DPLLNode(
+                                DPLL.parseClauses("{B},{!B,C},{!C}"),
+                                Optional.of(
+                                    new DPLLAssignment(
+                                        b,
+                                        true,
+                                        new DPLLNode(
+                                            DPLL.parseClauses("{C},{!C}"),
+                                            Optional.of(new DPLLAssignment(c, true, new DPLLNode(ClauseSet.FALSE)))
+                                        )
+                                    )
                                 )
                             )
                         )
                     ),
                     Optional.of(
-                        new DPLLNode(
-                            DPLL.parseClauses("{!B,C},{!C},{B}"),
-                            Optional.of(
-                                new DPLLNode(
-                                    DPLL.parseClauses("{C},{!C}"),
-                                    Optional.of(new DPLLNode(ClauseSet.FALSE))
-                                 )
+                        new DPLLAssignment(
+                            a,
+                            false,
+                            new DPLLNode(
+                                DPLL.parseClauses("{!B,C},{!C},{B}"),
+                                Optional.of(
+                                    new DPLLAssignment(
+                                        b,
+                                        true,
+                                        new DPLLNode(
+                                            DPLL.parseClauses("{C},{!C}"),
+                                            Optional.of(new DPLLAssignment(c, true, new DPLLNode(ClauseSet.FALSE)))
+                                        )
+                                    )
+                                )
                             )
                         )
                     )
