@@ -570,6 +570,39 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         return min;
     }
 
+    private static Pair<Integer, Integer> computeNumberOfNewAndCopiedFlowValues(
+        final List<FordFulkersonDoubleStep> solution
+    ) {
+        int copiedValues = 0;
+        int newValues = 0;
+        for (int i = 1; i < solution.size(); i++) {
+            final FordFulkersonDoubleStep step = solution.get(i);
+            final FordFulkersonDoubleStep previousStep = solution.get(i - 1);
+            final Graph<String, FlowAndCapacity> network = step.flowNetworkWithLayout().graph();
+            final Graph<String, FlowAndCapacity> previousNetwork = previousStep.flowNetworkWithLayout().graph();
+            final Set<Vertex<String>> vertices = network.getVertices();
+            for (final Vertex<String> from : vertices) {
+                for (final Vertex<String> to : network.getAdjacentVertices(from)) {
+                    final Edge<FlowAndCapacity, String> edge = network.getEdges(from, to).iterator().next();
+                    final Edge<FlowAndCapacity, String> previousEdge =
+                        previousNetwork.getEdges(from, to).iterator().next();
+                    if (edge.logicallyEquals(previousEdge)) {
+                        copiedValues++;
+                    } else {
+                        newValues++;
+                    }
+                }
+            }
+        }
+        return new Pair<Integer, Integer>(newValues, copiedValues);
+    }
+
+    private static int computeNumberOfResidualEdges(final List<FordFulkersonDoubleStep> solution) {
+        return solution.stream()
+            .flatMap(step -> step.residualGraphWithLayout().graph().getEdges().stream().map(pair -> pair.y.size()))
+            .reduce(0, Integer::sum);
+    };
+
     private static <V> Graph<V, Integer> computeResidualGraph(final Graph<V, FlowAndCapacity> graph) {
         final Graph<V, Integer> res = new Graph<V, Integer>();
         for (final Vertex<V> vertex : graph.getVertices()) {
@@ -642,7 +675,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         default:
             throw new IllegalStateException("Unkown text version!");
         }
-    };
+    }
 
     private static FlowNetworkProblem generateFlowNetworkProblem(final Parameters<Flag> options) {
         final int numOfInnerVertices = AlgorithmImplementation.parseOrGenerateLength(3, 18, options);
@@ -817,6 +850,18 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         } else {
             Main.newLine(writer);
         }
+    }
+
+    private static void printStatisticsAsComment(
+        final List<FordFulkersonDoubleStep> solution,
+        final BufferedWriter writer
+    ) throws IOException {
+        final Pair<Integer, Integer> numFlowValues =
+            FordFulkersonAlgorithm.computeNumberOfNewAndCopiedFlowValues(solution);
+        final int numResidualEdges = FordFulkersonAlgorithm.computeNumberOfResidualEdges(solution);
+        LaTeXUtils.printCommentLine("Anzahl kopierter Flusswerte", String.valueOf(numFlowValues.y), writer);
+        LaTeXUtils.printCommentLine("Anzahl neuer Flusswerte", String.valueOf(numFlowValues.x), writer);
+        LaTeXUtils.printCommentLine("Anzahl Kanten in Restnetzwerken", String.valueOf(numResidualEdges), writer);
     }
 
     /**
@@ -1126,6 +1171,8 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         Main.newLine(writer);
         writer.write("Der maximale Fluss hat den Wert: " + flow);
         Main.newLine(writer);
+        Main.newLine(writer);
+        FordFulkersonAlgorithm.printStatisticsAsComment(solution, writer);
         Main.newLine(writer);
     }
 

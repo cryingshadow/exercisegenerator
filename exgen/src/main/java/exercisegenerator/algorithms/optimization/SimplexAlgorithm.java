@@ -245,18 +245,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return target;
     }
 
-    private static void printCommentLine(
-        final String key,
-        final String value,
-        final BufferedWriter writer
-    ) throws IOException {
-        writer.write("%");
-        writer.write(key);
-        writer.write(": ");
-        writer.write(value);
-        Main.newLine(writer);
-    }
-
     private static void printSimplexProblem(final SimplexProblem problem, final BufferedWriter writer)
     throws IOException {
         writer.write("Maximiere $z(\\mathbf{x}) = ");
@@ -324,11 +312,11 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         final int numTableaus = SimplexAlgorithm.computeNumberOfTableaus(solution);
         final int numAutomatic = SimplexAlgorithm.computeNumberOfAutomaticCells(numVars, numInequalities, numTableaus);
         final int numCompute = SimplexAlgorithm.computeNumberOfComputeCells(numVars, numInequalities, numTableaus);
-        SimplexAlgorithm.printCommentLine("Anzahl Variablen", String.valueOf(numVars), writer);
-        SimplexAlgorithm.printCommentLine("Anzahl Ungleichungen", String.valueOf(numInequalities), writer);
-        SimplexAlgorithm.printCommentLine("Anzahl Tableaus", String.valueOf(numTableaus), writer);
-        SimplexAlgorithm.printCommentLine("Anzahl automatischer Zellen", String.valueOf(numAutomatic), writer);
-        SimplexAlgorithm.printCommentLine("Anzahl berechneter Zellen", String.valueOf(numCompute), writer);
+        LaTeXUtils.printCommentLine("Anzahl Variablen", String.valueOf(numVars), writer);
+        LaTeXUtils.printCommentLine("Anzahl Ungleichungen", String.valueOf(numInequalities), writer);
+        LaTeXUtils.printCommentLine("Anzahl Tableaus", String.valueOf(numTableaus), writer);
+        LaTeXUtils.printCommentLine("Anzahl automatischer Zellen", String.valueOf(numAutomatic), writer);
+        LaTeXUtils.printCommentLine("Anzahl berechneter Zellen", String.valueOf(numCompute), writer);
     }
 
     private static void printTableau(

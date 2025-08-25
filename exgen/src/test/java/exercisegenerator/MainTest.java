@@ -3005,7 +3005,11 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Der maximale Fluss hat den Wert: 15"
+                    "Der maximale Fluss hat den Wert: 15",
+                    "",
+                    "%Anzahl kopierter Flusswerte: 23",
+                    "%Anzahl neuer Flusswerte: 9",
+                    "%Anzahl Kanten in Restnetzwerken: 46"
                 )
             )
         );

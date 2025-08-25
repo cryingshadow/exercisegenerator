@@ -935,4 +935,16 @@ public abstract class LaTeXUtils {
         }
     }
 
+    public static void printCommentLine(
+        final String key,
+        final String value,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("%");
+        writer.write(key);
+        writer.write(": ");
+        writer.write(value);
+        Main.newLine(writer);
+    }
+
 }
