@@ -4565,6 +4565,109 @@ public class MainTest {
     }
 
     @Test
+    public void simplexBranchDecision() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.SIMPLEX.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-p", SolutionSpaceMode.SOLUTION_SPACE.text,
+                "-v", "2",
+                "-i", "1i, 1\n1, 0,  5\n0, 1,7/2\n2,-1,  0\n"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\",
+                    "Maximiere $z(\\mathbf{x}) = x_{1} + x_{2}$\\\\",
+                    "unter den folgenden Nebenbedingungen:\\\\",
+                    "$\\begin{array}{*{5}c}",
+                    "x_{1} &  &  & \\leq & 5\\\\",
+                    " &  & x_{2} & \\leq & \\frac{7}{2}\\\\",
+                    "2x_{1} & - & x_{2} & \\leq & 0\\\\",
+                    "\\end{array}$\\\\",
+                    "$x_{1}, x_{2} \\geq 0$\\\\",
+                    "$x_{1} \\in \\ints$\\\\[2ex]",
+                    "Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die folgende "
+                    + "optimale L\\\"osung:",
+                    "\\[x_{1}^* = \\frac{7}{4}, x_{2}^* = \\frac{7}{2}\\]",
+                    "Welche beiden linearen Programme in Standard-Maximum-Form m\\\"ussen nun gem\\\"a\\ss{} dem "
+                    + "Branch-And-Cut-Verfahren im n\\\"achsten Schritt gel\\\"ost werden, um die in dieser L\\\"osung "
+                    + "enthaltene Verletzung der Ganzzahligkeitsbedingungen zu verhindern?"
+                ),
+                List.of(
+                    "\\begin{tikzpicture}",
+                    "",
+                    "\\node (and) {und};",
+                    "\\node[rectangle,draw=black] (1) [left=0.1 of and.north west,anchor=north east] {%",
+                    "\\begin{minipage}{0.45\\columnwidth}",
+                    "Maximiere $z(\\mathbf{x}) = x_{1} + x_{2}$\\\\",
+                    "unter den folgenden Nebenbedingungen:\\\\",
+                    "$\\begin{array}{*{5}c}",
+                    "x_{1} &  &  & \\leq & 5\\\\",
+                    " &  & x_{2} & \\leq & \\frac{7}{2}\\\\",
+                    "2x_{1} & - & x_{2} & \\leq & 0\\\\",
+                    "x_{1} &  &  & \\leq & 1\\\\",
+                    "\\end{array}$\\\\",
+                    "$x_{1}, x_{2} \\geq 0$\\\\",
+                    "$x_{1} \\in \\ints$",
+                    "\\end{minipage}",
+                    "};",
+                    "\\node[rectangle,draw=black] (2) [right=0.1 of and.north east,anchor=north west] {%",
+                    "\\begin{minipage}{0.45\\columnwidth}",
+                    "Maximiere $z(\\mathbf{x}) = x_{1} + x_{2}$\\\\",
+                    "unter den folgenden Nebenbedingungen:\\\\",
+                    "$\\begin{array}{*{5}c}",
+                    "x_{1} &  &  & \\leq & 5\\\\",
+                    " &  & x_{2} & \\leq & \\frac{7}{2}\\\\",
+                    "2x_{1} & - & x_{2} & \\leq & 0\\\\",
+                    "-x_{1} &  &  & \\leq & -2\\\\",
+                    "\\end{array}$\\\\",
+                    "$x_{1}, x_{2} \\geq 0$\\\\",
+                    "$x_{1} \\in \\ints$",
+                    "\\end{minipage}",
+                    "};",
+                    "\\end{tikzpicture}"
+                )
+            )
+        );
+    }
+
+    @Test
+    public void simplexBranchDecisionEmpty() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.SIMPLEX.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-p", SolutionSpaceMode.SOLUTION_SPACE.text,
+                "-v", "2",
+                "-i", "1, 1\n1, 0,  5\n0, 1,7/2\n2,-1,  0\n"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\",
+                    "Maximiere $z(\\mathbf{x}) = x_{1} + x_{2}$\\\\",
+                    "unter den folgenden Nebenbedingungen:\\\\",
+                    "$\\begin{array}{*{5}c}",
+                    "x_{1} &  &  & \\leq & 5\\\\",
+                    " &  & x_{2} & \\leq & \\frac{7}{2}\\\\",
+                    "2x_{1} & - & x_{2} & \\leq & 0\\\\",
+                    "\\end{array}$\\\\",
+                    "$x_{1}, x_{2} \\geq 0$\\\\[2ex]",
+                    "Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die folgende "
+                    + "optimale L\\\"osung:",
+                    "\\[x_{1}^* = \\frac{7}{4}, x_{2}^* = \\frac{7}{2}\\]",
+                    "Welche beiden linearen Programme in Standard-Maximum-Form m\\\"ussen nun gem\\\"a\\ss{} dem "
+                    + "Branch-And-Cut-Verfahren im n\\\"achsten Schritt gel\\\"ost werden, um die in dieser L\\\"osung "
+                    + "enthaltene Verletzung der Ganzzahligkeitsbedingungen zu verhindern?"
+                ),
+                List.of(
+                    "Es sind keine weiteren Probleme zu l\\\"osen, da keine Verletzung der Ganzzahligkeitsbedingungen "
+                    + "vorliegt."
+                )
+            )
+        );
+    }
+
+    @Test
     public void toASCII() throws IOException {
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {

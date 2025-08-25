@@ -40,7 +40,85 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return SimplexAnswer.SOLVED;
     }
 
-    private static int computeNumberOfAutomaticCells(final int numVars, final int numInequalities, final int numTableaus) {
+    private static Pair<SimplexProblem, SimplexProblem> branchAndBound(
+        final BigFraction[] originalTarget,
+        final Matrix originalMatrix,
+        final List<Integer> originalIntegralConditions,
+        final List<BigFraction[]> cuttingHyperPlanes,
+        final Pair<Integer, BigFraction> violation
+    ) {
+        final Pair<List<BigFraction[]>, List<BigFraction[]>> branchRows =
+            SimplexAlgorithm.branchAndBound(cuttingHyperPlanes, violation, originalTarget.length + 1);
+        return new Pair<SimplexProblem, SimplexProblem>(
+            new SimplexProblem(
+                originalTarget,
+                originalMatrix.insertRowsAtIndex(branchRows.x, originalMatrix.getNumberOfRows()),
+                originalIntegralConditions
+            ),
+            new SimplexProblem(
+                originalTarget,
+                originalMatrix.insertRowsAtIndex(branchRows.y, originalMatrix.getNumberOfRows()),
+                originalIntegralConditions
+            )
+        );
+    }
+
+    private static Pair<List<BigFraction[]>, List<BigFraction[]>> branchAndBound(
+        final List<BigFraction[]> cuttingHyperPlanes,
+        final Pair<Integer, BigFraction> violation,
+        final int numberOfColumns
+    ) {
+        final BigFraction[] smallerRow = new BigFraction[numberOfColumns];
+        final BigFraction[] biggerRow = new BigFraction[numberOfColumns];
+        Arrays.fill(smallerRow, BigFraction.ZERO);
+        Arrays.fill(biggerRow, BigFraction.ZERO);
+        smallerRow[violation.x] = BigFraction.ONE;
+        biggerRow[violation.x] = BigFraction.ONE.negate();
+        final BigInteger floor = violation.y.getNumerator().divide(violation.y.getDenominator());
+        smallerRow[smallerRow.length - 1] = new BigFraction(floor);
+        biggerRow[biggerRow.length - 1] = new BigFraction(floor.add(BigInteger.ONE).negate());
+        final List<BigFraction[]> smallerRows = new ArrayList<BigFraction[]>(cuttingHyperPlanes);
+        final List<BigFraction[]> biggerRows = new ArrayList<BigFraction[]>(cuttingHyperPlanes);
+        smallerRows.add(smallerRow);
+        biggerRows.add(biggerRow);
+        return new Pair<List<BigFraction[]>, List<BigFraction[]>>(smallerRows, biggerRows);
+    }
+
+    private static void branchAndCut(
+        final SimplexTableau tableau,
+        final Pair<Integer, BigFraction> violation,
+        final Pair<SimplexProblem, List<SimplexTableau>> branch,
+        final int branchIndex,
+        final List<Pair<SimplexProblem, List<SimplexTableau>>> branches
+    ) {
+        final SimplexProblem problem = tableau.problem();
+        final List<BigFraction[]> cuttingHyperPlanes = SimplexAlgorithm.computeCuttingHyperPlanes(problem);
+        final Pair<SimplexProblem, SimplexProblem> newProblems =
+            SimplexAlgorithm.branchAndBound(
+                problem.target(),
+                branch.x.conditions(),
+                problem.integral(),
+                cuttingHyperPlanes,
+                violation
+            );
+        branch.y.add(SimplexAlgorithm.simplexInitializeTableau(newProblems.x));
+        final List<SimplexTableau> nextBranch = new LinkedList<SimplexTableau>();
+        nextBranch.add(SimplexAlgorithm.simplexInitializeTableau(newProblems.y));
+        branches.set(branchIndex, new Pair<SimplexProblem, List<SimplexTableau>>(newProblems.x, branch.y));
+        branches.add(new Pair<SimplexProblem, List<SimplexTableau>>(newProblems.y, nextBranch));
+    }
+
+    private static List<BigFraction[]> computeCuttingHyperPlanes(final SimplexProblem problem) {
+        // TODO Auto-generated method stub
+        final List<BigFraction[]> result = new LinkedList<BigFraction[]>();
+        return result;
+    }
+
+    private static int computeNumberOfAutomaticCells(
+        final int numVars,
+        final int numInequalities,
+        final int numTableaus
+    ) {
         final int columnSize = numInequalities + 2;
         return (numVars + numInequalities * 3 + numInequalities * columnSize) * numTableaus
             + numVars * columnSize
@@ -48,7 +126,11 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             - numTableaus;
     }
 
-    private static int computeNumberOfComputeCells(final int numVars, final int numInequalities, final int numTableaus) {
+    private static int computeNumberOfComputeCells(
+        final int numVars,
+        final int numInequalities,
+        final int numTableaus
+    ) {
         final int columnSize = numInequalities + 2;
         return (numVars * columnSize + columnSize + numInequalities) * (numTableaus - 1);
     }
@@ -65,7 +147,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return solution.branches().getFirst().x.target().length;
     }
 
-    private static List<Integer> generateIntegralConditions(final int numberOfVariables, final Parameters<Flag> options) {
+    private static List<Integer> generateIntegralConditions(
+        final int numberOfVariables,
+        final Parameters<Flag> options
+    ) {
         if (options.getOrDefault(Flag.VARIANT, "").equals("1") ) {
             return IntStream.range(0, numberOfVariables)
                 .filter(i -> Main.RANDOM.nextBoolean() ? true : false)
@@ -98,6 +183,18 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             target[i] = SimplexAlgorithm.generateNonZeroCoefficient(4);
         }
         return target;
+    }
+
+    private static SimplexTableau getTableauBeforeFirstBranch(final SimplexSolution solution) {
+        final List<SimplexTableau> tableaus = solution.branches().getFirst().y;
+        SimplexTableau tableau = tableaus.getFirst();
+        for (final SimplexTableau next : tableaus) {
+            if (next.problem().conditions().getNumberOfRows() > tableau.problem().conditions().getNumberOfRows()) {
+                return tableau;
+            }
+            tableau = next;
+        }
+        return tableau;
     }
 
     private static List<Integer> parseIntegralConditions(final String line) {
@@ -203,8 +300,9 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         for (int index = 1; index < problem.target().length; index++) {
             writer.write(String.format(", %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1));
         }
-        writer.write(" \\geq 0$\\\\");
+        writer.write(" \\geq 0$");
         if (!problem.integral().isEmpty()) {
+            writer.write("\\\\");
             Main.newLine(writer);
             writer.write("$");
             writer.write(
@@ -213,10 +311,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 .map(index -> String.format("%s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1))
                 .collect(Collectors.joining(","))
             );
-            writer.write(" \\in \\ints$\\\\");
+            writer.write(" \\in \\ints$");
         }
-        writer.write("[2ex]");
-        Main.newLine(writer);
     }
 
     private static void printStatisticsAsComment(
@@ -301,6 +397,33 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 matrix.setCoefficient(column, basicVariables.length + 1, BigFraction.ZERO);
             }
         }
+    }
+
+    private static SimplexAnswer simplexBestAnswer(final SimplexAnswer answer1, final SimplexAnswer answer2) {
+        switch (answer1) {
+        case UNSOLVABLE:
+            return answer2;
+        case INCOMPLETE:
+        case UNBOUNDED:
+            return answer2 == SimplexAnswer.INCOMPLETE ? answer2 : answer1;
+        default:
+            switch (answer2) {
+            case INCOMPLETE:
+            case UNBOUNDED:
+                return answer2;
+            default:
+                return answer1;
+            }
+        }
+    }
+
+    private static SimplexAnswer simplexComputeAnswer(final List<Pair<SimplexProblem, List<SimplexTableau>>> branches) {
+        SimplexAnswer answer = SimplexAnswer.UNSOLVABLE;
+        for (final Pair<SimplexProblem, List<SimplexTableau>> branch : branches) {
+            answer =
+                SimplexAlgorithm.simplexBestAnswer(answer, SimplexAlgorithm.simplexComputeAnswer(branch.y.getLast()));
+        }
+        return answer;
     }
 
     private static BigFraction[] simplexComputeQuotients(final Matrix matrix, final int pivotColumn) {
@@ -592,12 +715,12 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             }
             final Optional<Pair<Integer, BigFraction>> violation = tableau.getIntegralViolation();
             if (violation.isPresent() && (answer == SimplexAnswer.SOLVED || answer == SimplexAnswer.UNBOUNDED)) {
-                this.branchAndCut(tableau, violation.get(), branch, branchIndex, branches);
+                SimplexAlgorithm.branchAndCut(tableau, violation.get(), branch, branchIndex, branches);
             } else {
                 branchIndex++;
             }
         }
-        return new SimplexSolution(branches, this.simplexComputeAnswer(branches));
+        return new SimplexSolution(branches, SimplexAlgorithm.simplexComputeAnswer(branches));
     }
 
     @Override
@@ -626,62 +749,97 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         writer.write("Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\");
         Main.newLine(writer);
         SimplexAlgorithm.printSimplexProblem(problem, writer);
-        writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
-        writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale Belegung ");
-        writer.write(String.format("f\\\"ur die Variablen $%s_{1}", LaTeXUtils.MATH_VARIABLE_NAME));
-        for (int index = 1; index < problem.target().length; index++) {
-            writer.write(String.format(", %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1));
-        }
-        writer.write("$ und den daraus resultierenden Wert der Zielfunktion an oder begr\\\"unden Sie, warum es ");
-        writer.write("keine solche optimale Belegung gibt.");
+        writer.write("\\\\[2ex]");
         Main.newLine(writer);
-        Main.newLine(writer);
-        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
-        switch (mode) {
-        case SOLUTION_SPACE:
-            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-            // fall-through
-        case ALWAYS:
-            writer.write("{\\renewcommand{\\arraystretch}{1.5}");
+        if (options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 2) {
+            writer.write("Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die ");
+            writer.write("folgende optimale L\\\"osung:");
             Main.newLine(writer);
-            boolean first = true;
-            final int[] pagebreakCounters =
-                LaTeXUtils.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
-            int tableaus = 0;
-            int counterIndex = 0;
-            for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
-                if (first) {
-                    first = false;
-                } else {
-                    Main.newLine(writer);
-                    writer.write("Neuer Zweig:\\\\");
-                }
-                for (final SimplexTableau tableau : branch.y) {
-                    Main.newLine(writer);
-                    if (counterIndex < pagebreakCounters.length && tableaus >= pagebreakCounters[counterIndex]) {
-                        writer.write("\\newpage");
+            final SimplexTableau beforeBranch = SimplexAlgorithm.getTableauBeforeFirstBranch(solution);
+            final List<BigFraction> result = beforeBranch.getResult().get();
+            writer.write("\\[");
+            writer.write(
+                String.format(
+                    "%s_{1}^* = %s",
+                    LaTeXUtils.MATH_VARIABLE_NAME,
+                    LaTeXUtils.toCoefficient(result.get(0))
+                )
+            );
+            for (int i = 1; i < result.size() - 1; i++) {
+                writer.write(
+                    String.format(
+                        ", %s_{%d}^* = %s",
+                        LaTeXUtils.MATH_VARIABLE_NAME,
+                        i + 1,
+                        LaTeXUtils.toCoefficient(result.get(i))
+                    )
+                );
+            }
+            writer.write("\\]");
+            Main.newLine(writer);
+            writer.write("Welche beiden linearen Programme in Standard-Maximum-Form m\\\"ussen nun gem\\\"a\\ss{} ");
+            writer.write("dem Branch-And-Cut-Verfahren im n\\\"achsten Schritt gel\\\"ost werden, um die in dieser ");
+            writer.write("L\\\"osung enthaltene Verletzung der Ganzzahligkeitsbedingungen zu verhindern?");
+            Main.newLine(writer);
+            Main.newLine(writer);
+        } else {
+            writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
+            writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale ");
+            writer.write(String.format("Belegung f\\\"ur die Variablen $%s_{1}", LaTeXUtils.MATH_VARIABLE_NAME));
+            for (int index = 1; index < problem.target().length; index++) {
+                writer.write(String.format(", %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1));
+            }
+            writer.write("$ und den daraus resultierenden Wert der Zielfunktion an oder begr\\\"unden Sie, warum es ");
+            writer.write("keine solche optimale Belegung gibt.");
+            Main.newLine(writer);
+            Main.newLine(writer);
+            final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
+            switch (mode) {
+            case SOLUTION_SPACE:
+                LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+                // fall-through
+            case ALWAYS:
+                writer.write("{\\renewcommand{\\arraystretch}{1.5}");
+                Main.newLine(writer);
+                boolean first = true;
+                final int[] pagebreakCounters =
+                    LaTeXUtils.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
+                int tableaus = 0;
+                int counterIndex = 0;
+                for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
+                    if (first) {
+                        first = false;
+                    } else {
                         Main.newLine(writer);
-                        Main.newLine(writer);
-                        tableaus = 0;
-                        counterIndex++;
+                        writer.write("Neuer Zweig:\\\\");
                     }
-                    SimplexAlgorithm.printTableau(tableau, false, writer);
-                    tableaus++;
+                    for (final SimplexTableau tableau : branch.y) {
+                        Main.newLine(writer);
+                        if (counterIndex < pagebreakCounters.length && tableaus >= pagebreakCounters[counterIndex]) {
+                            writer.write("\\newpage");
+                            Main.newLine(writer);
+                            Main.newLine(writer);
+                            tableaus = 0;
+                            counterIndex++;
+                        }
+                        SimplexAlgorithm.printTableau(tableau, false, writer);
+                        tableaus++;
+                    }
                 }
+                Main.newLine(writer);
+                writer.write("\\renewcommand{\\arraystretch}{1}}");
+                Main.newLine(writer);
+                LaTeXUtils.printVerticalProtectedSpace(writer);
+                writer.write("Ergebnis:");
+                Main.newLine(writer);
+                if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
+                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
+                }
+                Main.newLine(writer);
+                break;
+            default:
+                //do nothing
             }
-            Main.newLine(writer);
-            writer.write("\\renewcommand{\\arraystretch}{1}}");
-            Main.newLine(writer);
-            LaTeXUtils.printVerticalProtectedSpace(writer);
-            writer.write("Ergebnis:");
-            Main.newLine(writer);
-            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
-                LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
-            }
-            Main.newLine(writer);
-            break;
-        default:
-            //do nothing
         }
     }
 
@@ -692,157 +850,113 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("{\\renewcommand{\\arraystretch}{1.5}");
-        Main.newLine(writer);
-        boolean first = true;
-        final int[] pagebreakCounters =
-            LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
-        int tableaus = 0;
-        int counterIndex = 0;
-        for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
-            if (first) {
-                first = false;
+        if (options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 2) {
+            final SimplexTableau beforeBranch = SimplexAlgorithm.getTableauBeforeFirstBranch(solution);
+            final Optional<Pair<Integer, BigFraction>> violation = beforeBranch.getIntegralViolation();
+            if (violation.isEmpty()) {
+                writer.write("Es sind keine weiteren Probleme zu l\\\"osen, da keine Verletzung der ");
+                writer.write("Ganzzahligkeitsbedingungen vorliegt.");
+                Main.newLine(writer);
+                Main.newLine(writer);
             } else {
+                final Pair<SimplexProblem, SimplexProblem> newProblems =
+                    SimplexAlgorithm.branchAndBound(
+                        problem.target(),
+                        problem.conditions(),
+                        problem.integral(),
+                        List.of(),
+                        violation.get()
+                    );
+                LaTeXUtils.printTikzBeginning(TikZStyle.EMPTY, writer);
+                writer.write("\\node (and) {und};");
                 Main.newLine(writer);
-                writer.write("Neuer Zweig:\\\\[2ex]");
+                writer.write("\\node[rectangle,draw=black] (1) [left=0.1 of and.north west,anchor=north east] {%");
+                Main.newLine(writer);
+                LaTeXUtils.printMinipageBeginning("0.45\\columnwidth", writer);
+                SimplexAlgorithm.printSimplexProblem(newProblems.x, writer);
+                Main.newLine(writer);
+                LaTeXUtils.printMinipageEnd(writer);
+                writer.write("};");
+                Main.newLine(writer);
+                writer.write("\\node[rectangle,draw=black] (2) [right=0.1 of and.north east,anchor=north west] {%");
+                Main.newLine(writer);
+                LaTeXUtils.printMinipageBeginning("0.45\\columnwidth", writer);
+                SimplexAlgorithm.printSimplexProblem(newProblems.y, writer);
+                Main.newLine(writer);
+                LaTeXUtils.printMinipageEnd(writer);
+                writer.write("};");
+                Main.newLine(writer);
+                LaTeXUtils.printTikzEnd(writer);
+                Main.newLine(writer);
             }
-            for (final SimplexTableau tableau : branch.y) {
-                Main.newLine(writer);
-                if (counterIndex < pagebreakCounters.length && tableaus >= pagebreakCounters[counterIndex]) {
-                    writer.write("\\newpage");
+        } else {
+            writer.write("{\\renewcommand{\\arraystretch}{1.5}");
+            Main.newLine(writer);
+            boolean first = true;
+            final int[] pagebreakCounters =
+                LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+            int tableaus = 0;
+            int counterIndex = 0;
+            for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
+                if (first) {
+                    first = false;
+                } else {
                     Main.newLine(writer);
-                    Main.newLine(writer);
-                    tableaus = 0;
-                    counterIndex++;
+                    writer.write("Neuer Zweig:\\\\[2ex]");
                 }
-                SimplexAlgorithm.printTableau(tableau, true, writer);
-                tableaus++;
+                for (final SimplexTableau tableau : branch.y) {
+                    Main.newLine(writer);
+                    if (counterIndex < pagebreakCounters.length && tableaus >= pagebreakCounters[counterIndex]) {
+                        writer.write("\\newpage");
+                        Main.newLine(writer);
+                        Main.newLine(writer);
+                        tableaus = 0;
+                        counterIndex++;
+                    }
+                    SimplexAlgorithm.printTableau(tableau, true, writer);
+                    tableaus++;
+                }
             }
-        }
-        Main.newLine(writer);
-        writer.write("\\renewcommand{\\arraystretch}{1}}");
-        Main.newLine(writer);
-        LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("Ergebnis: ");
-        switch (solution.answer()) {
-        case UNBOUNDED:
-            writer.write("unbeschr\\\"ankt, da wir eine Pivot-Spalte mit nicht-positiven Koeffizienten haben");
-            break;
-        case UNSOLVABLE:
-            writer.write(
-                "unl\\\"osbar, da wir eine Pivot-Zeile mit negativem Limit, aber nicht-negativen Koeffizienten haben"
-            );
-            break;
-        default:
-            final List<BigFraction> result = solution.getOptimalResult().get();
-            writer.write(
-                String.format(
-                    "$%s_{1}^* = %s$",
-                    LaTeXUtils.MATH_VARIABLE_NAME,
-                    LaTeXUtils.toCoefficient(result.get(0))
-                )
-            );
-            for (int i = 1; i < result.size() - 1; i++) {
+            Main.newLine(writer);
+            writer.write("\\renewcommand{\\arraystretch}{1}}");
+            Main.newLine(writer);
+            LaTeXUtils.printVerticalProtectedSpace(writer);
+            writer.write("Ergebnis: ");
+            switch (solution.answer()) {
+            case UNBOUNDED:
+                writer.write("unbeschr\\\"ankt, da wir eine Pivot-Spalte mit nicht-positiven Koeffizienten haben");
+                break;
+            case UNSOLVABLE:
+                writer.write("unl\\\"osbar, da wir eine Pivot-Zeile mit negativem Limit, aber nicht-negativen ");
+                writer.write("Koeffizienten haben");
+                break;
+            default:
+                final List<BigFraction> result = solution.getOptimalResult().get();
                 writer.write(
                     String.format(
-                        ", $%s_{%d}^* = %s$",
+                        "$%s_{1}^* = %s$",
                         LaTeXUtils.MATH_VARIABLE_NAME,
-                        i + 1,
-                        LaTeXUtils.toCoefficient(result.get(i))
+                        LaTeXUtils.toCoefficient(result.get(0))
                     )
                 );
+                for (int i = 1; i < result.size() - 1; i++) {
+                    writer.write(
+                        String.format(
+                            ", $%s_{%d}^* = %s$",
+                            LaTeXUtils.MATH_VARIABLE_NAME,
+                            i + 1,
+                            LaTeXUtils.toCoefficient(result.get(i))
+                        )
+                    );
+                }
+                writer.write(String.format(", $z(\\mathbf{x}^*) = %s$", LaTeXUtils.toCoefficient(result.getLast())));
+                break;
             }
-            writer.write(String.format(", $z(\\mathbf{x}^*) = %s$", LaTeXUtils.toCoefficient(result.getLast())));
-            break;
+            Main.newLine(writer);
+            Main.newLine(writer);
+            SimplexAlgorithm.printStatisticsAsComment(solution, writer);
+            Main.newLine(writer);
         }
-        Main.newLine(writer);
-        Main.newLine(writer);
-        SimplexAlgorithm.printStatisticsAsComment(solution, writer);
-        Main.newLine(writer);
-    }
-
-    private Pair<List<BigFraction[]>, List<BigFraction[]>> branchAndBound(
-        final List<BigFraction[]> cuttingHyperPlanes,
-        final Pair<Integer, BigFraction> violation,
-        final int numberOfColumns
-    ) {
-        final BigFraction[] smallerRow = new BigFraction[numberOfColumns];
-        final BigFraction[] biggerRow = new BigFraction[numberOfColumns];
-        Arrays.fill(smallerRow, BigFraction.ZERO);
-        Arrays.fill(biggerRow, BigFraction.ZERO);
-        smallerRow[violation.x] = BigFraction.ONE;
-        biggerRow[violation.x] = BigFraction.ONE.negate();
-        final BigInteger floor = violation.y.getNumerator().divide(violation.y.getDenominator());
-        smallerRow[smallerRow.length - 1] = new BigFraction(floor);
-        biggerRow[biggerRow.length - 1] = new BigFraction(floor.add(BigInteger.ONE).negate());
-        final List<BigFraction[]> smallerRows = new ArrayList<BigFraction[]>(cuttingHyperPlanes);
-        final List<BigFraction[]> biggerRows = new ArrayList<BigFraction[]>(cuttingHyperPlanes);
-        smallerRows.add(smallerRow);
-        biggerRows.add(biggerRow);
-        return new Pair<List<BigFraction[]>, List<BigFraction[]>>(smallerRows, biggerRows);
-    }
-
-    private void branchAndCut(
-        final SimplexTableau tableau,
-        final Pair<Integer, BigFraction> violation,
-        final Pair<SimplexProblem, List<SimplexTableau>> branch,
-        final int branchIndex,
-        final List<Pair<SimplexProblem, List<SimplexTableau>>> branches
-    ) {
-        final SimplexProblem problem = tableau.problem();
-        final List<BigFraction[]> cuttingHyperPlanes = this.computeCuttingHyperPlanes(problem);
-        final Pair<List<BigFraction[]>, List<BigFraction[]>> branchRows =
-            this.branchAndBound(cuttingHyperPlanes, violation, problem.target().length + 1);
-        final Matrix originalMatrix = branch.x.conditions();
-        final SimplexProblem smaller =
-            new SimplexProblem(
-                problem.target(),
-                originalMatrix.insertRowsAtIndex(branchRows.x, originalMatrix.getNumberOfRows()),
-                problem.integral()
-            );
-        final SimplexProblem bigger =
-            new SimplexProblem(
-                problem.target(),
-                originalMatrix.insertRowsAtIndex(branchRows.y, originalMatrix.getNumberOfRows()),
-                problem.integral()
-            );
-        branch.y.add(SimplexAlgorithm.simplexInitializeTableau(smaller));
-        final List<SimplexTableau> nextBranch = new LinkedList<SimplexTableau>();
-        nextBranch.add(SimplexAlgorithm.simplexInitializeTableau(bigger));
-        branches.set(branchIndex, new Pair<SimplexProblem, List<SimplexTableau>>(smaller, branch.y));
-        branches.add(new Pair<SimplexProblem, List<SimplexTableau>>(bigger, nextBranch));
-    }
-
-    private List<BigFraction[]> computeCuttingHyperPlanes(final SimplexProblem problem) {
-        // TODO Auto-generated method stub
-        final List<BigFraction[]> result = new LinkedList<BigFraction[]>();
-        return result;
-    }
-
-    private SimplexAnswer simplexBestAnswer(final SimplexAnswer answer1, final SimplexAnswer answer2) {
-        switch (answer1) {
-        case UNSOLVABLE:
-            return answer2;
-        case INCOMPLETE:
-        case UNBOUNDED:
-            return answer2 == SimplexAnswer.INCOMPLETE ? answer2 : answer1;
-        default:
-            switch (answer2) {
-            case INCOMPLETE:
-            case UNBOUNDED:
-                return answer2;
-            default:
-                return answer1;
-            }
-        }
-    }
-
-    private SimplexAnswer simplexComputeAnswer(final List<Pair<SimplexProblem, List<SimplexTableau>>> branches) {
-        SimplexAnswer answer = SimplexAnswer.UNSOLVABLE;
-        for (final Pair<SimplexProblem, List<SimplexTableau>> branch : branches) {
-            answer = this.simplexBestAnswer(answer, SimplexAlgorithm.simplexComputeAnswer(branch.y.getLast()));
-        }
-        return answer;
     }
 
 }
