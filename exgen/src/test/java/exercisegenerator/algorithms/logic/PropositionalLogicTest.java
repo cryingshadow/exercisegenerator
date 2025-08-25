@@ -19,6 +19,7 @@ public class PropositionalLogicTest {
         return new Object[][] {
             {ClauseSet.EMPTY, new DPLLNode(ClauseSet.EMPTY)},
             {ClauseSet.FALSE, new DPLLNode(ClauseSet.FALSE)},
+            {DPLL.parseClauses("{},{A}"), new DPLLNode(DPLL.parseClauses("{},{A}"))},
             {
                 DPLL.parseClauses("{A}"),
                 new DPLLNode(

@@ -67,6 +67,9 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         Optional<DPLLAssignment> result = Optional.empty();
         ClauseSet currentClauses = clauses;
         while (assignmentApplicable.test(currentClauses)) {
+            if (currentClauses.contains(Clause.EMPTY)) {
+                return result;
+            }
             final Literal literal = assignmentSelection.apply(currentClauses);
             currentClauses = DPLL.setTruth(literal.variable(), !literal.negative(), currentClauses);
             result =
@@ -180,6 +183,9 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
 
     @Override
     public DPLLNode apply(final ClauseSet clauses) {
+        if (clauses.isEmpty() || clauses.contains(Clause.EMPTY)) {
+            return new DPLLNode(clauses);
+        }
         DPLLNode result = new DPLLNode(clauses).addLeftmost(DPLL.unitPropagation(clauses));
         result = result.addLeftmost(DPLL.pureAssignment(result.getLeftmostClauses()));
         final ClauseSet latest = result.getLeftmostClauses();
