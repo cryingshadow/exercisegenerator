@@ -31,7 +31,7 @@ public class Main {
 
     private static final String[] HELP;
 
-    private static final String VERSION = "4.5.1";
+    private static final String VERSION = "4.5.2";
 
     static {
         RANDOM = new Random();
@@ -129,7 +129,7 @@ public class Main {
         }
     }
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException {
         if (args == null || args.length < 1) {
             new MainFrame(Main.VERSION).setVisible(true);
             return;

@@ -349,7 +349,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         }
         final List<Integer> currentForbiddenIndices = new LinkedList<Integer>(forbiddenIndices);
         final Stream.Builder<Integer> builder = Stream.builder();
-        for (int i = 0; i < numberOfValues; i++) {
+        for (int i = 0, iterations = 0; i < numberOfValues && iterations < numberOfValues * 10; i++, iterations++) {
             final int value = Hashing.generateRandomValue();
             final int index = hashFunction.apply(value);
             if (currentForbiddenIndices.contains(index)) {
