@@ -403,6 +403,15 @@ public enum Algorithm {
         KnapsackAlgorithm.INSTANCE
     ),
 
+    KOSARAJU_SHARIR(
+        "kosarajusharir",
+        "Kosaraju-Sharir-Algorithmus",
+        new String[] {
+            "Detection of strongly connected components using the Kosaraju-Sharir algorithm."
+        },
+        KosarajuSharirAlgorithm.INSTANCE
+    ),
+
     KRUSKAL(
         "kruskal",
         "Kruskal Algorithmus",
@@ -503,16 +512,6 @@ public enum Algorithm {
         RedBlackTreeAlgorithm.INSTANCE
     ),
 
-    SCC(
-        "scc",
-        "Starke Zusammenhangskomponenten",
-        new String[] {
-            "Detection of strongly connected components." // TODO
-        },
-        SCCAlgorithm.INSTANCE,
-        false
-    ),
-
     SELECTIONSORT(
         "selectionsort",
         "Selectionsort",
@@ -521,16 +520,6 @@ public enum Algorithm {
             "The flag -l specifies the length of the array to sort for generated instances."
         },
         SelectionSort.INSTANCE
-    ),
-
-    SHARIR(
-        "sharir",
-        "Starke Zusammenhangskomponenten finden mit Sharir's Algorithmus",
-        new String[] {
-            "Detection of strongly connected components using Sharir's algorithm." // TODO
-        },
-        SharirAlgorithm.INSTANCE,
-        false
     ),
 
     SIMPLEX(

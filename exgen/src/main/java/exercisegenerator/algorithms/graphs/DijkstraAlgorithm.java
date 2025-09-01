@@ -55,7 +55,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
         }
     }
 
-    private static <V> void fillRowHeadingsAndIdsForDijkstra(
+    private static <V extends Comparable<V>> void fillRowHeadingsAndIdsForDijkstra(
         final String[][] exTable,
         final String[][] solTable,
         final List<Vertex<V>> vertices,
@@ -67,7 +67,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
         exTable[0][0] = solTable[0][0];
         for (final Vertex<V> vertex : vertices) {
             if (!vertex.equals(start)) {
-                solTable[0][rowIndex] = DijkstraAlgorithm.toRowHeading(vertex.label);
+                solTable[0][rowIndex] = DijkstraAlgorithm.toRowHeading(vertex.label());
                 exTable[0][rowIndex] = solTable[0][rowIndex];
                 vertexIds.put(vertex, rowIndex);
                 rowIndex++;
@@ -75,14 +75,14 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
         }
     }
 
-    private static <V> void improveDistancesForVertex(
+    private static <V extends Comparable<V>> void improveDistancesForVertex(
         final Vertex<V> currentVertex,
         final int currentVertexId,
         final Graph<V, Integer> graph,
         final Map<Vertex<V>, Integer> vertexIds,
         final Integer[] distances
     ) {
-        for (final Edge<Integer, V> edge : graph.getAdjacencyList(currentVertex)) {
+        for (final Edge<Integer, V> edge : graph.getAdjacencySet(currentVertex)) {
             final Integer toVertexId = vertexIds.get(edge.to());
             if (
                 toVertexId != null
@@ -96,14 +96,14 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
         }
     }
 
-    private static <V> void setColumnHeadForDijkstra(
+    private static <V extends Comparable<V>> void setColumnHeadForDijkstra(
         final String[][] exTable,
         final String[][] solTable,
         final int columnIndex,
         final Vertex<V> currentVertex
     ) {
         exTable[columnIndex][0] = "";
-        solTable[columnIndex][0] = DijkstraAlgorithm.toColumnHeading(currentVertex.label);
+        solTable[columnIndex][0] = DijkstraAlgorithm.toColumnHeading(currentVertex.label());
     }
 
     private static <V> String toColumnHeading(final Optional<V> label) {
@@ -124,7 +124,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
 
     @Override
     public DijkstraTables apply(final GraphProblem problem) {
-        final Vertex<String> start = problem.startNode();
+        final Vertex<String> start = problem.startNode().get();
         final Graph<String, Integer> graph = problem.graphWithLayout().graph();
         final List<Vertex<String>> vertices = GraphAlgorithm.getSortedListOfVertices(graph, problem.comparator());
         vertices.remove(start);
@@ -165,7 +165,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
             currentVertexId = vertexIndexWithMinimumDistance.get();
             solColor[columnIndex][currentVertexId] = "black!20";
         }
-        exTable[1][0] = DijkstraAlgorithm.toColumnHeading(start.label);
+        exTable[1][0] = DijkstraAlgorithm.toColumnHeading(start.label());
         if (Main.TEXT_VERSION == TextVersion.ABRAHAM) {
             final String[][] exTableExtended = new String[size][size + 1];
             final String[][] exColorExtended = new String[size][size + 1];
@@ -175,7 +175,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
             DijkstraAlgorithm.copyToExtended(exColor, exColorExtended);
             DijkstraAlgorithm.copyToExtended(solTable, solTableExtended);
             DijkstraAlgorithm.copyToExtended(solColor, solColorExtended);
-            solTableExtended[0][1] = DijkstraAlgorithm.toRowHeading(start.label);
+            solTableExtended[0][1] = DijkstraAlgorithm.toRowHeading(start.label());
             exTableExtended[0][1] = solTableExtended[0][1];
             for (int i = 1; i < size; i++) {
                 solTableExtended[i][1] = String.valueOf(0);
@@ -203,7 +203,7 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
         final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         GraphAlgorithm.printGraphExercise(
             GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options)),
-            String.format(DijkstraAlgorithm.DIJKSTRA_PATTERN,  problem.startNode().label.get().toString()),
+            String.format(DijkstraAlgorithm.DIJKSTRA_PATTERN,  problem.startNode().get().label().get().toString()),
             writer
         );
         switch (mode) {

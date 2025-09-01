@@ -7,7 +7,7 @@ import java.util.stream.*;
 import exercisegenerator.*;
 import exercisegenerator.structures.graphs.*;
 
-public interface GraphLayout<V, E, T extends Number> {
+public interface GraphLayout<V extends Comparable<V>, E extends Comparable<E>, T extends Number> {
 
     public static <E> String edgeFormat(
         final String style,

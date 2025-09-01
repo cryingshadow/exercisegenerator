@@ -1,8 +1,9 @@
 package exercisegenerator.structures.graphs.flownetwork;
 
 import exercisegenerator.*;
+import exercisegenerator.util.*;
 
-public record FlowAndCapacity(int flow, int capacity) {
+public record FlowAndCapacity(int flow, int capacity) implements Comparable<FlowAndCapacity> {
 
     @Override
     public String toString() {
@@ -14,6 +15,16 @@ public record FlowAndCapacity(int flow, int capacity) {
             default:
                 throw new IllegalStateException("Unkown text version!");
         }
+    }
+
+    @Override
+    public int compareTo(final FlowAndCapacity o) {
+        return LexicographicComparator.compare(
+            this,
+            o,
+            (o1, o2) -> Integer.compare(o1.flow(), o2.flow()),
+            (o1, o2) -> Integer.compare(o1.capacity(), o2.capacity())
+        );
     }
 
 }

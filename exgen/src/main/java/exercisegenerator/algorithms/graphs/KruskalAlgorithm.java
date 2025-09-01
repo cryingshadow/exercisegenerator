@@ -32,18 +32,18 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
                         final UndirectedEdge<String, Integer> edge1,
                         final UndirectedEdge<String, Integer> edge2
                     ) {
-                        return edge1.label.get().compareTo(edge2.label.get());
+                        return edge1.label().get().compareTo(edge2.label().get());
                     }
                 }
             ).collect(Collectors.toCollection(LinkedList::new));
         final UnionFind<Vertex<String>> components = new UnionFind<Vertex<String>>();
         while (!edges.isEmpty()) {
             final UndirectedEdge<String, Integer> edge = edges.removeFirst();
-            if (!components.connected(edge.from, edge.to)) {
+            if (!components.connected(edge.from(), edge.to())) {
                 result.add(edge);
-                tree.addEdge(edge.from, edge.label, edge.to);
-                tree.addEdge(edge.to, edge.label, edge.from);
-                components.union(edge.from, edge.to);
+                tree.addEdge(edge.from(), edge.label(), edge.to());
+                tree.addEdge(edge.to(), edge.label(), edge.from());
+                components.union(edge.from(), edge.to());
             }
         }
         return new KruskalResult<String>(
@@ -84,7 +84,7 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
         writer.write("an:\\\\[2ex]");
         Main.newLine(writer);
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        writer.write(String.format("Kantenreihenfolge:\\\\[%dex]", solution.edges.size() * 4));
+        writer.write(String.format("Kantenreihenfolge:\\\\[%dex]", solution.edges().size() * 4));
         Main.newLine(writer);
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
@@ -101,7 +101,7 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
         writer.write("Kantenreihenfolge:\\\\[-2ex]");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
-        for (final UndirectedEdge<String, Integer> edge : solution.edges) {
+        for (final UndirectedEdge<String, Integer> edge : solution.edges()) {
             writer.write(LaTeXUtils.ITEM);
             writer.write(" ");
             writer.write(edge.toString());
@@ -111,9 +111,9 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        solution.treeWithLayout.graph().printTikZ(
+        solution.treeWithLayout().graph().printTikZ(
             GraphAlgorithm.stretch(
-                ((GridGraphLayout<String, Integer>)solution.treeWithLayout.layout()).setDirected(false),
+                ((GridGraphLayout<String, Integer>)solution.treeWithLayout().layout()).setDirected(false),
                 GraphAlgorithm.parseDistanceFactor(options)
             ),
             writer

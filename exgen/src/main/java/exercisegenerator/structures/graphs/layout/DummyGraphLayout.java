@@ -4,7 +4,8 @@ import java.io.*;
 
 import exercisegenerator.structures.graphs.*;
 
-public final class DummyGraphLayout<V, E, T extends Number> implements GraphLayout<V, E, T> {
+public final class DummyGraphLayout<V extends Comparable<V>, E extends Comparable<E>, T extends Number>
+implements GraphLayout<V, E, T> {
 
     @Override
     public Coordinates2D<T> getPosition(final Vertex<V> vertex) {

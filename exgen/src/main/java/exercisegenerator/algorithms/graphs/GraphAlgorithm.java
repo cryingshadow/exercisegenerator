@@ -16,81 +16,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
 
     static final int DEFAULT_EDGE_ROOT = 3;
 
-//    static VertexGridPosition addVertexWithGridLayout(
-//        final Vertex<String> vertex,
-//        final Graph<String, ?> graph,
-//        final Pair<GridCoordinates, Boolean> pos,
-//        final Map<GridCoordinates, Vertex<String>> grid,
-//        final Map<Vertex<String>, VertexGridPosition> positions
-//    ) {
-//        graph.addVertex(vertex);
-//        grid.put(pos.x, vertex);
-//        final int x = pos.x.x;
-//        final int y = pos.x.y;
-//        final VertexGridPosition gridPos = new VertexGridPosition(pos.x.x, pos.x.y, pos.y);
-//        positions.put(vertex, gridPos);
-//        GridCoordinates nextPos = new GridCoordinates(x, y - 1);
-//        Vertex<String> nextVertex = grid.get(nextPos);
-//        if (nextVertex != null) {
-//            final VertexGridPosition nextGridPos = positions.get(nextVertex);
-//            gridPos.north = nextGridPos;
-//            nextGridPos.south = gridPos;
-//        }
-//        nextPos = new GridCoordinates(x + 1, y);
-//        nextVertex = grid.get(nextPos);
-//        if (nextVertex != null) {
-//            final VertexGridPosition nextGridPos = positions.get(nextVertex);
-//            gridPos.east = nextGridPos;
-//            nextGridPos.west = gridPos;
-//        }
-//        nextPos = new GridCoordinates(x, y + 1);
-//        nextVertex = grid.get(nextPos);
-//        if (nextVertex != null) {
-//            final VertexGridPosition nextGridPos = positions.get(nextVertex);
-//            gridPos.south = nextGridPos;
-//            nextGridPos.north = gridPos;
-//        }
-//        nextPos = new GridCoordinates(x - 1, y);
-//        nextVertex = grid.get(nextPos);
-//        if (nextVertex != null) {
-//            final VertexGridPosition nextGridPos = positions.get(nextVertex);
-//            gridPos.west = nextGridPos;
-//            nextGridPos.east = gridPos;
-//        }
-//        if (pos.y) {
-//            nextPos = new GridCoordinates(x + 1, y - 1);
-//            nextVertex = grid.get(nextPos);
-//            if (nextVertex != null) {
-//                final VertexGridPosition nextGridPos = positions.get(nextVertex);
-//                gridPos.northeast = nextGridPos;
-//                nextGridPos.southwest = gridPos;
-//            }
-//            nextPos = new GridCoordinates(x + 1, y + 1);
-//            nextVertex = grid.get(nextPos);
-//            if (nextVertex != null) {
-//                final VertexGridPosition nextGridPos = positions.get(nextVertex);
-//                gridPos.southeast = nextGridPos;
-//                nextGridPos.northwest = gridPos;
-//            }
-//            nextPos = new GridCoordinates(x - 1, y + 1);
-//            nextVertex = grid.get(nextPos);
-//            if (nextVertex != null) {
-//                final VertexGridPosition nextGridPos = positions.get(nextVertex);
-//                gridPos.southwest = nextGridPos;
-//                nextGridPos.northeast = gridPos;
-//            }
-//            nextPos = new GridCoordinates(x - 1, y - 1);
-//            nextVertex = grid.get(nextPos);
-//            if (nextVertex != null) {
-//                final VertexGridPosition nextGridPos = positions.get(nextVertex);
-//                gridPos.northwest = nextGridPos;
-//                nextGridPos.southeast = gridPos;
-//            }
-//        }
-//        return gridPos;
-//    }
-
-    static <V> List<Vertex<V>> getSortedListOfVertices(
+    static <V extends Comparable<V>> List<Vertex<V>> getSortedListOfVertices(
         final Graph<V, Integer> graph,
         final Comparator<Vertex<V>> comparator
     ) {
@@ -156,7 +82,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         );
     }
 
-    static <V, E> GridGraphLayout<V, E> stretch(
+    static <V extends Comparable<V>, E extends Comparable<E>> GridGraphLayout<V, E> stretch(
         final GridGraphLayout<V, E> graphLayout,
         final double factor
     ) {
@@ -260,8 +186,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
             );
         return new GraphProblem(
             graphWithLayout,
-            GraphAlgorithm.generateStartVertex(graphWithLayout.graph(), options),
-            StringVertexComparator.INSTANCE
+            GraphAlgorithm.generateStartVertex(graphWithLayout.graph(), options)
         );
     }
 
@@ -297,8 +222,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
             Graph.create(reader, new StringLabelParser(), new IntLabelParser());
         return new GraphProblem(
             graphWithLayout,
-            GraphAlgorithm.parseOrGenerateStartVertex(graphWithLayout.graph(), options),
-            StringVertexComparator.INSTANCE
+            GraphAlgorithm.parseOrGenerateStartVertex(graphWithLayout.graph(), options)
         );
     }
 

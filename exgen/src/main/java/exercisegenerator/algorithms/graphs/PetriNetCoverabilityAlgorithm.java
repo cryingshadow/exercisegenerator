@@ -19,10 +19,7 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
     @Override
     public CoverabilityGraph apply(final PetriNetInput input) {
         final PetriNet net = new PetriNet(input);
-        final PetriMarking firstTokens = net.getZeroMarking();
-        for (final Map.Entry<Integer, Integer> entry : input.tokens().entrySet()) {
-            firstTokens.merge(entry.getKey(), Optional.of(entry.getValue()), PetriMarking::omegaSum);
-        }
+        final PetriMarking firstTokens = PetriMarking.create(input.tokens());
         final CoverabilityGraph result = new CoverabilityGraph(new Vertex<PetriMarking>(firstTokens));
         final List<PetriMarking> used = new LinkedList<PetriMarking>();
         used.add(firstTokens);
@@ -93,13 +90,13 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
         final List<PetriMarking> used,
         final CoverabilityGraph graph
     ) {
-        final PetriMarking result = new PetriMarking(nextTokens);
+        final PetriMarking result = PetriMarking.create(nextTokens);
         for (final PetriMarking existingTokens : used) {
             if (result.strictlyCovers(existingTokens) && this.isReachable(existingTokens, tokens, graph)) {
-                for (final Map.Entry<Integer, Optional<Integer>> entry : existingTokens.entrySet()) {
-                    final Optional<Integer> resultValue = result.get(entry.getKey());
-                    if (resultValue.isPresent() && resultValue.get() > entry.getValue().get()) {
-                        result.put(entry.getKey(), Optional.empty());
+                for (int i = 0; i < existingTokens.size(); i++) {
+                    final Optional<Integer> resultValue = result.get(i);
+                    if (resultValue.isPresent() && resultValue.get() > existingTokens.get(i).get()) {
+                        result.set(i, Optional.empty());
                     }
                 }
             }
@@ -123,7 +120,7 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
         while (!queue.isEmpty()) {
             final Vertex<PetriMarking> current = queue.poll();
             for (final Vertex<PetriMarking> next : graph.getAdjacentVertices(current)) {
-                final PetriMarking tokens = next.label.get();
+                final PetriMarking tokens = next.label().get();
                 if (used.contains(tokens)) {
                     continue;
                 }

@@ -24,7 +24,7 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
     public List<String> apply(final GraphProblem problem) {
         final Set<Vertex<String>> used = new LinkedHashSet<Vertex<String>>();
         final Queue<Vertex<String>> queue = new LinkedList<Vertex<String>>();
-        queue.offer(problem.startNode());
+        queue.offer(problem.startNode().get());
         final List<String> result = new LinkedList<String>();
         while (!queue.isEmpty()) {
             final Vertex<String> vertex = queue.poll();
@@ -32,7 +32,7 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
                 continue;
             }
             used.add(vertex);
-            result.add(vertex.label.get());
+            result.add(vertex.label().get());
             final List<Vertex<String>> nextVertices =
                 new ArrayList<Vertex<String>>(problem.graphWithLayout().graph().getAdjacentVertices(vertex));
             Collections.sort(nextVertices, problem.comparator());
@@ -65,7 +65,7 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
                 ),
                 GraphAlgorithm.parseDistanceFactor(options)
             ),
-            BreadthFirstSearch.breadthFirstSearchTask(problem.startNode().label.get()),
+            BreadthFirstSearch.breadthFirstSearchTask(problem.startNode().get().label().get()),
             writer
         );
         Main.newLine(writer);

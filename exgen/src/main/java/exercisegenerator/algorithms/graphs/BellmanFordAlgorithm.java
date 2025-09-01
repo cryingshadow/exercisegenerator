@@ -56,7 +56,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         result[1][0] = "\\textbf{Distanz/Vorg\\\"anger}";
         int i = 1;
         for (final Vertex<String> vertex : vertices) {
-            final String label = vertex.label.get();
+            final String label = vertex.label().get();
             result[0][i] = String.format("\\textbf{%s}", label);
             if (fill) {
                 if (step.distances.containsKey(label)) {
@@ -86,19 +86,19 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final List<BellmanFordStep<String>> result = new LinkedList<BellmanFordStep<String>>();
         final Map<String, Integer> distances = new LinkedHashMap<String, Integer>();
         final Map<String, String> predecessors = new LinkedHashMap<String, String>();
-        distances.put(problem.startNode().label.get(), 0);
+        distances.put(problem.startNode().get().label().get(), 0);
         result.add(new BellmanFordStep<String>(distances, predecessors));
         boolean changed = true;
         for (int i = 0; i < numberOfVertices - 1 && changed; i++) {
             changed = false;
             for (final Vertex<String> from : vertices) {
-                final String fromLabel = from.label.get();
+                final String fromLabel = from.label().get();
                 if (!distances.containsKey(fromLabel)) {
                     continue;
                 }
-                for (final Edge<Integer, String> edge : problem.graphWithLayout().graph().getAdjacencyList(from)) {
-                    final int newDistance = distances.get(from.label.get()) + edge.label().get();
-                    final String toLabel = edge.to().label.get();
+                for (final Edge<Integer, String> edge : problem.graphWithLayout().graph().getAdjacencySet(from)) {
+                    final int newDistance = distances.get(from.label().get()) + edge.label().get();
+                    final String toLabel = edge.to().label().get();
                     if (!distances.containsKey(toLabel) || newDistance < distances.get(toLabel)) {
                         distances.put(toLabel, newDistance);
                         predecessors.put(toLabel, fromLabel);
@@ -130,7 +130,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
             GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
         GraphAlgorithm.printGraphExercise(
             GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options)),
-            String.format(BellmanFordAlgorithm.BELLMAN_FORD_PATTERN, problem.startNode().label.get()),
+            String.format(BellmanFordAlgorithm.BELLMAN_FORD_PATTERN, problem.startNode().get().label().get()),
             writer
         );
         writer.write("F\\\"ullen Sie dazu die nachfolgenden Tabellen aus:\\\\[2ex]");

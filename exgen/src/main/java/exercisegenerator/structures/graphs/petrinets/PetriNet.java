@@ -27,10 +27,8 @@ public class PetriNet {
                 t -> t.from()
                 .entrySet()
                 .stream()
-                .map(
-                    entry -> tokens.getOrDefault(entry.getKey(), Optional.of(0))
-                    .orElse(entry.getValue()) >= entry.getValue()
-                ).reduce(true, Boolean::logicalAnd)
+                .map(entry -> tokens.get(entry.getKey()).orElse(entry.getValue()) >= entry.getValue())
+                .reduce(true, Boolean::logicalAnd)
             ).toList();
     }
 
@@ -45,22 +43,18 @@ public class PetriNet {
     }
 
     public PetriMarking fireTransition(final PetriMarking tokens, final PetriTransition transition) {
-        final PetriMarking result = new PetriMarking(tokens);
+        final PetriMarking result = PetriMarking.create(tokens);
         for (final Map.Entry<Integer, Integer> fromEntry : transition.from().entrySet()) {
-            result.merge(fromEntry.getKey(), Optional.of(-fromEntry.getValue()), PetriMarking::omegaSum);
+            result.omegaMerge(fromEntry.getKey(), Optional.of(-fromEntry.getValue()));
         }
         for (final Map.Entry<Integer, Integer> toEntry : transition.to().entrySet()) {
-            result.merge(toEntry.getKey(), Optional.of(toEntry.getValue()), PetriMarking::omegaSum);
+            result.omegaMerge(toEntry.getKey(), Optional.of(toEntry.getValue()));
         }
         return result;
     }
 
     public PetriMarking getZeroMarking() {
-        final PetriMarking result = new PetriMarking();
-        for (int i = 0; i < this.places.length; i++) {
-            result.put(i, Optional.of(0));
-        }
-        return result;
+        return PetriMarking.createZeroMarking(this.places.length);
     }
 
     public Matrix toIncidenceMatrix() {
@@ -103,7 +97,7 @@ public class PetriNet {
                 }
             );
         try {
-            this.toTikz(new PetriMarking(), writer);
+            this.toTikz(this.getZeroMarking(), writer);
             writer.flush();
         } catch (final IOException e) {
             throw new IllegalStateException(e);
@@ -120,7 +114,7 @@ public class PetriNet {
                     "\\node[place,label=%d:%s,tokens=%d] (p%d) at (%d,%d) {};",
                     place.labelDegree(),
                     place.label(),
-                    tokens.getOrDefault(placeIndex, Optional.of(0)).orElseGet(() -> 0),
+                    tokens.get(placeIndex).orElseGet(() -> 0),
                     placeIndex,
                     place.x(),
                     place.y()

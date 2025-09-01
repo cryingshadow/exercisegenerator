@@ -28,7 +28,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
         result[0][0] = "\\#Iteration";
         int index = 1;
         for (final Vertex<String> vertex : vertices) {
-            result[0][index++] = vertex.label.get();
+            result[0][index++] = vertex.label().get();
         }
         for (int i = 0; i < table.length; i++) {
             result[i + 1][0] = String.valueOf(i + 1);
@@ -60,7 +60,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
         Collections.sort(vertices, problem.comparator());
         final int numberOfVertices = vertices.size();
         final Graph<String, Integer> tree = originalGraph.nodeCopy();
-        int recentlyAdded = vertices.indexOf(problem.startNode());
+        int recentlyAdded = vertices.indexOf(problem.startNode().get());
         final int[] parents = new int[numberOfVertices];
         final PrimEntry[][] table = new PrimEntry[numberOfVertices][numberOfVertices];
         for (int i = 0; i < numberOfVertices; i++) {
@@ -68,7 +68,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
             parents[i] = -1;
         }
         for (int i = 1; i < numberOfVertices; i++) {
-            for (final Edge<Integer, String> edge : originalGraph.getAdjacencyList(vertices.get(recentlyAdded))) {
+            for (final Edge<Integer, String> edge : originalGraph.getAdjacencySet(vertices.get(recentlyAdded))) {
                 final int toIndex = vertices.indexOf(edge.to());
                 final PrimEntry toEntry = table[i - 1][toIndex];
                 if (toEntry != null && !toEntry.done() && toEntry.compareTo(edge.label().get()) > 0) {
@@ -128,7 +128,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
                 ),
                 GraphAlgorithm.parseDistanceFactor(options)
             ),
-            String.format(PrimAlgorithm.PRIM_PATTERN, problem.startNode().label.get()),
+            String.format(PrimAlgorithm.PRIM_PATTERN, problem.startNode().get().label().get()),
             writer
         );
         writer.write(

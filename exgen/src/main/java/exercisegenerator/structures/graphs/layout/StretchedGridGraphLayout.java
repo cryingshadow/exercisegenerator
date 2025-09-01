@@ -6,7 +6,7 @@ import exercisegenerator.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class StretchedGridGraphLayout<V, E> extends GridGraphLayout<V, E> {
+public class StretchedGridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> extends GridGraphLayout<V, E> {
 
     private final double factor;
 
@@ -37,7 +37,7 @@ public class StretchedGridGraphLayout<V, E> extends GridGraphLayout<V, E> {
     }
 
     @Override
-    public <F> StretchedGridGraphLayout<V, F> convertEdgeLabelType() {
+    public <F extends Comparable<F>> StretchedGridGraphLayout<V, F> convertEdgeLabelType() {
         return new StretchedGridGraphLayout<V, F>(
             super.convertEdgeLabelType(),
             this.factor
@@ -91,7 +91,7 @@ public class StretchedGridGraphLayout<V, E> extends GridGraphLayout<V, E> {
     @Override
     public String toTikZ(final Vertex<V> vertex, final boolean startVertex, final boolean endVertex) {
         final Coordinates2D<Integer> coordinates = this.nodeCoordinates.get(vertex);
-        final String id = vertex.id.toString();
+        final String id = vertex.id().toString();
         return String.format(
             Locale.US,
             "\\node[%s] (n%s) at (%.2f,%.2f) {%s};%s",
@@ -99,7 +99,7 @@ public class StretchedGridGraphLayout<V, E> extends GridGraphLayout<V, E> {
             id,
             coordinates.x() * this.factor,
             coordinates.y() * this.factor,
-            vertex.label.map(label -> label.toString()).orElse(""),
+            vertex.label().map(label -> label.toString()).orElse(""),
             startVertex ? GraphLayout.startNodeDecoration(id) : Main.lineSeparator
         );
     }

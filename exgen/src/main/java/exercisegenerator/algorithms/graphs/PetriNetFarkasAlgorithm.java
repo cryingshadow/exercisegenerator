@@ -152,7 +152,7 @@ public abstract class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Mat
         Main.newLine(writer);
         final PetriNet net = new PetriNet(problem);
         LaTeXUtils.printDefaultAdjustboxBeginning(writer);
-        net.toTikz(new PetriMarking(), writer);
+        net.toTikz(net.getZeroMarking(), writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Berechnen Sie eine Basis der ");

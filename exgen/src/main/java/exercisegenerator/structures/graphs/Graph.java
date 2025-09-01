@@ -12,17 +12,13 @@ import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.layout.*;
 import exercisegenerator.structures.graphs.layout.GridGraphLayout.*;
 
-/**
- * Directed graph implemented by adjacency lists. It supports arbitrary edge and vertex labels and multiple edges
- * between the same vertices.
- * @param <V> The type of the vertex labels.
- * @param <E> The type of the edge labels.
- */
-public class Graph<V, E> {
+public class Graph<V extends Comparable<V>, E extends Comparable<E>> {
 
-    public static<V, E> Graph<V, E> create(final AdjacencyLists<V, E> adjacencyLists) {
+    public static<V extends Comparable<V>, E extends Comparable<E>> Graph<V, E> create(
+        final AdjacencySets<V, E> adjacencySets
+    ) {
         final Graph<V, E> result = new Graph<V, E>();
-        result.adjacencyLists = new AdjacencyLists<V, E>(adjacencyLists);
+        result.adjacencySets = new AdjacencySets<V, E>(adjacencySets);
         return result;
     }
 
@@ -46,7 +42,7 @@ public class Graph<V, E> {
      * @throws IOException If some error occurs during input, the input does not comply to the expected format, or if
      *                     we have an edge adjacent to a non-existing vertex.
      */
-    public static <V, E> GraphWithLayout<V, E, Integer> create(
+    public static <V extends Comparable<V>, E extends Comparable<E>> GraphWithLayout<V, E, Integer> create(
         final BufferedReader reader,
         final LabelParser<V> vertexParser,
         final LabelParser<E> edgeParser
@@ -144,27 +140,29 @@ public class Graph<V, E> {
         final GridGraphLayoutBuilder<V, E> layoutBuilder = GridGraphLayout.<V, E>builder().setDirected(true);
         for (final Coordinates2D<Integer> pos : vertexPositions) {
             final Vertex<V> vertex = verticesAtPositions.get(pos);
-            graph.adjacencyLists.put(vertex, new ArrayList<Edge<E, V>>());
+            graph.adjacencySets.put(vertex, new TreeSet<Edge<E, V>>());
             layoutBuilder.addVertex(vertex, new Coordinates2D<Integer>(pos.x(), maxRow - pos.y()));
         }
         for (
             final Entry<Coordinates2D<Integer>, List<Pair<Optional<E>, Coordinates2D<Integer>>>> edge : edges.entrySet()
         ) {
-            final List<Edge<E, V>> list = graph.adjacencyLists.get(verticesAtPositions.get(edge.getKey()));
+            final Set<Edge<E, V>> set = graph.adjacencySets.get(verticesAtPositions.get(edge.getKey()));
             for (final Pair<Optional<E>, Coordinates2D<Integer>> pair : edge.getValue()) {
-                list.add(new Edge<E, V>(pair.x, verticesAtPositions.get(pair.y)));
+                set.add(new Edge<E, V>(pair.x, verticesAtPositions.get(pair.y)));
             }
         }
         return new GraphWithLayout<V, E, Integer>(graph, layoutBuilder.build());
     }
 
-    public static<V, E> Graph<V, E> create(final Map<Vertex<V>, ? extends List<Edge<E, V>>> adjacencyLists) {
+    public static<V extends Comparable<V>, E extends Comparable<E>> Graph<V, E> create(
+        final Map<Vertex<V>, ? extends Set<Edge<E, V>>> adjacencySets
+    ) {
         final Graph<V, E> result = new Graph<V, E>();
-        result.adjacencyLists = new AdjacencyLists<V, E>(adjacencyLists);
+        result.adjacencySets = new AdjacencySets<V, E>(adjacencySets);
         return result;
     }
 
-    private static <E> void addEdges(
+    private static <E extends Comparable<E>> void addEdges(
         final Map<Coordinates2D<Integer>, List<Pair<Optional<E>, Coordinates2D<Integer>>>> edges,
         final String[] edgeLabels,
         final LabelParser<E> edgeParser,
@@ -191,7 +189,7 @@ public class Graph<V, E> {
         }
     }
 
-    private static <E> boolean someVertexIsMissingForAnEdge(
+    private static <E extends Comparable<E>> boolean someVertexIsMissingForAnEdge(
         final Set<Coordinates2D<Integer>> vertexPositions,
         final Map<Coordinates2D<Integer>, List<Pair<Optional<E>, Coordinates2D<Integer>>>> edges
     ) {
@@ -208,24 +206,24 @@ public class Graph<V, E> {
         return false;
     }
 
-    private AdjacencyLists<V, E> adjacencyLists;
+    private AdjacencySets<V, E> adjacencySets;
 
     private final Set<Vertex<V>> endVertices;
 
     private final Set<Vertex<V>> startVertices;
 
     public Graph() {
-        this.adjacencyLists = new AdjacencyLists<V, E>();
-        this.startVertices = new LinkedHashSet<Vertex<V>>();
-        this.endVertices = new LinkedHashSet<Vertex<V>>();
+        this.adjacencySets = new AdjacencySets<V, E>();
+        this.startVertices = new TreeSet<Vertex<V>>();
+        this.endVertices = new TreeSet<Vertex<V>>();
     }
 
     private Graph(
-        final AdjacencyLists<V, E> adjacencyLists,
+        final AdjacencySets<V, E> adjacencySets,
         final Set<Vertex<V>> startVertices,
         final Set<Vertex<V>> endVertices
     ) {
-        this.adjacencyLists = adjacencyLists;
+        this.adjacencySets = adjacencySets;
         this.startVertices = startVertices;
         this.endVertices = endVertices;
     }
@@ -234,18 +232,18 @@ public class Graph<V, E> {
         if (from == null || to == null) {
             throw new NullPointerException();
         }
-        this.adjacencyLists.addEdge(from, label, to);
+        this.adjacencySets.addEdge(from, label, to);
     }
 
     public void addVertex(final Vertex<V> vertex) {
-        if (!this.adjacencyLists.containsKey(vertex)) {
-            this.adjacencyLists.put(vertex, new ArrayList<Edge<E, V>>());
+        if (!this.adjacencySets.containsKey(vertex)) {
+            this.adjacencySets.put(vertex, new TreeSet<Edge<E, V>>());
         }
     }
 
     public Graph<V, E> copy(final Function<E, E> labelCopy) {
         final Graph<V, E> result = this.nodeCopy();
-        for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
+        for (final Entry<Vertex<V>, Set<Edge<E, V>>> entry : this.adjacencySets.entrySet()) {
             for (final Edge<E, V> edge : entry.getValue()) {
                 result.addEdge(
                     entry.getKey(),
@@ -262,55 +260,53 @@ public class Graph<V, E> {
     public boolean equals(final Object o) {
         if (o instanceof Graph) {
             final Graph<V,E> other = (Graph<V,E>)o;
-            return this.adjacencyLists.equals(other.adjacencyLists);
+            return this.adjacencySets.equals(other.adjacencySets);
         }
         return false;
     }
 
-    public List<Edge<E, V>> getAdjacencyList(final Vertex<V> vertex) {
-        final List<Edge<E, V>> list = this.adjacencyLists.get(vertex);
-        if (list == null) {
+    public Set<Edge<E, V>> getAdjacencySet(final Vertex<V> vertex) {
+        final Set<Edge<E, V>> set = this.adjacencySets.get(vertex);
+        if (set == null) {
             return null;
         }
-        return new ArrayList<Edge<E, V>>(list);
+        return new TreeSet<Edge<E, V>>(set);
     }
 
-    public List<Vertex<V>> getAdjacentVertices(final Vertex<V> vertex) {
-        return this.getAdjacencyList(vertex).stream().map(edge -> edge.to()).toList();
+    public Set<Vertex<V>> getAdjacentVertices(final Vertex<V> vertex) {
+        return this.getAdjacencySet(vertex).stream().map(edge -> edge.to()).collect(Collectors.toSet());
     }
 
-    public List<UndirectedEdge<V, E>> getAllUndirectedEdges() {
-        final List<UndirectedEdge<V, E>> result = new ArrayList<UndirectedEdge<V, E>>();
+    public Set<UndirectedEdge<V, E>> getAllUndirectedEdges() {
+        final Set<UndirectedEdge<V, E>> result = new TreeSet<UndirectedEdge<V, E>>();
         final List<Pair<BigInteger,BigInteger>> finishedVertexPairs =
             new ArrayList<Pair<BigInteger,BigInteger>>();
-        for (final Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
+        for (final Entry<Vertex<V>, Set<Edge<E, V>>> entry : this.adjacencySets.entrySet()) {
             for (final Edge<E, V> edge : entry.getValue()) {
                 final Pair<BigInteger,BigInteger> reverseVertexPair =
-                    new Pair<BigInteger,BigInteger>(edge.to().id, entry.getKey().id);
+                    new Pair<BigInteger,BigInteger>(edge.to().id(), entry.getKey().id());
                 if (!finishedVertexPairs.contains(reverseVertexPair)) {
                     result.add(new UndirectedEdge<V, E>(entry.getKey(), edge.label(), edge.to()));
-                    finishedVertexPairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id, edge.to().id));
+                    finishedVertexPairs.add(new Pair<BigInteger,BigInteger>(entry.getKey().id(), edge.to().id()));
                 }
             }
         }
         return result;
     }
 
-    public List<Pair<Vertex<V>, List<Edge<E, V>>>> getEdges() {
-        final List<Pair<Vertex<V>, List<Edge<E, V>>>> result = new ArrayList<Pair<Vertex<V>, List<Edge<E, V>>>>();
-        for (final Map.Entry<Vertex<V>, List<Edge<E, V>>> entry : this.adjacencyLists.entrySet()) {
-            result.add(
-                new Pair<Vertex<V>, List<Edge<E, V>>>(entry.getKey(), new ArrayList<Edge<E, V>>(entry.getValue()))
-            );
+    public Map<Vertex<V>, Set<Edge<E, V>>> getEdges() {
+        final Map<Vertex<V>, Set<Edge<E, V>>> result = new TreeMap<Vertex<V>, Set<Edge<E, V>>>();
+        for (final Map.Entry<Vertex<V>, Set<Edge<E, V>>> entry : this.adjacencySets.entrySet()) {
+            result.put(entry.getKey(), new TreeSet<Edge<E, V>>(entry.getValue()));
         }
         return result;
     }
 
     public Set<Edge<E, V>> getEdges(final Vertex<V> from, final Vertex<V> to) {
-        final Set<Edge<E, V>> res = new LinkedHashSet<Edge<E, V>>();
-        final List<Edge<E, V>> list = this.adjacencyLists.get(from);
-        if (list != null) {
-            for (final Edge<E, V> edge : list) {
+        final Set<Edge<E, V>> res = new TreeSet<Edge<E, V>>();
+        final Set<Edge<E, V>> set = this.adjacencySets.get(from);
+        if (set != null) {
+            for (final Edge<E, V> edge : set) {
                 if (to.equals(edge.to())) {
                     res.add(edge);
                 }
@@ -320,13 +316,13 @@ public class Graph<V, E> {
     }
 
     public Set<Vertex<V>> getVertices() {
-        return new LinkedHashSet<Vertex<V>>(this.adjacencyLists.keySet());
+        return new TreeSet<Vertex<V>>(this.adjacencySets.keySet());
     }
 
     public Set<Vertex<V>> getVerticesWithLabel(final V label) {
-        final Set<Vertex<V>> res = new LinkedHashSet<Vertex<V>>();
-        for (final Vertex<V> vertex : this.adjacencyLists.keySet()) {
-            if (vertex.label.isPresent() && label.equals(vertex.label.get())) {
+        final Set<Vertex<V>> res = new TreeSet<Vertex<V>>();
+        for (final Vertex<V> vertex : this.adjacencySets.keySet()) {
+            if (vertex.label().isPresent() && label.equals(vertex.label().get())) {
                 res.add(vertex);
             }
         }
@@ -335,7 +331,7 @@ public class Graph<V, E> {
 
     @Override
     public int hashCode() {
-        return this.adjacencyLists.hashCode() * 3;
+        return this.adjacencySets.hashCode() * 3;
     }
 
     public boolean isEndVertex(final Vertex<V> vertex) {
@@ -347,18 +343,18 @@ public class Graph<V, E> {
     }
 
     public boolean logicallyEquals(final Graph<V,E> other) {
-        return this.adjacencyLists.logicallyEquals(other.adjacencyLists);
+        return this.adjacencySets.logicallyEquals(other.adjacencySets);
     }
 
     public Graph<V, E> nodeCopy() {
-        final AdjacencyLists<V, E> emptyLists = new AdjacencyLists<V, E>();
-        for (final Vertex<V> vertex : this.adjacencyLists.keySet()) {
-            emptyLists.put(vertex, new ArrayList<Edge<E,V>>());
+        final AdjacencySets<V, E> emptySets = new AdjacencySets<V, E>();
+        for (final Vertex<V> vertex : this.adjacencySets.keySet()) {
+            emptySets.put(vertex, new TreeSet<Edge<E,V>>());
         }
         return new Graph<V, E>(
-            emptyLists,
-            new LinkedHashSet<Vertex<V>>(this.startVertices),
-            new LinkedHashSet<Vertex<V>>(this.endVertices)
+            emptySets,
+            new TreeSet<Vertex<V>>(this.startVertices),
+            new TreeSet<Vertex<V>>(this.endVertices)
         );
     }
 
@@ -370,14 +366,14 @@ public class Graph<V, E> {
     }
 
     public void replaceEdgeLabel(final Vertex<V> from, final E label, final Vertex<V> to) {
-        this.adjacencyLists.put(
+        this.adjacencySets.put(
             from,
             this
-            .adjacencyLists
+            .adjacencySets
             .get(from)
             .stream()
             .map(edge -> edge.to().equals(to) ? new Edge<E, V>(Optional.of(label), to) : edge)
-            .collect(Collectors.toCollection(ArrayList::new))
+            .collect(Collectors.toCollection(TreeSet::new))
         );
     }
 
@@ -387,7 +383,20 @@ public class Graph<V, E> {
 
     @Override
     public String toString() {
-        return this.adjacencyLists.toString();
+        return this.adjacencySets.toString();
+    }
+
+    public Graph<V, E> transpose() {
+        final AdjacencySets<V, E> transposed = new AdjacencySets<V, E>();
+        for (final Map.Entry<Vertex<V>, Set<Edge<E, V>>> entry : this.adjacencySets.entrySet()) {
+            for (final Edge<E, V> edge : entry.getValue()) {
+                transposed.addEdge(edge.to(), edge.label(), entry.getKey());
+            }
+            if (entry.getValue().isEmpty() && !transposed.containsKey(entry.getKey())) {
+                transposed.put(entry.getKey(), new TreeSet<Edge<E, V>>());
+            }
+        }
+        return new Graph<V, E>(transposed, this.startVertices, this.endVertices);
     }
 
 }

@@ -2,19 +2,10 @@ package exercisegenerator.structures.graphs;
 
 import java.util.*;
 
-public class KruskalResult<V> {
-
-    public final List<UndirectedEdge<V, Integer>> edges;
-
-    public final GraphWithLayout<V, Integer, Integer> treeWithLayout;
-
-    public KruskalResult(
-        final List<UndirectedEdge<V, Integer>> edges,
-        final GraphWithLayout<V, Integer, Integer> treeWithLayout
-    ) {
-        this.edges = edges;
-        this.treeWithLayout = treeWithLayout;
-    }
+public record KruskalResult<V extends Comparable<V>>(
+    List<UndirectedEdge<V, Integer>> edges,
+    GraphWithLayout<V, Integer, Integer> treeWithLayout
+) {
 
     @Override
     @SuppressWarnings("unchecked")

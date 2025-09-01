@@ -2,7 +2,10 @@ package exercisegenerator.structures.graphs;
 
 import java.util.*;
 
-public record PrimResult<V>(PrimEntry[][] table, GraphWithLayout<V, Integer, Integer> treeWithLayout) {
+public record PrimResult<V extends Comparable<V>>(
+    PrimEntry[][] table,
+    GraphWithLayout<V, Integer, Integer> treeWithLayout
+) {
 
     @Override
     @SuppressWarnings("unchecked")

@@ -9,14 +9,14 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class TopologicSort implements GridGraphAlgorithm<List<String>> {
+public class TopologicSort implements GraphAlgorithm<List<String>> {
 
     public static final TopologicSort INSTANCE = new TopologicSort();
 
     private TopologicSort() {}
 
     @Override
-    public List<String> apply(final GridGraph graph) {
+    public List<String> apply(final GraphProblem graph) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not yet implemented!");
     }
@@ -25,7 +25,7 @@ public class TopologicSort implements GridGraphAlgorithm<List<String>> {
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         boolean fail;
         final GridGraph graph = new GridGraph();
-        final int[][] sparseAdjacencyMatrix = GridGraphAlgorithm.parseOrGenerateGridGraph(input.options);
+        final int[][] sparseAdjacencyMatrix = new int[0][0]; //GridGraphAlgorithm.parseOrGenerateGridGraph(input.options);
         do {
             try {
                 fail = false;
@@ -64,7 +64,7 @@ public class TopologicSort implements GridGraphAlgorithm<List<String>> {
 
     @Override
     public void printExercise(
-        final GridGraph problem,
+        final GraphProblem problem,
         final List<String> solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
@@ -74,7 +74,7 @@ public class TopologicSort implements GridGraphAlgorithm<List<String>> {
 
     @Override
     public void printSolution(
-        final GridGraph problem,
+        final GraphProblem problem,
         final List<String> solution,
         final Parameters<Flag> options,
         final BufferedWriter writer

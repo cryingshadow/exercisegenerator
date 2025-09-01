@@ -87,7 +87,7 @@ public abstract class PetriNetAlgorithm<S> implements AlgorithmImplementation<Pe
     private static PetriNetInput generateProblem(final Parameters<Flag> options) {
         final List<PetriPlace> places = new LinkedList<PetriPlace>();
         List<PetriTransition> transitions = new LinkedList<PetriTransition>();
-        final Map<Integer, Integer> tokens = new LinkedHashMap<Integer, Integer>();
+        final List<Integer> tokens = new ArrayList<Integer>();
         final int numberOfTransitionsForGeneration =
             PetriNetAlgorithm.numberOfTransitionsForGeneration(PetriNetAlgorithm.SIZE_OF_PLACE_SQUARE_SIDE);
         final TransitionSkeleton[] randomSkeleton =
@@ -127,10 +127,6 @@ public abstract class PetriNetAlgorithm<S> implements AlgorithmImplementation<Pe
                         135
                     )
                 );
-                final int numberOfTokens = Main.RANDOM.nextInt(11) - 5;
-                if (numberOfTokens > 0) {
-                    tokens.put(placeLabelIndex - 1, numberOfTokens);
-                }
                 placeLabelIndex++;
             } else {
                 final int reduceFromIndex = placeLabelIndex - 1;
@@ -146,6 +142,10 @@ public abstract class PetriNetAlgorithm<S> implements AlgorithmImplementation<Pe
                         )
                     ).toList();
             }
+        }
+        for (int i = 0; i < places.size(); i++) {
+            final int numberOfTokens = Main.RANDOM.nextInt(11) - 5;
+            tokens.add(numberOfTokens > 0 ? numberOfTokens : 0);
         }
         return new PetriNetInput(places, transitions, tokens);
     }

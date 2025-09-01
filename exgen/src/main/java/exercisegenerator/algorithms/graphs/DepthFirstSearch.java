@@ -25,7 +25,7 @@ public class DepthFirstSearch implements GraphAlgorithm<List<String>> {
         }
         used.add(vertex);
         final List<String> result = new LinkedList<String>();
-        result.add(vertex.label.get());
+        result.add(vertex.label().get());
         final List<Vertex<String>> nextVertices = new ArrayList<Vertex<String>>(graph.getAdjacentVertices(vertex));
         Collections.sort(nextVertices, comparator);
         for (final Vertex<String> nextVertex : nextVertices) {
@@ -44,7 +44,7 @@ public class DepthFirstSearch implements GraphAlgorithm<List<String>> {
     public List<String> apply(final GraphProblem problem) {
         return DepthFirstSearch.depthFirstSearch(
             problem.graphWithLayout().graph(),
-            problem.startNode(),
+            problem.startNode().get(),
             problem.comparator(),
             new LinkedHashSet<Vertex<String>>()
         );
@@ -74,7 +74,7 @@ public class DepthFirstSearch implements GraphAlgorithm<List<String>> {
                 ),
                 GraphAlgorithm.parseDistanceFactor(options)
             ),
-            DepthFirstSearch.depthFirstSearchTask(problem.startNode().label.get()),
+            DepthFirstSearch.depthFirstSearchTask(problem.startNode().get().label().get()),
             writer
         );
         Main.newLine(writer);

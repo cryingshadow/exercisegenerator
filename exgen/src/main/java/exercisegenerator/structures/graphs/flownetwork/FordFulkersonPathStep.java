@@ -2,7 +2,10 @@ package exercisegenerator.structures.graphs.flownetwork;
 
 import exercisegenerator.structures.graphs.*;
 
-public record FordFulkersonPathStep<V, E>(Vertex<V> startNode, Edge<E, V> edge) {
+public record FordFulkersonPathStep<V extends Comparable<V>, E extends Comparable<E>>(
+    Vertex<V> startNode,
+    Edge<E, V> edge
+) {
 
     @Override
     public boolean equals(final Object o) {

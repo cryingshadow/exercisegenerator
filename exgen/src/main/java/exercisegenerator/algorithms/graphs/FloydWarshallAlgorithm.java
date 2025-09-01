@@ -99,7 +99,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     private static String[] toLabels(final GraphProblem problem) {
         final List<Vertex<String>> vertices =
             GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
-        return vertices.stream().map(v -> v.label.get()).toArray(String[]::new);
+        return vertices.stream().map(v -> v.label().get()).toArray(String[]::new);
     }
 
     @Override

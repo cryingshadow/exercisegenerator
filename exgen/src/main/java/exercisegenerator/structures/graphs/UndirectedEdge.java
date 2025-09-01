@@ -2,22 +2,14 @@ package exercisegenerator.structures.graphs;
 
 import java.util.*;
 
-public class UndirectedEdge<V, E> {
-
-    public final Vertex<V> from;
-
-    public final Optional<E> label;
-
-    public final Vertex<V> to;
+public record UndirectedEdge<V extends Comparable<V>, E>(
+    Vertex<V> from,
+    Optional<E> label,
+    Vertex<V> to
+) implements Comparable<UndirectedEdge<V, E>> {
 
     public UndirectedEdge(final Vertex<V> from, final E label, final Vertex<V> to) {
         this(from, Optional.of(label), to);
-    }
-
-    public UndirectedEdge(final Vertex<V> from, final Optional<E> label, final Vertex<V> to) {
-        this.from = from;
-        this.label = label;
-        this.to = to;
     }
 
     @Override
@@ -37,19 +29,28 @@ public class UndirectedEdge<V, E> {
 
     @Override
     public int hashCode() {
-        return this.from.hashCode() * this.label.hashCode() * this.to.hashCode();
+        return this.from.hashCode() * 2 + this.label.hashCode() * 5 + this.to.hashCode() * 3;
     }
 
     @Override
     public String toString() {
         return this.label.isEmpty() ?
-            String.format("(%s, %s)", this.from.label.get().toString(), this.to.label.get().toString()) :
+            String.format("(%s, %s)", this.from.label().get().toString(), this.to.label().get().toString()) :
                 String.format(
                     "(%s, %s, %s)",
-                    this.from.label.get().toString(),
+                    this.from.label().get().toString(),
                     this.label.get().toString(),
-                    this.to.label.get().toString()
+                    this.to.label().get().toString()
                 );
+    }
+
+    @Override
+    public int compareTo(final UndirectedEdge<V, E> o) {
+        final int compare = this.from().compareTo(o.from());
+        if (compare != 0) {
+            return compare;
+        }
+        return this.to().compareTo(o.to());
     }
 
 }

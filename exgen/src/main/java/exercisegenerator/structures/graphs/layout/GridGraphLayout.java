@@ -9,9 +9,9 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
-public class GridGraphLayout<V, E> implements GraphLayout<V, E, Integer> {
+public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> implements GraphLayout<V, E, Integer> {
 
-    public static class GridGraphLayoutBuilder<V, E> {
+    public static class GridGraphLayoutBuilder<V extends Comparable<V>, E extends Comparable<E>> {
 
         private boolean directed;
 
@@ -102,7 +102,8 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E, Integer> {
 
     }
 
-    public static <V, E> GridGraphLayout.GridGraphLayoutBuilder<V, E> builder() {
+    public static <V extends Comparable<V>, E extends Comparable<E>>
+    GridGraphLayout.GridGraphLayoutBuilder<V, E> builder() {
         return new GridGraphLayoutBuilder<V, E>();
     }
 
@@ -150,7 +151,7 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E, Integer> {
         this.toHighlight = Collections.unmodifiableMap(toHighlight);
     }
 
-    public <F> GridGraphLayout<V, F> convertEdgeLabelType() {
+    public <F extends Comparable<F>> GridGraphLayout<V, F> convertEdgeLabelType() {
         return new GridGraphLayout<V, F>(
             this.nodeCoordinates,
             Map.of(),
@@ -194,7 +195,7 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E, Integer> {
         for (final Vertex<V> vertex : graph.getVertices()) {
             writer.write(this.toTikZ(vertex, graph.isStartVertex(vertex), graph.isEndVertex(vertex)));
         }
-        for (final Pair<Vertex<V>, List<Edge<E, V>>> entry : graph.getEdges()) {
+        for (final Map.Entry<Vertex<V>, Set<Edge<E, V>>> entry : graph.getEdges().entrySet()) {
             for (final Edge<E, V> edge : entry.getValue()) {
                 writer.write(this.toTikZ(entry.getKey(), edge));
             }
@@ -245,20 +246,20 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E, Integer> {
 
     protected String toTikZ(final Vertex<V> vertex, final boolean startVertex, final boolean endVertex) {
         final Coordinates2D<Integer> coordinates = this.nodeCoordinates.get(vertex);
-        final String id = vertex.id.toString();
+        final String id = vertex.id().toString();
         return String.format(
             "\\node[%s] (n%s) at (%d,%d) {%s};%s",
             endVertex ? "endnode" : "node",
             id,
             coordinates.x(),
             coordinates.y(),
-            vertex.label.map(label -> label.toString()).orElse(""),
+            vertex.label().map(label -> label.toString()).orElse(""),
             startVertex ? GraphLayout.startNodeDecoration(id) : Main.lineSeparator
         );
     }
 
     private String toTikZ(final Vertex<V> from, final Edge<E, V> edge) {
-        if (!this.drawEdges || !this.directed && edge.to().id.compareTo(from.id) < 0) {
+        if (!this.drawEdges || !this.directed && edge.to().id().compareTo(from.id()) < 0) {
             return "";
         }
         final String style =
@@ -275,9 +276,9 @@ public class GridGraphLayout<V, E> implements GraphLayout<V, E, Integer> {
                     ).style;
         return GraphLayout.edgeFormat(
             style,
-            from.id.toString(),
+            from.id().toString(),
             this.drawEdgeLabels && edge.label().isPresent() ? List.of(edge.label().get()) : List.of(),
-            edge.to().id.toString()
+            edge.to().id().toString()
         );
     }
 

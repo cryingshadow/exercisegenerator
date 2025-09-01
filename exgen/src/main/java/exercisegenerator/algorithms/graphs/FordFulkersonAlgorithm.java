@@ -543,12 +543,10 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         return new GraphWithHighlights(graph, toHighlight);
     }
 
-    /**
-     * @param graph A flow network.
-     * @param path A path in the specified flow network from source to sink.
-     * @return The minimal remaining edge value along the path (i.e., the maximal flow along the path).
-     */
-    private static <V> Integer computeMinEdge(final Graph<V, FlowAndCapacity> graph, final List<Vertex<V>> path) {
+    private static <V extends Comparable<V>> Integer computeMinEdge(
+        final Graph<V, FlowAndCapacity> graph,
+        final List<Vertex<V>> path
+    ) {
         Integer min = null;
         final Iterator<Vertex<V>> it = path.iterator();
         Vertex<V> from;
@@ -599,19 +597,27 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
 
     private static int computeNumberOfResidualEdges(final List<FordFulkersonDoubleStep> solution) {
         return solution.stream()
-            .flatMap(step -> step.residualGraphWithLayout().graph().getEdges().stream().map(pair -> pair.y.size()))
-            .reduce(0, Integer::sum);
+            .flatMap(step ->
+                step.residualGraphWithLayout()
+                .graph()
+                .getEdges()
+                .entrySet()
+                .stream()
+                .map(pair -> pair.getValue().size())
+            ).reduce(0, Integer::sum);
     };
 
-    private static <V> Graph<V, Integer> computeResidualGraph(final Graph<V, FlowAndCapacity> graph) {
+    private static <V extends Comparable<V>> Graph<V, Integer> computeResidualGraph(
+        final Graph<V, FlowAndCapacity> graph
+    ) {
         final Graph<V, Integer> res = new Graph<V, Integer>();
         for (final Vertex<V> vertex : graph.getVertices()) {
             res.addVertex(vertex);
-            final List<Edge<FlowAndCapacity, V>> list = graph.getAdjacencyList(vertex);
-            if (list == null) {
+            final Set<Edge<FlowAndCapacity, V>> set = graph.getAdjacencySet(vertex);
+            if (set == null) {
                 continue;
             }
-            for (final Edge<FlowAndCapacity, V> edge : list) {
+            for (final Edge<FlowAndCapacity, V> edge : set) {
                 final Vertex<V> target = edge.to();
                 final Integer back = edge.label().get().flow();
                 if (back > 0) {
@@ -746,7 +752,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
     private static GraphWithLayout<String, FlowAndCapacity, Integer> parsePositionedGraph(
         final BufferedReader reader
     ) throws IOException {
-        final AdjacencyLists<String, FlowAndCapacity> adjacencyLists = new AdjacencyLists<String, FlowAndCapacity>();
+        final AdjacencySets<String, FlowAndCapacity> adjacencySets = new AdjacencySets<String, FlowAndCapacity>();
         final GridGraphLayoutBuilder<String, FlowAndCapacity> layoutBuilder =
             GridGraphLayout.<String, FlowAndCapacity>builder().setDirected(true);
         final Map<String, Vertex<String>> nodeMap = new LinkedHashMap<String, Vertex<String>>();
@@ -754,7 +760,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         for (final String node : nodes) {
             final String[] nodeParts = node.split(",");
             final Vertex<String> vertex = new Vertex<String>(nodeParts[0]);
-            adjacencyLists.put(vertex, new ArrayList<Edge<FlowAndCapacity, String>>());
+            adjacencySets.put(vertex, new LinkedHashSet<Edge<FlowAndCapacity, String>>());
             layoutBuilder.addVertex(
                 vertex,
                 new Coordinates2D<Integer>(Integer.parseInt(nodeParts[1]), Integer.parseInt(nodeParts[2]))
@@ -764,14 +770,14 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         final String[] edges = reader.readLine().split(";");
         for (final String edge : edges) {
             final String[] edgeParts = edge.split(",");
-            adjacencyLists.addEdge(
+            adjacencySets.addEdge(
                 nodeMap.get(edgeParts[0]),
                 new FlowAndCapacity(0, Integer.parseInt(edgeParts[2])),
                 nodeMap.get(edgeParts[1])
             );
         }
         return new GraphWithLayout<String, FlowAndCapacity, Integer>(
-            Graph.create(adjacencyLists),
+            Graph.create(adjacencySets),
             layoutBuilder.build()
         );
     }
@@ -864,15 +870,8 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         LaTeXUtils.printCommentLine("Anzahl Kanten in Restnetzwerken", String.valueOf(numResidualEdges), writer);
     }
 
-    /**
-     * @param graph A residual graph for a flow network.
-     * @param source The source of the flow network.
-     * @param sink The sink of the flow network.
-     * @return A path from source to sink with a remaining capacity greater than 0. If no such path exists, null is
-     *         returned.
-     */
-    private static <V> List<Vertex<V>> selectAugmentingPath(
-        final Graph<V, Integer> graph,
+    private static <V extends Comparable<V>> List<Vertex<V>> selectAugmentingPath(
+        final Graph<V, Integer> residualGraph,
         final Vertex<V> source,
         final Vertex<V> sink
     ) {
@@ -884,11 +883,11 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         visited.add(source);
         while (!queue.isEmpty()) {
             path = queue.poll();
-            final List<Edge<Integer, V>> list = graph.getAdjacencyList(path.get(path.size() - 1));
-            if (list == null) {
+            final Set<Edge<Integer, V>> set = residualGraph.getAdjacencySet(path.get(path.size() - 1));
+            if (set == null) {
                 continue;
             }
-            for (final Edge<Integer, V> edge : list) {
+            for (final Edge<Integer, V> edge : set) {
                 if (visited.contains(edge.to())) {
                     continue;
                 }
@@ -904,13 +903,8 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         return null;
     }
 
-    /**
-     * @param graph Some residual graph.
-     * @param path A path through this residual graph.
-     * @return The set of all edges used by the specified path in the specified graph.
-     */
-    private static <V> Set<FordFulkersonPathStep<V, Integer>> toEdges(
-        final Graph<V, Integer> graph,
+    private static <V extends Comparable<V>> Set<FordFulkersonPathStep<V, Integer>> toEdges(
+        final Graph<V, Integer> residualGraph,
         final List<Vertex<V>> path
     ) {
         if (path == null) {
@@ -922,7 +916,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         Vertex<V> cur = it.next();
         while (it.hasNext()) {
             final Vertex<V> next = it.next();
-            for (final Edge<Integer, V> edge : graph.getAdjacencyList(cur)) {
+            for (final Edge<Integer, V> edge : residualGraph.getAdjacencySet(cur)) {
                 if (edge.to().equals(next)) {
                     res.add(new FordFulkersonPathStep<V, Integer>(cur, edge));
                     break;
@@ -1001,9 +995,9 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         final FordFulkersonConfiguration configuration =
             FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
         writer.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
-        writer.write(source.label.isEmpty() ? "" : source.label.get().toString());
+        writer.write(source.label().isEmpty() ? "" : source.label().get().toString());
         writer.write(" und Senke ");
-        writer.write(sink.label.isEmpty() ? "" : sink.label.get().toString());
+        writer.write(sink.label().isEmpty() ? "" : sink.label().get().toString());
         writer.write(":\\\\");
         Main.newLine(writer);
         LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
@@ -1110,9 +1104,9 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
         int flow = 0;
         final Graph<String, FlowAndCapacity> graph = solution.getLast().flowNetworkWithLayout().graph();
-        final List<Edge<FlowAndCapacity, String>> list = graph.getAdjacencyList(problem.source());
-        if (list != null) {
-            for (final Edge<FlowAndCapacity, String> edge : list) {
+        final Set<Edge<FlowAndCapacity, String>> set = graph.getAdjacencySet(problem.source());
+        if (set != null) {
+            for (final Edge<FlowAndCapacity, String> edge : set) {
                 flow += edge.label().get().flow();
             }
         }

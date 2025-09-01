@@ -13,26 +13,10 @@ public class GraphLayoutTest {
 
     @Test
     public void layoutTest() {
-        final PetriMarking one1 = new PetriMarking();
-        one1.put(0, Optional.of(1));
-        one1.put(1, Optional.of(0));
-        one1.put(2, Optional.of(0));
-        one1.put(3, Optional.of(0));
-        final PetriMarking one2 = new PetriMarking();
-        one2.put(0, Optional.of(0));
-        one2.put(1, Optional.of(1));
-        one2.put(2, Optional.of(0));
-        one2.put(3, Optional.of(0));
-        final PetriMarking one3 = new PetriMarking();
-        one3.put(0, Optional.of(0));
-        one3.put(1, Optional.of(0));
-        one3.put(2, Optional.of(1));
-        one3.put(3, Optional.of(0));
-        final PetriMarking one4 = new PetriMarking();
-        one4.put(0, Optional.of(0));
-        one4.put(1, Optional.of(0));
-        one4.put(2, Optional.of(0));
-        one4.put(3, Optional.of(1));
+        final PetriMarking one1 = PetriMarking.create(1, 0, 0, 0);
+        final PetriMarking one2 = PetriMarking.create(0, 1, 0, 0);
+        final PetriMarking one3 = PetriMarking.create(0, 0, 1, 0);
+        final PetriMarking one4 = PetriMarking.create(0, 0, 0, 1);
         final Vertex<PetriMarking> vertex1 = new Vertex<PetriMarking>(one1);
         final Vertex<PetriMarking> vertex2 = new Vertex<PetriMarking>(one2);
         final Vertex<PetriMarking> vertex3 = new Vertex<PetriMarking>(one3);
@@ -45,26 +29,13 @@ public class GraphLayoutTest {
         graph1.addEdge(vertex2, Optional.of("t2"), vertex3);
         graph1.addEdge(vertex3, Optional.of("t3"), vertex4);
         graph1.addEdge(vertex4, Optional.of("t4"), vertex1);
-        final PetriMarking inf1 = new PetriMarking();
-        inf1.put(0, Optional.empty());
-        inf1.put(1, Optional.of(0));
-        inf1.put(2, Optional.of(0));
-        inf1.put(3, Optional.of(0));
-        final PetriMarking inf2 = new PetriMarking();
-        inf2.put(0, Optional.empty());
-        inf2.put(1, Optional.empty());
-        inf2.put(2, Optional.of(0));
-        inf2.put(3, Optional.of(0));
-        final PetriMarking inf3 = new PetriMarking();
-        inf3.put(0, Optional.empty());
-        inf3.put(1, Optional.empty());
-        inf3.put(2, Optional.empty());
-        inf3.put(3, Optional.of(0));
-        final PetriMarking inf4 = new PetriMarking();
-        inf4.put(0, Optional.empty());
-        inf4.put(1, Optional.empty());
-        inf4.put(2, Optional.empty());
-        inf4.put(3, Optional.empty());
+        final PetriMarking inf1 = PetriMarking.create(Optional.empty(), Optional.of(0), Optional.of(0), Optional.of(0));
+        final PetriMarking inf2 =
+            PetriMarking.create(Optional.empty(), Optional.empty(), Optional.of(0), Optional.of(0));
+        final PetriMarking inf3 =
+            PetriMarking.create(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(0));
+        final PetriMarking inf4 =
+            PetriMarking.create(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
         final Vertex<PetriMarking> vertex5 = new Vertex<PetriMarking>(inf1);
         final Vertex<PetriMarking> vertex6 = new Vertex<PetriMarking>(inf2);
         final Vertex<PetriMarking> vertex7 = new Vertex<PetriMarking>(inf3);
@@ -96,9 +67,11 @@ public class GraphLayoutTest {
         final GraphLayout<PetriMarking, String, Double> layout2 =
             new ForceGraphLayout<PetriMarking, String>(graph2, TikZStyle.FORCE_GRAPH, 1, 1, 12, 12);
         final Coordinates2D<Double> coordinates1 = layout1.getPosition(vertex4);
-        Assert.assertEquals(coordinates1.x(), 5.4016, 0.001);
-        Assert.assertEquals(coordinates1.y(), 2.0997, 0.001);
-        Assert.assertEquals(layout2.getPosition(vertex8), new Coordinates2D<Double>(0.0, 0.0));
+        Assert.assertEquals(coordinates1.x(), 2.0996, 0.001);
+        Assert.assertEquals(coordinates1.y(), 5.4024, 0.001);
+        final Coordinates2D<Double> coordinates2 = layout2.getPosition(vertex8);
+        Assert.assertEquals(coordinates2.x(), 0.8066, 0.001);
+        Assert.assertEquals(coordinates2.y(), 0.0, 0.001);
     }
 
 }
