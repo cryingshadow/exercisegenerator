@@ -2,11 +2,11 @@ package exercisegenerator.algorithms.graphs;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.*;
 
 public class TopologicSort implements GraphAlgorithm<List<String>> {
@@ -16,42 +16,17 @@ public class TopologicSort implements GraphAlgorithm<List<String>> {
     private TopologicSort() {}
 
     @Override
-    public List<String> apply(final GraphProblem graph) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not yet implemented!");
-    }
-
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        boolean fail;
-        final GridGraph graph = new GridGraph();
-        final int[][] sparseAdjacencyMatrix = new int[0][0]; //GridGraphAlgorithm.parseOrGenerateGridGraph(input.options);
-        do {
-            try {
-                fail = false;
-                final boolean writeText = true; // TODO check whether this can be removed
-                graph.createGraph(sparseAdjacencyMatrix);
-                graph.printTopologicalOrder(input.exerciseWriter, input.solutionWriter, false, writeText);
-            } catch (final IOException e) {
-                //System.out.println("Caught cycle-exception.");
-                fail = true;
-                for (int i = 0; i < graph.numOfVerticesInSparseAdjacencyMatrix(); i++) {
-                    for (int j = 0; j < graph.numOfNeighborsInSparseAdjacencyMatrix(); j++) {
-                        if (graph.isNecessarySparseMatrixEntry(i,j) ) {
-                            int entry = Main.RANDOM.nextInt(3);
-                            entry = entry == 2 ? -1 : entry;
-                            if (graph.isLegalEntryForSparseAdjacencyMatrix(entry)) {
-                                sparseAdjacencyMatrix[i][j] = entry;
-                            } else {
-                                System.out.println("SHOULD NOT HAPPEN!");
-                            }
-                        } else {
-                            sparseAdjacencyMatrix[i][j] = 0;
-                        }
-                    }
-                }
+    public List<String> apply(final GraphProblem problem) {
+        final List<String> result = new LinkedList<String>();
+        final Set<Vertex<String>> visited = new LinkedHashSet<Vertex<String>>();
+        final Set<Vertex<String>> finished = new LinkedHashSet<Vertex<String>>();
+        final Graph<String, Integer> graph = problem.graphWithLayout().graph();
+        for (final Vertex<String> vertex : graph.getVertices()) {
+            if (this.visitAndCheckCycle(vertex, graph, visited, finished, result)) {
+                return null;
             }
-        } while (fail);
+        }
+        return result;
     }
 
     @Override
@@ -69,7 +44,13 @@ public class TopologicSort implements GraphAlgorithm<List<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
+        writer.write("Geben Sie eine topologische Sortierung des folgenden Graphen an oder begr\\\"unden Sie, warum ");
+        writer.write("keine topologische Sortierung f\\\"ur diesen Graphen existiert.\\\\");
+        Main.newLine(writer);
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+        problem.graphWithLayout().graph().printTikZ(problem.graphWithLayout().layout(), writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
+        Main.newLine(writer);
     }
 
     @Override
@@ -79,7 +60,39 @@ public class TopologicSort implements GraphAlgorithm<List<String>> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
+        if (solution == null) {
+            writer.write(
+                "Es existiert keine topologische Sortierung für diesen Graphen, da er mindestens einen Zyklus enthält."
+            );
+        } else {
+            writer.write(solution.stream().collect(Collectors.joining(", ")));
+        }
+        Main.newLine(writer);
+        Main.newLine(writer);
+    }
+
+    private boolean visitAndCheckCycle(
+        final Vertex<String> vertex,
+        final Graph<String, Integer> graph,
+        final Set<Vertex<String>> visited,
+        final Set<Vertex<String>> finished,
+        final List<String> result
+    ) {
+        if (finished.contains(vertex)) {
+            return false;
+        }
+        if (visited.contains(vertex)) {
+            return true;
+        }
+        visited.add(vertex);
+        for (final Vertex<String> neighbour : graph.getAdjacentVertices(vertex)) {
+            if (this.visitAndCheckCycle(neighbour, graph, visited, finished, result)) {
+                return true;
+            }
+        }
+        finished.add(vertex);
+        result.addFirst(vertex.label().get());
+        return false;
     }
 
 }

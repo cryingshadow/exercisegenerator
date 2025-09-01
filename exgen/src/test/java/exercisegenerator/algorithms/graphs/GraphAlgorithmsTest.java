@@ -1187,4 +1187,33 @@ public class GraphAlgorithmsTest {
         };
     }
 
+    @Test(dataProvider="topologicSortData")
+    public void topologicSort(final GraphProblem problem, final List<String> expected) {
+        Assert.assertEquals(TopologicSort.INSTANCE.apply(problem), expected);
+    }
+
+    @DataProvider
+    public Object[][] topologicSortData() {
+        return new Object[][] {
+            {
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer, Integer>(
+                        GraphAlgorithmsTest.GRAPHS.get(1),
+                        new DummyGraphLayout<String, Integer, Integer>()
+                    )
+                ),
+                List.of("A", "D", "C", "B")
+            },
+            {
+                new GraphProblem(
+                    new GraphWithLayout<String, Integer, Integer>(
+                        GraphAlgorithmsTest.GRAPHS.get(2),
+                        new DummyGraphLayout<String, Integer, Integer>()
+                    )
+                ),
+                null
+            }
+        };
+    }
+
 }

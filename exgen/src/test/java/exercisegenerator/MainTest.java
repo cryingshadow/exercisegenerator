@@ -4987,6 +4987,42 @@ public class MainTest {
     }
 
     @Test
+    public void topologicSort() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.TOPOLOGICSORT.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", " A , | , B \n"
+                    + "5| , | , |3\n"
+                    + " C , |4, D "
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Geben Sie eine topologische Sortierung des folgenden Graphen an oder begr\\\"unden Sie, warum "
+                    + "keine topologische Sortierung f\\\"ur diesen Graphen existiert.\\\\",
+                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, "
+                    + "endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, "
+                    + "p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
+                    "\\node[node] (n1) at (0,1) {A};",
+                    "\\node[node] (n2) at (1,1) {B};",
+                    "\\node[node] (n3) at (0,0) {C};",
+                    "\\node[node] (n4) at (1,0) {D};",
+                    "\\draw[p, bend left = 10] (n1) to node[auto] {5} (n3);",
+                    "\\draw[p, bend left = 10] (n4) to node[auto] {3} (n2);",
+                    "\\draw[p, bend left = 10] (n4) to node[auto] {4} (n3);",
+                    "\\end{tikzpicture}",
+                    "\\end{adjustbox}"
+                ),
+                List.of(
+                    "D, B, A, C"
+                )
+            )
+        );
+    }
+
+    @Test
     public void toTruthTableBig() throws IOException {
         this.harness(
             new String[] {

@@ -641,10 +641,9 @@ public enum Algorithm {
         "topologicSort",
         "Topologisches Sortieren",
         new String[] {
-            "Perform topological sort." // TODO
+            "Perform topological sort."
         },
-        TopologicSort.INSTANCE,
-        false
+        TopologicSort.INSTANCE
     ),
 
     WARSHALL(
