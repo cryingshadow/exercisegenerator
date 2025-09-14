@@ -1,12 +1,23 @@
 package exercisegenerator.structures.graphs;
 import java.util.*;
 
-public class UnionFind<E> {
+public class UnionFind<E extends Comparable<E>> extends TreeMap<E, E> {
 
-    private final Map<E, E> representedBy;
+    private static final long serialVersionUID = 1L;
 
     public UnionFind() {
-        this.representedBy = new LinkedHashMap<E, E>();
+        super();
+    }
+
+    public UnionFind(final Collection<E> elements) {
+        super();
+        for (final E element : elements) {
+            this.put(element, element);
+        }
+    }
+
+    public UnionFind(final Map<E, E> representations) {
+        super(representations);
     }
 
     public boolean connected(final E first, final E second) {
@@ -14,17 +25,43 @@ public class UnionFind<E> {
     }
 
     public E find(final E element) {
-        if (this.representedBy.containsKey(element)) {
-            final E res = this.find(this.representedBy.get(element));
-            this.representedBy.put(element, res);
+        if (this.containsKey(element)) {
+            final E representedBy = this.get(element);
+            if (representedBy.equals(element)) {
+                return representedBy;
+            }
+            final E res = this.find(representedBy);
+            this.put(element, res);
             return res;
         } else {
+            this.put(element, element);
             return element;
         }
     }
 
+    public Graph<E, Integer> toGraph() {
+        final Set<E> added = new LinkedHashSet<E>();
+        final Graph<E, Integer> result = new Graph<E, Integer>();
+        for (final Map.Entry<E, E> entry : this.entrySet()) {
+            if (!added.contains(entry.getKey())) {
+                result.addVertex(new Vertex<E>(entry.getKey()));
+                added.add(entry.getKey());
+            }
+            if (!added.contains(entry.getValue())) {
+                result.addVertex(new Vertex<E>(entry.getValue()));
+                added.add(entry.getValue());
+            }
+            result.addEdge(
+                result.getVerticesWithLabel(entry.getKey()).iterator().next(),
+                Optional.empty(),
+                result.getVerticesWithLabel(entry.getValue()).iterator().next()
+            );
+        }
+        return result;
+    }
+
     public void union(final E first, final E second) {
-        this.representedBy.put(this.find(first), this.find(second));
+        this.put(this.find(first), this.find(second));
     }
 
 }

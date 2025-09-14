@@ -95,7 +95,14 @@ public abstract class LaTeXUtils {
         return LaTeXUtils.parsePagebreakCounters(keyValues, "solutionbreaks=");
     }
 
-    public static void printAdjustboxBeginning(final BufferedWriter writer, final String... parameters) throws IOException {
+    public static void printAdjustboxBeginning(final BufferedWriter writer) throws IOException {
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+    }
+
+    public static void printAdjustboxBeginning(
+        final BufferedWriter writer,
+        final String... parameters
+    ) throws IOException {
         writer.write("\\begin{adjustbox}{");
         writer.write(Arrays.stream(parameters).collect(Collectors.joining(",")));
         writer.write("}");
@@ -125,6 +132,18 @@ public abstract class LaTeXUtils {
         } else {
             writer.write("\\Tree " + tree.toString() + ";");
         }
+        Main.newLine(writer);
+    }
+
+    public static void printCommentLine(
+        final String key,
+        final String value,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("%");
+        writer.write(key);
+        writer.write(": ");
+        writer.write(value);
         Main.newLine(writer);
     }
 
@@ -933,18 +952,6 @@ public abstract class LaTeXUtils {
         if (content != null) {
             writer.write(content);
         }
-    }
-
-    public static void printCommentLine(
-        final String key,
-        final String value,
-        final BufferedWriter writer
-    ) throws IOException {
-        writer.write("%");
-        writer.write(key);
-        writer.write(": ");
-        writer.write(value);
-        Main.newLine(writer);
     }
 
 }

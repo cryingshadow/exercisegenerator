@@ -646,6 +646,16 @@ public enum Algorithm {
         TopologicSort.INSTANCE
     ),
 
+    UNION_FIND(
+        "unionfind",
+        "Union-Find",
+        new String[] {
+            "Operations on a union find data structure.",
+            "The flag -l specifies how elements will be used for generated instances."
+        },
+        UnionFindAlgorithm.INSTANCE
+    ),
+
     WARSHALL(
         "warshall",
         "Warshall Algorithmus",

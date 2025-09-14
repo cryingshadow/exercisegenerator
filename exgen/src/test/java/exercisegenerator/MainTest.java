@@ -5187,6 +5187,54 @@ public class MainTest {
     }
 
     @Test
+    public void unionFind() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.UNION_FIND.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "1;2;3\n"
+                    + "\n"
+                    + "1,2;1,3;1"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Betrachten Sie die folgende Union-Find-Datenstruktur:\\\\",
+                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
+                    "\\node[node] (n1) at (0,0) {1};",
+                    "\\node[node] (n2) at (1,0) {2};",
+                    "\\node[node] (n3) at (2,0) {3};",
+                    "\\draw[p, bend left = 10] ($(n1.north)+(-0.1,0)$) .. controls +(-0.2,1) and +(0.2,1) .. ($(n1.north)+(0.1,0)$);",
+                    "\\draw[p, bend left = 10] ($(n2.north)+(-0.1,0)$) .. controls +(-0.2,1) and +(0.2,1) .. ($(n2.north)+(0.1,0)$);",
+                    "\\draw[p, bend left = 10] ($(n3.north)+(-0.1,0)$) .. controls +(-0.2,1) and +(0.2,1) .. ($(n3.north)+(0.1,0)$);",
+                    "\\end{tikzpicture}",
+                    "\\end{adjustbox}",
+                    "Geben Sie den Zustand dieser Datenstruktur nach Ausf\\\"uhrung der folgenden Operationen an:\\\\",
+                    "\\begin{enumerate}",
+                    "\\item UNION 1, 2",
+                    "\\item UNION 1, 3",
+                    "\\item FIND 1",
+                    "\\end{enumerate}"
+                ),
+                List.of(
+                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{tikzpicture}",
+                    "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
+                    "\\node[node] (n4) at (0,0) {1};",
+                    "\\node[node] (n6) at (1,0) {2};",
+                    "\\node[node] (n5) at (0,1) {3};",
+                    "\\draw[p, bend left = 10] (n4) to (n5);",
+                    "\\draw[p, bend left = 10] (n6) to (n5);",
+                    "\\draw[p, bend left = 10] ($(n5.north)+(-0.1,0)$) .. controls +(-0.2,1) and +(0.2,1) .. ($(n5.north)+(0.1,0)$);",
+                    "\\end{tikzpicture}",
+                    "\\end{adjustbox}"
+                )
+            )
+        );
+    }
+
+    @Test
     public void vigenereDecode() throws IOException {
         this.harness(
             new String[] {

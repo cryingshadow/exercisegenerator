@@ -315,6 +315,15 @@ public class Graph<V extends Comparable<V>, E extends Comparable<E>> {
         return res;
     }
 
+    public Vertex<V> getVertexWithUniqueLabel(final V label) {
+        return this.adjacencySets
+            .keySet()
+            .stream()
+            .filter(vertex -> vertex.label().isPresent() && vertex.label().get().equals(label))
+            .findAny()
+            .get();
+    }
+
     public Set<Vertex<V>> getVertices() {
         return new TreeSet<Vertex<V>>(this.adjacencySets.keySet());
     }

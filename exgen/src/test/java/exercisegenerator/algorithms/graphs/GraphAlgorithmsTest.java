@@ -1216,4 +1216,59 @@ public class GraphAlgorithmsTest {
         };
     }
 
+    @Test(dataProvider="unionFindData")
+    public void unionFind(final UnionFindProblem problem, final UnionFind<Integer> expected) {
+        Assert.assertEquals(UnionFindAlgorithm.INSTANCE.apply(problem), expected);
+    }
+
+    @DataProvider
+    public Object[][] unionFindData() {
+        return new Object[][] {
+            {
+                new UnionFindProblem(
+                    new UnionFind<Integer>(),
+                    List.of(
+                        new FindOperation<Integer>(1),
+                        new FindOperation<Integer>(2),
+                        new FindOperation<Integer>(3)
+                    )
+                ),
+                new UnionFind<Integer>(
+                    Map.of(
+                        1, 1,
+                        2, 2,
+                        3, 3
+                    )
+                )
+            },
+            {
+                new UnionFindProblem(
+                    new UnionFind<Integer>(
+                        Map.of(
+                            1, 1,
+                            2, 1,
+                            3, 2,
+                            4, 4,
+                            5, 4,
+                            6, 5
+                        )
+                    ),
+                    List.of(
+                        new UnionOperation<Integer>(3,6)
+                    )
+                ),
+                new UnionFind<Integer>(
+                    Map.of(
+                        1, 4,
+                        2, 1,
+                        3, 1,
+                        4, 4,
+                        5, 4,
+                        6, 4
+                    )
+                )
+            }
+        };
+    }
+
 }

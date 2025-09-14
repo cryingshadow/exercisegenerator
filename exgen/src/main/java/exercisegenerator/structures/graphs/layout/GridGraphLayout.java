@@ -50,7 +50,7 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
             );
         }
 
-        public Coordinates2D<Integer> getCoordinates(final Vertex<String> vertex) {
+        public Coordinates2D<Integer> getCoordinates(final Vertex<V> vertex) {
             return this.nodeCoordinates.get(vertex);
         }
 
