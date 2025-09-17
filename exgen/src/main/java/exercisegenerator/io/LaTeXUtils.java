@@ -15,21 +15,47 @@ import exercisegenerator.structures.trees.*;
 
 public abstract class LaTeXUtils {
 
-    public static final String CENTER = "center";
+    public static final String CENTER;
 
-    public static final String COL_WIDTH = "\\columnwidth";
+    public static final String COL_WIDTH;
 
-    public static final String ENUMERATE = "enumerate";
+    public static final String ENUMERATE;
 
-    public static final String ITEM = "\\item";
+    public static final String ITEM;
 
-    public static final String MATH_VARIABLE_NAME = "x";
+    public static final String MATH_VARIABLE_NAME;
 
-    public static final String TWO_COL_WIDTH = "8cm";
+    public static final String TWO_COL_WIDTH;
 
-    private static final int MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW = 17;
+    private static final int MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW;
 
     private static int number = 0;
+
+    private static final TreeMap<Integer, String> ROMAN_NUMERALS;
+
+    static {
+        CENTER = "center";
+        COL_WIDTH = "\\columnwidth";
+        ENUMERATE = "enumerate";
+        ITEM = "\\item";
+        MATH_VARIABLE_NAME = "x";
+        TWO_COL_WIDTH = "8cm";
+        MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW = 17;
+        ROMAN_NUMERALS = new TreeMap<Integer, String>();
+        LaTeXUtils.ROMAN_NUMERALS.put(1000, "M");
+        LaTeXUtils.ROMAN_NUMERALS.put(900, "CM");
+        LaTeXUtils.ROMAN_NUMERALS.put(500, "D");
+        LaTeXUtils.ROMAN_NUMERALS.put(400, "CD");
+        LaTeXUtils.ROMAN_NUMERALS.put(100, "C");
+        LaTeXUtils.ROMAN_NUMERALS.put(90, "XC");
+        LaTeXUtils.ROMAN_NUMERALS.put(50, "L");
+        LaTeXUtils.ROMAN_NUMERALS.put(40, "XL");
+        LaTeXUtils.ROMAN_NUMERALS.put(10, "X");
+        LaTeXUtils.ROMAN_NUMERALS.put(9, "IX");
+        LaTeXUtils.ROMAN_NUMERALS.put(5, "V");
+        LaTeXUtils.ROMAN_NUMERALS.put(4, "IV");
+        LaTeXUtils.ROMAN_NUMERALS.put(1, "I");
+    }
 
     public static void beginMulticols(final int cols, final BufferedWriter writer) throws IOException {
         writer.write(String.format("\\begin{multicols}{%d}", cols));
@@ -145,10 +171,6 @@ public abstract class LaTeXUtils {
         writer.write(": ");
         writer.write(value);
         Main.newLine(writer);
-    }
-
-    public static void printDefaultAdjustboxBeginning(final BufferedWriter writer) throws IOException {
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
     }
 
     public static String printEmptyArrayAndReturnLeftmostNodesName(
@@ -814,6 +836,17 @@ public abstract class LaTeXUtils {
             numerator.abs().toString(),
             coefficient.getDenominator().toString()
         );
+    }
+
+    public static String toRomanNumeral(final int number) {
+        if (number < 1) {
+            return "";
+        }
+        final int floorKey = LaTeXUtils.ROMAN_NUMERALS.floorKey(number);
+        if (number == floorKey) {
+            return LaTeXUtils.ROMAN_NUMERALS.get(number);
+        }
+        return LaTeXUtils.ROMAN_NUMERALS.get(floorKey) + LaTeXUtils.toRomanNumeral(number - floorKey);
     }
 
     public static String widthOf(final String text) {

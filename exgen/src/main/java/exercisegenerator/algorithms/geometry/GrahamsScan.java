@@ -284,15 +284,6 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         return input;
     }
 
-    private static List<Point> generatePointSet(final Parameters<Flag> options) {
-        final int numberOfPoints = GrahamsScan.parseOrGenerateNumberOfPoints(options);
-        final List<Point> result = new LinkedList<Point>();
-        for (int i = 0; i < numberOfPoints; i++) {
-            result.add(new Point(new BigFraction(Main.RANDOM.nextInt(11)), new BigFraction(Main.RANDOM.nextInt(11))));
-        }
-        return result;
-    }
-
     private static ArrayList<Pair<Double, Double>> parseConvexHullProblem(
         final BufferedReader reader,
         final Parameters<Flag> options
@@ -322,33 +313,6 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
 
     private static int parseOrGenerateNumberOfPoints(final Parameters<Flag> options) {
         return AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
-    }
-
-    private static List<Point> parsePointSet(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        String line = reader.readLine();
-        final List<Point> result = new LinkedList<Point>();
-        while (line != null) {
-            if (!line.isBlank()) {
-                final String[] points = line.split(";");
-                for (final String point : points) {
-                    final String[] coordinates = point.split(",");
-                    if (coordinates.length != 2) {
-                        throw new IOException("Non-2-d-point detected!");
-                    }
-                    result.add(
-                        new Point(
-                            AlgebraAlgorithms.parseRationalNumber(coordinates[0]),
-                            AlgebraAlgorithms.parseRationalNumber(coordinates[1])
-                        )
-                    );
-                }
-            }
-            line = reader.readLine();
-        }
-        return result;
     }
 
     /**
@@ -533,6 +497,11 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
     }
 
     @Override
+    public String commandPrefix() {
+        return "Graham";
+    }
+
+    @Override
     public void executeAlgorithm(final AlgorithmInput input) throws IOException {
         final ArrayList<Pair<Double,Double>> pointSet =
             GrahamsScan.parseOrGenerateConvexHullProblem(input.options);
@@ -546,6 +515,16 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
     }
 
     @Override
+    public List<Point> generateProblem(final Parameters<Flag> options) {
+        final int numberOfPoints = GrahamsScan.parseOrGenerateNumberOfPoints(options);
+        final List<Point> result = new LinkedList<Point>();
+        for (int i = 0; i < numberOfPoints; i++) {
+            result.add(new Point(new BigFraction(Main.RANDOM.nextInt(11)), new BigFraction(Main.RANDOM.nextInt(11))));
+        }
+        return result;
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -554,15 +533,46 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
     }
 
     @Override
-    public List<Point> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<List<Point>>(
-            GrahamsScan::parsePointSet,
-            GrahamsScan::generatePointSet
-        ).getResult(options);
+    public List<List<Point>> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        String line = reader.readLine();
+        final List<Point> result = new LinkedList<Point>();
+        while (line != null) {
+            if (!line.isBlank()) {
+                final String[] points = line.split(";");
+                for (final String point : points) {
+                    final String[] coordinates = point.split(",");
+                    if (coordinates.length != 2) {
+                        throw new IOException("Non-2-d-point detected!");
+                    }
+                    result.add(
+                        new Point(
+                            AlgebraAlgorithms.parseRationalNumber(coordinates[0]),
+                            AlgebraAlgorithms.parseRationalNumber(coordinates[1])
+                        )
+                    );
+                }
+            }
+            line = reader.readLine();
+        }
+        return List.of(result);
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<List<Point>> problems,
+        final List<List<List<Point>>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final List<Point> problem,
         final List<List<Point>> solution,
         final Parameters<Flag> options,
@@ -573,7 +583,29 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final List<Point> problem,
+        final List<List<Point>> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void printSolutionInstance(
+        final List<Point> problem,
+        final List<List<Point>> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void printSolutionSpace(
         final List<Point> problem,
         final List<List<Point>> solution,
         final Parameters<Flag> options,

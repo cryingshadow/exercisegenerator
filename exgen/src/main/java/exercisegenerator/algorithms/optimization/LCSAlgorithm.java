@@ -27,14 +27,6 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         return List.of(DPDirection.UPLEFT);
     };
 
-    private static LCSProblem generateLCSProblem(final Parameters<Flag> options) {
-        final int length1 = LCSAlgorithm.parseOrGenerateLengthOfWords(options);
-        final int length2 = LCSAlgorithm.parseOrGenerateLengthOfWords(options);
-        final String word1 = LCSAlgorithm.generateRandomString(length1);
-        final String word2 = LCSAlgorithm.generateRandomString(length2);
-        return new LCSProblem(word1, word2);
-    }
-
     private static String generateRandomString(final int length) {
         return
             Main
@@ -69,34 +61,6 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
             directions = LCSAlgorithm.TRACEBACK.apply(new DPPosition(table, row, column));
         }
         return result.toString();
-    }
-
-    private static LCSProblem parseLCSProblem(final BufferedReader reader, final Parameters<Flag> options)
-    throws IOException {
-        String wordA = null;
-        String wordB = null;
-        final String errorMessage = "You need to provide two lines each carrying exactly one non-empty word.";
-        String line = null;
-        int rowNum = 0;
-        while ((line = reader.readLine()) != null) {
-            if (rowNum == 0) {
-                wordA = new String(line);
-                if (wordA.length() == 0) {
-                    System.out.println(errorMessage);
-                    return null;
-                }
-            } else if (rowNum == 1) {
-                wordB = new String(line);
-                if (wordB.length() == 0) {
-                    System.out.println(errorMessage);
-                    return null;
-                }
-                return new LCSProblem(wordA, wordB);
-            }
-            rowNum++;
-        }
-        System.out.println(errorMessage);
-        return null;
     }
 
     private static int parseOrGenerateLengthOfWords(final Parameters<Flag> options) {
@@ -134,6 +98,20 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
     }
 
     @Override
+    public String commandPrefix() {
+        return "Lcs";
+    }
+
+    @Override
+    public LCSProblem generateProblem(final Parameters<Flag> options) {
+        final int length1 = LCSAlgorithm.parseOrGenerateLengthOfWords(options);
+        final int length2 = LCSAlgorithm.parseOrGenerateLengthOfWords(options);
+        final String word1 = LCSAlgorithm.generateRandomString(length1);
+        final String word2 = LCSAlgorithm.generateRandomString(length2);
+        return new LCSProblem(word1, word2);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -142,62 +120,71 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
     }
 
     @Override
-    public LCSProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<LCSProblem>(
-            LCSAlgorithm::parseLCSProblem,
-            LCSAlgorithm::generateLCSProblem
-        ).getResult(options);
+    public List<LCSProblem> parseProblems(final BufferedReader reader, final Parameters<Flag> options)
+    throws IOException {
+        final String wordA = reader.readLine();
+        final String wordB = reader.readLine();
+        if (wordA.isBlank() || wordB.isBlank()) {
+            throw new IllegalArgumentException(
+                "You need to provide two lines each carrying exactly one non-empty word."
+            );
+        }
+        return List.of(new LCSProblem(wordA, wordB));
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
         final LCSProblem problem,
         final int[][] solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final LengthConfiguration configuration =
-            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(options, 3);
-        writer.write("Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilfolge} der Folgen \\code{");
-        writer.write(problem.word1);
-        writer.write("} und \\code{");
-        writer.write(problem.word2);
-        writer.write("}. Benutzen Sie hierf\\\"ur den in der Vorlesung vorgestellten Algorithmus mit dynamischer ");
+        writer.write(". Benutzen Sie hierf\\\"ur den in der Vorlesung vorgestellten Algorithmus mit dynamischer ");
         writer.write("Programmierung und f\\\"ullen Sie die folgende Tabelle aus. Geben Sie au\\ss{}erdem die vom ");
         writer.write("Algorithmus bestimmte l\\\"angste gemeinsame Teilfolge an.");
         Main.newLine(writer);
-        Main.newLine(writer);
-        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
-        switch (mode) {
-        case SOLUTION_SPACE:
-            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-            // fall-through
-        case ALWAYS:
-            OptimizationAlgorithms.printDPTable(
-                solution,
-                new DPHeading(i -> problem.rowHeading(i)),
-                new DPHeading(i -> problem.columnHeading(i)),
-                Optional.empty(),
-                options,
-                configuration,
-                writer
-            );
-            writer.write("${}^*$ Folge 1/Folge 2\\\\[2ex]");
-            Main.newLine(writer);
-            writer.write("L\\\"angste gemeinsame Teilfolge:");
-            Main.newLine(writer);
-            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
-                LaTeXUtils.printSolutionSpaceEnd(Optional.of("3ex"), options, writer);
-            }
-            Main.newLine(writer);
-            break;
-        default:
-            //do nothing
-        }
     }
 
     @Override
-    public void printSolution(
+    public void printBeforeMultipleProblemInstances(
+        final List<LCSProblem> problems,
+        final List<int[][]> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilfolge} der folgenden Paare von ");
+        writer.write("Zeichenfolgen. Benutzen Sie hierf\\\"ur den in der Vorlesung vorgestellten Algorithmus mit ");
+        writer.write("dynamischer Programmierung und f\\\"ullen Sie die jeweilige Tabelle aus. Geben Sie ");
+        writer.write("au\\ss{}erdem jeweils die vom Algorithmus bestimmte l\\\"angste gemeinsame Teilfolge an.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
+        final LCSProblem problem,
+        final int[][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Bestimmen Sie die \\emphasize{l\\\"angste gemeinsame Teilfolge} der Folgen ");
+    }
+
+    @Override
+    public void printProblemInstance(
+        final LCSProblem problem,
+        final int[][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("\\code{");
+        writer.write(problem.word1);
+        writer.write("} und \\code{");
+        writer.write(problem.word2);
+        writer.write("}");
+    }
+
+    @Override
+    public void printSolutionInstance(
         final LCSProblem problem,
         final int[][] solution,
         final Parameters<Flag> options,
@@ -222,7 +209,47 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         writer.write("L\\\"angste gemeinsame Teilfolge: ");
         writer.write(LCSAlgorithm.lcs(problem, solution));
         Main.newLine(writer);
-        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final LCSProblem problem,
+        final int[][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException{
+        final LengthConfiguration configuration =
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(options, 3);
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
+        switch (mode) {
+        case SOLUTION_SPACE:
+            Main.newLine(writer);
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+            // fall-through
+        case ALWAYS:
+            if (mode != SolutionSpaceMode.SOLUTION_SPACE) {
+                Main.newLine(writer);
+            }
+            OptimizationAlgorithms.printDPTable(
+                solution,
+                new DPHeading(i -> problem.rowHeading(i)),
+                new DPHeading(i -> problem.columnHeading(i)),
+                Optional.empty(),
+                options,
+                configuration,
+                writer
+            );
+            writer.write("${}^*$ Folge 1/Folge 2\\\\[2ex]");
+            Main.newLine(writer);
+            writer.write("L\\\"angste gemeinsame Teilfolge:");
+            Main.newLine(writer);
+            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("3ex"), options, writer);
+            }
+            break;
+        default:
+            //do nothing
+        }
     }
 
 }

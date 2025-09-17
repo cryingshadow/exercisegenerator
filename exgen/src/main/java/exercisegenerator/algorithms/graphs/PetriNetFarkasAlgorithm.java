@@ -142,28 +142,48 @@ public abstract class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Mat
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
         final PetriNetInput problem,
         final List<Matrix> solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Betrachten Sie das folgende Petrinetz $N$:\\\\[2ex]");
-        Main.newLine(writer);
-        final PetriNet net = new PetriNet(problem);
-        LaTeXUtils.printDefaultAdjustboxBeginning(writer);
-        net.toTikz(net.getZeroMarking(), writer);
-        LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Berechnen Sie eine Basis der ");
         writer.write(this.kindOfInvariant());
         writer.write("-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}.");
         Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeMultipleProblemInstances(
+        final List<PetriNetInput> problems,
+        final List<List<Matrix>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Berechnen Sie jeweils eine Basis der ");
+        writer.write(this.kindOfInvariant());
+        writer.write("-Invarianten der folgenden \\emphasize{Petrinetze} mithilfe des ");
+        writer.write("\\emphasize{Algorithmus von Farkas}.");
         Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final PetriNetInput problem,
+        final List<Matrix> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final PetriNet net = new PetriNet(problem);
+        LaTeXUtils.printAdjustboxBeginning(writer);
+        net.toTikz(net.getZeroMarking(), writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final PetriNetInput problem,
         final List<Matrix> solution,
         final Parameters<Flag> options,
@@ -185,8 +205,15 @@ public abstract class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Mat
         Main.newLine(writer);
         writer.write("\\renewcommand{\\arraystretch}{1}}");
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final PetriNetInput problem,
+        final List<Matrix> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
     protected abstract Matrix getIncidenceMatrix(final PetriNet net);
 

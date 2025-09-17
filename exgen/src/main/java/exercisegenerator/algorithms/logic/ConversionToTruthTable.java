@@ -29,6 +29,16 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
     }
 
     @Override
+    public String commandPrefix() {
+        return "ToTruthTable";
+    }
+
+    @Override
+    public PropositionalFormula generateProblem(final Parameters<Flag> options) {
+        return PropositionalLogic.generateFormula(options);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -37,12 +47,26 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
     }
 
     @Override
-    public PropositionalFormula parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return PropositionalLogic.parseOrGenerateFormula(options);
+    public List<PropositionalFormula> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        return PropositionalLogic.parseFormulas(reader, options);
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<PropositionalFormula> problems,
+        final List<TruthTable> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Geben Sie die jeweilige Wahrheitstabelle zu den folgenden aussagenlogischen Formeln an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final PropositionalFormula problem,
         final TruthTable solution,
         final Parameters<Flag> options,
@@ -50,15 +74,20 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
     ) throws IOException {
         writer.write("Geben Sie die Wahrheitstabelle zu der folgenden aussagenlogischen Formel an:\\\\");
         Main.newLine(writer);
-        PropositionalLogic.printGeneralFormula(problem, writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-        LaTeXUtils.printVerticalProtectedSpace("1ex", writer);
-        PropositionalLogic.printTruthTable(solution, true, true, writer);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final PropositionalFormula problem,
+        final TruthTable solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        PropositionalLogic.printGeneralFormula(problem, writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final PropositionalFormula problem,
         final TruthTable solution,
         final Parameters<Flag> options,
@@ -66,7 +95,19 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
     ) throws IOException {
         LaTeXUtils.printVerticalProtectedSpace("-6ex", writer);
         PropositionalLogic.printTruthTable(solution, false, true, writer);
-        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final PropositionalFormula problem,
+        final TruthTable solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+        LaTeXUtils.printVerticalProtectedSpace("1ex", writer);
+        PropositionalLogic.printTruthTable(solution, true, true, writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
 }

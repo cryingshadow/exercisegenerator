@@ -14,6 +14,11 @@ public class RedBlackTreeAlgorithm implements SearchTreeAlgorithm {
     private RedBlackTreeAlgorithm() {}
 
     @Override
+    public String commandPrefix() {
+        return "RedBlackTree";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

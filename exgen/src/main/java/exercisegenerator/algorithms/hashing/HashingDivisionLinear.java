@@ -17,6 +17,11 @@ public class HashingDivisionLinear implements Hashing {
     private HashingDivisionLinear() {}
 
     @Override
+    public String commandPrefix() {
+        return "HashingDivisionLinear";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

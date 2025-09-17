@@ -12,9 +12,6 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
 
     public static final BellmanFordAlgorithm INSTANCE = new BellmanFordAlgorithm();
 
-    private static final String BELLMAN_FORD_PATTERN =
-        "F\\\"uhren Sie den \\emphasize{Bellman-Ford}-Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus.";
-
     private static void printTables(
         final List<Vertex<String>> vertices,
         final List<BellmanFordStep<String>> result,
@@ -112,6 +109,11 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
     }
 
     @Override
+    public String commandPrefix() {
+        return "BellmanFord";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -120,28 +122,36 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
         final GraphProblem problem,
         final List<BellmanFordStep<String>> solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final List<Vertex<String>> vertices =
-            GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
-        GraphAlgorithm.printGraphExercise(
-            GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options)),
-            String.format(BellmanFordAlgorithm.BELLMAN_FORD_PATTERN, problem.startNode().get().label().get()),
-            writer
-        );
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("F\\\"uhren Sie den \\emphasize{Bellman-Ford}-Algorithmus auf diesem Graphen mit dem ");
+        writer.write("\\emphasize{Startknoten ");
+        writer.write(problem.startNode().get().label().get());
+        writer.write("} aus.");
+        Main.newLine(writer);
         writer.write("F\\\"ullen Sie dazu die nachfolgenden Tabellen aus:\\\\[2ex]");
         Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        BellmanFordAlgorithm.printTables(vertices, solution, false, writer);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
     @Override
-    public void printSolution(
+    public void printBeforeMultipleProblemInstances(
+        final List<GraphProblem> problems,
+        final List<List<BellmanFordStep<String>>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("F\\\"uhren Sie den \\emphasize{Bellman-Ford}-Algorithmus auf den folgenden Graphen aus und ");
+        writer.write("f\\\"ullen Sie dazu die jeweiligen Tabellen aus.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final GraphProblem problem,
         final List<BellmanFordStep<String>> solution,
         final Parameters<Flag> options,
@@ -150,7 +160,20 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final List<Vertex<String>> vertices =
             GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
         BellmanFordAlgorithm.printTables(vertices, solution, true, writer);
-        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final GraphProblem problem,
+        final List<BellmanFordStep<String>> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final List<Vertex<String>> vertices =
+            GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        BellmanFordAlgorithm.printTables(vertices, solution, false, writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
 }

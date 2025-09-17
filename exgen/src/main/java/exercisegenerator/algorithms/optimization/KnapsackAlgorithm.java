@@ -34,20 +34,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         };
     }
 
-    private static KnapsackProblem generateKnapsackProblem(final Parameters<Flag> options) {
-        final int numberOfItems = KnapsackAlgorithm.parseOrGenerateNumberOfItems(options);
-        final int[] weights = new int[numberOfItems];
-        for (int i = 0; i < weights.length; i++) {
-            weights[i] = 1 + Main.RANDOM.nextInt(11);
-        }
-        final int[] values = new int[numberOfItems];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = 1 + Main.RANDOM.nextInt(11);
-        }
-        final int capacity = 3 + Main.RANDOM.nextInt(6);
-        return new KnapsackProblem(weights, values, capacity);
-    }
-
     private static List<Integer> knapsackItems(final KnapsackProblem problem, final int[][] solution) {
         final List<Integer> result = new LinkedList<Integer>();
         int i = solution.length - 1;
@@ -62,25 +48,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         }
         Collections.sort(result);
         return result;
-    }
-
-    private static KnapsackProblem parseKnapsackProblem(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final String errorMessage =
-            "You need to provide the same number of weights and values together with a capacity. The three parts need "
-            + " to be separated by ';' while the numbers within the parts are separated by ','!";
-        final String line = reader.readLine();
-        final String[] parts = line.strip().split(";");
-        if (parts.length < 3) {
-            throw new IOException(errorMessage);
-        }
-        return new KnapsackProblem(
-            KnapsackAlgorithm.toIntArray(parts[0]),
-            KnapsackAlgorithm.toIntArray(parts[1]),
-            Integer.parseInt(parts[2])
-        );
     }
 
     private static int parseOrGenerateNumberOfItems(final Parameters<Flag> options) {
@@ -134,6 +101,26 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
     }
 
     @Override
+    public String commandPrefix() {
+        return "Knapsack";
+    }
+
+    @Override
+    public KnapsackProblem generateProblem(final Parameters<Flag> options) {
+        final int numberOfItems = KnapsackAlgorithm.parseOrGenerateNumberOfItems(options);
+        final int[] weights = new int[numberOfItems];
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = 1 + Main.RANDOM.nextInt(11);
+        }
+        final int[] values = new int[numberOfItems];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = 1 + Main.RANDOM.nextInt(11);
+        }
+        final int capacity = 3 + Main.RANDOM.nextInt(6);
+        return new KnapsackProblem(weights, values, capacity);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -142,37 +129,82 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
     }
 
     @Override
-    public KnapsackProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<KnapsackProblem>(
-            KnapsackAlgorithm::parseKnapsackProblem,
-            KnapsackAlgorithm::generateKnapsackProblem
-        ).getResult(options);
+    public List<KnapsackProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final String errorMessage =
+            "You need to provide the same number of weights and values together with a capacity. The three parts need "
+            + " to be separated by ';' while the numbers within the parts are separated by ','!";
+        final String line = reader.readLine();
+        final String[] parts = line.strip().split(";");
+        if (parts.length < 3) {
+            throw new IOException(errorMessage);
+        }
+        return List.of(
+            new KnapsackProblem(
+                KnapsackAlgorithm.toIntArray(parts[0]),
+                KnapsackAlgorithm.toIntArray(parts[1]),
+                Integer.parseInt(parts[2])
+            )
+        );
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
         final KnapsackProblem problem,
         final int[][] solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final LengthConfiguration configuration =
-            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(
-                options,
-                2,
-                parameters -> new LengthConfiguration("7mm", "5mm", "7mm")
-            );
+        writer.write("Bestimmen Sie mit Hilfe des Algorithmus zum L\\\"osen ");
+        writer.write("des Rucksackproblems mittels dynamischer Programmierung den maximalen ");
+        writer.write("Gesamtwert der Gegenst\\\"ande, die der Rucksack tragen kann (das Gesamtgewicht der ");
+        writer.write("mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des Rucksacks). ");
+        Main.newLine(writer);
+        writer.write("Geben Sie zudem die vom Algorithmus bestimmte Tabelle ");
+        writer.write("und die mitzunehmenden Gegenst\\\"ande an.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeMultipleProblemInstances(
+        final List<KnapsackProblem> problems,
+        final List<int[][]> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Bestimmen Sie mit Hilfe des Algorithmus zum L\\\"osen ");
+        writer.write("des Rucksackproblems mittels dynamischer Programmierung den jeweils maximalen ");
+        writer.write("Gesamtwert der Gegenst\\\"ande f\\\"ur die folgenden Rucksackprobleme (das Gesamtgewicht der ");
+        writer.write("mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des jeweiligen Rucksacks). ");
+        Main.newLine(writer);
+        writer.write("Geben Sie zudem jeweils die vom Algorithmus bestimmte Tabelle ");
+        writer.write("und die mitzunehmenden Gegenst\\\"ande an.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
+        final KnapsackProblem problem,
+        final int[][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    public void printProblemInstance(
+        final KnapsackProblem problem,
+        final int[][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         final int numberOfItems = problem.weights.length;
         writer.write("Gegeben sei ein Rucksack mit ");
         writer.write(String.format("\\emphasize{maximaler Tragkraft} %d ", problem.capacity));
         writer.write(String.format("sowie %d \\emphasize{Gegenst\\\"ande}. ", numberOfItems));
         Main.newLine(writer);
         writer.write("Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $v_i$ haben. ");
-        Main.newLine(writer);
-        writer.write("Bestimmen Sie mit Hilfe des Algorithmus zum L\\\"osen ");
-        writer.write("des Rucksackproblems mittels dynamischer Programmierung den maximalen ");
-        writer.write("Gesamtwert der Gegenst\\\"ande, die der Rucksack tragen kann (das Gesamtgewicht der ");
-        writer.write("mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des Rucksacks). ");
         Main.newLine(writer);
         writer.write("Die \\emphasize{Gewichte} seien dabei $w_{1} = " + problem.weights[0] + "$");
         for (int i = 1; i < numberOfItems - 1; i++) {
@@ -187,43 +219,10 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         }
         writer.write(" und $v_{" + numberOfItems + "} = " + problem.values[numberOfItems - 1] + "$. ");
         Main.newLine(writer);
-        writer.write("Geben Sie zudem die vom Algorithmus bestimmte Tabelle ");
-        writer.write("und die mitzunehmenden Gegenst\\\"ande an.");
-        Main.newLine(writer);
-        Main.newLine(writer);
-        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
-        switch (mode) {
-        case SOLUTION_SPACE:
-            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-            // fall-through
-        case ALWAYS:
-            OptimizationAlgorithms.printDPTable(
-                solution,
-                KnapsackAlgorithm.toKnapsackRowHeading(problem.weights, problem.values),
-                new DPHeading(i -> LaTeXUtils.bold(i.toString())),
-                Optional.empty(),
-                options,
-                configuration,
-                writer
-            );
-            writer.write("${}^*$ Gegenstand/Kapazit\\\"at\\\\[2ex]");
-            Main.newLine(writer);
-            writer.write("Gegenst\\\"ande:\\\\[2ex]");
-            Main.newLine(writer);
-            writer.write("Wert:");
-            Main.newLine(writer);
-            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
-                LaTeXUtils.printSolutionSpaceEnd(Optional.of("3ex"), options, writer);
-            }
-            Main.newLine(writer);
-            break;
-        default:
-            //do nothing
-        }
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final KnapsackProblem problem,
         final int[][] solution,
         final Parameters<Flag> options,
@@ -256,7 +255,53 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         writer.write("Wert: ");
         writer.write(String.valueOf(solution[solution.length - 1][solution[0].length - 1]));
         Main.newLine(writer);
-        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final KnapsackProblem problem,
+        final int[][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final LengthConfiguration configuration =
+            OptimizationAlgorithms.parseOrGenerateLengthConfiguration(
+                options,
+                2,
+                parameters -> new LengthConfiguration("7mm", "5mm", "7mm")
+            );
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
+        switch (mode) {
+        case SOLUTION_SPACE:
+            Main.newLine(writer);
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+            // fall-through
+        case ALWAYS:
+            if (mode != SolutionSpaceMode.SOLUTION_SPACE) {
+                Main.newLine(writer);
+            }
+            OptimizationAlgorithms.printDPTable(
+                solution,
+                KnapsackAlgorithm.toKnapsackRowHeading(problem.weights, problem.values),
+                new DPHeading(i -> LaTeXUtils.bold(i.toString())),
+                Optional.empty(),
+                options,
+                configuration,
+                writer
+            );
+            writer.write("${}^*$ Gegenstand/Kapazit\\\"at\\\\[2ex]");
+            Main.newLine(writer);
+            writer.write("Gegenst\\\"ande:\\\\[2ex]");
+            Main.newLine(writer);
+            writer.write("Wert:");
+            Main.newLine(writer);
+            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("3ex"), options, writer);
+            }
+            break;
+        default:
+            //do nothing
+        }
     }
 
 }

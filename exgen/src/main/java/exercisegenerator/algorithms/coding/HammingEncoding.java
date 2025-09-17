@@ -22,11 +22,6 @@ public class HammingEncoding implements AlgorithmImplementation<BitString, BitSt
         return result;
     }
 
-    private static BitString generateHammingMessage(final Parameters<Flag> options) {
-        final int length = AlgorithmImplementation.parseOrGenerateLength(4, 4, options);
-        return CodingAlgorithms.generateHammingMessage(length);
-    }
-
     private static void invertParityBits(final int index, final BitString code, final int numOfParityBits) {
         final BitString indexBits = CodingAlgorithms.toIndexBits(index, numOfParityBits);
         int bitIndex = 0;
@@ -68,37 +63,63 @@ public class HammingEncoding implements AlgorithmImplementation<BitString, BitSt
     }
 
     @Override
+    public String commandPrefix() {
+        return "ToHamming";
+    }
+
+    @Override
+    public BitString generateProblem(final Parameters<Flag> options) {
+        final int length = AlgorithmImplementation.parseOrGenerateLength(4, 4, options);
+        return CodingAlgorithms.generateHammingMessage(length);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[0];
         return result;
     }
 
     @Override
-    public BitString parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<BitString>(
-            BitString::parse,
-            HammingEncoding::generateHammingMessage
-        ).getResult(options);
+    public List<BitString> parseProblems(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
+        return BitString.parseBitStringProblems(reader, options);
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<BitString> problems,
+        final List<BitString> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Geben Sie den jeweiligen \\emphasize{Hamming-Code} f\\\"ur die folgenden bin\\\"aren ");
+        writer.write("Nachrichten an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final BitString problem,
         final BitString solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write(
-            "Geben Sie den \\emphasize{Hamming-Code} f\\\"ur die folgende bin\\\"are Nachricht an:\\\\[2ex]"
-        );
-        Main.newLine(writer);
-        writer.write(LaTeXUtils.codeseq(problem.toString()));
-        Main.newLine(writer);
+        writer.write("Geben Sie den \\emphasize{Hamming-Code} f\\\"ur die folgende bin\\\"are Nachricht an:\\\\[2ex]");
         Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final BitString problem,
+        final BitString solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write(LaTeXUtils.codeseq(problem.toString()));
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final BitString problem,
         final BitString solution,
         final Parameters<Flag> options,
@@ -106,7 +127,14 @@ public class HammingEncoding implements AlgorithmImplementation<BitString, BitSt
     ) throws IOException {
         writer.write(LaTeXUtils.codeseq(solution.toString()));
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final BitString problem,
+        final BitString solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

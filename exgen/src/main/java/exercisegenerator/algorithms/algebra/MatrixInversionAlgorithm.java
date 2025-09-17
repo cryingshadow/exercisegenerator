@@ -26,10 +26,6 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
         return result;
     }
 
-    private static Matrix generateMatrix(final Parameters<Flag> options) {
-        return AlgebraAlgorithms.generateQuadraticMatrix(AlgebraAlgorithms.parseOrGenerateDimensionOfMatrices(options));
-    }
-
     private static boolean hasIdentityMatrixLeft(final Matrix matrix) {
         final int dimension = matrix.getNumberOfRows();
         for (int row = 0; row < dimension; row++) {
@@ -45,16 +41,6 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
         return true;
     }
 
-    private static Matrix parseMatrix(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
-        final List<String> text = new LinkedList<String>();
-        String line = reader.readLine();
-        while (line != null && !line.isBlank()) {
-            text.add(line);
-            line = reader.readLine();
-        }
-        return AlgebraAlgorithms.parseMatrix(text);
-    }
-
     private MatrixInversionAlgorithm() {}
 
     @Override
@@ -66,6 +52,17 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
     }
 
     @Override
+    public String commandPrefix() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Matrix generateProblem(final Parameters<Flag> options) {
+        return AlgebraAlgorithms.generateQuadraticMatrix(AlgebraAlgorithms.parseOrGenerateDimensionOfMatrices(options));
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-d";
@@ -74,15 +71,31 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
     }
 
     @Override
-    public Matrix parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<Matrix>(
-            MatrixInversionAlgorithm::parseMatrix,
-            MatrixInversionAlgorithm::generateMatrix
-        ).getResult(options);
+    public List<Matrix> parseProblems(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
+        final List<String> text = new LinkedList<String>();
+        String line = reader.readLine();
+        while (line != null && !line.isBlank()) {
+            text.add(line);
+            line = reader.readLine();
+        }
+        return List.of(AlgebraAlgorithms.parseMatrix(text));
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<Matrix> problems,
+        final List<List<Matrix>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Invertieren Sie die folgenden Matrizen mithilfe des \\emphasize{Gau\\ss{}-Jordan-Algorithmus} ");
+        writer.write("oder bestimmen Sie durch diesen Algorithmus, dass sich die jeweilige Matrix nicht invertieren ");
+        writer.write("l\\\"asst.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final Matrix problem,
         final List<Matrix> solution,
         final Parameters<Flag> options,
@@ -92,15 +105,23 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
         writer.write(" bestimmen Sie durch diesen Algorithmus, dass sich die Matrix nicht invertieren ");
         writer.write("l\\\"asst:\\\\[2ex]");
         Main.newLine(writer);
+    }
+
+    @Override
+    public void printProblemInstance(
+        final Matrix problem,
+        final List<Matrix> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write("$");
         writer.write(problem.toLaTeX());
         writer.write("$");
         Main.newLine(writer);
-        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final Matrix problem,
         final List<Matrix> solution,
         final Parameters<Flag> options,
@@ -124,8 +145,15 @@ public class MatrixInversionAlgorithm implements AlgorithmImplementation<Matrix,
             writer.write("nicht invertierbar");
         }
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final Matrix problem,
+        final List<Matrix> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
     private Matrix addIdentityMatrix(final Matrix problem) {
         final int dimension = problem.getNumberOfColumns();

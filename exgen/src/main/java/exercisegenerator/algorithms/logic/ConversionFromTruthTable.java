@@ -13,27 +13,6 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
 
     public static final ConversionFromTruthTable INSTANCE = new ConversionFromTruthTable();
 
-    private static TruthTable generateTruthTable(final Parameters<Flag> options) {
-        final List<String> variables = PropositionalLogic.generateVariables(options);
-        final boolean[] truthValues = new boolean[(int)Math.pow(2, variables.size())];
-        for (int i = 0; i < truthValues.length; i++) {
-            truthValues[i] = Main.RANDOM.nextBoolean();
-        }
-        final TruthTable result = new TruthTable(variables, truthValues );
-        return result;
-    }
-
-    private static TruthTable parseTruthTable(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        try {
-            return TruthTable.parse(reader.readLine());
-        } catch (final TruthTableParseException e) {
-            throw new IOException(e);
-        }
-    }
-
     private static void printDNFFormula(final PropositionalFormula formula, final BufferedWriter writer)
     throws IOException {
         LaTeXUtils.printBeginning("align*", writer);
@@ -102,6 +81,22 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
     }
 
     @Override
+    public String commandPrefix() {
+        return "FromTruthTable";
+    }
+
+    @Override
+    public TruthTable generateProblem(final Parameters<Flag> options) {
+        final List<String> variables = PropositionalLogic.generateVariables(options);
+        final boolean[] truthValues = new boolean[(int)Math.pow(2, variables.size())];
+        for (int i = 0; i < truthValues.length; i++) {
+            truthValues[i] = Main.RANDOM.nextBoolean();
+        }
+        final TruthTable result = new TruthTable(variables, truthValues );
+        return result;
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -110,15 +105,38 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
     }
 
     @Override
-    public TruthTable parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<TruthTable>(
-            ConversionFromTruthTable::parseTruthTable,
-            ConversionFromTruthTable::generateTruthTable
-        ).getResult(options);
+    public List<TruthTable> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final List<TruthTable> result = new ArrayList<TruthTable>();
+        try {
+            String line = reader.readLine();
+            while (line != null) {
+                if (!line.isBlank()) {
+                    result.add(TruthTable.parse(line));
+                }
+                line = reader.readLine();
+            }
+        } catch (final TruthTableParseException e) {
+            throw new IOException(e);
+        }
+        return result;
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<TruthTable> problems,
+        final List<PropositionalFormula> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Geben Sie zu den folgenden Wahrheitstabellen jeweils eine aussagenlogische Formel an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final TruthTable problem,
         final PropositionalFormula solution,
         final Parameters<Flag> options,
@@ -126,12 +144,20 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
     ) throws IOException {
         writer.write("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\");
         Main.newLine(writer);
-        PropositionalLogic.printTruthTable(problem, false, false, writer);
-        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final TruthTable problem,
+        final PropositionalFormula solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        PropositionalLogic.printTruthTable(problem, false, false, writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final TruthTable problem,
         final PropositionalFormula solution,
         final Parameters<Flag> options,
@@ -141,5 +167,13 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
         ConversionFromTruthTable.printDNFFormula(solution, writer);
         Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final TruthTable problem,
+        final PropositionalFormula solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

@@ -11,6 +11,11 @@ public class FloydAlgorithm implements FloydWarshallAlgorithm<Integer> {
     private FloydAlgorithm() {}
 
     @Override
+    public String commandPrefix() {
+        return "Floyd";
+    }
+
+    @Override
     public Integer[][][] createTable(final int size1, final int size2, final int size3) {
         return new Integer[size1][size2][size3];
     }

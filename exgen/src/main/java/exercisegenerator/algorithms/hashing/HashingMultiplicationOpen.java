@@ -17,6 +17,11 @@ public class HashingMultiplicationOpen implements Hashing {
     private HashingMultiplicationOpen() {}
 
     @Override
+    public String commandPrefix() {
+        return "HashingMultiplicationOpen";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

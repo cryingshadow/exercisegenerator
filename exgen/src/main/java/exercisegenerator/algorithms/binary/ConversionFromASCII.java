@@ -22,35 +22,20 @@ public class ConversionFromASCII implements BinaryNumbersAlgorithm<String> {
         return ConversionToTwosComplement.toTwosComplement(character, 8);
     }
 
-    private static String generateASCII() {
-        return String.valueOf((char)(Main.RANDOM.nextInt(95) + 32));
-    }
-
-    private static List<String> generateASCIIBitStringTasks(final Parameters<Flag> options) {
-        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
-        final List<String> result = new ArrayList<String>(numOfTasks);
-        for (int i = 0; i < numOfTasks; i++) {
-            result.add(ConversionFromASCII.generateASCII());
-        }
-        return result;
-    }
-
-    private static List<String> parseASCIIBitStringTasks(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        return Arrays.asList(reader.readLine().split(";"));
-    }
-
     private ConversionFromASCII() {}
 
     @Override
-    public SolvedBinaryTask algorithm(final String task) {
+    public SolvedBinaryTask apply(final String task) {
         return new SolvedBinaryTask(
             ConversionFromASCII.fromASCII(task.charAt(0)),
             "=",
             task
         );
+    }
+
+    @Override
+    public String generateProblem(final Parameters<Flag> options) {
+        return String.valueOf((char)(Main.RANDOM.nextInt(95) + 32));
     }
 
     @Override
@@ -76,13 +61,11 @@ public class ConversionFromASCII implements BinaryNumbersAlgorithm<String> {
     }
 
     @Override
-    public List<String> parseOrGenerateProblem(
+    public List<String> parseProblems(
+        final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        return new ParserAndGenerator<List<String>>(
-            ConversionFromASCII::parseASCIIBitStringTasks,
-            ConversionFromASCII::generateASCIIBitStringTasks
-        ).getResult(options);
+        return Arrays.asList(reader.readLine().split(";"));
     }
 
     @Override

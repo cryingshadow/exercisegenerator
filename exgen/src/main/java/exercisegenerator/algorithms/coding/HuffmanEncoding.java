@@ -48,13 +48,6 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         return Main.RANDOM.nextInt(6) + 5;
     }
 
-    private static String parseOrGenerateSourceText(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<String>(
-            CodingAlgorithms::parseInputText,
-            HuffmanEncoding::generateSourceText
-        ).getResult(options);
-    }
-
     private static List<Character> parseOrGenerateTargetAlphabet(final Parameters<Flag> options) throws IOException {
         if (options.containsKey(Flag.OPERATIONS)) {
             return options.get(Flag.OPERATIONS).chars().mapToObj(c -> (char)c).toList();
@@ -105,49 +98,94 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     }
 
     @Override
+    public String commandPrefix() {
+        return "ToHuffman";
+    }
+
+    @Override
+    public HuffmanProblem generateProblem(final Parameters<Flag> options) {
+        return new HuffmanProblem(HuffmanEncoding.generateSourceText(options), CodingAlgorithms.BINARY_ALPHABET);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[0];
         return result;
     }
 
     @Override
-    public HuffmanProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new HuffmanProblem(
-            HuffmanEncoding.parseOrGenerateSourceText(options),
-            HuffmanEncoding.parseOrGenerateTargetAlphabet(options)
+    public List<HuffmanProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        return List.of(
+            new HuffmanProblem(
+                CodingAlgorithms.parseInputText(reader, options),
+                HuffmanEncoding.parseOrGenerateTargetAlphabet(options)
+            )
         );
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
         final HuffmanProblem problem,
         final HuffmanSolution solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{");
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch sowie die Liste der ");
+        writer.write("Bin\\\"arb\\\"aume nach ihrer Erzeugung und nach jeder Kombination von Bin\\\"arb\\\"aumen ");
+        writer.write("an.\\\\[2ex]");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeMultipleProblemInstances(
+        final List<HuffmanProblem> problems,
+        final List<HuffmanSolution> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Erzeugen Sie den jeweiligen \\emphasize{Huffman-Code} f\\\"ur die folgenden Eingaben und ");
+        writer.write("geben Sie zus\\\"atzlich zu dem erstellten Code das jeweils erzeugte Codebuch sowie die Liste ");
+        writer.write("der Binärbäume nach ihrer Erzeugung und nach jeder Kombination von Binärbäumen an.\\\\");
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
+        final HuffmanProblem problem,
+        final HuffmanSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur die folgende Eingabe:\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printProblemInstance(
+        final HuffmanProblem problem,
+        final HuffmanSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Zielalphabet: $\\{");
         writer.write(
             LaTeXUtils.escapeForLaTeX(problem.alphabet().stream().map(String::valueOf).collect(Collectors.joining(",")))
         );
-        writer.write("\\}$ und den folgenden Eingabetext:\\\\");
+        writer.write("\\}$\\\\");
+        Main.newLine(writer);
+        writer.write("Eingabetext:\\\\");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         writer.write(LaTeXUtils.escapeForLaTeX(problem.message()));
         Main.newLine(writer);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-        LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]");
-        Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        HuffmanEncoding.printCodeBookForEncoding(solution.code().tree().toCodeBook(), true, writer);
-        LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("\\textbf{Code:}\\\\");
-        Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final HuffmanProblem problem,
         final HuffmanSolution solution,
         final Parameters<Flag> options,
@@ -183,6 +221,21 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         LaTeXUtils.printTikzEnd(writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final HuffmanProblem problem,
+        final HuffmanSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        HuffmanEncoding.printCodeBookForEncoding(solution.code().tree().toCodeBook(), true, writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("\\textbf{Code:}\\\\");
+        Main.newLine(writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
 }

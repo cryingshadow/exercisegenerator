@@ -45,23 +45,6 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
         return null;
     }
 
-    private static MatrixTerm generateMatrixTerm(final Parameters<Flag> options) {
-        final int numberOfMatrices = MatrixArithmeticAlgorithm.parseOrGenerateNumberOfMatrices(options);
-        final int dimensionOfMatrices = AlgebraAlgorithms.parseOrGenerateDimensionOfMatrices(options);
-        final List<MatrixTerm> terms = new ArrayList<MatrixTerm>();
-        for (int i = 0; i < numberOfMatrices; i++) {
-            terms.add(AlgebraAlgorithms.generateQuadraticMatrix(dimensionOfMatrices));
-        }
-        while (terms.size() > 1) {
-            final MatrixTerm left = terms.remove(Main.RANDOM.nextInt(terms.size()));
-            final MatrixTerm right = terms.remove(Main.RANDOM.nextInt(terms.size()));
-            terms.add(
-                Main.RANDOM.nextInt(4) == 0 ? new MatrixAddition(left, right) : new MatrixMultiplication(left, right)
-            );
-        }
-        return terms.get(0);
-    }
-
     private static MatrixTerm parseFirstOperation(
         final MatrixTerm left,
         final String operator,
@@ -179,19 +162,6 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
         return result;
     }
 
-    private static MatrixTerm parseMatrixTerm(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final List<Object> text = new ArrayList<Object>();
-        String line = reader.readLine();
-        while (line != null && !line.isBlank()) {
-            text.add(line);
-            line = reader.readLine();
-        }
-        return MatrixArithmeticAlgorithm.parseMatrixTerm(text);
-    }
-
     private static MatrixTerm parseMatrixTerm(final List<Object> toParse) {
         if (toParse.size() == 1) {
             return (MatrixTerm)toParse.get(0);
@@ -281,6 +251,29 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
     }
 
     @Override
+    public String commandPrefix() {
+        return "Matrixarithmetic";
+    }
+
+    @Override
+    public MatrixTerm generateProblem(final Parameters<Flag> options) {
+        final int numberOfMatrices = MatrixArithmeticAlgorithm.parseOrGenerateNumberOfMatrices(options);
+        final int dimensionOfMatrices = AlgebraAlgorithms.parseOrGenerateDimensionOfMatrices(options);
+        final List<MatrixTerm> terms = new ArrayList<MatrixTerm>();
+        for (int i = 0; i < numberOfMatrices; i++) {
+            terms.add(AlgebraAlgorithms.generateQuadraticMatrix(dimensionOfMatrices));
+        }
+        while (terms.size() > 1) {
+            final MatrixTerm left = terms.remove(Main.RANDOM.nextInt(terms.size()));
+            final MatrixTerm right = terms.remove(Main.RANDOM.nextInt(terms.size()));
+            terms.add(
+                Main.RANDOM.nextInt(4) == 0 ? new MatrixAddition(left, right) : new MatrixMultiplication(left, right)
+            );
+        }
+        return terms.get(0);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[4];
         result[0] = "-l";
@@ -291,16 +284,32 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
     }
 
     @Override
-    public MatrixTerm parseOrGenerateProblem(final Parameters<Flag> options)
-    throws IOException {
-        return new ParserAndGenerator<MatrixTerm>(
-            MatrixArithmeticAlgorithm::parseMatrixTerm,
-            MatrixArithmeticAlgorithm::generateMatrixTerm
-        ).getResult(options);
+    public List<MatrixTerm> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final List<Object> text = new ArrayList<Object>();
+        String line = reader.readLine();
+        while (line != null && !line.isBlank()) {
+            text.add(line);
+            line = reader.readLine();
+        }
+        return List.of(MatrixArithmeticAlgorithm.parseMatrixTerm(text));
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<MatrixTerm> problems,
+        final List<List<MatrixTerm>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Berechnen Sie das Ergebnis der folgenden Matrix-Operationen:\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final MatrixTerm problem,
         final List<MatrixTerm> solution,
         final Parameters<Flag> options,
@@ -308,15 +317,23 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
     ) throws IOException {
         writer.write("Berechnen Sie das Ergebnis der folgenden Matrix-Operationen:\\\\[2ex]");
         Main.newLine(writer);
+    }
+
+    @Override
+    public void printProblemInstance(
+        final MatrixTerm problem,
+        final List<MatrixTerm> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write("$");
         writer.write(problem.toLaTeX());
         writer.write("$");
         Main.newLine(writer);
-        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final MatrixTerm problem,
         final List<MatrixTerm> solution,
         final Parameters<Flag> options,
@@ -338,7 +355,14 @@ public class MatrixArithmeticAlgorithm implements AlgorithmImplementation<Matrix
         }
         writer.write("\\end{align*}");
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final MatrixTerm problem,
+        final List<MatrixTerm> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

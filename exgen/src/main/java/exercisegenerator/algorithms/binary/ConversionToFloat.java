@@ -111,23 +111,6 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
         return result;
     }
 
-    private static List<NumberFloatTask> generateNumberFloatTasks(final Parameters<Flag> options) {
-        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
-        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
-        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
-        final List<NumberFloatTask> result = new ArrayList<NumberFloatTask>(numOfTasks);
-        for (int i = 0; i < numOfTasks; i++) {
-            result.add(
-                new NumberFloatTask(
-                    ConversionToFloat.generateRationalNumberWithinRange(exponentLength),
-                    exponentLength,
-                    mantissaLength
-                )
-            );
-        }
-        return result;
-    }
-
     private static String generateRationalNumberWithinRange(final int exponentLength) {
         final int limit = (int)Math.pow(2, exponentLength - 1);
         return String.format("%d,%d", Main.RANDOM.nextInt(2 * limit - 1) - limit + 1, Main.RANDOM.nextInt(100000));
@@ -146,17 +129,6 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
     private static boolean outOfBoundsForFloat(final int numBefore, final int exponentLength) {
         final int bitLength = ((int)Math.pow(2, exponentLength - 1)) + 1;
         return BinaryNumbersAlgorithm.outOfBoundsForOnesComplement(numBefore, bitLength);
-    }
-
-    private static List<NumberFloatTask> parseNumberFloatTasks(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
-        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
-        return Arrays.stream(reader.readLine().split(";"))
-            .map(n -> new NumberFloatTask(n, exponentLength, mantissaLength))
-            .toList();
     }
 
     private static NumberTimesDecimalPower parseNumberTimesDecimalPower(final String numberAfterComma) {
@@ -239,11 +211,22 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
     private ConversionToFloat() {}
 
     @Override
-    public SolvedBinaryTask algorithm(final NumberFloatTask task) {
+    public SolvedBinaryTask apply(final NumberFloatTask task) {
         return new SolvedBinaryTask(
             ConversionToFloat.toFloat(task.number(), task.exponentLength(), task.mantissaLength()),
             "\\to",
             task.number()
+        );
+    }
+
+    @Override
+    public NumberFloatTask generateProblem(final Parameters<Flag> options) {
+        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
+        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
+        return new NumberFloatTask(
+            ConversionToFloat.generateRationalNumberWithinRange(exponentLength),
+            exponentLength,
+            mantissaLength
         );
     }
 
@@ -278,11 +261,15 @@ public class ConversionToFloat implements BinaryNumbersAlgorithm<NumberFloatTask
     }
 
     @Override
-    public List<NumberFloatTask> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<List<NumberFloatTask>>(
-            ConversionToFloat::parseNumberFloatTasks,
-            ConversionToFloat::generateNumberFloatTasks
-        ).getResult(options);
+    public List<NumberFloatTask> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
+        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
+        return Arrays.stream(reader.readLine().split(";"))
+            .map(n -> new NumberFloatTask(n, exponentLength, mantissaLength))
+            .toList();
     }
 
     @Override

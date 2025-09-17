@@ -13,10 +13,10 @@ public interface SearchTreeFactory<T extends Comparable<T>> {
     ) {
         T tree = creator.get();
         for (final TreeOperation<V> operation : construction) {
-            if (operation.add) {
-                tree = (T)tree.add(operation.value);
+            if (operation.add()) {
+                tree = (T)tree.add(operation.value());
             } else {
-                tree = (T)tree.remove(operation.value);
+                tree = (T)tree.remove(operation.value());
             }
         }
         return tree;

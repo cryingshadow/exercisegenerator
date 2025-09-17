@@ -344,10 +344,10 @@ public class TreeAlgorithmsTest {
     ) {
         final SearchTreeSteps<Integer> steps = new SearchTreeSteps<Integer>();
         for (final TreeOperation<Integer> operation : operations) {
-            if (operation.add) {
-                steps.addAll(tree.addWithSteps(operation.value));
+            if (operation.add()) {
+                steps.addAll(tree.addWithSteps(operation.value()));
             } else {
-                steps.addAll(tree.removeWithSteps(operation.value));
+                steps.addAll(tree.removeWithSteps(operation.value()));
             }
             tree = (BTree<Integer>)steps.getLast().tree();
         }

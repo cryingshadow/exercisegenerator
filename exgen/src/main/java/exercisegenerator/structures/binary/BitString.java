@@ -16,15 +16,20 @@ public class BitString extends LinkedList<Bit> {
         return BitString.parse(BitString.toBitLength(value.toString(2), bitLength));
     }
 
-    public static BitString parse(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
-        return BitString.parse(reader.readLine());
-    }
-
     public static BitString parse(final String bitString) {
         return
             bitString.chars()
                 .mapToObj(c -> c == '0' ? Bit.ZERO : Bit.ONE)
                 .collect(Collectors.toCollection(BitString::new));
+    }
+
+    public static List<BitString> parseBitStringProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        return Arrays.stream(reader.readLine().split(";"))
+            .map(BitString::parse)
+            .toList();
     }
 
     private static String toBitLength(final String bits, final int bitLength) {

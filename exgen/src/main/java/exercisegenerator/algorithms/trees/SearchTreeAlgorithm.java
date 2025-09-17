@@ -9,32 +9,41 @@ import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.trees.*;
 
 interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem, SearchTreeSteps<Integer>> {
 
-    static Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> generateConstructionAndTasks(
+    static ConstructionAndTasks<Integer> generateConstructionAndTasks(
         final Parameters<Flag> options
     ) {
-        return new Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>(
+        return new ConstructionAndTasks<Integer>(
             SearchTreeAlgorithm.generateTasks(options),
             SearchTreeAlgorithm.generateConstruction(options)
         );
     }
 
-    static Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> parseConstructionAndTasks(
+    static List<ConstructionAndTasks<Integer>> parseConstructionAndTasks(
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        final String[] parts = reader.readLine().split(";");
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Input must contain exactly two parts: construction and tasks!");
+        final List<ConstructionAndTasks<Integer>> result = new LinkedList<ConstructionAndTasks<Integer>>();
+        String line = reader.readLine();
+        while (line != null) {
+            if (!line.isBlank()) {
+                final String[] parts = line.split(";");
+                if (parts.length != 2) {
+                    throw new IllegalArgumentException("Input must contain exactly two parts: construction and tasks!");
+                }
+                result.add(
+                    new ConstructionAndTasks<Integer>(
+                        SearchTreeAlgorithm.parseOperations(parts[0].split(",")),
+                        SearchTreeAlgorithm.parseOperations(parts[1].split(","))
+                    )
+                );
+            }
+            line = reader.readLine();
         }
-        return new Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>(
-            SearchTreeAlgorithm.parseOperations(parts[0].split(",")),
-            SearchTreeAlgorithm.parseOperations(parts[1].split(","))
-        );
+        return result;
     }
 
     static Deque<TreeOperation<Integer>> parseOrGenerateConstruction(
@@ -124,6 +133,48 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         return SearchTreeAlgorithm.parseOperations(nums);
     }
 
+    private static void printOneOfManyProblemInstances(
+        final SearchTreeProblem problem,
+        final BufferedWriter writer
+    ) throws IOException {
+        if (problem.tree().isEmpty()) {
+            writer.write("leerer Baum\\\\");
+        } else {
+            SearchTreeAlgorithm.printTreeAndReturnHorizontalFillingDegree(BigFraction.ZERO, "", problem.tree(), writer);
+        }
+        Main.newLine(writer);
+        Main.newLine(writer);
+        if (problem.operations().size() == 1) {
+            final TreeOperation<Integer> op = problem.operations().peek();
+            if (op.add()) {
+                writer.write("F\\\"ugen Sie den Wert ");
+                writer.write(String.valueOf(op.value()));
+                writer.write(" ein.");
+            } else {
+                writer.write("L\\\"oschen Sie den Wert ");
+                writer.write(String.valueOf(op.value()));
+                writer.write(".");
+            }
+            Main.newLine(writer);
+        } else {
+            writer.write("Operationen:\\\\");
+            Main.newLine(writer);
+            LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
+            for (final TreeOperation<Integer> op : problem.operations()) {
+                writer.write("\\item Den Wert ");
+                writer.write(String.valueOf(op.value()));
+                writer.write(" ");
+                if (op.add()) {
+                    writer.write("einf\\\"ugen.");
+                } else {
+                    writer.write("l\\\"oschen.");
+                }
+                Main.newLine(writer);
+            }
+            LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
+        }
+    }
+
     private static void printSamePageBeginning(
         final Optional<String> width,
         final String headline,
@@ -189,7 +240,9 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         SearchTree<Integer> currentTree = problem.tree();
         for (final TreeOperation<Integer> operation : problem.operations()) {
             result.addAll(
-                operation.add ? currentTree.addWithSteps(operation.value) : currentTree.removeWithSteps(operation.value)
+                operation.add() ?
+                    currentTree.addWithSteps(operation.value()) :
+                        currentTree.removeWithSteps(operation.value())
             );
             currentTree = result.getLast().tree();
         }
@@ -197,18 +250,100 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
     }
 
     @Override
-    default public SearchTreeProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        final Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>> constructionAndTasks =
-            new ParserAndGenerator<Pair<Deque<TreeOperation<Integer>>, Deque<TreeOperation<Integer>>>>(
-                SearchTreeAlgorithm::parseConstructionAndTasks,
-                SearchTreeAlgorithm::generateConstructionAndTasks
-            ).getResult(options);
+    default SearchTreeProblem generateProblem(final Parameters<Flag> options) {
+        final ConstructionAndTasks<Integer> constructionAndTasks =
+            SearchTreeAlgorithm.generateConstructionAndTasks(options);
         final SearchTreeFactory<Integer> factory = this.parseOrGenerateTreeFactory(options);
-        return new SearchTreeProblem(factory.create(constructionAndTasks.x), constructionAndTasks.y, factory);
+        return new SearchTreeProblem(
+            factory.create(constructionAndTasks.construction()),
+            constructionAndTasks.tasks(),
+            factory
+        );
+    }
+
+    SearchTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters<Flag> options);
+
+    @Override
+    default List<SearchTreeProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final List<ConstructionAndTasks<Integer>> constructionAndTasks =
+            SearchTreeAlgorithm.parseConstructionAndTasks(reader, options);
+        final SearchTreeFactory<Integer> factory = this.parseOrGenerateTreeFactory(options);
+        return constructionAndTasks.stream()
+            .map(cat -> new SearchTreeProblem(factory.create(cat.construction()), cat.tasks(), factory))
+            .toList();
     }
 
     @Override
-    default public void printExercise(
+    default void printAfterEachOfMultipleProblemInstances(
+        final SearchTreeProblem problem,
+        final SearchTreeSteps<Integer> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printAfterMultipleProblemInstances(
+        final List<SearchTreeProblem> problems,
+        final List<SearchTreeSteps<Integer>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printBeforeEachOfMultipleProblemInstances(
+        final int number,
+        final SearchTreeProblem problem,
+        final SearchTreeSteps<Integer> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printBeforeMultipleProblemInstances(
+        final List<SearchTreeProblem> problems,
+        final List<SearchTreeSteps<Integer>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final SearchTree<Integer> tree = problems.getFirst().tree();
+        writer.write("F\\\"uhren Sie beginnend mit den folgenden Instanzen eines \\emphasize{");
+        writer.write(tree.getName());
+        writer.write("s} die jeweils darunter aufgef\\\"uhrten Operationen aus und ");
+        writer.write("geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ");
+        Main.newLine(writer);
+        writer.write(tree.getOperations());
+        Main.newLine(writer);
+        writer.write("an.\\\\");
+        Main.newLine(writer);
+        if (Main.embeddedExam(options)) {
+            int number = 1;
+            for (final SearchTreeProblem problem : problems) {
+                writer.write("\\newcommand{\\exercise");
+                writer.write(this.commandPrefix());
+                writer.write(LaTeXUtils.toRomanNumeral(number));
+                writer.write("}{%");
+                Main.newLine(writer);
+                SearchTreeAlgorithm.printOneOfManyProblemInstances(problem, writer);
+                writer.write("}");
+                Main.newLine(writer);
+                number++;
+            }
+        } else {
+            LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
+            for (final SearchTreeProblem problem : problems) {
+                writer.write("\\item ");
+                SearchTreeAlgorithm.printOneOfManyProblemInstances(problem, writer);
+            }
+            LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writer);
+        }
+
+    }
+
+    @Override
+    default void printBeforeSingleProblemInstance(
         final SearchTreeProblem problem,
         final SearchTreeSteps<Integer> solution,
         final Parameters<Flag> options,
@@ -243,15 +378,15 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
             }
             LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
             for (final TreeOperation<Integer> task : operations) {
-                if (task.add) {
+                if (task.add()) {
                     writer.write(LaTeXUtils.ITEM);
                     writer.write(" ");
-                    writer.write(String.valueOf(task.value));
+                    writer.write(String.valueOf(task.value()));
                     writer.write(" einf\\\"ugen\\\\");
                 } else {
                     writer.write(LaTeXUtils.ITEM);
                     writer.write(" ");
-                    writer.write(String.valueOf(task.value));
+                    writer.write(String.valueOf(task.value()));
                     writer.write(" l\\\"oschen\\\\");
                 }
                 Main.newLine(writer);
@@ -260,9 +395,9 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         } else {
             final TreeOperation<Integer> op = operations.peek();
             if (tree.isEmpty()) {
-                if (op.add) {
+                if (op.add()) {
                     writer.write("F\\\"ugen Sie den Wert ");
-                    writer.write(String.valueOf(op.value));
+                    writer.write(String.valueOf(op.value()));
                     writer.write(" in einen leeren \\emphasize{");
                     writer.write(tree.getName());
                     writer.write("} ein und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ");
@@ -274,9 +409,9 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
                     throw new IllegalArgumentException("Deleting a value from an empty tree makes no sense!");
                 }
             } else {
-                if (op.add) {
+                if (op.add()) {
                     writer.write("F\\\"ugen Sie den Wert ");
-                    writer.write(String.valueOf(op.value));
+                    writer.write(String.valueOf(op.value()));
                     writer.write(" in den folgenden \\emphasize{");
                     writer.write(tree.getName());
                     writer.write("} ein und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ");
@@ -286,7 +421,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
                     writer.write("an:\\\\");
                 } else {
                     writer.write("L\\\"oschen Sie den Wert ");
-                    writer.write(String.valueOf(op.value));
+                    writer.write(String.valueOf(op.value()));
                     writer.write(" aus dem folgenden \\emphasize{");
                     writer.write(tree.getName());
                     writer.write("} und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ");
@@ -300,11 +435,18 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
                 SearchTreeAlgorithm.printTreeAndReturnHorizontalFillingDegree(BigFraction.ZERO, "", tree, writer);
             }
         }
-        Main.newLine(writer);
     }
 
     @Override
-    default public void printSolution(
+    default void printProblemInstance(
+        final SearchTreeProblem problem,
+        final SearchTreeSteps<Integer> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printSolutionInstance(
         final SearchTreeProblem problem,
         final SearchTreeSteps<Integer> solution,
         final Parameters<Flag> options,
@@ -322,9 +464,22 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
                 );
             stepNumber++;
         }
-        Main.newLine(writer);
     }
 
-    SearchTreeFactory<Integer> parseOrGenerateTreeFactory(final Parameters<Flag> options);
+    @Override
+    default void printSolutionSpace(
+        final SearchTreeProblem problem,
+        final SearchTreeSteps<Integer> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printStartOfMultipleProblemInstances(
+        final List<SearchTreeProblem> problems,
+        final List<SearchTreeSteps<Integer>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

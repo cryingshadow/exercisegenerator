@@ -18,7 +18,7 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
 
     public static final BucketSort INSTANCE = new BucketSort();
 
-    private static int[] generateLimits() {
+    private static int[] generateLimitsAndBuckets() {
         return new int[] {0,99,10};
     }
 
@@ -36,16 +36,14 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
             return BucketSort.parseLimitsAndBuckets(options.get(Flag.CAPACITY));
         } else if (options.containsKey(Flag.SOURCE)) {
             try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                reader.readLine();
                 return BucketSort.parseLimitsAndBuckets(reader.readLine());
             }
         } else if (options.containsKey(Flag.INPUT)) {
             try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
-                reader.readLine();
                 return BucketSort.parseLimitsAndBuckets(reader.readLine());
             }
         }
-        return BucketSort.generateLimits();
+        return BucketSort.generateLimitsAndBuckets();
     }
 
     private BucketSort() {}
@@ -76,6 +74,25 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
     }
 
     @Override
+    public String commandPrefix() {
+        return "BucketSort";
+    }
+
+    @Override
+    public BucketSortProblem generateProblem(final Parameters<Flag> options) {
+        final int[] limitsAndBuckets = BucketSort.generateLimitsAndBuckets();
+        final int lowestValue = limitsAndBuckets[0];
+        final int highestValue = limitsAndBuckets[1];
+        final int numberOfBuckets = limitsAndBuckets[2];
+        return new BucketSortProblem(
+            Sorting.generateArray(options, lowestValue, highestValue),
+            lowestValue,
+            highestValue,
+            numberOfBuckets
+        );
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -84,21 +101,38 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
     }
 
     @Override
-    public BucketSortProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
+    public List<BucketSortProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
         final int[] limitsAndBuckets = BucketSort.parseOrGenerateLimitsAndBuckets(options);
         final int lowestValue = limitsAndBuckets[0];
         final int highestValue = limitsAndBuckets[1];
         final int numberOfBuckets = limitsAndBuckets[2];
-        return new BucketSortProblem(
-            Sorting.parseOrGenerateArray(options, lowestValue, highestValue),
-            lowestValue,
-            highestValue,
-            numberOfBuckets
-        );
+        final List<BucketSortProblem> result = new ArrayList<BucketSortProblem>();
+        reader.readLine();
+        for (final int[] array : Sorting.parseArrays(reader, options)) {
+            result.add(new BucketSortProblem(array, lowestValue, highestValue, numberOfBuckets));
+        }
+        return result;
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<BucketSortProblem> problems,
+        final List<BucketSortSolution> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Sortieren Sie die folgenden Arrays mit ganzen Zahlen mithilfe von \\emphasize{Bucketsort}.");
+        Main.newLine(writer);
+        writer.write("Geben Sie dazu jeweils die Buckets unmittelbar vor deren Sortierung sowie das jeweilige ");
+        writer.write("Ergebnisarray an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final BucketSortProblem problem,
         final BucketSortSolution solution,
         final Parameters<Flag> options,
@@ -108,26 +142,38 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
         writer.write(String.valueOf(problem.lowestValue()));
         writer.write(" bis ");
         writer.write(String.valueOf(problem.highestValue()));
-        writer.write(" mithilfe von Bucketsort mit ");
+        writer.write(" mithilfe von \\emphasize{Bucketsort} mit ");
         writer.write(String.valueOf(problem.numberOfBuckets()));
         writer.write(" Buckets.");
         Main.newLine(writer);
-        writer.write("Geben Sie dazu die Buckets vor deren Sortierung sowie das Ergebnisarray an.\\\\[2ex]");
+        writer.write("Geben Sie dazu die Buckets unmittelbar vor deren Sortierung sowie das Ergebnisarray ");
+        writer.write("an.\\\\[2ex]");
         Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
-            Sorting.toTikZItems(problem.initialArray()),
-            Optional.empty(),
-            Sorting.getMaximumContentLength(problem.initialArray()),
-            writer
-        );
-        LaTeXUtils.printTikzEnd(writer);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final BucketSortProblem problem,
+        final BucketSortSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Kleinste m\\\"ogliche Zahl: ");
+        writer.write(String.valueOf(problem.lowestValue()));
+        writer.write("\\\\");
+        Main.newLine(writer);
+        writer.write("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: ");
+        writer.write(String.valueOf(problem.highestValue()));
+        writer.write("\\\\");
+        Main.newLine(writer);
+        writer.write("Anzahl Buckets: ");
+        writer.write(String.valueOf(problem.numberOfBuckets()));
+        writer.write("\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final BucketSortProblem problem,
         final BucketSortSolution solution,
         final Parameters<Flag> options,
@@ -161,7 +207,25 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
             writer
         );
         LaTeXUtils.printTikzEnd(writer);
-        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final BucketSortProblem problem,
+        final BucketSortSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
+            Sorting.toTikZItems(problem.initialArray()),
+            Optional.empty(),
+            Sorting.getMaximumContentLength(problem.initialArray()),
+            writer
+        );
+        LaTeXUtils.printTikzEnd(writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
 }

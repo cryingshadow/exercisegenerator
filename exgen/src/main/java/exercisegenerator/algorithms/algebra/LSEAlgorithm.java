@@ -53,34 +53,6 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
         return rank;
     }
 
-    private static Matrix generateLinearSystemOfEquations(final Parameters<Flag> options) {
-        final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
-        final int numberOfEquations = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
-        final BigFraction[][] coefficients =
-            AlgebraAlgorithms.generateInequalitiesOrEquations(numberOfEquations, numberOfVariables);
-        return new Matrix(coefficients, numberOfVariables);
-    }
-
-    private static Matrix parseLinearSystemOfEquations(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final String line = reader.readLine();
-        final String[] rows = LSEAlgorithm.parseRows(line, reader);
-        final BigFraction[][] coefficients =
-            new BigFraction[rows.length][((int)rows[0].chars().filter(c -> c == ',').count()) + 1];
-        for (int row = 0; row < coefficients.length; row++) {
-            final String[] numbers = rows[row].split(",");
-            if (numbers.length != coefficients[row].length) {
-                throw new IOException("The rows of the matrix must all have the same length!");
-            }
-            for (int column = 0; column < numbers.length; column++) {
-                coefficients[row][column] = AlgebraAlgorithms.parseRationalNumber(numbers[column]);
-            }
-        }
-        return new Matrix(coefficients, coefficients[0].length - 1);
-    }
-
     private static String[] parseRows(final String firstLine, final BufferedReader reader) throws IOException {
         if (firstLine.contains(";")) {
             return firstLine.split(";");
@@ -127,6 +99,20 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
     }
 
     @Override
+    public String commandPrefix() {
+        return "Lse";
+    }
+
+    @Override
+    public Matrix generateProblem(final Parameters<Flag> options) {
+        final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
+        final int numberOfEquations = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
+        final BigFraction[][] coefficients =
+            AlgebraAlgorithms.generateInequalitiesOrEquations(numberOfEquations, numberOfVariables);
+        return new Matrix(coefficients, numberOfVariables);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -135,16 +121,53 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
     }
 
     @Override
-    public Matrix parseOrGenerateProblem(final Parameters<Flag> options)
-    throws IOException {
-        return new ParserAndGenerator<Matrix>(
-            LSEAlgorithm::parseLinearSystemOfEquations,
-            LSEAlgorithm::generateLinearSystemOfEquations
-        ).getResult(options);
+    public List<Matrix> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final String line = reader.readLine();
+        final String[] rows = LSEAlgorithm.parseRows(line, reader);
+        final BigFraction[][] coefficients =
+            new BigFraction[rows.length][((int)rows[0].chars().filter(c -> c == ',').count()) + 1];
+        for (int row = 0; row < coefficients.length; row++) {
+            final String[] numbers = rows[row].split(",");
+            if (numbers.length != coefficients[row].length) {
+                throw new IOException("The rows of the matrix must all have the same length!");
+            }
+            for (int column = 0; column < numbers.length; column++) {
+                coefficients[row][column] = AlgebraAlgorithms.parseRationalNumber(numbers[column]);
+            }
+        }
+        return List.of(new Matrix(coefficients, coefficients[0].length - 1));
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
+        final Matrix problem,
+        final List<Matrix> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("L\\\"osen Sie dieses lineare Gleichungssystem mithilfe des ");
+        writer.write("\\emphasize{Gau\\ss{}-Jordan-Algorithmus}.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeMultipleProblemInstances(
+        final List<Matrix> problems,
+        final List<List<Matrix>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("L\\\"osen Sie die folgenden \\emphasize{linearen Gleichungssysteme} mithilfe des ");
+        writer.write("\\emphasize{Gau\\ss{}-Jordan-Algorithmus}.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final Matrix problem,
         final List<Matrix> solution,
         final Parameters<Flag> options,
@@ -152,17 +175,20 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
     ) throws IOException {
         writer.write("Gegeben sei das folgende \\emphasize{lineare Gleichungssystem}:\\\\[2ex]");
         Main.newLine(writer);
-        AlgebraAlgorithms.printMatrixAsInequalitiesOrEquations(problem, "=", writer);
-        LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write(
-            "L\\\"osen Sie dieses lineare Gleichungssystem mithilfe des \\emphasize{Gau\\ss{}-Jordan-Algorithmus}."
-        );
-        Main.newLine(writer);
-        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final Matrix problem,
+        final List<Matrix> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        AlgebraAlgorithms.printMatrixAsInequalitiesOrEquations(problem, "=", writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final Matrix problem,
         final List<Matrix> solution,
         final Parameters<Flag> options,
@@ -201,7 +227,14 @@ public class LSEAlgorithm implements AlgorithmImplementation<Matrix, List<Matrix
             writer.write("$");
         }
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final Matrix problem,
+        final List<Matrix> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

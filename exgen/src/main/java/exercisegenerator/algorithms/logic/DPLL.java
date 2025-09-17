@@ -99,17 +99,6 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
             .collect(Collectors.toCollection(Clause::new));
     }
 
-    private static ClauseSet generateClauseSet(final Parameters<Flag> options) {
-        final int numberOfVariables = AlgorithmImplementation.parseOrGenerateLength(2, 10, options);
-        final List<PropositionalVariable> variables =
-            Stream.iterate(65, x -> x + 1)
-            .limit(numberOfVariables)
-            .map(x -> new PropositionalVariable(Character.toString(x)))
-            .toList();
-        final int numberOfClauses = Main.RANDOM.nextInt(16) + 5;
-        return Stream.generate(() -> DPLL.generateClause(variables)).limit(numberOfClauses).collect(Collectors.toCollection(ClauseSet::new));
-    }
-
     private static Literal generateLiteral(final List<PropositionalVariable> variables) {
         return new Literal(variables.get(Main.RANDOM.nextInt(variables.size())), Main.RANDOM.nextBoolean());
     }
@@ -120,13 +109,6 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         }
         final String[] literals = toParse.replaceAll("\\s", "").split(",");
         return Arrays.stream(literals).map(DPLL::parseLiteral).collect(Collectors.toCollection(Clause::new));
-    }
-
-    private static ClauseSet parseClauseSet(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        return DPLL.parseClauses(reader.readLine());
     }
 
     private static Literal parseLiteral(final String toParse) {
@@ -203,6 +185,25 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
     }
 
     @Override
+    public String commandPrefix() {
+        return "Dpll";
+    }
+
+    @Override
+    public ClauseSet generateProblem(final Parameters<Flag> options) {
+        final int numberOfVariables = AlgorithmImplementation.parseOrGenerateLength(2, 10, options);
+        final List<PropositionalVariable> variables =
+            Stream.iterate(65, x -> x + 1)
+            .limit(numberOfVariables)
+            .map(x -> new PropositionalVariable(Character.toString(x)))
+            .toList();
+        final int numberOfClauses = Main.RANDOM.nextInt(16) + 5;
+        return Stream.generate(() -> DPLL.generateClause(variables))
+            .limit(numberOfClauses)
+            .collect(Collectors.toCollection(ClauseSet::new));
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -211,24 +212,53 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
     }
 
     @Override
-    public ClauseSet parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<ClauseSet>(
-            DPLL::parseClauseSet,
-            DPLL::generateClauseSet
-        ).getResult(options);
+    public List<ClauseSet> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final List<ClauseSet> result = new ArrayList<ClauseSet>();
+        String line = reader.readLine();
+        while (line != null) {
+            if (!line.isBlank()) {
+                result.add(DPLL.parseClauses(line));
+            }
+            line = reader.readLine();
+        }
+        return result;
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<ClauseSet> problems,
+        final List<DPLLNode> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgenden ");
+        writer.write("\\emphasize{Klauselmengen} jeweils erfüllbar sind. Geben Sie dazu auch den jeweiligen ");
+        writer.write("DPLL-Baum an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final ClauseSet problem,
         final DPLLNode solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write(
-            "Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende Klauselmenge erfüllbar ist:"
-        );
+        writer.write("Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende ");
+        writer.write("\\emphasize{Klauselmenge} erfüllbar ist. Geben Sie dazu auch den zugehörigen DPLL-Baum an.");
         Main.newLine(writer);
+    }
+
+    @Override
+    public void printProblemInstance(
+        final ClauseSet problem,
+        final DPLLNode solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         if (problem.isEmpty()) {
             writer.write("$\\{\\}$");
@@ -263,13 +293,10 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
             LaTeXUtils.printTikzEnd(writer);
         }
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-        writer.write("Geben Sie dazu auch den zugehörigen DPLL-Baum an.");
-        Main.newLine(writer);
-        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final ClauseSet problem,
         final DPLLNode solution,
         final Parameters<Flag> options,
@@ -289,7 +316,14 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
             writer.write("unerfüllbar");
         }
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final ClauseSet problem,
+        final DPLLNode solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

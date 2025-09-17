@@ -11,6 +11,11 @@ public class WarshallAlgorithm implements FloydWarshallAlgorithm<Boolean> {
     private WarshallAlgorithm() {}
 
     @Override
+    public String commandPrefix() {
+        return "Warshall";
+    }
+
+    @Override
     public Boolean[][][] createTable(final int size1, final int size2, final int size3) {
         return new Boolean[size1][size2][size3];
     }

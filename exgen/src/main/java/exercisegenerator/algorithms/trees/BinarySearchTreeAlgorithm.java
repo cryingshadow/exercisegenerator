@@ -14,6 +14,11 @@ public class BinarySearchTreeAlgorithm implements SearchTreeAlgorithm {
     private BinarySearchTreeAlgorithm() {}
 
     @Override
+    public String commandPrefix() {
+        return "Bst";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

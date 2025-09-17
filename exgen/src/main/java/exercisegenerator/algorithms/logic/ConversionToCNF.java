@@ -21,6 +21,16 @@ public class ConversionToCNF implements AlgorithmImplementation<PropositionalFor
     }
 
     @Override
+    public String commandPrefix() {
+        return "ToCnf";
+    }
+
+    @Override
+    public PropositionalFormula generateProblem(final Parameters<Flag> options) {
+        return PropositionalLogic.generateFormula(options);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -29,12 +39,27 @@ public class ConversionToCNF implements AlgorithmImplementation<PropositionalFor
     }
 
     @Override
-    public PropositionalFormula parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return PropositionalLogic.parseOrGenerateFormula(options);
+    public List<PropositionalFormula> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        return PropositionalLogic.parseFormulas(reader, options);
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<PropositionalFormula> problems,
+        final List<List<PropositionalFormula>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Geben Sie jeweils eine zu den folgenden aussagenlogischen Formeln ");
+        writer.write("\\\"aquivalente aussagenlogische Formel in CNF an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final PropositionalFormula problem,
         final List<PropositionalFormula> solution,
         final Parameters<Flag> options,
@@ -43,12 +68,20 @@ public class ConversionToCNF implements AlgorithmImplementation<PropositionalFor
         writer.write("Geben Sie eine zur folgenden aussagenlogischen Formel ");
         writer.write("\\\"aquivalente aussagenlogische Formel in CNF an:\\\\");
         Main.newLine(writer);
-        PropositionalLogic.printGeneralFormula(problem, writer);
-        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final PropositionalFormula problem,
+        final List<PropositionalFormula> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        PropositionalLogic.printGeneralFormula(problem, writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final PropositionalFormula problem,
         final List<PropositionalFormula> solution,
         final Parameters<Flag> options,
@@ -56,5 +89,13 @@ public class ConversionToCNF implements AlgorithmImplementation<PropositionalFor
     ) throws IOException {
         PropositionalLogic.printFormulaEquivalencesSolution(solution, writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final PropositionalFormula problem,
+        final List<PropositionalFormula> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

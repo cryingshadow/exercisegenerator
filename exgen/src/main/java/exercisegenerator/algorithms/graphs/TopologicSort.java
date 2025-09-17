@@ -30,6 +30,11 @@ public class TopologicSort implements GraphAlgorithm<List<String>> {
     }
 
     @Override
+    public String commandPrefix() {
+        return "TopologicSort";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -38,7 +43,19 @@ public class TopologicSort implements GraphAlgorithm<List<String>> {
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<GraphProblem> problems,
+        final List<List<String>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Geben Sie jeweils eine topologische Sortierung der folgenden Graphen an oder begr\\\"unden ");
+        writer.write("Sie, warum keine topologische Sortierung f\\\"ur den jeweiligen Graphen existiert.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final GraphProblem problem,
         final List<String> solution,
         final Parameters<Flag> options,
@@ -47,29 +64,31 @@ public class TopologicSort implements GraphAlgorithm<List<String>> {
         writer.write("Geben Sie eine topologische Sortierung des folgenden Graphen an oder begr\\\"unden Sie, warum ");
         writer.write("keine topologische Sortierung f\\\"ur diesen Graphen existiert.\\\\");
         Main.newLine(writer);
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
-        problem.graphWithLayout().graph().printTikZ(problem.graphWithLayout().layout(), writer);
-        LaTeXUtils.printAdjustboxEnd(writer);
-        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final GraphProblem problem,
         final List<String> solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         if (solution == null) {
-            writer.write(
-                "Es existiert keine topologische Sortierung für diesen Graphen, da er mindestens einen Zyklus enthält."
-            );
+            writer.write("Es existiert keine topologische Sortierung für diesen Graphen, da er mindestens einen ");
+            writer.write("Zyklus enthält.");
         } else {
             writer.write(solution.stream().collect(Collectors.joining(", ")));
         }
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final GraphProblem problem,
+        final List<String> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
     private boolean visitAndCheckCycle(
         final Vertex<String> vertex,

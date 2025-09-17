@@ -14,9 +14,6 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
 
     private static final String COLUMN_WIDTH = "16mm";
 
-    private static final String DIJKSTRA_PATTERN =
-        "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus.";
-
     private static Optional<Integer> computeVertexIndexWithMinimumDistance(
         final int columnIndex,
         final int size,
@@ -186,6 +183,11 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
     }
 
     @Override
+    public String commandPrefix() {
+        return "Dijkstra";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -194,18 +196,66 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
+        final GraphProblem problem,
+        final DijkstraTables solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("F\\\"uhren Sie den \\emphasize{Dijkstra}-Algorithmus auf diesem Graphen mit dem ");
+        writer.write("\\emphasize{Startknoten ");
+        writer.write(problem.startNode().get().label().get());
+        writer.write("} aus.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeMultipleProblemInstances(
+        final List<GraphProblem> problems,
+        final List<DijkstraTables> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("F\\\"uhren Sie den \\emphasize{Dijkstra}-Algorithmus auf den folgenden Graphen aus und ");
+        writer.write("f\\\"ullen Sie dazu die jeweiligen Tabellen aus.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
+        final GraphProblem problem,
+        final DijkstraTables solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        Main.newLine(writer);
+        LaTeXUtils.printArrayStretch(1.5, writer);
+        LaTeXUtils.printTable(
+            solution.solTable,
+            Optional.of(solution.solColor),
+            LaTeXUtils.defaultColumnDefinition(DijkstraAlgorithm.COLUMN_WIDTH),
+            false,
+            10,
+            writer
+        );
+        LaTeXUtils.printArrayStretch(1.0, writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
+        writer.write(" Distanz sicher berechnet worden ist.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
         final GraphProblem problem,
         final DijkstraTables solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
-        GraphAlgorithm.printGraphExercise(
-            GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options)),
-            String.format(DijkstraAlgorithm.DIJKSTRA_PATTERN,  problem.startNode().get().label().get().toString()),
-            writer
-        );
         switch (mode) {
             case ALWAYS:
             case SOLUTION_SPACE:
@@ -251,36 +301,6 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
             case NEVER:
                 Main.newLine(writer);
         }
-    }
-
-    @Override
-    public void printSolution(
-        final GraphProblem problem,
-        final DijkstraTables solution,
-        final Parameters<Flag> options,
-        final BufferedWriter writer
-    ) throws IOException {
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        Main.newLine(writer);
-        LaTeXUtils.printArrayStretch(1.5, writer);
-        LaTeXUtils.printTable(
-            solution.solTable,
-            Optional.of(solution.solColor),
-            LaTeXUtils.defaultColumnDefinition(DijkstraAlgorithm.COLUMN_WIDTH),
-            false,
-            10,
-            writer
-        );
-        LaTeXUtils.printArrayStretch(1.0, writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-        Main.newLine(writer);
-        writer.write("\\vspace*{1ex}");
-        Main.newLine(writer);
-        Main.newLine(writer);
-        writer.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
-        writer.write(" Distanz sicher berechnet worden ist.");
-        Main.newLine(writer);
-        Main.newLine(writer);
     }
 
 }

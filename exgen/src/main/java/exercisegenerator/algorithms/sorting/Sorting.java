@@ -10,19 +10,35 @@ import exercisegenerator.io.*;
 
 interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
 
+    static int[] generateArray(final Parameters<Flag> options, final int lowestInt, final int highestInt) {
+        final int length = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
+        final int[] array = new int[length];
+        final int range = highestInt - lowestInt + 1;
+        for (int i = 0; i < array.length; i++) {
+            array[i] = Main.RANDOM.nextInt(range) + lowestInt;
+        }
+        return array;
+    }
+
     static int getMaximumContentLength(final int[] array) {
         return Arrays.stream(array).map(n -> String.valueOf(n).length()).max().getAsInt();
     }
 
-    static int[] parseOrGenerateArray(
-        final Parameters<Flag> flags,
-        final int lowestInt,
-        final int highestInt
-    ) throws IOException {
-        return new ParserAndGenerator<int[]>(
-            Sorting::parseArray,
-            options -> Sorting.generateArray(options, lowestInt, highestInt)
-        ).getResult(flags);
+    static List<int[]> parseArrays(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
+        final List<int[]> result = new ArrayList<int[]>();
+        String line = reader.readLine();
+        while (line != null) {
+            if (!line.isBlank()) {
+                final String[] numbers = line.split(",");
+                final int[] array = new int[numbers.length];
+                for (int i = 0; i < array.length; i++) {
+                    array[i] = Integer.parseInt(numbers[i].trim());
+                }
+                result.add(array);
+            }
+            line = reader.readLine();
+        }
+        return result;
     }
 
     static List<ItemWithTikZInformation<Integer>> toTikZItems(final int[] array) {
@@ -55,59 +71,43 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
         return result;
     }
 
-    private static int[] generateArray(final Parameters<Flag> options, final int lowestInt, final int highestInt) {
-        final int length = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
-        final int[] array = new int[length];
-        final int range = highestInt - lowestInt + 1;
-        for (int i = 0; i < array.length; i++) {
-            array[i] = Main.RANDOM.nextInt(range) + lowestInt;
-        }
-        return array;
+    String additionalExerciseText();
+
+    String algorithmName();
+
+    @Override
+    default int[] generateProblem(final Parameters<Flag> options) {
+        return Sorting.generateArray(options, 0, Main.NUMBER_LIMIT - 1);
     }
 
-    private static int[] parseArray(final BufferedReader reader, final Parameters<Flag> options)
-    throws IOException {
-        final String[] numbers = reader.readLine().split(",");
-        final int[] array = new int[numbers.length];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = Integer.parseInt(numbers[i].trim());
-        }
-        return array;
+    String operation();
+
+    @Override
+    default List<int[]> parseProblems(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
+        return Sorting.parseArrays(reader, options);
     }
 
     @Override
-    default public int[] parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return Sorting.parseOrGenerateArray(options, 0, Main.NUMBER_LIMIT - 1);
+    default void printBeforeMultipleProblemInstances(
+        final List<int[]> problems,
+        final List<SortingSolution> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Sortieren Sie die folgenden Arrays mithilfe von ");
+        writer.write(this.algorithmName());
+        writer.write(".");
+        Main.newLine(writer);
+        writer.write("Geben Sie dazu das jeweilige Array nach jeder ");
+        writer.write(this.operation());
+        writer.write(" an");
+        writer.write(this.additionalExerciseText());
+        writer.write(".\\\\");
+        Main.newLine(writer);
     }
 
-//    static <E extends Exception> void sort(
-//        final AlgorithmInput input,
-//        final String name,
-//        final String operation,
-//        final String suffix,
-//        final Function<int[], List<List<ItemWithTikZInformation<Integer>>>> sort,
-//        final CheckedConsumer<SortingSolution, IOException> solutionPrinter
-//    ) throws IOException {
-//        final int[] array = Sorting.parseOrGenerateArray(input.options);
-//        final List<List<ItemWithTikZInformation<Integer>>> solution = sort.apply(array);
-//        final int contentLength = Sorting.getMaximumContentLength(array);
-//        if (input.options.containsKey(Flag.EXERCISE)) {
-//            Sorting.printExerciseText(
-//                name,
-//                operation,
-//                suffix,
-//                array,
-//                solution.size() - 1,
-//                contentLength,
-//                input.options,
-//                input.exerciseWriter
-//            );
-//        }
-//        solutionPrinter.accept(new SortingSolution(solution, contentLength, input.solutionWriter));
-//    }
-
     @Override
-    default public void printExercise(
+    default void printBeforeSingleProblemInstance(
         final int[] problem,
         final SortingSolution solution,
         final Parameters<Flag> options,
@@ -123,6 +123,44 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
         writer.write(this.additionalExerciseText());
         writer.write(".\\\\[2ex]");
         Main.newLine(writer);
+    }
+
+    @Override
+    default void printProblemInstance(
+        final int[] problem,
+        final SortingSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printSolutionInstance(
+        final int[] problem,
+        final SortingSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        String anchor = null;
+        for (final List<ItemWithTikZInformation<Integer>> list : solution.solution()) {
+            anchor =
+                LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
+                    list,
+                    Optional.ofNullable(anchor),
+                    solution.contentLength(),
+                    writer
+                );
+        }
+        LaTeXUtils.printTikzEnd(writer);
+    }
+
+    @Override
+    default void printSolutionSpace(
+        final int[] problem,
+        final SortingSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
         String anchor =
@@ -145,33 +183,5 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
         LaTeXUtils.printTikzEnd(writer);
         LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
-
-    @Override
-    default public void printSolution(
-        final int[] problem,
-        final SortingSolution solution,
-        final Parameters<Flag> options,
-        final BufferedWriter writer
-    ) throws IOException {
-        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor = null;
-        for (final List<ItemWithTikZInformation<Integer>> list : solution.solution()) {
-            anchor =
-                LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
-                    list,
-                    Optional.ofNullable(anchor),
-                    solution.contentLength(),
-                    writer
-                );
-        }
-        LaTeXUtils.printTikzEnd(writer);
-        Main.newLine(writer);
-    }
-
-    String additionalExerciseText();
-
-    String algorithmName();
-
-    String operation();
 
 }

@@ -1,6 +1,7 @@
 package exercisegenerator.algorithms.analysis;
 
 import java.io.*;
+import java.util.*;
 
 import org.apache.commons.math3.fraction.*;
 
@@ -15,32 +16,23 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
 
     public static final ArithmeticSumAlgorithm INSTANCE = new ArithmeticSumAlgorithm();
 
-    private static ArithmeticSum generateProblem(final Parameters<Flag> options) throws IOException {
+    @Override
+    public ArithmeticSum apply(final ArithmeticSum problem) {
+        return problem;
+    }
+
+    @Override
+    public String commandPrefix() {
+        return "ArithmeticSum";
+    }
+
+    @Override
+    public ArithmeticSum generateProblem(final Parameters<Flag> options) {
         return new ArithmeticSum(
             new BigFraction(Main.RANDOM.nextInt(2002) - 1001),
             new BigFraction(Main.RANDOM.nextInt(2002) - 1001, Main.RANDOM.nextInt(100) + 1),
             100 * (Main.RANDOM.nextInt(10) + 1)
         );
-    }
-
-    private static ArithmeticSum parseProblem(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final String[] split = reader.readLine().split(";");
-        if (split.length != 3) {
-            throw new IOException("Exactly 3 parameters are expected!");
-        }
-        return new ArithmeticSum(
-            AlgebraAlgorithms.parseRationalNumber(split[0]),
-            AlgebraAlgorithms.parseRationalNumber(split[1]),
-            Integer.parseInt(split[2])
-        );
-    }
-
-    @Override
-    public ArithmeticSum apply(final ArithmeticSum problem) {
-        return problem;
     }
 
     @Override
@@ -49,15 +41,36 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
     }
 
     @Override
-    public ArithmeticSum parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<ArithmeticSum>(
-            ArithmeticSumAlgorithm::parseProblem,
-            ArithmeticSumAlgorithm::generateProblem
-        ).getResult(options);
+    public List<ArithmeticSum> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final String[] split = reader.readLine().split(";");
+        if (split.length != 3) {
+            throw new IOException("Exactly 3 parameters are expected!");
+        }
+        return List.of(
+            new ArithmeticSum(
+                AlgebraAlgorithms.parseRationalNumber(split[0]),
+                AlgebraAlgorithms.parseRationalNumber(split[1]),
+                Integer.parseInt(split[2])
+            )
+        );
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<ArithmeticSum> problems,
+        final List<ArithmeticSum> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Berechnen Sie die folgenden Summen.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final ArithmeticSum problem,
         final ArithmeticSum solution,
         final Parameters<Flag> options,
@@ -65,15 +78,23 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
     ) throws IOException {
         writer.write("Berechnen Sie:");
         Main.newLine(writer);
+    }
+
+    @Override
+    public void printProblemInstance(
+        final ArithmeticSum problem,
+        final ArithmeticSum solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write("\\[");
         writer.write(problem.toString());
         writer.write("\\]");
         Main.newLine(writer);
-        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final ArithmeticSum problem,
         final ArithmeticSum solution,
         final Parameters<Flag> options,
@@ -87,7 +108,14 @@ public class ArithmeticSumAlgorithm implements AlgorithmImplementation<Arithmeti
         writer.write(LaTeXUtils.toCoefficient(problem.sumValue()));
         writer.write("\\]");
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final ArithmeticSum problem,
+        final ArithmeticSum solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

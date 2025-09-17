@@ -585,7 +585,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     }
 
     @Override
-    default public HashProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
+    default public List<HashProblem> parseOrGenerateProblems(final Parameters<Flag> options) throws IOException {
         final int numOfValues = Hashing.parseOrGenerateNumberOfValues(options);
         final IntegerList[] initialHashTable = Hashing.parseOrGenerateInitialArray(numOfValues, options);
         final int capacity = initialHashTable.length;
@@ -600,11 +600,41 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
                 optionalProbingFunction,
                 options
             );
-        return new HashProblem(initialHashTable, values, hashFunction, optionalProbingFunction);
+        return List.of(new HashProblem(initialHashTable, values, hashFunction, optionalProbingFunction));
     }
 
     @Override
-    default public void printExercise(
+    default HashProblem generateProblem(final Parameters<Flag> options) {
+        throw new IllegalStateException("Should never be called!");
+    }
+
+    HashFunctionWithParameters hashFunction(final int capacity, final Parameters<Flag> options) throws IOException;
+
+    Optional<ProbingFunctionWithParameters> optionalProbingFunction(
+        final int capacity,
+        final Parameters<Flag> options
+    ) throws IOException;
+
+    @Override
+    default List<HashProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        throw new IllegalStateException("Should never be called!");
+    }
+
+    @Override
+    default void printBeforeMultipleProblemInstances(
+        final List<HashProblem> problems,
+        final List<HashResult> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        throw new IllegalStateException("Should never be called!");
+    }
+
+    @Override
+    default void printBeforeSingleProblemInstance(
         final HashProblem problem,
         final HashResult solution,
         final Parameters<Flag> options,
@@ -612,45 +642,42 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     ) throws IOException {
         final PrintOptions printOptions = Hashing.printOptions(problem, options);
         final int capacity = solution.result().length;
-        final int contentLength = Hashing.computeContentLength(solution.result());
-        writer.write(
-            "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange "
-        );
+        writer.write("F\\\"ugen Sie die folgenden Werte nacheinander in das darunter stehende Array der L\\\"ange ");
         writer.write(String.valueOf(capacity));
         writer.write(" unter Verwendung der ");
         writer.write(printOptions.optionsText);
         writer.write(":\\\\");
         Main.newLine(writer);
+    }
+
+    @Override
+    default void printProblemInstance(
+        final HashProblem problem,
+        final HashResult solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final PrintOptions printOptions = Hashing.printOptions(problem, options);
+        final int contentLength = Hashing.computeContentLength(solution.result());
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         writer.write(problem.values().stream().map(String::valueOf).collect(Collectors.joining(", ")));
         writer.write(".");
         Main.newLine(writer);
         LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-        switch (printOptions.preprintMode) {
-            case ALWAYS:
-            case SOLUTION_SPACE:
-                LaTeXUtils.printVerticalProtectedSpace("2ex", writer);
-                if (printOptions.preprintMode == SolutionSpaceMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-                }
-                LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-                Hashing.printArray(problem.initialHashTable(), contentLength, printOptions.probing, writer);
-                LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
-                if (printOptions.preprintMode == SolutionSpaceMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
-                } else {
-                    Main.newLine(writer);
-                    Main.newLine(writer);
-                }
-                break;
-            case NEVER:
-                Main.newLine(writer);
-                Main.newLine(writer);
+        LaTeXUtils.printVerticalProtectedSpace("2ex", writer);
+        if (printOptions.preprintMode == SolutionSpaceMode.SOLUTION_SPACE) {
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        }
+        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        Hashing.printArray(problem.initialHashTable(), contentLength, printOptions.probing, writer);
+        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        if (printOptions.preprintMode == SolutionSpaceMode.SOLUTION_SPACE) {
+            LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
         }
     }
 
     @Override
-    default public void printSolution(
+    default void printSolutionInstance(
         final HashProblem problem,
         final HashResult solution,
         final Parameters<Flag> options,
@@ -671,11 +698,12 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         Main.newLine(writer);
     }
 
-    HashFunctionWithParameters hashFunction(final int capacity, final Parameters<Flag> options) throws IOException;
-
-    Optional<ProbingFunctionWithParameters> optionalProbingFunction(
-        final int capacity,
-        final Parameters<Flag> options
-    ) throws IOException;
+    @Override
+    default void printSolutionSpace(
+        final HashProblem problem,
+        final HashResult solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

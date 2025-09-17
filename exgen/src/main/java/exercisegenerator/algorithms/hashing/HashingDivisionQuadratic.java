@@ -17,6 +17,11 @@ public class HashingDivisionQuadratic implements Hashing {
     private HashingDivisionQuadratic() {}
 
     @Override
+    public String commandPrefix() {
+    return "HashingDivisionQuadratic";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

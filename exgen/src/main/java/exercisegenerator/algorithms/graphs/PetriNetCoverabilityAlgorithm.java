@@ -44,44 +44,73 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
     }
 
     @Override
+    public String commandPrefix() {
+        return "Coverability";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         return new String[] {};
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
         final PetriNetInput problem,
         final CoverabilityGraph solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Betrachten Sie das folgende Petrinetz $N$:\\\\[2ex]");
-        Main.newLine(writer);
-        final PetriNet net = new PetriNet(problem);
-        LaTeXUtils.printDefaultAdjustboxBeginning(writer);
-        net.toTikz(PetriMarking.create(problem.tokens()), writer);
-        LaTeXUtils.printAdjustboxEnd(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("Geben Sie einen Abdeckungsgraphen zu $N$ an.");
-        Main.newLine(writer);
+        writer.write("Geben Sie einen \\emphasize{Abdeckungsgraphen} zu $N$ an.");
         Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printBeforeMultipleProblemInstances(
+        final List<PetriNetInput> problems,
+        final List<CoverabilityGraph> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Geben Sie jeweils einen \\emphasize{Abdeckungsgraphen} zu den folgenden ");
+        writer.write("\\emphasize{Petrinetzen} an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printProblemInstance(
         final PetriNetInput problem,
         final CoverabilityGraph solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        LaTeXUtils.printDefaultAdjustboxBeginning(writer);
+        LaTeXUtils.printAdjustboxBeginning(writer);
+        new PetriNet(problem).toTikz(PetriMarking.create(problem.tokens()), writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
+        final PetriNetInput problem,
+        final CoverabilityGraph solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printAdjustboxBeginning(writer);
         solution.printTikZ(
             new ForceGraphLayout<PetriMarking, String>(solution, TikZStyle.COVERABILITY_GRAPH, 4, 1, 12, 12),
             writer
         );
         LaTeXUtils.printAdjustboxEnd(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final PetriNetInput problem,
+        final CoverabilityGraph solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
     private PetriMarking addOmegas(
         final PetriMarking tokens,

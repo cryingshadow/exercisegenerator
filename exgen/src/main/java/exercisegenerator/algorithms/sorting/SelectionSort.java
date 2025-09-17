@@ -44,6 +44,11 @@ public class SelectionSort implements Sorting {
     }
 
     @Override
+    public String commandPrefix() {
+        return "SelectionSort";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

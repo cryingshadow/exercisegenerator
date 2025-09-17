@@ -10,6 +10,11 @@ public class PetriNetFarkasPlaceInvariantsAlgorithm extends PetriNetFarkasAlgori
     private PetriNetFarkasPlaceInvariantsAlgorithm() {}
 
     @Override
+    public String commandPrefix() {
+        return "FarkasPlace";
+    }
+
+    @Override
     protected Matrix getIncidenceMatrix(final PetriNet net) {
         return net.toIncidenceMatrix();
     }

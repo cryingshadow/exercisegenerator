@@ -14,10 +14,6 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
 
     public static final BreadthFirstSearch INSTANCE = new BreadthFirstSearch();
 
-    private static String breadthFirstSearchTask(final String start) {
-        return GraphAlgorithm.searchTask("Breitensuche", start);
-    }
-
     private BreadthFirstSearch() {}
 
     @Override
@@ -42,6 +38,11 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
     }
 
     @Override
+    public String commandPrefix() {
+        return "Bfs";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -50,29 +51,47 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
     }
 
     @Override
-    public void printExercise(
+    public GraphWithLayout<String, Integer, Integer> getGraphWithLayoutForProblemInstance(
+        final GraphProblem problem,
+        final Parameters<Flag> options
+    ) {
+        return GraphAlgorithm.stretch(
+            new GraphWithLayout<String, Integer, Integer>(
+                problem.graphWithLayout().graph(),
+                ((GridGraphLayout<String, Integer>)problem.graphWithLayout().layout()).setDrawEdgeLabels(false)
+            ),
+            GraphAlgorithm.parseDistanceFactor(options)
+        );
+    }
+
+    @Override
+    public void printAfterSingleProblemInstance(
         final GraphProblem problem,
         final List<String> solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final GraphWithLayout<String, Integer, Integer> graphWithLayout = problem.graphWithLayout();
-        GraphAlgorithm.printGraphExercise(
-            GraphAlgorithm.stretch(
-                new GraphWithLayout<String, Integer, Integer>(
-                    graphWithLayout.graph(),
-                    ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDrawEdgeLabels(false)
-                ),
-                GraphAlgorithm.parseDistanceFactor(options)
-            ),
-            BreadthFirstSearch.breadthFirstSearchTask(problem.startNode().get().label().get()),
-            writer
-        );
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write(GraphAlgorithm.searchTask("Breitensuche", problem.startNode().get().label().get()));
         Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printBeforeMultipleProblemInstances(
+        final List<GraphProblem> problems,
+        final List<List<String>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("F\\\"uhren Sie eine \\emphasize{Breitensuche} auf den folgenden Graphen mit ihren jeweiligen ");
+        writer.write("Startknoten aus. Geben Sie dazu jeweils die Knoten in der Reihenfolge an, in der sie durch die ");
+        writer.write("Breitensuche gefunden werden. Nehmen Sie an, dass der Algorithmus die Kanten in der ");
+        writer.write("alphabetischen Reihenfolge ihrer Zielknoten durchl\\\"auft.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final GraphProblem problem,
         final List<String> solution,
         final Parameters<Flag> options,
@@ -80,7 +99,14 @@ public class BreadthFirstSearch implements GraphAlgorithm<List<String>> {
     ) throws IOException {
         writer.write(solution.stream().collect(Collectors.joining(", ")));
         Main.newLine(writer);
-        Main.newLine(writer);
     }
+
+    @Override
+    public void printSolutionSpace(
+        final GraphProblem problem,
+        final List<String> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
 }

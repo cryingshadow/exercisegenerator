@@ -156,6 +156,11 @@ public class HeapSort implements Sorting {
     }
 
     @Override
+    public String commandPrefix() {
+        return "HeapSort";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -169,7 +174,7 @@ public class HeapSort implements Sorting {
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final int[] problem,
         final SortingSolution solution,
         final Parameters<Flag> options,
@@ -178,7 +183,7 @@ public class HeapSort implements Sorting {
         if (Algorithm.HEAPSORT_TREE.name.equals(options.get(Flag.ALGORITHM))) {
             HeapSort.printSolutionWithTrees(solution, writer);
         } else {
-            Sorting.super.printSolution(problem, solution, options, writer);
+            Sorting.super.printSolutionInstance(problem, solution, options, writer);
         }
     }
 

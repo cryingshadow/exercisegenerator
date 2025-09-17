@@ -17,6 +17,11 @@ public class HashingMultiplicationLinear implements Hashing {
     private HashingMultiplicationLinear() {}
 
     @Override
+    public String commandPrefix() {
+        return "HashingMultiplicationLinear";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

@@ -38,7 +38,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
     ) throws IOException {
         writer.write("Betrachten Sie den folgenden Graphen:\\\\");
         Main.newLine(writer);
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+        LaTeXUtils.printAdjustboxBeginning(writer);
         graphWithLayout.graph().printTikZ(graphWithLayout.layout(), writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         Main.newLine(writer);
@@ -62,7 +62,9 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
 
     static String searchTask(final String search, final String start) {
         return String.format(
-            "F\\\"uhren Sie eine \\emphasize{%s} auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die %s gefunden werden. Nehmen Sie an, dass der Algorithmus die Kanten in der alphabetischen Reihenfolge ihrer Zielknoten durchl\\\"auft.",
+            "F\\\"uhren Sie eine \\emphasize{%s} auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus. Geben "
+            + "Sie dazu die Knoten in der Reihenfolge an, in der sie durch die %s gefunden werden. Nehmen Sie an, "
+            + "dass der Algorithmus die Kanten in der alphabetischen Reihenfolge ihrer Zielknoten durchl\\\"auft.",
             search,
             start,
             search
@@ -176,20 +178,6 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         return new GraphWithLayout<String, Integer, Integer>(graph, layoutBuilder.build());
     }
 
-    private static GraphProblem generateGraphProblem(final Parameters<Flag> options) {
-        final String algorithmName = options.get(Flag.ALGORITHM);
-        final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
-        final GraphWithLayout<String, Integer, Integer> graphWithLayout =
-            GraphAlgorithm.createRandomGraphWithGridLayout(
-                numOfVertices,
-                !GraphAlgorithm.isUndirectedGraphAlgorithm(algorithmName)
-            );
-        return new GraphProblem(
-            graphWithLayout,
-            GraphAlgorithm.generateStartVertex(graphWithLayout.graph(), options)
-        );
-    }
-
     private static Vertex<String> generateStartVertex(
         final Graph<String, Integer> graph,
         final Parameters<Flag> options
@@ -212,18 +200,6 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         return Stream.of(
             Algorithm.PRIM
         ).filter(algorithm -> algorithm.enabled).map(algorithm -> algorithm.name).toList().contains(algorithmName);
-    }
-
-    private static GraphProblem parseGraphProblem(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final GraphWithLayout<String, Integer, Integer> graphWithLayout =
-            Graph.create(reader, new StringLabelParser(), new IntLabelParser());
-        return new GraphProblem(
-            graphWithLayout,
-            GraphAlgorithm.parseOrGenerateStartVertex(graphWithLayout.graph(), options)
-        );
     }
 
     private static Vertex<String> parseOrGenerateStartVertex(
@@ -286,11 +262,72 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
     }
 
     @Override
-    default public GraphProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<GraphProblem>(
-            GraphAlgorithm::parseGraphProblem,
-            GraphAlgorithm::generateGraphProblem
-        ).getResult(options);
+    default GraphProblem generateProblem(final Parameters<Flag> options) {
+        final String algorithmName = options.get(Flag.ALGORITHM);
+        final int numOfVertices = AlgorithmImplementation.parseOrGenerateLength(5, 20, options);
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout =
+            GraphAlgorithm.createRandomGraphWithGridLayout(
+                numOfVertices,
+                !GraphAlgorithm.isUndirectedGraphAlgorithm(algorithmName)
+            );
+        return new GraphProblem(
+            graphWithLayout,
+            GraphAlgorithm.generateStartVertex(graphWithLayout.graph(), options)
+        );
+    }
+
+    default GraphWithLayout<String, Integer, Integer> getGraphWithLayoutForProblemInstance(
+        final GraphProblem problem,
+        final Parameters<Flag> options
+    ) {
+        return GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options));
+
+    }
+
+    @Override
+    default List<GraphProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout =
+            Graph.create(reader, new StringLabelParser(), new IntLabelParser());
+        return List.of(
+            new GraphProblem(
+                graphWithLayout,
+                GraphAlgorithm.parseOrGenerateStartVertex(graphWithLayout.graph(), options)
+            )
+        );
+    }
+
+    @Override
+    default void printBeforeSingleProblemInstance(
+        final GraphProblem problem,
+        final S solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Betrachten Sie den folgenden Graphen:\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    default void printProblemInstance(
+        final GraphProblem problem,
+        final S solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printAdjustboxBeginning(writer);
+        final GraphWithLayout<String, Integer, Integer> graphWithLayout =
+            this.getGraphWithLayoutForProblemInstance(problem, options);
+        graphWithLayout.graph().printTikZ(graphWithLayout.layout(), writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
+        if (problem.startNode().isPresent()) {
+            Main.newLine(writer);
+            writer.write("Startknoten: ");
+            writer.write(problem.startNode().get().label().get());
+            Main.newLine(writer);
+        }
     }
 
 }

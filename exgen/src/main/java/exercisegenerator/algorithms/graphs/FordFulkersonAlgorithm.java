@@ -28,8 +28,6 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
 
     static final int DEFAULT_SOURCE_SINK_ROOT = 7;
 
-    private static final String EACH_RESIDUAL_GRAPH = "\\emphasize{jedes Restnetzwerk (auch das initiale)}";
-
     private static final String RESIDUAL_GRAPH_NAME = "Restnetzwerk";
 
     public static GraphWithLayout<String, FlowAndCapacity, Integer> createRandomFlowNetwork(
@@ -683,46 +681,6 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         }
     }
 
-    private static FlowNetworkProblem generateFlowNetworkProblem(final Parameters<Flag> options) {
-        final int numOfInnerVertices = AlgorithmImplementation.parseOrGenerateLength(3, 18, options);
-        final GraphWithLayout<String, FlowAndCapacity, Integer> graphWithLayout =
-            FordFulkersonAlgorithm.createRandomFlowNetwork(numOfInnerVertices);
-        return new FlowNetworkProblem(
-            graphWithLayout,
-            graphWithLayout.graph().getVerticesWithLabel("s").iterator().next(),
-            graphWithLayout.graph().getVerticesWithLabel("t").iterator().next()
-        );
-    }
-
-    private static FlowNetworkProblem parseFlowNetworkProblem(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final GraphWithLayout<String, FlowAndCapacity, Integer> graphWithLayout =
-            options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 1 ?
-                FordFulkersonAlgorithm.parsePositionedGraph(reader) :
-                    Graph.create(reader, new StringLabelParser(), new FlowAndCapacityLabelParser());
-        final Graph<String, FlowAndCapacity> graph = graphWithLayout.graph();
-        Vertex<String> source = graph.getVerticesWithLabel("s").iterator().next();
-        Vertex<String> sink = graph.getVerticesWithLabel("t").iterator().next();
-        if (options.containsKey(Flag.OPERATIONS)) {
-            try (BufferedReader operationsReader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
-                Set<Vertex<String>> vertices = graph.getVerticesWithLabel(operationsReader.readLine().trim());
-                if (!vertices.isEmpty()) {
-                    source = vertices.iterator().next();
-                }
-                vertices = graph.getVerticesWithLabel(operationsReader.readLine().trim());
-                if (!vertices.isEmpty()) {
-                    sink = vertices.iterator().next();
-                }
-            } catch (IOException | NumberFormatException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-        return new FlowNetworkProblem(graphWithLayout, source, sink);
-    }
-
     private static FordFulkersonConfiguration parseOrGenerateConfiguration(
         final FlowNetworkProblem problem,
         final Parameters<Flag> options
@@ -966,6 +924,23 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
     }
 
     @Override
+    public String commandPrefix() {
+        return "FordFulkerson";
+    }
+
+    @Override
+    public FlowNetworkProblem generateProblem(final Parameters<Flag> options) {
+        final int numOfInnerVertices = AlgorithmImplementation.parseOrGenerateLength(3, 18, options);
+        final GraphWithLayout<String, FlowAndCapacity, Integer> graphWithLayout =
+            FordFulkersonAlgorithm.createRandomFlowNetwork(numOfInnerVertices);
+        return new FlowNetworkProblem(
+            graphWithLayout,
+            graphWithLayout.graph().getVerticesWithLabel("s").iterator().next(),
+            graphWithLayout.graph().getVerticesWithLabel("t").iterator().next()
+        );
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -974,33 +949,87 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
     }
 
     @Override
-    public FlowNetworkProblem parseOrGenerateProblem(final Parameters<Flag> options)
-    throws IOException {
-        return new ParserAndGenerator<FlowNetworkProblem>(
-            FordFulkersonAlgorithm::parseFlowNetworkProblem,
-            FordFulkersonAlgorithm::generateFlowNetworkProblem
-        ).getResult(options);
+    public List<FlowNetworkProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final GraphWithLayout<String, FlowAndCapacity, Integer> graphWithLayout =
+            options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 1 ?
+                FordFulkersonAlgorithm.parsePositionedGraph(reader) :
+                    Graph.create(reader, new StringLabelParser(), new FlowAndCapacityLabelParser());
+        final Graph<String, FlowAndCapacity> graph = graphWithLayout.graph();
+        Vertex<String> source = graph.getVerticesWithLabel("s").iterator().next();
+        Vertex<String> sink = graph.getVerticesWithLabel("t").iterator().next();
+        if (options.containsKey(Flag.OPERATIONS)) {
+            try (BufferedReader operationsReader = new BufferedReader(new FileReader(options.get(Flag.OPERATIONS)))) {
+                Set<Vertex<String>> vertices = graph.getVerticesWithLabel(operationsReader.readLine().trim());
+                if (!vertices.isEmpty()) {
+                    source = vertices.iterator().next();
+                }
+                vertices = graph.getVerticesWithLabel(operationsReader.readLine().trim());
+                if (!vertices.isEmpty()) {
+                    sink = vertices.iterator().next();
+                }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+        return List.of(new FlowNetworkProblem(graphWithLayout, source, sink));
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
         final FlowNetworkProblem problem,
         final List<FordFulkersonDoubleStep> solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final Vertex<String> source = problem.source();
-        final Vertex<String> sink = problem.sink();
-        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der ");
+        writer.write("\\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
+        writer.write("\\emphasize{jedes Restnetzwerk (auch das initiale)} ");
+        writer.write("sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. ");
+        writer.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeMultipleProblemInstances(
+        final List<FlowNetworkProblem> problems,
+        final List<List<FordFulkersonDoubleStep>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Berechnen Sie den maximalen Fluss in den folgenden \\emphasize{Flussnetzwerken} mithilfe der ");
+        writer.write("\\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
+        writer.write("\\emphasize{jedes Restnetzwerk (auch das jeweils initiale)} sowie ");
+        writer.write("\\emphasize{nach jeder Augmentierung} den aktuellen Zustand des jeweiligen Flussnetzwerks an. ");
+        writer.write("Geben Sie au\\ss{}erdem jeweils den \\emphasize{Wert des maximalen Flusses} an.");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
+        final FlowNetworkProblem problem,
+        final List<FordFulkersonDoubleStep> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Betrachten Sie das folgende \\emphasize{Flussnetzwerk}:\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printProblemInstance(
+        final FlowNetworkProblem problem,
+        final List<FordFulkersonDoubleStep> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         final FordFulkersonConfiguration configuration =
             FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
-        writer.write("Betrachten Sie das folgende Flussnetzwerk mit Quelle ");
-        writer.write(source.label().isEmpty() ? "" : source.label().get().toString());
-        writer.write(" und Senke ");
-        writer.write(sink.label().isEmpty() ? "" : sink.label().get().toString());
-        writer.write(":\\\\");
-        Main.newLine(writer);
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+        LaTeXUtils.printAdjustboxBeginning(writer);
         problem.graphWithLayout().graph().printTikZ(
             GraphAlgorithm.stretch(
                 (GridGraphLayout<String, FlowAndCapacity>)problem.graphWithLayout().layout(),
@@ -1010,90 +1039,18 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         );
         LaTeXUtils.printAdjustboxEnd(writer);
         Main.newLine(writer);
-        writer.write("Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der");
-        writer.write(" \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu ");
-        writer.write(FordFulkersonAlgorithm.EACH_RESIDUAL_GRAPH);
-        writer.write(" sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. ");
-        writer.write("Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an.");
-        switch (mode) {
-        case ALWAYS:
-        case SOLUTION_SPACE:
-            writer.write(
-                " Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl "
-                );
-            writer.write("solcher Schritte \\\"ubereinstimmen.\\\\[2ex]");
-            break;
-        case NEVER:
-            // do nothing
-        }
+        writer.write("Quelle: ");
+        writer.write(problem.source().label().get());
+        writer.write("\\\\");
         Main.newLine(writer);
-        int stepNumber = 1;
-        switch (mode) {
-        case SOLUTION_SPACE:
-            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-            // fall-through
-        case ALWAYS:
-            if (configuration.twoColumns) {
-                writer.write("\\begin{longtable}{cc}");
-                Main.newLine(writer);
-            }
-            break;
-        case NEVER:
-            // do nothing
-        }
-        boolean first = true;
-        for (final FordFulkersonDoubleStep step : solution) {
-            if (first) {
-                first = false;
-                FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
-                    stepNumber,
-                    step,
-                    true,
-                    false,
-                    mode,
-                    configuration,
-                    writer
-                );
-                stepNumber += 1;
-            } else {
-                FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
-                    stepNumber,
-                    step,
-                    false,
-                    false,
-                    mode,
-                    configuration,
-                    writer
-                );
-                stepNumber += 2;
-            }
-        }
-        switch (mode) {
-        case ALWAYS:
-        case SOLUTION_SPACE:
-            if (configuration.twoColumns) {
-                writer.write("\\end{longtable}");
-                Main.newLine(writer);
-            }
-            Main.newLine(writer);
-            Main.newLine(writer);
-            writer.write("\\vspace*{1ex}");
-            Main.newLine(writer);
-            Main.newLine(writer);
-            writer.write("Der maximale Fluss hat den Wert: ");
-            Main.newLine(writer);
-            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
-                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
-            }
-            Main.newLine(writer);
-            break;
-        case NEVER:
-            // do nothing
-        }
+        writer.write("Senke: ");
+        writer.write(problem.sink().label().get());
+        writer.write("\\\\");
+        Main.newLine(writer);
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final FlowNetworkProblem problem,
         final List<FordFulkersonDoubleStep> solution,
         final Parameters<Flag> options,
@@ -1167,7 +1124,92 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         Main.newLine(writer);
         Main.newLine(writer);
         FordFulkersonAlgorithm.printStatisticsAsComment(solution, writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final FlowNetworkProblem problem,
+        final List<FordFulkersonDoubleStep> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
+        final FordFulkersonConfiguration configuration =
+            FordFulkersonAlgorithm.parseOrGenerateConfiguration(problem, options);
+        switch (mode) {
+        case ALWAYS:
+        case SOLUTION_SPACE:
+            writer.write(
+                "Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl "
+            );
+            writer.write("solcher Schritte \\\"ubereinstimmen.\\\\[2ex]");
+            break;
+        case NEVER:
+            // do nothing
+        }
         Main.newLine(writer);
+        int stepNumber = 1;
+        switch (mode) {
+        case SOLUTION_SPACE:
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+            // fall-through
+        case ALWAYS:
+            if (configuration.twoColumns) {
+                writer.write("\\begin{longtable}{cc}");
+                Main.newLine(writer);
+            }
+            break;
+        case NEVER:
+            // do nothing
+        }
+        boolean first = true;
+        for (final FordFulkersonDoubleStep step : solution) {
+            if (first) {
+                first = false;
+                FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
+                    stepNumber,
+                    step,
+                    true,
+                    false,
+                    mode,
+                    configuration,
+                    writer
+                );
+                stepNumber += 1;
+            } else {
+                FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
+                    stepNumber,
+                    step,
+                    false,
+                    false,
+                    mode,
+                    configuration,
+                    writer
+                );
+                stepNumber += 2;
+            }
+        }
+        switch (mode) {
+        case ALWAYS:
+        case SOLUTION_SPACE:
+            if (configuration.twoColumns) {
+                writer.write("\\end{longtable}");
+                Main.newLine(writer);
+            }
+            Main.newLine(writer);
+            Main.newLine(writer);
+            writer.write("\\vspace*{1ex}");
+            Main.newLine(writer);
+            Main.newLine(writer);
+            writer.write("Der maximale Fluss hat den Wert: ");
+            Main.newLine(writer);
+            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+            }
+            break;
+        case NEVER:
+            // do nothing
+        }
     }
 
 }

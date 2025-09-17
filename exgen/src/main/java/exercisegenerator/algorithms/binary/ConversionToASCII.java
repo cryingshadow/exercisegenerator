@@ -25,27 +25,20 @@ public class ConversionToASCII implements BinaryNumbersAlgorithm<BitString> {
         return (char)ConversionFromTwosComplement.fromTwosComplement(bitString);
     }
 
-    private static List<BitString> generateBitStringASCIITasks(final Parameters<Flag> options) {
-        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
-        final int bitLength = 8;
-        final List<BitString> result = new ArrayList<BitString>(numOfTasks);
-        for (int i = 0; i < numOfTasks; i++) {
-            result.add(
-                BinaryNumbersAlgorithm.generateBitString(bitLength, BigInteger.valueOf(32), BigInteger.valueOf(126))
-            );
-        }
-        return result;
-    }
-
     private ConversionToASCII() {}
 
     @Override
-    public SolvedBinaryTask algorithm(final BitString task) {
+    public SolvedBinaryTask apply(final BitString task) {
         return new SolvedBinaryTask(
             task,
             "=",
             String.valueOf(ConversionToASCII.toASCII(task))
         );
+    }
+
+    @Override
+    public BitString generateProblem(final Parameters<Flag> options) {
+        return BinaryNumbersAlgorithm.generateBitString(8, BigInteger.valueOf(32), BigInteger.valueOf(126));
     }
 
     @Override
@@ -71,11 +64,8 @@ public class ConversionToASCII implements BinaryNumbersAlgorithm<BitString> {
     }
 
     @Override
-    public List<BitString> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<List<BitString>>(
-            BinaryNumbersAlgorithm::parseBitStringValueTasks,
-            ConversionToASCII::generateBitStringASCIITasks
-        ).getResult(options);
+    public List<BitString> parseProblems(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
+        return BitString.parseBitStringProblems(reader, options);
     }
 
     @Override

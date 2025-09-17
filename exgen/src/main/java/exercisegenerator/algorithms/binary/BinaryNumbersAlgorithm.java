@@ -10,7 +10,7 @@ import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.binary.*;
 
-interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, List<SolvedBinaryTask>> {
+public interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<T, SolvedBinaryTask> {
 
     static BitString generateBitString(final int bitLength) {
         return BinaryNumbersAlgorithm.generateBitString(bitLength, BigInteger.ZERO, BigInteger.TWO.pow(bitLength));
@@ -28,6 +28,15 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
             return BitString.create(newValue, bitLength);
         }
         return result;
+    }
+
+    static NumberComplementTask generateNumberComplementTasks(final Parameters<Flag> options) {
+        final int bitLength = BinaryNumbersAlgorithm.getBitLength(options);
+        final boolean onesComplement = BinaryNumbersAlgorithm.algorithmUsesOnesComplement(options);
+        return new NumberComplementTask(
+            BinaryNumbersAlgorithm.generateNumberWithinBitlength(bitLength, onesComplement),
+            bitLength
+        );
     }
 
     static int generateNumOfTasks(final Parameters<Flag> options) {
@@ -58,30 +67,14 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         return Math.abs(number) > Math.pow(2, length - 1) - 1;
     }
 
-    static List<BitString> parseBitStringValueTasks(
+    static List<NumberComplementTask> parseNumberComplementTasks(
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
+        final int bitLength = BinaryNumbersAlgorithm.getBitLength(options);
         return Arrays.stream(reader.readLine().split(";"))
-            .map(BitString::parse)
+            .map(n -> new NumberComplementTask(Integer.parseInt(n), bitLength))
             .toList();
-    }
-
-    static List<BitString> parseOrGenerateBitStringValueTasks(
-        final Parameters<Flag> options
-    ) throws IOException {
-        return new ParserAndGenerator<List<BitString>>(
-            BinaryNumbersAlgorithm::parseBitStringValueTasks,
-            BinaryNumbersAlgorithm::generateBitStringValueTasks
-        ).getResult(options);
-    }
-
-    static List<NumberComplementTask> parseOrGenerateNumberComplementTasks(final Parameters<Flag> options)
-    throws IOException {
-        return new ParserAndGenerator<List<NumberComplementTask>>(
-            BinaryNumbersAlgorithm::parseNumberComplementTasks,
-            BinaryNumbersAlgorithm::generateNumberComplementTasks
-        ).getResult(options);
     }
 
     static List<ItemWithTikZInformation<Bit>> toBitStringSolution(final SolvedBinaryTask solvedTask) {
@@ -131,32 +124,6 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         }
     }
 
-    private static List<BitString> generateBitStringValueTasks(final Parameters<Flag> options) {
-        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
-        final int bitLength = BinaryNumbersAlgorithm.getBitLength(options);
-        final List<BitString> result = new ArrayList<BitString>(numOfTasks);
-        for (int i = 0; i < numOfTasks; i++) {
-            result.add(BinaryNumbersAlgorithm.generateBitString(bitLength));
-        }
-        return result;
-    }
-
-    private static List<NumberComplementTask> generateNumberComplementTasks(final Parameters<Flag> options) {
-        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
-        final int bitLength = BinaryNumbersAlgorithm.getBitLength(options);
-        final List<NumberComplementTask> result = new ArrayList<NumberComplementTask>(numOfTasks);
-        final boolean onesComplement = BinaryNumbersAlgorithm.algorithmUsesOnesComplement(options);
-        for (int i = 0; i < numOfTasks; i++) {
-            result.add(
-                new NumberComplementTask(
-                    BinaryNumbersAlgorithm.generateNumberWithinBitlength(bitLength, onesComplement),
-                    bitLength
-                )
-            );
-        }
-        return result;
-    }
-
     private static int generateNumberWithinBitlength(final int bitLength, final boolean onesComplement) {
         int limit = (int)Math.pow(2, bitLength);
         final int toSubtract = limit / 2;
@@ -168,21 +135,6 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
             number++;
         }
         return number;
-    }
-
-    private static List<NumberComplementTask> parseNumberComplementTasks(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final int bitLength = BinaryNumbersAlgorithm.getBitLength(options);
-        return Arrays.stream(reader.readLine().split(";"))
-            .map(n -> new NumberComplementTask(Integer.parseInt(n), bitLength))
-            .toList();
-    }
-
-    @Override
-    default public List<SolvedBinaryTask> apply(final List<T> problem) {
-        return problem.stream().map(this::algorithm).toList();
     }
 
     @Override
@@ -211,11 +163,54 @@ interface BinaryNumbersAlgorithm<T> extends AlgorithmImplementation<List<T>, Lis
         Main.newLine(writer);
     }
 
-    SolvedBinaryTask algorithm(T task);
+    @Override
+    default String commandPrefix() {
+        return "Binary";
+    }
 
     String getExerciseText(Parameters<Flag> options);
 
     String getExerciseTextSingular(Parameters<Flag> options);
+
+    @Override
+    default void printBeforeMultipleProblemInstances(
+        final List<T> problems,
+        final List<SolvedBinaryTask> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printBeforeSingleProblemInstance(
+        final T problem,
+        final SolvedBinaryTask solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printProblemInstance(
+        final T problem,
+        final SolvedBinaryTask solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printSolutionInstance(
+        final T problem,
+        final SolvedBinaryTask solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
+
+    @Override
+    default void printSolutionSpace(
+        final T problem,
+        final SolvedBinaryTask solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {}
 
     int toContentLength(List<SolvedBinaryTask> solvedTasks);
 

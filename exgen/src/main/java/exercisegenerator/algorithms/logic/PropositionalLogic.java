@@ -29,6 +29,51 @@ abstract class PropositionalLogic {
             PropositionalLogic::simplifyChildRecursively
         );
 
+    static PropositionalFormula generateFormula(final Parameters<Flag> options) {
+        final List<String> variables = PropositionalLogic.generateVariables(options);
+        final List<PropositionalFormula> formulas = new ArrayList<PropositionalFormula>();
+        for (final String name : variables) {
+            final PropositionalVariable var = new PropositionalVariable(name);
+            formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
+        }
+        final int additional = Main.RANDOM.nextInt(3 * variables.size());
+        for (int i = 0; i < additional; i++) {
+            final PropositionalVariable var =
+                new PropositionalVariable(variables.get(Main.RANDOM.nextInt(variables.size())));
+            formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
+        }
+        while (formulas.size() > 3) {
+            final int number = Main.RANDOM.nextInt(formulas.size() - 1) + 1;
+            if (number == 1) {
+                final PropositionalFormula formula = formulas.remove(Main.RANDOM.nextInt(formulas.size()));
+                formulas.add(formula.negate());
+            } else {
+                final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
+                for (int i = 0; i < number; i++) {
+                    children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
+                }
+                formulas.add(
+                    Main.RANDOM.nextBoolean() ?
+                        Conjunction.createConjunction(children) :
+                            Disjunction.createDisjunction(children)
+                );
+            }
+        }
+        while (formulas.size() > 1) {
+            final int number = formulas.size() > 2 ? Main.RANDOM.nextInt(formulas.size() - 2) + 2 : 2;
+            final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
+            for (int i = 0; i < number; i++) {
+                children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
+            }
+            formulas.add(
+                Main.RANDOM.nextBoolean() ?
+                    Conjunction.createConjunction(children) :
+                        Disjunction.createDisjunction(children)
+            );
+        }
+        return formulas.get(0);
+    }
+
     static List<String> generateVariables(final Parameters<Flag> options) {
         final List<String> variables = new ArrayList<String>();
         final int size = AlgorithmImplementation.parseOrGenerateLength(3, 4, options);
@@ -41,11 +86,23 @@ abstract class PropositionalLogic {
         return variables;
     }
 
-    static PropositionalFormula parseOrGenerateFormula(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<PropositionalFormula>(
-            PropositionalLogic::parseFormula,
-            PropositionalLogic::generateFormula
-        ).getResult(options);
+    static List<PropositionalFormula> parseFormulas(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final List<PropositionalFormula> result = new ArrayList<PropositionalFormula>();
+        try {
+            String line = reader.readLine();
+            while (line != null) {
+                if (!line.isBlank()) {
+                    result.add(PropositionalFormula.parse(line));
+                }
+                line = reader.readLine();
+            }
+        } catch (final PropositionalFormulaParseException e) {
+            throw new IOException(e);
+        }
+        return result;
     }
 
     static void printFormulaEquivalencesSolution(
@@ -62,7 +119,6 @@ abstract class PropositionalLogic {
             }
             PropositionalLogic.printGeneralFormula(step, writer);
         }
-        Main.newLine(writer);
     }
 
     static void printGeneralFormula(
@@ -263,51 +319,6 @@ abstract class PropositionalLogic {
         return Optional.empty();
     }
 
-    private static PropositionalFormula generateFormula(final Parameters<Flag> options) {
-        final List<String> variables = PropositionalLogic.generateVariables(options);
-        final List<PropositionalFormula> formulas = new ArrayList<PropositionalFormula>();
-        for (final String name : variables) {
-            final PropositionalVariable var = new PropositionalVariable(name);
-            formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
-        }
-        final int additional = Main.RANDOM.nextInt(3 * variables.size());
-        for (int i = 0; i < additional; i++) {
-            final PropositionalVariable var =
-                new PropositionalVariable(variables.get(Main.RANDOM.nextInt(variables.size())));
-            formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
-        }
-        while (formulas.size() > 3) {
-            final int number = Main.RANDOM.nextInt(formulas.size() - 1) + 1;
-            if (number == 1) {
-                final PropositionalFormula formula = formulas.remove(Main.RANDOM.nextInt(formulas.size()));
-                formulas.add(formula.negate());
-            } else {
-                final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
-                for (int i = 0; i < number; i++) {
-                    children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
-                }
-                formulas.add(
-                    Main.RANDOM.nextBoolean() ?
-                        Conjunction.createConjunction(children) :
-                            Disjunction.createDisjunction(children)
-                );
-            }
-        }
-        while (formulas.size() > 1) {
-            final int number = formulas.size() > 2 ? Main.RANDOM.nextInt(formulas.size() - 2) + 2 : 2;
-            final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
-            for (int i = 0; i < number; i++) {
-                children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
-            }
-            formulas.add(
-                Main.RANDOM.nextBoolean() ?
-                    Conjunction.createConjunction(children) :
-                        Disjunction.createDisjunction(children)
-            );
-        }
-        return formulas.get(0);
-    }
-
     private static Optional<List<? extends PropositionalFormula>> getChildren(final PropositionalFormula formula) {
         if (formula.isConjunction()) {
             return Optional.of(((Conjunction)formula).children);
@@ -399,17 +410,6 @@ abstract class PropositionalLogic {
             }
         }
         return Optional.empty();
-    }
-
-    private static PropositionalFormula parseFormula(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        try {
-            return PropositionalFormula.parse(reader.readLine());
-        } catch (final PropositionalFormulaParseException e) {
-            throw new IOException(e);
-        }
     }
 
     private static Optional<PropositionalFormula> simplify(final PropositionalFormula formula) {

@@ -33,12 +33,17 @@ public class ConversionToOnesComplement implements BinaryNumbersAlgorithm<Number
     private ConversionToOnesComplement() {}
 
     @Override
-    public SolvedBinaryTask algorithm(final NumberComplementTask task) {
+    public SolvedBinaryTask apply(final NumberComplementTask task) {
         return new SolvedBinaryTask(
             ConversionToOnesComplement.toOnesComplement(task.number(), task.bitLength()),
             "=",
             String.valueOf(task.number())
         );
+    }
+
+    @Override
+    public NumberComplementTask generateProblem(final Parameters<Flag> options) {
+        return BinaryNumbersAlgorithm.generateNumberComplementTasks(options);
     }
 
     @Override
@@ -70,8 +75,11 @@ public class ConversionToOnesComplement implements BinaryNumbersAlgorithm<Number
     }
 
     @Override
-    public List<NumberComplementTask> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return BinaryNumbersAlgorithm.parseOrGenerateNumberComplementTasks(options);
+    public List<NumberComplementTask> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        return BinaryNumbersAlgorithm.parseNumberComplementTasks(reader, options);
     }
 
     @Override

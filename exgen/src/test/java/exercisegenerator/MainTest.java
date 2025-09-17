@@ -600,6 +600,10 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
                     "",
+                    "Startknoten: A",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
                     "F\\\"uhren Sie den \\emphasize{Bellman-Ford}-Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus.",
                     "F\\\"ullen Sie dazu die nachfolgenden Tabellen aus:\\\\[2ex]",
                     "\\ifprintanswers",
@@ -636,7 +640,8 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "\\fi"
+                    "\\fi",
+                    ""
                 ),
                 List.of(
                     "\\begin{center}",
@@ -713,6 +718,10 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n9) to (n6);",
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
+                    "",
+                    "Startknoten: A",
+                    "",
+                    "\\vspace*{1ex}",
                     "",
                     "F\\\"uhren Sie eine \\emphasize{Breitensuche} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Breitensuche gefunden werden. Nehmen Sie an, dass der Algorithmus die Kanten in der alphabetischen Reihenfolge ihrer Zielknoten durchl\\\"auft."
                 ),
@@ -893,9 +902,13 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         final List<String> solText = new LinkedList<String>();
         exText.add(
-            "Sortieren Sie das folgende Array mit ganzen Zahlen von 0 bis 99 mithilfe von Bucketsort mit 10 Buckets."
+            "Sortieren Sie das folgende Array mit ganzen Zahlen von 0 bis 99 mithilfe von "
+            + "\\emphasize{Bucketsort} mit 10 Buckets."
         );
-        exText.add("Geben Sie dazu die Buckets vor deren Sortierung sowie das Ergebnisarray an.\\\\[2ex]");
+        exText.add("Geben Sie dazu die Buckets unmittelbar vor deren Sortierung sowie das Ergebnisarray an.\\\\[2ex]");
+        exText.add("Kleinste m\\\"ogliche Zahl: 0\\\\");
+        exText.add("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: 99\\\\");
+        exText.add("Anzahl Buckets: 10\\\\");
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
             List.of(
@@ -911,6 +924,7 @@ public class MainTest {
             )
         );
         exText.addAll(Patterns.SOLUTION_SPACE_END);
+        exText.add("");
 
         solText.addAll(
             List.of(
@@ -958,7 +972,7 @@ public class MainTest {
             new String[] {
                 "-a", Algorithm.BUCKETSORT.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-i", "33,13,55,11,44,22\n0;99;10"
+                "-i", "0;99;10\n33,13,55,11,44,22"
             },
             MainTest.simpleComparison(exText, solText)
         );
@@ -980,6 +994,8 @@ public class MainTest {
         final List<String> solText = new LinkedList<String>();
         exText.add("Sortieren Sie das folgende Array mit ganzen Zahlen von 0 bis 9 mithilfe von Countingsort.");
         exText.add("Geben Sie dazu das Z\\\"ahlarray sowie das Ergebnisarray an.\\\\[2ex]");
+        exText.add("Kleinste m\\\"ogliche Zahl: 0\\\\");
+        exText.add("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: 9\\\\");
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
             List.of(
@@ -1005,6 +1021,7 @@ public class MainTest {
         }
         exText.add("\\end{tikzpicture}");
         exText.addAll(Patterns.SOLUTION_SPACE_END);
+        exText.add("");
 
         solText.add("\\begin{tikzpicture}");
         solText.add(Patterns.ARRAY_STYLE);
@@ -1035,7 +1052,7 @@ public class MainTest {
             new String[] {
                 "-a", Algorithm.COUNTINGSORT.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-i", "3,5,1,4,2\n0;9"
+                "-i", "0;9\n3,5,1,4,2"
             },
             MainTest.simpleComparison(exText, solText)
         );
@@ -1059,7 +1076,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie das folgende Petrinetz $N$:\\\\[2ex]",
+                    "Betrachten Sie das folgende \\emphasize{Petrinetz} $N$:\\\\[2ex]",
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "",
@@ -1084,7 +1101,7 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Geben Sie einen Abdeckungsgraphen zu $N$ an."
+                    "Geben Sie einen \\emphasize{Abdeckungsgraphen} zu $N$ an."
                 ),
                 List.of(
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",
@@ -1109,7 +1126,8 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Dekodieren Sie den folgenden \\emphasize{Hamming-Code}:\\\\[2ex]",
+                    "Dekodieren Sie den folgenden \\emphasize{Hamming-Code} und geben Sie die daf\\\"ur berechnete "
+                    + "Pr\\\"ufsumme an:\\\\[2ex]",
                     "\\codeseq{100110110101111}"
                 ),
                 List.of("\\codeseq{00010101111} (Pr\\\"ufsumme: \\codeseq{0101})")
@@ -1240,6 +1258,10 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
                     "",
+                    "Startknoten: A",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
                     "F\\\"uhren Sie eine \\emphasize{Tiefensuche} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus. Geben Sie dazu die Knoten in der Reihenfolge an, in der sie durch die Tiefensuche gefunden werden. Nehmen Sie an, dass der Algorithmus die Kanten in der alphabetischen Reihenfolge ihrer Zielknoten durchl\\\"auft."
                 ),
                 List.of(
@@ -1269,7 +1291,11 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
                     "",
-                    "F\\\"uhren Sie den \\emphasize{Dijkstra} Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus.",
+                    "Startknoten: A",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "F\\\"uhren Sie den \\emphasize{Dijkstra}-Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus.",
                     "F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]",
                     "\\ifprintanswers",
                     "",
@@ -1291,7 +1317,8 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "\\fi"
+                    "\\fi",
+                    ""
                 ),
                 List.of(
                     "\\begin{center}",
@@ -1347,7 +1374,8 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende Klauselmenge erfüllbar ist:",
+                    "Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende "
+                    + "\\emphasize{Klauselmenge} erfüllbar ist. Geben Sie dazu auch den zugehörigen DPLL-Baum an.",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[node distance=0.5 and 1]",
@@ -1359,8 +1387,7 @@ public class MainTest {
                     "\\node (c5) [below=of c4.south west,anchor=south west] {$\\{\\neg B,C\\}$};",
                     "\\node (end) [below left=of c5.south west,anchor=south west] {$\\}$};",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
-                    "Geben Sie dazu auch den zugehörigen DPLL-Baum an."
+                    "\\end{center}"
                 ),
                 List.of(
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",
@@ -1424,14 +1451,18 @@ public class MainTest {
         final List<String> solText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur die folgende Eingabe:\\\\",
+                "Zielalphabet: $\\{0,1\\}$\\\\",
+                "Eingabetext:\\\\",
                 "\\begin{center}",
                 "GEIERMEIER",
                 "\\end{center}",
                 "",
                 "\\vspace*{1ex}",
                 "",
-                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
+                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch sowie die Liste der "
+                + "Bin\\\"arb\\\"aume nach ihrer Erzeugung und nach jeder Kombination von Bin\\\"arb\\\"aumen "
+                + "an.\\\\[2ex]"
             )
         );
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
@@ -1453,6 +1484,7 @@ public class MainTest {
         exText.addAll(Patterns.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
         exText.addAll(Patterns.SOLUTION_SPACE_END);
+        exText.add("");
         solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{100} \\code{11} \\code{00} \\code{11} \\code{01} \\code{101} \\code{11} \\code{00} \\code{11} \\code{01}");
@@ -1599,6 +1631,7 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
+        solText.add("");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
@@ -1617,14 +1650,18 @@ public class MainTest {
         final List<String> solText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur die folgende Eingabe:\\\\",
+                "Zielalphabet: $\\{0,1\\}$\\\\",
+                "Eingabetext:\\\\",
                 "\\begin{center}",
                 "\\textbackslash{}\\&\\%\\&\\textasciicircum{}\\_\\&\\%\\&\\textasciicircum{}",
                 "\\end{center}",
                 "",
                 "\\vspace*{1ex}",
                 "",
-                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
+                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch sowie die Liste der "
+                + "Bin\\\"arb\\\"aume nach ihrer Erzeugung und nach jeder Kombination von Bin\\\"arb\\\"aumen "
+                + "an.\\\\[2ex]"
             )
         );
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
@@ -1646,6 +1683,7 @@ public class MainTest {
         exText.addAll(Patterns.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
         exText.addAll(Patterns.SOLUTION_SPACE_END);
+        exText.add("");
         solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{100} \\code{11} \\code{00} \\code{11} \\code{01} \\code{101} \\code{11} \\code{00} \\code{11} \\code{01}");
@@ -1792,6 +1830,7 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
+        solText.add("");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
@@ -1810,14 +1849,18 @@ public class MainTest {
         final List<String> solText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur das Zielalphabet $\\{0,1\\}$ und den folgenden Eingabetext:\\\\",
+                "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur die folgende Eingabe:\\\\",
+                "Zielalphabet: $\\{0,1\\}$\\\\",
+                "Eingabetext:\\\\",
                 "\\begin{center}",
                 "RHABARBERBARBARABARBARBARENBARTBARBIER",
                 "\\end{center}",
                 "",
                 "\\vspace*{1ex}",
                 "",
-                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch an.\\\\[2ex]"
+                "Geben Sie zus\\\"atzlich zu dem erstellten Code das erzeugte Codebuch sowie die Liste der "
+                + "Bin\\\"arb\\\"aume nach ihrer Erzeugung und nach jeder Kombination von Bin\\\"arb\\\"aumen "
+                + "an.\\\\[2ex]"
             )
         );
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
@@ -1846,6 +1889,7 @@ public class MainTest {
         exText.addAll(Patterns.MIDDLE_SPACE);
         exText.add("\\textbf{Code:}\\\\");
         exText.addAll(Patterns.SOLUTION_SPACE_END);
+        exText.add("");
         solText.addAll(Patterns.MIDDLE_SPACE);
         solText.add("\\textbf{Code:}\\\\");
         solText.add("\\code{11} \\code{00100} \\code{01} \\code{10} \\code{01} \\code{11} \\code{10} \\code{000} \\code{11} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{01} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{10} \\code{01} \\code{11} \\code{000} \\code{00110} \\code{10} \\code{01} \\code{11} \\code{00111} \\code{10} \\code{01} \\code{11} \\code{10} \\code{00101} \\code{000} \\code{11}");
@@ -2196,6 +2240,7 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
+        solText.add("");
         this.harness(
             new String[] {
                 "-a", Algorithm.TO_HUFFMAN.name,
@@ -2224,7 +2269,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie das folgende Petrinetz $N$:\\\\[2ex]",
+                    "Betrachten Sie das folgende \\emphasize{Petrinetz} $N$:\\\\[2ex]",
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "",
@@ -2305,7 +2350,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie das folgende Petrinetz $N$:\\\\[2ex]",
+                    "Betrachten Sie das folgende \\emphasize{Petrinetz} $N$:\\\\[2ex]",
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "",
@@ -2399,6 +2444,8 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
                     "",
+                    "\\vspace*{1ex}",
+                    "",
                     "F\\\"uhren Sie den \\emphasize{Algorithmus von Floyd} auf diesem Graphen aus. F\\\"ullen Sie dazu die nachfolgenden Tabellen aus.\\\\[2ex]",
                     "\\ifprintanswers",
                     "\\else",
@@ -2472,7 +2519,8 @@ public class MainTest {
                     "",
                     "\\renewcommand{\\arraystretch}{1.0}",
                     "\\end{multicols}",
-                    "\\fi"
+                    "\\fi",
+                    ""
                 ),
                 List.of(
                     "\\begin{multicols}{2}",
@@ -2544,7 +2592,8 @@ public class MainTest {
                     "\\vspace*{1ex}",
                     "",
                     "\\renewcommand{\\arraystretch}{1.0}",
-                    "\\end{multicols}"
+                    "\\end{multicols}",
+                    ""
                 )
             )
         );
@@ -2565,7 +2614,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie das folgende Flussnetzwerk mit Quelle s und Senke t:\\\\",
+                    "Betrachten Sie das folgende \\emphasize{Flussnetzwerk}:\\\\",
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2585,7 +2634,13 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
                     "",
-                    "Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu \\emphasize{jedes Restnetzwerk (auch das initiale)} sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an. Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl solcher Schritte \\\"ubereinstimmen.\\\\[2ex]",
+                    "Quelle: s\\\\",
+                    "Senke: t\\\\",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "Berechnen Sie den maximalen Fluss in diesem Netzwerk mithilfe der \\emphasize{Ford-Fulkerson Methode}. Geben Sie dazu \\emphasize{jedes Restnetzwerk (auch das initiale)} sowie \\emphasize{nach jeder Augmentierung} den aktuellen Zustand des Flussnetzwerks an. Geben Sie au\\ss{}erdem den \\emphasize{Wert des maximalen Flusses} an.",
+                    "Die vorgegebene Anzahl an L\\\"osungsschritten muss nicht mit der ben\\\"otigten Anzahl solcher Schritte \\\"ubereinstimmen.\\\\[2ex]",
                     "\\ifprintanswers",
                     "",
                     "\\vspace*{-3ex}",
@@ -3110,7 +3165,8 @@ public class MainTest {
                     "\\vee & \\neg\\var{A} \\wedge \\var{B} \\wedge \\var{C}\\\\",
                     "\\vee & \\var{A} \\wedge \\neg\\var{B} \\wedge \\var{C}\\\\",
                     "\\vee & \\var{A} \\wedge \\var{B} \\wedge \\var{C}",
-                    "\\end{align*}"
+                    "\\end{align*}",
+                    ""
                 )
             )
         );
@@ -3159,7 +3215,8 @@ public class MainTest {
                     "\\vee & \\neg\\var{A} \\wedge \\var{B} \\wedge \\neg\\var{C} \\wedge \\var{D}\\\\",
                     "\\vee & \\var{A} \\wedge \\neg\\var{B} \\wedge \\neg\\var{C} \\wedge \\var{D}\\\\",
                     "\\vee & \\var{A} \\wedge \\var{B} \\wedge \\var{C} \\wedge \\neg\\var{D}",
-                    "\\end{align*}"
+                    "\\end{align*}",
+                    ""
                 )
             )
         );
@@ -3189,7 +3246,8 @@ public class MainTest {
                 "",
                 "\\begin{align*}",
                 " & \\code{1}",
-                "\\end{align*}"
+                "\\end{align*}",
+                ""
             )
         );
         this.harness(
@@ -3269,7 +3327,7 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{7}{10}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\",
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das darunter stehende Array der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{7}{10}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\",
                 "\\begin{center}",
                 "3, 5, 1, 4, 2, 1.",
                 "\\end{center}",
@@ -3299,6 +3357,7 @@ public class MainTest {
             )
         );
         exText.addAll(Patterns.SOLUTION_SPACE_END);
+        exText.add("");
         this.harness(
             new String[] {
                 "-a", Algorithm.HASH_MULT_QUAD.name,
@@ -3340,7 +3399,8 @@ public class MainTest {
                     Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
                     Patterns.indexNode(nodeNumber++, 10),
                     "\\end{tikzpicture}",
-                    "\\end{center}"
+                    "\\end{center}",
+                    ""
                 )
             )
         );
@@ -3353,7 +3413,7 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "F\\\"ugen Sie die folgenden Werte nacheinander in das unten stehende Array der L\\\"ange 32 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{3}{25}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = \\frac{1}{2}$, $c_2 = \\frac{1}{2}$) ein:\\\\",
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das darunter stehende Array der L\\\"ange 32 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{3}{25}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = \\frac{1}{2}$, $c_2 = \\frac{1}{2}$) ein:\\\\",
                 "\\begin{center}",
                 "13, 55, 11, 14, 2, 17.",
                 "\\end{center}",
@@ -3390,6 +3450,7 @@ public class MainTest {
             )
         );
         exText.addAll(Patterns.SOLUTION_SPACE_END);
+        exText.add("");
         leftmost = nodeNumber;
         this.harness(
             new String[] {
@@ -3474,7 +3535,8 @@ public class MainTest {
                     Patterns.rightEmptyNodeToPredecessor(nodeNumber, contentLength),
                     Patterns.indexNode(nodeNumber++, 31),
                     "\\end{tikzpicture}",
-                    "\\end{center}"
+                    "\\end{center}",
+                    ""
                 )
             )
         );
@@ -3510,6 +3572,7 @@ public class MainTest {
         }
         exText.add("\\end{tikzpicture}");
         exText.addAll(Patterns.SOLUTION_SPACE_END);
+        exText.add("");
 
         solText.add("\\begin{tikzpicture}");
         solText.add(Patterns.ARRAY_STYLE);
@@ -3567,12 +3630,12 @@ public class MainTest {
                     "Gegeben sei ein Rucksack mit \\emphasize{maximaler Tragkraft} 7 sowie 3 "
                     + "\\emphasize{Gegenst\\\"ande}. ",
                     "Der $i$-te Gegenstand soll hierbei ein Gewicht von $w_i$ und einen Wert von $v_i$ haben. ",
+                    "Die \\emphasize{Gewichte} seien dabei $w_{1} = 4$, $w_{2} = 3$ und $w_{3} = 3$. ",
+                    "Die \\emphasize{Werte} seien $v_{1} = 3$, $v_{2} = 2$ und $v_{3} = 2$. ",
                     "Bestimmen Sie mit Hilfe des Algorithmus zum L\\\"osen des Rucksackproblems mittels dynamischer "
                     + "Programmierung den maximalen Gesamtwert der Gegenst\\\"ande, die der Rucksack tragen kann (das "
                     + "Gesamtgewicht der mitgef\\\"uhrten Gegenst\\\"ande \\\"ubersteigt nicht die Tragkraft des "
                     + "Rucksacks). ",
-                    "Die \\emphasize{Gewichte} seien dabei $w_{1} = 4$, $w_{2} = 3$ und $w_{3} = 3$. ",
-                    "Die \\emphasize{Werte} seien $v_{1} = 3$, $v_{2} = 2$ und $v_{3} = 2$. ",
                     "Geben Sie zudem die vom Algorithmus bestimmte Tabelle und die mitzunehmenden Gegenst\\\"ande an.",
                     "",
                     "\\ifprintanswers",
@@ -3681,7 +3744,8 @@ public class MainTest {
                     Patterns.rightEmptyNode(10, 9, 1),
                     Patterns.rightEmptyNode(11, 10, 1),
                     "\\end{tikzpicture}",
-                    "\\fi"
+                    "\\fi",
+                    ""
                 ),
                 List.of(
                     "Stack:\\\\",
@@ -3737,6 +3801,8 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
                     "",
+                    "\\vspace*{1ex}",
+                    "",
                     "F\\\"uhren Sie den \\emphasize{Algorithmus von Kruskal} auf diesem Graphen aus.",
                     "Geben Sie dazu die Kanten in der Reihenfolge an, in der sie vom Algorithmus zum minimalen Spannbaum hinzugef\\\"ugt werden, und geben Sie den resultierenden minimalen Spannbaum an:\\\\[2ex]",
                     "\\ifprintanswers",
@@ -3749,7 +3815,8 @@ public class MainTest {
                     "",
                     "\\vspace*{10ex}",
                     "",
-                    "\\fi"
+                    "\\fi",
+                    ""
                 ),
                 List.of(
                     "Kantenreihenfolge:\\\\[-2ex]",
@@ -3759,7 +3826,7 @@ public class MainTest {
                     "\\item (C, 4, D)",
                     "\\end{enumerate}",
                     "Minimaler Spannbaum:",
-                    "\\begin{center}",
+                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -3770,7 +3837,7 @@ public class MainTest {
                     "\\draw[p] (n2) to node[auto] {3} (n4);",
                     "\\draw[p] (n3) to node[auto] {4} (n4);",
                     "\\end{tikzpicture}",
-                    "\\end{center}"
+                    "\\end{adjustbox}"
                 )
             )
         );
@@ -4421,6 +4488,10 @@ public class MainTest {
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
                     "",
+                    "Startknoten: A",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
                     "F\\\"uhren Sie den \\emphasize{Algorithmus von Prim} auf diesem Graphen mit dem \\emphasize{Startknoten A} aus.",
                     "F\\\"ullen Sie dazu die nachfolgende Tabelle aus und geben Sie den resultierenden minimalen Spannbaum an:\\\\[2ex]",
                     "\\ifprintanswers",
@@ -4444,7 +4515,8 @@ public class MainTest {
                     "",
                     "\\vspace*{10ex}",
                     "",
-                    "\\fi"
+                    "\\fi",
+                    ""
                 ),
                 List.of(
                     "\\begin{center}",
@@ -4460,7 +4532,7 @@ public class MainTest {
                     "\\renewcommand{\\arraystretch}{1.0}",
                     "\\end{center}",
                     "Minimaler Spannbaum:",
-                    "\\begin{center}",
+                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -4471,7 +4543,7 @@ public class MainTest {
                     "\\draw[p] (n2) to node[auto] {3} (n4);",
                     "\\draw[p] (n3) to node[auto] {4} (n4);",
                     "\\end{tikzpicture}",
-                    "\\end{center}"
+                    "\\end{adjustbox}"
                 )
             )
         );
@@ -4676,7 +4748,10 @@ public class MainTest {
                     "2x_{1} & - & x_{2} & \\leq & 0\\\\",
                     "\\end{array}$\\\\",
                     "$x_{1}, x_{2} \\geq 0$\\\\",
-                    "$x_{1} \\in \\ints$\\\\[2ex]",
+                    "$x_{1} \\in \\ints$",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
                     "Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die folgende "
                     + "optimale L\\\"osung:",
                     "\\[x_{1}^* = \\frac{7}{4}, x_{2}^* = \\frac{7}{2}\\]",
@@ -4742,7 +4817,10 @@ public class MainTest {
                     " &  & x_{2} & \\leq & \\frac{7}{2}\\\\",
                     "2x_{1} & - & x_{2} & \\leq & 0\\\\",
                     "\\end{array}$\\\\",
-                    "$x_{1}, x_{2} \\geq 0$\\\\[2ex]",
+                    "$x_{1}, x_{2} \\geq 0$",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
                     "Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die folgende "
                     + "optimale L\\\"osung:",
                     "\\[x_{1}^* = \\frac{7}{4}, x_{2}^* = \\frac{7}{2}\\]",
@@ -5067,7 +5145,8 @@ public class MainTest {
                         "}",
                         "\\end{center}"
                     ),
-                    Patterns.SOLUTION_SPACE_END.stream()
+                    Patterns.SOLUTION_SPACE_END.stream(),
+                    Stream.of("")
                 ).toList(),
                 List.of(
                     "",
@@ -5139,7 +5218,8 @@ public class MainTest {
                         "}",
                         "\\end{center}"
                     ),
-                    Patterns.SOLUTION_SPACE_END.stream()
+                    Patterns.SOLUTION_SPACE_END.stream(),
+                    Stream.of("")
                 ).toList(),
                 List.of(
                     "",
@@ -5198,7 +5278,8 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie die folgende Union-Find-Datenstruktur:\\\\",
+                    "Geben Sie den finalen Zustand der folgenden \\emphasize{Union-Find}-Datenstruktur an, nachdem "
+                    + "alle darunter angegebenen Operationen ausgef\\\"uhrt wurden:\\\\",
                     "\\begin{adjustbox}{max width=\\columnwidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -5210,7 +5291,8 @@ public class MainTest {
                     "\\draw[p, bend left = 10] ($(n3.north)+(-0.1,0)$) .. controls +(-0.2,1) and +(0.2,1) .. ($(n3.north)+(0.1,0)$);",
                     "\\end{tikzpicture}",
                     "\\end{adjustbox}",
-                    "Geben Sie den Zustand dieser Datenstruktur nach Ausf\\\"uhrung der folgenden Operationen an:\\\\",
+                    "",
+                    "Operationen:\\\\",
                     "\\begin{enumerate}",
                     "\\item UNION 1, 2",
                     "\\item UNION 1, 3",
@@ -5240,27 +5322,21 @@ public class MainTest {
             new String[] {
                 "-a", Algorithm.FROM_VIGENERE.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-i", "URKSAK\nSAKRAL\nAKLRSU"
+                "-i", "AKLRSU\nURKSAK\nSAKRAL"
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Entschl\\\"usseln Sie den Text",
-                    "\\begin{center}",
-                    "\\code{URKSAK}",
-                    "\\end{center}",
-                    "unter Benutzung des Schl\\\"usselworts",
-                    "\\begin{center}",
-                    "\\code{SAKRAL}",
-                    "\\end{center}",
-                    "auf dem Alphabet",
-                    "\\begin{center}",
+                    "Entschl\\\"usseln Sie den folgenden Text unter Benutzung des folgenden Schl\\\"usselworts auf "
+                    + "dem folgenden Alphabet mithilfe der \\emphasize{Vigen\\'ere-Verschl\\\"usselung}:\\\\",
+                    "Alphabet:\\\\",
                     "\\begin{tabular}{|*{6}{C{1.5em}|}}",
                     "\\hline",
                     "0 & 1 & 2 & 3 & 4 & 5\\\\\\hline",
                     "A & K & L & R & S & U\\\\\\hline",
                     "\\end{tabular}",
-                    "\\end{center}",
-                    "mithilfe der Vigen\\'ere-Verschl\\\"usselung."
+                    "",
+                    "\\noindent{}Nachricht: \\code{URKSAK}\\\\",
+                    "Schl\\\"usselwort: \\code{SAKRAL}\\\\"
                 ),
                 List.of("\\code{KRAKAU}")
             )
@@ -5273,27 +5349,21 @@ public class MainTest {
             new String[]{
                 "-a", Algorithm.TO_VIGENERE.name,
                 "-x", Main.EMBEDDED_EXAM,
-                "-i", "KLAUSUR\nSAKRAL\nAKLRSU"
+                "-i", "AKLRSU\nKLAUSUR\nSAKRAL"
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Verschl\\\"usseln Sie den Text",
-                    "\\begin{center}",
-                    "\\code{KLAUSUR}",
-                    "\\end{center}",
-                    "unter Benutzung des Schl\\\"usselworts",
-                    "\\begin{center}",
-                    "\\code{SAKRAL}",
-                    "\\end{center}",
-                    "auf dem Alphabet",
-                    "\\begin{center}",
+                    "Verschl\\\"usseln Sie den folgenden Text unter Benutzung des folgenden Schl\\\"usselworts auf "
+                    + "dem folgenden Alphabet mithilfe der \\emphasize{Vigen\\'ere-Verschl\\\"usselung}:\\\\",
+                    "Alphabet:\\\\",
                     "\\begin{tabular}{|*{6}{C{1.5em}|}}",
                     "\\hline",
                     "0 & 1 & 2 & 3 & 4 & 5\\\\\\hline",
                     "A & K & L & R & S & U\\\\\\hline",
                     "\\end{tabular}",
-                    "\\end{center}",
-                    "mithilfe der Vigen\\'ere-Verschl\\\"usselung."
+                    "",
+                    "\\noindent{}Nachricht: \\code{KLAUSUR}\\\\",
+                    "Schl\\\"usselwort: \\code{SAKRAL}\\\\"
                 ),
                 List.of("\\code{ULKLSKK}")
             )
@@ -5340,9 +5410,12 @@ public class MainTest {
                 " &  & x_{2} & \\leq & \\frac{7}{2}\\\\",
                 "2x_{1} & - & x_{2} & \\leq & 0\\\\",
                 "\\end{array}$\\\\",
-                "$x_{1}, x_{2} \\geq 0$\\\\[2ex]",
+                "$x_{1}, x_{2} \\geq 0$",
+                "",
+                "\\vspace*{1ex}",
+                "",
                 "L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. F\\\"ullen "
-                + "Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale Belegung f\\\"ur die "
+                + "Sie dazu die nachfolgenden Simplex-Tableaus aus und geben Sie eine optimale Belegung f\\\"ur die "
                 + "Variablen $x_{1}, x_{2}$ und den daraus resultierenden Wert der Zielfunktion an oder begr\\\"unden "
                 + "Sie, warum es keine solche optimale Belegung gibt.",
                 "",

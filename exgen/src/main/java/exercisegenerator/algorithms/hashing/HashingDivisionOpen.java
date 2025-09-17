@@ -17,6 +17,11 @@ public class HashingDivisionOpen implements Hashing {
     private HashingDivisionOpen() {}
 
     @Override
+    public String commandPrefix() {
+        return "HashingDivisionOpen";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

@@ -167,16 +167,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         );
     }
 
-    private static SimplexProblem generateSimplexProblem(final Parameters<Flag> options) {
-        final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
-        final int numberOfInequalities = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
-        final BigFraction[] target = SimplexAlgorithm.generateTargetFunction(numberOfVariables);
-        final BigFraction[][] conditions =
-            AlgebraAlgorithms.generateInequalitiesOrEquations(numberOfInequalities, numberOfVariables);
-        final List<Integer> integral = SimplexAlgorithm.generateIntegralConditions(target.length, options);
-        return new SimplexProblem(target, new Matrix(conditions, target.length), integral);
-    }
-
     private static BigFraction[] generateTargetFunction(final int numberOfVariables) {
         final BigFraction[] target = new BigFraction[numberOfVariables];
         for (int i = 0; i < numberOfVariables; i++) {
@@ -208,34 +198,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return result;
     }
 
-    private static SimplexProblem parseSimplexProblem(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final List<String> rows = new ArrayList<String>();
-        String line = reader.readLine();
-        while (line != null) {
-            rows.addAll(Arrays.stream(line.split(";")).filter(row -> !row.isBlank()).toList());
-            line = reader.readLine();
-        }
-        final String firstRow = rows.getFirst();
-        final BigFraction[] target = SimplexAlgorithm.parseTargetFunction(firstRow);
-        final List<Integer> integral = SimplexAlgorithm.parseIntegralConditions(firstRow);
-        final BigFraction[][] conditions = new BigFraction[rows.size() - 1][target.length + 1];
-        for (int row = 0; row < conditions.length; row++) {
-            final String[] numbers = rows.get(row + 1).split(",");
-            if (numbers.length != conditions[row].length) {
-                throw new IOException(
-                    "The rows of the matrix must have exactly one more entry than the target function!"
-                );
-            }
-            for (int col = 0; col < numbers.length; col++) {
-                conditions[row][col] = AlgebraAlgorithms.parseRationalNumber(numbers[col]);
-            }
-        }
-        return new SimplexProblem(target, new Matrix(conditions, target.length), integral);
-    }
-
     private static BigFraction[] parseTargetFunction(final String line) {
         final String[] numbers = line.split(",");
         final BigFraction[] target = new BigFraction[numbers.length];
@@ -245,8 +207,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return target;
     }
 
-    private static void printSimplexProblem(final SimplexProblem problem, final BufferedWriter writer)
-    throws IOException {
+    private static void printSimplexProblem(
+        final SimplexProblem problem,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write("Maximiere $z(\\mathbf{x}) = ");
         int firstNonZeroIndex = 0;
         for (final BigFraction coefficient : problem.target()) {
@@ -301,6 +265,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             );
             writer.write(" \\in \\ints$");
         }
+        Main.newLine(writer);
     }
 
     private static void printStatisticsAsComment(
@@ -712,6 +677,22 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     }
 
     @Override
+    public String commandPrefix() {
+        return "Simplex";
+    }
+
+    @Override
+    public SimplexProblem generateProblem(final Parameters<Flag> options) {
+        final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
+        final int numberOfInequalities = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
+        final BigFraction[] target = SimplexAlgorithm.generateTargetFunction(numberOfVariables);
+        final BigFraction[][] conditions =
+            AlgebraAlgorithms.generateInequalitiesOrEquations(numberOfInequalities, numberOfVariables);
+        final List<Integer> integral = SimplexAlgorithm.generateIntegralConditions(target.length, options);
+        return new SimplexProblem(target, new Matrix(conditions, target.length), integral);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -720,15 +701,85 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     }
 
     @Override
-    public SimplexProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<SimplexProblem>(
-            SimplexAlgorithm::parseSimplexProblem,
-            SimplexAlgorithm::generateSimplexProblem
-        ).getResult(options);
+    public List<SimplexProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        final List<String> rows = new ArrayList<String>();
+        String line = reader.readLine();
+        while (line != null) {
+            rows.addAll(Arrays.stream(line.split(";")).filter(row -> !row.isBlank()).toList());
+            line = reader.readLine();
+        }
+        final String firstRow = rows.getFirst();
+        final BigFraction[] target = SimplexAlgorithm.parseTargetFunction(firstRow);
+        final List<Integer> integral = SimplexAlgorithm.parseIntegralConditions(firstRow);
+        final BigFraction[][] conditions = new BigFraction[rows.size() - 1][target.length + 1];
+        for (int row = 0; row < conditions.length; row++) {
+            final String[] numbers = rows.get(row + 1).split(",");
+            if (numbers.length != conditions[row].length) {
+                throw new IOException(
+                    "The rows of the matrix must have exactly one more entry than the target function!"
+                );
+            }
+            for (int col = 0; col < numbers.length; col++) {
+                conditions[row][col] = AlgebraAlgorithms.parseRationalNumber(numbers[col]);
+            }
+        }
+        return List.of(new SimplexProblem(target, new Matrix(conditions, target.length), integral));
     }
 
     @Override
-    public void printExercise(
+    public void printAfterSingleProblemInstance(
+        final SimplexProblem problem,
+        final SimplexSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
+            writer.write("Welche beiden linearen Programme in Standard-Maximum-Form m\\\"ussen nun gem\\\"a\\ss{} ");
+            writer.write("dem Branch-And-Cut-Verfahren im n\\\"achsten Schritt gel\\\"ost werden, um die in dieser ");
+            writer.write("L\\\"osung enthaltene Verletzung der Ganzzahligkeitsbedingungen zu verhindern?");
+            Main.newLine(writer);
+        } else {
+            LaTeXUtils.printVerticalProtectedSpace(writer);
+            writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
+            writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus aus und geben Sie eine optimale ");
+            writer.write(String.format("Belegung f\\\"ur die Variablen $%s_{1}", LaTeXUtils.MATH_VARIABLE_NAME));
+            for (int index = 1; index < problem.target().length; index++) {
+                writer.write(String.format(", %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1));
+            }
+            writer.write("$ und den daraus resultierenden Wert der Zielfunktion an oder begr\\\"unden Sie, warum es ");
+            writer.write("keine solche optimale Belegung gibt.");
+            Main.newLine(writer);
+        }
+    }
+
+    @Override
+    public void printBeforeMultipleProblemInstances(
+        final List<SimplexProblem> problems,
+        final List<SimplexSolution> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
+            writer.write("Geben Sie zu jedem der folgenden \\emphasize{linearen Programme} in Standard-Maximum-Form ");
+            writer.write("und deren zugeh\\\"origen L\\\"osungen ohne Branch-And-Cut an, welche beiden linearen ");
+            writer.write("Programme in Standard-Maximum-Form gem\\\"a\\ss{} dem Branch-And-Cut-Verfahren im ");
+            writer.write("n\\\"achsten Schritt gel\\\"ost werden m\\\"ussen, um die in der jeweiligen L\\\"osung ");
+            writer.write("enthaltene Verletzung der Ganzzahligkeitsbedingungen zu verhindern.");
+        } else {
+            writer.write("L\\\"osen Sie die folgenden \\emphasize{linearen Programme} in Standard-Maximum-Form ");
+            writer.write("mithilfe des \\emphasize{Simplex-Algorithmus}. F\\\"ullen Sie dazu die jeweils ");
+            writer.write("nachfolgenden Simplex-Tableaus aus und geben Sie eine optimale Belegung f\\\"ur die ");
+            writer.write("Variablen der jeweiligen Zielfunktion sowie den daraus resultierenden Wert dieser ");
+            writer.write("Zielfunktion an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.");
+            Main.newLine(writer);
+        }
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final SimplexProblem problem,
         final SimplexSolution solution,
         final Parameters<Flag> options,
@@ -736,10 +787,19 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     ) throws IOException {
         writer.write("Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\");
         Main.newLine(writer);
+    }
+
+
+    @Override
+    public void printProblemInstance(
+        final SimplexProblem problem,
+        final SimplexSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
         SimplexAlgorithm.printSimplexProblem(problem, writer);
-        writer.write("\\\\[2ex]");
-        Main.newLine(writer);
-        if (options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 2) {
+        if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
+            LaTeXUtils.printVerticalProtectedSpace(writer);
             writer.write("Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die ");
             writer.write("folgende optimale L\\\"osung:");
             Main.newLine(writer);
@@ -765,86 +825,22 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             }
             writer.write("\\]");
             Main.newLine(writer);
-            writer.write("Welche beiden linearen Programme in Standard-Maximum-Form m\\\"ussen nun gem\\\"a\\ss{} ");
-            writer.write("dem Branch-And-Cut-Verfahren im n\\\"achsten Schritt gel\\\"ost werden, um die in dieser ");
-            writer.write("L\\\"osung enthaltene Verletzung der Ganzzahligkeitsbedingungen zu verhindern?");
-            Main.newLine(writer);
-            Main.newLine(writer);
-        } else {
-            writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
-            writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus und geben Sie eine optimale ");
-            writer.write(String.format("Belegung f\\\"ur die Variablen $%s_{1}", LaTeXUtils.MATH_VARIABLE_NAME));
-            for (int index = 1; index < problem.target().length; index++) {
-                writer.write(String.format(", %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1));
-            }
-            writer.write("$ und den daraus resultierenden Wert der Zielfunktion an oder begr\\\"unden Sie, warum es ");
-            writer.write("keine solche optimale Belegung gibt.");
-            Main.newLine(writer);
-            Main.newLine(writer);
-            final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
-            switch (mode) {
-            case SOLUTION_SPACE:
-                LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-                // fall-through
-            case ALWAYS:
-                writer.write("{\\renewcommand{\\arraystretch}{1.5}");
-                Main.newLine(writer);
-                boolean first = true;
-                final int[] pagebreakCounters =
-                    LaTeXUtils.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
-                int tableaus = 0;
-                int counterIndex = 0;
-                for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        Main.newLine(writer);
-                        writer.write("Neuer Zweig:\\\\");
-                    }
-                    for (final SimplexTableau tableau : branch.y) {
-                        Main.newLine(writer);
-                        if (counterIndex < pagebreakCounters.length && tableaus >= pagebreakCounters[counterIndex]) {
-                            writer.write("\\newpage");
-                            Main.newLine(writer);
-                            Main.newLine(writer);
-                            tableaus = 0;
-                            counterIndex++;
-                        }
-                        SimplexAlgorithm.printTableau(tableau, false, writer);
-                        tableaus++;
-                    }
-                }
-                Main.newLine(writer);
-                writer.write("\\renewcommand{\\arraystretch}{1}}");
-                Main.newLine(writer);
-                LaTeXUtils.printVerticalProtectedSpace(writer);
-                writer.write("Ergebnis:");
-                Main.newLine(writer);
-                if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
-                }
-                Main.newLine(writer);
-                break;
-            default:
-                //do nothing
-            }
         }
     }
 
     @Override
-    public void printSolution(
+    public void printSolutionInstance(
         final SimplexProblem problem,
         final SimplexSolution solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        if (options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 2) {
+        if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
             final SimplexTableau beforeBranch = SimplexAlgorithm.getTableauBeforeFirstBranch(solution);
             final Optional<Pair<Integer, BigFraction>> violation = beforeBranch.getIntegralViolation();
             if (violation.isEmpty()) {
                 writer.write("Es sind keine weiteren Probleme zu l\\\"osen, da keine Verletzung der ");
                 writer.write("Ganzzahligkeitsbedingungen vorliegt.");
-                Main.newLine(writer);
                 Main.newLine(writer);
             } else {
                 final Pair<SimplexProblem, SimplexProblem> newProblems =
@@ -862,7 +858,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 Main.newLine(writer);
                 LaTeXUtils.printMinipageBeginning("0.45\\columnwidth", writer);
                 SimplexAlgorithm.printSimplexProblem(newProblems.x, writer);
-                Main.newLine(writer);
                 LaTeXUtils.printMinipageEnd(writer);
                 writer.write("};");
                 Main.newLine(writer);
@@ -870,12 +865,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 Main.newLine(writer);
                 LaTeXUtils.printMinipageBeginning("0.45\\columnwidth", writer);
                 SimplexAlgorithm.printSimplexProblem(newProblems.y, writer);
-                Main.newLine(writer);
                 LaTeXUtils.printMinipageEnd(writer);
                 writer.write("};");
                 Main.newLine(writer);
                 LaTeXUtils.printTikzEnd(writer);
-                Main.newLine(writer);
             }
         } else {
             writer.write("{\\renewcommand{\\arraystretch}{1.5}");
@@ -943,7 +936,67 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             Main.newLine(writer);
             Main.newLine(writer);
             SimplexAlgorithm.printStatisticsAsComment(solution, writer);
-            Main.newLine(writer);
+        }
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final SimplexProblem problem,
+        final SimplexSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        if (!options.hasKeySetToValue(Flag.VARIANT, 2)) {
+            final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
+            switch (mode) {
+            case SOLUTION_SPACE:
+                Main.newLine(writer);
+                LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+                // fall-through
+            case ALWAYS:
+                if (mode != SolutionSpaceMode.SOLUTION_SPACE) {
+                    Main.newLine(writer);
+                }
+                writer.write("{\\renewcommand{\\arraystretch}{1.5}");
+                Main.newLine(writer);
+                boolean first = true;
+                final int[] pagebreakCounters =
+                    LaTeXUtils.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
+                int tableaus = 0;
+                int counterIndex = 0;
+                for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        Main.newLine(writer);
+                        writer.write("Neuer Zweig:\\\\");
+                    }
+                    for (final SimplexTableau tableau : branch.y) {
+                        Main.newLine(writer);
+                        if (counterIndex < pagebreakCounters.length && tableaus >= pagebreakCounters[counterIndex]) {
+                            writer.write("\\newpage");
+                            Main.newLine(writer);
+                            Main.newLine(writer);
+                            tableaus = 0;
+                            counterIndex++;
+                        }
+                        SimplexAlgorithm.printTableau(tableau, false, writer);
+                        tableaus++;
+                    }
+                }
+                Main.newLine(writer);
+                writer.write("\\renewcommand{\\arraystretch}{1}}");
+                Main.newLine(writer);
+                LaTeXUtils.printVerticalProtectedSpace(writer);
+                writer.write("Ergebnis:");
+                Main.newLine(writer);
+                if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
+                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
+                }
+                break;
+            default:
+                //do nothing
+            }
         }
     }
 

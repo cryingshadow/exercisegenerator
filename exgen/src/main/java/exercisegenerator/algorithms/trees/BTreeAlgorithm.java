@@ -11,6 +11,11 @@ public class BTreeAlgorithm implements SearchTreeAlgorithm {
     private BTreeAlgorithm() {}
 
     @Override
+    public String commandPrefix() {
+        return "Btree";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

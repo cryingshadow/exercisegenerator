@@ -1,4 +1,4 @@
-package exercisegenerator.structures;
+package exercisegenerator.structures.cryptography;
 
 import java.io.*;
 import java.util.*;

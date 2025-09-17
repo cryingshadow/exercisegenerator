@@ -27,8 +27,13 @@ public class ConversionFromTwosComplement implements BinaryNumbersAlgorithm<BitS
     private ConversionFromTwosComplement() {}
 
     @Override
-    public SolvedBinaryTask algorithm(final BitString task) {
+    public SolvedBinaryTask apply(final BitString task) {
         return new SolvedBinaryTask(task, "=", String.valueOf(ConversionFromTwosComplement.fromTwosComplement(task)));
+    }
+
+    @Override
+    public BitString generateProblem(final Parameters<Flag> options) {
+        return BinaryNumbersAlgorithm.generateBitString(BinaryNumbersAlgorithm.getBitLength(options));
     }
 
     @Override
@@ -60,8 +65,11 @@ public class ConversionFromTwosComplement implements BinaryNumbersAlgorithm<BitS
     }
 
     @Override
-    public List<BitString> parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return BinaryNumbersAlgorithm.parseOrGenerateBitStringValueTasks(options);
+    public List<BitString> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        return BitString.parseBitStringProblems(reader, options);
     }
 
     @Override

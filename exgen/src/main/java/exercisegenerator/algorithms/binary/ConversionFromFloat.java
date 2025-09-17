@@ -52,34 +52,6 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
         );
     }
 
-    private static List<BitStringFloatTask> generateBitStringFloatTasks(final Parameters<Flag> options) {
-        final int numOfTasks = BinaryNumbersAlgorithm.generateNumOfTasks(options);
-        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
-        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
-        final List<BitStringFloatTask> result = new ArrayList<BitStringFloatTask>(numOfTasks);
-        for (int i = 0; i < numOfTasks; i++) {
-            result.add(
-                new BitStringFloatTask(
-                    BinaryNumbersAlgorithm.generateBitString(exponentLength + mantissaLength + 1),
-                    exponentLength,
-                    mantissaLength
-                )
-            );
-        }
-        return result;
-    }
-
-    private static List<BitStringFloatTask> parseBitStringFloatTasks(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
-        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
-        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
-        return Arrays.stream(reader.readLine().split(";"))
-            .map(bitstring -> new BitStringFloatTask(BitString.parse(bitstring), exponentLength, mantissaLength))
-            .toList();
-    }
-
     private static void shiftOneBitLeft(final BitString beforeComma, final BitString afterComma) {
         final Bit bit = afterComma.pollFirst();
         if (bit == null) {
@@ -116,11 +88,22 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
     private ConversionFromFloat() {}
 
     @Override
-    public SolvedBinaryTask algorithm(final BitStringFloatTask task) {
+    public SolvedBinaryTask apply(final BitStringFloatTask task) {
         return new SolvedBinaryTask(
             task.bitString(),
             "=",
             ConversionFromFloat.fromFloat(task.bitString(), task.exponentLength(), task.mantissaLength())
+        );
+    }
+
+    @Override
+    public BitStringFloatTask generateProblem(final Parameters<Flag> options) {
+        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
+        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
+        return new BitStringFloatTask(
+            BinaryNumbersAlgorithm.generateBitString(exponentLength + mantissaLength + 1),
+            exponentLength,
+            mantissaLength
         );
     }
 
@@ -155,13 +138,15 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
     }
 
     @Override
-    public List<BitStringFloatTask> parseOrGenerateProblem(
+    public List<BitStringFloatTask> parseProblems(
+        final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        return new ParserAndGenerator<List<BitStringFloatTask>>(
-            ConversionFromFloat::parseBitStringFloatTasks,
-            ConversionFromFloat::generateBitStringFloatTasks
-        ).getResult(options);
+        final int exponentLength = BinaryNumbersAlgorithm.getExponentLength(options);
+        final int mantissaLength = BinaryNumbersAlgorithm.getMantissaLength(options);
+        return Arrays.stream(reader.readLine().split(";"))
+            .map(bitstring -> new BitStringFloatTask(BitString.parse(bitstring), exponentLength, mantissaLength))
+            .toList();
     }
 
     @Override

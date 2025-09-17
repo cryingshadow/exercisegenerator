@@ -14,6 +14,11 @@ public class AVLTreeAlgorithm implements SearchTreeAlgorithm {
     private AVLTreeAlgorithm() {}
 
     @Override
+    public String commandPrefix() {
+        return "Avl";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";

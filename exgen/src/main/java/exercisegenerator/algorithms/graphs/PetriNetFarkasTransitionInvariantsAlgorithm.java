@@ -11,6 +11,11 @@ public class PetriNetFarkasTransitionInvariantsAlgorithm extends PetriNetFarkasA
     private PetriNetFarkasTransitionInvariantsAlgorithm() {}
 
     @Override
+    public String commandPrefix() {
+        return "FarkasTransition";
+    }
+
+    @Override
     protected Matrix getIncidenceMatrix(final PetriNet net) {
         return net.toIncidenceMatrix().transpose();
     }

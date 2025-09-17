@@ -15,9 +15,6 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
 
     static final PrimEntry INFINITY = new PrimEntry(0, true, false);
 
-    private static final String PRIM_PATTERN =
-        "F\\\"uhren Sie den \\emphasize{Algorithmus von Prim} auf diesem Graphen mit dem \\emphasize{Startknoten %s} aus.";
-
     private static void printTable(
         final PrimEntry[][] table,
         final List<Vertex<String>> vertices,
@@ -102,6 +99,11 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
     }
 
     @Override
+    public String commandPrefix() {
+        return "Prim";
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -110,40 +112,53 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
     }
 
     @Override
-    public void printExercise(
+    public GraphWithLayout<String, Integer, Integer> getGraphWithLayoutForProblemInstance(
+        final GraphProblem problem,
+        final Parameters<Flag> options
+    ) {
+        return GraphAlgorithm.stretch(
+            new GraphWithLayout<String, Integer, Integer>(
+                problem.graphWithLayout().graph(),
+                ((GridGraphLayout<String, Integer>)problem.graphWithLayout().layout()).setDirected(false)
+            ),
+            GraphAlgorithm.parseDistanceFactor(options)
+        );
+    }
+
+    @Override
+    public void printAfterSingleProblemInstance(
         final GraphProblem problem,
         final PrimResult<String> solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final GraphWithLayout<String, Integer, Integer> graphWithLayout = problem.graphWithLayout();
-        final List<Vertex<String>> vertices =
-            new ArrayList<Vertex<String>>(graphWithLayout.graph().getVertices());
-        Collections.sort(vertices, problem.comparator());
-        GraphAlgorithm.printGraphExercise(
-            GraphAlgorithm.stretch(
-                new GraphWithLayout<String, Integer, Integer>(
-                    graphWithLayout.graph(),
-                    ((GridGraphLayout<String, Integer>)graphWithLayout.layout()).setDirected(false)
-                ),
-                GraphAlgorithm.parseDistanceFactor(options)
-            ),
-            String.format(PrimAlgorithm.PRIM_PATTERN, problem.startNode().get().label().get()),
-            writer
-        );
-        writer.write(
-            "F\\\"ullen Sie dazu die nachfolgende Tabelle aus und geben Sie den resultierenden minimalen Spannbaum an:\\\\[2ex]"
-        );
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("F\\\"uhren Sie den \\emphasize{Algorithmus von Prim} auf diesem Graphen mit dem ");
+        writer.write("\\emphasize{Startknoten ");
+        writer.write(problem.startNode().get().label().get());
+        writer.write("} aus.");
         Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        PrimAlgorithm.printTable(solution.table(), vertices, false, writer);
-        writer.write("Minimaler Spannbaum:");
+        writer.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus und geben Sie den resultierenden minimalen ");
+        writer.write("Spannbaum an:\\\\[2ex]");
         Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("10ex"), options, writer);
     }
 
     @Override
-    public void printSolution(
+    public void printBeforeMultipleProblemInstances(
+        final List<GraphProblem> problems,
+        final List<PrimResult<String>> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("F\\\"uhren Sie den \\emphasize{Algorithmus von Prim} auf den folgenden Graphen aus.");
+        Main.newLine(writer);
+        writer.write("F\\\"ullen Sie dazu die jeweiligen Tabelle aus und geben Sie den jeweils resultierenden ");
+        writer.write("minimalen Spannbaum an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final GraphProblem problem,
         final PrimResult<String> solution,
         final Parameters<Flag> options,
@@ -155,7 +170,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
         PrimAlgorithm.printTable(solution.table(), vertices, true, writer);
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printAdjustboxBeginning(writer);
         solution.treeWithLayout().graph().printTikZ(
             GraphAlgorithm.stretch(
                 ((GridGraphLayout<String, Integer>)solution.treeWithLayout().layout()).setDirected(false),
@@ -163,8 +178,24 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
             ),
             writer
         );
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final GraphProblem problem,
+        final PrimResult<String> solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final List<Vertex<String>> vertices =
+            new ArrayList<Vertex<String>>(problem.graphWithLayout().graph().getVertices());
+        Collections.sort(vertices, problem.comparator());
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        PrimAlgorithm.printTable(solution.table(), vertices, false, writer);
+        writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("10ex"), options, writer);
     }
 
 }

@@ -32,12 +32,10 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
             return CountingSort.parseLimits(options.get(Flag.CAPACITY));
         } else if (options.containsKey(Flag.SOURCE)) {
             try (BufferedReader reader = new BufferedReader(new FileReader(options.get(Flag.SOURCE)))) {
-                reader.readLine();
                 return CountingSort.parseLimits(reader.readLine());
             }
         } else if (options.containsKey(Flag.INPUT)) {
             try (BufferedReader reader = new BufferedReader(new StringReader(options.get(Flag.INPUT)))) {
-                reader.readLine();
                 return CountingSort.parseLimits(reader.readLine());
             }
         }
@@ -69,6 +67,17 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
     }
 
     @Override
+    public String commandPrefix() {
+        return "CountingSort";
+    }
+
+    @Override
+    public CountingSortProblem generateProblem(final Parameters<Flag> options) {
+        final int[] limits = CountingSort.generateLimits();
+        return new CountingSortProblem(Sorting.generateArray(options, limits[0], limits[1]), limits[0], limits[1]);
+    }
+
+    @Override
     public String[] generateTestParameters() {
         final String[] result = new String[2];
         result[0] = "-l";
@@ -77,22 +86,39 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
     }
 
     @Override
-    public CountingSortProblem parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
+    public List<CountingSortProblem> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
         final int[] limits = CountingSort.parseOrGenerateLimits(options);
-        final int lowestValue = limits[0];
-        final int highestValue = limits[1];
-        final int[] array = Sorting.parseOrGenerateArray(options, lowestValue, highestValue);
-        return new CountingSortProblem(array, lowestValue, highestValue);
+        final List<CountingSortProblem> result = new ArrayList<CountingSortProblem>();
+        reader.readLine();
+        for (final int[] array : Sorting.parseArrays(reader, options)) {
+            result.add(new CountingSortProblem(array, limits[0], limits[1]));
+        }
+        return result;
     }
 
     @Override
-    public void printExercise(
+    public void printBeforeMultipleProblemInstances(
+        final List<CountingSortProblem> problems,
+        final List<CountingSortSolution> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Sortieren Sie die folgenden Arrays mit ganzen Zahlen mithilfe von Countingsort.");
+        Main.newLine(writer);
+        writer.write("Geben Sie dazu das jeweilige Z\\\"ahlarray sowie das jeweilige Ergebnisarray an.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printBeforeSingleProblemInstance(
         final CountingSortProblem problem,
         final CountingSortSolution solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final int contentLength = Sorting.getMaximumContentLength(problem.initialArray());
         writer.write("Sortieren Sie das folgende Array mit ganzen Zahlen von ");
         writer.write(String.valueOf(problem.lowestValue()));
         writer.write(" bis ");
@@ -101,35 +127,27 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
         Main.newLine(writer);
         writer.write("Geben Sie dazu das Z\\\"ahlarray sowie das Ergebnisarray an.\\\\[2ex]");
         Main.newLine(writer);
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
-        String anchor =
-            LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
-                Sorting.toTikZItems(problem.initialArray()),
-                Optional.empty(),
-                contentLength,
-                writer
-            );
-        anchor =
-            LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(
-                solution.countArray().size(),
-                Optional.of(anchor),
-                contentLength,
-                writer
-            );
-        anchor =
-            LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(
-                solution.solutionArray().size(),
-                Optional.of(anchor),
-                contentLength,
-                writer
-            );
-        LaTeXUtils.printTikzEnd(writer);
-        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
     @Override
-    public void printSolution(
+    public void printProblemInstance(
+        final CountingSortProblem problem,
+        final CountingSortSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Kleinste m\\\"ogliche Zahl: ");
+        writer.write(String.valueOf(problem.lowestValue()));
+        writer.write("\\\\");
+        Main.newLine(writer);
+        writer.write("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: ");
+        writer.write(String.valueOf(problem.highestValue()));
+        writer.write("\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionInstance(
         final CountingSortProblem problem,
         final CountingSortSolution solution,
         final Parameters<Flag> options,
@@ -158,7 +176,41 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
             writer
         );
         LaTeXUtils.printTikzEnd(writer);
-        Main.newLine(writer);
+    }
+
+    @Override
+    public void printSolutionSpace(
+        final CountingSortProblem problem,
+        final CountingSortSolution solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final int contentLength = Sorting.getMaximumContentLength(problem.initialArray());
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);
+        String anchor =
+            LaTeXUtils.printListAndReturnLowestLeftmostNodesName(
+                Sorting.toTikZItems(problem.initialArray()),
+                Optional.empty(),
+                contentLength,
+                writer
+            );
+        anchor =
+            LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(
+                solution.countArray().size(),
+                Optional.of(anchor),
+                contentLength,
+                writer
+            );
+        anchor =
+            LaTeXUtils.printEmptyArrayAndReturnLeftmostNodesName(
+                solution.solutionArray().size(),
+                Optional.of(anchor),
+                contentLength,
+                writer
+            );
+        LaTeXUtils.printTikzEnd(writer);
+        LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
 }

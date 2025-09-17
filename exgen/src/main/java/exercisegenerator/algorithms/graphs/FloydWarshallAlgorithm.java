@@ -111,58 +111,6 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     }
 
     @Override
-    default public void printExercise(
-        final GraphProblem problem,
-        final T[][][] solution,
-        final Parameters<Flag> options,
-        final BufferedWriter writer
-    ) throws IOException {
-        final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
-        GraphAlgorithm.printGraphExercise(
-            GraphAlgorithm.stretch(problem.graphWithLayout(), GraphAlgorithm.parseDistanceFactor(options)),
-            String.format(FloydWarshallAlgorithm.FLOYD_WARSHALL_PATTERN, this.getName()),
-            writer
-        );
-        LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-        if (layout.columns > 1) {
-            LaTeXUtils.beginMulticols(layout.columns, writer);
-        }
-        FloydWarshallAlgorithm.printTables(
-            this.toPrintableTables(solution, false, FloydWarshallAlgorithm.toLabels(problem)),
-            Optional.empty(),
-            layout,
-            writer
-        );
-        if (layout.columns > 1) {
-            LaTeXUtils.endMulticols(writer);
-        }
-        LaTeXUtils.printSolutionSpaceEnd(Optional.empty(), options, writer);
-    }
-
-    @Override
-    default public void printSolution(
-        final GraphProblem problem,
-        final T[][][] solution,
-        final Parameters<Flag> options,
-        final BufferedWriter writer
-    ) throws IOException {
-        final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
-        if (layout.columns > 1) {
-            LaTeXUtils.beginMulticols(layout.columns, writer);
-        }
-        FloydWarshallAlgorithm.printTables(
-            this.toPrintableTables(solution, true, FloydWarshallAlgorithm.toLabels(problem)),
-            Optional.of(this.toColorTables(solution)),
-            layout,
-            writer
-        );
-        if (layout.columns > 1) {
-            LaTeXUtils.endMulticols(writer);
-        }
-        Main.newLine(writer);
-    }
-
-    @Override
     default T[][][] apply(final GraphProblem problem) {
         final Graph<String, Integer> graph = problem.graphWithLayout().graph();
         final List<Vertex<String>> vertices = GraphAlgorithm.getSortedListOfVertices(graph, problem.comparator());
@@ -188,6 +136,80 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     String getName();
 
     T initialValue(Graph<String, Integer> graph, List<Vertex<String>> vertices, int from, int to);
+
+    @Override
+    default void printAfterSingleProblemInstance(
+        final GraphProblem problem,
+        final T[][][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        writer.write("F\\\"uhren Sie den \\emphasize{Algorithmus von ");
+        writer.write(this.commandPrefix());
+        writer.write("} auf diesem Graphen aus. F\\\"ullen Sie dazu die nachfolgenden Tabellen aus.\\\\[2ex]");
+        Main.newLine(writer);
+    }
+
+    @Override
+    default void printBeforeMultipleProblemInstances(
+        final List<GraphProblem> problems,
+        final List<T[][][]> solutions,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("F\\\"uhren Sie den \\emphasize{Algorithmus von ");
+        writer.write(this.commandPrefix());
+        writer.write("} auf den folgenden Graphen aus. F\\\"ullen Sie dazu die jeweiligen Tabellen aus.\\\\");
+        Main.newLine(writer);
+    }
+
+    @Override
+    default void printSolutionInstance(
+        final GraphProblem problem,
+        final T[][][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
+        if (layout.columns > 1) {
+            LaTeXUtils.beginMulticols(layout.columns, writer);
+        }
+        FloydWarshallAlgorithm.printTables(
+            this.toPrintableTables(solution, true, FloydWarshallAlgorithm.toLabels(problem)),
+            Optional.of(this.toColorTables(solution)),
+            layout,
+            writer
+        );
+        if (layout.columns > 1) {
+            LaTeXUtils.endMulticols(writer);
+        }
+        Main.newLine(writer);
+    }
+
+    @Override
+    default void printSolutionSpace(
+        final GraphProblem problem,
+        final T[][][] solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
+        LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
+        if (layout.columns > 1) {
+            LaTeXUtils.beginMulticols(layout.columns, writer);
+        }
+        FloydWarshallAlgorithm.printTables(
+            this.toPrintableTables(solution, false, FloydWarshallAlgorithm.toLabels(problem)),
+            Optional.empty(),
+            layout,
+            writer
+        );
+        if (layout.columns > 1) {
+            LaTeXUtils.endMulticols(writer);
+        }
+        LaTeXUtils.printSolutionSpaceEnd(Optional.empty(), options, writer);
+    }
 
     String toString(T value);
 

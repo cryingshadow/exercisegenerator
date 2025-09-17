@@ -7,6 +7,11 @@ public class VigenereEncryption implements VigenereAlgorithm {
     private VigenereEncryption() {}
 
     @Override
+    public String commandPrefix() {
+        return "ToVigenere";
+    }
+
+    @Override
     public boolean isEncoding() {
         return true;
     }

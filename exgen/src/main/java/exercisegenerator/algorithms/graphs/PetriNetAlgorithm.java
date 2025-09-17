@@ -84,7 +84,80 @@ public abstract class PetriNetAlgorithm<S> implements AlgorithmImplementation<Pe
         return toX > fromX ? fromY + 1 : fromY - 1;
     }
 
-    private static PetriNetInput generateProblem(final Parameters<Flag> options) {
+    private static TransitionSkeleton[] generateTransitions(final int numberOfTransitionsForGeneration) {
+        final int maxWeight = 5;
+        final TransitionSkeleton[] result =
+            new TransitionSkeleton[numberOfTransitionsForGeneration];
+        final List<Integer> indices =
+            IntStream.range(0, numberOfTransitionsForGeneration)
+            .boxed()
+            .collect(Collectors.toCollection(ArrayList::new));
+        for (int i = 0; i < 4; i++) {
+            result[indices.remove(Main.RANDOM.nextInt(indices.size()))] =
+                new TransitionSkeleton(Main.RANDOM.nextInt(maxWeight) + 1, Main.RANDOM.nextInt(maxWeight) + 1);
+        }
+        int additionalTransitions = 0;
+        while (additionalTransitions < numberOfTransitionsForGeneration - 4 && Main.RANDOM.nextBoolean()) {
+            additionalTransitions++;
+        }
+        for (int i = 0; i < additionalTransitions; i++) {
+            result[indices.remove(Main.RANDOM.nextInt(indices.size()))] =
+                new TransitionSkeleton(Main.RANDOM.nextInt(maxWeight) + 1, Main.RANDOM.nextInt(maxWeight) + 1);
+        }
+        return result;
+    }
+
+    private static int levelForPlaceIndex(final int placeIndex) {
+        return ((int)Math.floor(Math.sqrt(placeIndex))) + 1;
+    }
+
+    private static int levelForTransitionIndex(final int transitionIndex) {
+        if (transitionIndex == 0) {
+            return 1;
+        }
+        int level = 1;
+        int current = 0;
+        while (true) {
+            if (transitionIndex < current) {
+                return level;
+            }
+            current += 8 * level;
+            level++;
+        }
+    }
+
+    private static int numberOfTransitionsForGeneration(final int level) {
+        int result = 0;
+        for (int i = 1; i < level; i++) {
+            result += 8 * i;
+        }
+        return result;
+    }
+
+    private static Map<Integer, Integer> reduceKeyIndices(final Map<Integer, Integer> weights, final int fromIndex) {
+        return weights.entrySet()
+            .stream()
+            .map(entry -> entry.getKey() >= fromIndex ? Map.entry(entry.getKey() - 1, entry.getValue()) : entry)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private static int transitionsBeforeCurrentLevel(final int transitionIndex) {
+        if (transitionIndex < 8) {
+            return 0;
+        }
+        int level = 1;
+        int current = 0;
+        while (true) {
+            if (transitionIndex < current) {
+                return current - 8 * (level - 1);
+            }
+            current += 8 * level;
+            level++;
+        }
+    }
+
+    @Override
+    public PetriNetInput generateProblem(final Parameters<Flag> options) {
         final List<PetriPlace> places = new LinkedList<PetriPlace>();
         List<PetriTransition> transitions = new LinkedList<PetriTransition>();
         final List<Integer> tokens = new ArrayList<Integer>();
@@ -150,88 +223,20 @@ public abstract class PetriNetAlgorithm<S> implements AlgorithmImplementation<Pe
         return new PetriNetInput(places, transitions, tokens);
     }
 
-    private static TransitionSkeleton[] generateTransitions(final int numberOfTransitionsForGeneration) {
-        final int maxWeight = 5;
-        final TransitionSkeleton[] result =
-            new TransitionSkeleton[numberOfTransitionsForGeneration];
-        final List<Integer> indices =
-            IntStream.range(0, numberOfTransitionsForGeneration)
-            .boxed()
-            .collect(Collectors.toCollection(ArrayList::new));
-        for (int i = 0; i < 4; i++) {
-            result[indices.remove(Main.RANDOM.nextInt(indices.size()))] =
-                new TransitionSkeleton(Main.RANDOM.nextInt(maxWeight) + 1, Main.RANDOM.nextInt(maxWeight) + 1);
-        }
-        int additionalTransitions = 0;
-        while (additionalTransitions < numberOfTransitionsForGeneration - 4 && Main.RANDOM.nextBoolean()) {
-            additionalTransitions++;
-        }
-        for (int i = 0; i < additionalTransitions; i++) {
-            result[indices.remove(Main.RANDOM.nextInt(indices.size()))] =
-                new TransitionSkeleton(Main.RANDOM.nextInt(maxWeight) + 1, Main.RANDOM.nextInt(maxWeight) + 1);
-        }
-        return result;
-    }
-
-    private static int levelForPlaceIndex(final int placeIndex) {
-        return ((int)Math.floor(Math.sqrt(placeIndex))) + 1;
-    }
-
-    private static int levelForTransitionIndex(final int transitionIndex) {
-        if (transitionIndex == 0) {
-            return 1;
-        }
-        int level = 1;
-        int current = 0;
-        while (true) {
-            if (transitionIndex < current) {
-                return level;
-            }
-            current += 8 * level;
-            level++;
-        }
-    }
-
-    private static int numberOfTransitionsForGeneration(final int level) {
-        int result = 0;
-        for (int i = 1; i < level; i++) {
-            result += 8 * i;
-        }
-        return result;
-    }
-
-    private static PetriNetInput parseProblem(final BufferedReader reader, final Parameters<Flag> options) {
-        return Main.GSON.fromJson(reader, PetriNetInput.class);
-    }
-
-    private static Map<Integer, Integer> reduceKeyIndices(final Map<Integer, Integer> weights, final int fromIndex) {
-        return weights.entrySet()
-            .stream()
-            .map(entry -> entry.getKey() >= fromIndex ? Map.entry(entry.getKey() - 1, entry.getValue()) : entry)
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    private static int transitionsBeforeCurrentLevel(final int transitionIndex) {
-        if (transitionIndex < 8) {
-            return 0;
-        }
-        int level = 1;
-        int current = 0;
-        while (true) {
-            if (transitionIndex < current) {
-                return current - 8 * (level - 1);
-            }
-            current += 8 * level;
-            level++;
-        }
+    @Override
+    public List<PetriNetInput> parseProblems(final BufferedReader reader, final Parameters<Flag> options) {
+        return List.of(Main.GSON.fromJson(reader, PetriNetInput.class));
     }
 
     @Override
-    public PetriNetInput parseOrGenerateProblem(final Parameters<Flag> options) throws IOException {
-        return new ParserAndGenerator<PetriNetInput>(
-            PetriNetAlgorithm::parseProblem,
-            PetriNetAlgorithm::generateProblem
-        ).getResult(options);
+    public void printBeforeSingleProblemInstance(
+        final PetriNetInput problem,
+        final S solution,
+        final Parameters<Flag> options,
+        final BufferedWriter writer
+    ) throws IOException {
+        writer.write("Betrachten Sie das folgende \\emphasize{Petrinetz} $N$:\\\\[2ex]");
+        Main.newLine(writer);
     }
 
 }
