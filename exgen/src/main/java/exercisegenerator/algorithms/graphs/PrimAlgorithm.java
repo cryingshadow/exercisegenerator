@@ -168,7 +168,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
             new ArrayList<Vertex<String>>(problem.graphWithLayout().graph().getVertices());
         Collections.sort(vertices, problem.comparator());
         PrimAlgorithm.printTable(solution.table(), vertices, true, writer);
-        writer.write("Minimaler Spannbaum:");
+        writer.write("Minimaler Spannbaum:\\\\");
         Main.newLine(writer);
         LaTeXUtils.printAdjustboxBeginning(writer);
         solution.treeWithLayout().graph().printTikZ(

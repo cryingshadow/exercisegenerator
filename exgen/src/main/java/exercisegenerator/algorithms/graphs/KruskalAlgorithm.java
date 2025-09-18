@@ -127,7 +127,7 @@ public class KruskalAlgorithm implements GraphAlgorithm<KruskalResult<String>> {
             Main.newLine(writer);
         }
         LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writer);
-        writer.write("Minimaler Spannbaum:");
+        writer.write("Minimaler Spannbaum:\\\\");
         Main.newLine(writer);
         LaTeXUtils.printAdjustboxBeginning(writer);
         solution.treeWithLayout().graph().printTikZ(
