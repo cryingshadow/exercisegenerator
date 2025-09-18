@@ -64,9 +64,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     ) throws IOException {
         LaTeXUtils.printArrayStretch(1.5, writer);
         for (int i = 0; i < tables.length; i++) {
-            if (layout.columns > 1) {
-                LaTeXUtils.resizeboxBeginning("\\columnwidth", "!", writer);
-            }
+            LaTeXUtils.printAdjustboxBeginning(writer);
             LaTeXUtils.printTable(
                 tables[i],
                 color.isEmpty() ? Optional.empty() : Optional.of(color.get()[i]),
@@ -75,9 +73,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
                 0,
                 writer
             );
-            if (layout.columns > 1) {
-                LaTeXUtils.resizeboxEnd(writer);
-            }
+            LaTeXUtils.printAdjustboxEnd(writer);
             if (layout.columns > 1 && i == tables.length / layout.columns) {
                 Main.newLine(writer);
                 writer.write("\\vfill\\null");
@@ -173,7 +169,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     ) throws IOException {
         final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
         if (layout.columns > 1) {
-            LaTeXUtils.beginMulticols(layout.columns, writer);
+            LaTeXUtils.beginMulticols(layout.columns, Optional.of("1pt"), writer);
         }
         FloydWarshallAlgorithm.printTables(
             this.toPrintableTables(solution, true, FloydWarshallAlgorithm.toLabels(problem)),
@@ -197,7 +193,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
         final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
         LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
         if (layout.columns > 1) {
-            LaTeXUtils.beginMulticols(layout.columns, writer);
+            LaTeXUtils.beginMulticols(layout.columns, Optional.of("2pt"), writer);
         }
         FloydWarshallAlgorithm.printTables(
             this.toPrintableTables(solution, false, FloydWarshallAlgorithm.toLabels(problem)),

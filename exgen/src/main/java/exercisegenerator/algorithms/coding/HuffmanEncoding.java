@@ -64,7 +64,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         writer.write("\\textbf{Codebuch:}");
         if (big) {
             Main.newLine(writer);
-            LaTeXUtils.beginMulticols(2, writer);
+            LaTeXUtils.beginMulticols(2, Optional.of("1pt"), writer);
         } else {
             writer.write("\\\\[2ex]");
             Main.newLine(writer);
@@ -202,20 +202,20 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         );
         Main.newLine(writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
-        writer.write("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
+        writer.write("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
         Main.newLine(writer);
         for (final List<HuffmanNode> trees : solution.trees()) {
-            LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+            LaTeXUtils.printAdjustboxBeginning(writer);
             for (final HuffmanNode root : trees) {
                 LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
                 new HuffmanTree(Optional.of(root)).toTikZ(writer);
                 LaTeXUtils.printTikzEnd(writer);
             }
             LaTeXUtils.printAdjustboxEnd(writer);
-            writer.write("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
+            writer.write("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
             Main.newLine(writer);
         }
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+        LaTeXUtils.printAdjustboxBeginning(writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.TREE, writer);
         solution.code().tree().toTikZ(writer);
         LaTeXUtils.printTikzEnd(writer);

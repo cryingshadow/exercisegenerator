@@ -140,6 +140,8 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         if (problem.tree().isEmpty()) {
             writer.write("leerer Baum\\\\");
         } else {
+            writer.write("~\\\\[-2ex]");
+            Main.newLine(writer);
             SearchTreeAlgorithm.printTreeAndReturnHorizontalFillingDegree(BigFraction.ZERO, "", problem.tree(), writer);
         }
         Main.newLine(writer);
@@ -180,24 +182,23 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         final String headline,
         final BufferedWriter writer
     ) throws IOException {
-        if (width.isEmpty()) {
-            writer.write("\\begin{minipage}[t]{\\columnwidth}");
-        } else {
-            writer.write(String.format("\\begin{minipage}[t]{%s}", width.get()));
-        }
+        final String widthText = width.orElse(LaTeXUtils.LINE_WIDTH);
+        writer.write(String.format("\\begin{minipage}[t]{%s}", widthText));
         Main.newLine(writer);
         if (headline != null && !headline.isBlank()) {
             writer.write(headline);
-            writer.write("\\\\[-2ex]");
+            writer.write("\\\\[1.2ex]");
             Main.newLine(writer);
         }
-        writer.write("\\begin{center}");
-        Main.newLine(writer);
+//        writer.write("\\begin{center}");
+//        Main.newLine(writer);
+        LaTeXUtils.printAdjustboxBeginning(writer, String.format("max width=%s", widthText), "center");
     }
 
     private static void printSamePageEnd(final BufferedWriter writer) throws IOException {
-        writer.write("\\end{center}");
-        Main.newLine(writer);
+//        writer.write("\\end{center}");
+//        Main.newLine(writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
         writer.write("\\end{minipage}");
         Main.newLine(writer);
     }
@@ -309,7 +310,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         final BufferedWriter writer
     ) throws IOException {
         final SearchTree<Integer> tree = problems.getFirst().tree();
-        writer.write("F\\\"uhren Sie beginnend mit den folgenden Instanzen eines \\emphasize{");
+        writer.write("F\\\"uhren Sie jeweils beginnend mit den folgenden Instanzen eines \\emphasize{");
         writer.write(tree.getName());
         writer.write("s} die jeweils darunter aufgef\\\"uhrten Operationen aus und ");
         writer.write("geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ");
@@ -453,8 +454,19 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         final BufferedWriter writer
     ) throws IOException {
         int stepNumber = 1;
+        final int[] pagebreakCounters =
+            LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+        int trees = 0;
+        int counterIndex = 0;
         BigFraction horizontalFillingDegree = BigFraction.ZERO;
         for (final SearchTreeAndStep<Integer> step : solution) {
+            if (counterIndex < pagebreakCounters.length && trees >= pagebreakCounters[counterIndex]) {
+                writer.write("\\newpage");
+                Main.newLine(writer);
+                Main.newLine(writer);
+                trees = 0;
+                counterIndex++;
+            }
             horizontalFillingDegree =
                 SearchTreeAlgorithm.printTreeAndReturnHorizontalFillingDegree(
                     horizontalFillingDegree,
@@ -463,6 +475,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
                     writer
                 );
             stepNumber++;
+            trees++;
         }
     }
 

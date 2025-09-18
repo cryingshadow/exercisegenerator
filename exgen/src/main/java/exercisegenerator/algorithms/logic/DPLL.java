@@ -302,7 +302,7 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+        LaTeXUtils.printAdjustboxBeginning(writer);
         LaTeXUtils.printTikzBeginning(TikZStyle.DPLLTREE, writer);
         writer.write(solution.toString());
         Main.newLine(writer);

@@ -856,14 +856,14 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 Main.newLine(writer);
                 writer.write("\\node[rectangle,draw=black] (1) [left=0.1 of and.north west,anchor=north east] {%");
                 Main.newLine(writer);
-                LaTeXUtils.printMinipageBeginning("0.45\\columnwidth", writer);
+                LaTeXUtils.printMinipageBeginning("0.45\\linewidth", writer);
                 SimplexAlgorithm.printSimplexProblem(newProblems.x, writer);
                 LaTeXUtils.printMinipageEnd(writer);
                 writer.write("};");
                 Main.newLine(writer);
                 writer.write("\\node[rectangle,draw=black] (2) [right=0.1 of and.north east,anchor=north west] {%");
                 Main.newLine(writer);
-                LaTeXUtils.printMinipageBeginning("0.45\\columnwidth", writer);
+                LaTeXUtils.printMinipageBeginning("0.45\\linewidth", writer);
                 SimplexAlgorithm.printSimplexProblem(newProblems.y, writer);
                 LaTeXUtils.printMinipageEnd(writer);
                 writer.write("};");

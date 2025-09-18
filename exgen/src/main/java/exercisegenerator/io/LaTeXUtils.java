@@ -17,11 +17,13 @@ public abstract class LaTeXUtils {
 
     public static final String CENTER;
 
-    public static final String COL_WIDTH;
-
     public static final String ENUMERATE;
 
     public static final String ITEM;
+
+    public static final String ITEMIZE;
+
+    public static final String LINE_WIDTH;
 
     public static final String MATH_VARIABLE_NAME;
 
@@ -35,8 +37,9 @@ public abstract class LaTeXUtils {
 
     static {
         CENTER = "center";
-        COL_WIDTH = "\\columnwidth";
+        LINE_WIDTH = "\\linewidth";
         ENUMERATE = "enumerate";
+        ITEMIZE = "itemize";
         ITEM = "\\item";
         MATH_VARIABLE_NAME = "x";
         TWO_COL_WIDTH = "8cm";
@@ -57,9 +60,17 @@ public abstract class LaTeXUtils {
         LaTeXUtils.ROMAN_NUMERALS.put(1, "I");
     }
 
-    public static void beginMulticols(final int cols, final BufferedWriter writer) throws IOException {
+    public static void beginMulticols(
+        final int cols,
+        final Optional<String> columnSep,
+        final BufferedWriter writer
+    ) throws IOException {
         writer.write(String.format("\\begin{multicols}{%d}", cols));
         Main.newLine(writer);
+        if (columnSep.isPresent()) {
+            writer.write(String.format("\\setlength{\\columnseprule}{%s}", columnSep.get()));
+            Main.newLine(writer);
+        }
     }
 
     public static String bold(final String text) {
@@ -122,7 +133,7 @@ public abstract class LaTeXUtils {
     }
 
     public static void printAdjustboxBeginning(final BufferedWriter writer) throws IOException {
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\columnwidth", "center");
+        LaTeXUtils.printAdjustboxBeginning(writer, "max width=\\linewidth", "center");
     }
 
     public static void printAdjustboxBeginning(
@@ -334,29 +345,17 @@ public abstract class LaTeXUtils {
         LaTeXUtils.printEnd("minipage", writer);
     }
 
-    /**
-     * Prints a protected whitespace and a line terminator to the specified writer.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printProtectedNewline(final BufferedWriter writer) throws IOException {
-        writer.write("~\\\\*\\vspace*{1ex}");
+        writer.write("~\\\\\\vspace*{1ex}");
         Main.newLine(writer);
     }
 
-    /**
-     * Prints the beginning of a samepage environment.
-     * @param step The current evaluation step.
-     * @param op The current operation.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printSamePageBeginning(
         final int step,
         final Pair<Integer, Boolean> op,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("\\begin{minipage}{\\columnwidth}");
+        writer.write("\\begin{minipage}{\\linewidth}");
         Main.newLine(writer);
         writer.write("\\vspace*{2ex}");
         Main.newLine(writer);
@@ -370,13 +369,6 @@ public abstract class LaTeXUtils {
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
     }
 
-    /**
-     * Prints the beginning of a samepage environment.
-     * @param step The current evaluation step.
-     * @param width A LaTeX String indicating the width of the minipage.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printSamePageBeginning(
         final int step,
         final String width,
@@ -386,18 +378,13 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         writer.write("\\vspace*{1ex}");
         Main.newLine(writer);
-        writer.write("Schritt " + step + ":\\\\[-2ex]");
+        writer.write("Schritt " + step + ":\\\\[1.2ex]");
         Main.newLine(writer);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printAdjustboxBeginning(writer);
     }
 
-    /**
-     * Prints the end of a samepage environment.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
     public static void printSamePageEnd(final BufferedWriter writer) throws IOException {
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
         writer.write("\\end{minipage}");
         Main.newLine(writer);
     }

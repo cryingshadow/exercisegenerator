@@ -52,7 +52,7 @@ public class HeapSort implements Sorting {
     ) throws IOException {
         int step = 0;
         for (final List<ItemWithTikZInformation<Integer>> list : solutionData.solution()) {
-            LaTeXUtils.printSamePageBeginning(step++, LaTeXUtils.COL_WIDTH, writer);
+            LaTeXUtils.printSamePageBeginning(step++, LaTeXUtils.LINE_WIDTH, writer);
             HeapSort.printTree(list, writer);
             LaTeXUtils.printProtectedNewline(writer);
             LaTeXUtils.printTikzBeginning(TikZStyle.ARRAY, writer);

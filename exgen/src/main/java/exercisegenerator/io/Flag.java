@@ -13,6 +13,12 @@ public enum Flag implements clit.Parameter {
         + "<alg> is the name of the algorithm."
     ),
 
+    BATCH(
+        "b",
+        "Batch",
+        "Batch processing of the specified parameter lists (new batch must always start with -a parameter)."
+    ),
+
     CAPACITY(
         "c",
         "Capacity",

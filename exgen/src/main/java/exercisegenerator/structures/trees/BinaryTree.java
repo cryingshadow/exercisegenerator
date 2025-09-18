@@ -59,9 +59,6 @@ public class BinaryTree<T extends Comparable<T>> implements SearchTree<T> {
     @Override
     public BigFraction getHorizontalFillingDegree() {
         final int height = this.getHeight();
-        if (height < 3) {
-            return BigFraction.ONE_THIRD;
-        }
         if (height < 5) {
             return BigFraction.ONE_HALF;
         }
@@ -91,9 +88,7 @@ public class BinaryTree<T extends Comparable<T>> implements SearchTree<T> {
     @Override
     public Optional<String> getSamePageWidth() {
         final int height = this.getHeight();
-        if (height < 3) {
-            return Optional.of("4cm");
-        } else if (height < 5) {
+        if (height < 5) {
             return Optional.of("7cm");
         }
         return Optional.empty();

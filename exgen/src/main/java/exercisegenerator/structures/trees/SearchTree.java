@@ -1,13 +1,33 @@
 package exercisegenerator.structures.trees;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
 import org.apache.commons.math3.fraction.*;
 
+import exercisegenerator.*;
 import exercisegenerator.io.*;
 
 public interface SearchTree<T extends Comparable<T>> extends Iterable<T> {
+
+    public static String formatOperations(final List<String> operations) {
+        final StringWriter result = new StringWriter();
+        try (BufferedWriter writer = new BufferedWriter(result)) {
+            LaTeXUtils.printBeginning(LaTeXUtils.ITEMIZE, writer);
+            for (final String operation : operations) {
+                writer.write(LaTeXUtils.ITEM);
+                writer.write(" \\emphasize{");
+                writer.write(operation);
+                writer.write("}");
+                Main.newLine(writer);
+            }
+            LaTeXUtils.printEnd(LaTeXUtils.ITEMIZE, writer);
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return result.toString();
+    }
 
     default SearchTree<T> add(final T value) {
         final SearchTreeSteps<T> steps = this.addWithSteps(value);

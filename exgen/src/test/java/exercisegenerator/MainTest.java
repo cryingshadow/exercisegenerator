@@ -503,13 +503,13 @@ public class MainTest {
             List.of(
                 "Betrachten Sie den folgenden \\emphasize{AVL-Baum}:\\\\",
                 "\\begin{minipage}[t]{7cm}",
-                "\\begin{center}",
+                "\\begin{adjustbox}{max width=7cm,center}",
                 "\\begin{tikzpicture}",
                 "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                 "\\Tree [.5 [.3 1 4 ] [.7 6 8 ] ]",
                 "\\end{tikzpicture}",
-                "~\\\\*\\vspace*{1ex}",
-                "\\end{center}",
+                "~\\\\\\vspace*{1ex}",
+                "\\end{adjustbox}",
                 "\\end{minipage}"
             )
         );
@@ -535,37 +535,37 @@ public class MainTest {
                 exText,
                 List.of(
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 1: f\\\"uge 2 ein\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 1: f\\\"uge 2 ein\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.5 [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] 4 ] [.7 6 8 ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 2: entferne 6\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 2: entferne 6\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.5 [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] 4 ] [.7 \\edge[draw=none];\\node[draw=none]{}; 8 ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
                     "~\\\\",
                     "",
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 3: ersetze 5\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 3: ersetze 5\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.6 [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] 4 ] [.7 \\edge[draw=none];\\node[draw=none]{}; 8 ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}"
                 )
             )
@@ -586,7 +586,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie den folgenden Graphen:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -691,7 +691,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie den folgenden Graphen:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n1) at (0,2) {A};",
@@ -739,13 +739,13 @@ public class MainTest {
             List.of(
                 "Betrachten Sie den folgenden \\emphasize{Bin\\\"ar-Suchbaum}:\\\\",
                 "\\begin{minipage}[t]{7cm}",
-                "\\begin{center}",
+                "\\begin{adjustbox}{max width=7cm,center}",
                 "\\begin{tikzpicture}",
                 "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                 "\\Tree [.3 1 [.5 4 [.7 6 8 ] ] ]",
                 "\\end{tikzpicture}",
-                "~\\\\*\\vspace*{1ex}",
-                "\\end{center}",
+                "~\\\\\\vspace*{1ex}",
+                "\\end{adjustbox}",
                 "\\end{minipage}"
             )
         );
@@ -771,37 +771,37 @@ public class MainTest {
                 exText,
                 List.of(
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 1: f\\\"uge 2 ein\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 1: f\\\"uge 2 ein\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] [.5 4 [.7 6 8 ] ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 2: entferne 6\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 2: entferne 6\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] [.5 4 [.7 \\edge[draw=none];\\node[draw=none]{}; 8 ] ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
                     "~\\\\",
                     "",
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 3: ersetze 5\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 3: ersetze 5\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.3 [.1 \\edge[draw=none];\\node[draw=none]{}; 2 ] [.6 4 [.7 \\edge[draw=none];\\node[draw=none]{}; 8 ] ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}"
                 )
             )
@@ -814,16 +814,16 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "Betrachten Sie den folgenden \\emphasize{B-Baum mit Grad $t = 2$}:\\\\",
-                "\\begin{minipage}[t]{\\columnwidth}",
-                "\\begin{center}",
+                "\\begin{minipage}[t]{\\linewidth}",
+                "\\begin{adjustbox}{max width=\\linewidth,center}",
                 "\\begin{tikzpicture}",
                 "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                     + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                     + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                 "\\Tree [.{3,5} {1} {4} {6,7,8} ];",
                 "\\end{tikzpicture}",
-                "~\\\\*\\vspace*{1ex}",
-                "\\end{center}",
+                "~\\\\\\vspace*{1ex}",
+                "\\end{adjustbox}",
                 "\\end{minipage}"
             )
         );
@@ -831,7 +831,15 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ",
-                "\\begin{itemize}\\item \\emphasize{Aufteilung}\\item \\emphasize{Diebstahloperation}\\item \\emphasize{Einf\\\"ugeoperation}\\item \\emphasize{L\\\"oschoperation}\\item \\emphasize{Rotation}\\item \\emphasize{Verschmelzung}\\end{itemize}",
+                "\\begin{itemize}",
+                "\\item \\emphasize{Aufteilung}",
+                "\\item \\emphasize{Diebstahloperation}",
+                "\\item \\emphasize{Einf\\\"ugeoperation}",
+                "\\item \\emphasize{L\\\"oschoperation}",
+                "\\item \\emphasize{Rotation}",
+                "\\item \\emphasize{Verschmelzung}",
+                "\\end{itemize}",
+                "",
                 "an:\\\\[2ex]",
                 "\\begin{enumerate}",
                 "\\item 2 einf\\\"ugen\\\\",
@@ -848,47 +856,47 @@ public class MainTest {
             MainTest.simpleComparison(
                 exText,
                 List.of(
-                    "\\begin{minipage}[t]{\\columnwidth}",
-                    "Schritt 1: f\\\"uge 2 ein\\\\[-2ex]",
-                    "\\begin{center}",
+                    "\\begin{minipage}[t]{\\linewidth}",
+                    "Schritt 1: f\\\"uge 2 ein\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.{3,5} {1,2} {4} {6,7,8} ];",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
                     "~\\\\",
                     "",
-                    "\\begin{minipage}[t]{\\columnwidth}",
-                    "Schritt 2: stehle Nachfolger von 5\\\\[-2ex]",
-                    "\\begin{center}",
+                    "\\begin{minipage}[t]{\\linewidth}",
+                    "Schritt 2: stehle Nachfolger von 5\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.{3,6} {1,2} {4} {6,7,8} ];",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
                     "~\\\\",
                     "",
-                    "\\begin{minipage}[t]{\\columnwidth}",
-                    "Schritt 3: entferne 6\\\\[-2ex]",
-                    "\\begin{center}",
+                    "\\begin{minipage}[t]{\\linewidth}",
+                    "Schritt 3: entferne 6\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=30pt, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.{3,6} {1,2} {4} {7,8} ];",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}"
                 )
             )
@@ -1077,7 +1085,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie das folgende \\emphasize{Petrinetz} $N$:\\\\[2ex]",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "",
                     "\\node[place,label=135:spring,tokens=0] (p0) at (0,0) {};",
@@ -1104,7 +1112,7 @@ public class MainTest {
                     "Geben Sie einen \\emphasize{Abdeckungsgraphen} zu $N$ an."
                 ),
                 List.of(
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[node/.style={rectangle,rounded corners,draw=black,thin,inner sep=5pt}, endnode/.style={rectangle,rounded corners,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n1) at (0.00,0.00) {<$0,0,0,0$>};",
@@ -1230,7 +1238,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie den folgenden Graphen:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n1) at (0,2) {A};",
@@ -1277,7 +1285,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie den folgenden Graphen:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -1390,7 +1398,7 @@ public class MainTest {
                     "\\end{center}"
                 ),
                 List.of(
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
                         + "sibling distance=10pt, level distance=45pt, edge from parent/.style="
@@ -1491,8 +1499,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\vspace*{1ex}");
         solText.add("");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.1/G");
@@ -1519,8 +1527,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.2/I");
@@ -1547,8 +1555,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1575,8 +1583,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1603,8 +1611,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1690,8 +1698,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\vspace*{1ex}");
         solText.add("");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.1/\\textbackslash{}");
@@ -1718,8 +1726,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.2/\\%");
@@ -1746,8 +1754,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1774,8 +1782,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1802,8 +1810,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -1866,8 +1874,10 @@ public class MainTest {
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.add("\\textbf{Codebuch:}");
         exText.add("\\begin{multicols}{2}");
+        exText.add("\\setlength{\\columnseprule}{1pt}");
         solText.add("\\textbf{Codebuch:}");
         solText.add("\\begin{multicols}{2}");
+        solText.add("\\setlength{\\columnseprule}{1pt}");
         MainTest.addAssignmentTextForHuffman(
             List.of(
                 new Pair<String, String>("A", "01"),
@@ -1896,8 +1906,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\vspace*{1ex}");
         solText.add("");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.1/H");
@@ -1939,8 +1949,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.1/N");
@@ -1982,8 +1992,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -2025,8 +2035,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.3/E");
@@ -2068,8 +2078,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -2111,8 +2121,8 @@ public class MainTest {
         solText.add(" ]");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.10/B");
@@ -2154,8 +2164,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -2197,8 +2207,8 @@ public class MainTest {
         solText.add("");
         solText.add("\\end{tikzpicture}");
         solText.add("\\end{adjustbox}");
-        solText.add("\\par\\noindent\\rule[5pt]{\\columnwidth}{1pt}");
-        solText.add("\\begin{adjustbox}{max width=\\columnwidth,center}");
+        solText.add("\\par\\noindent\\rule[5pt]{\\linewidth}{1pt}");
+        solText.add("\\begin{adjustbox}{max width=\\linewidth,center}");
         solText.add("\\begin{tikzpicture}");
         solText.add("[every tree node/.style={circle,draw=black,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]");
         solText.add("\\Tree [.\\phantom{0}");
@@ -2270,7 +2280,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie das folgende \\emphasize{Petrinetz} $N$:\\\\[2ex]",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "",
                     "\\node[place,label=135:spring,tokens=0] (p0) at (0,0) {};",
@@ -2351,7 +2361,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie das folgende \\emphasize{Petrinetz} $N$:\\\\[2ex]",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "",
                     "\\node[place,label=135:spring,tokens=0] (p0) at (0,0) {};",
@@ -2427,7 +2437,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie den folgenden Graphen:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -2450,8 +2460,9 @@ public class MainTest {
                     "\\ifprintanswers",
                     "\\else",
                     "\\begin{multicols}{2}",
+                    "\\setlength{\\columnseprule}{2pt}",
                     "\\renewcommand{\\arraystretch}{1.5}",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{1} & A & B & C & D\\\\\\hline",
@@ -2460,11 +2471,11 @@ public class MainTest {
                     "C & $\\infty$ & $\\infty$ & 0 & 6\\\\\\hline",
                     "D & $\\infty$ & 1 & 1 & 0\\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{2} & A & B & C & D\\\\\\hline",
@@ -2473,11 +2484,11 @@ public class MainTest {
                     "C &  &  &  & \\\\\\hline",
                     "D &  &  &  & \\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{3} & A & B & C & D\\\\\\hline",
@@ -2486,12 +2497,12 @@ public class MainTest {
                     "C &  &  &  & \\\\\\hline",
                     "D &  &  &  & \\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vfill\\null",
                     "\\columnbreak",
                     "",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{4} & A & B & C & D\\\\\\hline",
@@ -2500,11 +2511,11 @@ public class MainTest {
                     "C &  &  &  & \\\\\\hline",
                     "D &  &  &  & \\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{5} & A & B & C & D\\\\\\hline",
@@ -2513,7 +2524,7 @@ public class MainTest {
                     "C &  &  &  & \\\\\\hline",
                     "D &  &  &  & \\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vspace*{1ex}",
                     "",
@@ -2524,8 +2535,9 @@ public class MainTest {
                 ),
                 List.of(
                     "\\begin{multicols}{2}",
+                    "\\setlength{\\columnseprule}{1pt}",
                     "\\renewcommand{\\arraystretch}{1.5}",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{1} & A & B & C & D\\\\\\hline",
@@ -2534,11 +2546,11 @@ public class MainTest {
                     "C & $\\infty$ & $\\infty$ & 0 & 6\\\\\\hline",
                     "D & $\\infty$ & 1 & 1 & 0\\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{2} & A & B & C & D\\\\\\hline",
@@ -2547,11 +2559,11 @@ public class MainTest {
                     "C & $\\infty$ & $\\infty$ & 0 & 6\\\\\\hline",
                     "D & $\\infty$ & 1 & 1 & 0\\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{3} & A & B & C & D\\\\\\hline",
@@ -2560,12 +2572,12 @@ public class MainTest {
                     "C & $\\infty$ & $\\infty$ & 0 & 6\\\\\\hline",
                     "D & $\\infty$ & 1 & 1 & 0\\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vfill\\null",
                     "\\columnbreak",
                     "",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{4} & A & B & C & D\\\\\\hline",
@@ -2574,11 +2586,11 @@ public class MainTest {
                     "C & $\\infty$ & $\\infty$ & 0 & 6\\\\\\hline",
                     "D & $\\infty$ & 1 & 1 & 0\\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "\\resizebox{\\columnwidth}{!}{%",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",
                     "\\hline",
                     "\\circled{5} & A & B & C & D\\\\\\hline",
@@ -2587,7 +2599,7 @@ public class MainTest {
                     "C & $\\infty$ & \\cellcolor{black!20}7 & 0 & 6\\\\\\hline",
                     "D & $\\infty$ & 1 & 1 & 0\\\\\\hline",
                     "\\end{tabular}",
-                    "}",
+                    "\\end{adjustbox}",
                     "",
                     "\\vspace*{1ex}",
                     "",
@@ -2615,7 +2627,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie das folgende \\emphasize{Flussnetzwerk}:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n1) at (2,2) {A};",
@@ -2646,10 +2658,10 @@ public class MainTest {
                     "\\vspace*{-3ex}",
                     "",
                     "\\else",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 1:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 1:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2659,13 +2671,13 @@ public class MainTest {
                     "\\node[node] (n2) at (1,1) {s};",
                     "\\node[node] (n4) at (3,1) {t};",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 2:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 2:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2683,13 +2695,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n2) to (n3);",
                     "\\draw[p, bend left = 10] (n2) to (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 3:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 3:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2699,13 +2711,13 @@ public class MainTest {
                     "\\node[node] (n2) at (1,1) {s};",
                     "\\node[node] (n4) at (3,1) {t};",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 4:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 4:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2723,13 +2735,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n2) to (n3);",
                     "\\draw[p, bend left = 10] (n2) to (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 5:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 5:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2739,13 +2751,13 @@ public class MainTest {
                     "\\node[node] (n2) at (1,1) {s};",
                     "\\node[node] (n4) at (3,1) {t};",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 6:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 6:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2763,13 +2775,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n2) to (n3);",
                     "\\draw[p, bend left = 10] (n2) to (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 7:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 7:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2779,13 +2791,13 @@ public class MainTest {
                     "\\node[node] (n2) at (1,1) {s};",
                     "\\node[node] (n4) at (3,1) {t};",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 8:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 8:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2803,13 +2815,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n2) to (n3);",
                     "\\draw[p, bend left = 10] (n2) to (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 9:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 9:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2819,7 +2831,7 @@ public class MainTest {
                     "\\node[node] (n2) at (1,1) {s};",
                     "\\node[node] (n4) at (3,1) {t};",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
                     "",
@@ -2834,10 +2846,10 @@ public class MainTest {
                     ""
                 ),
                 List.of(
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 1:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 1:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2855,13 +2867,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n2) to node[auto] {7} (n3);",
                     "\\draw[p, bend left = 10] (n2) to node[auto] {5} (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 2:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 2:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2879,13 +2891,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n2) to node[auto] {0/7} (n3);",
                     "\\draw[p, bend left = 10] (n2) to node[auto] {0/5} (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 3:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 3:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2904,13 +2916,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n2) to node[auto] {5} (n5);",
                     "\\draw[p, bend left = 10] (n4) to node[auto] {3} (n1);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 4:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 4:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2928,13 +2940,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10, very thick, red] (n2) to node[auto] {6/7} (n3);",
                     "\\draw[p, bend left = 10] (n2) to node[auto] {0/5} (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 5:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 5:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2954,13 +2966,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n4) to node[auto] {3} (n1);",
                     "\\draw[p, bend left = 10] (n4) to node[auto] {6} (n3);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 6:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 6:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2978,13 +2990,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n2) to node[auto] {6/7} (n3);",
                     "\\draw[p, bend left = 10, very thick, red] (n2) to node[auto] {5/5} (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 7:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 7:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -3004,13 +3016,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n4) to node[auto] {6} (n3);",
                     "\\draw[p, bend left = 10] (n4) to node[auto] {5} (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 8:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 8:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -3028,13 +3040,13 @@ public class MainTest {
                     "\\draw[p, bend left = 10, very thick, red] (n2) to node[auto] {7/7} (n3);",
                     "\\draw[p, bend left = 10] (n2) to node[auto] {5/5} (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
-                    "\\begin{minipage}{\\columnwidth}",
+                    "\\begin{minipage}{\\linewidth}",
                     "\\vspace*{1ex}",
-                    "Schritt 9:\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 9:\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "Restnetzwerk:\\\\[2ex]",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -3053,7 +3065,7 @@ public class MainTest {
                     "\\draw[p, bend left = 10] (n4) to node[auto] {6} (n3);",
                     "\\draw[p, bend left = 10] (n4) to node[auto] {5} (n5);",
                     "\\end{tikzpicture}",
-                    "\\end{center}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
                     "",
@@ -3702,7 +3714,7 @@ public class MainTest {
                     + "Zusammenhangskomponenten des folgenden Graphen zu finden. Geben Sie dazu den Stack "
                     + "nach Abschluss der ersten Phase und die Zuordnung der Knoten zu Repräsentanten der "
                     + "Zusammenhangskomponenten nach der zweiten Phase an.\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, "
                     + "endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, "
@@ -3787,7 +3799,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie den folgenden Graphen:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -3826,7 +3838,7 @@ public class MainTest {
                     "\\item (C, 4, D)",
                     "\\end{enumerate}",
                     "Minimaler Spannbaum:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -3863,7 +3875,7 @@ public class MainTest {
                     "\\else",
                     "\\begin{adjustbox}{max width=0.9\\textwidth,center}",
                     "{\\Large",
-                    "\\begin{tabular}{|*{1}{C{5mm}|}*{3}{C{5mm}C{7mm}|}}",
+                    "\\begin{tabular}{|*{1}{C{6mm}|}*{3}{C{6mm}C{7mm}|}}",
                     "\\hline",
                     "${}^*$ &  &  & \\textbf{M} &  & \\textbf{E} & \\\\\\hline",
                     " &  &  &  &  &  & \\\\\\hline",
@@ -3888,7 +3900,7 @@ public class MainTest {
                     "",
                     "\\begin{adjustbox}{max width=0.9\\textwidth,center}",
                     "{\\Large",
-                    "\\begin{tabular}{|*{1}{C{5mm}|}*{3}{C{5mm}C{7mm}|}}",
+                    "\\begin{tabular}{|*{1}{C{6mm}|}*{3}{C{6mm}C{7mm}|}}",
                     "\\hline",
                     "${}^*$ &  &  & \\textbf{M} &  & \\textbf{E} & \\\\\\hline",
                     " & 0 &  & 0 & $\\leftarrow$ & 0 & \\\\\\hline",
@@ -4474,7 +4486,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Betrachten Sie den folgenden Graphen:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -4532,7 +4544,7 @@ public class MainTest {
                     "\\renewcommand{\\arraystretch}{1.0}",
                     "\\end{center}",
                     "Minimaler Spannbaum:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
                     "\\node[node] (n1) at (0,1) {A};",
@@ -4632,13 +4644,13 @@ public class MainTest {
             List.of(
                 "Betrachten Sie den folgenden \\emphasize{Rot-Schwarz-Baum}:\\\\",
                 "\\begin{minipage}[t]{7cm}",
-                "\\begin{center}",
+                "\\begin{adjustbox}{max width=7cm,center}",
                 "\\begin{tikzpicture}",
                 "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                 "\\Tree [.\\node[b]{3}; \\node[b]{1}; [.\\node[r]{5}; \\node[b]{4}; [.\\node[b]{7}; \\node[r]{6}; \\node[r]{8}; ] ] ]",
                 "\\end{tikzpicture}",
-                "~\\\\*\\vspace*{1ex}",
-                "\\end{center}",
+                "~\\\\\\vspace*{1ex}",
+                "\\end{adjustbox}",
                 "\\end{minipage}"
             )
         );
@@ -4646,7 +4658,14 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ",
-                "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Umf\\\"arbe-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation",
+                "\\begin{itemize}",
+                "\\item \\emphasize{Einf\\\"ugeoperation}",
+                "\\item \\emphasize{Ersetzung}",
+                "\\item \\emphasize{L\\\"oschoperation}",
+                "\\item \\emphasize{Rotation}",
+                "\\item \\emphasize{Umf\\\"arbung}",
+                "\\end{itemize}",
+                "",
                 "an:\\\\[2ex]",
                 "\\begin{enumerate}",
                 "\\item 2 einf\\\"ugen\\\\",
@@ -4664,37 +4683,37 @@ public class MainTest {
                 exText,
                 List.of(
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 1: f\\\"uge 2 ein\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 1: f\\\"uge 2 ein\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.\\node[b]{3}; [.\\node[b]{1}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{2}; ] [.\\node[r]{5}; \\node[b]{4}; [.\\node[b]{7}; \\node[r]{6}; \\node[r]{8}; ] ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 2: entferne 6\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 2: entferne 6\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.\\node[b]{3}; [.\\node[b]{1}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{2}; ] [.\\node[r]{5}; \\node[b]{4}; [.\\node[b]{7}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{8}; ] ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}",
                     "",
                     "~\\\\",
                     "",
                     "\\begin{minipage}[t]{7cm}",
-                    "Schritt 3: ersetze 5\\\\[-2ex]",
-                    "\\begin{center}",
+                    "Schritt 3: ersetze 5\\\\[1.2ex]",
+                    "\\begin{adjustbox}{max width=7cm,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={circle,draw=gray,thick,inner sep=5pt}, b/.style={rectangle,draw=black,thick,inner sep=5pt}, r/.style={circle,draw=gray,thick,inner sep=5pt}, bb/.style={rectangle,general shadow={draw=black,shadow xshift=.5ex,shadow yshift=.5ex},draw=black,fill=white,thick,inner sep=5pt}, rb/.style={circle,draw=black,dashed,thick,inner sep=5pt}, sibling distance=10pt, level distance=30pt, edge from parent/.style={draw,edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree [.\\node[b]{3}; [.\\node[b]{1}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{2}; ] [.\\node[r]{6}; \\node[b]{4}; [.\\node[b]{7}; \\edge[draw=none];\\node[draw=none]{}; \\node[r]{8}; ] ] ]",
                     "\\end{tikzpicture}",
-                    "~\\\\*\\vspace*{1ex}",
-                    "\\end{center}",
+                    "~\\\\\\vspace*{1ex}",
+                    "\\end{adjustbox}",
                     "\\end{minipage}"
                 )
             )
@@ -4764,7 +4783,7 @@ public class MainTest {
                     "",
                     "\\node (and) {und};",
                     "\\node[rectangle,draw=black] (1) [left=0.1 of and.north west,anchor=north east] {%",
-                    "\\begin{minipage}{0.45\\columnwidth}",
+                    "\\begin{minipage}{0.45\\linewidth}",
                     "Maximiere $z(\\mathbf{x}) = x_{1} + x_{2}$\\\\",
                     "unter den folgenden Nebenbedingungen:\\\\",
                     "$\\begin{array}{*{5}c}",
@@ -4778,7 +4797,7 @@ public class MainTest {
                     "\\end{minipage}",
                     "};",
                     "\\node[rectangle,draw=black] (2) [right=0.1 of and.north east,anchor=north west] {%",
-                    "\\begin{minipage}{0.45\\columnwidth}",
+                    "\\begin{minipage}{0.45\\linewidth}",
                     "Maximiere $z(\\mathbf{x}) = x_{1} + x_{2}$\\\\",
                     "unter den folgenden Nebenbedingungen:\\\\",
                     "$\\begin{array}{*{5}c}",
@@ -5078,7 +5097,7 @@ public class MainTest {
                 List.of(
                     "Geben Sie eine topologische Sortierung des folgenden Graphen an oder begr\\\"unden Sie, warum "
                     + "keine topologische Sortierung f\\\"ur diesen Graphen existiert.\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, "
                     + "endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, "
@@ -5280,7 +5299,7 @@ public class MainTest {
                 List.of(
                     "Geben Sie den finalen Zustand der folgenden \\emphasize{Union-Find}-Datenstruktur an, nachdem "
                     + "alle darunter angegebenen Operationen ausgef\\\"uhrt wurden:\\\\",
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n1) at (0,0) {1};",
@@ -5300,7 +5319,7 @@ public class MainTest {
                     "\\end{enumerate}"
                 ),
                 List.of(
-                    "\\begin{adjustbox}{max width=\\columnwidth,center}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
                     "\\node[node] (n4) at (0,0) {1};",

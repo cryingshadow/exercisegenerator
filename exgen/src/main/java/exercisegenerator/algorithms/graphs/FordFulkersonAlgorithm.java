@@ -755,7 +755,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         if (!first) {
             LaTeXUtils.printSamePageBeginning(
                 stepNumber,
-                configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
+                configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.LINE_WIDTH,
                 writer
             );
             writer.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
@@ -785,7 +785,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         }
         LaTeXUtils.printSamePageBeginning(
             first ? stepNumber : stepNumber + 1,
-            configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.COL_WIDTH,
+            configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.LINE_WIDTH,
             writer
         );
         writer.write(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME);

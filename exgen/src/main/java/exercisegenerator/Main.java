@@ -31,7 +31,7 @@ public class Main {
 
     private static final String[] HELP;
 
-    private static final String VERSION = "5.0.1";
+    private static final String VERSION = "5.1.0";
 
     static {
         RANDOM = new Random();
@@ -138,14 +138,19 @@ public class Main {
             Main.showHelp(args);
             return;
         }
-        if (args.length % 2 != 0) {
+        final boolean even = args.length % 2 == 0;
+        if (!even) {
             System.out.println("The number of arguments must be even (flag/value pairs)!");
             return;
         }
-        try {
-            Main.main(Main.parseFlags(args));
-        } catch (final Exception e) {
-            e.printStackTrace();
+        final boolean isBatchMode = Main.isBatchMode(args);
+        final List<String[]> batchedArgs = isBatchMode ? Main.parseBatchArgs(args) : Collections.singletonList(args);
+        for (final String[] batch : batchedArgs) {
+            try {
+                Main.main(Main.parseFlags(batch));
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -194,6 +199,10 @@ public class Main {
         return res;
     }
 
+    private static boolean isBatchMode(final String[] args) {
+        return "-b".equals(args[0]);
+    }
+
     private static boolean isHelpMode(final String[] args) {
         return "-h".equals(args[0]);
     }
@@ -208,6 +217,25 @@ public class Main {
             final Optional<Algorithm> algorithm = Algorithm.forName(algorithmName.strip());
             if (algorithm.isPresent()) {
                 result.add(algorithm.get());
+            }
+        }
+        return result;
+    }
+
+    private static List<String[]> parseBatchArgs(final String[] args) throws IOException {
+        final List<String[]> result = new LinkedList<String[]>();
+        try (BufferedReader reader = new BufferedReader(new StringReader(args[1]))) {
+            String batch = reader.readLine();
+            while (batch != null) {
+                if (!batch.isBlank()) {
+                    final String[] batchedArgs =
+                        Arrays.stream(batch.split(" ")).filter(s -> !s.isBlank()).toArray(String[]::new);
+                    if (batchedArgs.length % 2 != 0) {
+                        throw new IllegalArgumentException("The number of arguments must be even (flag/value pairs)!");
+                    }
+                    result.add(batchedArgs);
+                }
+                batch = reader.readLine();
             }
         }
         return result;

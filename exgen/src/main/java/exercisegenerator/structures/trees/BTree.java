@@ -9,6 +9,16 @@ import exercisegenerator.io.*;
 
 public class BTree<T extends Comparable<T>> implements SearchTree<T> {
 
+    private static final List<String> OPERATIONS =
+        List.of(
+            "Aufteilung",
+            "Diebstahloperation",
+            "Einf\\\"ugeoperation",
+            "L\\\"oschoperation",
+            "Rotation",
+            "Verschmelzung"
+        );
+
     static <T> List<T> insertSorted(final List<T> values, final T value) {
         return Stream.concat(values.stream(), Stream.of(value)).sorted().toList();
     }
@@ -104,7 +114,7 @@ public class BTree<T extends Comparable<T>> implements SearchTree<T> {
 
     @Override
     public String getOperations() {
-        return "\\begin{itemize}\\item \\emphasize{Aufteilung}\\item \\emphasize{Diebstahloperation}\\item \\emphasize{Einf\\\"ugeoperation}\\item \\emphasize{L\\\"oschoperation}\\item \\emphasize{Rotation}\\item \\emphasize{Verschmelzung}\\end{itemize}";
+        return SearchTree.formatOperations(BTree.OPERATIONS);
     }
 
     @Override

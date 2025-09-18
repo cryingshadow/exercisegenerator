@@ -6,6 +6,15 @@ import exercisegenerator.io.*;
 
 public class RedBlackTree<T extends Comparable<T>> extends BinaryTree<T> {
 
+    private static final List<String> OPERATIONS =
+        List.of(
+            "Einf\\\"ugeoperation",
+            "Ersetzung",
+            "L\\\"oschoperation",
+            "Rotation",
+            "Umf\\\"arbung"
+        );
+
     RedBlackTree(final Optional<RedBlackTreeNode<T>> root, final RedBlackTreeFactory<T> treeFactory) {
         super(root, treeFactory);
     }
@@ -17,7 +26,7 @@ public class RedBlackTree<T extends Comparable<T>> extends BinaryTree<T> {
 
     @Override
     public String getOperations() {
-        return "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Umf\\\"arbe-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation";
+        return SearchTree.formatOperations(RedBlackTree.OPERATIONS);
     }
 
     @Override

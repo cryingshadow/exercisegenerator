@@ -3,7 +3,7 @@ package exercisegenerator.structures.optimization;
 public record LengthConfiguration(String headerColLength, String numberLength, String arrowLength) {
 
     public LengthConfiguration() {
-        this("5mm", "5mm", "7mm");
+        this("6mm", "6mm", "7mm");
     }
 
 }
