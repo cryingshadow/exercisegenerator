@@ -176,7 +176,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         );
         writer.write("\\}$\\\\");
         Main.newLine(writer);
-        writer.write("Eingabetext:\\\\");
+        writer.write("Eingabetext:");
         Main.newLine(writer);
         LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         writer.write(LaTeXUtils.escapeForLaTeX(problem.message()));

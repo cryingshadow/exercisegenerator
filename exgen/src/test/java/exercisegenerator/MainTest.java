@@ -1461,7 +1461,7 @@ public class MainTest {
             List.of(
                 "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur die folgende Eingabe:\\\\",
                 "Zielalphabet: $\\{0,1\\}$\\\\",
-                "Eingabetext:\\\\",
+                "Eingabetext:",
                 "\\begin{center}",
                 "GEIERMEIER",
                 "\\end{center}",
@@ -1660,7 +1660,7 @@ public class MainTest {
             List.of(
                 "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur die folgende Eingabe:\\\\",
                 "Zielalphabet: $\\{0,1\\}$\\\\",
-                "Eingabetext:\\\\",
+                "Eingabetext:",
                 "\\begin{center}",
                 "\\textbackslash{}\\&\\%\\&\\textasciicircum{}\\_\\&\\%\\&\\textasciicircum{}",
                 "\\end{center}",
@@ -1859,7 +1859,7 @@ public class MainTest {
             List.of(
                 "Erzeugen Sie den \\emphasize{Huffman-Code} f\\\"ur die folgende Eingabe:\\\\",
                 "Zielalphabet: $\\{0,1\\}$\\\\",
-                "Eingabetext:\\\\",
+                "Eingabetext:",
                 "\\begin{center}",
                 "RHABARBERBARBARABARBARBARENBARTBARBIER",
                 "\\end{center}",
