@@ -4,6 +4,14 @@ import java.util.*;
 
 public class AVLTree<T extends Comparable<T>> extends BinaryTree<T> {
 
+    private static final List<String> OPERATIONS =
+        List.of(
+            "Einf\\\"ugeoperation",
+            "Ersetzung",
+            "L\\\"oschoperation",
+            "Rotation"
+        );
+
     AVLTree(final Optional<AVLTreeNode<T>> root, final AVLTreeFactory<T> treeFactory) {
         super(root, treeFactory);
     }
@@ -15,7 +23,7 @@ public class AVLTree<T extends Comparable<T>> extends BinaryTree<T> {
 
     @Override
     public String getOperations() {
-        return "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation";
+        return SearchTree.formatOperations(AVLTree.OPERATIONS);
     }
 
     @Override

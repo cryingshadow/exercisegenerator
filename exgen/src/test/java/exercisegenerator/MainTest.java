@@ -517,7 +517,13 @@ public class MainTest {
         exText.addAll(
             List.of(
                 "F\\\"uhren Sie beginnend mit diesem Baum die folgenden Operationen aus und geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ",
-                "\\emphasize{Einf\\\"uge-}, \\emphasize{L\\\"osch-}, \\emphasize{Ersetzungs-} und \\emphasize{Rotations-}Operation",
+                "\\begin{itemize}",
+                "\\item \\emphasize{Einf\\\"ugeoperation}",
+                "\\item \\emphasize{Ersetzung}",
+                "\\item \\emphasize{L\\\"oschoperation}",
+                "\\item \\emphasize{Rotation}",
+                "\\end{itemize}",
+                "",
                 "an:\\\\[2ex]",
                 "\\begin{enumerate}",
                 "\\item 2 einf\\\"ugen\\\\",
