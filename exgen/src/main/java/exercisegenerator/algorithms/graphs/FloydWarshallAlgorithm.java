@@ -64,7 +64,6 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     ) throws IOException {
         LaTeXUtils.printArrayStretch(1.5, writer);
         for (int i = 0; i < tables.length; i++) {
-            LaTeXUtils.printAdjustboxBeginning(writer);
             LaTeXUtils.printTable(
                 tables[i],
                 color.isEmpty() ? Optional.empty() : Optional.of(color.get()[i]),
@@ -73,7 +72,6 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
                 0,
                 writer
             );
-            LaTeXUtils.printAdjustboxEnd(writer);
             if (layout.columns > 1 && i == tables.length / layout.columns) {
                 Main.newLine(writer);
                 writer.write("\\vfill\\null");
@@ -143,7 +141,9 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("F\\\"uhren Sie den \\emphasize{Algorithmus von ");
         writer.write(this.commandPrefix());
-        writer.write("} auf diesem Graphen aus. F\\\"ullen Sie dazu die nachfolgenden Tabellen aus.\\\\[2ex]");
+        writer.write("} auf diesem Graphen aus. Geben Sie dazu die Distanzen zwischen allen Knoten nach jeder ");
+        writer.write("Iteration der \\\"au\\ss{}eren Schleife an, indem Sie die nachfolgenden Tabellen ");
+        writer.write("ausf\\\"ullen.\\\\[2ex]");
         Main.newLine(writer);
     }
 

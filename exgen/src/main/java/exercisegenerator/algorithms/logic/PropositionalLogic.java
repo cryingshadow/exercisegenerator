@@ -192,7 +192,6 @@ abstract class PropositionalLogic {
             }
             row++;
         }
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         if (large) {
             writer.write("{\\Large");
             Main.newLine(writer);
@@ -209,7 +208,6 @@ abstract class PropositionalLogic {
             writer.write("}");
             Main.newLine(writer);
         }
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
     }
 
     static Set<Clause> toClauses(final PropositionalFormula formula) {

@@ -289,7 +289,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         final boolean withSolution,
         final BufferedWriter writer
     ) throws IOException {
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=0.9\\textwidth", "center");
         LaTeXUtils.printTable(
             SimplexAlgorithm.toSimplexTableau(tableau, withSolution),
             Optional.empty(),
@@ -298,7 +297,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             0,
             writer
         );
-        LaTeXUtils.printAdjustboxEnd(writer);
     }
 
     private static void simplexBaseSwap(

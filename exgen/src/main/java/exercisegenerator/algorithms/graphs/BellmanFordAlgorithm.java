@@ -17,10 +17,8 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final List<BellmanFordStep<String>> result,
         final boolean fill,
         final BufferedWriter writer
-        ) throws IOException {
-    final String columnWidth = "16mm";
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        Main.newLine(writer);
+    ) throws IOException {
+        final String columnWidth = "16mm";
         LaTeXUtils.printArrayStretch(1.5, writer);
         boolean first = true;
         for (final BellmanFordStep<String> step : result) {
@@ -40,7 +38,6 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
             );
         }
         LaTeXUtils.printArrayStretch(1.0, writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
     }
 
     private static String[][] toTable(
@@ -134,7 +131,8 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         writer.write(problem.startNode().get().label().get());
         writer.write("} aus.");
         Main.newLine(writer);
-        writer.write("F\\\"ullen Sie dazu die nachfolgenden Tabellen aus:\\\\[2ex]");
+        writer.write("Geben Sie dazu die Distanzen und Vorg\\\"anger nach jeder Iteration aller Kanten an, indem Sie ");
+        writer.write("die nachfolgenden Tabellen ausf\\\"ullen:\\\\[2ex]");
         Main.newLine(writer);
     }
 

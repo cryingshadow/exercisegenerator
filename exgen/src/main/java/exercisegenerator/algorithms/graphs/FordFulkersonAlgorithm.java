@@ -756,7 +756,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             LaTeXUtils.printSamePageBeginning(
                 stepNumber,
                 configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.LINE_WIDTH,
-                Optional.of("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:"),
+                Optional.of("n\\\"achstes Flussnetzwerk mit aktuellem Fluss"),
                 writer
             );
             GridGraphLayout<String, FlowAndCapacity> layout =
@@ -785,7 +785,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         LaTeXUtils.printSamePageBeginning(
             first ? stepNumber : stepNumber + 1,
             configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.LINE_WIDTH,
-            Optional.of(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME + ":"),
+            Optional.of(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME),
             writer
         );
         GridGraphLayout<String, Integer> layout =

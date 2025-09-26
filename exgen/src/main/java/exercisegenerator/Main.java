@@ -31,7 +31,7 @@ public class Main {
 
     private static final String[] HELP;
 
-    private static final String VERSION = "5.1.3";
+    private static final String VERSION = "5.1.4";
 
     static {
         RANDOM = new Random();

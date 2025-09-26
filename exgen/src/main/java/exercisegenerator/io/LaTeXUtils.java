@@ -366,13 +366,15 @@ public abstract class LaTeXUtils {
         printMinipageBeginning(width, writer);
         writer.write("\\vspace*{1ex}");
         Main.newLine(writer);
-        writer.write("Schritt " + step + ":\\\\[1.2ex]");
-        Main.newLine(writer);
+        writer.write("Schritt ");
+        writer.write(String.valueOf(step));
         if (title.isPresent()) {
+            writer.write(" (");
             writer.write(title.get());
-            writer.write("\\\\[2ex]");
-            Main.newLine(writer);
+            writer.write(")");
         }
+        writer.write(":\\\\[1.2ex]");
+        Main.newLine(writer);
         printAdjustboxBeginning(writer);
     }
 
@@ -448,6 +450,7 @@ public abstract class LaTeXUtils {
             final int cols =
                 LaTeXUtils.computeNumberOfColumns(remainingCols, breakAtColumn, titleColumns, firstColumnBlock);
             final int rows = (transpose ? table.length : table[0].length);
+            LaTeXUtils.printAdjustboxBeginning(writer);
             writer.write("\\begin{tabular}{");
             writer.write(columnDefinition.apply(!firstColumnBlock ? cols : cols - titleColumns));
             writer.write("}");
@@ -476,6 +479,7 @@ public abstract class LaTeXUtils {
             }
             writer.write("\\end{tabular}");
             Main.newLine(writer);
+            LaTeXUtils.printAdjustboxEnd(writer);
             remainingCols -= cols;
             firstColumnBlock = false;
         } while (remainingCols > 0);

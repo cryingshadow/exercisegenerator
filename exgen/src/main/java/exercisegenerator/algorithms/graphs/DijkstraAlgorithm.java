@@ -229,8 +229,6 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-        Main.newLine(writer);
         LaTeXUtils.printArrayStretch(1.5, writer);
         LaTeXUtils.printTable(
             solution.solTable,
@@ -241,7 +239,6 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
             writer
         );
         LaTeXUtils.printArrayStretch(1.0, writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Die grau unterlegten Zellen markieren, an welcher Stelle f\\\"ur welchen Knoten die minimale");
         writer.write(" Distanz sicher berechnet worden ist.");
@@ -278,8 +275,6 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
                 LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
                 // fall-through
             case ALWAYS:
-                LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
-                Main.newLine(writer);
                 LaTeXUtils.printArrayStretch(1.5, writer);
                 LaTeXUtils.printTable(
                     solution.exTable,
@@ -290,7 +285,6 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
                     writer
                 );
                 LaTeXUtils.printArrayStretch(1.0, writer);
-                LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
                 if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
                     LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
                 } else {

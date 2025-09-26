@@ -33,7 +33,6 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
                 result[i + 1][j + 1] = solution ? (table[i][j] == null ? "" : table[i][j].toString()) : "";
             }
         }
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
         LaTeXUtils.printArrayStretch(1.5, writer);
         LaTeXUtils.printTable(
             result,
@@ -44,7 +43,6 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
             writer
         );
         LaTeXUtils.printArrayStretch(1, writer);
-        LaTeXUtils.printEnd(LaTeXUtils.CENTER, writer);
     }
 
     private PrimAlgorithm() {}

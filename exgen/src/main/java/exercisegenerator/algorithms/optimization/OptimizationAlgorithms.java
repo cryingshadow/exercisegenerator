@@ -97,7 +97,6 @@ public abstract class OptimizationAlgorithms {
         final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {
-        LaTeXUtils.printAdjustboxBeginning(writer, "max width=0.9\\textwidth", "center");
         writer.write("{\\Large");
         Main.newLine(writer);
         LaTeXUtils.printTable(
@@ -110,8 +109,6 @@ public abstract class OptimizationAlgorithms {
             writer
         );
         writer.write("}");
-        Main.newLine(writer);
-        LaTeXUtils.printAdjustboxEnd(writer);
         Main.newLine(writer);
     }
 
