@@ -156,7 +156,9 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     ) throws IOException {
         writer.write("F\\\"uhren Sie den \\emphasize{Algorithmus von ");
         writer.write(this.commandPrefix());
-        writer.write("} auf den folgenden Graphen aus. F\\\"ullen Sie dazu die jeweiligen Tabellen aus.\\\\");
+        writer.write("} auf den folgenden Graphen aus. Geben Sie dazu jeweils die Distanzen zwischen allen Knoten ");
+        writer.write("nach jeder Iteration der \\\"au\\ss{}eren Schleife an, indem Sie die jeweiligen Tabellen ");
+        writer.write("ausf\\\"ullen.\\\\");
         Main.newLine(writer);
     }
 

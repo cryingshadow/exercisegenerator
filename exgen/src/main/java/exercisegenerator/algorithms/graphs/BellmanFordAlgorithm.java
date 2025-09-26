@@ -143,8 +143,9 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("F\\\"uhren Sie den \\emphasize{Bellman-Ford}-Algorithmus auf den folgenden Graphen aus und ");
-        writer.write("f\\\"ullen Sie dazu die jeweiligen Tabellen aus.\\\\");
+        writer.write("F\\\"uhren Sie den \\emphasize{Bellman-Ford}-Algorithmus auf den folgenden Graphen aus. ");
+        writer.write("Geben Sie dazu jeweils die Distanzen und Vorg\\\"anger nach jeder Iteration aller Kanten an, ");
+        writer.write("indem Sie die jeweiligen Tabellen ausf\\\"ullen.\\\\");
         Main.newLine(writer);
     }
 

@@ -1316,7 +1316,9 @@ public class MainTest {
                     "\\vspace*{1ex}",
                     "",
                     "F\\\"uhren Sie den \\emphasize{Dijkstra}-Algorithmus auf diesem Graphen mit dem \\emphasize{Startknoten A} aus.",
-                    "F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]",
+                    "F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie in jeder Iteration der "
+                    + "\\\"au\\ss{}eren Schleife den aktuell betrachteten Knoten sowie die am Ende der jeweiligen "
+                    + "Iteration berechneten Distanzen angeben:\\\\[2ex]",
                     "\\ifprintanswers",
                     "",
                     "\\vspace*{-3ex}",

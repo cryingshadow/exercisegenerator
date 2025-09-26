@@ -218,7 +218,9 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
         final BufferedWriter writer
     ) throws IOException {
         writer.write("F\\\"uhren Sie den \\emphasize{Dijkstra}-Algorithmus auf den folgenden Graphen aus und ");
-        writer.write("f\\\"ullen Sie dazu die jeweiligen Tabellen aus.\\\\");
+        writer.write("f\\\"ullen Sie dazu die jeweiligen Tabellen aus, indem Sie in jeder Iteration ");
+        writer.write("der \\\"au\\ss{}eren Schleife den aktuell betrachteten Knoten sowie die am ");
+        writer.write("Ende der jeweiligen Iteration berechneten Distanzen angeben.\\\\");
         Main.newLine(writer);
     }
 
@@ -263,7 +265,9 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
                         writer.write("\\texttt{while}-Schleife eintragen:\\\\[2ex]");
                         break;
                     default:
-                        writer.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus:\\\\[2ex]");
+                        writer.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie in jeder Iteration ");
+                        writer.write("der \\\"au\\ss{}eren Schleife den aktuell betrachteten Knoten sowie die am ");
+                        writer.write("Ende der jeweiligen Iteration berechneten Distanzen angeben:\\\\[2ex]");
                 }
                 break;
             case NEVER:
