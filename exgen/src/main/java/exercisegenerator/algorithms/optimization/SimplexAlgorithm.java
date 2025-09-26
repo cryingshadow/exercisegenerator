@@ -572,7 +572,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     }
 
     private static String simplexTableColumnDefinition(final int cols) {
-        return String.format("|*{%d}{C{9mm}|}", cols);
+        return String.format("|*{%d}{C{1cm}|}", cols);
     }
 
     private static BigFraction simplexTargetValue(final BigFraction[] target, final int index) {
