@@ -10,7 +10,6 @@ import org.apache.commons.math3.fraction.*;
 
 import clit.*;
 import exercisegenerator.*;
-import exercisegenerator.structures.*;
 import exercisegenerator.structures.trees.*;
 
 public abstract class LaTeXUtils {
@@ -352,41 +351,34 @@ public abstract class LaTeXUtils {
 
     public static void printSamePageBeginning(
         final int step,
-        final Pair<Integer, Boolean> op,
+        final String width,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("\\begin{minipage}{\\linewidth}");
-        Main.newLine(writer);
-        writer.write("\\vspace*{2ex}");
-        Main.newLine(writer);
-        Main.newLine(writer);
-        if (op.y) {
-            writer.write("Schritt " + step + ": F\\\"uge " + op.x + " ein\\\\[-2ex]");
-        } else {
-            writer.write("Schritt " + step + ": L\\\"osche " + op.x + "\\\\[-2ex]");
-        }
-        Main.newLine(writer);
-        LaTeXUtils.printBeginning(LaTeXUtils.CENTER, writer);
+        printSamePageBeginning(step, width, Optional.empty(), writer);
     }
 
     public static void printSamePageBeginning(
         final int step,
         final String width,
+        final Optional<String> title,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("\\begin{minipage}{" + width + "}");
-        Main.newLine(writer);
+        printMinipageBeginning(width, writer);
         writer.write("\\vspace*{1ex}");
         Main.newLine(writer);
         writer.write("Schritt " + step + ":\\\\[1.2ex]");
         Main.newLine(writer);
-        LaTeXUtils.printAdjustboxBeginning(writer);
+        if (title.isPresent()) {
+            writer.write(title.get());
+            writer.write("\\\\[2ex]");
+            Main.newLine(writer);
+        }
+        printAdjustboxBeginning(writer);
     }
 
     public static void printSamePageEnd(final BufferedWriter writer) throws IOException {
-        LaTeXUtils.printAdjustboxEnd(writer);
-        writer.write("\\end{minipage}");
-        Main.newLine(writer);
+        printAdjustboxEnd(writer);
+        printMinipageEnd(writer);
     }
 
     public static void printSolutionSpaceBeginning(

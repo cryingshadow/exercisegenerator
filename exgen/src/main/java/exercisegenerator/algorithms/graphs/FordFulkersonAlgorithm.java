@@ -756,10 +756,9 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
             LaTeXUtils.printSamePageBeginning(
                 stepNumber,
                 configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.LINE_WIDTH,
+                Optional.of("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:"),
                 writer
             );
-            writer.write("N\\\"achstes Flussnetzwerk mit aktuellem Fluss:\\\\[2ex]");
-            Main.newLine(writer);
             GridGraphLayout<String, FlowAndCapacity> layout =
                 GraphAlgorithm.stretch(
                     (GridGraphLayout<String, FlowAndCapacity>)step.flowNetworkWithLayout().layout(),
@@ -786,11 +785,9 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         LaTeXUtils.printSamePageBeginning(
             first ? stepNumber : stepNumber + 1,
             configuration.twoColumns ? LaTeXUtils.TWO_COL_WIDTH : LaTeXUtils.LINE_WIDTH,
+            Optional.of(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME + ":"),
             writer
         );
-        writer.write(FordFulkersonAlgorithm.RESIDUAL_GRAPH_NAME);
-        writer.write(":\\\\[2ex]");
-        Main.newLine(writer);
         GridGraphLayout<String, Integer> layout =
             GraphAlgorithm.stretch(
                 (GridGraphLayout<String, Integer>)step.residualGraphWithLayout().layout(),
