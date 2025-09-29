@@ -149,7 +149,8 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     ) throws IOException {
         writer.write("Erzeugen Sie den jeweiligen \\emphasize{Huffman-Code} f\\\"ur die folgenden Eingaben und ");
         writer.write("geben Sie zus\\\"atzlich zu dem erstellten Code das jeweils erzeugte Codebuch sowie die Liste ");
-        writer.write("der Binärbäume nach ihrer Erzeugung und nach jeder Kombination von Binärbäumen an.\\\\");
+        writer.write("der Bin\\\"arb\\\"aume nach ihrer Erzeugung und nach jeder Kombination von Bin\\\"arb\\\"aumen ");
+        writer.write("an.\\\\");
     }
 
     @Override

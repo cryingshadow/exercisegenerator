@@ -234,8 +234,8 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgenden ");
-        writer.write("\\emphasize{Klauselmengen} jeweils erfüllbar sind. Geben Sie dazu auch den jeweiligen ");
+        writer.write("\\\"Uberpr\\\"ufen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgenden ");
+        writer.write("\\emphasize{Klauselmengen} jeweils erf\\\"ullbar sind. Geben Sie dazu auch den jeweiligen ");
         writer.write("DPLL-Baum an.\\\\");
         Main.newLine(writer);
     }
@@ -247,8 +247,9 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende ");
-        writer.write("\\emphasize{Klauselmenge} erfüllbar ist. Geben Sie dazu auch den zugehörigen DPLL-Baum an.");
+        writer.write("\\\"Uberpr\\\"ufen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende ");
+        writer.write("\\emphasize{Klauselmenge} erf\\\"ullbar ist. Geben Sie dazu auch den zugeh\\\"origen DPLL-Baum ");
+        writer.write("an.");
         Main.newLine(writer);
     }
 
@@ -311,9 +312,9 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Ergebnis: ");
         if (solution.isSAT()) {
-            writer.write("erfüllbar");
+            writer.write("erf\\\"ullbar");
         } else {
-            writer.write("unerfüllbar");
+            writer.write("unerf\\\"ullbar");
         }
         Main.newLine(writer);
     }

@@ -74,8 +74,8 @@ public class TopologicSort implements GraphAlgorithm<List<String>> {
         final BufferedWriter writer
     ) throws IOException {
         if (solution == null) {
-            writer.write("Es existiert keine topologische Sortierung für diesen Graphen, da er mindestens einen ");
-            writer.write("Zyklus enthält.");
+            writer.write("Es existiert keine topologische Sortierung f\\\"ur diesen Graphen, da er mindestens einen ");
+            writer.write("Zyklus enth\\\"alt.");
         } else {
             writer.write(solution.stream().collect(Collectors.joining(", ")));
         }

@@ -91,7 +91,7 @@ public class KosarajuSharirAlgorithm implements GraphAlgorithm<KosarajuSharirRes
     ) throws IOException {
         writer.write("Wenden Sie den \\emphasize{Kosaraju-Sharir-Algorithmus} an, um die starken ");
         writer.write("Zusammenhangskomponenten der folgenden Graphen zu finden. Geben Sie dazu jeweils den Stack ");
-        writer.write("nach Abschluss der ersten Phase und die Zuordnung der Knoten zu Repräsentanten der ");
+        writer.write("nach Abschluss der ersten Phase und die Zuordnung der Knoten zu Repr\\\"asentanten der ");
         writer.write("Zusammenhangskomponenten nach der zweiten Phase an.\\\\");
         Main.newLine(writer);
     }
@@ -105,7 +105,7 @@ public class KosarajuSharirAlgorithm implements GraphAlgorithm<KosarajuSharirRes
     ) throws IOException {
         writer.write("Wenden Sie den \\emphasize{Kosaraju-Sharir-Algorithmus} an, um die starken ");
         writer.write("Zusammenhangskomponenten des folgenden Graphen zu finden. Geben Sie dazu den Stack ");
-        writer.write("nach Abschluss der ersten Phase und die Zuordnung der Knoten zu Repräsentanten der ");
+        writer.write("nach Abschluss der ersten Phase und die Zuordnung der Knoten zu Repr\\\"asentanten der ");
         writer.write("Zusammenhangskomponenten nach der zweiten Phase an.\\\\");
         Main.newLine(writer);
     }

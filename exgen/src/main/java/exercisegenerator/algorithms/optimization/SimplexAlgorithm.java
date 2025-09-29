@@ -798,7 +798,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         SimplexAlgorithm.printSimplexProblem(problem, writer);
         if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
             LaTeXUtils.printVerticalProtectedSpace(writer);
-            writer.write("Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die ");
+            writer.write("Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert f\\\"ur dieses lineare Programm die ");
             writer.write("folgende optimale L\\\"osung:");
             Main.newLine(writer);
             final SimplexTableau beforeBranch = SimplexAlgorithm.getTableauBeforeFirstBranch(solution);

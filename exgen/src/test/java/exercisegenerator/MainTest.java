@@ -1394,8 +1394,9 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Überprüfen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende "
-                    + "\\emphasize{Klauselmenge} erfüllbar ist. Geben Sie dazu auch den zugehörigen DPLL-Baum an.",
+                    "\\\"Uberpr\\\"ufen Sie mithilfe des \\emphasize{DPLL-Algorithmus}, ob die folgende "
+                    + "\\emphasize{Klauselmenge} erf\\\"ullbar ist. Geben Sie dazu auch den zugeh\\\"origen DPLL-Baum "
+                    + "an.",
                     "\\begin{center}",
                     "\\begin{tikzpicture}",
                     "[node distance=0.5 and 1]",
@@ -1439,7 +1440,7 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Ergebnis: unerfüllbar"
+                    "Ergebnis: unerf\\\"ullbar"
                 )
             )
         );
@@ -2316,7 +2317,9 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Berechnen Sie eine Basis der P-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}."
+                    "Berechnen Sie eine Basis der P-Invarianten von $N$ mithilfe des "
+                    + "\\emphasize{Algorithmus von Farkas}. Geben Sie dazu die vom Algorithmus berechneten "
+                    + "Matrizen nach jeder Iteration der \\\"au\\ss{}eren Schleife an."
                 ),
                 List.of(
                     "{\\renewcommand{\\arraystretch}{1.2}",
@@ -2397,7 +2400,9 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Berechnen Sie eine Basis der T-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}."
+                    "Berechnen Sie eine Basis der T-Invarianten von $N$ mithilfe des "
+                    + "\\emphasize{Algorithmus von Farkas}. Geben Sie dazu die vom Algorithmus berechneten "
+                    + "Matrizen nach jeder Iteration der \\\"au\\ss{}eren Schleife an."
                 ),
                 List.of(
                     "{\\renewcommand{\\arraystretch}{1.2}",
@@ -3298,7 +3303,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Berechnen Sie den Wert der Reihe oder begründen Sie, warum sie nicht konvergiert:",
+                    "Berechnen Sie den Wert der Reihe oder begr\\\"unden Sie, warum sie nicht konvergiert:",
                     "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(1000 \\cdot \\left(\\frac{24}{25}\\right)^{i - 1}\\right)\\]"
                 ),
                 List.of(
@@ -3318,7 +3323,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Berechnen Sie den Wert der Reihe oder begründen Sie, warum sie nicht konvergiert:",
+                    "Berechnen Sie den Wert der Reihe oder begr\\\"unden Sie, warum sie nicht konvergiert:",
                     "\\[\\sum\\limits_{i = 1}^{\\infty} \\left(-20 \\cdot \\left(\\frac{13}{5}\\right)^{i - 1}\\right)\\]"
                 ),
                 List.of(
@@ -3706,7 +3711,7 @@ public class MainTest {
                 List.of(
                     "Wenden Sie den \\emphasize{Kosaraju-Sharir-Algorithmus} an, um die starken "
                     + "Zusammenhangskomponenten des folgenden Graphen zu finden. Geben Sie dazu den Stack "
-                    + "nach Abschluss der ersten Phase und die Zuordnung der Knoten zu Repräsentanten der "
+                    + "nach Abschluss der ersten Phase und die Zuordnung der Knoten zu Repr\\\"asentanten der "
                     + "Zusammenhangskomponenten nach der zweiten Phase an.\\\\",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
@@ -4763,7 +4768,7 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die folgende "
+                    "Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert f\\\"ur dieses lineare Programm die folgende "
                     + "optimale L\\\"osung:",
                     "\\[x_{1}^* = \\frac{7}{4}, x_{2}^* = \\frac{7}{2}\\]",
                     "Welche beiden linearen Programme in Standard-Maximum-Form m\\\"ussen nun gem\\\"a\\ss{} dem "
@@ -4832,7 +4837,7 @@ public class MainTest {
                     "",
                     "\\vspace*{1ex}",
                     "",
-                    "Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert für dieses lineare Programm die folgende "
+                    "Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert f\\\"ur dieses lineare Programm die folgende "
                     + "optimale L\\\"osung:",
                     "\\[x_{1}^* = \\frac{7}{4}, x_{2}^* = \\frac{7}{2}\\]",
                     "Welche beiden linearen Programme in Standard-Maximum-Form m\\\"ussen nun gem\\\"a\\ss{} dem "

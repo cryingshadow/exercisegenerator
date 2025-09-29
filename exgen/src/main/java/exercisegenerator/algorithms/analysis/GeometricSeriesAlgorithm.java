@@ -64,7 +64,7 @@ public class GeometricSeriesAlgorithm implements AlgorithmImplementation<Geometr
         final BufferedWriter writer
     ) throws IOException {
         writer.write(
-            "Berechnen Sie den Wert der folgenden Reihen oder begründen Sie, warum sie jeweils nicht konvergieren."
+            "Berechnen Sie den Wert der folgenden Reihen oder begr\\\"unden Sie, warum sie jeweils nicht konvergieren."
         );
         Main.newLine(writer);
     }
@@ -76,7 +76,7 @@ public class GeometricSeriesAlgorithm implements AlgorithmImplementation<Geometr
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Berechnen Sie den Wert der Reihe oder begründen Sie, warum sie nicht konvergiert:");
+        writer.write("Berechnen Sie den Wert der Reihe oder begr\\\"unden Sie, warum sie nicht konvergiert:");
         Main.newLine(writer);
     }
 

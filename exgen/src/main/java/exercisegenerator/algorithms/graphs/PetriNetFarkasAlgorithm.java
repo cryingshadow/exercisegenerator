@@ -151,7 +151,8 @@ public abstract class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Mat
         LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Berechnen Sie eine Basis der ");
         writer.write(this.kindOfInvariant());
-        writer.write("-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}.");
+        writer.write("-Invarianten von $N$ mithilfe des \\emphasize{Algorithmus von Farkas}. Geben Sie dazu die ");
+        writer.write("vom Algorithmus berechneten Matrizen nach jeder Iteration der \\\"au\\ss{}eren Schleife an.");
         Main.newLine(writer);
     }
 
@@ -165,7 +166,8 @@ public abstract class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Mat
         writer.write("Berechnen Sie jeweils eine Basis der ");
         writer.write(this.kindOfInvariant());
         writer.write("-Invarianten der folgenden \\emphasize{Petrinetze} mithilfe des ");
-        writer.write("\\emphasize{Algorithmus von Farkas}.");
+        writer.write("\\emphasize{Algorithmus von Farkas}. Geben Sie dazu jeweils die ");
+        writer.write("vom Algorithmus berechneten Matrizen nach jeder Iteration der \\\"au\\ss{}eren Schleife an.");
         Main.newLine(writer);
     }
 
