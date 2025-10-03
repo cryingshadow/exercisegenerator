@@ -1,5 +1,7 @@
 package exercisegenerator.structures.simulator;
 
+import java.util.*;
+
 public record ProgramVariable(String name, String type) implements ProgramExpression, ProgramVariableExpression {
 
     @Override
@@ -14,7 +16,12 @@ public record ProgramVariable(String name, String type) implements ProgramExpres
 
     @Override
     public ProgramState apply(final ProgramState state) {
-        return state.intermediateValue(ProgramExpressionPosition.EMPTY, this.read(state.memory()));
+        throw new IllegalStateException("Variable should never be executed!");
+    }
+
+    @Override
+    public Optional<ProgramValue> evaluate(final ProgramState state) {
+        return Optional.of(this.read(state.memory()));
     }
 
 }

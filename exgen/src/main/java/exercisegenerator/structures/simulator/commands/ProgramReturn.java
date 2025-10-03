@@ -8,21 +8,17 @@ public record ProgramReturn(ProgramExpression expression) implements ProgramComm
 
     @Override
     public ProgramState apply(final ProgramState state) {
-        final ProgramState nextState = this.expression.apply(state);
-        if (nextState.indermediateValues().containsKey(ProgramExpressionPosition.EMPTY)) {
-            final MemoryStack nextStack = new MemoryStack(nextState.memory().stack());
+        final Optional<ProgramValue> value = this.expression().evaluate(state);
+        if (value.isPresent()) {
+            final MemoryStack nextStack = new MemoryStack(state.memory().stack());
             final MemoryFrame top = nextStack.pop();
             return new ProgramState(
-                nextState.program(),
-                new Memory(nextStack, nextState.memory().heap()),
-                top.returnPosition(),
-                Map.of(
-                    top.returnPosition().position(),
-                    nextState.indermediateValues().get(ProgramExpressionPosition.EMPTY)
-                )
+                state.program(),
+                new Memory(nextStack.update(top.returnPosition(), value.get()), state.memory().heap()),
+                top.returnPosition()
             );
         }
-        return nextState;
+        return this.expression.apply(state);
     }
 
 }

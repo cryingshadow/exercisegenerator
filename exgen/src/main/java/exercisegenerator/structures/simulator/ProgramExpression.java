@@ -1,6 +1,11 @@
 package exercisegenerator.structures.simulator;
 
+import java.util.*;
+
 import exercisegenerator.structures.simulator.commands.*;
 
-@FunctionalInterface
-public interface ProgramExpression extends ProgramCommand {}
+public interface ProgramExpression extends ProgramCommand {
+
+    Optional<ProgramValue> evaluate(ProgramState state);
+
+}

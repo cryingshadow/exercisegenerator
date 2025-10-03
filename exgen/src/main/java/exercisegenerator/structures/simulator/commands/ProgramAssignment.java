@@ -11,19 +11,15 @@ public record ProgramAssignment(
 
     @Override
     public ProgramState apply(final ProgramState state) {
-        final ProgramState nextState = this.expression.apply(state);
-        if (nextState.indermediateValues().containsKey(ProgramExpressionPosition.EMPTY)) {
+        final Optional<ProgramValue> value = this.expression().evaluate(state);
+        if (value.isPresent()) {
             return new ProgramState(
-                nextState.program(),
-                this.variable.write(
-                    nextState.memory(),
-                    nextState.indermediateValues().get(ProgramExpressionPosition.EMPTY)
-                ),
-                state.position().increment(),
-                Map.of()
+                state.program(),
+                this.variable.write(state.memory(), value.get()).clearIntermediateValues(),
+                state.position().increment()
             );
         }
-        return nextState;
+        return this.expression.apply(state);
     }
 
 }
