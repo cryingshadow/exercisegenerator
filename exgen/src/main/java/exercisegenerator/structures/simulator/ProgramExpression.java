@@ -8,4 +8,6 @@ public interface ProgramExpression extends ProgramCommand {
 
     Optional<ProgramValue> evaluate(ProgramState state);
 
+    String type();
+
 }

@@ -4,12 +4,15 @@ import java.util.*;
 
 import exercisegenerator.structures.simulator.*;
 
-public record ProgramReturn(ProgramExpression expression) implements ProgramCommand {
+public record ProgramReturn(Optional<ProgramExpression> expression) implements ProgramCommand {
 
     @Override
     public ProgramState apply(final ProgramState state) {
-        final Optional<ProgramValue> value = this.expression().evaluate(state);
-        if (value.isPresent()) {
+        if (this.expression().isPresent()) {
+            final Optional<ProgramValue> value = this.expression().get().evaluate(state);
+            if (value.isEmpty()) {
+                return this.expression().get().apply(state);
+            }
             final MemoryStack nextStack = new MemoryStack(state.memory().stack());
             final MemoryFrame top = nextStack.pop();
             return new ProgramState(
@@ -18,7 +21,13 @@ public record ProgramReturn(ProgramExpression expression) implements ProgramComm
                 top.returnPosition()
             );
         }
-        return this.expression.apply(state);
+        final MemoryStack nextStack = new MemoryStack(state.memory().stack());
+        final MemoryFrame top = nextStack.pop();
+        return new ProgramState(
+            state.program(),
+            new Memory(nextStack, state.memory().heap()),
+            top.returnPosition()
+        );
     }
 
 }
