@@ -35,8 +35,18 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
                         }
 
                         @Override
+                        public String onEquivalence(final String left, final String right) {
+                            throw new IllegalStateException("An equivalence should not appear in a DNF!");
+                        }
+
+                        @Override
                         public String onFalse() {
                             return "\\code{0}";
+                        }
+
+                        @Override
+                        public String onImplication(final String antecedence, final String consequence) {
+                            throw new IllegalStateException("An implication should not appear in a DNF!");
                         }
 
                         @Override
@@ -52,6 +62,11 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
                         @Override
                         public String onVariable(final String name) {
                             return String.format("\\var{%s}", name);
+                        }
+
+                        @Override
+                        public String onXor(final String left, final String right) {
+                            throw new IllegalStateException("An XOR should not appear in a DNF!");
                         }
 
                     }
@@ -87,7 +102,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
 
     @Override
     public TruthTable generateProblem(final Parameters<Flag> options) {
-        final List<String> variables = PropositionalLogic.generateVariables(options);
+        final Set<String> variables = new TreeSet<String>(PropositionalLogic.generateVariables(options));
         final boolean[] truthValues = new boolean[(int)Math.pow(2, variables.size())];
         for (int i = 0; i < truthValues.length; i++) {
             truthValues[i] = Main.RANDOM.nextBoolean();

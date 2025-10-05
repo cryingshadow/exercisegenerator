@@ -5,7 +5,7 @@ import java.util.stream.*;
 
 public class Disjunction extends PropositionalFormula {
 
-    public static PropositionalFormula createDisjunction(final List<? extends PropositionalFormula> children) {
+    public static PropositionalFormula createDisjunction(final List<PropositionalFormula> children) {
         return Disjunction.createDisjunction(children.stream());
     }
 
@@ -13,7 +13,7 @@ public class Disjunction extends PropositionalFormula {
         return Disjunction.createDisjunction(Arrays.stream(children));
     }
 
-    public static PropositionalFormula createDisjunction(final Stream<? extends PropositionalFormula> stream) {
+    public static PropositionalFormula createDisjunction(final Stream<PropositionalFormula> stream) {
         final List<PropositionalFormula> children =
             stream
             .flatMap(child -> child.isDisjunction() ? ((Disjunction)child).children.stream() : Stream.of(child))
@@ -27,9 +27,9 @@ public class Disjunction extends PropositionalFormula {
         return new Disjunction(children);
     }
 
-    public final List<? extends PropositionalFormula> children;
+    public final List<PropositionalFormula> children;
 
-    private Disjunction(final List<? extends PropositionalFormula> children) {
+    private Disjunction(final List<PropositionalFormula> children) {
         this.children = children;
     }
 
@@ -53,15 +53,17 @@ public class Disjunction extends PropositionalFormula {
     }
 
     @Override
-    public List<String> getVariableNames() {
-        final Set<String> variables = new LinkedHashSet<String>();
-        this.children
+    public List<PropositionalFormula> getChildren() {
+        return this.children;
+    }
+
+    @Override
+    public Set<String> getVariableNames() {
+        return this.children
             .stream()
             .map(PropositionalFormula::getVariableNames)
-            .forEach(list -> variables.addAll(list));
-        final List<String> result = new ArrayList<String>(variables);
-        Collections.sort(result);
-        return result;
+            .flatMap(Set::stream)
+            .collect(Collectors.toCollection(TreeSet::new));
     }
 
     @Override
@@ -78,6 +80,13 @@ public class Disjunction extends PropositionalFormula {
         final LinkedList<PropositionalFormula> newChildren = new LinkedList<PropositionalFormula>(this.children);
         newChildren.addFirst(firstChild);
         return new Disjunction(newChildren);
+    }
+
+    @Override
+    public PropositionalFormula replaceChild(final int index, final PropositionalFormula newChild) {
+        final List<PropositionalFormula> newChildren = new ArrayList<PropositionalFormula>(this.children);
+        newChildren.set(index, newChild);
+        return Disjunction.createDisjunction(newChildren);
     }
 
     @Override

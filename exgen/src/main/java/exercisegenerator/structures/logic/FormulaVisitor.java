@@ -8,12 +8,18 @@ public interface FormulaVisitor<T> {
 
     T onDisjunction(List<T> children);
 
+    T onEquivalence(T left, T right);
+
     T onFalse();
+
+    T onImplication(T antecedence, T consequence);
 
     T onNegation(T child);
 
     T onTrue();
 
     T onVariable(String name);
+
+    T onXor(T left, T right);
 
 }

@@ -27,9 +27,9 @@ public class Conjunction extends PropositionalFormula {
         return new Conjunction(children);
     }
 
-    public final List<? extends PropositionalFormula> children;
+    public final List<PropositionalFormula> children;
 
-    private Conjunction(final List<? extends PropositionalFormula> children) {
+    private Conjunction(final List<PropositionalFormula> children) {
         this.children = children;
     }
 
@@ -53,15 +53,17 @@ public class Conjunction extends PropositionalFormula {
     }
 
     @Override
-    public List<String> getVariableNames() {
-        final Set<String> variables = new LinkedHashSet<String>();
-        this.children
+    public List<PropositionalFormula> getChildren() {
+        return this.children;
+    }
+
+    @Override
+    public Set<String> getVariableNames() {
+        return this.children
             .stream()
             .map(PropositionalFormula::getVariableNames)
-            .forEach(list -> variables.addAll(list));
-        final List<String> result = new ArrayList<String>(variables);
-        Collections.sort(result);
-        return result;
+            .flatMap(Set::stream)
+            .collect(Collectors.toCollection(TreeSet::new));
     }
 
     @Override
@@ -84,6 +86,13 @@ public class Conjunction extends PropositionalFormula {
             newChildren.addFirst(firstChild);
         }
         return new Conjunction(newChildren);
+    }
+
+    @Override
+    public PropositionalFormula replaceChild(final int index, final PropositionalFormula newChild) {
+        final List<PropositionalFormula> newChildren = new ArrayList<PropositionalFormula>(this.children);
+        newChildren.set(index, newChild);
+        return Conjunction.createConjunction(newChildren);
     }
 
     @Override

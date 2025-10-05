@@ -30,8 +30,13 @@ public class PropositionalVariable extends PropositionalFormula {
     }
 
     @Override
-    public List<String> getVariableNames() {
-        return Collections.singletonList(this.name);
+    public List<PropositionalFormula> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public Set<String> getVariableNames() {
+        return Collections.singleton(this.name);
     }
 
     @Override
@@ -42,6 +47,11 @@ public class PropositionalVariable extends PropositionalFormula {
     @Override
     public boolean isVariable() {
         return true;
+    }
+
+    @Override
+    public PropositionalFormula replaceChild(final int index, final PropositionalFormula newChild) {
+        throw new IllegalStateException("One cannot replace a child of a variable!");
     }
 
     @Override

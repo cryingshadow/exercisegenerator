@@ -17,7 +17,7 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
 
     @Override
     public TruthTable apply(final PropositionalFormula formula) {
-        final List<String> variables = formula.getVariableNames();
+        final Set<String> variables = formula.getVariableNames();
         final List<PropositionalInterpretation> interpretations =
             TruthTable.computeAllInterpretations(variables);
         final boolean[] truthValues = new boolean[interpretations.size()];

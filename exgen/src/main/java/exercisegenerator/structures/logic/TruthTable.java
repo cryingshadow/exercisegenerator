@@ -2,12 +2,13 @@ package exercisegenerator.structures.logic;
 
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 import exercisegenerator.io.*;
 
 public class TruthTable {
 
-    public static List<PropositionalInterpretation> computeAllInterpretations(final List<String> variables) {
+    public static List<PropositionalInterpretation> computeAllInterpretations(final Set<String> variables) {
         final List<PropositionalInterpretation> result = new LinkedList<PropositionalInterpretation>();
         final BigInteger size = BigInteger.TWO.pow(variables.size());
         BigInteger current = BigInteger.ZERO;
@@ -23,10 +24,12 @@ public class TruthTable {
         if (parts.length != 2) {
             throw new TruthTableParseException();
         }
-        final List<String> variables =
+        final Set<String> variables =
             parts[0].isBlank() ?
-                Collections.emptyList() :
-                    Arrays.stream(parts[0].split(",")).map(String::strip).toList();
+                Set.of() :
+                    Arrays.stream(parts[0].split(","))
+                    .map(String::strip)
+                    .collect(Collectors.toCollection(TreeSet::new));
         final boolean[] truthValues = new boolean[(int)Math.pow(2, variables.size())];
         final char[] bits = parts[1].strip().toCharArray();
         if (bits.length != truthValues.length) {
@@ -43,7 +46,7 @@ public class TruthTable {
 
     public static PropositionalInterpretation toInterpretation(
         final BigInteger current,
-        final List<String> variables
+        final Set<String> variables
     ) {
         final PropositionalInterpretation result = new PropositionalInterpretation();
         int i = variables.size() - 1;
@@ -65,9 +68,9 @@ public class TruthTable {
 
     public final boolean[] truthValues;
 
-    public final List<String> variables;
+    public final Set<String> variables;
 
-    public TruthTable(final List<String> variables, final boolean[] truthValues) {
+    public TruthTable(final Set<String> variables, final boolean[] truthValues) {
         this.variables = variables;
         this.truthValues = truthValues;
     }

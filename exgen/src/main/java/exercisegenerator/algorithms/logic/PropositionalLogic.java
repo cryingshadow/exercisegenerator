@@ -15,7 +15,7 @@ import exercisegenerator.structures.logic.*;
 abstract class PropositionalLogic {
 
     private static interface CompositeSimplification
-    extends BiFunction<List<? extends PropositionalFormula>, Boolean, Optional<PropositionalFormula>> {}
+    extends BiFunction<List<PropositionalFormula>, Boolean, Optional<PropositionalFormula>> {}
 
     private static final List<CompositeSimplification> COMPOSITE_SIMPLIFICATION_RULES =
         List.of(
@@ -42,12 +42,17 @@ abstract class PropositionalLogic {
                 new PropositionalVariable(variables.get(Main.RANDOM.nextInt(variables.size())));
             formulas.add(Main.RANDOM.nextBoolean() ? var : var.negate());
         }
-        while (formulas.size() > 3) {
+        while (formulas.size() > 2) {
             final int number = Main.RANDOM.nextInt(formulas.size() - 1) + 1;
-            if (number == 1) {
+            switch (number) {
+            case 1:
                 final PropositionalFormula formula = formulas.remove(Main.RANDOM.nextInt(formulas.size()));
                 formulas.add(formula.negate());
-            } else {
+                break;
+            case 2:
+                PropositionalLogic.combineInfix(formulas);
+                break;
+            default:
                 final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
                 for (int i = 0; i < number; i++) {
                     children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
@@ -59,17 +64,8 @@ abstract class PropositionalLogic {
                 );
             }
         }
-        while (formulas.size() > 1) {
-            final int number = formulas.size() > 2 ? Main.RANDOM.nextInt(formulas.size() - 2) + 2 : 2;
-            final List<PropositionalFormula> children = new LinkedList<PropositionalFormula>();
-            for (int i = 0; i < number; i++) {
-                children.add(formulas.remove(Main.RANDOM.nextInt(formulas.size())));
-            }
-            formulas.add(
-                Main.RANDOM.nextBoolean() ?
-                    Conjunction.createConjunction(children) :
-                        Disjunction.createDisjunction(children)
-            );
+        if (formulas.size() > 1) {
+            PropositionalLogic.combineInfix(formulas);
         }
         return formulas.get(0);
     }
@@ -141,8 +137,18 @@ abstract class PropositionalLogic {
                     }
 
                     @Override
+                    public String onEquivalence(final String left, final String right) {
+                        return String.format("(%s \\leftrightarrow %s)", left, right);
+                    }
+
+                    @Override
                     public String onFalse() {
                         return "\\code{0}";
+                    }
+
+                    @Override
+                    public String onImplication(final String antecedence, final String consequence) {
+                        return String.format("(%s \\rightarrow %s)", antecedence, consequence);
                     }
 
                     @Override
@@ -158,6 +164,11 @@ abstract class PropositionalLogic {
                     @Override
                     public String onVariable(final String name) {
                         return String.format("\\var{%s}", name);
+                    }
+
+                    @Override
+                    public String onXor(final String left, final String right) {
+                        return String.format("(%s \\oplus %s)", left, right);
                     }
 
                 }
@@ -229,21 +240,26 @@ abstract class PropositionalLogic {
         result.add(formula);
         PropositionalFormula current = formula;
         while (!PropositionalLogic.isInNF(current, shouldBeCNF)) {
-            final Optional<PropositionalFormula> simplified = PropositionalLogic.simplify(current);
-            if (simplified.isPresent()) {
-                current = simplified.get();
+            final Optional<PropositionalFormula> transformed = PropositionalLogic.transformOperators(current);
+            if (transformed.isPresent()) {
+                current = transformed.get();
             } else {
-                final Optional<PropositionalFormula> negationMoreInside =
-                    PropositionalLogic.moveNegationToLiterals(current);
-                if (negationMoreInside.isPresent()) {
-                    current = negationMoreInside.get();
+                final Optional<PropositionalFormula> simplified = PropositionalLogic.simplify(current);
+                if (simplified.isPresent()) {
+                    current = simplified.get();
                 } else {
-                    final Optional<PropositionalFormula> deMorgan =
-                        PropositionalLogic.applyDistributiveLaw(current, shouldBeCNF);
-                    if (deMorgan.isPresent()) {
-                        current = deMorgan.get();
+                    final Optional<PropositionalFormula> negationMoreInside =
+                        PropositionalLogic.moveNegationToLiterals(current);
+                    if (negationMoreInside.isPresent()) {
+                        current = negationMoreInside.get();
                     } else {
-                        current = null;
+                        final Optional<PropositionalFormula> deMorgan =
+                            PropositionalLogic.applyDistributiveLaw(current, shouldBeCNF);
+                        if (deMorgan.isPresent()) {
+                            current = deMorgan.get();
+                        } else {
+                            current = null;
+                        }
                     }
                 }
             }
@@ -260,7 +276,7 @@ abstract class PropositionalLogic {
     }
 
     private static Optional<PropositionalFormula> applyDistributiveLaw(
-        final List<? extends PropositionalFormula> childrenOfFormula,
+        final List<PropositionalFormula> childrenOfFormula,
         final int indexOfSuitableChild,
         final PropositionalFormula suitableChild,
         final boolean formulaIsConjunction
@@ -275,8 +291,7 @@ abstract class PropositionalLogic {
             formulaIsConjunction ?
                 x -> Conjunction.createConjunction(x, factor) :
                     x -> Disjunction.createDisjunction(x, factor);
-        final Stream<PropositionalFormula> outerChildren =
-            PropositionalLogic.getChildren(suitableChild).get().stream().map(mapper);
+        final Stream<PropositionalFormula> outerChildren = suitableChild.getChildren().stream().map(mapper);
         return Optional.of(
             formulaIsConjunction ?
                 Disjunction.createDisjunction(outerChildren) :
@@ -288,11 +303,10 @@ abstract class PropositionalLogic {
         final PropositionalFormula formula,
         final boolean shouldBeCNF
     ) {
-        final Optional<List<? extends PropositionalFormula>> optionalChildren = PropositionalLogic.getChildren(formula);
-        if (optionalChildren.isEmpty()) {
+        final List<PropositionalFormula> children = formula.getChildren();
+        if (children.size() < 2) {
             return Optional.empty();
         }
-        final List<? extends PropositionalFormula> children = optionalChildren.get();
         final boolean conjunction = formula.isConjunction();
         final boolean needsDistribution = shouldBeCNF != conjunction;
         final Predicate<PropositionalFormula> suitableChild =
@@ -317,26 +331,28 @@ abstract class PropositionalLogic {
         return Optional.empty();
     }
 
-    private static Optional<List<? extends PropositionalFormula>> getChildren(final PropositionalFormula formula) {
-        if (formula.isConjunction()) {
-            return Optional.of(((Conjunction)formula).children);
-        }
-        if (formula.isDisjunction()) {
-            return Optional.of(((Disjunction)formula).children);
-        }
-        return Optional.empty();
+    private static void combineInfix(final List<PropositionalFormula> formulas) {
+        formulas.add(
+            PropositionalLogic.toInfixFormula(
+                Main.RANDOM.nextInt(5),
+                formulas.remove(Main.RANDOM.nextInt(formulas.size())),
+                formulas.remove(Main.RANDOM.nextInt(formulas.size()))
+            )
+        );
     }
 
     private static boolean isInNF(final PropositionalFormula formula, final boolean shouldBeCNF) {
+        if (formula.isXor() || formula.isEquivalence() || formula.isImplication()) {
+            return false;
+        }
         if (formula.isNegation()) {
             final Negation negation = (Negation)formula;
             return negation.child.isConstant() || negation.child.isVariable();
         }
-        final Optional<List<? extends PropositionalFormula>> optionalChildren = PropositionalLogic.getChildren(formula);
-        if (optionalChildren.isEmpty()) {
+        final List<PropositionalFormula> children = formula.getChildren();
+        if (children.isEmpty()) {
             return true;
         }
-        final List<? extends PropositionalFormula> children = optionalChildren.get();
         for (final PropositionalFormula child : children) {
             if (shouldBeCNF == formula.isConjunction()) {
                 if (!PropositionalLogic.isInNF(child, shouldBeCNF)) {
@@ -350,15 +366,17 @@ abstract class PropositionalLogic {
     }
 
     private static boolean isJunctionOfLiterals(final PropositionalFormula formula, final boolean shouldBeConjunction) {
+        if (formula.isXor() || formula.isEquivalence() || formula.isImplication()) {
+            return false;
+        }
         if (formula.isNegation()) {
             final Negation negation = (Negation)formula;
             return negation.child.isConstant() || negation.child.isVariable();
         }
-        final Optional<List<? extends PropositionalFormula>> optionalChildren = PropositionalLogic.getChildren(formula);
-        if (optionalChildren.isEmpty()) {
+        final List<PropositionalFormula> children = formula.getChildren();
+        if (children.isEmpty()) {
             return true;
         }
-        final List<? extends PropositionalFormula> children = optionalChildren.get();
         if (shouldBeConjunction != formula.isConjunction()) {
             return false;
         }
@@ -376,11 +394,9 @@ abstract class PropositionalLogic {
             if (negation.child.isNegation()) {
                 return Optional.of(((Negation)negation.child).child);
             }
-            final Optional<List<? extends PropositionalFormula>> optionalChildren =
-                PropositionalLogic.getChildren(negation.child);
-            if (optionalChildren.isPresent()) {
-                final Stream<PropositionalFormula> negated =
-                    optionalChildren.get().stream().map(PropositionalFormula::negate);
+            final List<PropositionalFormula> children = negation.child.getChildren();
+            if (children.size() > 1) {
+                final Stream<PropositionalFormula> negated = children.stream().map(PropositionalFormula::negate);
                 return Optional.of(
                     negation.child.isConjunction() ?
                         Disjunction.createDisjunction(negated) :
@@ -389,9 +405,8 @@ abstract class PropositionalLogic {
             }
             return Optional.empty();
         }
-        final Optional<List<? extends PropositionalFormula>> optionalChildren = PropositionalLogic.getChildren(formula);
-        if (optionalChildren.isPresent()) {
-            final List<? extends PropositionalFormula> children = optionalChildren.get();
+        final List<PropositionalFormula> children = formula.getChildren();
+        if (children.size() > 1) {
             for (int i = 0; i < children.size(); i++) {
                 final Optional<PropositionalFormula> changedChild =
                     PropositionalLogic.moveNegationToLiterals(children.get(i));
@@ -415,11 +430,10 @@ abstract class PropositionalLogic {
         if (simplifiedNegation.isPresent()) {
             return simplifiedNegation;
         }
-        final Optional<List<? extends PropositionalFormula>> optionalChildren = PropositionalLogic.getChildren(formula);
-        if (optionalChildren.isEmpty()) {
+        final List<PropositionalFormula> children = formula.getChildren();
+        if (children.size() < 2) {
             return Optional.empty();
         }
-        final List<? extends PropositionalFormula> children = optionalChildren.get();
         final Boolean conjunction = formula.isConjunction();
         for (
             final CompositeSimplification simplificationRule :
@@ -486,7 +500,7 @@ abstract class PropositionalLogic {
             if (conjunction ? !child.isDisjunction() : !child.isConjunction()) {
                 continue;
             }
-            final List<? extends PropositionalFormula> childChildren = PropositionalLogic.getChildren(child).get();
+            final List<PropositionalFormula> childChildren = child.getChildren();
             for (final PropositionalFormula otherChild : children) {
                 if (child.equals(otherChild)) {
                     continue;
@@ -553,12 +567,12 @@ abstract class PropositionalLogic {
     }
 
     private static Optional<PropositionalFormula> simplifyRemovableConstants(
-        final List<? extends PropositionalFormula> children,
+        final List<PropositionalFormula> children,
         final Boolean conjunction
     ) {
         final PropositionalFormula removableConstant = conjunction ? True.TRUE : False.FALSE;
         if (children.contains(removableConstant)) {
-            final Stream<? extends PropositionalFormula> reduced =
+            final Stream<PropositionalFormula> reduced =
                 children.stream().filter(child -> !removableConstant.equals(child));
             return Optional.of(
                 conjunction ? Conjunction.createConjunction(reduced) : Disjunction.createDisjunction(reduced)
@@ -568,7 +582,7 @@ abstract class PropositionalLogic {
     }
 
     private static Optional<PropositionalFormula> simplifySingleChild(
-        final List<? extends PropositionalFormula> children,
+        final List<PropositionalFormula> children,
         final Boolean conjunction
     ) {
         if (children.size() == 1) {
@@ -601,11 +615,61 @@ abstract class PropositionalLogic {
         return new Clause(PropositionalLogic.toLiteral(simplifiedPurelyDisjunctiveFormula));
     }
 
+    private static PropositionalFormula toInfixFormula(
+        final int operator,
+        final PropositionalFormula left,
+        final PropositionalFormula right
+    ) {
+        switch (operator) {
+        case 0:
+            return Conjunction.createConjunction(left, right);
+        case 1:
+            return Disjunction.createDisjunction(left, right);
+        case 2:
+            return new Implication(left, right);
+        case 3:
+            return new Equivalence(left, right);
+        case 4:
+            return new Xor(left, right);
+        }
+        throw new IllegalStateException("Should never be reached!");
+    }
+
     private static Literal toLiteral(final PropositionalFormula nonConstantLiteral) {
         if (nonConstantLiteral.isNegation()) {
             return new Literal((PropositionalVariable)((Negation)nonConstantLiteral).child, true);
         }
         return new Literal((PropositionalVariable)nonConstantLiteral, false);
+    }
+
+    private static Optional<PropositionalFormula> transformOperators(final PropositionalFormula formula) {
+        if (formula.isXor()) {
+            final Xor xor = (Xor)formula;
+            return Optional.of(new Equivalence(xor.left, xor.right).negate());
+        }
+        if (formula.isEquivalence()) {
+            final Equivalence equivalence = (Equivalence)formula;
+            return Optional.of(
+                Conjunction.createConjunction(
+                    new Implication(equivalence.left, equivalence.right),
+                    new Implication(equivalence.right, equivalence.left)
+                )
+            );
+        }
+        if (formula.isImplication()) {
+            final Implication implication = (Implication)formula;
+            return Optional.of(
+                Disjunction.createDisjunction(implication.antecedence.negate(), implication.consequence)
+            );
+        }
+        final List<PropositionalFormula> children = formula.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            final Optional<PropositionalFormula> transformedChild = PropositionalLogic.transformOperators(children.get(i));
+            if (transformedChild.isPresent()) {
+                return Optional.of(formula.replaceChild(i, transformedChild.get()));
+            }
+        }
+        return Optional.empty();
     }
 
 }

@@ -20,8 +20,13 @@ public class False extends PropositionalFormula {
     }
 
     @Override
-    public List<String> getVariableNames() {
-        return Collections.emptyList();
+    public List<PropositionalFormula> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public Set<String> getVariableNames() {
+        return Set.of();
     }
 
     @Override
@@ -32,6 +37,11 @@ public class False extends PropositionalFormula {
     @Override
     public boolean isConstant() {
         return true;
+    }
+
+    @Override
+    public PropositionalFormula replaceChild(final int index, final PropositionalFormula newChild) {
+        throw new IllegalStateException("One cannot replace a child of a constant!");
     }
 
     @Override

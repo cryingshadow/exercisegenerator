@@ -122,6 +122,15 @@ public abstract class PropositionalFormula {
         if (remainingFormula.startsWith("||")) {
             return PropositionalFormula.parseDisjunction(leftConjuncts, remainingFormula.substring(2));
         }
+        if (remainingFormula.startsWith("->")) {
+            return new Implication(leftConjuncts, PropositionalFormula.parse(remainingFormula.substring(2)));
+        }
+        if (remainingFormula.startsWith("<->")) {
+            return new Equivalence(leftConjuncts, PropositionalFormula.parse(remainingFormula.substring(3)));
+        }
+        if (remainingFormula.startsWith("+")) {
+            return new Xor(leftConjuncts, PropositionalFormula.parse(remainingFormula.substring(1)));
+        }
         throw new PropositionalFormulaParseException();
     }
 
@@ -151,7 +160,9 @@ public abstract class PropositionalFormula {
 
     public abstract boolean evaluate(PropositionalInterpretation interpretation);
 
-    public abstract List<String> getVariableNames();
+    public abstract List<PropositionalFormula> getChildren();
+
+    public abstract Set<String> getVariableNames();
 
     @Override
     public abstract int hashCode();
@@ -168,6 +179,14 @@ public abstract class PropositionalFormula {
         return false;
     }
 
+    public boolean isEquivalence() {
+        return false;
+    }
+
+    public boolean isImplication() {
+        return false;
+    }
+
     public boolean isNegation() {
         return false;
     }
@@ -176,9 +195,15 @@ public abstract class PropositionalFormula {
         return false;
     }
 
+    public boolean isXor() {
+        return false;
+    }
+
     public PropositionalFormula negate() {
         return new Negation(this);
     }
+
+    public abstract PropositionalFormula replaceChild(int index, PropositionalFormula newChild);
 
     @Override
     public abstract String toString();

@@ -11,6 +11,10 @@ import exercisegenerator.structures.logic.*;
 
 public class PropositionalLogicTest {
 
+    private static Set<String> set(final String... variables) {
+        return new TreeSet<String>(Arrays.asList(variables));
+    }
+
     @DataProvider
     public Object[][] dpllData() throws PropositionalFormulaParseException {
         final PropositionalVariable a = new PropositionalVariable("A");
@@ -113,24 +117,24 @@ public class PropositionalLogicTest {
     public Object[][] fromTruthTableData() throws PropositionalFormulaParseException {
         return new Object[][] {
             {
-                new TruthTable(Arrays.asList("A", "B"), new boolean[] {false, false, false, true}),
+                new TruthTable(PropositionalLogicTest.set("A", "B"), new boolean[] {false, false, false, true}),
                 PropositionalFormula.parse("A && B")
             },
             {
-                new TruthTable(Arrays.asList("A", "B"), new boolean[] {false, true, true, true}),
+                new TruthTable(PropositionalLogicTest.set("A", "B"), new boolean[] {false, true, true, true}),
                 PropositionalFormula.parse("!A && B || A && !B || A && B")
             },
             {
-                new TruthTable(Arrays.asList("A", "B"), new boolean[] {true, false, true, true}),
+                new TruthTable(PropositionalLogicTest.set("A", "B"), new boolean[] {true, false, true, true}),
                 PropositionalFormula.parse("!A && !B || A && !B || A && B")
             },
             {
-                new TruthTable(Arrays.asList("A", "B"), new boolean[] {true, true, true, false}),
+                new TruthTable(PropositionalLogicTest.set("A", "B"), new boolean[] {true, true, true, false}),
                 PropositionalFormula.parse("!A && !B || !A && B || A && !B")
             },
             {
                 new TruthTable(
-                    Arrays.asList("A", "B", "C"),
+                    PropositionalLogicTest.set("A", "B", "C"),
                     new boolean[] {false, false, false, true, true, true, true, true}
                 ),
                 PropositionalFormula.parse(
@@ -139,7 +143,7 @@ public class PropositionalLogicTest {
             },
             {
                 new TruthTable(
-                    Arrays.asList("A", "B", "C"),
+                    PropositionalLogicTest.set("A", "B", "C"),
                     new boolean[] {false, true, false, true, false, false, false, true}
                 ),
                 PropositionalFormula.parse("!A && !B && C || !A && B && C || A && B && C")
@@ -161,6 +165,7 @@ public class PropositionalLogicTest {
         final PropositionalFormula formula5 = PropositionalFormula.parse("!(A && B)");
         final PropositionalFormula formula6 =
             PropositionalFormula.parse("!((A || B || !(B || !C)) && !(B || (!A && (C || !B))))");
+        final PropositionalFormula formula7 = PropositionalFormula.parse("A + B");
         return new Object[][] {
             {formula1, List.of(formula1)},
             {formula2, List.of(formula2)},
@@ -176,7 +181,8 @@ public class PropositionalLogicTest {
                     PropositionalFormula.parse("(!A && !B && !!(B || !C)) || B || (!A && (C || !B))"),
                     PropositionalFormula.parse("(!A && !B && (B || !C)) || B || (!A && (C || !B))"),
                     PropositionalFormula.parse(
-                        "(!A || B || (!A && (C || !B))) && (!B || B || (!A && (C || !B))) && (B || !C || B || (!A && (C || !B)))"
+                        "(!A || B || (!A && (C || !B))) && (!B || B || (!A && (C || !B))) "
+                        + "&& (B || !C || B || (!A && (C || !B)))"
                     ),
                     PropositionalFormula.parse(
                         "(!A || B) && (!B || B || (!A && (C || !B))) && (B || !C || B || (!A && (C || !B)))"
@@ -188,6 +194,28 @@ public class PropositionalLogicTest {
                     PropositionalFormula.parse("(!A || B) && (C || !B || B || !C)"),
                     PropositionalFormula.parse("(!A || B) && 1"),
                     PropositionalFormula.parse("!A || B")
+                )
+            },
+            {
+                formula7,
+                List.of(
+                    formula7,
+                    PropositionalFormula.parse("!(A <-> B)"),
+                    PropositionalFormula.parse("!((A -> B) && (B -> A))"),
+                    PropositionalFormula.parse("!((!A || B) && (B -> A))"),
+                    PropositionalFormula.parse("!((!A || B) && (!B || A))"),
+                    PropositionalFormula.parse("(!(!A || B) || !(!B || A))"),
+                    PropositionalFormula.parse("((!!A && !B) || !(!B || A))"),
+                    PropositionalFormula.parse("((A && !B) || !(!B || A))"),
+                    PropositionalFormula.parse("((A && !B) || (!!B && !A))"),
+                    PropositionalFormula.parse("((A && !B) || (B && !A))"),
+                    PropositionalFormula.parse("((A || (B && !A)) && (!B || (B && !A)))"),
+                    PropositionalFormula.parse("((B || A) && (!A || A) && (!B || (B && !A)))"),
+                    PropositionalFormula.parse("((B || A) && 1 && (!B || (B && !A)))"),
+                    PropositionalFormula.parse("((B || A) && (!B || (B && !A)))"),
+                    PropositionalFormula.parse("((B || A) && (B || !B) && (!A || !B))"),
+                    PropositionalFormula.parse("((B || A) && 1 && (!A || !B))"),
+                    PropositionalFormula.parse("((B || A) && (!A || !B))")
                 )
             }
         };
@@ -240,31 +268,31 @@ public class PropositionalLogicTest {
         return new Object[][] {
             {
                 PropositionalFormula.parse("A && B"),
-                new TruthTable(Arrays.asList("A", "B"), new boolean[] {false, false, false, true})
+                new TruthTable(PropositionalLogicTest.set("A", "B"), new boolean[] {false, false, false, true})
             },
             {
                 PropositionalFormula.parse("A || B"),
-                new TruthTable(Arrays.asList("A", "B"), new boolean[] {false, true, true, true})
+                new TruthTable(PropositionalLogicTest.set("A", "B"), new boolean[] {false, true, true, true})
             },
             {
                 PropositionalFormula.parse("A || !B"),
-                new TruthTable(Arrays.asList("A", "B"), new boolean[] {true, false, true, true})
+                new TruthTable(PropositionalLogicTest.set("A", "B"), new boolean[] {true, false, true, true})
             },
             {
                 PropositionalFormula.parse("!(A && B)"),
-                new TruthTable(Arrays.asList("A", "B"), new boolean[] {true, true, true, false})
+                new TruthTable(PropositionalLogicTest.set("A", "B"), new boolean[] {true, true, true, false})
             },
             {
                 PropositionalFormula.parse("A || B && C"),
                 new TruthTable(
-                    Arrays.asList("A", "B", "C"),
+                    PropositionalLogicTest.set("A", "B", "C"),
                     new boolean[] {false, false, false, true, true, true, true, true}
                 )
             },
             {
                 PropositionalFormula.parse("!A && C || B && C"),
                 new TruthTable(
-                    Arrays.asList("A", "B", "C"),
+                    PropositionalLogicTest.set("A", "B", "C"),
                     new boolean[] {false, true, false, true, false, false, false, true}
                 )
             }

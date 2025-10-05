@@ -25,7 +25,12 @@ public class Negation extends PropositionalFormula {
     }
 
     @Override
-    public List<String> getVariableNames() {
+    public List<PropositionalFormula> getChildren() {
+        return List.of(this.child);
+    }
+
+    @Override
+    public Set<String> getVariableNames() {
         return this.child.getVariableNames();
     }
 
@@ -37,6 +42,11 @@ public class Negation extends PropositionalFormula {
     @Override
     public boolean isNegation() {
         return true;
+    }
+
+    @Override
+    public PropositionalFormula replaceChild(final int index, final PropositionalFormula newChild) {
+        return newChild.negate();
     }
 
     @Override
