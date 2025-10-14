@@ -27,7 +27,7 @@ public record ProgramReturn(Optional<ProgramExpression> expression) implements P
             state.program(),
             new Memory(nextStack, state.memory().heap()),
             top.returnPosition()
-        );
+        ).incrementPosition();
     }
 
 }

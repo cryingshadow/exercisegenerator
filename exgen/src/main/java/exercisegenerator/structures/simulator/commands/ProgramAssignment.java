@@ -16,8 +16,8 @@ public record ProgramAssignment(
             return new ProgramState(
                 state.program(),
                 this.variable.write(state.memory(), value.get()).clearIntermediateValues(),
-                state.position().increment()
-            );
+                state.position()
+            ).incrementPosition();
         }
         return this.expression.apply(state);
     }

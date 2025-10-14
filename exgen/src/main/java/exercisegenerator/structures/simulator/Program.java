@@ -2,20 +2,24 @@ package exercisegenerator.structures.simulator;
 
 import java.util.*;
 
-import exercisegenerator.structures.simulator.commands.*;
-
-public class Program extends ArrayList<ProgramCommand> {
+public class Program extends LinkedHashMap<String, ProgramDataStructure> {
 
     private static final long serialVersionUID = 1L;
 
-    public ProgramPosition find(final String structureType, final String method, final List<String> parameterTypes) {
-        // TODO Auto-generated method stub
-        return null;
+    public ProgramPosition findFirstPositionInMethod(
+        final String structureType,
+        final String methodName,
+        final List<String> parameterTypes
+    ) {
+        final ProgramDataStructure structure = this.get(structureType);
+        final int methodIndex = structure.findMethodIndex(methodName, parameterTypes);
+        return new ProgramPosition(structureType, methodIndex, 0, ProgramExpressionPosition.EMPTY);
     }
 
     public List<ProgramVariable> getParameters(final ProgramPosition firstPositionInMethod) {
-        // TODO Auto-generated method stub
-        return null;
+        final ProgramDataStructure structure = this.get(firstPositionInMethod.dataStructureName());
+        final ProgramMethodDefinition method = structure.methods().get(firstPositionInMethod.methodIndex());
+        return method.parameters();
     }
 
 }

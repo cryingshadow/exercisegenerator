@@ -23,7 +23,7 @@ public record ProgramMethodCall(
         }
 
         final ProgramPosition nextPosition =
-            state.program().find(
+            state.program().findFirstPositionInMethod(
                 this.callFrom().type(),
                 this.method(),
                 this.parameters().stream().map(ProgramExpression::type).toList()
