@@ -1,8 +1,11 @@
-package exercisegenerator.structures.simulator;
+package exercisegenerator.structures.simulator.expressions;
 
 import java.util.*;
 
-public record ProgramVariable(String name, String type) implements ProgramExpression, ProgramVariableExpression {
+import exercisegenerator.structures.simulator.*;
+
+public record ProgramVariable(String name, String type)
+implements ProgramExpression, ProgramVariableExpression {
 
     @Override
     public ProgramValue read(final Memory memory) {
@@ -22,6 +25,16 @@ public record ProgramVariable(String name, String type) implements ProgramExpres
     @Override
     public Optional<ProgramValue> evaluate(final ProgramState state) {
         return Optional.of(this.read(state.memory()));
+    }
+
+    @Override
+    public HeapAddress getHeapAddress(final Memory memory) {
+        return (HeapAddress)this.read(memory);
+    }
+
+    @Override
+    public String type(final ProgramState state) {
+        return this.type();
     }
 
 }

@@ -1,5 +1,7 @@
 package exercisegenerator.structures.simulator;
 
+import exercisegenerator.structures.simulator.expressions.*;
+
 public record ProgramState(
     Program program,
     Memory memory,
@@ -10,20 +12,27 @@ public record ProgramState(
         return new ProgramState(this.program(), this.memory().intermediateValue(position, value), this.position());
     }
 
-    public ProgramState descendPosition(final int index) {
-        return new ProgramState(this.program(), this.memory(), this.position().descend(index));
+    public ProgramState descendExpressionPosition(final int index) {
+        return new ProgramState(this.program(), this.memory(), this.position().descendExpression(index));
     }
 
-    public ProgramState ascendPosition() {
-        return new ProgramState(this.program(), this.memory(), this.position().ascend());
+    public ProgramState ascendExpressionPosition() {
+        return new ProgramState(this.program(), this.memory(), this.position().ascendExpression());
     }
 
-    public ProgramState incrementPosition() {
+    public ProgramState incrementCommandPosition() {
         final ProgramPosition increment = this.position().increment();
         final ProgramDataStructure structure = this.program().get(increment.dataStructureName());
         final ProgramMethodDefinition method = structure.methods().get(increment.methodIndex());
-        if (increment.commandIndex() < method.commands().size()) {
+        if (method.positionExists(increment.commandPosition())) {
             return new ProgramState(this.program(), this.memory(), increment);
+        }
+        if (increment.commandPosition().size() > 1) {
+            final ProgramPosition ascend = increment.ascendBlock();
+            if (method.isLoop(ascend.commandPosition())) {
+                return new ProgramState(this.program(), this.memory(), ascend);
+            }
+            return new ProgramState(this.program(), this.memory(), ascend).incrementCommandPosition();
         }
         final MemoryStack nextStack = new MemoryStack(this.memory().stack());
         if (nextStack.isEmpty()) {
@@ -34,7 +43,7 @@ public record ProgramState(
             this.program(),
             new Memory(nextStack, this.memory().heap()),
             top.returnPosition()
-        ).incrementPosition();
+        ).incrementCommandPosition();
     }
 
 }

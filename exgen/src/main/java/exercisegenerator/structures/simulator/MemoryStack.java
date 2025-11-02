@@ -2,6 +2,8 @@ package exercisegenerator.structures.simulator;
 
 import java.util.*;
 
+import exercisegenerator.structures.simulator.expressions.*;
+
 public class MemoryStack extends ArrayDeque<MemoryFrame> {
 
     private static final long serialVersionUID = 1L;

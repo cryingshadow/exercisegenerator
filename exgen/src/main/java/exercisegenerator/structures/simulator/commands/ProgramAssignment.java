@@ -3,6 +3,7 @@ package exercisegenerator.structures.simulator.commands;
 import java.util.*;
 
 import exercisegenerator.structures.simulator.*;
+import exercisegenerator.structures.simulator.expressions.*;
 
 public record ProgramAssignment(
     ProgramVariableExpression variable,
@@ -15,11 +16,11 @@ public record ProgramAssignment(
         if (value.isPresent()) {
             return new ProgramState(
                 state.program(),
-                this.variable.write(state.memory(), value.get()).clearIntermediateValues(),
+                this.variable().write(state.memory(), value.get()).clearIntermediateValues(),
                 state.position()
-            ).incrementPosition();
+            ).incrementCommandPosition();
         }
-        return this.expression.apply(state);
+        return this.expression().apply(state);
     }
 
 }

@@ -1,6 +1,8 @@
-package exercisegenerator.structures.simulator;
+package exercisegenerator.structures.simulator.expressions;
 
 import java.util.*;
+
+import exercisegenerator.structures.simulator.*;
 
 public interface ProgramConstantValue extends ProgramValue, ProgramExpression {
 

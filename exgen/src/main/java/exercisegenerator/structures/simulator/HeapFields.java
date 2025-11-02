@@ -1,5 +1,5 @@
 package exercisegenerator.structures.simulator;
 
-public interface ProgramValue {
+public interface HeapFields {
 
 }

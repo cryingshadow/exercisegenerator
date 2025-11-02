@@ -3,6 +3,7 @@ package exercisegenerator.structures.simulator.commands;
 import java.util.*;
 
 import exercisegenerator.structures.simulator.*;
+import exercisegenerator.structures.simulator.expressions.*;
 
 public record ProgramMethodCall(
     ProgramVariableExpression callFrom,
@@ -18,15 +19,14 @@ public record ProgramMethodCall(
         for (int i = 0; i < evaluatedParameters.size(); i++) {
             final Optional<ProgramValue> value = evaluatedParameters.get(i);
             if (value.isEmpty()) {
-                return this.parameters().get(i).apply(state.descendPosition(i)).ascendPosition();
+                return this.parameters().get(i).apply(state.descendExpressionPosition(i)).ascendExpressionPosition();
             }
         }
-
         final ProgramPosition nextPosition =
             state.program().findFirstPositionInMethod(
-                this.callFrom().type(),
+                this.callFrom().type(state),
                 this.method(),
-                this.parameters().stream().map(ProgramExpression::type).toList()
+                this.parameters().stream().map(parameter -> parameter.type(state)).toList()
             );
         final List<ProgramVariable> parameterVariables = state.program().getParameters(nextPosition);
         final Map<ProgramVariable, ProgramValue> localVariables = new TreeMap<ProgramVariable, ProgramValue>();
@@ -34,7 +34,15 @@ public record ProgramMethodCall(
             localVariables.put(parameterVariables.get(i), evaluatedParameters.get(i).get());
         }
         final MemoryStack stack = new MemoryStack(state.memory().stack());
-        stack.push(new MemoryFrame(state.position(), localVariables, Map.of()));
+        stack.push(
+            new MemoryFrame(
+                state.position(),
+                this.callFrom().getHeapAddress(state.memory()),
+                this.callFrom().type(state),
+                localVariables,
+                Map.of()
+            )
+        );
         return new ProgramState(state.program(), new Memory(stack, state.memory().heap()), nextPosition);
     }
 
@@ -49,7 +57,7 @@ public record ProgramMethodCall(
     }
 
     @Override
-    public String type() {
+    public String type(final ProgramState state) {
         return this.returnType();
     }
 

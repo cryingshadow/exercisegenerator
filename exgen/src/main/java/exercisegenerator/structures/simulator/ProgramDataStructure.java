@@ -2,6 +2,8 @@ package exercisegenerator.structures.simulator;
 
 import java.util.*;
 
+import exercisegenerator.structures.simulator.expressions.*;
+
 public record ProgramDataStructure(List<ProgramVariable> fields, List<ProgramMethodDefinition> methods) {
 
     public int findMethodIndex(final String methodName, final List<String> parameterTypes) {

@@ -1,5 +1,7 @@
 package exercisegenerator.structures.simulator;
 
+import exercisegenerator.structures.simulator.expressions.*;
+
 public record Memory(MemoryStack stack, MemoryHeap heap) {
 
     public Memory intermediateValue(final ProgramPosition position, final ProgramValue value) {

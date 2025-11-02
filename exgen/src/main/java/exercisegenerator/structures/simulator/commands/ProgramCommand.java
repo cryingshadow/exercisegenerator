@@ -5,8 +5,4 @@ import java.util.function.*;
 import exercisegenerator.structures.simulator.*;
 
 @FunctionalInterface
-public interface ProgramCommand extends Function<ProgramState, ProgramState> {
-
-
-
-}
+public interface ProgramCommand extends Function<ProgramState, ProgramState> {}
