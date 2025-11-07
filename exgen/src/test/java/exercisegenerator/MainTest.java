@@ -5339,7 +5339,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Entschl\\\"usseln Sie den folgenden Text unter Benutzung des folgenden Schl\\\"usselworts auf "
-                    + "dem folgenden Alphabet mithilfe der \\emphasize{Vigen\\'ere-Verschl\\\"usselung}:\\\\",
+                    + "dem folgenden Alphabet mithilfe der \\emphasize{Vigen\\'ere-Verschl\\\"usselung}:\\\\[1.5ex]",
                     "Alphabet:\\\\",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{6}{C{1.5em}|}}",
@@ -5368,7 +5368,7 @@ public class MainTest {
             MainTest.simpleComparison(
                 List.of(
                     "Verschl\\\"usseln Sie den folgenden Text unter Benutzung des folgenden Schl\\\"usselworts auf "
-                    + "dem folgenden Alphabet mithilfe der \\emphasize{Vigen\\'ere-Verschl\\\"usselung}:\\\\",
+                    + "dem folgenden Alphabet mithilfe der \\emphasize{Vigen\\'ere-Verschl\\\"usselung}:\\\\[1.5ex]",
                     "Alphabet:\\\\",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{6}{C{1.5em}|}}",

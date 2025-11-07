@@ -130,7 +130,7 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
         }
         writer.write("schl\\\"usseln Sie die folgenden Texte unter Benutzung des jeweils angegebenen ");
         writer.write("Schl\\\"usselworts auf dem jeweils angegebenen Alphabet mithilfe der ");
-        writer.write("\\emphasize{Vigen\\'ere-Verschl\\\"usselung}.\\\\");
+        writer.write("\\emphasize{Vigen\\'ere-Verschl\\\"usselung}.\\\\[1.5ex]");
         Main.newLine(writer);
     }
 
@@ -147,7 +147,7 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
             writer.write("Ent");
         }
         writer.write("schl\\\"usseln Sie den folgenden Text unter Benutzung des folgenden Schl\\\"usselworts auf dem ");
-        writer.write("folgenden Alphabet mithilfe der \\emphasize{Vigen\\'ere-Verschl\\\"usselung}:\\\\");
+        writer.write("folgenden Alphabet mithilfe der \\emphasize{Vigen\\'ere-Verschl\\\"usselung}:\\\\[1.5ex]");
         Main.newLine(writer);
     }
 
