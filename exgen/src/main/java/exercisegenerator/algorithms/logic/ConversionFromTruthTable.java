@@ -146,7 +146,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Geben Sie zu den folgenden Wahrheitstabellen jeweils eine aussagenlogische Formel an.\\\\");
+        writer.write("Geben Sie zu den folgenden Wahrheitstabellen jeweils eine aussagenlogische Formel an.\\\\[1.5ex]");
         Main.newLine(writer);
     }
 
@@ -157,7 +157,7 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\");
+        writer.write("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\[1.5ex]");
         Main.newLine(writer);
     }
 

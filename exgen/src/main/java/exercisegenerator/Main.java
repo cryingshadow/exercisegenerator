@@ -31,11 +31,12 @@ public class Main {
 
     private static final String[] HELP;
 
-    private static final String VERSION = "5.2.0";
+    private static final String VERSION;
 
     static {
         RANDOM = new Random();
         GSON = new Gson();
+        VERSION = "5.2.1";
         NUMBER_LIMIT = 100;
         EMBEDDED = "embedded";
         EMBEDDED_EXAM = "embeddedExam";

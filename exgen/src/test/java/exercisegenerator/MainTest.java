@@ -3153,7 +3153,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\",
+                    "Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{3}{C{1em}|}C{4em}|}",
                     "\\hline",
@@ -3195,7 +3195,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\",
+                    "Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{4}{C{1em}|}C{4em}|}",
                     "\\hline",
@@ -3249,7 +3249,7 @@ public class MainTest {
                 "\\end{tabular}",
                 "\\end{adjustbox}"
             );
-        exText.add("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\");
+        exText.add("Geben Sie zu der folgenden Wahrheitstabelle eine aussagenlogische Formel an:\\\\[1.5ex]");
         exText.addAll(table);
 
         solText.addAll(
