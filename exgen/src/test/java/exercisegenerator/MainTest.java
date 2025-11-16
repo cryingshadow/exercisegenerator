@@ -1012,7 +1012,9 @@ public class MainTest {
         int nodeNumber = 0;
         final List<String> exText = new LinkedList<String>();
         final List<String> solText = new LinkedList<String>();
-        exText.add("Sortieren Sie das folgende Array mit ganzen Zahlen von 0 bis 9 mithilfe von Countingsort.");
+        exText.add(
+            "Sortieren Sie das folgende Array mit ganzen Zahlen von 0 bis 9 mithilfe von \\emphasize{Countingsort}."
+        );
         exText.add("Geben Sie dazu das Z\\\"ahlarray sowie das Ergebnisarray an.\\\\[2ex]");
         exText.add("Kleinste m\\\"ogliche Zahl: 0\\\\");
         exText.add("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: 9\\\\[1.5ex]");
@@ -3561,7 +3563,7 @@ public class MainTest {
         int nodeNumber = 0;
         final List<String> exText = new LinkedList<String>();
         final List<String> solText = new LinkedList<String>();
-        exText.add("Sortieren Sie das folgende Array mithilfe von Insertionsort.");
+        exText.add("Sortieren Sie das folgende Array mithilfe von \\emphasize{Insertionsort}.");
         exText.add("Geben Sie dazu das Array nach jeder Iteration der \\\"au\\ss{}eren Schleife an.\\\\[2ex]");
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
@@ -4570,7 +4572,10 @@ public class MainTest {
                 int nodeNumber = 0;
                 MainTest.checkLaTeXPreamble(exReader);
                 MainTest.checkExerciseTitle(exReader);
-                Assert.assertEquals(exReader.readLine(), "Sortieren Sie das folgende Array mithilfe von Quicksort.");
+                Assert.assertEquals(
+                    exReader.readLine(),
+                    "Sortieren Sie das folgende Array mithilfe von \\emphasize{Quicksort}."
+                );
                 Assert.assertEquals(
                     exReader.readLine(),
                     "Geben Sie dazu das Array nach jeder Partition-Operation an und markieren Sie das jeweils verwendete Pivot-Element.\\\\[2ex]"

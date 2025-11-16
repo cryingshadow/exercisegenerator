@@ -111,6 +111,15 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         return deque;
     }
 
+    private static boolean parseFillingDegreeUsage(final String keyValues) {
+        final Optional<String> fillingDegreeUsage =
+            Arrays.stream(keyValues.split(",")).filter(entry -> entry.startsWith("useFillingDegree=")).findAny();
+        if (fillingDegreeUsage.isEmpty()) {
+            return true;
+        }
+        return Boolean.parseBoolean(fillingDegreeUsage.get().split("=")[1]);
+    }
+
     private static Deque<TreeOperation<Integer>> parseOperations(final String[] operations) {
         final Deque<TreeOperation<Integer>> deque = new ArrayDeque<TreeOperation<Integer>>();
         for (final String num : operations) {
@@ -190,14 +199,10 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
             writer.write("\\\\[1.2ex]");
             Main.newLine(writer);
         }
-//        writer.write("\\begin{center}");
-//        Main.newLine(writer);
         LaTeXUtils.printAdjustboxBeginning(writer, String.format("max width=%s", widthText), "center");
     }
 
     private static void printSamePageEnd(final BufferedWriter writer) throws IOException {
-//        writer.write("\\end{center}");
-//        Main.newLine(writer);
         LaTeXUtils.printAdjustboxEnd(writer);
         writer.write("\\end{minipage}");
         Main.newLine(writer);
@@ -454,8 +459,9 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         final BufferedWriter writer
     ) throws IOException {
         int stepNumber = 1;
-        final int[] pagebreakCounters =
-            LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+        final String keyValues = options.getOrDefault(Flag.KEYVALUE, "");
+        final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForSolution(keyValues);
+        final boolean useFillingDegree = SearchTreeAlgorithm.parseFillingDegreeUsage(keyValues);
         int trees = 0;
         int counterIndex = 0;
         BigFraction horizontalFillingDegree = BigFraction.ZERO;
@@ -469,7 +475,7 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
             }
             horizontalFillingDegree =
                 SearchTreeAlgorithm.printTreeAndReturnHorizontalFillingDegree(
-                    horizontalFillingDegree,
+                    useFillingDegree ? horizontalFillingDegree : BigFraction.TWO,
                     String.format("Schritt %d: %s", stepNumber, step.step().toLaTeX()),
                     step.tree(),
                     writer

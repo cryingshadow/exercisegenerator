@@ -94,9 +94,9 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Sortieren Sie die folgenden Arrays mithilfe von ");
+        writer.write("Sortieren Sie die folgenden Arrays mithilfe von \\emphasize{");
         writer.write(this.algorithmName());
-        writer.write(".");
+        writer.write("}.");
         Main.newLine(writer);
         writer.write("Geben Sie dazu das jeweilige Array nach jeder ");
         writer.write(this.operation());
@@ -113,9 +113,9 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Sortieren Sie das folgende Array mithilfe von ");
+        writer.write("Sortieren Sie das folgende Array mithilfe von \\emphasize{");
         writer.write(this.algorithmName());
-        writer.write(".");
+        writer.write("}.");
         Main.newLine(writer);
         writer.write("Geben Sie dazu das Array nach jeder ");
         writer.write(this.operation());

@@ -106,7 +106,7 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Sortieren Sie die folgenden Arrays mit ganzen Zahlen mithilfe von Countingsort.");
+        writer.write("Sortieren Sie die folgenden Arrays mit ganzen Zahlen mithilfe von \\emphasize{Countingsort}.");
         Main.newLine(writer);
         writer.write("Geben Sie dazu das jeweilige Z\\\"ahlarray sowie das jeweilige Ergebnisarray an.\\\\");
         Main.newLine(writer);
@@ -123,7 +123,7 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
         writer.write(String.valueOf(problem.lowestValue()));
         writer.write(" bis ");
         writer.write(String.valueOf(problem.highestValue()));
-        writer.write(" mithilfe von Countingsort.");
+        writer.write(" mithilfe von \\emphasize{Countingsort}.");
         Main.newLine(writer);
         writer.write("Geben Sie dazu das Z\\\"ahlarray sowie das Ergebnisarray an.\\\\[2ex]");
         Main.newLine(writer);
