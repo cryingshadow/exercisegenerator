@@ -35,7 +35,7 @@ public record SimplexProblem(BigFraction[] target, Matrix conditions, List<Integ
     }
 
     public boolean showsFeasibleSolution() {
-        for (int row = 0; row < this.conditions().getNumberOfRows(); row++) {
+        for (int row = 0; row < this.conditions().getNumberOfRows() - 2; row++) {
             if (this.conditions().getLastCoefficientOfRow(row).compareTo(BigFraction.ZERO) < 0) {
                 return false;
             }

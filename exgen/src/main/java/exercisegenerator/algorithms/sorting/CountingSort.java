@@ -142,7 +142,7 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
         Main.newLine(writer);
         writer.write("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: ");
         writer.write(String.valueOf(problem.highestValue()));
-        writer.write("\\\\");
+        writer.write("\\\\[1.5ex]");
         Main.newLine(writer);
     }
 

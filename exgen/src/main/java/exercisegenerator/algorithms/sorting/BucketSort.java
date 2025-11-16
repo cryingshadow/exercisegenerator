@@ -168,7 +168,7 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
         Main.newLine(writer);
         writer.write("Anzahl Buckets: ");
         writer.write(String.valueOf(problem.numberOfBuckets()));
-        writer.write("\\\\");
+        writer.write("\\\\[1.5ex]");
         Main.newLine(writer);
     }
 

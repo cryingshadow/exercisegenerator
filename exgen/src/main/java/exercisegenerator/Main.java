@@ -36,7 +36,7 @@ public class Main {
     static {
         RANDOM = new Random();
         GSON = new Gson();
-        VERSION = "5.2.2";
+        VERSION = "5.2.3";
         NUMBER_LIMIT = 100;
         EMBEDDED = "embedded";
         EMBEDDED_EXAM = "embeddedExam";

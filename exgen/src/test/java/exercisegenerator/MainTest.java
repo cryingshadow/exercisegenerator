@@ -928,7 +928,7 @@ public class MainTest {
         exText.add("Geben Sie dazu die Buckets unmittelbar vor deren Sortierung sowie das Ergebnisarray an.\\\\[2ex]");
         exText.add("Kleinste m\\\"ogliche Zahl: 0\\\\");
         exText.add("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: 99\\\\");
-        exText.add("Anzahl Buckets: 10\\\\");
+        exText.add("Anzahl Buckets: 10\\\\[1.5ex]");
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
             List.of(
@@ -1015,7 +1015,7 @@ public class MainTest {
         exText.add("Sortieren Sie das folgende Array mit ganzen Zahlen von 0 bis 9 mithilfe von Countingsort.");
         exText.add("Geben Sie dazu das Z\\\"ahlarray sowie das Ergebnisarray an.\\\\[2ex]");
         exText.add("Kleinste m\\\"ogliche Zahl: 0\\\\");
-        exText.add("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: 9\\\\");
+        exText.add("Gr\\\"o\\ss{}te m\\\"ogliche Zahl: 9\\\\[1.5ex]");
         exText.addAll(Patterns.SOLUTION_SPACE_BEGINNING);
         exText.addAll(
             List.of(
@@ -4740,6 +4740,181 @@ public class MainTest {
                 "-i", "1, 1\n1, 0,  5\n0, 1,7/2\n2,-1,  0\n"
             },
             this.simplexTestContent()
+        );
+    }
+
+    @Test
+    public void simplex3() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.SIMPLEX.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-p", SolutionSpaceMode.SOLUTION_SPACE.text,
+                "-i", "8,-4,1,-4,4;5,10,10,5,0,3;6,10,8,-5,1,-3;-1,-8,9,7,2,8;7,-10,7,8,1,7"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\",
+                    "Maximiere $z(\\mathbf{x}) = 8x_{1} - 4x_{2} + x_{3} - 4x_{4} + 4x_{5}$\\\\",
+                    "unter den folgenden Nebenbedingungen:\\\\",
+                    "$\\begin{array}{*{11}c}",
+                    "5x_{1} & + & 10x_{2} & + & 10x_{3} & + & 5x_{4} &  &  & \\leq & 3\\\\",
+                    "6x_{1} & + & 10x_{2} & + & 8x_{3} & - & 5x_{4} & + & x_{5} & \\leq & -3\\\\",
+                    "-x_{1} & - & 8x_{2} & + & 9x_{3} & + & 7x_{4} & + & 2x_{5} & \\leq & 8\\\\",
+                    "7x_{1} & - & 10x_{2} & + & 7x_{3} & + & 8x_{4} & + & x_{5} & \\leq & 7\\\\",
+                    "\\end{array}$\\\\",
+                    "$x_{1}, x_{2}, x_{3}, x_{4}, x_{5} \\geq 0$",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. F\\\"ullen "
+                    + "Sie dazu die nachfolgenden Simplex-Tableaus aus und geben Sie eine optimale Belegung f\\\"ur "
+                    + "die Variablen $x_{1}, x_{2}, x_{3}, x_{4}, x_{5}$ und den daraus resultierenden Wert der "
+                    + "Zielfunktion an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.",
+                    "",
+                    "\\ifprintanswers",
+                    "\\else",
+                    "{\\renewcommand{\\arraystretch}{1.5}",
+                    "",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{13}{C{1cm}|}}",
+                    "\\hline",
+                    " & $c_j$ &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "$c_i^B\\downarrow$ & $B$ & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & $x_{5}$ & $x_{6}$ & $x_{7}$ & $x_{8}$ & $x_{9}$ & $b_i$ & $q_i$\\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " & $z_j$ &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " & {\\scriptsize $c_j - z_j$} &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{13}{C{1cm}|}}",
+                    "\\hline",
+                    " & $c_j$ &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "$c_i^B\\downarrow$ & $B$ & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & $x_{5}$ & $x_{6}$ & $x_{7}$ & $x_{8}$ & $x_{9}$ & $b_i$ & $q_i$\\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " & $z_j$ &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " & {\\scriptsize $c_j - z_j$} &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{13}{C{1cm}|}}",
+                    "\\hline",
+                    " & $c_j$ &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "$c_i^B\\downarrow$ & $B$ & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & $x_{5}$ & $x_{6}$ & $x_{7}$ & $x_{8}$ & $x_{9}$ & $b_i$ & $q_i$\\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " & $z_j$ &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " & {\\scriptsize $c_j - z_j$} &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{13}{C{1cm}|}}",
+                    "\\hline",
+                    " & $c_j$ &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "$c_i^B\\downarrow$ & $B$ & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & $x_{5}$ & $x_{6}$ & $x_{7}$ & $x_{8}$ & $x_{9}$ & $b_i$ & $q_i$\\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " &  &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " & $z_j$ &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    " & {\\scriptsize $c_j - z_j$} &  &  &  &  &  &  &  &  &  &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\renewcommand{\\arraystretch}{1}}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "Ergebnis:",
+                    "",
+                    "\\vspace*{2ex}",
+                    "",
+                    "\\fi",
+                    ""
+                ),
+                List.of(
+                    "{\\renewcommand{\\arraystretch}{1.5}",
+                    "",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{13}{C{1cm}|}}",
+                    "\\hline",
+                    " & $c_j$ & $8$ & $-4$ & $1$ & $-4$ & $4$ & $0$ & $0$ & $0$ & $0$ &  & \\\\\\hline",
+                    "$c_i^B\\downarrow$ & $B$ & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & $x_{5}$ & $x_{6}$ & $x_{7}$ & $x_{8}$ & $x_{9}$ & $b_i$ & $q_i$\\\\\\hline",
+                    "$0$ & $x_{6}$ & $5$ & $10$ & $10$ & $5$ & $0$ & $1$ & $0$ & $0$ & $0$ & $3$ & $\\frac{3}{5}$\\\\\\hline",
+                    "$0$ & $x_{7}$ & $6$ & $10$ & $8$ & $-5$ & $1$ & $0$ & $1$ & $0$ & $0$ & $-3$ & \\\\\\hline",
+                    "$0$ & $x_{8}$ & $-1$ & $-8$ & $9$ & $7$ & $2$ & $0$ & $0$ & $1$ & $0$ & $8$ & $\\frac{8}{7}$\\\\\\hline",
+                    "$0$ & $x_{9}$ & $7$ & $-10$ & $7$ & $8$ & $1$ & $0$ & $0$ & $0$ & $1$ & $7$ & $\\frac{7}{8}$\\\\\\hline",
+                    " & $z_j$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & \\\\\\hline",
+                    " & {\\scriptsize $c_j - z_j$} & $8$ & $-4$ & $1$ & $-4$ & $4$ & $0$ & $0$ & $0$ & $0$ &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{13}{C{1cm}|}}",
+                    "\\hline",
+                    " & $c_j$ & $8$ & $-4$ & $1$ & $-4$ & $4$ & $0$ & $0$ & $0$ & $0$ &  & \\\\\\hline",
+                    "$c_i^B\\downarrow$ & $B$ & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & $x_{5}$ & $x_{6}$ & $x_{7}$ & $x_{8}$ & $x_{9}$ & $b_i$ & $q_i$\\\\\\hline",
+                    "$-4$ & $x_{4}$ & $1$ & $2$ & $2$ & $1$ & $0$ & $\\frac{1}{5}$ & $0$ & $0$ & $0$ & $\\frac{3}{5}$ & $\\frac{3}{5}$\\\\\\hline",
+                    "$0$ & $x_{7}$ & $11$ & $20$ & $18$ & $0$ & $1$ & $1$ & $1$ & $0$ & $0$ & $0$ & $0$\\\\\\hline",
+                    "$0$ & $x_{8}$ & $-8$ & $-22$ & $-5$ & $0$ & $2$ & $-\\frac{7}{5}$ & $0$ & $1$ & $0$ & $\\frac{19}{5}$ & \\\\\\hline",
+                    "$0$ & $x_{9}$ & $-1$ & $-26$ & $-9$ & $0$ & $1$ & $-\\frac{8}{5}$ & $0$ & $0$ & $1$ & $\\frac{11}{5}$ & \\\\\\hline",
+                    " & $z_j$ & $-4$ & $-8$ & $-8$ & $-4$ & $0$ & $-\\frac{4}{5}$ & $0$ & $0$ & $0$ & $-\\frac{12}{5}$ & \\\\\\hline",
+                    " & {\\scriptsize $c_j - z_j$} & $12$ & $4$ & $9$ & $0$ & $4$ & $\\frac{4}{5}$ & $0$ & $0$ & $0$ &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{13}{C{1cm}|}}",
+                    "\\hline",
+                    " & $c_j$ & $8$ & $-4$ & $1$ & $-4$ & $4$ & $0$ & $0$ & $0$ & $0$ &  & \\\\\\hline",
+                    "$c_i^B\\downarrow$ & $B$ & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & $x_{5}$ & $x_{6}$ & $x_{7}$ & $x_{8}$ & $x_{9}$ & $b_i$ & $q_i$\\\\\\hline",
+                    "$-4$ & $x_{4}$ & $0$ & $\\frac{2}{11}$ & $\\frac{4}{11}$ & $1$ & $-\\frac{1}{11}$ & $\\frac{6}{55}$ & $-\\frac{1}{11}$ & $0$ & $0$ & $\\frac{3}{5}$ & \\\\\\hline",
+                    "$8$ & $x_{1}$ & $1$ & $\\frac{20}{11}$ & $\\frac{18}{11}$ & $0$ & $\\frac{1}{11}$ & $\\frac{1}{11}$ & $\\frac{1}{11}$ & $0$ & $0$ & $0$ & $0$\\\\\\hline",
+                    "$0$ & $x_{8}$ & $0$ & $-\\frac{82}{11}$ & $\\frac{89}{11}$ & $0$ & $\\frac{30}{11}$ & $-\\frac{37}{55}$ & $\\frac{8}{11}$ & $1$ & $0$ & $\\frac{19}{5}$ & $\\frac{209}{150}$\\\\\\hline",
+                    "$0$ & $x_{9}$ & $0$ & $-\\frac{266}{11}$ & $-\\frac{81}{11}$ & $0$ & $\\frac{12}{11}$ & $-\\frac{83}{55}$ & $\\frac{1}{11}$ & $0$ & $1$ & $\\frac{11}{5}$ & $\\frac{121}{60}$\\\\\\hline",
+                    " & $z_j$ & $8$ & $\\frac{152}{11}$ & $\\frac{128}{11}$ & $-4$ & $\\frac{12}{11}$ & $\\frac{16}{55}$ & $\\frac{12}{11}$ & $0$ & $0$ & $-\\frac{12}{5}$ & \\\\\\hline",
+                    " & {\\scriptsize $c_j - z_j$} & $0$ & $-\\frac{196}{11}$ & $-\\frac{117}{11}$ & $0$ & $\\frac{32}{11}$ & $-\\frac{16}{55}$ & $-\\frac{12}{11}$ & $0$ & $0$ &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{13}{C{1cm}|}}",
+                    "\\hline",
+                    " & $c_j$ & $8$ & $-4$ & $1$ & $-4$ & $4$ & $0$ & $0$ & $0$ & $0$ &  & \\\\\\hline",
+                    "$c_i^B\\downarrow$ & $B$ & $x_{1}$ & $x_{2}$ & $x_{3}$ & $x_{4}$ & $x_{5}$ & $x_{6}$ & $x_{7}$ & $x_{8}$ & $x_{9}$ & $b_i$ & $q_i$\\\\\\hline",
+                    "$-4$ & $x_{4}$ & $1$ & $2$ & $2$ & $1$ & $0$ & $\\frac{1}{5}$ & $0$ & $0$ & $0$ & $\\frac{3}{5}$ & \\\\\\hline",
+                    "$4$ & $x_{5}$ & $11$ & $20$ & $18$ & $0$ & $1$ & $1$ & $1$ & $0$ & $0$ & $0$ & \\\\\\hline",
+                    "$0$ & $x_{8}$ & $-30$ & $-62$ & $-41$ & $0$ & $0$ & $-\\frac{17}{5}$ & $-2$ & $1$ & $0$ & $\\frac{19}{5}$ & \\\\\\hline",
+                    "$0$ & $x_{9}$ & $-12$ & $-46$ & $-27$ & $0$ & $0$ & $-\\frac{13}{5}$ & $-1$ & $0$ & $1$ & $\\frac{11}{5}$ & \\\\\\hline",
+                    " & $z_j$ & $40$ & $72$ & $64$ & $-4$ & $4$ & $\\frac{16}{5}$ & $4$ & $0$ & $0$ & $-\\frac{12}{5}$ & \\\\\\hline",
+                    " & {\\scriptsize $c_j - z_j$} & $-32$ & $-76$ & $-63$ & $0$ & $0$ & $-\\frac{16}{5}$ & $-4$ & $0$ & $0$ &  & \\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\renewcommand{\\arraystretch}{1}}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "Ergebnis: $x_{1}^* = 0$, $x_{2}^* = 0$, $x_{3}^* = 0$, $x_{4}^* = \\frac{3}{5}$, $x_{5}^* = 0$, $z(\\mathbf{x}^*) = -\\frac{12}{5}$",
+                    "",
+                    "%Anzahl Variablen: 5",
+                    "%Anzahl Ungleichungen: 4",
+                    "%Anzahl Tableaus: 4",
+                    "%Anzahl automatischer Zellen: 196",
+                    "%Anzahl berechneter Zellen: 120"
+                )
+            )
         );
     }
 
