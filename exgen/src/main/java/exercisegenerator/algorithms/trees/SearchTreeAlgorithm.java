@@ -316,8 +316,8 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
     ) throws IOException {
         final SearchTree<Integer> tree = problems.getFirst().tree();
         writer.write("F\\\"uhren Sie jeweils beginnend mit den folgenden Instanzen eines \\emphasize{");
-        writer.write(tree.getName());
-        writer.write("s} die jeweils darunter aufgef\\\"uhrten Operationen aus und ");
+        writer.write(tree.getName(true));
+        writer.write("} die jeweils darunter aufgef\\\"uhrten Operationen aus und ");
         writer.write("geben Sie die dabei jeweils entstehenden B\\\"aume nach jeder ");
         Main.newLine(writer);
         writer.write(tree.getOperations());

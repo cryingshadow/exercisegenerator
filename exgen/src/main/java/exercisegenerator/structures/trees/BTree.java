@@ -108,8 +108,8 @@ public class BTree<T extends Comparable<T>> implements SearchTree<T> {
     }
 
     @Override
-    public String getName() {
-        return String.format("B-Baum mit Grad $t = %d$", this.degree);
+    public String getName(boolean genitive) {
+        return String.format("B-Baum%s mit Grad $t = %d$", (genitive ? "s" : ""), this.degree);
     }
 
     @Override

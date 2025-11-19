@@ -64,7 +64,11 @@ public interface SearchTree<T extends Comparable<T>> extends Iterable<T> {
         return this.stream().findFirst();
     }
 
-    String getName();
+    default String getName() {
+        return this.getName(false);
+    }
+
+    String getName(boolean genitive);
 
     String getOperations();
 

@@ -76,8 +76,8 @@ public class BinaryTree<T extends Comparable<T>> implements SearchTree<T> {
     }
 
     @Override
-    public String getName() {
-        return "Bin\\\"ar-Suchbaum";
+    public String getName(boolean genitive) {
+        return "Bin\\\"ar-Suchbaum" + (genitive ? "s" : "");
     }
 
     @Override
