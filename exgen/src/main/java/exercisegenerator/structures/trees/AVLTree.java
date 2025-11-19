@@ -17,8 +17,8 @@ public class AVLTree<T extends Comparable<T>> extends BinaryTree<T> {
     }
 
     @Override
-    public String getName() {
-        return "AVL-Baum";
+    public String getName(boolean genitive) {
+        return "AVL-Baum" + (genitive ? "s" : "");
     }
 
     @Override

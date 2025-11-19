@@ -20,8 +20,8 @@ public class RedBlackTree<T extends Comparable<T>> extends BinaryTree<T> {
     }
 
     @Override
-    public String getName() {
-        return "Rot-Schwarz-Baum";
+    public String getName(boolean genitive) {
+        return "Rot-Schwarz-Baum" + (genitive ? "s" : "");
     }
 
     @Override
