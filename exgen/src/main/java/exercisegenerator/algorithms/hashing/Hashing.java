@@ -646,7 +646,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         writer.write(String.valueOf(capacity));
         writer.write(" unter Verwendung der ");
         writer.write(printOptions.optionsText);
-        writer.write(":\\\\");
+        writer.write(":");
         Main.newLine(writer);
     }
 

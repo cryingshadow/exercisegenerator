@@ -3342,7 +3342,7 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "F\\\"ugen Sie die folgenden Werte nacheinander in das darunter stehende Array der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{7}{10}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:\\\\",
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das darunter stehende Array der L\\\"ange 11 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{7}{10}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = 7$, $c_2 = 3$) ein:",
                 "\\begin{center}",
                 "3, 5, 1, 4, 2, 1.",
                 "\\end{center}",
@@ -3428,7 +3428,7 @@ public class MainTest {
         final List<String> exText = new LinkedList<String>();
         exText.addAll(
             List.of(
-                "F\\\"ugen Sie die folgenden Werte nacheinander in das darunter stehende Array der L\\\"ange 32 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{3}{25}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = \\frac{1}{2}$, $c_2 = \\frac{1}{2}$) ein:\\\\",
+                "F\\\"ugen Sie die folgenden Werte nacheinander in das darunter stehende Array der L\\\"ange 32 unter Verwendung der \\emphasize{Multiplikationsmethode} ($c = \\frac{3}{25}$) mit \\emphasize{quadratischer Sondierung} ($c_1 = \\frac{1}{2}$, $c_2 = \\frac{1}{2}$) ein:",
                 "\\begin{center}",
                 "13, 55, 11, 14, 2, 17.",
                 "\\end{center}",
