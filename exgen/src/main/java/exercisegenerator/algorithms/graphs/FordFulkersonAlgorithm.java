@@ -1159,8 +1159,19 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         case NEVER:
             // do nothing
         }
+        final int[] pagebreakCounters =
+            LaTeXUtils.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
+        int doubleSteps = 0;
+        int counterIndex = 0;
         boolean first = true;
         for (final FordFulkersonDoubleStep step : solution) {
+            if (counterIndex < pagebreakCounters.length && doubleSteps >= pagebreakCounters[counterIndex]) {
+                writer.write("\\newpage");
+                Main.newLine(writer);
+                Main.newLine(writer);
+                doubleSteps = 0;
+                counterIndex++;
+            }
             if (first) {
                 first = false;
                 FordFulkersonAlgorithm.printFordFulkersonDoubleStep(
@@ -1185,6 +1196,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
                 );
                 stepNumber += 2;
             }
+            doubleSteps++;
         }
         switch (mode) {
         case ALWAYS:
