@@ -2556,7 +2556,7 @@ public class MainTest {
                 ),
                 List.of(
                     "\\begin{multicols}{2}",
-                    "\\setlength{\\columnseprule}{1pt}",
+                    "\\setlength{\\columnseprule}{2pt}",
                     "\\renewcommand{\\arraystretch}{1.5}",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{5}{C{1cm}|}}",

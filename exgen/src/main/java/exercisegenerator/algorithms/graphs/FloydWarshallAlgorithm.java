@@ -171,7 +171,7 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
     ) throws IOException {
         final LayoutConfiguration layout = FloydWarshallAlgorithm.parseOrGenerateLayoutConfiguration(options);
         if (layout.columns > 1) {
-            LaTeXUtils.beginMulticols(layout.columns, Optional.of("1pt"), writer);
+            LaTeXUtils.beginMulticols(layout.columns, Optional.of("2pt"), writer);
         }
         FloydWarshallAlgorithm.printTables(
             this.toPrintableTables(solution, true, FloydWarshallAlgorithm.toLabels(problem)),
