@@ -591,7 +591,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "Betrachten Sie den folgenden Graphen:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -702,7 +702,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "Betrachten Sie den folgenden Graphen:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -1251,7 +1251,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "Betrachten Sie den folgenden Graphen:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -1298,7 +1298,7 @@ public class MainTest {
         final CheckedBiConsumer<BufferedReader, BufferedReader, IOException> test =
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "Betrachten Sie den folgenden Graphen:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2455,7 +2455,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "Betrachten Sie den folgenden Graphen:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -2647,7 +2647,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie das folgende \\emphasize{Flussnetzwerk}:\\\\",
+                    "Betrachten Sie das folgende \\emphasize{Flussnetzwerk}:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, >=stealth, p/.style={->, thin, shorten <=2pt, shorten >=2pt}]",
@@ -3799,7 +3799,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "Betrachten Sie den folgenden Graphen:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
@@ -4484,7 +4484,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Betrachten Sie den folgenden Graphen:\\\\",
+                    "Betrachten Sie den folgenden Graphen:\\\\[1.5ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[scale=2.4, node/.style={circle,draw=black,thin,inner sep=5pt}, endnode/.style={circle,draw=black,thin,inner sep=5pt}, p/.style={thin}]",
@@ -4522,6 +4522,9 @@ public class MainTest {
                     "\\end{tabular}",
                     "\\end{adjustbox}",
                     "\\renewcommand{\\arraystretch}{1.0}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
                     "Minimaler Spannbaum:",
                     "",
                     "\\vspace*{10ex}",
@@ -4542,6 +4545,9 @@ public class MainTest {
                     "\\end{tabular}",
                     "\\end{adjustbox}",
                     "\\renewcommand{\\arraystretch}{1.0}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
                     "Minimaler Spannbaum:\\\\",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",

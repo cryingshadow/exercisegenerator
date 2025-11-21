@@ -57,8 +57,7 @@ public class Graph<V extends Comparable<V>, E extends Comparable<E>> {
             new LinkedHashMap<Coordinates2D<Integer>, List<Pair<Optional<E>, Coordinates2D<Integer>>>>();
         int maxRow = 0;
         for (int lineNumber = 0; line != null; lineNumber++) {
-            line.trim();
-            if ("".equals(line)) {
+            if (line.isBlank()) {
                 break;
             }
             final String[] commaSeparated = line.split(",");

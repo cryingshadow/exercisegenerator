@@ -306,7 +306,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Betrachten Sie den folgenden Graphen:\\\\");
+        writer.write("Betrachten Sie den folgenden Graphen:\\\\[1.5ex]");
         Main.newLine(writer);
     }
 

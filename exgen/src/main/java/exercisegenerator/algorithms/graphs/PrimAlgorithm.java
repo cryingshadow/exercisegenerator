@@ -166,6 +166,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
             new ArrayList<Vertex<String>>(problem.graphWithLayout().graph().getVertices());
         Collections.sort(vertices, problem.comparator());
         PrimAlgorithm.printTable(solution.table(), vertices, true, writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Minimaler Spannbaum:\\\\");
         Main.newLine(writer);
         LaTeXUtils.printAdjustboxBeginning(writer);
@@ -191,6 +192,7 @@ public class PrimAlgorithm implements GraphAlgorithm<PrimResult<String>> {
         Collections.sort(vertices, problem.comparator());
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
         PrimAlgorithm.printTable(solution.table(), vertices, false, writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
         writer.write("Minimaler Spannbaum:");
         Main.newLine(writer);
         LaTeXUtils.printSolutionSpaceEnd(Optional.of("10ex"), options, writer);

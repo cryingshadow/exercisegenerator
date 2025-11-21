@@ -1013,7 +1013,7 @@ implements AlgorithmImplementation<FlowNetworkProblem, List<FordFulkersonDoubleS
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Betrachten Sie das folgende \\emphasize{Flussnetzwerk}:\\\\");
+        writer.write("Betrachten Sie das folgende \\emphasize{Flussnetzwerk}:\\\\[1.5ex]");
         Main.newLine(writer);
     }
 
