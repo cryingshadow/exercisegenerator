@@ -19,6 +19,8 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
 
         private boolean drawEdges;
 
+        private final Map<Vertex<V>, Map<Vertex<V>, EdgeStyle>> edgeStyles;
+
         private final Map<Vertex<V>, Coordinates2D<Integer>> nodeCoordinates;
 
         private final Map<Coordinates2D<Integer>, Vertex<V>> nodesAtCoordinates;
@@ -29,6 +31,8 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
             this.drawEdgeLabels = true;
             this.nodeCoordinates = new LinkedHashMap<Vertex<V>, Coordinates2D<Integer>>();
             this.nodesAtCoordinates = new LinkedHashMap<Coordinates2D<Integer>, Vertex<V>>();
+            this.edgeStyles = new LinkedHashMap<Vertex<V>, Map<Vertex<V>, EdgeStyle>>();
+
         }
 
         public GridGraphLayoutBuilder<V, E> addVertex(
@@ -44,6 +48,7 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
             return new GridGraphLayout<V, E>(
                 this.makeCoordinatesNonNegative(),
                 Map.of(),
+                this.edgeStyles,
                 this.directed,
                 this.drawEdges,
                 this.drawEdgeLabels
@@ -80,6 +85,13 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
         public GridGraphLayoutBuilder<V, E> setDrawEdges(final boolean drawEdges) {
             this.drawEdges = drawEdges;
             return this;
+        }
+
+        public void setEdgeStyle(final Vertex<V> from, final Vertex<V> to, final EdgeStyle edgeStyle) {
+            if (!this.edgeStyles.containsKey(from)) {
+                this.edgeStyles.put(from, new LinkedHashMap<Vertex<V>, EdgeStyle>());
+            }
+            this.edgeStyles.get(from).put(to, edgeStyle);
         }
 
         private Map<Vertex<V>, Coordinates2D<Integer>> makeCoordinatesNonNegative() {
@@ -133,6 +145,8 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
 
     protected final boolean drawEdges;
 
+    protected final Map<Vertex<V>, Map<Vertex<V>, EdgeStyle>> edgeStyles;
+
     protected final Map<Vertex<V>, Coordinates2D<Integer>> nodeCoordinates;
 
     protected final Map<Vertex<V>, List<Edge<E, V>>> toHighlight;
@@ -140,6 +154,7 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
     protected GridGraphLayout(
         final Map<Vertex<V>, Coordinates2D<Integer>> nodeCoordinates,
         final Map<Vertex<V>, List<Edge<E, V>>> toHighlight,
+        final Map<Vertex<V>, Map<Vertex<V>, EdgeStyle>> edgeStyles,
         final boolean directed,
         final boolean drawEdges,
         final boolean drawEdgeLabels
@@ -149,22 +164,19 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
         this.drawEdgeLabels = drawEdgeLabels;
         this.nodeCoordinates = Collections.unmodifiableMap(nodeCoordinates);
         this.toHighlight = Collections.unmodifiableMap(toHighlight);
+        this.edgeStyles = Collections.unmodifiableMap(edgeStyles);
     }
 
     public <F extends Comparable<F>> GridGraphLayout<V, F> convertEdgeLabelType() {
         return new GridGraphLayout<V, F>(
             this.nodeCoordinates,
             Map.of(),
+            Map.of(),
             this.directed,
             this.drawEdges,
             this.drawEdgeLabels
         );
     }
-
-//    @Override
-//    public TikZStyle graphStyle() {
-//        return this.directed ? TikZStyle.GRAPH : TikZStyle.SYM_GRAPH;
-//    }
 
     @Override
     public Coordinates2D<Integer> getPosition(final Vertex<V> vertex) {
@@ -183,6 +195,7 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
         return new GridGraphLayout<V, E>(
             this.nodeCoordinates,
             newToHighlight,
+            this.edgeStyles,
             this.directed,
             this.drawEdges,
             this.drawEdgeLabels
@@ -207,6 +220,7 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
         return new GridGraphLayout<V, E>(
             this.nodeCoordinates,
             this.toHighlight,
+            this.edgeStyles,
             directed,
             this.drawEdges,
             this.drawEdgeLabels
@@ -217,6 +231,7 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
         return new GridGraphLayout<V, E>(
             this.nodeCoordinates,
             this.toHighlight,
+            this.edgeStyles,
             this.directed,
             this.drawEdges,
             drawEdgeLabels
@@ -227,6 +242,7 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
         return new GridGraphLayout<V, E>(
             this.nodeCoordinates,
             this.toHighlight,
+            this.edgeStyles,
             this.directed,
             drawEdges,
             this.drawEdgeLabels
@@ -237,6 +253,7 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
         return new StretchedGridGraphLayout<V, E>(
             this.nodeCoordinates,
             this.toHighlight,
+            this.edgeStyles,
             this.directed,
             this.drawEdges,
             this.drawEdgeLabels,
@@ -258,11 +275,8 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
         );
     }
 
-    private String toTikZ(final Vertex<V> from, final Edge<E, V> edge) {
-        if (!this.drawEdges || !this.directed && edge.to().id().compareTo(from.id()) < 0) {
-            return "";
-        }
-        final String style =
+    private String defaultEdgeStyle(final Vertex<V> from, final Edge<E, V> edge) {
+        return
             this.directed ?
                 (
                     this.toHighlight.getOrDefault(from, List.of()).contains(edge) ?
@@ -274,8 +288,34 @@ public class GridGraphLayout<V extends Comparable<V>, E extends Comparable<E>> i
                             TikZStyle.SYM_EDGE_HIGHLIGHT_STYLE :
                                 TikZStyle.SYM_EDGE_STYLE
                     ).style;
+    }
+
+    private String toTikZ(final Vertex<V> from, final Edge<E, V> edge) {
+        if (!this.drawEdges || !this.directed && edge.to().id().compareTo(from.id()) < 0) {
+            return "";
+        }
+        if (this.edgeStyles.containsKey(from)) {
+            final Map<Vertex<V>, EdgeStyle> styles = this.edgeStyles.get(from);
+            if (styles.containsKey(edge.to())) {
+                final EdgeStyle style = styles.get(edge.to());
+                return GraphLayout.edgeFormat(
+                    style.edgeStyle().isBlank() ?
+                        this.defaultEdgeStyle(from, edge) :
+                            String.format(
+                                "[%s]",
+                                this.toHighlight.getOrDefault(from, List.of()).contains(edge) ?
+                                    style.edgeStyle() + ", very thick, red":
+                                        style.edgeStyle()
+                            ),
+                    from.id().toString(),
+                    this.drawEdgeLabels && edge.label().isPresent() ? List.of(edge.label().get()) : List.of(),
+                    style.labelStyle(),
+                    edge.to().id().toString()
+                );
+            }
+        }
         return GraphLayout.edgeFormat(
-            style,
+            this.defaultEdgeStyle(from, edge),
             from.id().toString(),
             this.drawEdgeLabels && edge.label().isPresent() ? List.of(edge.label().get()) : List.of(),
             edge.to().id().toString()

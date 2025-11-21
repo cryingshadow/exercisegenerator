@@ -7,6 +7,7 @@ import java.util.Map.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.*;
 import exercisegenerator.structures.graphs.layout.*;
@@ -48,6 +49,9 @@ public class Graph<V extends Comparable<V>, E extends Comparable<E>> {
         final LabelParser<E> edgeParser
     ) throws IOException {
         String line = reader.readLine();
+        if ("!json".equals(line.trim().toLowerCase())) {
+            return Graph.create(Main.GSON.fromJson(reader, GraphJSON.class), vertexParser, edgeParser);
+        }
         while (line.startsWith("!")) {
             line = reader.readLine();
         }
@@ -186,6 +190,29 @@ public class Graph<V extends Comparable<V>, E extends Comparable<E>> {
                 toPos
             ).add(new Pair<Optional<E>, Coordinates2D<Integer>>(Optional.of(edgeParser.parse(toEdge)), fromPos));
         }
+    }
+
+    private static <V extends Comparable<V>, E extends Comparable<E>> GraphWithLayout<V, E, Integer> create(
+        final GraphJSON json,
+        final LabelParser<V> vertexParser,
+        final LabelParser<E> edgeParser
+    ) throws IOException {
+        final Graph<V, E> graph = new Graph<V, E>();
+        final GridGraphLayoutBuilder<V, E> builder = GridGraphLayout.<V, E>builder().setDirected(true);
+        for (final Entry<String, Coordinates2D<Integer>> entry : json.nodes().entrySet()) {
+            final Vertex<V> vertex = new Vertex<V>(vertexParser.parse(entry.getKey()));
+            graph.addVertex(vertex);
+            builder.addVertex(vertex, entry.getValue());
+        }
+        for (final EdgeJSON edge : json.edges()) {
+            final Vertex<V> from = graph.getVertexWithUniqueLabel(vertexParser.parse(edge.from()));
+            final Vertex<V> to = graph.getVertexWithUniqueLabel(vertexParser.parse(edge.to()));
+            graph.addEdge(from, Optional.ofNullable(edgeParser.parse(edge.label())), to);
+            if (!edge.labelStyle().isBlank() || !edge.edgeStyle().isBlank()) {
+                builder.setEdgeStyle(from, to, new EdgeStyle(edge.labelStyle(), edge.edgeStyle()));
+            }
+        }
+        return new GraphWithLayout<V, E, Integer>(graph, builder.build());
     }
 
     private static <E extends Comparable<E>> boolean someVertexIsMissingForAnEdge(

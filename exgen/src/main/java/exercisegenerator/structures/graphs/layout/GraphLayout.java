@@ -15,11 +15,22 @@ public interface GraphLayout<V extends Comparable<V>, E extends Comparable<E>, T
         final List<E> edgeLabels,
         final String toID
     ) {
+        return GraphLayout.edgeFormat(style, fromID, edgeLabels, "", toID);
+    }
+
+    public static <E> String edgeFormat(
+        final String style,
+        final String fromID,
+        final List<E> edgeLabels,
+        final String labelStyle,
+        final String toID
+    ) {
         final String edgeNode =
             edgeLabels.isEmpty() ?
                 "" :
                     String.format(
-                        "node[auto] {%s} ",
+                        "node[auto%s] {%s} ",
+                        labelStyle.isBlank() ? "" : "," + labelStyle,
                         edgeLabels.stream().map(l -> l.toString()).collect(Collectors.joining(","))
                     );
         if (fromID.equals(toID)) {

@@ -17,6 +17,7 @@ public class StretchedGridGraphLayout<V extends Comparable<V>, E extends Compara
         this(
             baseLayout.nodeCoordinates,
             baseLayout.toHighlight,
+            baseLayout.edgeStyles,
             baseLayout.directed,
             baseLayout.drawEdges,
             baseLayout.drawEdgeLabels,
@@ -27,12 +28,13 @@ public class StretchedGridGraphLayout<V extends Comparable<V>, E extends Compara
     public StretchedGridGraphLayout(
         final Map<Vertex<V>, Coordinates2D<Integer>> nodeCoordinates,
         final Map<Vertex<V>, List<Edge<E, V>>> toHighlight,
+        final Map<Vertex<V>, Map<Vertex<V>, EdgeStyle>> edgeStyles,
         final boolean directed,
         final boolean drawEdges,
         final boolean drawEdgeLabels,
         final double factor
     ) {
-        super(nodeCoordinates, toHighlight, directed, drawEdges, drawEdgeLabels);
+        super(nodeCoordinates, toHighlight, edgeStyles, directed, drawEdges, drawEdgeLabels);
         this.factor = factor;
     }
 
@@ -81,6 +83,7 @@ public class StretchedGridGraphLayout<V extends Comparable<V>, E extends Compara
         return new StretchedGridGraphLayout<V, E>(
             this.nodeCoordinates,
             this.toHighlight,
+            this.edgeStyles,
             this.directed,
             this.drawEdges,
             this.drawEdgeLabels,
