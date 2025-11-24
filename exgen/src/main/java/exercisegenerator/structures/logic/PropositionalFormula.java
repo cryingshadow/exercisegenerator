@@ -122,14 +122,14 @@ public abstract class PropositionalFormula {
         if (remainingFormula.startsWith("||")) {
             return PropositionalFormula.parseDisjunction(leftConjuncts, remainingFormula.substring(2));
         }
+        if (remainingFormula.startsWith("<->")) {
+            return new Equivalence(leftConjuncts, PropositionalFormula.parse(remainingFormula.substring(3)));
+        }
         if (remainingFormula.startsWith("->")) {
             return new Implication(leftConjuncts, PropositionalFormula.parse(remainingFormula.substring(2)));
         }
         if (remainingFormula.startsWith("<-")) {
             return new Converse(leftConjuncts, PropositionalFormula.parse(remainingFormula.substring(2)));
-        }
-        if (remainingFormula.startsWith("<->")) {
-            return new Equivalence(leftConjuncts, PropositionalFormula.parse(remainingFormula.substring(3)));
         }
         if (remainingFormula.startsWith("+")) {
             return new Xor(leftConjuncts, PropositionalFormula.parse(remainingFormula.substring(1)));
