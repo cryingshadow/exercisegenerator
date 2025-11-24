@@ -30,6 +30,11 @@ public class ConversionFromTruthTable implements AlgorithmImplementation<TruthTa
                         }
 
                         @Override
+                        public String onConverse(final String consequence, final String antecedence) {
+                            throw new IllegalStateException("A converse should not appear in a DNF!");
+                        }
+
+                        @Override
                         public String onDisjunction(final List<String> children) {
                             return String.format("%s", String.join("\\\\" + Main.lineSeparator + "\\vee & ", children));
                         }

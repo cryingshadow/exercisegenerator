@@ -6,6 +6,8 @@ public interface FormulaVisitor<T> {
 
     T onConjunction(List<T> children);
 
+    T onConverse(T consequence, T antecedence);
+
     T onDisjunction(List<T> children);
 
     T onEquivalence(T left, T right);

@@ -132,6 +132,11 @@ abstract class PropositionalLogic {
                     }
 
                     @Override
+                    public String onConverse(final String consequence, final String antecedence) {
+                        return String.format("(%s \\leftarrow %s)", consequence, antecedence);
+                    }
+
+                    @Override
                     public String onDisjunction(final List<String> children) {
                         return String.format("(%s)", String.join(" \\vee ", children));
                     }
@@ -334,7 +339,7 @@ abstract class PropositionalLogic {
     private static void combineInfix(final List<PropositionalFormula> formulas) {
         formulas.add(
             PropositionalLogic.toInfixFormula(
-                Main.RANDOM.nextInt(5),
+                Main.RANDOM.nextInt(6),
                 formulas.remove(Main.RANDOM.nextInt(formulas.size())),
                 formulas.remove(Main.RANDOM.nextInt(formulas.size()))
             )
@@ -628,8 +633,10 @@ abstract class PropositionalLogic {
         case 2:
             return new Implication(left, right);
         case 3:
-            return new Equivalence(left, right);
+            return new Converse(left, right);
         case 4:
+            return new Equivalence(left, right);
+        case 5:
             return new Xor(left, right);
         }
         throw new IllegalStateException("Should never be reached!");
@@ -660,6 +667,12 @@ abstract class PropositionalLogic {
             final Implication implication = (Implication)formula;
             return Optional.of(
                 Disjunction.createDisjunction(implication.antecedence.negate(), implication.consequence)
+            );
+        }
+        if (formula.isConverse()) {
+            final Converse converse = (Converse)formula;
+            return Optional.of(
+                new Implication(converse.antecedence, converse.consequence)
             );
         }
         final List<PropositionalFormula> children = formula.getChildren();
