@@ -1193,6 +1193,40 @@ public class MainTest {
     }
 
     @Test
+    public void decodeHuffmanReverse() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.FROM_HUFFMAN_REVERSE.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "KLINIKUM"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen Codebuch:\\\\[2ex]",
+                    "\\codeseq{01100001100001111101}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\textbf{Codebuch:}",
+                    "\\begin{align*}",
+                    "\\code{`I'} &= \\code{\\textquotedbl{}00\\textquotedbl{}}\\\\",
+                    "\\code{`K'} &= \\code{\\textquotedbl{}01\\textquotedbl{}}\\\\",
+                    "\\code{`L'} &= \\code{\\textquotedbl{}100\\textquotedbl{}}\\\\",
+                    "\\code{`M'} &= \\code{\\textquotedbl{}101\\textquotedbl{}}\\\\",
+                    "\\code{`N'} &= \\code{\\textquotedbl{}110\\textquotedbl{}}\\\\",
+                    "\\code{`U'} &= \\code{\\textquotedbl{}111\\textquotedbl{}}\\\\",
+                    "\\end{align*}",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\textbf{Quelltext:}\\\\[2ex]"
+                ),
+                List.of("\\code{KLINIKUM}")
+            )
+        );
+    }
+
+    @Test
     public void decodeHuffmanLongComma() throws IOException {
         this.harness(
             new String[] {

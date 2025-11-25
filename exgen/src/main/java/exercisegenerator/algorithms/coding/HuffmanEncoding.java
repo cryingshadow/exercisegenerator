@@ -15,6 +15,22 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
 
     public static final HuffmanEncoding INSTANCE = new HuffmanEncoding();
 
+    static HuffmanProblem generateProblemStatically(final Parameters<Flag> options) {
+        return new HuffmanProblem(HuffmanEncoding.generateSourceText(options), CodingAlgorithms.BINARY_ALPHABET);
+    }
+    
+    static List<HuffmanProblem> parseProblemsStatically(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        return List.of(
+            new HuffmanProblem(
+                CodingAlgorithms.parseInputText(reader, options),
+                HuffmanEncoding.parseOrGenerateTargetAlphabet(options)
+            )
+        );
+    }
+
     private static List<Character> generateAlphabet(final int alphabetSize) {
         final List<Character> biggestAlphabet = new ArrayList<Character>();
         for (int i = 32; i < 127; i++) {
@@ -104,7 +120,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
 
     @Override
     public HuffmanProblem generateProblem(final Parameters<Flag> options) {
-        return new HuffmanProblem(HuffmanEncoding.generateSourceText(options), CodingAlgorithms.BINARY_ALPHABET);
+        return HuffmanEncoding.generateProblemStatically(options);
     }
 
     @Override
@@ -118,12 +134,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        return List.of(
-            new HuffmanProblem(
-                CodingAlgorithms.parseInputText(reader, options),
-                HuffmanEncoding.parseOrGenerateTargetAlphabet(options)
-            )
-        );
+        return HuffmanEncoding.parseProblemsStatically(reader, options);
     }
 
     @Override

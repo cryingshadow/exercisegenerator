@@ -233,6 +233,16 @@ public enum Algorithm {
         HuffmanDecoding.INSTANCE
     ),
 
+    FROM_HUFFMAN_REVERSE(
+        "fromhuffrev",
+        "Huffman decoding reverse",
+        new String[] {
+            "Decodes a text using the Huffman code.",
+            "Specifies the solution as instance."
+        },
+        HuffmanDecodingReverse.INSTANCE
+    ),
+
     FROM_ONES_COMPLEMENT(
         "fromonescompl",
         "One's Complement (from)",
