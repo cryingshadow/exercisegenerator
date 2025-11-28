@@ -74,7 +74,7 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
     default public String apply(final VigenereProblem problem) {
         final VigenereSquare square = new VigenereSquare(problem.alphabet());
         return
-            this.isEncoding() ?
+            this.isEncodingAlgorithm() ?
                 VigenereAlgorithm.vigenere(problem.message(), problem.keyword(), square::encode) :
                     VigenereAlgorithm.vigenere(problem.message(), problem.keyword(), square::decode);
     }
@@ -96,7 +96,9 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
         );
     }
 
-    boolean isEncoding();
+    boolean isEncodingAlgorithm();
+
+    boolean isEncodingTask();
 
     @Override
     default List<VigenereProblem> parseProblems(
@@ -123,7 +125,7 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        if (this.isEncoding()) {
+        if (this.isEncodingTask()) {
             writer.write("Ver");
         } else {
             writer.write("Ent");
@@ -141,7 +143,7 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        if (this.isEncoding()) {
+        if (this.isEncodingTask()) {
             writer.write("Ver");
         } else {
             writer.write("Ent");
@@ -163,7 +165,11 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
         new VigenereSquare(problem.alphabet()).toLaTeX(writer);
         Main.newLine(writer);
         writer.write("\\noindent{}Nachricht: ");
-        writer.write(LaTeXUtils.code(problem.message()));
+        if (this.isEncodingAlgorithm() == this.isEncodingTask()) {
+            writer.write(LaTeXUtils.code(problem.message()));
+        } else {
+            writer.write(LaTeXUtils.code(solution));
+        }
         writer.write("\\\\");
         Main.newLine(writer);
         writer.write("Schl\\\"usselwort: ");
@@ -179,7 +185,11 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write(LaTeXUtils.code(solution));
+        if (this.isEncodingAlgorithm() == this.isEncodingTask()) {
+            writer.write(LaTeXUtils.code(solution));
+        } else {
+            writer.write(LaTeXUtils.code(problem.message()));
+        }
         Main.newLine(writer);
     }
 

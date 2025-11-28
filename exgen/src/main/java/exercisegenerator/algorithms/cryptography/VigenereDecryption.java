@@ -12,7 +12,12 @@ public class VigenereDecryption implements VigenereAlgorithm {
     }
 
     @Override
-    public boolean isEncoding() {
+    public boolean isEncodingAlgorithm() {
+        return false;
+    }
+
+    @Override
+    public boolean isEncodingTask() {
         return false;
     }
 

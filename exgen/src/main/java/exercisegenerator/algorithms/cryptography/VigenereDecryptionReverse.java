@@ -1,14 +1,14 @@
 package exercisegenerator.algorithms.cryptography;
 
-public class VigenereEncryption implements VigenereAlgorithm {
+public class VigenereDecryptionReverse implements VigenereAlgorithm {
 
-    public static final VigenereEncryption INSTANCE = new VigenereEncryption();
+    public static final VigenereDecryptionReverse INSTANCE = new VigenereDecryptionReverse();
 
-    private VigenereEncryption() {}
+    private VigenereDecryptionReverse() {}
 
     @Override
     public String commandPrefix() {
-        return "ToVigenere";
+        return "FromVigenere";
     }
 
     @Override
@@ -18,7 +18,7 @@ public class VigenereEncryption implements VigenereAlgorithm {
 
     @Override
     public boolean isEncodingTask() {
-        return true;
+        return false;
     }
 
 }

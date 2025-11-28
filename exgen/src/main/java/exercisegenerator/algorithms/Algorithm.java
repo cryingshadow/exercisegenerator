@@ -284,6 +284,16 @@ public enum Algorithm {
         VigenereDecryption.INSTANCE
     ),
 
+    FROM_VIGENERE_REVERSE(
+        "fromvigenererev",
+        "Vigenere cipher (from/reverse)",
+        new String[] {
+            "Decode a text with the specified keyword using the Vigenere cipher such that the specified text is the "
+            + "result."
+        },
+        VigenereDecryptionReverse.INSTANCE
+    ),
+
     GEOMETRIC_SERIES(
         "geometricseries",
         "Geometrische Reihe",
