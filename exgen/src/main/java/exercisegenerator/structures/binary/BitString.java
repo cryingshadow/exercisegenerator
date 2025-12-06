@@ -48,6 +48,62 @@ public class BitString extends LinkedList<Bit> {
         super(bitString);
     }
 
+    public BitString add(final BitString other, final int length) {
+        final Iterator<Bit> thisIterator = this.descendingIterator();
+        final Iterator<Bit> otherIterator = other.descendingIterator();
+        int carry = 0;
+        final BitString result = new BitString();
+        while (thisIterator.hasNext() && otherIterator.hasNext()) {
+            final Bit thisBit = thisIterator.next();
+            final Bit otherBit = otherIterator.next();
+            carry += thisBit.value;
+            carry += otherBit.value;
+            if (carry % 2 == 0) {
+                result.addFirst(Bit.ZERO);
+            } else {
+                result.addFirst(Bit.ONE);
+            }
+            carry /= 2;
+        }
+        while (thisIterator.hasNext()) {
+            carry += thisIterator.next().value;
+            if (carry % 2 == 0) {
+                result.addFirst(Bit.ZERO);
+            } else {
+                result.addFirst(Bit.ONE);
+            }
+            carry /= 2;
+        }
+        while (otherIterator.hasNext()) {
+            carry += otherIterator.next().value;
+            if (carry % 2 == 0) {
+                result.addFirst(Bit.ZERO);
+            } else {
+                result.addFirst(Bit.ONE);
+            }
+            carry /= 2;
+        }
+        while (carry > 0) {
+            if (carry % 2 == 0) {
+                result.addFirst(Bit.ZERO);
+            } else {
+                result.addFirst(Bit.ONE);
+            }
+            carry /= 2;
+        }
+        while (result.size() < length) {
+            result.addFirst(Bit.ZERO);
+        }
+        while (result.size() > length) {
+            result.removeFirst();
+        }
+        return result;
+    }
+
+    public boolean and(final BitString other) {
+        return !this.isZero() && !other.isZero();
+    }
+
     public void append(final BitString toAppend) {
         for (final Bit bit : toAppend) {
             this.add(bit);
@@ -84,8 +140,38 @@ public class BitString extends LinkedList<Bit> {
         this.set(index, bit.invert());
     }
 
+    public boolean isNegativeInTwosComplement() {
+        return !this.getFirst().isZero();
+    }
+
+    public boolean isPositiveInTwosComplement() {
+        return this.getFirst().isZero() && ! this.isZero();
+    }
+
     public boolean isZero() {
         return this.toUnsignedInt() == 0;
+    }
+
+    public boolean lessThanInTwosComplement(final BitString other, final int length) {
+        if (this.size() != other.size() || this.size() != length) {
+            throw new IllegalArgumentException("Length does not match!");
+        }
+        if (this.isNegativeInTwosComplement()) {
+            if (!other.isNegativeInTwosComplement()) {
+                return true;
+            }
+        } else if (other.isNegativeInTwosComplement()) {
+            return false;
+        }
+        return other.subtract(this, length).isPositiveInTwosComplement();
+    }
+
+    public BitString negate(final int length) {
+        return this.isZero() ? BitString.create(BigInteger.ONE, length) : BitString.create(BigInteger.ZERO, length);
+    }
+
+    public boolean or(final BitString other) {
+        return !this.isZero() || !other.isZero();
     }
 
     public BitString reverse() {
@@ -102,6 +188,10 @@ public class BitString extends LinkedList<Bit> {
 
     public BitString subString(final int fromIndex, final int toIndexExclusive) {
         return new BitString(this.subList(fromIndex, toIndexExclusive));
+    }
+
+    public BitString subtract(final BitString other, final int length) {
+        return this.add(other.invert().increment(), length);
     }
 
     public BigInteger toNonNegativeBigInteger() {

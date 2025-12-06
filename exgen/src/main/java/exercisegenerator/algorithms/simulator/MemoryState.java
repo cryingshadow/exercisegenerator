@@ -30,12 +30,17 @@ public class MemoryState implements AlgorithmImplementation<MemoryStateInput, Li
 
     @Override
     public String[] generateTestParameters() {
-        // TODO Auto-generated method stub
-        return null;
+        final String[] result = new String[2];
+        result[0] = "-l";
+        result[1] = "5";
+        return result; //TODO
     }
 
     @Override
-    public List<MemoryStateInput> parseProblems(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
+    public List<MemoryStateInput> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
         // TODO Auto-generated method stub
         return null;
     }
