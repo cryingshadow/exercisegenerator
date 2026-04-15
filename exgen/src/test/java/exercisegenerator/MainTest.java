@@ -1193,40 +1193,6 @@ public class MainTest {
     }
 
     @Test
-    public void decodeHuffmanReverse() throws IOException {
-        this.harness(
-            new String[] {
-                "-a", Algorithm.FROM_HUFFMAN_REVERSE.name,
-                "-x", Main.EMBEDDED_EXAM,
-                "-i", "KLINIKUM"
-            },
-            MainTest.simpleComparison(
-                List.of(
-                    "Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen Codebuch:\\\\[2ex]",
-                    "\\codeseq{01100001100001111101}",
-                    "",
-                    "\\vspace*{1ex}",
-                    "",
-                    "\\textbf{Codebuch:}",
-                    "\\begin{align*}",
-                    "\\code{`I'} &= \\code{\\textquotedbl{}00\\textquotedbl{}}\\\\",
-                    "\\code{`K'} &= \\code{\\textquotedbl{}01\\textquotedbl{}}\\\\",
-                    "\\code{`L'} &= \\code{\\textquotedbl{}100\\textquotedbl{}}\\\\",
-                    "\\code{`M'} &= \\code{\\textquotedbl{}101\\textquotedbl{}}\\\\",
-                    "\\code{`N'} &= \\code{\\textquotedbl{}110\\textquotedbl{}}\\\\",
-                    "\\code{`U'} &= \\code{\\textquotedbl{}111\\textquotedbl{}}\\\\",
-                    "\\end{align*}",
-                    "",
-                    "\\vspace*{-3ex}",
-                    "",
-                    "\\textbf{Quelltext:}\\\\[2ex]"
-                ),
-                List.of("\\code{KLINIKUM}")
-            )
-        );
-    }
-
-    @Test
     public void decodeHuffmanLongComma() throws IOException {
         this.harness(
             new String[] {
@@ -1266,6 +1232,40 @@ public class MainTest {
                     "\\textbf{Quelltext:}\\\\[2ex]"
                 ),
                 List.of("\\code{KLINGT INTERESSANT, IST ES ABER NICHT}")
+            )
+        );
+    }
+
+    @Test
+    public void decodeHuffmanReverse() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.FROM_HUFFMAN_REVERSE.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "KLINIKUM"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen Codebuch:\\\\[2ex]",
+                    "\\codeseq{01100001100001111101}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "\\textbf{Codebuch:}",
+                    "\\begin{align*}",
+                    "\\code{`I'} &= \\code{\\textquotedbl{}00\\textquotedbl{}}\\\\",
+                    "\\code{`K'} &= \\code{\\textquotedbl{}01\\textquotedbl{}}\\\\",
+                    "\\code{`L'} &= \\code{\\textquotedbl{}100\\textquotedbl{}}\\\\",
+                    "\\code{`M'} &= \\code{\\textquotedbl{}101\\textquotedbl{}}\\\\",
+                    "\\code{`N'} &= \\code{\\textquotedbl{}110\\textquotedbl{}}\\\\",
+                    "\\code{`U'} &= \\code{\\textquotedbl{}111\\textquotedbl{}}\\\\",
+                    "\\end{align*}",
+                    "",
+                    "\\vspace*{-3ex}",
+                    "",
+                    "\\textbf{Quelltext:}\\\\[2ex]"
+                ),
+                List.of("\\code{KLINIKUM}")
             )
         );
     }
@@ -5112,7 +5112,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Geben Sie eine zur folgenden aussagenlogischen Formel \\\"aquivalente aussagenlogische Formel in CNF an:\\\\",
+                    "Leiten Sie eine zur folgenden aussagenlogischen Formel \\\"aquivalente aussagenlogische Formel in CNF ab, indem Sie äquivalente Umformungsschritte aus der Vorlesung anwenden:\\\\",
                     "\\[((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{C}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{C}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B}))))\\]"
                 ),
                 List.of(
@@ -5206,7 +5206,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Geben Sie eine zur folgenden aussagenlogischen Formel \\\"aquivalente aussagenlogische Formel in DNF an:\\\\",
+                    "Leiten Sie eine zur folgenden aussagenlogischen Formel \\\"aquivalente aussagenlogische Formel in DNF ab, indem Sie äquivalente Umformungsschritte aus der Vorlesung anwenden:\\\\",
                     "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]"
                 ),
                 List.of(
