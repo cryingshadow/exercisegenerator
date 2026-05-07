@@ -26,6 +26,8 @@ public abstract class LaTeXUtils {
 
     public static final String MATH_VARIABLE_NAME;
 
+    public static final String TABLE_GREY;
+
     public static final String TWO_COL_WIDTH;
 
     private static final int MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW;
@@ -42,6 +44,7 @@ public abstract class LaTeXUtils {
         ITEM = "\\item";
         MATH_VARIABLE_NAME = "x";
         TWO_COL_WIDTH = "8cm";
+        TABLE_GREY = "black!20";
         MAX_NUMBER_OF_ARRAY_CELLS_IN_A_ROW = 17;
         ROMAN_NUMERALS = new TreeMap<Integer, String>();
         LaTeXUtils.ROMAN_NUMERALS.put(1000, "M");
@@ -354,7 +357,7 @@ public abstract class LaTeXUtils {
         final String width,
         final BufferedWriter writer
     ) throws IOException {
-        printSamePageBeginning(step, width, Optional.empty(), writer);
+        LaTeXUtils.printSamePageBeginning(step, width, Optional.empty(), writer);
     }
 
     public static void printSamePageBeginning(
@@ -363,7 +366,7 @@ public abstract class LaTeXUtils {
         final Optional<String> title,
         final BufferedWriter writer
     ) throws IOException {
-        printMinipageBeginning(width, writer);
+        LaTeXUtils.printMinipageBeginning(width, writer);
         writer.write("\\vspace*{1ex}");
         Main.newLine(writer);
         writer.write("Schritt ");
@@ -375,12 +378,12 @@ public abstract class LaTeXUtils {
         }
         writer.write(":\\\\[1.2ex]");
         Main.newLine(writer);
-        printAdjustboxBeginning(writer);
+        LaTeXUtils.printAdjustboxBeginning(writer);
     }
 
     public static void printSamePageEnd(final BufferedWriter writer) throws IOException {
-        printAdjustboxEnd(writer);
-        printMinipageEnd(writer);
+        LaTeXUtils.printAdjustboxEnd(writer);
+        LaTeXUtils.printMinipageEnd(writer);
     }
 
     public static void printSolutionSpaceBeginning(

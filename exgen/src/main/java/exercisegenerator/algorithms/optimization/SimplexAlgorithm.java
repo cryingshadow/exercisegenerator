@@ -126,6 +126,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             - numTableaus;
     }
 
+    private static int computeNumberOfColumnsForSimplexTableau(final SimplexTableau tableau) {
+        return tableau.problem().conditions().getNumberOfColumns() + 3;
+    }
+
     private static int computeNumberOfComputeCells(
         final int numVars,
         final int numInequalities,
@@ -137,6 +141,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
 
     private static int computeNumberOfInequalities(final SimplexSolution solution) {
         return solution.branches().getFirst().x.conditions().getNumberOfRows();
+    }
+
+    private static int computeNumberOfRowsForSimplexTableau(final SimplexTableau tableau) {
+        return tableau.problem().conditions().getNumberOfRows() + 2;
     }
 
     private static int computeNumberOfTableaus(final SimplexSolution solution) {
@@ -291,7 +299,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     ) throws IOException {
         LaTeXUtils.printTable(
             SimplexAlgorithm.toSimplexTableau(tableau, withSolution),
-            Optional.empty(),
+            Optional.of(SimplexAlgorithm.toSimplexTableauColors(tableau)),
             SimplexAlgorithm::simplexTableColumnDefinition,
             true,
             0,
@@ -580,8 +588,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
     }
 
     private static String[][] toSimplexTableau(final SimplexTableau tableau, final boolean fill) {
-        final int numberOfRows = tableau.problem().conditions().getNumberOfRows() + 2;
-        final int numberOfColumns = tableau.problem().conditions().getNumberOfColumns() + 3;
+        final int numberOfRows = SimplexAlgorithm.computeNumberOfRowsForSimplexTableau(tableau);
+        final int numberOfColumns = SimplexAlgorithm.computeNumberOfColumnsForSimplexTableau(tableau);
         final String[][] result = new String[numberOfRows][numberOfColumns];
         result[0][0] = "";
         result[0][1] = "$c_j$";
@@ -641,6 +649,21 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             }
         }
         result[result.length - 1][result[0].length - 2] = "";
+        return result;
+    }
+
+    private static String[][] toSimplexTableauColors(final SimplexTableau tableau) {
+        final int numberOfRows = SimplexAlgorithm.computeNumberOfRowsForSimplexTableau(tableau);
+        final int numberOfColumns = SimplexAlgorithm.computeNumberOfColumnsForSimplexTableau(tableau);
+        final String[][] result = new String[numberOfRows][numberOfColumns];
+        result[0][0] = LaTeXUtils.TABLE_GREY;
+        result[0][numberOfColumns - 2] = LaTeXUtils.TABLE_GREY;
+        result[0][numberOfColumns - 1] = LaTeXUtils.TABLE_GREY;
+        result[numberOfRows - 2][0] = LaTeXUtils.TABLE_GREY;
+        result[numberOfRows - 1][0] = LaTeXUtils.TABLE_GREY;
+        result[numberOfRows - 2][numberOfColumns - 1] = LaTeXUtils.TABLE_GREY;
+        result[numberOfRows - 1][numberOfColumns - 2] = LaTeXUtils.TABLE_GREY;
+        result[numberOfRows - 1][numberOfColumns - 1] = LaTeXUtils.TABLE_GREY;
         return result;
     }
 
