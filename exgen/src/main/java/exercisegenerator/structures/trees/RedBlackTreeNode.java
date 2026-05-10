@@ -4,24 +4,6 @@ import java.util.*;
 
 public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T> {
 
-    private static <T extends Comparable<T>> boolean hasBlackLeftChild(
-        final Optional<? extends BinaryTreeNode<T>> node
-    ) {
-        return node.isEmpty() || RedBlackTreeNode.isBlack(node.get().leftChild);
-    }
-
-    private static <T extends Comparable<T>> boolean hasBlackRightChild(
-        final Optional<? extends BinaryTreeNode<T>> node
-    ) {
-        return node.isEmpty() || RedBlackTreeNode.isBlack(node.get().rightChild);
-    }
-
-    private static <T extends Comparable<T>> boolean hasLeftRedRedConflict(
-        final Optional<? extends BinaryTreeNode<T>> node
-    ) {
-        return RedBlackTreeNode.isRed(node.get().leftChild);
-    }
-
     @SuppressWarnings("unchecked")
     private static <T extends Comparable<T>> boolean hasRedRedConflict(
         final Optional<? extends BinaryTreeNode<T>> node
@@ -290,7 +272,8 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
                 Optional.of(newNode),
                 new SearchTreeStep<T>(
                     SearchTreeStepType.COLOR,
-                    List.of(this.leftChild.get().value, this.value, this.rightChild.get().value)
+                    List.of(this.leftChild.get().value, this.value, this.rightChild.get().value),
+                    "(Fall 1) "
                 )
             )
         );
@@ -298,44 +281,34 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
         return result;
     }
 
-    private SearchTreeNodeSteps<T> addCase3Left(final SearchTreeNodeSteps<T> result) {
-        result.addAll(this.rotateRight());
+    private SearchTreeNodeSteps<T> addCase3(final SearchTreeNodeSteps<T> result, final OperationsMirror mirror) {
+        result.addAll(mirror.innerRotate(this, "(Fall 3) "));
         @SuppressWarnings("unchecked")
         final BinaryTreeNode<T> grandParent = (BinaryTreeNode<T>)result.getLast().node().get();
+        final Optional<? extends BinaryTreeNode<T>> parent = mirror.getInnerChild(grandParent);
         result.add(
             new SearchTreeNodeAndStep<T>(
                 Optional.of(
-                    ((RedBlackTreeNode<T>)grandParent).toggleColor().setRightChild(
-                        RedBlackTreeNode.toggleColor(grandParent.rightChild)
+                    mirror.setInnerChild(
+                        ((RedBlackTreeNode<T>)grandParent).toggleColor(),
+                        RedBlackTreeNode.toggleColor(parent)
                     )
                 ),
                 new SearchTreeStep<T>(
                     SearchTreeStepType.COLOR,
-                    List.of(grandParent.value, grandParent.rightChild.get().value)
+                    List.of(grandParent.value, parent.get().value)
                 )
             )
         );
         return result;
     }
 
+    private SearchTreeNodeSteps<T> addCase3Left(final SearchTreeNodeSteps<T> result) {
+        return this.addCase3(result, BinaryTreeNode.LEFT_IS_OUTSIDE);
+    }
+
     private SearchTreeNodeSteps<T> addCase3Right(final SearchTreeNodeSteps<T> result) {
-        result.addAll(this.rotateLeft());
-        @SuppressWarnings("unchecked")
-        final BinaryTreeNode<T> grandParent = (BinaryTreeNode<T>)result.getLast().node().get();
-        result.add(
-            new SearchTreeNodeAndStep<T>(
-                Optional.of(
-                    ((RedBlackTreeNode<T>)grandParent).toggleColor().setLeftChild(
-                        RedBlackTreeNode.toggleColor(grandParent.leftChild)
-                    )
-                ),
-                new SearchTreeStep<T>(
-                    SearchTreeStepType.COLOR,
-                    List.of(grandParent.leftChild.get().value, grandParent.value)
-                )
-            )
-        );
-        return result;
+        return this.addCase3(result, BinaryTreeNode.RIGHT_IS_OUTSIDE);
     }
 
     private RedBlackTreeNode<T> cloneRedBlackProperties(final RedBlackTreeNode<T> node) {
@@ -352,71 +325,64 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
     }
 
     @SuppressWarnings("unchecked")
-    private RedBlackTreeNode<T> handleAddCase2Left(final SearchTreeNodeSteps<T> result) {
-        if (!RedBlackTreeNode.hasLeftRedRedConflict(this.leftChild)) {
-            result.addAll(this.asLeftChildren(this.leftChild.get().rotateLeft()));
+    private RedBlackTreeNode<T> handleAddCase2(final SearchTreeNodeSteps<T> result, final OperationsMirror mirror) {
+        final BinaryTreeNode<T> child = mirror.getOuterChild(this).get();
+        if (RedBlackTreeNode.isRed((Optional<? extends BinaryTreeNode<T>>)mirror.getInnerChild(child))) {
+            result.addAll(mirror.asOuterChildren(this, mirror.outerRotate(child, "(Fall 2) ")));
             return (RedBlackTreeNode<T>)result.getLast().node().get();
         }
         return this;
     }
 
-    @SuppressWarnings("unchecked")
+    private RedBlackTreeNode<T> handleAddCase2Left(final SearchTreeNodeSteps<T> result) {
+        return this.handleAddCase2(result, BinaryTreeNode.LEFT_IS_OUTSIDE);
+    }
+
     private RedBlackTreeNode<T> handleAddCase2Right(final SearchTreeNodeSteps<T> result) {
-        if (RedBlackTreeNode.hasLeftRedRedConflict(this.rightChild)) {
-            result.addAll(this.asRightChildren(this.rightChild.get().rotateRight()));
-            return (RedBlackTreeNode<T>)result.getLast().node().get();
+        return this.handleAddCase2(result, BinaryTreeNode.RIGHT_IS_OUTSIDE);
+    }
+
+    private RedBlackTreeNode<T> handleRemoveCase3(final SearchTreeNodeSteps<T> result, final OperationsMirror mirror) {
+        final Optional<? extends BinaryTreeNode<T>> innerChildBefore = mirror.getInnerChild(this);
+        if (
+            innerChildBefore.isEmpty()
+            || RedBlackTreeNode.isBlack(
+                (Optional<? extends BinaryTreeNode<T>>)mirror.getInnerChild(innerChildBefore.get())
+            )
+        ) {
+            result.addAll(mirror.asInnerChildren(this, mirror.innerRotate(innerChildBefore.get(), "(Fall 3) ")));
+            @SuppressWarnings("unchecked")
+            BinaryTreeNode<T> parent = (BinaryTreeNode<T>)result.getLast().node().get();
+            final BinaryTreeNode<T> innerChildIntermediate = mirror.getInnerChild(parent).get();
+            parent =
+                mirror.setInnerChild(
+                    parent,
+                    ((RedBlackTreeNode<T>)mirror.setInnerChild(
+                        innerChildIntermediate,
+                        RedBlackTreeNode.toggleColor(mirror.getInnerChild(innerChildIntermediate))
+                    )).toggleColor()
+                );
+            final BinaryTreeNode<T> innerChildAfter = mirror.getInnerChild(parent).get();
+            result.add(
+                new SearchTreeNodeAndStep<T>(
+                    Optional.of(parent),
+                    new SearchTreeStep<T>(
+                        SearchTreeStepType.COLOR,
+                        List.of(innerChildAfter.value, mirror.getInnerChild(innerChildAfter).get().value)
+                    )
+                )
+            );
+            return (RedBlackTreeNode<T>)parent;
         }
         return this;
     }
 
     private RedBlackTreeNode<T> handleRemoveCase3Left(final SearchTreeNodeSteps<T> result) {
-        if (RedBlackTreeNode.hasBlackRightChild(this.rightChild)) {
-            result.addAll(this.asRightChildren(this.rightChild.get().rotateRight()));
-            @SuppressWarnings("unchecked")
-            BinaryTreeNode<T> parent = (BinaryTreeNode<T>)result.getLast().node().get();
-            parent =
-                parent.setRightChild(
-                    ((RedBlackTreeNode<T>)parent.rightChild.get().setRightChild(
-                        RedBlackTreeNode.toggleColor(parent.rightChild.get().rightChild)
-                    )).toggleColor()
-                );
-            result.add(
-                new SearchTreeNodeAndStep<T>(
-                    Optional.of(parent),
-                    new SearchTreeStep<T>(
-                        SearchTreeStepType.COLOR,
-                        List.of(parent.rightChild.get().value, parent.rightChild.get().rightChild.get().value)
-                    )
-                )
-            );
-            return (RedBlackTreeNode<T>)parent;
-        }
-        return this;
+        return this.handleRemoveCase3(result, BinaryTreeNode.LEFT_IS_OUTSIDE);
     }
 
     private RedBlackTreeNode<T> handleRemoveCase3Right(final SearchTreeNodeSteps<T> result) {
-        if (RedBlackTreeNode.hasBlackLeftChild(this.leftChild)) {
-            result.addAll(this.asLeftChildren(this.leftChild.get().rotateLeft()));
-            @SuppressWarnings("unchecked")
-            BinaryTreeNode<T> parent = (BinaryTreeNode<T>)result.getLast().node().get();
-            parent =
-                parent.setLeftChild(
-                    ((RedBlackTreeNode<T>)parent.leftChild.get().setLeftChild(
-                        RedBlackTreeNode.toggleColor(parent.leftChild.get().leftChild)
-                    )).toggleColor()
-                );
-            result.add(
-                new SearchTreeNodeAndStep<T>(
-                    Optional.of(parent),
-                    new SearchTreeStep<T>(
-                        SearchTreeStepType.COLOR,
-                        List.of(parent.leftChild.get().leftChild.get().value, parent.leftChild.get().value)
-                    )
-                )
-            );
-            return (RedBlackTreeNode<T>)parent;
-        }
-        return this;
+        return this.handleRemoveCase3(result, BinaryTreeNode.RIGHT_IS_OUTSIDE);
     }
 
     private boolean hasRedRedConflict() {
@@ -436,105 +402,100 @@ public class RedBlackTreeNode<T extends Comparable<T>> extends BinaryTreeNode<T>
     }
 
     @SuppressWarnings("unchecked")
-    private SearchTreeNodeSteps<T> removeCase1Left() {
-        final SearchTreeNodeSteps<T> result = this.rotateLeft();
+    private SearchTreeNodeSteps<T> removeCase1(final OperationsMirror mirror) {
+        final SearchTreeNodeSteps<T> result = mirror.outerRotate(this);
         RedBlackTreeNode<T> parent = (RedBlackTreeNode<T>)result.getLast().node().get();
         parent =
-            (RedBlackTreeNode<T>)parent.toggleColor().setLeftChild(RedBlackTreeNode.toggleColor(parent.leftChild));
+            (RedBlackTreeNode<T>)mirror.setOuterChild(
+                parent.toggleColor(),
+                RedBlackTreeNode.toggleColor(mirror.getOuterChild(parent))
+            );
+        final BinaryTreeNode<T> outerChild = mirror.getOuterChild(parent).get();
         result.add(
             new SearchTreeNodeAndStep<T>(
                 Optional.of(parent),
                 new SearchTreeStep<T>(
                     SearchTreeStepType.COLOR,
-                    List.of(parent.leftChild.get().value, parent.value)
+                    List.of(outerChild.value, parent.value),
+                    "(Fall 1) "
                 )
             )
         );
-        result.addAll(parent.asLeftChildren(parent.leftChild.get().balanceWithSteps()));
+        result.addAll(mirror.asOuterChildren(parent, outerChild.balanceWithSteps()));
         result.addAll(((RedBlackTreeNode<T>)result.getLast().node().get()).balanceWithSteps());
         return result;
     }
 
-    @SuppressWarnings("unchecked")
+    private SearchTreeNodeSteps<T> removeCase1Left() {
+        return this.removeCase1(BinaryTreeNode.LEFT_IS_OUTSIDE);
+    }
+
     private SearchTreeNodeSteps<T> removeCase1Right() {
-        final SearchTreeNodeSteps<T> result = this.rotateRight();
-        RedBlackTreeNode<T> parent = (RedBlackTreeNode<T>)result.getLast().node().get();
-        parent =
-            (RedBlackTreeNode<T>)parent.toggleColor().setRightChild(RedBlackTreeNode.toggleColor(parent.rightChild));
-        result.add(
-            new SearchTreeNodeAndStep<T>(
-                Optional.of(parent),
-                new SearchTreeStep<T>(
-                    SearchTreeStepType.COLOR,
-                    List.of(parent.value, parent.rightChild.get().value)
-                )
-            )
+        return this.removeCase1(BinaryTreeNode.RIGHT_IS_OUTSIDE);
+    }
+
+    private SearchTreeNodeSteps<T> removeCase2(final OperationsMirror mirror) {
+        final Optional<? extends BinaryTreeNode<T>> innerChild = mirror.getInnerChild(this);
+        return new SearchTreeNodeSteps<T>(
+            mirror.setInnerChild(
+                mirror.setOuterChild(
+                    this.toggleMark().get(),
+                    RedBlackTreeNode.toggleMark((Optional<? extends BinaryTreeNode<T>>)mirror.getOuterChild(this))
+                ),
+                RedBlackTreeNode.toggleColor(innerChild)
+            ),
+            new SearchTreeStep<T>(SearchTreeStepType.COLOR, innerChild.get().value, "(Fall 2) ")
         );
-        result.addAll(parent.asRightChildren(parent.rightChild.get().balanceWithSteps()));
-        result.addAll(((RedBlackTreeNode<T>)result.getLast().node().get()).balanceWithSteps());
-        return result;
     }
 
     private SearchTreeNodeSteps<T> removeCase2Left() {
-        return new SearchTreeNodeSteps<T>(
-            this.toggleMark().get().setLeftChild(
-                RedBlackTreeNode.toggleMark(this.leftChild)
-            ).setRightChild(RedBlackTreeNode.toggleColor(this.rightChild)),
-            new SearchTreeStep<T>(SearchTreeStepType.COLOR, this.rightChild.get().value)
-        );
+        return this.removeCase2(BinaryTreeNode.LEFT_IS_OUTSIDE);
     }
 
     private SearchTreeNodeSteps<T> removeCase2Right() {
-        return new SearchTreeNodeSteps<T>(
-            this.toggleMark().get().setLeftChild(
-                RedBlackTreeNode.toggleColor(this.leftChild)
-            ).setRightChild(RedBlackTreeNode.toggleMark(this.rightChild)),
-            new SearchTreeStep<T>(SearchTreeStepType.COLOR, this.leftChild.get().value)
+        return this.removeCase2(BinaryTreeNode.RIGHT_IS_OUTSIDE);
+    }
+
+    private SearchTreeNodeSteps<T> removeCase4(final SearchTreeNodeSteps<T> result, final OperationsMirror mirror) {
+        final Optional<? extends BinaryTreeNode<T>> innerChild = mirror.getInnerChild(this);
+        final BinaryTreeNode<T> parent =
+            mirror.setInnerChild(
+                this.setBlack(),
+                mirror.setInnerChild(
+                    RedBlackTreeNode.setColor(innerChild, this.isBlack),
+                    RedBlackTreeNode.toggleColor(mirror.getInnerChild(innerChild.get()))
+                )
+            );
+        final T innerInnerValue = mirror.getInnerChild(innerChild.get()).get().value;
+        result.add(
+            new SearchTreeNodeAndStep<T>(
+                Optional.of(parent),
+                new SearchTreeStep<T>(
+                    SearchTreeStepType.COLOR,
+                    this.isBlack ?
+                        List.of(innerInnerValue) :
+                            List.of(this.value, innerChild.get().value, innerInnerValue),
+                    "(Fall 4) "
+                )
+            )
         );
+        result.addAll(
+            mirror.outerRotate(
+                mirror.setOuterChild(
+                    parent,
+                    RedBlackTreeNode.toggleMark((Optional<? extends BinaryTreeNode<T>>)mirror.getOuterChild(parent))
+                )
+            )
+        );
+        return result;
     }
 
     private SearchTreeNodeSteps<T> removeCase4Left(final SearchTreeNodeSteps<T> result) {
-        final BinaryTreeNode<T> parent =
-            this.setBlack().setRightChild(
-                RedBlackTreeNode.setColor(this.rightChild, this.isBlack)
-                .setRightChild(RedBlackTreeNode.toggleColor(this.rightChild.get().rightChild))
-            );
-        final T rightRightValue = this.rightChild.get().rightChild.get().value;
-        result.add(
-            new SearchTreeNodeAndStep<T>(
-                Optional.of(parent),
-                new SearchTreeStep<T>(
-                    SearchTreeStepType.COLOR,
-                    this.isBlack ?
-                        List.of(rightRightValue) :
-                            List.of(this.value, this.rightChild.get().value, rightRightValue)
-                )
-            )
-        );
-        result.addAll(parent.setLeftChild(RedBlackTreeNode.toggleMark(parent.leftChild)).rotateLeft());
-        return result;
+        return this.removeCase4(result, BinaryTreeNode.LEFT_IS_OUTSIDE);
     }
 
     private SearchTreeNodeSteps<T> removeCase4Right(final SearchTreeNodeSteps<T> result) {
-        final BinaryTreeNode<T> parent =
-            this.setBlack().setLeftChild(
-                RedBlackTreeNode.setColor(this.leftChild, this.isBlack)
-                .setLeftChild(RedBlackTreeNode.toggleColor(this.leftChild.get().leftChild))
-            );
-        final T leftLeftValue = this.leftChild.get().leftChild.get().value;
-        result.add(
-            new SearchTreeNodeAndStep<T>(
-                Optional.of(parent),
-                new SearchTreeStep<T>(
-                    SearchTreeStepType.COLOR,
-                    this.isBlack ?
-                        List.of(leftLeftValue) :
-                            List.of(leftLeftValue, this.leftChild.get().value, this.value)
-                )
-            )
-        );
-        result.addAll(parent.setRightChild(RedBlackTreeNode.toggleMark(parent.rightChild)).rotateRight());
-        return result;
+        return this.removeCase4(result, BinaryTreeNode.RIGHT_IS_OUTSIDE);
     }
 
     private RedBlackTreeNode<T> removed() {

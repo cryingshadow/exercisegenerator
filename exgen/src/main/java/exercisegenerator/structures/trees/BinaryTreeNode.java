@@ -1,9 +1,194 @@
 package exercisegenerator.structures.trees;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 public class BinaryTreeNode<T extends Comparable<T>> implements SearchTreeNode<T> {
+
+    final static OperationsMirror LEFT_IS_OUTSIDE =
+        new OperationsMirror() {
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> asInnerChildren(
+                final BinaryTreeNode<T> node,
+                final SearchTreeNodeSteps<T> steps
+            ) {
+                return node.asRightChildren(steps);
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> asOuterChildren(
+                final BinaryTreeNode<T> node,
+                final SearchTreeNodeSteps<T> steps
+            ) {
+                return node.asLeftChildren(steps);
+            }
+
+            @Override
+            public <T extends Comparable<T>> Optional<? extends BinaryTreeNode<T>> getInnerChild(
+                final BinaryTreeNode<T> node
+            ) {
+                return node.rightChild;
+            }
+
+            @Override
+            public <T extends Comparable<T>> Optional<? extends BinaryTreeNode<T>> getOuterChild(
+                final BinaryTreeNode<T> node
+            ) {
+                return node.leftChild;
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> innerRotate(final BinaryTreeNode<T> node) {
+                return node.rotateRight();
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> innerRotate(
+                final BinaryTreeNode<T> node,
+                final String annotation
+            ) {
+                return node.rotateRight(annotation);
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> outerRotate(final BinaryTreeNode<T> node) {
+                return node.rotateLeft();
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> outerRotate(
+                final BinaryTreeNode<T> node,
+                final String annotation
+            ) {
+                return node.rotateLeft(annotation);
+            }
+
+            @Override
+            public <T extends Comparable<T>> BinaryTreeNode<T> setInnerChild(
+                final BinaryTreeNode<T> node,
+                final BinaryTreeNode<T> child
+            ) {
+                return node.setRightChild(child);
+            }
+
+            @Override
+            public <T extends Comparable<T>> BinaryTreeNode<T> setInnerChild(
+                final BinaryTreeNode<T> node,
+                final Optional<? extends BinaryTreeNode<T>> child
+            ) {
+                return node.setRightChild(child);
+            }
+
+            @Override
+            public <T extends Comparable<T>> BinaryTreeNode<T> setOuterChild(
+                final BinaryTreeNode<T> node,
+                final BinaryTreeNode<T> child
+            ) {
+                return node.setLeftChild(child);
+            }
+
+            @Override
+            public <T extends Comparable<T>> BinaryTreeNode<T> setOuterChild(
+                final BinaryTreeNode<T> node,
+                final Optional<? extends BinaryTreeNode<T>> child
+            ) {
+                return node.setLeftChild(child);
+            }
+        };
+
+    final static OperationsMirror RIGHT_IS_OUTSIDE =
+        new OperationsMirror() {
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> asInnerChildren(
+                final BinaryTreeNode<T> node,
+                final SearchTreeNodeSteps<T> steps
+                ) {
+                return node.asLeftChildren(steps);
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> asOuterChildren(
+                final BinaryTreeNode<T> node,
+                final SearchTreeNodeSteps<T> steps
+                ) {
+                return node.asRightChildren(steps);
+            }
+
+            @Override
+            public <T extends Comparable<T>> Optional<? extends BinaryTreeNode<T>> getInnerChild(
+                final BinaryTreeNode<T> node
+                ) {
+                return node.leftChild;
+            }
+
+            @Override
+            public <T extends Comparable<T>> Optional<? extends BinaryTreeNode<T>> getOuterChild(
+                final BinaryTreeNode<T> node
+                ) {
+                return node.rightChild;
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> innerRotate(final BinaryTreeNode<T> node) {
+                return node.rotateLeft();
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> innerRotate(
+                final BinaryTreeNode<T> node,
+                final String annotation
+                ) {
+                return node.rotateLeft(annotation);
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> outerRotate(final BinaryTreeNode<T> node) {
+                return node.rotateRight();
+            }
+
+            @Override
+            public <T extends Comparable<T>> SearchTreeNodeSteps<T> outerRotate(
+                final BinaryTreeNode<T> node,
+                final String annotation
+                ) {
+                return node.rotateRight(annotation);
+            }
+
+            @Override
+            public <T extends Comparable<T>> BinaryTreeNode<T> setInnerChild(
+                final BinaryTreeNode<T> node,
+                final BinaryTreeNode<T> child
+                ) {
+                return node.setLeftChild(child);
+            }
+
+            @Override
+            public <T extends Comparable<T>> BinaryTreeNode<T> setInnerChild(
+                final BinaryTreeNode<T> node,
+                final Optional<? extends BinaryTreeNode<T>> child
+                ) {
+                return node.setLeftChild(child);
+            }
+
+            @Override
+            public <T extends Comparable<T>> BinaryTreeNode<T> setOuterChild(
+                final BinaryTreeNode<T> node,
+                final BinaryTreeNode<T> child
+                ) {
+                return node.setRightChild(child);
+            }
+
+            @Override
+            public <T extends Comparable<T>> BinaryTreeNode<T> setOuterChild(
+                final BinaryTreeNode<T> node,
+                final Optional<? extends BinaryTreeNode<T>> child
+                ) {
+                return node.setRightChild(child);
+            }
+        };
 
     @SuppressWarnings("unchecked")
     private static <T extends Comparable<T>> void addBalanceSteps(final SearchTreeNodeSteps<T> steps) {
@@ -258,35 +443,11 @@ public class BinaryTreeNode<T extends Comparable<T>> implements SearchTreeNode<T
     }
 
     SearchTreeNodeSteps<T> asLeftChildren(final SearchTreeNodeSteps<T> steps) {
-        @SuppressWarnings("unchecked")
-        final SearchTreeNodeSteps<T> result =
-            steps
-            .stream()
-            .map(nodeAndStep ->
-                new SearchTreeNodeAndStep<T>(
-                    Optional.of(
-                        this.setLeftChild((Optional<? extends BinaryTreeNode<T>>)nodeAndStep.node())
-                    ),
-                    nodeAndStep.step()
-                )
-            ).collect(Collectors.toCollection(SearchTreeNodeSteps::new));
-        return result;
+        return this.asChildren(steps, (x,y) -> x.setLeftChild(y));
     }
 
     SearchTreeNodeSteps<T> asRightChildren(final SearchTreeNodeSteps<T> steps) {
-        @SuppressWarnings("unchecked")
-        final SearchTreeNodeSteps<T> result =
-            steps
-            .stream()
-            .map(nodeAndStep ->
-                new SearchTreeNodeAndStep<T>(
-                    Optional.of(
-                        this.setRightChild((Optional<? extends BinaryTreeNode<T>>)nodeAndStep.node())
-                    ),
-                    nodeAndStep.step()
-                )
-            ).collect(Collectors.toCollection(SearchTreeNodeSteps::new));
-        return result;
+        return this.asChildren(steps, (x,y) -> x.setRightChild(y));
     }
 
     SearchTreeNodeSteps<T> balanceWithSteps() {
@@ -310,16 +471,24 @@ public class BinaryTreeNode<T extends Comparable<T>> implements SearchTreeNode<T
     }
 
     SearchTreeNodeSteps<T> rotateLeft() {
+        return this.rotateLeft("");
+    }
+
+    SearchTreeNodeSteps<T> rotateLeft(final String annotation) {
         return new SearchTreeNodeSteps<T>(
             this.rotationLeft(),
-            new SearchTreeStep<T>(SearchTreeStepType.ROTATE_LEFT, this.value)
+            new SearchTreeStep<T>(SearchTreeStepType.ROTATE_LEFT, this.value, annotation)
         );
     }
 
     SearchTreeNodeSteps<T> rotateRight() {
+        return this.rotateRight("");
+    }
+
+    SearchTreeNodeSteps<T> rotateRight(final String annotation) {
         return new SearchTreeNodeSteps<T>(
             this.rotationRight(),
-            new SearchTreeStep<T>(SearchTreeStepType.ROTATE_RIGHT, this.value)
+            new SearchTreeStep<T>(SearchTreeStepType.ROTATE_RIGHT, this.value, annotation)
         );
     }
 
@@ -337,6 +506,25 @@ public class BinaryTreeNode<T extends Comparable<T>> implements SearchTreeNode<T
 
     String valueToTikZ() {
         return this.value.toString();
+    }
+
+    private SearchTreeNodeSteps<T> asChildren(
+        final SearchTreeNodeSteps<T> steps,
+        final BiFunction<BinaryTreeNode<T>, Optional<? extends BinaryTreeNode<T>>, BinaryTreeNode<T>> setter
+    ) {
+        @SuppressWarnings("unchecked")
+        final SearchTreeNodeSteps<T> result =
+            steps
+            .stream()
+            .map(nodeAndStep ->
+                new SearchTreeNodeAndStep<T>(
+                    Optional.of(
+                        setter.apply(this, (Optional<? extends BinaryTreeNode<T>>)nodeAndStep.node())
+                    ),
+                    nodeAndStep.step()
+                )
+            ).collect(Collectors.toCollection(SearchTreeNodeSteps::new));
+        return result;
     }
 
     private LinkedList<? extends T> getLeft(final Collection<? extends T> values) {
