@@ -233,7 +233,7 @@ public class BinaryTreeNode<T extends Comparable<T>> implements SearchTreeNode<T
 
     @Override
     public SearchTreeNodeSteps<T> addWithSteps(final T value) {
-        if (this.value.compareTo(value) < 0) {
+        if (this.value.compareTo(value) <= 0) {
             if (this.rightChild.isEmpty()) {
                 final BinaryTreeNode<T> resultingNode = this.setRightChild(this.nodeFactory.create(value));
                 return new SearchTreeNodeSteps<T>(resultingNode, new SearchTreeStep<T>(SearchTreeStepType.ADD, value));
