@@ -126,6 +126,10 @@ public abstract class LaTeXUtils {
         return String.format("\\{%s\\}", elements.map(x -> x.toString()).collect(Collectors.joining(",")));
     }
 
+    public static int[] parsePagebreakCounters(final String keyValues) {
+        return LaTeXUtils.parsePagebreakCounters(keyValues, "breaks=");
+    }
+
     public static int[] parsePagebreakCountersForExercise(final String keyValues) {
         return LaTeXUtils.parsePagebreakCounters(keyValues, "exercisebreaks=");
     }

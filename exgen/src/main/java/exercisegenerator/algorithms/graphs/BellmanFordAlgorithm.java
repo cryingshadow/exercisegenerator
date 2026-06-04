@@ -16,16 +16,29 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final List<Vertex<String>> vertices,
         final List<BellmanFordStep<String>> result,
         final boolean fill,
+        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         final String columnWidth = "16mm";
         LaTeXUtils.printArrayStretch(1.5, writer);
+        final int[] pagebreakCounters =
+            LaTeXUtils.parsePagebreakCounters(options.getOrDefault(Flag.KEYVALUE, ""));
+        int counterIndex = 0;
+        int tables = 0;
         boolean first = true;
         for (final BellmanFordStep<String> step : result) {
             if (first) {
                 first = false;
             } else {
-                LaTeXUtils.printVerticalProtectedSpace(writer);
+                if (counterIndex < pagebreakCounters.length && tables >= pagebreakCounters[counterIndex]) {
+                    writer.write("\\newpage");
+                    Main.newLine(writer);
+                    Main.newLine(writer);
+                    tables = 0;
+                    counterIndex++;
+                } else {
+                    LaTeXUtils.printVerticalProtectedSpace(writer);
+                }
             }
             LaTeXUtils.printTable(
                 BellmanFordAlgorithm.toTable(step, vertices, fill),
@@ -36,6 +49,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
                 1,
                 writer
             );
+            tables++;
         }
         LaTeXUtils.printArrayStretch(1.0, writer);
     }
@@ -158,7 +172,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
     ) throws IOException {
         final List<Vertex<String>> vertices =
             GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
-        BellmanFordAlgorithm.printTables(vertices, solution, true, writer);
+        BellmanFordAlgorithm.printTables(vertices, solution, true, options, writer);
     }
 
     @Override
@@ -171,7 +185,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final List<Vertex<String>> vertices =
             GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
         LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-        BellmanFordAlgorithm.printTables(vertices, solution, false, writer);
+        BellmanFordAlgorithm.printTables(vertices, solution, false, options, writer);
         LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
     }
 
