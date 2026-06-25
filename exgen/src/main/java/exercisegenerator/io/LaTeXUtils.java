@@ -111,7 +111,9 @@ public abstract class LaTeXUtils {
             .replaceAll("\\^", "\\\\textasciicircum{}")
             .replaceAll("\\\\textbackslash", "\\\\textbackslash{}")
             .replaceAll("([^\\\\])\"", "$1''")
-            .replaceAll("^\"", "''");
+            .replaceAll("^\"", "''")
+            .replaceAll("\u00a0", "~")
+            .replaceAll("\u202f", "\\,");
     }
 
     public static String inlineMath(final String content) {
