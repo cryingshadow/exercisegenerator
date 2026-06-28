@@ -834,9 +834,9 @@ public class GraphAlgorithmsTest {
     @Test(dataProvider="fordFulkersonData")
     public void fordFulkerson(
         final FlowNetworkProblem problem,
-        final List<FordFulkersonDoubleStep> expected
+        final FlowNetworkResult expected
     ) {
-        final List<FordFulkersonDoubleStep> solution = FordFulkersonAlgorithm.INSTANCE.apply(problem);
+        final FlowNetworkResult solution = FordFulkersonAlgorithm.INSTANCE.apply(problem);
         Assert.assertEquals(solution, expected);
     }
 
@@ -912,72 +912,75 @@ public class GraphAlgorithmsTest {
         return new Object[][] {
             {
                 new FlowNetworkProblem(new GraphWithLayout<>(graph1, layout), a, d),
-                List.of(
-                    new FordFulkersonDoubleStep(
-                        new GraphWithLayout<String, FlowAndCapacity, Integer>(graph1, layout),
-                        Collections.emptySet(),
-                        new GraphWithLayout<String, Integer, Integer>(graph1r, residualLayout),
-                        Set.of(
-                            new FordFulkersonPathStep<String, Integer>(a, graph1r.getEdges(a, b).iterator().next()),
-                            new FordFulkersonPathStep<String, Integer>(b, graph1r.getEdges(b, d).iterator().next())
-                        )
-                    ),
-                    new FordFulkersonDoubleStep(
-                        new GraphWithLayout<String, FlowAndCapacity, Integer>(graph2, layout),
-                        Set.of(
-                            new FordFulkersonPathStep<String, FlowAndCapacity>(
-                                a,
-                                graph2.getEdges(a, b).iterator().next()
-                            ),
-                            new FordFulkersonPathStep<String, FlowAndCapacity>(
-                                b,
-                                graph2.getEdges(b, d).iterator().next()
-                             )
-                        ),
-                        new GraphWithLayout<String, Integer, Integer>(graph2r, residualLayout),
-                        Set.of(
-                            new FordFulkersonPathStep<String, Integer>(a, graph2r.getEdges(a, c).iterator().next()),
-                            new FordFulkersonPathStep<String, Integer>(c, graph2r.getEdges(c, d).iterator().next())
-                        )
-                    ),
-                    new FordFulkersonDoubleStep(
-                        new GraphWithLayout<String, FlowAndCapacity, Integer>(graph3, layout),
-                        Set.of(
-                            new FordFulkersonPathStep<String, FlowAndCapacity>(
-                                a,
-                                graph3.getEdges(a, c).iterator().next()
-                            ),
-                            new FordFulkersonPathStep<String, FlowAndCapacity>(
-                                c,
-                                graph3.getEdges(c, d).iterator().next()
+                new FlowNetworkResult(
+                    List.of(
+                        new FordFulkersonDoubleStep(
+                            new GraphWithLayout<String, FlowAndCapacity, Integer>(graph1, layout),
+                            Collections.emptySet(),
+                            new GraphWithLayout<String, Integer, Integer>(graph1r, residualLayout),
+                            Set.of(
+                                new FordFulkersonPathStep<String, Integer>(a, graph1r.getEdges(a, b).iterator().next()),
+                                new FordFulkersonPathStep<String, Integer>(b, graph1r.getEdges(b, d).iterator().next())
                             )
                         ),
-                        new GraphWithLayout<String, Integer, Integer>(graph3r, residualLayout),
-                        Set.of(
-                            new FordFulkersonPathStep<String, Integer>(a, graph3r.getEdges(a, b).iterator().next()),
-                            new FordFulkersonPathStep<String, Integer>(b, graph3r.getEdges(b, c).iterator().next()),
-                            new FordFulkersonPathStep<String, Integer>(c, graph3r.getEdges(c, d).iterator().next())
-                        )
-                    ),
-                    new FordFulkersonDoubleStep(
-                        new GraphWithLayout<String, FlowAndCapacity, Integer>(graph4, layout),
-                        Set.of(
-                            new FordFulkersonPathStep<String, FlowAndCapacity>(
-                                a,
-                                graph4.getEdges(a, b).iterator().next()
+                        new FordFulkersonDoubleStep(
+                            new GraphWithLayout<String, FlowAndCapacity, Integer>(graph2, layout),
+                            Set.of(
+                                new FordFulkersonPathStep<String, FlowAndCapacity>(
+                                    a,
+                                    graph2.getEdges(a, b).iterator().next()
+                                ),
+                                new FordFulkersonPathStep<String, FlowAndCapacity>(
+                                    b,
+                                    graph2.getEdges(b, d).iterator().next()
+                                )
                             ),
-                            new FordFulkersonPathStep<String, FlowAndCapacity>(
-                                b,
-                                graph4.getEdges(b, c).iterator().next()
-                            ),
-                            new FordFulkersonPathStep<String, FlowAndCapacity>(
-                                c,
-                                graph4.getEdges(c, d).iterator().next()
+                            new GraphWithLayout<String, Integer, Integer>(graph2r, residualLayout),
+                            Set.of(
+                                new FordFulkersonPathStep<String, Integer>(a, graph2r.getEdges(a, c).iterator().next()),
+                                new FordFulkersonPathStep<String, Integer>(c, graph2r.getEdges(c, d).iterator().next())
                             )
                         ),
-                        new GraphWithLayout<String, Integer, Integer>(graph4r, residualLayout),
-                        Collections.emptySet()
-                    )
+                        new FordFulkersonDoubleStep(
+                            new GraphWithLayout<String, FlowAndCapacity, Integer>(graph3, layout),
+                            Set.of(
+                                new FordFulkersonPathStep<String, FlowAndCapacity>(
+                                    a,
+                                    graph3.getEdges(a, c).iterator().next()
+                                ),
+                                new FordFulkersonPathStep<String, FlowAndCapacity>(
+                                    c,
+                                    graph3.getEdges(c, d).iterator().next()
+                                )
+                            ),
+                            new GraphWithLayout<String, Integer, Integer>(graph3r, residualLayout),
+                            Set.of(
+                                new FordFulkersonPathStep<String, Integer>(a, graph3r.getEdges(a, b).iterator().next()),
+                                new FordFulkersonPathStep<String, Integer>(b, graph3r.getEdges(b, c).iterator().next()),
+                                new FordFulkersonPathStep<String, Integer>(c, graph3r.getEdges(c, d).iterator().next())
+                            )
+                        ),
+                        new FordFulkersonDoubleStep(
+                            new GraphWithLayout<String, FlowAndCapacity, Integer>(graph4, layout),
+                            Set.of(
+                                new FordFulkersonPathStep<String, FlowAndCapacity>(
+                                    a,
+                                    graph4.getEdges(a, b).iterator().next()
+                                ),
+                                new FordFulkersonPathStep<String, FlowAndCapacity>(
+                                    b,
+                                    graph4.getEdges(b, c).iterator().next()
+                                ),
+                                new FordFulkersonPathStep<String, FlowAndCapacity>(
+                                    c,
+                                    graph4.getEdges(c, d).iterator().next()
+                                )
+                            ),
+                            new GraphWithLayout<String, Integer, Integer>(graph4r, residualLayout),
+                            Collections.emptySet()
+                        )
+                    ),
+                    Set.of(a)
                 )
             }
         };

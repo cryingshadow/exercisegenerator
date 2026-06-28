@@ -501,6 +501,17 @@ public enum Algorithm {
         MergeSortWithSplitting.INSTANCE
     ),
 
+    MIN_CUT(
+        "mincut",
+        "Min-Cut",
+        new String[] {
+            "Perform Ford-Fulkerson (Edmonds-Karp) on a flow network to compute a minimum cut.",
+            "The flag -l specifies how many vertices will be added to the flow network in addition to source "
+            + "and sink (for generated instances). Thus, the number of vertices in the network is l + 2."
+        },
+        MinCutAlgorithm.INSTANCE
+    ),
+
     PRIM(
         "prim",
         "Prim Algorithmus",
