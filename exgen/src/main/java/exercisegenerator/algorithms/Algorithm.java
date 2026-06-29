@@ -12,6 +12,7 @@ import exercisegenerator.algorithms.cryptography.*;
 import exercisegenerator.algorithms.geometry.*;
 import exercisegenerator.algorithms.graphs.*;
 import exercisegenerator.algorithms.hashing.*;
+import exercisegenerator.algorithms.learning.*;
 import exercisegenerator.algorithms.logic.*;
 import exercisegenerator.algorithms.optimization.*;
 import exercisegenerator.algorithms.sorting.*;
@@ -401,6 +402,16 @@ public enum Algorithm {
             "The flag -l specifies the length of the array to sort for generated instances."
         },
         HeapSort.INSTANCE
+    ),
+
+    ID3(
+        "id3",
+        "ID3",
+        new String[] {
+            "Learning of a decision tree with the ID3 algorithm.",
+            "The flag -l specifies how many data elements should be provided for training."
+        },
+        ID3Algorithm.INSTANCE
     ),
 
     INSERTIONSORT(
