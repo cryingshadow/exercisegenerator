@@ -44,7 +44,7 @@ public record DecisionTreeInnerNode (
         for (final Map.Entry<String, DecisionTree> child : this.children().entrySet()) {
             result.append(
                 String.format(
-                    "%s%s\\edge node[midway] {%s};%s",
+                    "%s%s\\edge node[midway,fill=white] {%s};%s",
                     Main.lineSeparator,
                     "  ".repeat(level + 1),
                     child.getKey(),

@@ -367,7 +367,7 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printAdjustboxBeginning(writer);
-        LaTeXUtils.printTikzBeginning(TikZStyle.DPLLTREE, writer);
+        LaTeXUtils.printTikzBeginning(TikZStyle.ID3TREE, writer);
         writer.write(solution.toString());
         Main.newLine(writer);
         LaTeXUtils.printTikzEnd(writer);

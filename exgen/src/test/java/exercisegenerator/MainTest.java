@@ -3621,13 +3621,13 @@ public class MainTest {
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
-                        + "sibling distance=10pt, level distance=45pt, edge from parent/.style="
+                        + "sibling distance=3cm, level distance=3cm, edge from parent/.style="
                         + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
                     "\\Tree",
                     "  [.{\\begin{minipage}{4cm}Farbe: 1{,}000\\\\\\underline{Preis}: 0{,}000\\end{minipage}}",
-                    "    \\edge node[midway] {hoch};",
+                    "    \\edge node[midway,fill=white] {hoch};",
                     "    nein",
-                    "    \\edge node[midway] {niedrig};",
+                    "    \\edge node[midway,fill=white] {niedrig};",
                     "    ja",
                     "  ]",
                     "\\end{tikzpicture}",

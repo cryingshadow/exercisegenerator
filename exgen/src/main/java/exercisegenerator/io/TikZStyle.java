@@ -51,6 +51,12 @@ public enum TikZStyle {
 
     GRID("[node/.style={rectangle,draw=black,thick,inner sep=5pt,font={\\Large}},node distance=0 and 0]"),
 
+    ID3TREE(
+        "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+        + "sibling distance=3cm, level distance=3cm, edge from parent/.style="
+        + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]"
+    ),
+
     POINTSET("[framed,draw=black]"),
 
     RED_BLACK_TREE(
