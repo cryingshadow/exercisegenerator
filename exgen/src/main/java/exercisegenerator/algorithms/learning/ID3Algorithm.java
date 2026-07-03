@@ -19,6 +19,11 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
 
     private static final Map<String, List<String>> LABELS;
 
+    private static final String STYLE_PATTERN =
+        "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+        + "sibling distance=%scm, level distance=%scm, edge from parent/.style="
+        + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]";
+
     static {
         CATEGORIES = new LinkedHashMap<String, List<String>>();
         ID3Algorithm.CATEGORIES.put(
@@ -202,7 +207,7 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
 
                 @Override
                 public int compare(final Entry<String, Integer> o1, final Entry<String, Integer> o2) {
-                    return o1.getValue().compareTo(o2.getValue());
+                    return -o1.getValue().compareTo(o2.getValue());
                 }
 
             }
@@ -367,7 +372,14 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printAdjustboxBeginning(writer);
-        LaTeXUtils.printTikzBeginning(TikZStyle.ID3TREE, writer);
+        LaTeXUtils.printTikzBeginning(
+            String.format(
+                ID3Algorithm.STYLE_PATTERN,
+                "3",
+                String.valueOf(Math.max(3, 2 + (problem.elements().getFirst().attributes().size() / 2)))
+            ),
+            writer
+        );
         writer.write(solution.toString());
         Main.newLine(writer);
         LaTeXUtils.printTikzEnd(writer);

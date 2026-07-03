@@ -494,25 +494,17 @@ public abstract class LaTeXUtils {
         } while (remainingCols > 0);
     }
 
-    /**
-     * Prints the beginning of the TikZ picture environment to the specified writer, including style settings for
-     * arrays or trees.
-     * @param style The style to use.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
-    public static void printTikzBeginning(final TikZStyle style, final BufferedWriter writer) throws IOException {
+    public static void printTikzBeginning(final String style, final BufferedWriter writer) throws IOException {
         writer.write("\\begin{tikzpicture}");
         Main.newLine(writer);
-        writer.write(style.style);
+        writer.write(style);
         Main.newLine(writer);
     }
 
-    /**
-     * Prints the end of the TikZ picture environment to the specified writer.
-     * @param writer The writer to send the output to.
-     * @throws IOException If some error occurs during output.
-     */
+    public static void printTikzBeginning(final TikZStyle style, final BufferedWriter writer) throws IOException {
+        LaTeXUtils.printTikzBeginning(style.style, writer);
+    }
+
     public static void printTikzEnd(final BufferedWriter writer) throws IOException {
         writer.write("\\end{tikzpicture}");
         Main.newLine(writer);
