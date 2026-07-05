@@ -1,3 +1,3 @@
 package exercisegenerator.structures.graphs.petrinets;
 
-public record PetriPlace(String label, int x, int y, int labelDegree) {}
+public record PetriPlace(String label, double x, double y, int labelDegree) {}

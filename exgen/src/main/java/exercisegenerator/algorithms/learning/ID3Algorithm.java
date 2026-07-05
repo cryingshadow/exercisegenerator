@@ -11,7 +11,7 @@ import exercisegenerator.algorithms.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.learning.*;
 
-public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, DecisionTree>{
+public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, DecisionTree> {
 
     public static final ID3Algorithm INSTANCE = new ID3Algorithm();
 
@@ -298,8 +298,8 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Geben Sie jeweils den \\emphasize{Entscheidungsbaum} an, den der ID3-Algorithmus zu den ");
-        writer.write("folgenden Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die ");
+        writer.write("Geben Sie jeweils den \\emphasize{Entscheidungsbaum} an, den der \\emphasize{ID3-Algorithmus} ");
+        writer.write("zu den folgenden Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die ");
         writer.write("gewichtete Entropie f\\\"ur jedes verf\\\"ugbare Attribut gerundet auf drei Nachkommastellen ");
         writer.write("an (also auch f\\\"ur diejenigen, die jeweils nicht als Selektionskriterium ausgew\\\"ahlt ");
         writer.write("werden). Unterstreichen Sie das jeweils gew\\\"ahlte Attribut:\\\\[2ex]");
@@ -313,11 +313,11 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Geben Sie den \\emphasize{Entscheidungsbaum} an, den der ID3-Algorithmus zu den folgenden ");
-        writer.write("Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die gewichtete Entropie ");
-        writer.write("f\\\"ur jedes verf\\\"ugbare Attribut gerundet auf drei Nachkommastellen an (also auch f\\\"ur ");
-        writer.write("diejenigen, die jeweils nicht als Selektionskriterium ausgew\\\"ahlt werden). Unterstreichen ");
-        writer.write("Sie das jeweils gew\\\"ahlte Attribut:\\\\[2ex]");
+        writer.write("Geben Sie den \\emphasize{Entscheidungsbaum} an, den der \\emphasize{ID3-Algorithmus} zu den ");
+        writer.write("folgenden Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die ");
+        writer.write("gewichtete Entropie f\\\"ur jedes verf\\\"ugbare Attribut gerundet auf drei Nachkommastellen ");
+        writer.write("an (also auch f\\\"ur diejenigen, die jeweils nicht als Selektionskriterium ausgew\\\"ahlt ");
+        writer.write("werden). Unterstreichen Sie das jeweils gew\\\"ahlte Attribut:\\\\[2ex]");
         Main.newLine(writer);
     }
 

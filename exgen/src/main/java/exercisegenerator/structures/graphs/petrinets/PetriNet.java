@@ -8,6 +8,7 @@ import org.apache.commons.math3.fraction.*;
 import exercisegenerator.*;
 import exercisegenerator.io.*;
 import exercisegenerator.structures.algebra.*;
+import exercisegenerator.structures.graphs.*;
 
 public class PetriNet {
 
@@ -55,6 +56,34 @@ public class PetriNet {
 
     public PetriMarking getZeroMarking() {
         return PetriMarking.createZeroMarking(this.places.length);
+    }
+
+    public GraphWithVertexMappings toGraphWithVertexMappings() {
+        final Graph<String, Integer> graph = new Graph<String, Integer>();
+        final Map<Vertex<String>, Object> backwardsMapping = new LinkedHashMap<Vertex<String>, Object>();
+        final Map<Vertex<String>, Integer> placeIndex = new LinkedHashMap<Vertex<String>, Integer>();
+        final List<Vertex<String>> placeVertices = new ArrayList<Vertex<String>>();
+
+        for (int index = 0; index < this.places.length; index++) {
+            final PetriPlace place = this.places[index];
+            final Vertex<String> vertex = new Vertex<String>(place.label());
+            backwardsMapping.put(vertex, place);
+            placeIndex.put(vertex, index);
+            graph.addVertex(vertex);
+            placeVertices.add(vertex);
+        }
+        for (final PetriTransition transition : this.transitions) {
+            final Vertex<String> vertex = new Vertex<String>(transition.label());
+            backwardsMapping.put(vertex, transition);
+            graph.addVertex(vertex);
+            for (final Map.Entry<Integer, Integer> entry : transition.from().entrySet()) {
+                graph.addEdge(placeVertices.get(entry.getKey()), Optional.of(entry.getValue()), vertex);
+            }
+            for (final Map.Entry<Integer, Integer> entry : transition.to().entrySet()) {
+                graph.addEdge(vertex, Optional.of(entry.getValue()), placeVertices.get(entry.getKey()));
+            }
+        }
+        return new GraphWithVertexMappings(graph, backwardsMapping, placeIndex);
     }
 
     public Matrix toIncidenceMatrix() {
@@ -111,7 +140,8 @@ public class PetriNet {
             final PetriPlace place = this.places[placeIndex];
             writer.write(
                 String.format(
-                    "\\node[place,label=%d:%s,tokens=%d] (p%d) at (%d,%d) {};",
+                    Locale.US,
+                    "\\node[place,label=%d:%s,tokens=%d] (p%d) at (%.2f,%.2f) {};",
                     place.labelDegree(),
                     place.label(),
                     tokens.get(placeIndex).orElseGet(() -> 0),
@@ -126,7 +156,8 @@ public class PetriNet {
         for (final PetriTransition transition : this.transitions) {
             writer.write(
                 String.format(
-                    "\\node[transition] (t%d) at (%d,%d) {%s}",
+                    Locale.US,
+                    "\\node[transition] (t%d) at (%.2f,%.2f) {%s}",
                     transitionIndex,
                     transition.x(),
                     transition.y(),

@@ -252,6 +252,7 @@ public class MainTest {
                 "\\usepackage{tikz-qtree}",
                 "\\usepackage{calc}",
                 "\\usepackage{array}",
+                "\\usepackage{amssymb}",
                 "\\usepackage{amsmath}",
                 "\\usepackage{enumitem}",
                 "\\usepackage{seqsplit}",
@@ -475,6 +476,73 @@ public class MainTest {
     }
 
     private final List<File> tmpFiles = new LinkedList<File>();
+
+    @Test
+    public void alpha() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.ALPHA.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "a,b\nb,a",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Geben Sie die \\emphasize{Footprint-Matrix} sowie das \\emphasize{Petrinetz} an, welche der "
+                    + "\\emphasize{Alpha-Algorithmus} zum folgenden Eventlog berechnet:\\\\[2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{minipage}{\\linewidth}",
+                    "\\begin{center}",
+                    "$\\langle \\text{a}, \\text{b} \\rangle$\\\\",
+                    "$\\langle \\text{b}, \\text{a} \\rangle$\\\\",
+                    "\\end{center}",
+                    "\\end{minipage}",
+                    "\\end{adjustbox}"
+                ),
+                List.of(
+                    "Footprint:\\\\",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{5}{c|}}",
+                    "\\hline",
+                    " & $\\blacktriangleright$ & a & b & $\\blacksquare$\\\\\\hline",
+                    "$\\blacktriangleright$ & $\\#$ & $\\rightarrow$ & $\\rightarrow$ & $\\#$\\\\\\hline",
+                    "a & $\\leftarrow$ & $\\#$ & $\\parallel$ & $\\rightarrow$\\\\\\hline",
+                    "b & $\\leftarrow$ & $\\parallel$ & $\\#$ & $\\rightarrow$\\\\\\hline",
+                    "$\\blacksquare$ & $\\#$ & $\\leftarrow$ & $\\leftarrow$ & $\\#$\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}",
+                    "",
+                    "\\vspace*{1ex}",
+                    "",
+                    "Petrinetz:\\\\",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tikzpicture}",
+                    "",
+                    "\\node[place,label=270:$p_{\\blacktriangleright}$,tokens=1] (p0) at (0.00,0.84) {};",
+                    "\\node[place,label=270:$p_{\\blacksquare}$,tokens=0] (p1) at (6.32,5.82) {};",
+                    "\\node[place,label=270:$p_{\\{\\text{a}\\}, \\{\\blacksquare\\}}$,tokens=0] (p2) at (4.16,5.88) {};",
+                    "\\node[place,label=270:$p_{\\{\\text{b}\\}, \\{\\blacksquare\\}}$,tokens=0] (p3) at (6.16,1.48) {};",
+                    "\\node[place,label=270:$p_{\\{\\blacktriangleright\\}, \\{\\text{b}\\}}$,tokens=0] (p4) at (2.12,0.50) {};",
+                    "\\node[place,label=270:$p_{\\{\\blacktriangleright\\}, \\{\\text{a}\\}}$,tokens=0] (p5) at (0.13,4.97) {};",
+                    "\\node[transition] (t0) at (6.03,3.98) {$\\blacksquare$}",
+                    "  edge[pre] node[auto] {1} (p2)",
+                    "  edge[pre] node[auto] {1} (p3)",
+                    "  edge[post] node[auto,swap] {1} (p1);",
+                    "\\node[transition] (t1) at (0.29,2.52) {$\\blacktriangleright$}",
+                    "  edge[pre] node[auto] {1} (p0)",
+                    "  edge[post] node[auto,swap] {1} (p4)",
+                    "  edge[post] node[auto,swap] {1} (p5);",
+                    "\\node[transition] (t2) at (1.93,6.32) {a}",
+                    "  edge[pre] node[auto] {1} (p5)",
+                    "  edge[post] node[auto,swap] {1} (p2);",
+                    "\\node[transition] (t3) at (4.37,0.00) {b}",
+                    "  edge[pre] node[auto] {1} (p4)",
+                    "  edge[post] node[auto,swap] {1} (p3);",
+                    "\\end{tikzpicture}",
+                    "\\end{adjustbox}"
+                )
+            )
+        );
+    }
 
     @Test
     public void arithmeticSum() throws IOException {
@@ -1102,20 +1170,20 @@ public class MainTest {
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "",
-                    "\\node[place,label=135:spring,tokens=0] (p0) at (0,0) {};",
-                    "\\node[place,label=135:summer,tokens=0] (p1) at (2,0) {};",
-                    "\\node[place,label=135:fall,tokens=0] (p2) at (2,2) {};",
-                    "\\node[place,label=135:winter,tokens=0] (p3) at (0,2) {};",
-                    "\\node[transition] (t0) at (1,0) {t1}",
+                    "\\node[place,label=135:spring,tokens=0] (p0) at (0.00,0.00) {};",
+                    "\\node[place,label=135:summer,tokens=0] (p1) at (2.00,0.00) {};",
+                    "\\node[place,label=135:fall,tokens=0] (p2) at (2.00,2.00) {};",
+                    "\\node[place,label=135:winter,tokens=0] (p3) at (0.00,2.00) {};",
+                    "\\node[transition] (t0) at (1.00,0.00) {t1}",
                     "  edge[pre] node[auto] {1} (p0)",
                     "  edge[post] node[auto,swap] {1} (p1);",
-                    "\\node[transition] (t1) at (2,1) {t2}",
+                    "\\node[transition] (t1) at (2.00,1.00) {t2}",
                     "  edge[pre] node[auto] {1} (p1)",
                     "  edge[post] node[auto,swap] {1} (p2);",
-                    "\\node[transition] (t2) at (1,2) {t3}",
+                    "\\node[transition] (t2) at (1.00,2.00) {t3}",
                     "  edge[pre] node[auto] {1} (p2)",
                     "  edge[post] node[auto,swap] {1} (p3);",
-                    "\\node[transition] (t3) at (0,1) {t4}",
+                    "\\node[transition] (t3) at (0.00,1.00) {t4}",
                     "  edge[pre] node[auto] {1} (p3)",
                     "  edge[post] node[auto,swap] {1} (p0);",
                     "\\end{tikzpicture}",
@@ -2332,20 +2400,20 @@ public class MainTest {
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "",
-                    "\\node[place,label=135:spring,tokens=0] (p0) at (0,0) {};",
-                    "\\node[place,label=135:summer,tokens=0] (p1) at (2,0) {};",
-                    "\\node[place,label=135:fall,tokens=0] (p2) at (2,2) {};",
-                    "\\node[place,label=135:winter,tokens=0] (p3) at (0,2) {};",
-                    "\\node[transition] (t0) at (1,0) {t1}",
+                    "\\node[place,label=135:spring,tokens=0] (p0) at (0.00,0.00) {};",
+                    "\\node[place,label=135:summer,tokens=0] (p1) at (2.00,0.00) {};",
+                    "\\node[place,label=135:fall,tokens=0] (p2) at (2.00,2.00) {};",
+                    "\\node[place,label=135:winter,tokens=0] (p3) at (0.00,2.00) {};",
+                    "\\node[transition] (t0) at (1.00,0.00) {t1}",
                     "  edge[pre] node[auto] {1} (p0)",
                     "  edge[post] node[auto,swap] {1} (p1);",
-                    "\\node[transition] (t1) at (2,1) {t2}",
+                    "\\node[transition] (t1) at (2.00,1.00) {t2}",
                     "  edge[pre] node[auto] {1} (p1)",
                     "  edge[post] node[auto,swap] {1} (p2);",
-                    "\\node[transition] (t2) at (1,2) {t3}",
+                    "\\node[transition] (t2) at (1.00,2.00) {t3}",
                     "  edge[pre] node[auto] {1} (p2)",
                     "  edge[post] node[auto,swap] {1} (p3);",
-                    "\\node[transition] (t3) at (0,1) {t4}",
+                    "\\node[transition] (t3) at (0.00,1.00) {t4}",
                     "  edge[pre] node[auto] {1} (p3)",
                     "  edge[post] node[auto,swap] {1} (p0);",
                     "\\end{tikzpicture}",
@@ -2415,20 +2483,20 @@ public class MainTest {
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "",
-                    "\\node[place,label=135:spring,tokens=0] (p0) at (0,0) {};",
-                    "\\node[place,label=135:summer,tokens=0] (p1) at (2,0) {};",
-                    "\\node[place,label=135:fall,tokens=0] (p2) at (2,2) {};",
-                    "\\node[place,label=135:winter,tokens=0] (p3) at (0,2) {};",
-                    "\\node[transition] (t0) at (1,0) {t1}",
+                    "\\node[place,label=135:spring,tokens=0] (p0) at (0.00,0.00) {};",
+                    "\\node[place,label=135:summer,tokens=0] (p1) at (2.00,0.00) {};",
+                    "\\node[place,label=135:fall,tokens=0] (p2) at (2.00,2.00) {};",
+                    "\\node[place,label=135:winter,tokens=0] (p3) at (0.00,2.00) {};",
+                    "\\node[transition] (t0) at (1.00,0.00) {t1}",
                     "  edge[pre] node[auto] {1} (p0)",
                     "  edge[post] node[auto,swap] {1} (p1);",
-                    "\\node[transition] (t1) at (2,1) {t2}",
+                    "\\node[transition] (t1) at (2.00,1.00) {t2}",
                     "  edge[pre] node[auto] {1} (p1)",
                     "  edge[post] node[auto,swap] {1} (p2);",
-                    "\\node[transition] (t2) at (1,2) {t3}",
+                    "\\node[transition] (t2) at (1.00,2.00) {t3}",
                     "  edge[pre] node[auto] {1} (p2)",
                     "  edge[post] node[auto,swap] {1} (p3);",
-                    "\\node[transition] (t3) at (0,1) {t4}",
+                    "\\node[transition] (t3) at (0.00,1.00) {t4}",
                     "  edge[pre] node[auto] {1} (p3)",
                     "  edge[post] node[auto,swap] {1} (p0);",
                     "\\end{tikzpicture}",
@@ -3601,11 +3669,11 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Geben Sie den \\emphasize{Entscheidungsbaum} an, den der ID3-Algorithmus zu den folgenden "
-                    + "Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die gewichtete Entropie "
-                    + "f\\\"ur jedes verf\\\"ugbare Attribut gerundet auf drei Nachkommastellen an (also auch f\\\"ur "
-                    + "diejenigen, die jeweils nicht als Selektionskriterium ausgew\\\"ahlt werden). Unterstreichen "
-                    + "Sie das jeweils gew\\\"ahlte Attribut:\\\\[2ex]",
+                    "Geben Sie den \\emphasize{Entscheidungsbaum} an, den der \\emphasize{ID3-Algorithmus} zu den "
+                    + "folgenden Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die gewichtete "
+                    + "Entropie f\\\"ur jedes verf\\\"ugbare Attribut gerundet auf drei Nachkommastellen an (also auch "
+                    + "f\\\"ur diejenigen, die jeweils nicht als Selektionskriterium ausgew\\\"ahlt werden). "
+                    + "Unterstreichen Sie das jeweils gew\\\"ahlte Attribut:\\\\[2ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{3}{c|}}",
                     "\\hline",

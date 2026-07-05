@@ -21,6 +21,16 @@ import exercisegenerator.io.*;
 
 public enum Algorithm {
 
+    ALPHA(
+        "alpha",
+        "Alpha-Algorithmus",
+        new String[] {
+            "Computes a petri net from an event log.",
+            "The flag -l specifies how many different activities are used for generated instances."
+        },
+        AlphaAlgorithm.INSTANCE
+    ),
+
     ARITHMETIC_SUM(
         "arithmeticsum",
         "Arithmetische Summe",
@@ -135,7 +145,7 @@ public enum Algorithm {
 
     DIJKSTRA(
         "dijkstra",
-        "Dijkstra Algorithmus",
+        "Dijkstra-Algorithmus",
         new String[] {
             "Dijkstra's algorithm to find the shortest paths from a single source to all other vertices.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
@@ -173,7 +183,7 @@ public enum Algorithm {
 
     FLOYD(
         "floyd",
-        "Floyd Algorithmus",
+        "Floyd-Algorithmus",
         new String[] {
             "Floyd's algorithm to find all shortest paths to all other vertices.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
@@ -406,7 +416,7 @@ public enum Algorithm {
 
     ID3(
         "id3",
-        "ID3",
+        "ID3-Algorithmus",
         new String[] {
             "Learning of a decision tree with the ID3 algorithm.",
             "The flag -l specifies how many data elements should be provided for training."
@@ -445,7 +455,7 @@ public enum Algorithm {
 
     KRUSKAL(
         "kruskal",
-        "Kruskal Algorithmus",
+        "Kruskal-Algorithmus",
         new String[] {
             "Kruskal's algorithm to find the minimum spanning tree.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
@@ -525,7 +535,7 @@ public enum Algorithm {
 
     PRIM(
         "prim",
-        "Prim Algorithmus",
+        "Prim-Algorithmus",
         new String[] {
             "Prim's algorithm to find the minimum spanning tree.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."
@@ -700,7 +710,7 @@ public enum Algorithm {
 
     WARSHALL(
         "warshall",
-        "Warshall Algorithmus",
+        "Warshall-Algorithmus",
         new String[] {
             "Warshall's algorithm to find the transitive hull.",
             "The flag -l specifies how many vertices will be added to the graph for generated instances."

@@ -9,9 +9,9 @@ import exercisegenerator.structures.graphs.*;
 
 public class ForceGraphLayout<V extends Comparable<V>, E extends Comparable<E>> implements GraphLayout<V, E, Double> {
 
-    private static final int ITERATIONS = 75;
+    private static final int DEFAULT_ITERATIONS = 75;
 
-    private static final double TEMPERATURE_FACTOR = 4.0;
+    private static final double DEFAULT_TEMPERATURE_FACTOR = 4.0;
 
     private final TikZStyle graphStyle;
 
@@ -26,6 +26,28 @@ public class ForceGraphLayout<V extends Comparable<V>, E extends Comparable<E>> 
         final double minVerticalDistance,
         final double preferredWidth,
         final double preferredHeight
+    ) {
+        this(
+            graph,
+            graphStyle,
+            minHorizontalDistance,
+            minVerticalDistance,
+            preferredWidth,
+            preferredHeight,
+            ForceGraphLayout.DEFAULT_ITERATIONS,
+            ForceGraphLayout.DEFAULT_TEMPERATURE_FACTOR
+        );
+    }
+
+    public ForceGraphLayout(
+        final Graph<V, E> graph,
+        final TikZStyle graphStyle,
+        final double minHorizontalDistance,
+        final double minVerticalDistance,
+        final double preferredWidth,
+        final double preferredHeight,
+        final int iterations,
+        final double temperatureFactor
     ) {
         this.vertexPositions = new LinkedHashMap<Vertex<V>, Coordinates2D<Double>>();
         this.graphStyle = graphStyle;
@@ -53,9 +75,9 @@ public class ForceGraphLayout<V extends Comparable<V>, E extends Comparable<E>> 
             final double area = width * height;
             this.optimalDistance = Math.sqrt(area/numberOfVertices);
             this.placeVerticesCloseToGrid(vertices, width);
-            double temperature = Math.max(width, height) / ForceGraphLayout.TEMPERATURE_FACTOR;
-            final double cooling = temperature / (ForceGraphLayout.ITERATIONS - 5);
-            for (int i = 0; i < ForceGraphLayout.ITERATIONS; i++) {
+            double temperature = Math.max(width, height) / temperatureFactor;
+            final double cooling = temperature / (iterations - 5);
+            for (int i = 0; i < iterations; i++) {
                 final Map<Vertex<V>, Coordinates2D<Double>> displacement =
                     new LinkedHashMap<Vertex<V>, Coordinates2D<Double>>();
                 for (final Vertex<V> vertex : vertices) {

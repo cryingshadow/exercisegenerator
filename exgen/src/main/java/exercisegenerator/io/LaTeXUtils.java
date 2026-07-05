@@ -247,6 +247,8 @@ public abstract class LaTeXUtils {
         Main.newLine(writer);
         writer.write("\\usepackage{array}");
         Main.newLine(writer);
+        writer.write("\\usepackage{amssymb}");
+        Main.newLine(writer);
         writer.write("\\usepackage{amsmath}");
         Main.newLine(writer);
         writer.write("\\usepackage{enumitem}");
