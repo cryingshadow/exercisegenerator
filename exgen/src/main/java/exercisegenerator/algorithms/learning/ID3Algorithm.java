@@ -341,6 +341,10 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         Main.newLine(writer);
         writer.write("\\hline");
         Main.newLine(writer);
+        writer.write("\\multicolumn{");
+        writer.write(String.valueOf(attributes.size()));
+        writer.write("}{|c|}{Attribute} & Klassifikation\\\\\\hline");
+        Main.newLine(writer);
         for (final String attribute : attributes) {
             writer.write("\\textbf{");
             writer.write(attribute);

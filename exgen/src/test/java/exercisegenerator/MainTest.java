@@ -3677,6 +3677,7 @@ public class MainTest {
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tabular}{|*{3}{c|}}",
                     "\\hline",
+                    "\\multicolumn{2}{|c|}{Attribute} & Klassifikation\\\\\\hline",
                     "\\textbf{Farbe} & \\textbf{Preis} & \\textbf{Kaufen}\\\\\\hline",
                     "rot & hoch & nein\\\\\\hline",
                     "rot & niedrig & ja\\\\\\hline",
