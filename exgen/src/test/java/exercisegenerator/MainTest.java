@@ -2423,7 +2423,7 @@ public class MainTest {
                     "",
                     "Berechnen Sie eine Basis der P-Invarianten von $N$ mithilfe des "
                     + "\\emphasize{Algorithmus von Farkas}. Geben Sie dazu die vom Algorithmus berechneten "
-                    + "Matrizen nach jeder Iteration der \\\"au\\ss{}eren Schleife an."
+                    + "Matrizen vor und nach jeder Iteration der \\\"au\\ss{}eren Schleife an."
                 ),
                 List.of(
                     "{\\renewcommand{\\arraystretch}{1.2}",
@@ -2506,7 +2506,7 @@ public class MainTest {
                     "",
                     "Berechnen Sie eine Basis der T-Invarianten von $N$ mithilfe des "
                     + "\\emphasize{Algorithmus von Farkas}. Geben Sie dazu die vom Algorithmus berechneten "
-                    + "Matrizen nach jeder Iteration der \\\"au\\ss{}eren Schleife an."
+                    + "Matrizen vor und nach jeder Iteration der \\\"au\\ss{}eren Schleife an."
                 ),
                 List.of(
                     "{\\renewcommand{\\arraystretch}{1.2}",
