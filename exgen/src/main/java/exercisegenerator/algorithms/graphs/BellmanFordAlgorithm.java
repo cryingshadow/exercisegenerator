@@ -21,8 +21,7 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
     ) throws IOException {
         final String columnWidth = "16mm";
         LaTeXUtils.printArrayStretch(1.5, writer);
-        final int[] pagebreakCounters =
-            LaTeXUtils.parsePagebreakCounters(options.getOrDefault(Flag.KEYVALUE, ""));
+        final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCounters(options);
         int counterIndex = 0;
         int tables = 0;
         boolean first = true;

@@ -459,9 +459,9 @@ interface SearchTreeAlgorithm extends AlgorithmImplementation<SearchTreeProblem,
         final BufferedWriter writer
     ) throws IOException {
         int stepNumber = 1;
-        final String keyValues = options.getOrDefault(Flag.KEYVALUE, "");
-        final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForSolution(keyValues);
-        final boolean useFillingDegree = SearchTreeAlgorithm.parseFillingDegreeUsage(keyValues);
+        final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForSolution(options);
+        final boolean useFillingDegree =
+            SearchTreeAlgorithm.parseFillingDegreeUsage(options.getOrDefault(Flag.KEYVALUE, ""));
         int trees = 0;
         int counterIndex = 0;
         BigFraction horizontalFillingDegree = BigFraction.ZERO;

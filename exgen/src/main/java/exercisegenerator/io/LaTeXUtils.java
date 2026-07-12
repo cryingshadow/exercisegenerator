@@ -116,6 +116,19 @@ public abstract class LaTeXUtils {
             .replaceAll("\u202f", "\\,");
     }
 
+    public static Optional<String> getValueForKey(final String key, final Parameters<Flag> options) {
+        return LaTeXUtils.getValueForKey(key, options.getOrDefault(Flag.KEYVALUE, ""));
+    }
+
+    public static Optional<String> getValueForKey(final String key, final String keyValues) {
+        return
+            Arrays
+            .stream(keyValues.split(","))
+            .filter(entry -> entry.startsWith(key))
+            .findAny()
+            .map(entry -> entry.split("=")[1]);
+    }
+
     public static String inlineMath(final String content) {
         return String.format("$%s$", content);
     }
@@ -128,16 +141,16 @@ public abstract class LaTeXUtils {
         return String.format("\\{%s\\}", elements.map(x -> x.toString()).collect(Collectors.joining(",")));
     }
 
-    public static int[] parsePagebreakCounters(final String keyValues) {
-        return LaTeXUtils.parsePagebreakCounters(keyValues, "breaks=");
+    public static int[] parsePagebreakCounters(final Parameters<Flag> options) {
+        return LaTeXUtils.parsePagebreakCounters(LaTeXUtils.getValueForKey("breaks", options));
     }
 
-    public static int[] parsePagebreakCountersForExercise(final String keyValues) {
-        return LaTeXUtils.parsePagebreakCounters(keyValues, "exercisebreaks=");
+    public static int[] parsePagebreakCountersForExercise(final Parameters<Flag> options) {
+        return LaTeXUtils.parsePagebreakCounters(LaTeXUtils.getValueForKey("exercisebreaks", options));
     }
 
-    public static int[] parsePagebreakCountersForSolution(final String keyValues) {
-        return LaTeXUtils.parsePagebreakCounters(keyValues, "solutionbreaks=");
+    public static int[] parsePagebreakCountersForSolution(final Parameters<Flag> options) {
+        return LaTeXUtils.parsePagebreakCounters(LaTeXUtils.getValueForKey("solutionbreaks", options));
     }
 
     public static void printAdjustboxBeginning(final BufferedWriter writer) throws IOException {
@@ -859,9 +872,7 @@ public abstract class LaTeXUtils {
         return remainingCols;
     }
 
-    private static int[] parsePagebreakCounters(final String keyValues, final String key) {
-        final Optional<String> pagebreaks =
-            Arrays.stream(keyValues.split(",")).filter(entry -> entry.startsWith(key)).findAny();
+    private static int[] parsePagebreakCounters(final Optional<String> pagebreaks) {
         if (pagebreaks.isEmpty()) {
             return new int[] {};
         }

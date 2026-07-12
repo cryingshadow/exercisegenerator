@@ -206,6 +206,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         return result;
     }
 
+    private static boolean parseMaxBreak(final Parameters<Flag> options) {
+        return LaTeXUtils.getValueForKey("maxbreak", options).map(Boolean::valueOf).orElseGet(() -> true);
+    }
+
     private static BigFraction[] parseTargetFunction(final String line) {
         final String[] numbers = line.split(",");
         final BigFraction[] target = new BigFraction[numbers.length];
@@ -217,6 +221,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
 
     private static void printSimplexProblem(
         final SimplexProblem problem,
+        final boolean maxBreak,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Maximiere $z(\\mathbf{x}) = ");
@@ -251,8 +256,13 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 );
             }
         }
-        writer.write("$\\\\");
-        Main.newLine(writer);
+        writer.write("$");
+        if (maxBreak) {
+            writer.write("\\\\");
+            Main.newLine(writer);
+        } else {
+            writer.write(" ");
+        }
         writer.write("unter den folgenden Nebenbedingungen:\\\\");
         Main.newLine(writer);
         AlgebraAlgorithms.printMatrixAsInequalitiesOrEquations(problem.conditions(), "\\leq", writer);
@@ -799,6 +809,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         }
     }
 
+
     @Override
     public void printBeforeSingleProblemInstance(
         final SimplexProblem problem,
@@ -810,7 +821,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         Main.newLine(writer);
     }
 
-
     @Override
     public void printProblemInstance(
         final SimplexProblem problem,
@@ -818,7 +828,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        SimplexAlgorithm.printSimplexProblem(problem, writer);
+        SimplexAlgorithm.printSimplexProblem(problem, SimplexAlgorithm.parseMaxBreak(options), writer);
         if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
             LaTeXUtils.printVerticalProtectedSpace(writer);
             writer.write("Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert f\\\"ur dieses lineare Programm die ");
@@ -856,6 +866,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
+        final boolean maxBreak = SimplexAlgorithm.parseMaxBreak(options);
         if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
             final SimplexTableau beforeBranch = SimplexAlgorithm.getTableauBeforeFirstBranch(solution);
             final Optional<Pair<Integer, BigFraction>> violation = beforeBranch.getIntegralViolation();
@@ -878,14 +889,14 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 writer.write("\\node[rectangle,draw=black] (1) [left=0.1 of and.north west,anchor=north east] {%");
                 Main.newLine(writer);
                 LaTeXUtils.printMinipageBeginning("0.45\\linewidth", writer);
-                SimplexAlgorithm.printSimplexProblem(newProblems.x, writer);
+                SimplexAlgorithm.printSimplexProblem(newProblems.x, maxBreak, writer);
                 LaTeXUtils.printMinipageEnd(writer);
                 writer.write("};");
                 Main.newLine(writer);
                 writer.write("\\node[rectangle,draw=black] (2) [right=0.1 of and.north east,anchor=north west] {%");
                 Main.newLine(writer);
                 LaTeXUtils.printMinipageBeginning("0.45\\linewidth", writer);
-                SimplexAlgorithm.printSimplexProblem(newProblems.y, writer);
+                SimplexAlgorithm.printSimplexProblem(newProblems.y, maxBreak, writer);
                 LaTeXUtils.printMinipageEnd(writer);
                 writer.write("};");
                 Main.newLine(writer);
@@ -895,8 +906,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             writer.write("{\\renewcommand{\\arraystretch}{1.5}");
             Main.newLine(writer);
             boolean first = true;
-            final int[] pagebreakCounters =
-                LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+            final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForSolution(options);
             int tableaus = 0;
             int counterIndex = 0;
             for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
@@ -978,11 +988,15 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 if (mode != SolutionSpaceMode.SOLUTION_SPACE) {
                     Main.newLine(writer);
                 }
+                final Optional<String> verticalLength = LaTeXUtils.getValueForKey("verticallength", options);
+                if (verticalLength.isPresent()) {
+                    LaTeXUtils.printAdjustboxBeginning(writer, "max height=" + verticalLength.get(), "center");
+                    LaTeXUtils.printMinipageBeginning("\\linewidth", writer);
+                }
                 writer.write("{\\renewcommand{\\arraystretch}{1.5}");
                 Main.newLine(writer);
                 boolean first = true;
-                final int[] pagebreakCounters =
-                    LaTeXUtils.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
+                final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForExercise(options);
                 int tableaus = 0;
                 int counterIndex = 0;
                 for (final Pair<SimplexProblem, List<SimplexTableau>> branch : solution.branches()) {
@@ -1011,6 +1025,10 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
                 LaTeXUtils.printVerticalProtectedSpace(writer);
                 writer.write("Ergebnis:");
                 Main.newLine(writer);
+                if (verticalLength.isPresent()) {
+                    LaTeXUtils.printMinipageEnd(writer);
+                    LaTeXUtils.printAdjustboxEnd(writer);
+                }
                 if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
                     LaTeXUtils.printSolutionSpaceEnd(Optional.of("2ex"), options, writer);
                 }

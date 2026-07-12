@@ -1045,8 +1045,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
         }
         int stepNumber = 1;
         boolean first = true;
-        final int[] pagebreakCounters =
-            LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+        final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForSolution(options);
         int doubleSteps = 0;
         int counterIndex = 0;
         for (final FordFulkersonDoubleStep step : solution.steps()) {
@@ -1089,7 +1088,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
         }
         Main.newLine(writer);
         Main.newLine(writer);
-        writer.write("\\vspace*{1ex}");
+        writer.write("\\vspace*{2ex}");
         Main.newLine(writer);
         Main.newLine(writer);
         this.printFinalAnswer(problem, solution, writer);
@@ -1132,8 +1131,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
         case NEVER:
             // do nothing
         }
-        final int[] pagebreakCounters =
-            LaTeXUtils.parsePagebreakCountersForExercise(options.getOrDefault(Flag.KEYVALUE, ""));
+        final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForExercise(options);
         int doubleSteps = 0;
         int counterIndex = 0;
         boolean first = true;
@@ -1180,7 +1178,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
             }
             Main.newLine(writer);
             Main.newLine(writer);
-            writer.write("\\vspace*{1ex}");
+            writer.write("\\vspace*{5ex}");
             Main.newLine(writer);
             Main.newLine(writer);
             this.printSolutionSpaceForFinalAnswer(solution, writer);

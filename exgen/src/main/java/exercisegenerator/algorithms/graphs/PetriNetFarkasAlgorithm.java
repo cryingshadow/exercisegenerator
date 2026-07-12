@@ -198,8 +198,7 @@ public abstract class PetriNetFarkasAlgorithm extends PetriNetAlgorithm<List<Mat
         Main.newLine(writer);
         writer.write("\\begin{enumerate}");
         Main.newLine(writer);
-        final int[] pagebreakCounters =
-            LaTeXUtils.parsePagebreakCountersForSolution(options.getOrDefault(Flag.KEYVALUE, ""));
+        final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForSolution(options);
         int matrices = 0;
         int counterIndex = 0;
         for (final Matrix matrix : solution) {
