@@ -876,7 +876,7 @@ public abstract class LaTeXUtils {
         if (pagebreaks.isEmpty()) {
             return new int[] {};
         }
-        return Arrays.stream(pagebreaks.get().split("=")[1].split("\\|")).mapToInt(Integer::parseInt).toArray();
+        return Arrays.stream(pagebreaks.get().split("\\|")).mapToInt(Integer::parseInt).toArray();
     }
 
     private static void printElse(final BufferedWriter writer) throws IOException {
