@@ -8,13 +8,25 @@ import exercisegenerator.*;
 public record DecisionTreeInnerNode (
     Map<String, DecisionTree> children,
     String selector,
-    Map<String, Double> entropies,
+    Map<String, AverageEntropyCalculation> entropies,
     Set<String> used
 ) implements DecisionTree {
 
     @Override
     public String classify(final Map<String, String> attributes) {
         return this.children().get(attributes.get(this.selector())).classify(attributes);
+    }
+
+    @Override
+    public List<String> getCalculations() {
+        return
+            this
+            .entropies()
+            .entrySet()
+            .stream()
+            .map(entry ->
+                entry.getValue().isEmpty() ? "" : String.format("%s:\\\\$%s$\\\\", entry.getKey(), entry.getValue().toLaTeX())
+            ).toList();
     }
 
     @Override
@@ -36,7 +48,7 @@ public record DecisionTreeInnerNode (
                 String.format(
                     this.selector.equals(entry.getKey()) ? "\\underline{%s}: %s" : "%s: %s",
                     entry.getKey(),
-                    DecisionTreeInnerNode.formatEntropy(entry.getValue())
+                    DecisionTreeInnerNode.formatEntropy(entry.getValue().value())
                 )
             ).collect(Collectors.joining("\\\\"))
         );

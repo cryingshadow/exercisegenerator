@@ -12,6 +12,11 @@ public record DecisionTreeLeaf(String classifier) implements DecisionTree {
     }
 
     @Override
+    public List<String> getCalculations() {
+        return List.of();
+    }
+
+    @Override
     public String toString() {
         return String.format("\\Tree [.%s ];", this.classifier());
     }

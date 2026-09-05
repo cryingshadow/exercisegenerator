@@ -3707,6 +3707,56 @@ public class MainTest {
     }
 
     @Test
+    public void id3Variant2() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.ID3.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-v", "2",
+                "-i", "Preis;Farbe;Kaufen\nhoch;rot;nein\nniedrig;rot;ja\nniedrig;blau;ja\nhoch;blau;nein",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Geben Sie den \\emphasize{Entscheidungsbaum} an, den der \\emphasize{ID3-Algorithmus} zu den "
+                    + "folgenden Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die gewichtete "
+                    + "Entropie f\\\"ur jedes verf\\\"ugbare Attribut gerundet auf drei Nachkommastellen an (also auch "
+                    + "f\\\"ur diejenigen, die jeweils nicht als Selektionskriterium ausgew\\\"ahlt werden). "
+                    + "Unterstreichen Sie das jeweils gew\\\"ahlte Attribut:\\\\[2ex]",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tabular}{|*{3}{c|}}",
+                    "\\hline",
+                    "\\multicolumn{2}{|c|}{Attribute} & Klassifikation\\\\\\hline",
+                    "\\textbf{Farbe} & \\textbf{Preis} & \\textbf{Kaufen}\\\\\\hline",
+                    "rot & hoch & nein\\\\\\hline",
+                    "rot & niedrig & ja\\\\\\hline",
+                    "blau & niedrig & ja\\\\\\hline",
+                    "blau & hoch & nein\\\\\\hline",
+                    "\\end{tabular}",
+                    "\\end{adjustbox}"
+                ),
+                List.of(
+                    "Farbe:\\\\$\\frac{1}{2} \\cdot \\left(\\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right) + \\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right)\\right)$\\\\$+ \\frac{1}{2} \\cdot \\left(\\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right) + \\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right)\\right)$\\\\",
+                    "Preis:\\\\$0$\\\\$+ 0$\\\\",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tikzpicture}",
+                    "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
+                        + "sibling distance=3cm, level distance=3cm, edge from parent/.style="
+                        + "{draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}]",
+                    "\\Tree",
+                    "  [.{\\begin{minipage}{4cm}Farbe: 1{,}000\\\\\\underline{Preis}: 0{,}000\\end{minipage}}",
+                    "    \\edge node[midway,fill=white] {hoch};",
+                    "    nein",
+                    "    \\edge node[midway,fill=white] {niedrig};",
+                    "    ja",
+                    "  ]",
+                    "\\end{tikzpicture}",
+                    "\\end{adjustbox}"
+                )
+            )
+        );
+    }
+
+    @Test
     public void insertionsort() throws IOException {
         final int contentLength = 1;
         int nodeNumber = 0;

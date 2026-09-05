@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.Map.*;
 import java.util.stream.*;
 
+import org.apache.commons.math3.fraction.*;
+
 import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
@@ -89,11 +91,11 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
             );
     }
 
-    static Map<String, Double> calculateAverageEntropies(
+    static Map<String, AverageEntropyCalculation> calculateAverageEntropies(
         final List<DecisionTreeDataElement> data,
         final Set<String> used
     ) {
-        final Map<String, Double> result = new TreeMap<String, Double>();
+        final Map<String, AverageEntropyCalculation> result = new TreeMap<String, AverageEntropyCalculation>();
         final Set<String> attributes =
             data
             .stream()
@@ -111,32 +113,30 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         return result;
     }
 
-    static double calculateAverageEntropy(final List<List<DecisionTreeDataElement>> data) {
-        final double total = data.stream().mapToInt(set -> set.size()).sum();
-        if (total == 0.0) {
-            return 0.0;
+    static AverageEntropyCalculation calculateAverageEntropy(final List<List<DecisionTreeDataElement>> data) {
+        final AverageEntropyCalculation result = new AverageEntropyCalculation();
+        final int total = data.stream().mapToInt(set -> set.size()).sum();
+        if (total == 0) {
+            return result;
         }
-        Double result = 0.0;
         for (final List<DecisionTreeDataElement> subset : data) {
-            final double entropy = ID3Algorithm.calculateEntropy(subset);
-            result += (subset.size() / total) * entropy;
+            result.add(new EntropyCalculation(new BigFraction(subset.size(), total), ID3Algorithm.calculateEntropy(subset)));
         }
         return result;
     }
 
-    static double calculateEntropy(final List<DecisionTreeDataElement> data) {
+    static List<BigFraction> calculateEntropy(final List<DecisionTreeDataElement> data) {
         final Map<String, Integer> labelCounts = new LinkedHashMap<String, Integer>();
         for (final DecisionTreeDataElement element : data) {
             labelCounts.merge(element.label(), 1, Integer::sum);
         }
         if (labelCounts.size() < 2) {
-            return 0.0;
+            return List.of();
         }
-        final double total = data.size();
-        double result = 0.0;
+        final int dataSize = data.size();
+        final List<BigFraction> result = new LinkedList<BigFraction>();
         for (final Integer count : labelCounts.values()) {
-            final double frac = count / total;
-            result += -frac * Math.log(frac) / Math.log(2);
+            result.add(new BigFraction(count, dataSize));
         }
         return result;
     }
@@ -146,17 +146,20 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         if (labels.size() == 1) {
             return new DecisionTreeLeaf(labels.iterator().next());
         }
-        final Map<String, Double> entropies = ID3Algorithm.calculateAverageEntropies(data, used);
+        final Map<String, AverageEntropyCalculation> entropies = ID3Algorithm.calculateAverageEntropies(data, used);
         if (entropies.isEmpty()) {
             return new DecisionTreeLeaf(ID3Algorithm.majorityVote(data));
         }
         final String attribute =
             entropies.entrySet().stream().sorted(
-                new Comparator<Map.Entry<String, Double>>() {
+                new Comparator<Map.Entry<String, AverageEntropyCalculation>>() {
 
                     @Override
-                    public int compare(final Map.Entry<String, Double> o1, final Map.Entry<String, Double> o2) {
-                        return o1.getValue().compareTo(o2.getValue());
+                    public int compare(
+                        final Map.Entry<String, AverageEntropyCalculation> o1,
+                        final Map.Entry<String, AverageEntropyCalculation> o2
+                    ) {
+                        return Double.compare(o1.getValue().value(), o2.getValue().value());
                     }
 
                 }
@@ -375,6 +378,12 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
+        if (options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 2) {
+            for (final String calculation : solution.getCalculations()) {
+                writer.write(calculation);
+                Main.newLine(writer);
+            }
+        }
         LaTeXUtils.printAdjustboxBeginning(writer);
         LaTeXUtils.printTikzBeginning(
             String.format(
