@@ -3687,6 +3687,16 @@ public class MainTest {
                     "\\end{adjustbox}"
                 ),
                 List.of(
+                    "\\textit{Nebenrechnung:}\\\\[2ex]",
+                    "\\begin{minipage}{\\columnwidth}",
+                    "Farbe:\\\\$\\left(-\\frac{1}{2} \\cdot \\left(\\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right) + \\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right)\\right)\\right)$\\\\${} + \\left(-\\frac{1}{2} \\cdot \\left(\\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right) + \\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right)\\right)\\right)$\\\\$\\approx 1,000$\\\\[2ex]",
+                    "\\end{minipage}",
+                    "\\begin{minipage}{\\columnwidth}",
+                    "Preis:\\\\$0$\\\\${} + 0$\\\\$\\approx 0,000$\\\\[2ex]",
+                    "\\end{minipage}",
+                    "",
+                    "\\begin{minipage}{\\columnwidth}",
+                    "\\textit{Entscheidungsbaum:}\\\\[2ex]",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "
@@ -3700,7 +3710,8 @@ public class MainTest {
                     "    ja",
                     "  ]",
                     "\\end{tikzpicture}",
-                    "\\end{adjustbox}"
+                    "\\end{adjustbox}",
+                    "\\end{minipage}"
                 )
             )
         );
@@ -3735,8 +3746,6 @@ public class MainTest {
                     "\\end{adjustbox}"
                 ),
                 List.of(
-                    "Farbe:\\\\$\\frac{1}{2} \\cdot \\left(\\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right) + \\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right)\\right)$\\\\$+ \\frac{1}{2} \\cdot \\left(\\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right) + \\frac{1}{2} \\log_2\\left(\\frac{1}{2}\\right)\\right)$\\\\",
-                    "Preis:\\\\$0$\\\\$+ 0$\\\\",
                     "\\begin{adjustbox}{max width=\\linewidth,center}",
                     "\\begin{tikzpicture}",
                     "[every tree node/.style={rounded corners,draw=black,thick,inner sep=5pt}, "

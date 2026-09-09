@@ -378,11 +378,24 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        if (options.containsKey(Flag.VARIANT) && options.getAsInt(Flag.VARIANT) == 2) {
-            for (final String calculation : solution.getCalculations()) {
+        final boolean verbose = !options.containsKey(Flag.VARIANT) || options.getAsInt(Flag.VARIANT) == 1;
+        if (verbose) {
+            if (options.containsKey(Flag.CAPACITY)) {
+                LaTeXUtils.beginMulticols(options.getAsInt(Flag.CAPACITY), Optional.empty(), writer);
+            }
+            writer.write("\\textit{Nebenrechnung:}\\\\[2ex]");
+            Main.newLine(writer);
+            for (final String calculation : solution.getCalculations("")) {
                 writer.write(calculation);
                 Main.newLine(writer);
             }
+            if (options.containsKey(Flag.CAPACITY)) {
+                LaTeXUtils.endMulticols(writer);
+            }
+            Main.newLine(writer);
+            LaTeXUtils.printMinipageBeginning("\\columnwidth", writer);
+            writer.write("\\textit{Entscheidungsbaum:}\\\\[2ex]");
+            Main.newLine(writer);
         }
         LaTeXUtils.printAdjustboxBeginning(writer);
         LaTeXUtils.printTikzBeginning(
@@ -397,6 +410,9 @@ public class ID3Algorithm implements AlgorithmImplementation<DecisionTreeData, D
         Main.newLine(writer);
         LaTeXUtils.printTikzEnd(writer);
         LaTeXUtils.printAdjustboxEnd(writer);
+        if (verbose) {
+            LaTeXUtils.printMinipageEnd(writer);
+        }
     }
 
     @Override

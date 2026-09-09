@@ -12,7 +12,7 @@ public record DecisionTreeLeaf(String classifier) implements DecisionTree {
     }
 
     @Override
-    public List<String> getCalculations() {
+    public List<String> getCalculations(final String prefix) {
         return List.of();
     }
 

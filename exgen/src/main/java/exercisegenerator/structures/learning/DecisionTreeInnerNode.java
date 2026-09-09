@@ -18,15 +18,30 @@ public record DecisionTreeInnerNode (
     }
 
     @Override
-    public List<String> getCalculations() {
-        return
-            this
-            .entropies()
-            .entrySet()
-            .stream()
-            .map(entry ->
-                entry.getValue().isEmpty() ? "" : String.format("%s:\\\\$%s$\\\\", entry.getKey(), entry.getValue().toLaTeX())
-            ).toList();
+    public List<String> getCalculations(final String prefix) {
+        final List<String> result = new LinkedList<String>();
+        for (final Map.Entry<String, AverageEntropyCalculation> entry : this.entropies().entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                continue;
+            }
+            result.add("\\begin{minipage}{\\columnwidth}");
+            result.add(
+                String.format(
+                    "%s:\\\\$%s$\\\\[2ex]",
+                    prefix.isBlank() ? entry.getKey() : String.format("%s, %s", prefix, entry.getKey()),
+                    entry.getValue().toLaTeX()
+                )
+            );
+            result.add("\\end{minipage}");
+        }
+        for (final Map.Entry<String, DecisionTree> entry : this.children().entrySet()) {
+            result.addAll(
+                entry.getValue().getCalculations(
+                    String.format("%s%s = %s", prefix.isBlank() ? "" : prefix + ", ", this.selector(), entry.getKey())
+                )
+            );
+        }
+        return result;
     }
 
     @Override

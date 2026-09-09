@@ -16,7 +16,11 @@ public class AverageEntropyCalculation extends LinkedList<EntropyCalculation> {
     }
 
     public String toLaTeX() {
-        return this.stream().map(EntropyCalculation::toLaTeX).collect(Collectors.joining("$\\\\$+ "));
+        return String.format(
+            "%s$\\\\$\\approx %.3f",
+            this.stream().map(EntropyCalculation::toLaTeX).collect(Collectors.joining("$\\\\${} + ")),
+            this.value()
+        );
     }
 
     public double value() {

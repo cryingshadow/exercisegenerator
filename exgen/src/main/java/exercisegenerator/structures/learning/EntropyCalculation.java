@@ -12,11 +12,18 @@ public record EntropyCalculation(BigFraction fraction, List<BigFraction> classif
             return "0";
         }
         final StringBuilder result = new StringBuilder();
-        result.append("\\frac{");
-        result.append(this.fraction().getNumeratorAsInt());
-        result.append("}{");
-        result.append(this.fraction().getDenominatorAsInt());
-        result.append("} \\cdot \\left(");
+        result.append("\\left(-");
+        final int denominator = this.fraction().getDenominatorAsInt();
+        if (denominator == 1) {
+            result.append(this.fraction().getNumeratorAsInt());
+        } else {
+            result.append("\\frac{");
+            result.append(this.fraction().getNumeratorAsInt());
+            result.append("}{");
+            result.append(denominator);
+            result.append("}");
+        }
+        result.append(" \\cdot \\left(");
         result.append(
             this
             .classifications()
@@ -31,7 +38,7 @@ public record EntropyCalculation(BigFraction fraction, List<BigFraction> classif
                 )
             ).collect(Collectors.joining(" + "))
         );
-        result.append("\\right)");
+        result.append("\\right)\\right)");
         return result.toString();
     }
 

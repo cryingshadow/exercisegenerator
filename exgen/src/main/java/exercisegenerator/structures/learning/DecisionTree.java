@@ -6,7 +6,7 @@ public interface DecisionTree {
 
     String classify(Map<String, String> attributes);
 
-    List<String> getCalculations();
+    List<String> getCalculations(String prefix);
 
     String toStringRecursive(int level);
 
