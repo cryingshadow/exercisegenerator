@@ -5285,7 +5285,8 @@ public class MainTest {
                     "%Anzahl Ungleichungen: 4",
                     "%Anzahl Tableaus: 4",
                     "%Anzahl automatischer Zellen: 196",
-                    "%Anzahl berechneter Zellen: 120"
+                    "%Anzahl berechneter Zellen: 120",
+                    "%Berechnete Zellen: neue Basisvariable, Quotienten, b-Spalte, Nicht-Basis-Spalten"
                 )
             )
         );
@@ -6089,7 +6090,8 @@ public class MainTest {
                 "%Anzahl Ungleichungen: 3",
                 "%Anzahl Tableaus: 3",
                 "%Anzahl automatischer Zellen: 90",
-                "%Anzahl berechneter Zellen: 36"
+                "%Anzahl berechneter Zellen: 36",
+                "%Berechnete Zellen: neue Basisvariable, Quotienten, b-Spalte, Nicht-Basis-Spalten"
             )
         );
     }

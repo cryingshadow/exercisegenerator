@@ -300,6 +300,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         LaTeXUtils.printCommentLine("Anzahl Tableaus", String.valueOf(numTableaus), writer);
         LaTeXUtils.printCommentLine("Anzahl automatischer Zellen", String.valueOf(numAutomatic), writer);
         LaTeXUtils.printCommentLine("Anzahl berechneter Zellen", String.valueOf(numCompute), writer);
+        writer.write("%Berechnete Zellen: neue Basisvariable, Quotienten, b-Spalte, Nicht-Basis-Spalten");
+        Main.newLine(writer);
     }
 
     private static void printTableau(
