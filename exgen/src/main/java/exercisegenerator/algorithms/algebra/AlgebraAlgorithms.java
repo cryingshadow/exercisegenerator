@@ -34,6 +34,19 @@ public abstract class AlgebraAlgorithms {
         return Main.RANDOM.nextInt(5) + 2;
     }
 
+    public static Matrix parseMatrix(final List<String> toParse) {
+        final int numberOfRows = toParse.size();
+        final int numberOfColumns = toParse.get(0).split(" ").length;
+        final Matrix result = new Matrix(numberOfColumns, numberOfRows, numberOfColumns);
+        for (int row = 0; row < numberOfRows; row++) {
+            final String[] columns = toParse.get(row).split(" ");
+            for (int column = 0; column < numberOfColumns; column++) {
+                result.setCoefficient(column, row, AlgebraAlgorithms.parseRationalNumber(columns[column]));
+            }
+        }
+        return result;
+    }
+
     public static int parseOrGenerateNumberOfVariables(final Parameters<Flag> options) {
         final int result = AlgorithmImplementation.parseOrGenerateLength(2, 4, options);
         return result > 1 ? result : 2;
@@ -117,19 +130,6 @@ public abstract class AlgebraAlgorithms {
         for (int row = 0; row < dimension; row++) {
             for (int column = 0; column < dimension; column++) {
                 result.setCoefficient(column, row, AlgebraAlgorithms.generateCoefficient(21, 2));
-            }
-        }
-        return result;
-    }
-
-    static Matrix parseMatrix(final List<String> toParse) {
-        final int numberOfRows = toParse.size();
-        final int numberOfColumns = toParse.get(0).split(" ").length;
-        final Matrix result = new Matrix(numberOfColumns, numberOfRows, numberOfColumns);
-        for (int row = 0; row < numberOfRows; row++) {
-            final String[] columns = toParse.get(row).split(" ");
-            for (int column = 0; column < numberOfColumns; column++) {
-                result.setCoefficient(column, row, AlgebraAlgorithms.parseRationalNumber(columns[column]));
             }
         }
         return result;

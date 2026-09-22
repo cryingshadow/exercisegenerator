@@ -584,6 +584,16 @@ public enum Algorithm {
         SimplexAlgorithm.INSTANCE
     ),
 
+    SIMPLEX_STEP(
+        "simplexstep",
+        "Simplex-Einzelschritt",
+        new String[] {
+            "Perform one step for a base swap within the Simplex-Algorithm.",
+            "The flag -l specifies how many decision variables are used (minimum is 2)."
+        },
+        SimplexStepAlgorithm.INSTANCE
+    ),
+
     TO_ASCII(
         "toascii",
         "ASCII (to)",

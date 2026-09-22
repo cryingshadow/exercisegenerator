@@ -319,57 +319,6 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         );
     }
 
-    private static void simplexBaseSwap(
-        final int pivotRow,
-        final int pivotColumn,
-        final Matrix matrix,
-        final int[] basicVariables,
-        final BigFraction[] target
-    ) {
-        if (!matrix.isOne(pivotColumn, pivotRow)) {
-            final BigFraction pivotElement = matrix.getCoefficient(pivotColumn, pivotRow);
-            for (int column = 0; column < matrix.getNumberOfColumns(); column++) {
-                matrix.setCoefficient(
-                    column,
-                    pivotRow,
-                    matrix.getCoefficient(column, pivotRow).divide(pivotElement)
-                );
-            }
-        }
-        for (int row = 0; row < matrix.getNumberOfRows() - 2; row++) {
-            if (row != pivotRow && !matrix.isZero(pivotColumn, row)) {
-                final BigFraction factor = matrix.getCoefficient(pivotColumn, row);
-                for (int column = 0; column < matrix.getNumberOfColumns(); column++) {
-                    matrix.setCoefficient(
-                        column,
-                        row,
-                        matrix.getCoefficient(column, row)
-                        .subtract(matrix.getCoefficient(column, pivotRow).multiply(factor))
-                    );
-                }
-            }
-        }
-        basicVariables[pivotRow] = pivotColumn;
-        for (int column = 0; column < matrix.getNumberOfColumns(); column++) {
-            BigFraction sum = BigFraction.ZERO;
-            for (int row = 0; row < basicVariables.length; row++) {
-                sum =
-                    sum.add(
-                        matrix.getCoefficient(column, row)
-                        .multiply(SimplexAlgorithm.simplexTargetValue(target, basicVariables[row]))
-                    );
-            }
-            matrix.setCoefficient(column, basicVariables.length, sum);
-            if (column < target.length) {
-                matrix.setCoefficient(column, basicVariables.length + 1, target[column].subtract(sum));
-            } else if (column < matrix.getIndexOfLastColumn()) {
-                matrix.setCoefficient(column, basicVariables.length + 1, sum.negate());
-            } else {
-                matrix.setCoefficient(column, basicVariables.length + 1, BigFraction.ZERO);
-            }
-        }
-    }
-
     private static SimplexAnswer simplexBestAnswer(final SimplexAnswer answer1, final SimplexAnswer answer2) {
         switch (answer1) {
         case UNSOLVABLE:
@@ -579,7 +528,8 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         final int[] basicVariables = ArrayUtils.copy(tableau.baseVariables());
         final int pivotRow =
             tableau.pivotRow() < 0 ? SimplexAlgorithm.simplexFirstRowWithNegativeLimit(matrix) : tableau.pivotRow();
-        SimplexAlgorithm.simplexBaseSwap(pivotRow, tableau.pivotColumn(), matrix, basicVariables, target);
+        SimplexStepAlgorithm.simplexBaseSwap(pivotRow, tableau.pivotColumn(), matrix, 2);
+        SimplexAlgorithm.simplexUpdateBaseAndLastTwoRows(pivotRow, tableau.pivotColumn(), matrix, basicVariables, target);
         final int pivotColumn = SimplexAlgorithm.simplexSelectPivotColumn(matrix);
         final BigFraction[] quotients = SimplexAlgorithm.simplexComputeQuotients(matrix, pivotColumn);
         return new SimplexTableau(
@@ -597,6 +547,34 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
 
     private static BigFraction simplexTargetValue(final BigFraction[] target, final int index) {
         return index < target.length ? target[index] : BigFraction.ZERO;
+    }
+
+    private static void simplexUpdateBaseAndLastTwoRows(
+        final int pivotRow,
+        final int pivotColumn,
+        final Matrix matrix,
+        final int[] basicVariables,
+        final BigFraction[] target
+    ) {
+        basicVariables[pivotRow] = pivotColumn;
+        for (int column = 0; column < matrix.getNumberOfColumns(); column++) {
+            BigFraction sum = BigFraction.ZERO;
+            for (int row = 0; row < basicVariables.length; row++) {
+                sum =
+                    sum.add(
+                        matrix.getCoefficient(column, row)
+                        .multiply(SimplexAlgorithm.simplexTargetValue(target, basicVariables[row]))
+                    );
+            }
+            matrix.setCoefficient(column, basicVariables.length, sum);
+            if (column < target.length) {
+                matrix.setCoefficient(column, basicVariables.length + 1, target[column].subtract(sum));
+            } else if (column < matrix.getIndexOfLastColumn()) {
+                matrix.setCoefficient(column, basicVariables.length + 1, sum.negate());
+            } else {
+                matrix.setCoefficient(column, basicVariables.length + 1, BigFraction.ZERO);
+            }
+        }
     }
 
     private static String[][] toSimplexTableau(final SimplexTableau tableau, final boolean fill) {

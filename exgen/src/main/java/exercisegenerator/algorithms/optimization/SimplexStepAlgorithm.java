@@ -8,7 +8,9 @@ import org.apache.commons.math3.fraction.*;
 import clit.*;
 import exercisegenerator.*;
 import exercisegenerator.algorithms.*;
+import exercisegenerator.algorithms.algebra.*;
 import exercisegenerator.io.*;
+import exercisegenerator.structures.*;
 import exercisegenerator.structures.algebra.*;
 import exercisegenerator.structures.optimization.*;
 
@@ -20,8 +22,7 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
         final int pivotRow,
         final int pivotColumn,
         final Matrix matrix,
-        final int[] basicVariables,
-        final BigFraction[] target
+        final int numberOfExcludedRows
     ) {
         if (!matrix.isOne(pivotColumn, pivotRow)) {
             final BigFraction pivotElement = matrix.getCoefficient(pivotColumn, pivotRow);
@@ -33,7 +34,7 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
                 );
             }
         }
-        for (int row = 0; row < matrix.getNumberOfRows() - 2; row++) {
+        for (int row = 0; row < matrix.getNumberOfRows() - numberOfExcludedRows; row++) {
             if (row != pivotRow && !matrix.isZero(pivotColumn, row)) {
                 final BigFraction factor = matrix.getCoefficient(pivotColumn, row);
                 for (int column = 0; column < matrix.getNumberOfColumns(); column++) {
@@ -46,56 +47,15 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
                 }
             }
         }
-        basicVariables[pivotRow] = pivotColumn;
-        for (int column = 0; column < matrix.getNumberOfColumns(); column++) {
-            final BigFraction sum = BigFraction.ZERO;
-//            for (int row = 0; row < basicVariables.length; row++) {
-//                sum =
-//                    sum.add(
-//                        matrix.getCoefficient(column, row)
-//                        .multiply(SimplexStepAlgorithm.simplexTargetValue(target, basicVariables[row]))
-//                    );
-//            }
-            matrix.setCoefficient(column, basicVariables.length, sum);
-            if (column < target.length) {
-                matrix.setCoefficient(column, basicVariables.length + 1, target[column].subtract(sum));
-            } else if (column < matrix.getIndexOfLastColumn()) {
-                matrix.setCoefficient(column, basicVariables.length + 1, sum.negate());
-            } else {
-                matrix.setCoefficient(column, basicVariables.length + 1, BigFraction.ZERO);
-            }
-        }
     }
 
     private SimplexStepAlgorithm() {}
 
     @Override
     public Matrix apply(final SimplexStepProblem problem) {
-        return new Matrix(0,0,0);
-//        final List<Pair<SimplexProblem, List<SimplexTableau>>> branches =
-//            new LinkedList<Pair<SimplexProblem, List<SimplexTableau>>>();
-//        SimplexTableau tableau = SimplexStepAlgorithm.simplexInitializeTableau(problem);
-//        final List<SimplexTableau> firstBranch = new LinkedList<SimplexTableau>();
-//        firstBranch.add(tableau);
-//        branches.add(new Pair<SimplexProblem, List<SimplexTableau>>(problem, firstBranch));
-//        int branchIndex = 0;
-//        while (branchIndex < branches.size()) {
-//            final Pair<SimplexProblem, List<SimplexTableau>> branch = branches.get(branchIndex);
-//            tableau = branch.y.getLast();
-//            SimplexAnswer answer = SimplexStepAlgorithm.simplexComputeAnswer(tableau);
-//            while (answer == SimplexAnswer.INCOMPLETE) {
-//                tableau = SimplexStepAlgorithm.simplexStep(tableau);
-//                branch.y.add(tableau);
-//                answer = SimplexStepAlgorithm.simplexComputeAnswer(tableau);
-//            }
-//            final Optional<Pair<Integer, BigFraction>> violation = tableau.getIntegralViolation();
-//            if (violation.isPresent() && (answer == SimplexAnswer.SOLVED || answer == SimplexAnswer.UNBOUNDED)) {
-//                SimplexStepAlgorithm.branchAndCut(tableau, violation.get(), branch, branchIndex, branches);
-//            } else {
-//                branchIndex++;
-//            }
-//        }
-//        return new SimplexSolution(branches, SimplexStepAlgorithm.simplexComputeAnswer(branches));
+        final Matrix result = problem.matrix().copy();
+        SimplexStepAlgorithm.simplexBaseSwap(problem.pivotRow(), problem.pivotColumn(), result, 0);
+        return result;
     }
 
     @Override
@@ -105,13 +65,21 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
 
     @Override
     public SimplexStepProblem generateProblem(final Parameters<Flag> options) {
-//        final int numberOfVariables = AlgebraAlgorithms.parseOrGenerateNumberOfVariables(options);
-//        final int numberOfInequalities = AlgebraAlgorithms.generateNumberOfInequalitiesOrEquations();
-//        final BigFraction[] target = SimplexStepAlgorithm.generateTargetFunction(numberOfVariables);
-//        final BigFraction[][] conditions =
-//            AlgebraAlgorithms.generateInequalitiesOrEquations(numberOfInequalities, numberOfVariables);
-//        final List<Integer> integral = SimplexStepAlgorithm.generateIntegralConditions(target.length, options);
-        return new SimplexStepProblem(new Matrix(0, 0, 0), 0, 0);
+        final SimplexProblem originalProblem = SimplexAlgorithm.INSTANCE.generateProblem(options);
+        final SimplexSolution originalSolution = SimplexAlgorithm.INSTANCE.apply(originalProblem);
+        final Pair<SimplexProblem, List<SimplexTableau>> pair =
+            originalSolution.branches().get(Main.RANDOM.nextInt(originalSolution.branches().size()));
+        final SimplexTableau tableau = pair.y.get(pair.y.size() > 1 ? Main.RANDOM.nextInt(pair.y.size() - 1) : 0);
+        final int pivotRow;
+        final int pivotColumn;
+        if (tableau.pivotColumn() < 0 || tableau.pivotRow() < 0) {
+            pivotColumn = Main.RANDOM.nextInt(tableau.problem().conditions().getNumberOfColumns());
+            pivotRow = Main.RANDOM.nextInt(tableau.problem().conditions().getNumberOfRows());
+        } else {
+            pivotColumn = tableau.pivotColumn();
+            pivotRow = tableau.pivotRow();
+        }
+        return new SimplexStepProblem(tableau.problem().conditions(), pivotColumn, pivotRow);
     }
 
     @Override
@@ -127,55 +95,15 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        return List.of();
-//        final List<String> rows = new ArrayList<String>();
-//        String line = reader.readLine();
-//        while (line != null) {
-//            rows.addAll(Arrays.stream(line.split(";")).filter(row -> !row.isBlank()).toList());
-//            line = reader.readLine();
-//        }
-//        final String firstRow = rows.getFirst();
-//        final BigFraction[] target = SimplexStepAlgorithm.parseTargetFunction(firstRow);
-//        final List<Integer> integral = SimplexStepAlgorithm.parseIntegralConditions(firstRow);
-//        final BigFraction[][] conditions = new BigFraction[rows.size() - 1][target.length + 1];
-//        for (int row = 0; row < conditions.length; row++) {
-//            final String[] numbers = rows.get(row + 1).split(",");
-//            if (numbers.length != conditions[row].length) {
-//                throw new IOException(
-//                    "The rows of the matrix must have exactly one more entry than the target function!"
-//                );
-//            }
-//            for (int col = 0; col < numbers.length; col++) {
-//                conditions[row][col] = AlgebraAlgorithms.parseRationalNumber(numbers[col]);
-//            }
-//        }
-//        return List.of(new SimplexProblem(target, new Matrix(conditions, target.length), integral));
-    }
-
-    @Override
-    public void printAfterSingleProblemInstance(
-        final SimplexStepProblem problem,
-        final Matrix solution,
-        final Parameters<Flag> options,
-        final BufferedWriter writer
-    ) throws IOException {
-        if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
-            writer.write("Welche beiden linearen Programme in Standard-Maximum-Form m\\\"ussen nun gem\\\"a\\ss{} ");
-            writer.write("dem Branch-And-Cut-Verfahren im n\\\"achsten Schritt gel\\\"ost werden, um die in dieser ");
-            writer.write("L\\\"osung enthaltene Verletzung der Ganzzahligkeitsbedingungen zu verhindern?");
-            Main.newLine(writer);
-        } else {
-            LaTeXUtils.printVerticalProtectedSpace(writer);
-            writer.write("L\\\"osen Sie dieses lineare Programm mithilfe des \\emphasize{Simplex-Algorithmus}. ");
-            writer.write("F\\\"ullen Sie dazu die nachfolgenden Simplex-Tableaus aus und geben Sie eine optimale ");
-            writer.write(String.format("Belegung f\\\"ur die Variablen $%s_{1}", LaTeXUtils.MATH_VARIABLE_NAME));
-//            for (int index = 1; index < problem.target().length; index++) {
-//                writer.write(String.format(", %s_{%d}", LaTeXUtils.MATH_VARIABLE_NAME, index + 1));
-//            }
-            writer.write("$ und den daraus resultierenden Wert der Zielfunktion an oder begr\\\"unden Sie, warum es ");
-            writer.write("keine solche optimale Belegung gibt.");
-            Main.newLine(writer);
+        final List<String> text = new LinkedList<String>();
+        final int pivotColumn = Integer.parseInt(reader.readLine());
+        final int pivotRow = Integer.parseInt(reader.readLine());
+        String line = reader.readLine();
+        while (line != null && !line.isBlank()) {
+            text.add(line);
+            line = reader.readLine();
         }
+        return List.of(new SimplexStepProblem(AlgebraAlgorithms.parseMatrix(text), pivotColumn, pivotRow));
     }
 
     @Override
@@ -185,20 +113,10 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
-            writer.write("Geben Sie zu jedem der folgenden \\emphasize{linearen Programme} in Standard-Maximum-Form ");
-            writer.write("und deren zugeh\\\"origen L\\\"osungen ohne Branch-And-Cut an, welche beiden linearen ");
-            writer.write("Programme in Standard-Maximum-Form gem\\\"a\\ss{} dem Branch-And-Cut-Verfahren im ");
-            writer.write("n\\\"achsten Schritt gel\\\"ost werden m\\\"ussen, um die in der jeweiligen L\\\"osung ");
-            writer.write("enthaltene Verletzung der Ganzzahligkeitsbedingungen zu verhindern.");
-        } else {
-            writer.write("L\\\"osen Sie die folgenden \\emphasize{linearen Programme} in Standard-Maximum-Form ");
-            writer.write("mithilfe des \\emphasize{Simplex-Algorithmus}. F\\\"ullen Sie dazu die jeweils ");
-            writer.write("nachfolgenden Simplex-Tableaus aus und geben Sie eine optimale Belegung f\\\"ur die ");
-            writer.write("Variablen der jeweiligen Zielfunktion sowie den daraus resultierenden Wert dieser ");
-            writer.write("Zielfunktion an oder begr\\\"unden Sie, warum es keine solche optimale Belegung gibt.");
-            Main.newLine(writer);
-        }
+        writer.write("Transformieren Sie die folgenden Matrizen mithilfe von Gau\\ss{}-Jordan-Schritten so, dass die jeweils ");
+        writer.write("angegebene Pivot-Spalte zu einem Einheitsvektor mit der 1 in der jeweils angegebenen Pivot-Zeile ");
+        writer.write("wird:\\\\");
+        Main.newLine(writer);
     }
 
 
@@ -209,7 +127,8 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        writer.write("Gegeben sei das folgende \\emphasize{lineare Programm} in Standard-Maximum-Form:\\\\");
+        writer.write("Transformieren Sie die folgende Matrix mithilfe von Gau\\ss{}-Jordan-Schritten so, dass die ");
+        writer.write("Pivot-Spalte zu einem Einheitsvektor mit der 1 in der Pivot-Zeile wird:\\\\");
         Main.newLine(writer);
     }
 
@@ -220,35 +139,16 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-//        SimplexStepAlgorithm.printSimplexProblem(problem, SimplexStepAlgorithm.parseMaxBreak(options), writer);
-        if (options.hasKeySetToValue(Flag.VARIANT, 2)) {
-            LaTeXUtils.printVerticalProtectedSpace(writer);
-            writer.write("Der Simplex-Algorithmus (ohne Branch-And-Cut) liefert f\\\"ur dieses lineare Programm die ");
-            writer.write("folgende optimale L\\\"osung:");
-            Main.newLine(writer);
-//            final SimplexTableau beforeBranch = SimplexStepAlgorithm.getTableauBeforeFirstBranch(solution);
-//            final List<BigFraction> result = beforeBranch.getResult().get();
-            writer.write("\\[");
-//            writer.write(
-//                String.format(
-//                    "%s_{1}^* = %s",
-//                    LaTeXUtils.MATH_VARIABLE_NAME,
-//                    LaTeXUtils.toCoefficient(result.get(0))
-//                )
-//            );
-//            for (int i = 1; i < result.size() - 1; i++) {
-//                writer.write(
-//                    String.format(
-//                        ", %s_{%d}^* = %s",
-//                        LaTeXUtils.MATH_VARIABLE_NAME,
-//                        i + 1,
-//                        LaTeXUtils.toCoefficient(result.get(i))
-//                    )
-//                );
-//            }
-            writer.write("\\]");
-            Main.newLine(writer);
-        }
+        writer.write(LaTeXUtils.displayMath(problem.matrix().toLaTeX()));
+        Main.newLine(writer);
+        writer.write("Pivot-Spalte: ");
+        writer.write(String.valueOf(problem.pivotColumn() + 1));
+        writer.write("\\\\");
+        Main.newLine(writer);
+        writer.write("Pivot-Zeile: ");
+        writer.write(String.valueOf(problem.pivotRow() + 1));
+        writer.write("\\\\");
+        Main.newLine(writer);
     }
 
     @Override
@@ -258,6 +158,8 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
+        writer.write(LaTeXUtils.displayMath(solution.toLaTeX()));
+        Main.newLine(writer);
     }
 
     @Override

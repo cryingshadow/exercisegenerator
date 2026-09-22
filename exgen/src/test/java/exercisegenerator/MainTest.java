@@ -5402,6 +5402,37 @@ public class MainTest {
     }
 
     @Test
+    public void simplexStep() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.SIMPLEX_STEP.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "1\n1\n1 1 1 0 0 3\n-1 -2 0 1 0 -4\n-4 4 0 0 1 -2"
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "Transformieren Sie die folgende Matrix mithilfe von Gau\\ss{}-Jordan-Schritten so, dass die Pivot-Spalte "
+                    + "zu einem Einheitsvektor mit der 1 in der Pivot-Zeile wird:\\\\",
+                    "\\[\\left(\\begin{array}{*{6}c}",
+                    "1 & 1 & 1 & 0 & 0 & 3\\\\",
+                    "-1 & -2 & 0 & 1 & 0 & -4\\\\",
+                    "-4 & 4 & 0 & 0 & 1 & -2\\\\",
+                    "\\end{array}\\right)\\]",
+                    "Pivot-Spalte: 2\\\\",
+                    "Pivot-Zeile: 2\\\\"
+                ),
+                List.of(
+                    "\\[\\left(\\begin{array}{*{6}c}",
+                    "\\frac{1}{2} & 0 & 1 & \\frac{1}{2} & 0 & 1\\\\",
+                    "\\frac{1}{2} & 1 & 0 & -\\frac{1}{2} & 0 & 2\\\\",
+                    "-6 & 0 & 0 & 2 & 1 & -10\\\\",
+                    "\\end{array}\\right)\\]"
+                )
+            )
+        );
+    }
+
+    @Test
     public void toASCII() throws IOException {
         final BinaryTestCase[] cases =
             new BinaryTestCase[] {
