@@ -96,14 +96,27 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
         final Parameters<Flag> options
     ) throws IOException {
         final List<String> text = new LinkedList<String>();
-        final int pivotColumn = Integer.parseInt(reader.readLine());
-        final int pivotRow = Integer.parseInt(reader.readLine());
+        int pivotColumn = Integer.parseInt(reader.readLine());
+        int pivotRow = Integer.parseInt(reader.readLine());
         String line = reader.readLine();
-        while (line != null && !line.isBlank()) {
-            text.add(line);
+        final List<SimplexStepProblem> result = new LinkedList<SimplexStepProblem>();
+        while (line != null) {
+            if (line.isBlank()) {
+                result.add(new SimplexStepProblem(AlgebraAlgorithms.parseMatrix(text), pivotColumn, pivotRow));
+                text.clear();
+                line = reader.readLine();
+                if (line == null) {
+                    return result;
+                }
+                pivotColumn = Integer.parseInt(line);
+                pivotRow = Integer.parseInt(reader.readLine());
+            } else {
+                text.add(line);
+            }
             line = reader.readLine();
         }
-        return List.of(new SimplexStepProblem(AlgebraAlgorithms.parseMatrix(text), pivotColumn, pivotRow));
+        result.add(new SimplexStepProblem(AlgebraAlgorithms.parseMatrix(text), pivotColumn, pivotRow));
+        return result;
     }
 
     @Override
