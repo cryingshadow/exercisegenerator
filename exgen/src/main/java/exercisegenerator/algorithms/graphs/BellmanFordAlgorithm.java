@@ -2,6 +2,7 @@ package exercisegenerator.algorithms.graphs;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 import clit.*;
 import exercisegenerator.*;
@@ -28,16 +29,14 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         for (final BellmanFordStep<String> step : result) {
             if (first) {
                 first = false;
+            } else if (counterIndex < pagebreakCounters.length && tables >= pagebreakCounters[counterIndex]) {
+                writer.write("\\newpage");
+                Main.newLine(writer);
+                Main.newLine(writer);
+                tables = 0;
+                counterIndex++;
             } else {
-                if (counterIndex < pagebreakCounters.length && tables >= pagebreakCounters[counterIndex]) {
-                    writer.write("\\newpage");
-                    Main.newLine(writer);
-                    Main.newLine(writer);
-                    tables = 0;
-                    counterIndex++;
-                } else {
-                    LaTeXUtils.printVerticalProtectedSpace(writer);
-                }
+                LaTeXUtils.printVerticalProtectedSpace(writer);
             }
             LaTeXUtils.printTable(
                 BellmanFordAlgorithm.toTable(step, vertices, fill),
@@ -145,7 +144,17 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         writer.write("} aus.");
         Main.newLine(writer);
         writer.write("Geben Sie dazu die Distanzen und Vorg\\\"anger nach jeder Iteration aller Kanten an, indem Sie ");
-        writer.write("die nachfolgenden Tabellen ausf\\\"ullen:\\\\[2ex]");
+        writer.write("die nachfolgenden Tabellen ausf\\\"ullen");
+        if (options.containsKey(Flag.VARIANT)) {
+            writer.write(". Geben Sie au\\ss{}erdem den k\\\"urzesten Pfad von ");
+            writer.write(problem.startNode().get().label().get());
+            writer.write(" nach ");
+            writer.write(options.get(Flag.VARIANT));
+            writer.write(" an oder begr\\\"unden Sie, warum kein solcher Pfad existiert.");
+        } else {
+            writer.write(":");
+        }
+        writer.write("\\\\[2ex]");
         Main.newLine(writer);
     }
 
@@ -158,7 +167,15 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
     ) throws IOException {
         writer.write("F\\\"uhren Sie den \\emphasize{Bellman-Ford}-Algorithmus auf den folgenden Graphen aus. ");
         writer.write("Geben Sie dazu jeweils die Distanzen und Vorg\\\"anger nach jeder Iteration aller Kanten an, ");
-        writer.write("indem Sie die jeweiligen Tabellen ausf\\\"ullen.\\\\");
+        writer.write("indem Sie die jeweiligen Tabellen ausf\\\"ullen.");
+        if (options.containsKey(Flag.VARIANT)) {
+            writer.write(" Geben Sie au\\ss{}erdem jeweils den k\\\"urzesten Pfad vom Startknoten nach ");
+            writer.write(options.get(Flag.VARIANT));
+            writer.write(" an oder begr\\\"unden Sie, warum ein solcher Pfad nicht existiert.");
+        } else {
+
+        }
+        writer.write("\\\\");
         Main.newLine(writer);
     }
 
@@ -172,6 +189,35 @@ public class BellmanFordAlgorithm implements GraphAlgorithm<List<BellmanFordStep
         final List<Vertex<String>> vertices =
             GraphAlgorithm.getSortedListOfVertices(problem.graphWithLayout().graph(), problem.comparator());
         BellmanFordAlgorithm.printTables(vertices, solution, true, options, writer);
+        if (options.containsKey(Flag.VARIANT)) {
+            LaTeXUtils.printVerticalProtectedSpace(writer);
+            if (solution.getLast().equals(solution.get(solution.size() - 2))) {
+                final BellmanFordStep<String> lastStep = solution.getLast();
+                final String start = problem.startNode().get().label().get();
+                String current = options.get(Flag.VARIANT);
+                if (lastStep.predecessors.containsKey(current)) {
+                    final List<String> path = new LinkedList<String>();
+                    while (!current.equals(start)) {
+                        path.add(current);
+                        current = lastStep.predecessors.get(current);
+                    }
+                    path.add(start);
+                    writer.write("Der kürzeste Pfad von ");
+                    writer.write(start);
+                    writer.write(" nach ");
+                    writer.write(path.getFirst());
+                    writer.write(" ist ");
+                    writer.write(path.reversed().stream().collect(Collectors.joining(" $\\to$ ")));
+                    writer.write(".");
+                } else {
+                    writer.write("Der gew\\\"unschte Zielknoten ist vom Startknoten aus nicht erreichbar.");
+                }
+            } else {
+                writer.write("In diesem Graphen gibt es einen Zyklus mit negativem Gewicht, sodass die Frage nach ");
+                writer.write("k\\\"urzesten Pfaden f\\\"ur diesen Graphen nicht anwendbar ist.");
+            }
+            Main.newLine(writer);
+        }
     }
 
     @Override
