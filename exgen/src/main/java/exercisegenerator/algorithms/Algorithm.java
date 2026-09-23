@@ -163,6 +163,17 @@ public enum Algorithm {
         exercisegenerator.algorithms.logic.DPLL.INSTANCE
     ),
 
+    ENTROPY_CALCULATION(
+        "entropycalculation",
+        "Entropy Calculation",
+        new String[] {
+            "Computes the average entropy of a certain attribute within a certain data set.",
+            "The flag -l specifies how many data elements should be contained in the data set."
+        },
+        EntropyCalculationAlgorithm.INSTANCE,
+        false
+    ),
+
     FARKAS_PLACE(
         "farkasplace",
         "Farkas-Algorithmus",
