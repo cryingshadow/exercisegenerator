@@ -139,7 +139,7 @@ public class ID3Test {
                             "cost",
                             Map.of(
                                 "cost",
-                                new AverageEntropyCalculation(
+                                new SummedEntropyCalculation(
                                     List.of(
                                         new EntropyCalculation(BigFraction.ONE_THIRD, List.of()),
                                         new EntropyCalculation(BigFraction.ONE_THIRD, List.of()),
@@ -154,7 +154,7 @@ public class ID3Test {
                     "size",
                     Map.of(
                         "size",
-                        new AverageEntropyCalculation(
+                        new SummedEntropyCalculation(
                             List.of(
                                 new EntropyCalculation(new BigFraction(3, 9), List.of()),
                                 new EntropyCalculation(
@@ -165,7 +165,7 @@ public class ID3Test {
                             )
                         ),
                         "cost",
-                        new AverageEntropyCalculation(
+                        new SummedEntropyCalculation(
                             List.of(
                                 new EntropyCalculation(
                                     new BigFraction(3, 9),
@@ -199,7 +199,7 @@ public class ID3Test {
                             "size",
                             Map.of(
                                 "size",
-                                new AverageEntropyCalculation(
+                                new SummedEntropyCalculation(
                                     List.of(
                                         new EntropyCalculation(BigFraction.ONE_THIRD, List.of()),
                                         new EntropyCalculation(BigFraction.ONE_THIRD, List.of()),
@@ -214,7 +214,7 @@ public class ID3Test {
                     "cost",
                     Map.of(
                         "size",
-                        new AverageEntropyCalculation(
+                        new SummedEntropyCalculation(
                             List.of(
                                 new EntropyCalculation(
                                     new BigFraction(3, 9),
@@ -231,7 +231,7 @@ public class ID3Test {
                             )
                         ),
                         "cost",
-                        new AverageEntropyCalculation(
+                        new SummedEntropyCalculation(
                             List.of(
                                 new EntropyCalculation(new BigFraction(3, 9), List.of()),
                                 new EntropyCalculation(new BigFraction(3, 9), List.of()),

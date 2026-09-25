@@ -1,5 +1,6 @@
 package exercisegenerator.structures.learning;
 
+import java.math.*;
 import java.util.*;
 
 import exercisegenerator.*;
@@ -14,6 +15,11 @@ public record DecisionTreeLeaf(String classifier) implements DecisionTree {
     @Override
     public List<String> getCalculations(final String prefix) {
         return List.of();
+    }
+
+    @Override
+    public Set<BigInteger> getDenominators() {
+        return Set.of();
     }
 
     @Override

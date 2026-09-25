@@ -3,15 +3,15 @@ package exercisegenerator.structures.learning;
 import java.util.*;
 import java.util.stream.*;
 
-public class AverageEntropyCalculation extends LinkedList<EntropyCalculation> {
+public class SummedEntropyCalculation extends LinkedList<EntropyCalculation> {
 
     private static final long serialVersionUID = 1L;
 
-    public AverageEntropyCalculation() {
+    public SummedEntropyCalculation() {
         super();
     }
 
-    public AverageEntropyCalculation(final Collection<? extends EntropyCalculation> c) {
+    public SummedEntropyCalculation(final Collection<? extends EntropyCalculation> c) {
         super(c);
     }
 

@@ -30,11 +30,11 @@ public record EntropyCalculation(BigFraction fraction, List<BigFraction> classif
             .stream()
             .map(classification ->
                 String.format(
-                    "\\frac{%d}{%d} \\log_2\\left(\\frac{%d}{%d}\\right)",
-                    classification.getNumeratorAsInt(),
-                    classification.getDenominatorAsInt(),
-                    classification.getNumeratorAsInt(),
-                    classification.getDenominatorAsInt()
+                    "\\frac{%s}{%s} \\log_2\\left(\\frac{%s}{%s}\\right)",
+                    classification.getNumerator().toString(),
+                    classification.getDenominator().toString(),
+                    classification.getNumerator().toString(),
+                    classification.getDenominator().toString()
                 )
             ).collect(Collectors.joining(" + "))
         );
@@ -44,7 +44,9 @@ public record EntropyCalculation(BigFraction fraction, List<BigFraction> classif
 
     public double value() {
         return -this.fraction().doubleValue()
-            * this.classifications().stream().mapToDouble(v -> v.doubleValue() * Math.log(v.doubleValue()) / Math.log(2)).sum();
+            * this.classifications().stream().mapToDouble(
+                v -> v.doubleValue() * Math.log(v.doubleValue()) / Math.log(2)
+            ).sum();
     }
 
 }

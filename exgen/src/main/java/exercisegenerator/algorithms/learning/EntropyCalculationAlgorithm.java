@@ -11,7 +11,7 @@ import exercisegenerator.io.*;
 import exercisegenerator.structures.learning.*;
 
 public class EntropyCalculationAlgorithm
-implements AlgorithmImplementation<EntropyCalculationData, AverageEntropyCalculation> {
+implements AlgorithmImplementation<EntropyCalculationData, SummedEntropyCalculation> {
 
     public static final EntropyCalculationAlgorithm INSTANCE = new EntropyCalculationAlgorithm();
 
@@ -20,7 +20,7 @@ implements AlgorithmImplementation<EntropyCalculationData, AverageEntropyCalcula
     }
 
     @Override
-    public AverageEntropyCalculation apply(final EntropyCalculationData data) {
+    public SummedEntropyCalculation apply(final EntropyCalculationData data) {
         final List<DecisionTreeDataElement> elements =
             data
             .data()
@@ -83,7 +83,7 @@ implements AlgorithmImplementation<EntropyCalculationData, AverageEntropyCalcula
     @Override
     public void printBeforeMultipleProblemInstances(
         final List<EntropyCalculationData> problems,
-        final List<AverageEntropyCalculation> solutions,
+        final List<SummedEntropyCalculation> solutions,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
@@ -99,7 +99,7 @@ implements AlgorithmImplementation<EntropyCalculationData, AverageEntropyCalcula
     @Override
     public void printBeforeSingleProblemInstance(
         final EntropyCalculationData problem,
-        final AverageEntropyCalculation solution,
+        final SummedEntropyCalculation solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
@@ -115,7 +115,7 @@ implements AlgorithmImplementation<EntropyCalculationData, AverageEntropyCalcula
     @Override
     public void printProblemInstance(
         final EntropyCalculationData problem,
-        final AverageEntropyCalculation solution,
+        final SummedEntropyCalculation solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
@@ -163,7 +163,7 @@ implements AlgorithmImplementation<EntropyCalculationData, AverageEntropyCalcula
     @Override
     public void printSolutionInstance(
         final EntropyCalculationData problem,
-        final AverageEntropyCalculation solution,
+        final SummedEntropyCalculation solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
@@ -174,7 +174,7 @@ implements AlgorithmImplementation<EntropyCalculationData, AverageEntropyCalcula
     @Override
     public void printSolutionSpace(
         final EntropyCalculationData problem,
-        final AverageEntropyCalculation solution,
+        final SummedEntropyCalculation solution,
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {

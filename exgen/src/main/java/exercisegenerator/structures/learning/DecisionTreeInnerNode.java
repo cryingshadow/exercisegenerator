@@ -1,14 +1,17 @@
 package exercisegenerator.structures.learning;
 
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
+
+import org.apache.commons.math3.fraction.*;
 
 import exercisegenerator.*;
 
 public record DecisionTreeInnerNode (
     Map<String, DecisionTree> children,
     String selector,
-    Map<String, AverageEntropyCalculation> entropies,
+    Map<String, SummedEntropyCalculation> entropies,
     Set<String> used
 ) implements DecisionTree {
 
@@ -20,7 +23,7 @@ public record DecisionTreeInnerNode (
     @Override
     public List<String> getCalculations(final String prefix) {
         final List<String> result = new LinkedList<String>();
-        for (final Map.Entry<String, AverageEntropyCalculation> entry : this.entropies().entrySet()) {
+        for (final Map.Entry<String, SummedEntropyCalculation> entry : this.entropies().entrySet()) {
             if (entry.getValue().isEmpty()) {
                 continue;
             }
@@ -40,6 +43,22 @@ public record DecisionTreeInnerNode (
                     String.format("%s%s = %s", prefix.isBlank() ? "" : prefix + ", ", this.selector(), entry.getKey())
                 )
             );
+        }
+        return result;
+    }
+
+    @Override
+    public Set<BigInteger> getDenominators() {
+        final Set<BigInteger> result = new TreeSet<BigInteger>();
+        for (final DecisionTree child : this.children().values()) {
+            result.addAll(child.getDenominators());
+        }
+        for (final SummedEntropyCalculation summedEntropy : this.entropies().values()) {
+            for (final EntropyCalculation entropy : summedEntropy) {
+                for (final BigFraction fraction : entropy.classifications()) {
+                    result.add(fraction.getDenominator());
+                }
+            }
         }
         return result;
     }
