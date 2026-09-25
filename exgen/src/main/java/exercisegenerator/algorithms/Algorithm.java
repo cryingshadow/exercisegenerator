@@ -170,8 +170,7 @@ public enum Algorithm {
             "Computes the average entropy of a certain attribute within a certain data set.",
             "The flag -l specifies how many data elements should be contained in the data set."
         },
-        EntropyCalculationAlgorithm.INSTANCE,
-        false
+        EntropyCalculationAlgorithm.INSTANCE
     ),
 
     FARKAS_PLACE(

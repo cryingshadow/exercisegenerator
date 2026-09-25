@@ -2,7 +2,6 @@ package exercisegenerator.algorithms.learning;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.*;
 
 import clit.*;
 import exercisegenerator.*;
@@ -49,10 +48,16 @@ implements AlgorithmImplementation<EntropyCalculationData, SummedEntropyCalculat
     @Override
     public EntropyCalculationData generateProblem(final Parameters<Flag> options) {
         final DecisionTreeData data = ID3Algorithm.INSTANCE.generateProblem(options);
-        final Map<String, String> attributeValues = Map.of();
-        final String attribute = "";
-        //TODO
-        return new EntropyCalculationData(data, attributeValues, attribute);
+        final DecisionTreeDataElement element = data.elements().get(Main.RANDOM.nextInt(data.elements().size()));
+        final List<String> attributes = new ArrayList<String>(element.attributes().keySet());
+        Collections.shuffle(attributes);
+        final int fixed = attributes.size() > 2 ? Main.RANDOM.nextInt(attributes.size() - 2) : 0;
+        final Map<String, String> attributeValues = new TreeMap<String, String>();
+        for (int i = 0; i < fixed; i++) {
+            final String attribute = attributes.get(i);
+            attributeValues.put(attribute, element.attributes().get(attribute));
+        }
+        return new EntropyCalculationData(data, attributeValues, attributes.get(fixed));
     }
 
     @Override
@@ -87,12 +92,8 @@ implements AlgorithmImplementation<EntropyCalculationData, SummedEntropyCalculat
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        //TODO
-        writer.write("Geben Sie jeweils den \\emphasize{Entscheidungsbaum} an, den der \\emphasize{ID3-Algorithmus} ");
-        writer.write("zu den folgenden Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die ");
-        writer.write("gewichtete Entropie f\\\"ur jedes verf\\\"ugbare Attribut gerundet auf drei Nachkommastellen ");
-        writer.write("an (also auch f\\\"ur diejenigen, die jeweils nicht als Selektionskriterium ausgew\\\"ahlt ");
-        writer.write("werden). Unterstreichen Sie das jeweils gew\\\"ahlte Attribut:\\\\[2ex]");
+        writer.write("Berechnen Sie die gewichtete Entropie f\\\"ur das jeweils angegebene Merkmal in den jeweiligen ");
+        writer.write("Datenmengen unter Ber\\\"ucksichtigung der angegebenen festgelegten Merkmale.");
         Main.newLine(writer);
     }
 
@@ -103,12 +104,13 @@ implements AlgorithmImplementation<EntropyCalculationData, SummedEntropyCalculat
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        //TODO
-        writer.write("Geben Sie den \\emphasize{Entscheidungsbaum} an, den der \\emphasize{ID3-Algorithmus} zu den ");
-        writer.write("folgenden Trainingsdaten berechnet. Geben Sie dabei f\\\"ur jeden inneren Knoten die ");
-        writer.write("gewichtete Entropie f\\\"ur jedes verf\\\"ugbare Attribut gerundet auf drei Nachkommastellen ");
-        writer.write("an (also auch f\\\"ur diejenigen, die jeweils nicht als Selektionskriterium ausgew\\\"ahlt ");
-        writer.write("werden). Unterstreichen Sie das jeweils gew\\\"ahlte Attribut:\\\\[2ex]");
+        writer.write(
+            "Berechnen Sie die gewichtete Entropie f\\\"ur das angegebene Merkmal in der folgenden Datenmenge"
+        );
+        if (!problem.attributeValues().isEmpty()) {
+            writer.write(" unter Ber\\\"ucksichtigung der angegebenen festgelegten Merkmale");
+        }
+        writer.write(".");
         Main.newLine(writer);
     }
 
@@ -119,45 +121,23 @@ implements AlgorithmImplementation<EntropyCalculationData, SummedEntropyCalculat
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        LaTeXUtils.printAdjustboxBeginning(writer);
-        writer.write("\\begin{tabular}{|*{");
-        final Set<String> attributes =
-            problem
-            .data()
-            .elements()
-            .stream()
-            .flatMap(element -> element.attributes().keySet().stream())
-            .collect(Collectors.toCollection(TreeSet<String>::new));
-        writer.write(String.valueOf(attributes.size() + 1));
-        writer.write("}{c|}}");
-        Main.newLine(writer);
-        writer.write("\\hline");
-        Main.newLine(writer);
-        writer.write("\\multicolumn{");
-        writer.write(String.valueOf(attributes.size()));
-        writer.write("}{|c|}{Attribute} & Klassifikation\\\\\\hline");
-        Main.newLine(writer);
-        for (final String attribute : attributes) {
-            writer.write("\\textbf{");
-            writer.write(attribute);
-            writer.write("} & ");
-        }
-        writer.write("\\textbf{");
-        writer.write(problem.data().labelTitle());
-        writer.write("}\\\\\\hline");
-        Main.newLine(writer);
-        for (final DecisionTreeDataElement element : problem.data().elements()) {
-            for (final Map.Entry<String, String> attributeEntry : element.attributes().entrySet()) {
-                writer.write(attributeEntry.getValue());
-                writer.write(" & ");
-            }
-            writer.write(element.label());
-            writer.write("\\\\\\hline");
+        ID3Algorithm.INSTANCE.printProblemInstance(problem.data(), new DecisionTreeLeaf(""), options, writer);
+        LaTeXUtils.printVerticalProtectedSpace(writer);
+        if (!problem.attributeValues().isEmpty()) {
+            writer.write("Festgelegte Merkmale:\\\\");
             Main.newLine(writer);
+            for (final Map.Entry<String, String> entry : problem.attributeValues().entrySet()) {
+                writer.write(entry.getKey());
+                writer.write(" = ");
+                writer.write(entry.getValue());
+                writer.write("\\\\");
+                Main.newLine(writer);
+            }
+            LaTeXUtils.printVerticalProtectedSpace(writer);
         }
-        writer.write("\\end{tabular}");
+        writer.write("Entropie-Merkmal: ");
+        writer.write(problem.attribute());
         Main.newLine(writer);
-        LaTeXUtils.printAdjustboxEnd(writer);
     }
 
     @Override

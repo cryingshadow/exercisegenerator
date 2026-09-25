@@ -70,14 +70,20 @@ public class SimplexStepAlgorithm implements AlgorithmImplementation<SimplexStep
         final Pair<SimplexProblem, List<SimplexTableau>> pair =
             originalSolution.branches().get(Main.RANDOM.nextInt(originalSolution.branches().size()));
         final SimplexTableau tableau = pair.y.get(pair.y.size() > 1 ? Main.RANDOM.nextInt(pair.y.size() - 1) : 0);
-        final int pivotRow;
-        final int pivotColumn;
-        if (tableau.pivotColumn() < 0 || tableau.pivotRow() < 0) {
+        int pivotRow = tableau.pivotRow();
+        int pivotColumn = tableau.pivotColumn();
+        int i = 0;
+        while (
+            pivotRow < 0
+            || pivotColumn < 0
+            || tableau.problem().conditions().getCoefficient(pivotColumn, pivotRow).equals(BigFraction.ZERO)
+        ) {
+            if (i > 100) {
+                return this.generateProblem(options);
+            }
             pivotColumn = Main.RANDOM.nextInt(tableau.problem().conditions().getNumberOfColumns());
             pivotRow = Main.RANDOM.nextInt(tableau.problem().conditions().getNumberOfRows());
-        } else {
-            pivotColumn = tableau.pivotColumn();
-            pivotRow = tableau.pivotRow();
+            i++;
         }
         return new SimplexStepProblem(tableau.problem().conditions(), pivotColumn, pivotRow);
     }
