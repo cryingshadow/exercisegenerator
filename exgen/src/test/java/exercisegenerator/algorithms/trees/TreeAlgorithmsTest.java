@@ -338,10 +338,11 @@ public class TreeAlgorithmsTest {
 
     @Test(dataProvider="btreeData")
     public void btreeTest(
-        BTree<Integer> tree,
+        final BTree<Integer> inputTree,
         final List<TreeOperation<Integer>> operations,
         final List<Pair<String, String>> expectedList
     ) {
+        BTree<Integer> tree = inputTree;
         final SearchTreeSteps<Integer> steps = new SearchTreeSteps<Integer>();
         for (final TreeOperation<Integer> operation : operations) {
             if (operation.add()) {

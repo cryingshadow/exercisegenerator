@@ -34,31 +34,30 @@ public class BinaryNumbersTest {
     public void fromFloat(
         final String bits,
         final int exponentLength,
-        final int mantissaLength,
         final String expected
     ) {
-        Assert.assertEquals(ConversionFromFloat.fromFloat(BitString.parse(bits), exponentLength, mantissaLength), expected);
+        Assert.assertEquals(ConversionFromFloat.fromFloat(BitString.parse(bits), exponentLength), expected);
     }
 
     @DataProvider
     public Object[][] fromFloatData() {
         return new Object[][] {
-            {"00110110", 3, 4, "1,375"},
-            {"01000001011011000000000000000000", 8, 23, "14,75"},
-            {"10010000", 3, 4, "-0,25"},
-            {"00000000", 3, 4, "0,0"},
-            {"10000000", 3, 4, "-0,0"},
-            {"00010000", 3, 4, "0,25"},
-            {"01110000", 3, 4, "inf"},
-            {"11110000", 3, 4, "-inf"},
-            {"11111111", 3, 4, "NaN"},
-            {"00001000", 3, 4, "0,125"},
-            {"00000100", 3, 4, "0,0625"},
-            {"00000010", 3, 4, "0,03125"},
-            {"00000001", 3, 4, "0,015625"},
-            {"01101111", 3, 4, "15,5"},
-            {"0111011111", 4, 5, "252,0"},
-            {"0000000001", 4, 5, "0,00048828125"}
+            {"00110110", 3, "1,375"},
+            {"01000001011011000000000000000000", 8, "14,75"},
+            {"10010000", 3, "-0,25"},
+            {"00000000", 3, "0,0"},
+            {"10000000", 3, "-0,0"},
+            {"00010000", 3, "0,25"},
+            {"01110000", 3, "inf"},
+            {"11110000", 3, "-inf"},
+            {"11111111", 3, "NaN"},
+            {"00001000", 3, "0,125"},
+            {"00000100", 3, "0,0625"},
+            {"00000010", 3, "0,03125"},
+            {"00000001", 3, "0,015625"},
+            {"01101111", 3, "15,5"},
+            {"0111011111", 4, "252,0"},
+            {"0000000001", 4, "0,00048828125"}
         };
     }
 
@@ -86,7 +85,7 @@ public class BinaryNumbersTest {
     }
 
     @Test(dataProvider="twosData")
-    public void fromTwosComplement(final int expected, final int bitLength, final String bits) {
+    public void fromTwosComplement(final int expected, final String bits) {
         Assert.assertEquals(ConversionFromTwosComplement.fromTwosComplement(BitString.parse(bits)), expected);
     }
 
@@ -167,8 +166,11 @@ public class BinaryNumbersTest {
     }
 
     @Test(dataProvider="twosData")
-    public void toTwosComplement(final int number, final int bitLength, final String expected) {
-        Assert.assertEquals(ConversionToTwosComplement.toTwosComplement(number, bitLength).toString(), expected);
+    public void toTwosComplement(final int number, final String expected) {
+        Assert.assertEquals(
+            ConversionToTwosComplement.toTwosComplement(number, expected.length()).toString(),
+            expected
+        );
     }
 
     @Test(dataProvider="toTwosErrorData")
@@ -190,19 +192,19 @@ public class BinaryNumbersTest {
     @DataProvider
     public Object[][] twosData() {
         return new Object[][] {
-            {3, 4, "0011"},
-            {4, 4, "0100"},
-            {0, 2, "00"},
-            {0, 9, "000000000"},
-            {1, 11, "00000000001"},
-            {7, 4, "0111"},
-            {-5, 4, "1011"},
-            {-7, 4, "1001"},
-            {-4, 7, "1111100"},
-            {-1, 3, "111"},
-            {-8, 4, "1000"},
-            {-1, 1, "1"},
-            {0, 1, "0"}
+            {3, "0011"},
+            {4, "0100"},
+            {0, "00"},
+            {0, "000000000"},
+            {1, "00000000001"},
+            {7, "0111"},
+            {-5, "1011"},
+            {-7, "1001"},
+            {-4, "1111100"},
+            {-1, "111"},
+            {-8, "1000"},
+            {-1, "1"},
+            {0, "0"}
         };
     }
 

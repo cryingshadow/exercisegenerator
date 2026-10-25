@@ -242,7 +242,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
             KnapsackAlgorithm.toKnapsackRowHeading(problem.weights, problem.values),
             new DPHeading(i -> LaTeXUtils.bold(i.toString())),
             Optional.of(KnapsackAlgorithm.traceback(problem.weights)),
-            options,
             configuration,
             writer
         );
@@ -275,7 +274,7 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
         case SOLUTION_SPACE:
             Main.newLine(writer);
             LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-            // fall-through
+            //$FALL-THROUGH$
         case ALWAYS:
             if (mode != SolutionSpaceMode.SOLUTION_SPACE) {
                 Main.newLine(writer);
@@ -285,7 +284,6 @@ public class KnapsackAlgorithm implements AlgorithmImplementation<KnapsackProble
                 KnapsackAlgorithm.toKnapsackRowHeading(problem.weights, problem.values),
                 new DPHeading(i -> LaTeXUtils.bold(i.toString())),
                 Optional.empty(),
-                options,
                 configuration,
                 writer
             );

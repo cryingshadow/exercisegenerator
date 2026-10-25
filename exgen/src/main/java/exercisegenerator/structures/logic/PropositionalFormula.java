@@ -39,6 +39,8 @@ public abstract class PropositionalFormula {
                     return i;
                 }
                 break;
+            default:
+                // do nothing
             }
         }
         return -1;

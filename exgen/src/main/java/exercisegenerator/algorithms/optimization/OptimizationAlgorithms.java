@@ -36,7 +36,7 @@ public abstract class OptimizationAlgorithms {
         }
     }
 
-    static LengthConfiguration generateLengthConfiguration(final Parameters<Flag> options) {
+    static LengthConfiguration generateLengthConfiguration() {
         return new LengthConfiguration();
     }
 
@@ -68,7 +68,7 @@ public abstract class OptimizationAlgorithms {
         return OptimizationAlgorithms.parseOrGenerateLengthConfiguration(
             options,
             lineNumber,
-            OptimizationAlgorithms::generateLengthConfiguration
+            flags -> OptimizationAlgorithms.generateLengthConfiguration()
         );
     }
 
@@ -93,7 +93,6 @@ public abstract class OptimizationAlgorithms {
         final DPHeading rowHeading,
         final DPHeading columnHeading,
         final Optional<DPTracebackFunction> traceback,
-        final Parameters<Flag> options,
         final LengthConfiguration configuration,
         final BufferedWriter writer
     ) throws IOException {

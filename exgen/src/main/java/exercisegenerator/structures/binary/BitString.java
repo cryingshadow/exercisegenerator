@@ -5,9 +5,6 @@ import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
-import clit.*;
-import exercisegenerator.io.*;
-
 public class BitString extends LinkedList<Bit> {
 
     private static final long serialVersionUID = -3160588348086277796L;
@@ -23,10 +20,7 @@ public class BitString extends LinkedList<Bit> {
                 .collect(Collectors.toCollection(BitString::new));
     }
 
-    public static List<BitString> parseBitStringProblems(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
+    public static List<BitString> parseBitStringProblems(final BufferedReader reader) throws IOException {
         return Arrays.stream(reader.readLine().split(";"))
             .map(BitString::parse)
             .toList();

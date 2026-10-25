@@ -120,14 +120,14 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
 
     static BigFraction parseOrGenerateMultiplicationFactor(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<BigFraction>(
-            Hashing::parseMultiplicationFactor,
+            (reader, flags) -> Hashing.parseMultiplicationFactor(reader),
             flags -> Hashing.getRandomFactorBetweenZeroAndOne()
         ).getResult(options);
     }
 
     static Integer parseOrGenerateNumberOfValues(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<Integer>(
-            Hashing::parseNumberOfValues,
+            (reader, flags) -> Hashing.parseNumberOfValues(reader),
             Hashing::generateNumberOfValues
         ).getResult(options);
     }
@@ -137,8 +137,8 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         final Parameters<Flag> options
     ) throws IOException {
         return new ParserAndGenerator<ProbingFactors>(
-            (reader, flags) -> Hashing.parseProbingFactors(reader, flags),
-            flags -> Hashing.generateProbingFactors(capacity, flags)
+            (reader, flags) -> Hashing.parseProbingFactors(reader),
+            flags -> Hashing.generateProbingFactors(capacity)
         ).getResult(options);
     }
 
@@ -150,7 +150,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         final Parameters<Flag> options
     ) throws IOException {
         return new ParserAndGenerator<List<Integer>>(
-            Hashing::parseValues,
+            (reader, flags) -> Hashing.parseValues(reader),
             flags -> Hashing.generateValues(
                 numOfValues,
                 capacity,
@@ -306,7 +306,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         }
     }
 
-    private static int generateCapacity(final int numberOfValues, final Parameters<Flag> options) {
+    private static int generateCapacity(final int numberOfValues) {
         final int length = (int)(numberOfValues * 1.25);
         final List<Integer> candidates =
             Arrays.stream(Hashing.CAPACITIES).filter(value -> value >= length).boxed().toList();
@@ -320,7 +320,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         return AlgorithmImplementation.parseOrGenerateLength(5, 15, options);
     }
 
-    private static ProbingFactors generateProbingFactors(final int capacity, final Parameters<Flag> options) {
+    private static ProbingFactors generateProbingFactors(final int capacity) {
         if (Hashing.isPowerOf2(capacity)) {
             return new ProbingFactors(BigFraction.ONE_HALF, BigFraction.ONE_HALF);
         }
@@ -437,20 +437,17 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         return Integer.numberOfLeadingZeros(capacity) + Integer.numberOfTrailingZeros(capacity) == 31;
     }
 
-    private static int parseCapacity(final BufferedReader reader, final Parameters<Flag> options)
-    throws NumberFormatException, IOException {
+    private static int parseCapacity(final BufferedReader reader) throws NumberFormatException, IOException {
         return Integer.parseInt(reader.readLine().split(",")[0]);
     }
 
-    private static BigFraction parseMultiplicationFactor(final BufferedReader reader, final Parameters<Flag> options)
-    throws NumberFormatException, IOException {
+    private static BigFraction parseMultiplicationFactor(
+        final BufferedReader reader
+    ) throws NumberFormatException, IOException {
         return AlgebraAlgorithms.parseRationalNumber(reader.readLine().split(",")[1]);
     }
 
-    private static Integer parseNumberOfValues(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
+    private static Integer parseNumberOfValues(final BufferedReader reader) throws IOException {
         reader.readLine();
         return (int)Arrays.stream(reader.readLine().split(",")).count();
     }
@@ -458,8 +455,8 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
     private static int parseOrGenerateCapacity(final int numberOfValues, final Parameters<Flag> options)
     throws IOException {
         return new ParserAndGenerator<Integer>(
-            Hashing::parseCapacity,
-            flags -> Hashing.generateCapacity(numberOfValues, flags)
+            (reader, flags) -> Hashing.parseCapacity(reader),
+            flags -> Hashing.generateCapacity(numberOfValues)
         ).getResult(options);
     }
 
@@ -470,8 +467,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         return Main.RANDOM.nextInt(7) + 1;
     }
 
-    private static ProbingFactors parseProbingFactors(final BufferedReader reader, final Parameters<Flag> options)
-    throws IOException {
+    private static ProbingFactors parseProbingFactors(final BufferedReader reader) throws IOException {
         final String[] parameters = reader.readLine().split(",");
         return new ProbingFactors(
             AlgebraAlgorithms.parseRationalNumber(parameters[parameters.length - 2]),
@@ -479,10 +475,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         );
     }
 
-    private static List<Integer> parseValues(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
+    private static List<Integer> parseValues(final BufferedReader reader) throws IOException {
         reader.readLine();
         return Arrays.stream(reader.readLine().split(",")).map(Integer::parseInt).toList();
     }
@@ -508,10 +501,7 @@ interface Hashing extends AlgorithmImplementation<HashProblem, HashResult> {
         LaTeXUtils.printTikzEnd(writer);
     }
 
-    private static PrintOptions printOptions(
-        final HashProblem problem,
-        final Parameters<Flag> options
-    ) throws IOException {
+    private static PrintOptions printOptions(final HashProblem problem, final Parameters<Flag> options) {
         return new PrintOptions(
             problem
             .hashFunction()

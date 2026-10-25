@@ -95,8 +95,11 @@ public class HammingDecoding implements AlgorithmImplementation<BitString, Hammi
     }
 
     @Override
-    public List<BitString> parseProblems(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
-        return BitString.parseBitStringProblems(reader, options);
+    public List<BitString> parseProblems(
+        final BufferedReader reader,
+        final Parameters<Flag> options
+    ) throws IOException {
+        return BitString.parseBitStringProblems(reader);
     }
 
     @Override

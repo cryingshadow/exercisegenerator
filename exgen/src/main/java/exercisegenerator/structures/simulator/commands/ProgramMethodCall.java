@@ -10,7 +10,7 @@ public record ProgramMethodCall(
     String method,
     String returnType,
     List<ProgramExpression> parameters
-) implements ProgramCommand, ProgramExpression {
+) implements ProgramExpression {
 
     @Override
     public ProgramState apply(final ProgramState state) {

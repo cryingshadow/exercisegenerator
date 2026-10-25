@@ -51,6 +51,7 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
                 count = 1;
                 break;
             case ALWAYS:
+            default:
                 // do nothing
         }
         boolean one = false;
@@ -285,8 +286,7 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
     }
 
     private static ArrayList<Pair<Double, Double>> parseConvexHullProblem(
-        final BufferedReader reader,
-        final Parameters<Flag> options
+        final BufferedReader reader
     ) throws IOException {
         String line = null;
         final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
@@ -306,7 +306,7 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
     private static ArrayList<Pair<Double, Double>> parseOrGenerateConvexHullProblem(final Parameters<Flag> options)
     throws IOException {
         return new ParserAndGenerator<ArrayList<Pair<Double, Double>>>(
-            GrahamsScan::parseConvexHullProblem,
+            (reader, flags) -> GrahamsScan.parseConvexHullProblem(reader),
             GrahamsScan::generateConvexHullProblem
         ).getResult(options);
     }

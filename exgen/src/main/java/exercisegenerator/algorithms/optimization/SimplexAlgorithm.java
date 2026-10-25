@@ -108,6 +108,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
         branches.add(new Pair<SimplexProblem, List<SimplexTableau>>(newProblems.y, nextBranch));
     }
 
+    @SuppressWarnings("unused")
     private static List<BigFraction[]> computeCuttingHyperPlanes(final SimplexProblem problem) {
         // TODO Auto-generated method stub
         final List<BigFraction[]> result = new LinkedList<BigFraction[]>();
@@ -963,7 +964,7 @@ public class SimplexAlgorithm implements AlgorithmImplementation<SimplexProblem,
             case SOLUTION_SPACE:
                 Main.newLine(writer);
                 LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-                // fall-through
+                //$FALL-THROUGH$
             case ALWAYS:
                 if (mode != SolutionSpaceMode.SOLUTION_SPACE) {
                     Main.newLine(writer);

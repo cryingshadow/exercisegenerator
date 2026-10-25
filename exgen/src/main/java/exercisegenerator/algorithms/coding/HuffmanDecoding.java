@@ -20,9 +20,6 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
         "The specified code book does not match the expected format (entries of the form 'S':\"C\" for a symbol S and a code C, separated by commas)!";
 
     static void printBeforeMultipleProblemInstancesStatically(
-        final List<HuffmanCode> problems,
-        final List<String> solutions,
-        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Erzeugen Sie den jeweiligen Quelltext aus den nachfolgenden \\emphasize{Huffman-Codes} mit dem ");
@@ -31,9 +28,6 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
     }
 
     static void printBeforeSingleProblemInstanceStatically(
-        final HuffmanCode problem,
-        final String solution,
-        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write("Erzeugen Sie den Quelltext aus dem nachfolgenden \\emphasize{Huffman-Code} mit dem angegebenen ");
@@ -43,8 +37,6 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
 
     static void printProblemInstanceStatically(
         final HuffmanCode problem,
-        final String solution,
-        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write(LaTeXUtils.codeseq(LaTeXUtils.escapeForLaTeX(problem.message())));
@@ -54,9 +46,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
     }
 
     static void printSolutionInstanceStatically(
-        final HuffmanCode problem,
         final String solution,
-        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         writer.write(LaTeXUtils.code(LaTeXUtils.escapeForLaTeX(solution)));
@@ -64,9 +54,6 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
     }
 
     static void printSolutionSpaceStatically(
-        final HuffmanCode problem,
-        final String solution,
-        final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
         LaTeXUtils.printVerticalProtectedSpace("-3ex", writer);
@@ -162,7 +149,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
     ) throws IOException {
         return List.of(
             new HuffmanCode(
-                CodingAlgorithms.parseInputText(reader, options),
+                CodingAlgorithms.parseInputText(reader),
                 new HuffmanTree(HuffmanDecoding.parseCodeBook(options))
             )
         );
@@ -175,7 +162,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printBeforeMultipleProblemInstancesStatically(problems, solutions, options, writer);
+        HuffmanDecoding.printBeforeMultipleProblemInstancesStatically(writer);
     }
 
     @Override
@@ -185,7 +172,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printBeforeSingleProblemInstanceStatically(problem, solution, options, writer);
+        HuffmanDecoding.printBeforeSingleProblemInstanceStatically(writer);
     }
 
     @Override
@@ -195,7 +182,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printProblemInstanceStatically(problem, solution, options, writer);
+        HuffmanDecoding.printProblemInstanceStatically(problem, writer);
     }
 
     @Override
@@ -205,7 +192,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printSolutionInstanceStatically(problem, solution, options, writer);
+        HuffmanDecoding.printSolutionInstanceStatically(solution, writer);
     }
 
     @Override
@@ -215,7 +202,7 @@ public class HuffmanDecoding implements AlgorithmImplementation<HuffmanCode, Str
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printSolutionSpaceStatically(problem, solution, options, writer);
+        HuffmanDecoding.printSolutionSpaceStatically(writer);
     }
 
 }

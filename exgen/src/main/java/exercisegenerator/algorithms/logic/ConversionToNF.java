@@ -36,7 +36,7 @@ implements AlgorithmImplementation<PropositionalFormula, List<PropositionalFormu
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        return PropositionalLogic.parseFormulas(reader, options);
+        return PropositionalLogic.parseFormulas(reader);
     }
 
     @Override

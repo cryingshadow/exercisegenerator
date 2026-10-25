@@ -44,45 +44,49 @@ public class NumberTimesDecimalPowerTest {
     }
 
     @Test(dataProvider="data")
-    public void constructorToStringTest(
-        final NumberTimesDecimalPower number,
-        final String expected,
-        final String times2
-    ) {
+    public void constructorToStringTest(final NumberTimesDecimalPower number, final String expected) {
         Assert.assertEquals(number.toString(), expected);
     }
 
     @DataProvider
     public Object[][] data() {
         return new Object[][] {
-            {new NumberTimesDecimalPower(BigInteger.ZERO, 0), "0,0", "0,0"},
-            {new NumberTimesDecimalPower(BigInteger.ONE, 0), "1,0", "2,0"},
-            {new NumberTimesDecimalPower(BigInteger.ONE, 1), "10,0", "20,0"},
-            {new NumberTimesDecimalPower(BigInteger.ONE, -1), "0,1", "0,2"},
-            {new NumberTimesDecimalPower(BigInteger.TEN, -1), "1,0", "2,0"},
-            {new NumberTimesDecimalPower(BigInteger.TEN, -2), "0,1", "0,2"},
-            {new NumberTimesDecimalPower(BigInteger.TEN, 2), "1000,0", "2000,0"},
-            {new NumberTimesDecimalPower(BigInteger.TEN.add(BigInteger.TWO), -5), "0,00012", "0,00024"},
-            {new NumberTimesDecimalPower(BigInteger.TWO.pow(3), -2), "0,08", "0,16"},
-            {new NumberTimesDecimalPower(BigInteger.TWO.pow(3), -1), "0,8", "1,6"}
+            {new NumberTimesDecimalPower(BigInteger.ZERO, 0), "0,0"},
+            {new NumberTimesDecimalPower(BigInteger.ONE, 0), "1,0"},
+            {new NumberTimesDecimalPower(BigInteger.ONE, 1), "10,0"},
+            {new NumberTimesDecimalPower(BigInteger.ONE, -1), "0,1"},
+            {new NumberTimesDecimalPower(BigInteger.TEN, -1), "1,0"},
+            {new NumberTimesDecimalPower(BigInteger.TEN, -2), "0,1"},
+            {new NumberTimesDecimalPower(BigInteger.TEN, 2), "1000,0"},
+            {new NumberTimesDecimalPower(BigInteger.TEN.add(BigInteger.TWO), -5), "0,00012"},
+            {new NumberTimesDecimalPower(BigInteger.TWO.pow(3), -2), "0,08"},
+            {new NumberTimesDecimalPower(BigInteger.TWO.pow(3), -1), "0,8"}
+        };
+    }
+
+    @DataProvider
+    public Object[][] dataTimes2() {
+        return new Object[][] {
+            {new NumberTimesDecimalPower(BigInteger.ZERO, 0), "0,0"},
+            {new NumberTimesDecimalPower(BigInteger.ONE, 0), "2,0"},
+            {new NumberTimesDecimalPower(BigInteger.ONE, 1), "20,0"},
+            {new NumberTimesDecimalPower(BigInteger.ONE, -1), "0,2"},
+            {new NumberTimesDecimalPower(BigInteger.TEN, -1), "2,0"},
+            {new NumberTimesDecimalPower(BigInteger.TEN, -2), "0,2"},
+            {new NumberTimesDecimalPower(BigInteger.TEN, 2), "2000,0"},
+            {new NumberTimesDecimalPower(BigInteger.TEN.add(BigInteger.TWO), -5), "0,00024"},
+            {new NumberTimesDecimalPower(BigInteger.TWO.pow(3), -2), "0,16"},
+            {new NumberTimesDecimalPower(BigInteger.TWO.pow(3), -1), "1,6"}
         };
     }
 
     @Test(dataProvider="data")
-    public void getAfterCommaTest(
-        final NumberTimesDecimalPower number,
-        final String expected,
-        final String times2
-    ) {
+    public void getAfterCommaTest(final NumberTimesDecimalPower number, final String expected) {
         Assert.assertEquals(number.getAfterComma().toString(), expected.split(",")[1]);
     }
 
     @Test(dataProvider="data")
-    public void getBeforeCommaTest(
-        final NumberTimesDecimalPower number,
-        final String expected,
-        final String times2
-    ) {
+    public void getBeforeCommaTest(final NumberTimesDecimalPower number, final String expected) {
         Assert.assertEquals(number.getBeforeComma().toString(), expected.split(",")[0]);
     }
 
@@ -118,13 +122,9 @@ public class NumberTimesDecimalPowerTest {
         );
     }
 
-    @Test(dataProvider="data")
-    public void times2Test(
-        final NumberTimesDecimalPower number,
-        final String expected,
-        final String times2
-    ) {
-        Assert.assertEquals(number.times2().toString(), times2);
+    @Test(dataProvider="dataTimes2")
+    public void times2Test(final NumberTimesDecimalPower number, final String expected) {
+        Assert.assertEquals(number.times2().toString(), expected);
     }
 
 }

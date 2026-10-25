@@ -178,10 +178,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
         return new GraphWithLayout<String, Integer, Integer>(graph, layoutBuilder.build());
     }
 
-    private static Vertex<String> generateStartVertex(
-        final Graph<String, Integer> graph,
-        final Parameters<Flag> options
-    ) {
+    private static Vertex<String> generateStartVertex(final Graph<String, Integer> graph) {
         final Set<Vertex<String>> vertices = graph.getVerticesWithLabel("A");
         if (!vertices.isEmpty()) {
             return vertices.iterator().next();
@@ -242,7 +239,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
             !options.containsAtLeastOne(Flag.SOURCE, Flag.INPUT)
             && GraphAlgorithm.isGraphAlgorithmWithStartVertex(options.get(Flag.ALGORITHM))
         ) {
-            return GraphAlgorithm.generateStartVertex(graph, options);
+            return GraphAlgorithm.generateStartVertex(graph);
         }
         return vertex;
     }
@@ -272,7 +269,7 @@ public interface GraphAlgorithm<S> extends AlgorithmImplementation<GraphProblem,
             );
         return new GraphProblem(
             graphWithLayout,
-            GraphAlgorithm.generateStartVertex(graphWithLayout.graph(), options)
+            GraphAlgorithm.generateStartVertex(graphWithLayout.graph())
         );
     }
 

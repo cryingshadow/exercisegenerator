@@ -309,6 +309,9 @@ public class ForceGraphLayout<V extends Comparable<V>, E extends Comparable<E>> 
             case 8:
                 currentWidth -= distortion / 2;
                 currentHeight += distortion / 2;
+                break;
+            default:
+                // do nothing
             }
             this.vertexPositions.put(vertex, new Coordinates2D<Double>(currentWidth, currentHeight));
             currentWidth += this.optimalDistance;

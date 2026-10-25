@@ -24,7 +24,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
         return Arrays.stream(array).map(n -> String.valueOf(n).length()).max().getAsInt();
     }
 
-    static List<int[]> parseArrays(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
+    static List<int[]> parseArrays(final BufferedReader reader) throws IOException {
         final List<int[]> result = new ArrayList<int[]>();
         String line = reader.readLine();
         while (line != null) {
@@ -84,7 +84,7 @@ interface Sorting extends AlgorithmImplementation<int[], SortingSolution> {
 
     @Override
     default List<int[]> parseProblems(final BufferedReader reader, final Parameters<Flag> options) throws IOException {
-        return Sorting.parseArrays(reader, options);
+        return Sorting.parseArrays(reader);
     }
 
     @Override

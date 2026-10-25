@@ -18,7 +18,7 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
     private static final String EXERCISE_TEXT_PATTERN_FROM_FLOAT_SINGULAR =
         "Geben Sie zur folgenden 1.%d.%d Gleitkommazahl die entsprechende rationale Zahl an";
 
-    public static String fromFloat(final BitString bitString, final int exponentLength, final int mantissaLength) {
+    public static String fromFloat(final BitString bitString, final int exponentLength) {
         final String sign = bitString.getFirst().isZero() ? "" : "-";
         final int excess = BinaryNumbersAlgorithm.getExcess(exponentLength);
         final int exponent = bitString.subString(1, exponentLength + 1).toUnsignedInt() - excess;
@@ -92,7 +92,7 @@ public class ConversionFromFloat implements BinaryNumbersAlgorithm<BitStringFloa
         return new SolvedBinaryTask(
             task.bitString(),
             "=",
-            ConversionFromFloat.fromFloat(task.bitString(), task.exponentLength(), task.mantissaLength())
+            ConversionFromFloat.fromFloat(task.bitString(), task.exponentLength())
         );
     }
 

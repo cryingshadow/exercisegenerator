@@ -30,6 +30,8 @@ public class DPLL implements AlgorithmImplementation<ClauseSet, DPLLNode> {
             case '}':
                 clauses.add(toParse.substring(clauseStart, i));
                 break;
+            default:
+                // do nothing
             }
         }
         return clauses.stream().map(DPLL::parseClause).collect(Collectors.toCollection(ClauseSet::new));

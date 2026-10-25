@@ -28,14 +28,11 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
         "F\\\"uhren Sie den \\emphasize{Algorithmus von %s} auf diesem Graphen aus. F\\\"ullen Sie dazu die "
         + "nachfolgenden Tabellen aus.\\\\[2ex]";
 
-    private static LayoutConfiguration generateLayoutConfiguration(final Parameters<Flag> options) {
+    private static LayoutConfiguration generateLayoutConfiguration() {
         return new LayoutConfiguration();
     }
 
-    private static LayoutConfiguration parseLayoutConfiguration(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
+    private static LayoutConfiguration parseLayoutConfiguration(final BufferedReader reader) throws IOException {
         final String line = reader.readLine();
         if (line.startsWith("!")) {
             try {
@@ -44,15 +41,15 @@ interface FloydWarshallAlgorithm<T> extends GraphAlgorithm<T[][][]> {
                 // fall through
             }
         }
-        return FloydWarshallAlgorithm.generateLayoutConfiguration(options);
+        return FloydWarshallAlgorithm.generateLayoutConfiguration();
     }
 
     private static LayoutConfiguration parseOrGenerateLayoutConfiguration(
         final Parameters<Flag> options
     ) throws IOException {
         return new ParserAndGenerator<LayoutConfiguration>(
-            FloydWarshallAlgorithm::parseLayoutConfiguration,
-            FloydWarshallAlgorithm::generateLayoutConfiguration
+            (reader, flags) -> FloydWarshallAlgorithm.parseLayoutConfiguration(reader),
+            flags -> FloydWarshallAlgorithm.generateLayoutConfiguration()
         ).getResult(options);
     }
 

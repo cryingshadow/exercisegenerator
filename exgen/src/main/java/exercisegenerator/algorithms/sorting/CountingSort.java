@@ -93,7 +93,7 @@ public class CountingSort implements AlgorithmImplementation<CountingSortProblem
         final int[] limits = CountingSort.parseOrGenerateLimits(options);
         final List<CountingSortProblem> result = new ArrayList<CountingSortProblem>();
         reader.readLine();
-        for (final int[] array : Sorting.parseArrays(reader, options)) {
+        for (final int[] array : Sorting.parseArrays(reader)) {
             result.add(new CountingSortProblem(array, limits[0], limits[1]));
         }
         return result;

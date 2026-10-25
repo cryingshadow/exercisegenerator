@@ -16,7 +16,7 @@ public class PropositionalLogicTest {
     }
 
     @DataProvider
-    public Object[][] dpllData() throws PropositionalFormulaParseException {
+    public Object[][] dpllData() {
         final PropositionalVariable a = new PropositionalVariable("A");
         final PropositionalVariable b = new PropositionalVariable("B");
         final PropositionalVariable c = new PropositionalVariable("C");

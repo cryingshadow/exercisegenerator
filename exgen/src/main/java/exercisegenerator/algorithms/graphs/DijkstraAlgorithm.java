@@ -256,48 +256,52 @@ public class DijkstraAlgorithm implements GraphAlgorithm<DijkstraTables> {
     ) throws IOException {
         final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
         switch (mode) {
-            case ALWAYS:
-            case SOLUTION_SPACE:
-                switch (Main.TEXT_VERSION) {
-                    case ABRAHAM:
-                        writer.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
-                        writer.write("\\texttt{v} und \\texttt{key} \\emphasize{nach jeder Iteration} der ");
-                        writer.write("\\texttt{while}-Schleife eintragen:\\\\[2ex]");
-                        break;
-                    default:
-                        writer.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie in jeder Iteration ");
-                        writer.write("der \\\"au\\ss{}eren Schleife den aktuell betrachteten Knoten sowie die am ");
-                        writer.write("Ende der jeweiligen Iteration berechneten Distanzen angeben:\\\\[2ex]");
-                }
+        case ALWAYS:
+        case SOLUTION_SPACE:
+            switch (Main.TEXT_VERSION) {
+            case ABRAHAM:
+                writer.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie den Wert von ");
+                writer.write("\\texttt{v} und \\texttt{key} \\emphasize{nach jeder Iteration} der ");
+                writer.write("\\texttt{while}-Schleife eintragen:\\\\[2ex]");
                 break;
-            case NEVER:
-                // do nothing
+            default:
+                writer.write("F\\\"ullen Sie dazu die nachfolgende Tabelle aus, indem Sie in jeder Iteration ");
+                writer.write("der \\\"au\\ss{}eren Schleife den aktuell betrachteten Knoten sowie die am ");
+                writer.write("Ende der jeweiligen Iteration berechneten Distanzen angeben:\\\\[2ex]");
+            }
+            break;
+        case NEVER:
+        default:
+            // do nothing
         }
         Main.newLine(writer);
         switch (mode) {
-            case SOLUTION_SPACE:
-                LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-                // fall-through
-            case ALWAYS:
-                LaTeXUtils.printArrayStretch(1.5, writer);
-                LaTeXUtils.printTable(
-                    solution.exTable,
-                    Optional.of(solution.exColor),
-                    LaTeXUtils.defaultColumnDefinition(DijkstraAlgorithm.COLUMN_WIDTH),
-                    false,
-                    10,
-                    writer
-                );
-                LaTeXUtils.printArrayStretch(1.0, writer);
-                if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
-                    LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
-                } else {
-                    Main.newLine(writer);
-                    Main.newLine(writer);
-                }
-                break;
-            case NEVER:
+        case SOLUTION_SPACE:
+            LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
+            //$FALL-THROUGH$
+        case ALWAYS:
+            LaTeXUtils.printArrayStretch(1.5, writer);
+            LaTeXUtils.printTable(
+                solution.exTable,
+                Optional.of(solution.exColor),
+                LaTeXUtils.defaultColumnDefinition(DijkstraAlgorithm.COLUMN_WIDTH),
+                false,
+                10,
+                writer
+            );
+            LaTeXUtils.printArrayStretch(1.0, writer);
+            if (mode == SolutionSpaceMode.SOLUTION_SPACE) {
+                LaTeXUtils.printSolutionSpaceEnd(Optional.of("1ex"), options, writer);
+            } else {
                 Main.newLine(writer);
+                Main.newLine(writer);
+            }
+            break;
+        case NEVER:
+            Main.newLine(writer);
+            break;
+        default:
+            throw new IllegalStateException("Unknown solution space mode detected!");
         }
     }
 

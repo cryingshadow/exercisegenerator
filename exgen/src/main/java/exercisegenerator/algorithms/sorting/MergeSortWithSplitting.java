@@ -4,6 +4,7 @@ import exercisegenerator.algorithms.*;
 
 public class MergeSortWithSplitting extends MergeSort {
 
+    @SuppressWarnings("hiding")
     public static final MergeSortWithSplitting INSTANCE = new MergeSortWithSplitting();
 
     private MergeSortWithSplitting() {}

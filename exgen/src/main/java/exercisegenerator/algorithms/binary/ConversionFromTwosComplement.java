@@ -69,7 +69,7 @@ public class ConversionFromTwosComplement implements BinaryNumbersAlgorithm<BitS
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        return BitString.parseBitStringProblems(reader, options);
+        return BitString.parseBitStringProblems(reader);
     }
 
     @Override

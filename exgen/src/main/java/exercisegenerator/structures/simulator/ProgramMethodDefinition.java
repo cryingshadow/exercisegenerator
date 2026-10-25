@@ -23,11 +23,13 @@ public record ProgramMethodDefinition(
 
     private static boolean isLoop(final ProgramCommand command) {
         // TODO Auto-generated method stub
+        System.out.println(command);
         return false;
     }
 
     private Optional<ProgramCommand> getCommandAt(final ProgramPositionIndex commandPosition) {
         // TODO Auto-generated method stub
+        System.out.println(commandPosition);
         return Optional.empty();
     }
 

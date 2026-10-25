@@ -51,7 +51,7 @@ public class ConversionToTruthTable implements AlgorithmImplementation<Propositi
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
-        return PropositionalLogic.parseFormulas(reader, options);
+        return PropositionalLogic.parseFormulas(reader);
     }
 
     @Override

@@ -115,8 +115,9 @@ public interface VonNeumannInstruction {
                     VonNeumannInstruction.INSTRUCTION_LENGTH + VonNeumannInstruction.REGISTER_LENGTH
                 ).toUnsignedInt()
             );
+        default:
+            throw new IllegalArgumentException("Unknown instruction!");
         }
-        throw new IllegalArgumentException("Unknown instruction!");
     }
 
     public static boolean isJumpInstruction(final BitString instructionRegister) {

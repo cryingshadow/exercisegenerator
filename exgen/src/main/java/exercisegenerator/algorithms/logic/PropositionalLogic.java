@@ -20,7 +20,7 @@ abstract class PropositionalLogic {
     private static final List<CompositeSimplification> COMPOSITE_SIMPLIFICATION_RULES =
         List.of(
             PropositionalLogic::simplifyEmptyChildren,
-            PropositionalLogic::simplifySingleChild,
+            (formula, conjunction) -> PropositionalLogic.simplifySingleChild(formula),
             PropositionalLogic::simplifyCollapsingConstants,
             PropositionalLogic::simplifyContradiction,
             PropositionalLogic::simplifyDistribution,
@@ -82,10 +82,7 @@ abstract class PropositionalLogic {
         return variables;
     }
 
-    static List<PropositionalFormula> parseFormulas(
-        final BufferedReader reader,
-        final Parameters<Flag> options
-    ) throws IOException {
+    static List<PropositionalFormula> parseFormulas(final BufferedReader reader) throws IOException {
         final List<PropositionalFormula> result = new ArrayList<PropositionalFormula>();
         try {
             String line = reader.readLine();
@@ -586,10 +583,7 @@ abstract class PropositionalLogic {
         return Optional.empty();
     }
 
-    private static Optional<PropositionalFormula> simplifySingleChild(
-        final List<PropositionalFormula> children,
-        final Boolean conjunction
-    ) {
+    private static Optional<PropositionalFormula> simplifySingleChild(final List<PropositionalFormula> children) {
         if (children.size() == 1) {
             return Optional.of(children.get(0));
         }
@@ -638,8 +632,9 @@ abstract class PropositionalLogic {
             return new Equivalence(left, right);
         case 5:
             return new Xor(left, right);
+        default:
+            throw new IllegalStateException("Should never be reached!");
         }
-        throw new IllegalStateException("Should never be reached!");
     }
 
     private static Literal toLiteral(final PropositionalFormula nonConstantLiteral) {

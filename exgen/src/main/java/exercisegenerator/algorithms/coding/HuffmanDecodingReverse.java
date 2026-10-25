@@ -54,12 +54,7 @@ public class HuffmanDecodingReverse implements AlgorithmImplementation<HuffmanPr
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printBeforeMultipleProblemInstancesStatically(
-            solutions.stream().map(HuffmanDecodingReverse::toCode).toList(),
-            problems.stream().map(HuffmanProblem::message).toList(),
-            options,
-            writer
-        );
+        HuffmanDecoding.printBeforeMultipleProblemInstancesStatically(writer);
     }
 
     @Override
@@ -69,12 +64,7 @@ public class HuffmanDecodingReverse implements AlgorithmImplementation<HuffmanPr
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printBeforeSingleProblemInstanceStatically(
-            HuffmanDecodingReverse.toCode(solution),
-            problem.message(),
-            options,
-            writer
-        );
+        HuffmanDecoding.printBeforeSingleProblemInstanceStatically(writer);
     }
 
     @Override
@@ -84,12 +74,7 @@ public class HuffmanDecodingReverse implements AlgorithmImplementation<HuffmanPr
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printProblemInstanceStatically(
-            HuffmanDecodingReverse.toCode(solution),
-            problem.message(),
-            options,
-            writer
-        );
+        HuffmanDecoding.printProblemInstanceStatically(HuffmanDecodingReverse.toCode(solution), writer);
     }
 
     @Override
@@ -99,12 +84,7 @@ public class HuffmanDecodingReverse implements AlgorithmImplementation<HuffmanPr
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printSolutionInstanceStatically(
-            HuffmanDecodingReverse.toCode(solution),
-            problem.message(),
-            options,
-            writer
-        );
+        HuffmanDecoding.printSolutionInstanceStatically(problem.message(), writer);
     }
 
     @Override
@@ -114,12 +94,7 @@ public class HuffmanDecodingReverse implements AlgorithmImplementation<HuffmanPr
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        HuffmanDecoding.printSolutionSpaceStatically(
-            HuffmanDecodingReverse.toCode(solution),
-            problem.message(),
-            options,
-            writer
-        );
+        HuffmanDecoding.printSolutionSpaceStatically(writer);
     }
 
 }

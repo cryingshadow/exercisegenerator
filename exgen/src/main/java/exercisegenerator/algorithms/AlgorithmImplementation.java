@@ -49,6 +49,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
 
     List<P> parseProblems(final BufferedReader reader, final Parameters<Flag> options) throws IOException;
 
+    @SuppressWarnings("unused")
     default void printAfterEachOfMultipleProblemInstances(
         final P problem,
         final S solution,
@@ -61,6 +62,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         }
     }
 
+    @SuppressWarnings("unused")
     default void printAfterEachOfMultipleSolutionInstances(
         final P problem,
         final S solution,
@@ -73,6 +75,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         }
     }
 
+    @SuppressWarnings("unused")
     default void printAfterMultipleProblemInstances(
         final List<P> problems,
         final List<S> solutions,
@@ -84,6 +87,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         }
     }
 
+    @SuppressWarnings("unused")
     default void printAfterMultipleSolutionInstances(
         final List<P> problems,
         final List<S> solutions,
@@ -95,6 +99,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         }
     }
 
+    @SuppressWarnings("unused")
     default void printAfterSingleProblemInstance(
         final P problem,
         final S solution,
@@ -102,6 +107,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         final BufferedWriter writer
     ) throws IOException {}
 
+    @SuppressWarnings("unused")
     default void printAfterSingleSolutionInstance(
         final P problem,
         final S solution,
@@ -109,6 +115,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         final BufferedWriter writer
     ) throws IOException {}
 
+    @SuppressWarnings("unused")
     default void printBeforeEachOfMultipleProblemInstances(
         final int number,
         final P problem,
@@ -127,6 +134,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         }
     }
 
+    @SuppressWarnings("unused")
     default void printBeforeEachOfMultipleSolutionInstances(
         final int number,
         final P problem,
@@ -152,6 +160,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         final BufferedWriter writer
     ) throws IOException;
 
+    @SuppressWarnings("unused")
     default void printBeforeMultipleSolutionInstances(
         final List<P> problems,
         final List<S> solutions,
@@ -166,6 +175,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         final BufferedWriter writer
     ) throws IOException;
 
+    @SuppressWarnings("unused")
     default void printBeforeSingleSolutionInstance(
         final P problem,
         final S solution,
@@ -250,6 +260,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         final BufferedWriter writer
     ) throws IOException;
 
+    @SuppressWarnings("unused")
     default void printStartOfMultipleProblemInstances(
         final List<P> problems,
         final List<S> solutions,
@@ -261,6 +272,7 @@ public interface AlgorithmImplementation<P, S> extends Function<P, S> {
         }
     }
 
+    @SuppressWarnings("unused")
     default void printStartOfMultipleSolutionInstances(
         final List<P> problems,
         final List<S> solutions,

@@ -200,7 +200,6 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
             new DPHeading(i -> problem.rowHeading(i)),
             new DPHeading(i -> problem.columnHeading(i)),
             Optional.of(LCSAlgorithm.TRACEBACK),
-            options,
             configuration,
             writer
         );
@@ -225,7 +224,7 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
         case SOLUTION_SPACE:
             Main.newLine(writer);
             LaTeXUtils.printSolutionSpaceBeginning(Optional.empty(), options, writer);
-            // fall-through
+            //$FALL-THROUGH$
         case ALWAYS:
             if (mode != SolutionSpaceMode.SOLUTION_SPACE) {
                 Main.newLine(writer);
@@ -235,7 +234,6 @@ public class LCSAlgorithm implements AlgorithmImplementation<LCSProblem, int[][]
                 new DPHeading(i -> problem.rowHeading(i)),
                 new DPHeading(i -> problem.columnHeading(i)),
                 Optional.empty(),
-                options,
                 configuration,
                 writer
             );

@@ -668,10 +668,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
         }
     }
 
-    private static FlowNetworkConfiguration parseOrGenerateConfiguration(
-        final FlowNetworkProblem problem,
-        final Parameters<Flag> options
-    ) {
+    private static FlowNetworkConfiguration parseOrGenerateConfiguration(final Parameters<Flag> options) {
         double multiplier = 1.0;
         boolean twoColumns = false;
         if (options.containsKey(Flag.OPERATIONS)) {
@@ -1007,8 +1004,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        final FlowNetworkConfiguration configuration =
-            FlowNetworkAlgorithm.parseOrGenerateConfiguration(problem, options);
+        final FlowNetworkConfiguration configuration = FlowNetworkAlgorithm.parseOrGenerateConfiguration(options);
         LaTeXUtils.printAdjustboxBeginning(writer);
         problem.graphWithLayout().graph().printTikZ(
             GraphAlgorithm.stretch(
@@ -1037,8 +1033,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
         final BufferedWriter writer
     ) throws IOException {
         final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
-        final FlowNetworkConfiguration configuration =
-            FlowNetworkAlgorithm.parseOrGenerateConfiguration(problem, options);
+        final FlowNetworkConfiguration configuration = FlowNetworkAlgorithm.parseOrGenerateConfiguration(options);
         if (configuration.twoColumns()) {
             writer.write("\\begin{longtable}{cc}");
             Main.newLine(writer);
@@ -1103,8 +1098,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
         final BufferedWriter writer
     ) throws IOException {
         final SolutionSpaceMode mode = SolutionSpaceMode.parsePreprintMode(options);
-        final FlowNetworkConfiguration configuration =
-            FlowNetworkAlgorithm.parseOrGenerateConfiguration(problem, options);
+        final FlowNetworkConfiguration configuration = FlowNetworkAlgorithm.parseOrGenerateConfiguration(options);
         switch (mode) {
         case ALWAYS:
         case SOLUTION_SPACE:
@@ -1114,6 +1108,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
             writer.write("solcher Schritte \\\"ubereinstimmen.\\\\[2ex]");
             break;
         case NEVER:
+        default:
             // do nothing
         }
         Main.newLine(writer);
@@ -1121,7 +1116,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
         switch (mode) {
         case SOLUTION_SPACE:
             LaTeXUtils.printSolutionSpaceBeginning(Optional.of("-3ex"), options, writer);
-            // fall-through
+            //$FALL-THROUGH$
         case ALWAYS:
             if (configuration.twoColumns()) {
                 writer.write("\\begin{longtable}{cc}");
@@ -1129,6 +1124,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
             }
             break;
         case NEVER:
+        default:
             // do nothing
         }
         final int[] pagebreakCounters = LaTeXUtils.parsePagebreakCountersForExercise(options);
@@ -1187,6 +1183,7 @@ public interface FlowNetworkAlgorithm extends AlgorithmImplementation<FlowNetwor
             }
             break;
         case NEVER:
+        default:
             // do nothing
         }
     }

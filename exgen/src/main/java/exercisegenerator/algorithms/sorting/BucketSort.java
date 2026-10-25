@@ -111,7 +111,7 @@ public class BucketSort implements AlgorithmImplementation<BucketSortProblem, Bu
         final int numberOfBuckets = limitsAndBuckets[2];
         final List<BucketSortProblem> result = new ArrayList<BucketSortProblem>();
         reader.readLine();
-        for (final int[] array : Sorting.parseArrays(reader, options)) {
+        for (final int[] array : Sorting.parseArrays(reader)) {
             result.add(new BucketSortProblem(array, lowestValue, highestValue, numberOfBuckets));
         }
         return result;

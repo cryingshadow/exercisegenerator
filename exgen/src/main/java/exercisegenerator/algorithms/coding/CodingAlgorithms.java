@@ -37,8 +37,7 @@ abstract class CodingAlgorithms {
         return true;
     }
 
-    static String parseInputText(final BufferedReader reader, final Parameters<Flag> options)
-    throws IOException {
+    static String parseInputText(final BufferedReader reader) throws IOException {
         return reader.readLine();
     }
 

@@ -18,14 +18,14 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
     static HuffmanProblem generateProblemStatically(final Parameters<Flag> options) {
         return new HuffmanProblem(HuffmanEncoding.generateSourceText(options), CodingAlgorithms.BINARY_ALPHABET);
     }
-    
+
     static List<HuffmanProblem> parseProblemsStatically(
         final BufferedReader reader,
         final Parameters<Flag> options
     ) throws IOException {
         return List.of(
             new HuffmanProblem(
-                CodingAlgorithms.parseInputText(reader, options),
+                CodingAlgorithms.parseInputText(reader),
                 HuffmanEncoding.parseOrGenerateTargetAlphabet(options)
             )
         );
@@ -64,7 +64,7 @@ public class HuffmanEncoding implements AlgorithmImplementation<HuffmanProblem, 
         return Main.RANDOM.nextInt(6) + 5;
     }
 
-    private static List<Character> parseOrGenerateTargetAlphabet(final Parameters<Flag> options) throws IOException {
+    private static List<Character> parseOrGenerateTargetAlphabet(final Parameters<Flag> options) {
         if (options.containsKey(Flag.OPERATIONS)) {
             return options.get(Flag.OPERATIONS).chars().mapToObj(c -> (char)c).toList();
         }

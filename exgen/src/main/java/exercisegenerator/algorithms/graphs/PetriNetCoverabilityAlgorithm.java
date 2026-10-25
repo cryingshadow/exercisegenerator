@@ -29,7 +29,7 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
             final PetriMarking tokens = queue.poll();
             for (final PetriTransition transition : net.activeTransitions(tokens)) {
                 final PetriMarking nextTokens = net.fireTransition(tokens, transition);
-                final PetriMarking omegaTokens = this.addOmegas(tokens, transition, nextTokens, used, result);
+                final PetriMarking omegaTokens = this.addOmegas(tokens, nextTokens, used, result);
                 if (!used.contains(omegaTokens)) {
                     result.addVertex(new Vertex<PetriMarking>(omegaTokens));
                     used.add(omegaTokens);
@@ -114,7 +114,6 @@ public class PetriNetCoverabilityAlgorithm extends PetriNetAlgorithm<Coverabilit
 
     private PetriMarking addOmegas(
         final PetriMarking tokens,
-        final PetriTransition transition,
         final PetriMarking nextTokens,
         final List<PetriMarking> used,
         final CoverabilityGraph graph

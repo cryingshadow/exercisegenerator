@@ -1,7 +1,5 @@
 package exercisegenerator.io;
 
-import java.io.*;
-
 import clit.*;
 
 public enum SolutionSpaceMode {
@@ -12,7 +10,7 @@ public enum SolutionSpaceMode {
 
     SOLUTION_SPACE("solutionSpace");
 
-    public static SolutionSpaceMode parsePreprintMode(final Parameters<Flag> options) throws IOException {
+    public static SolutionSpaceMode parsePreprintMode(final Parameters<Flag> options) {
         if (options.containsKey(Flag.PREPRINT_MODE)) {
             final String modeText = options.get(Flag.PREPRINT_MODE);
             for (final SolutionSpaceMode mode : SolutionSpaceMode.values()) {

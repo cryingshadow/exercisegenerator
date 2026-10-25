@@ -32,16 +32,16 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
         return result.toString();
     }
 
-    private static List<Character> generateAlphabet(final Parameters<Flag> options) {
+    private static List<Character> generateAlphabet() {
         return VigenereAlgorithm.ALPHABET26;
     }
 
-    private static String generateInputText(final List<Character> alphabet, final Parameters<Flag> flags) {
+    private static String generateInputText(final List<Character> alphabet) {
         final int size = Main.RANDOM.nextInt(26) + 5;
         return VigenereAlgorithm.generateText(alphabet, size);
     }
 
-    private static String generateKeyword(final List<Character> alphabet, final Parameters<Flag> flags) {
+    private static String generateKeyword(final List<Character> alphabet) {
         final int size = Main.RANDOM.nextInt(17) + 4;
         return VigenereAlgorithm.generateText(alphabet, size);
     }
@@ -54,19 +54,19 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
         return result.toString();
     }
 
-    private static List<Character> parseAlphabet(final BufferedReader reader, final Parameters<Flag> options)
+    private static List<Character> parseAlphabet(final BufferedReader reader)
     throws IOException {
         final String alphabet = reader.readLine();
         if (alphabet == null || alphabet.isBlank()) {
-            return VigenereAlgorithm.generateAlphabet(options);
+            return VigenereAlgorithm.generateAlphabet();
         }
         return alphabet.chars().mapToObj(c -> (char)c).toList();
     }
 
     private static List<Character> parseOrGenerateAlphabet(final Parameters<Flag> options) throws IOException {
         return new ParserAndGenerator<List<Character>>(
-            VigenereAlgorithm::parseAlphabet,
-            VigenereAlgorithm::generateAlphabet
+            (reader, flags) -> VigenereAlgorithm.parseAlphabet(reader),
+            flags -> VigenereAlgorithm.generateAlphabet()
         ).getResult(options);
     }
 
@@ -90,8 +90,8 @@ interface VigenereAlgorithm extends AlgorithmImplementation<VigenereProblem, Str
     @Override
     default VigenereProblem generateProblem(final Parameters<Flag> options) {
         return new VigenereProblem(
-            VigenereAlgorithm.generateInputText(VigenereAlgorithm.ALPHABET26, options),
-            VigenereAlgorithm.generateKeyword(VigenereAlgorithm.ALPHABET26, options),
+            VigenereAlgorithm.generateInputText(VigenereAlgorithm.ALPHABET26),
+            VigenereAlgorithm.generateKeyword(VigenereAlgorithm.ALPHABET26),
             VigenereAlgorithm.ALPHABET26
         );
     }

@@ -1,6 +1,5 @@
 package exercisegenerator.algorithms.coding;
 
-import java.io.*;
 import java.util.*;
 
 import org.testng.*;
@@ -50,11 +49,7 @@ public class CodingAlgorithmsTest {
     }
 
     @Test(dataProvider="decodeHammingData")
-    public void decodeHammingTest(
-        final String message,
-        final String expectedResult,
-        final String expectedChecksum
-    ) throws IOException {
+    public void decodeHammingTest(final String message, final String expectedResult, final String expectedChecksum) {
         final HammingDecodingResult result = HammingDecoding.INSTANCE.apply(BitString.parse(message));
         Assert.assertEquals(result.result().toString(), expectedResult);
         Assert.assertEquals(result.checksum().toString(), expectedChecksum);
@@ -128,12 +123,12 @@ public class CodingAlgorithmsTest {
     }
 
     @Test(dataProvider="encodeHammingData")
-    public void encodeHammingTest(final String message, final String expected) throws IOException {
+    public void encodeHammingTest(final String message, final String expected) {
         Assert.assertEquals(HammingEncoding.INSTANCE.apply(BitString.parse(message)).toString(), expected);
     }
 
     @Test
-    public void encodeHuffmanTest() throws IOException {
+    public void encodeHuffmanTest() {
         final HuffmanSolution result =
             HuffmanEncoding.INSTANCE.apply(
                 new HuffmanProblem(
