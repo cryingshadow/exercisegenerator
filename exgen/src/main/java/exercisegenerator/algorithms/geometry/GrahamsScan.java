@@ -276,39 +276,8 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         return (GrahamsScan.polarAngle(firstSegment, secondSegment));
     }
 
-    private static ArrayList<Pair<Double, Double>> generateConvexHullProblem(final Parameters<Flag> options) {
-        final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
-        final int numOfPoints = GrahamsScan.parseOrGenerateNumberOfPoints(options);
-        for (int i = 0; i < numOfPoints; ++i) {
-            input.add(new Pair<Double,Double>((double)Main.RANDOM.nextInt(11), (double)Main.RANDOM.nextInt(11)));
-        }
-        return input;
-    }
-
-    private static ArrayList<Pair<Double, Double>> parseConvexHullProblem(
-        final BufferedReader reader
-    ) throws IOException {
-        String line = null;
-        final ArrayList<Pair<Double,Double>> input = new ArrayList<Pair<Double,Double>>();
-        while ((line = reader.readLine()) != null) {
-            line = line.trim();
-            final String[] splitted = line.split(",");
-            input.add(
-                new Pair<Double,Double>(
-                    Double.parseDouble(splitted[0].trim()),
-                    Double.parseDouble(splitted[1].trim())
-                )
-            );
-        }
-        return input;
-    }
-
-    private static ArrayList<Pair<Double, Double>> parseOrGenerateConvexHullProblem(final Parameters<Flag> options)
-    throws IOException {
-        return new ParserAndGenerator<ArrayList<Pair<Double, Double>>>(
-            (reader, flags) -> GrahamsScan.parseConvexHullProblem(reader),
-            GrahamsScan::generateConvexHullProblem
-        ).getResult(options);
+    private static int orientation(final Point a, final Point b, final Point c) {
+        return GrahamsScan.computeDeterminant(a, b, c).compareTo(BigFraction.ZERO);
     }
 
     private static int parseOrGenerateNumberOfPoints(final Parameters<Flag> options) {
@@ -466,7 +435,7 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
 
                 @Override
                 public int compare(final Point p1, final Point p2) {
-                    return Double.compare(start.angleTo(p1), start.angleTo(p2));
+                    return GrahamsScan.orientation(start, p1, p2);
                 }
 
             }
@@ -474,13 +443,13 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final Stack<Point> stack = new Stack<Point>();
         stack.push(start);
         stack.push(sortedList.removeFirst());
-        result.add(new LinkedList<Point>(stack));
+        result.add(new LinkedList<Point>(stack.reversed()));
         for (final Point p : sortedList) {
             Point candidate = stack.pop();
             List<Point> snapshot = new LinkedList<Point>(stack);
             snapshot.add(candidate);
             snapshot.add(p);
-            result.add(snapshot);
+            result.add(snapshot.reversed());
             while (
                 stack.size() > 1
                 && GrahamsScan.computeDeterminant(stack.peek(), candidate, p).compareTo(BigFraction.ZERO) <= 0
@@ -489,7 +458,7 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
                 snapshot = new LinkedList<Point>(stack);
                 snapshot.add(candidate);
                 snapshot.add(p);
-                result.add(snapshot);
+                result.add(snapshot.reversed());
             }
             stack.push(p);
         }
@@ -501,18 +470,18 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         return "Graham";
     }
 
-    @Override
-    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
-        final ArrayList<Pair<Double,Double>> pointSet =
-            GrahamsScan.parseOrGenerateConvexHullProblem(input.options);
-        GrahamsScan.printConvexHull(
-            pointSet,
-            SolutionSpaceMode.parsePreprintMode(input.options),
-            input.options,
-            input.exerciseWriter,
-            input.solutionWriter
-        );
-    }
+//    @Override
+//    public void executeAlgorithm(final AlgorithmInput input) throws IOException {
+//        final ArrayList<Pair<Double,Double>> pointSet =
+//            GrahamsScan.parseOrGenerateConvexHullProblem(input.options);
+//        GrahamsScan.printConvexHull(
+//            pointSet,
+//            SolutionSpaceMode.parsePreprintMode(input.options),
+//            input.options,
+//            input.exerciseWriter,
+//            input.solutionWriter
+//        );
+//    }
 
     @Override
     public List<Point> generateProblem(final Parameters<Flag> options) {
@@ -567,8 +536,10 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
-
+        writer.write("Führen Sie den Graham Scan für jede der folgenden Listen an Punkten durch. Geben Sie dazu jeweils den ");
+        writer.write("Stack nach dem Hinzufügen der ersten beiden Punkte sowie vor jeder weiteren Prüfung eines neuen ");
+        writer.write("Punktes an.");
+        Main.newLine(writer);
     }
 
     @Override
@@ -578,8 +549,9 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
-
+        writer.write("Führen Sie den Graham Scan für die folgende Liste an Punkten durch. Geben Sie dazu den Stack nach dem ");
+        writer.write("Hinzufügen der ersten beiden Punkte sowie vor jeder weiteren Prüfung eines neuen Punktes an.");
+        Main.newLine(writer);
     }
 
     @Override
@@ -589,8 +561,14 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
-
+        LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
+        for (final Point point : problem) {
+            writer.write("\\item $");
+            writer.write(point.toLaTeX());
+            writer.write("$");
+            Main.newLine(writer);
+        }
+        LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writer);
     }
 
     @Override
@@ -600,8 +578,19 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
-
+        LaTeXUtils.printBeginning(LaTeXUtils.ENUMERATE, writer);
+        for (final List<Point> stack : solution) {
+            writer.write("\\item \\begin{itemize}[label={}]");
+            Main.newLine(writer);
+            for (final Point point : stack) {
+                writer.write("\\item $");
+                writer.write(point.toLaTeX());
+                writer.write("$");
+                Main.newLine(writer);
+            }
+            LaTeXUtils.printEnd(LaTeXUtils.ITEMIZE, writer);
+        }
+        LaTeXUtils.printEnd(LaTeXUtils.ENUMERATE, writer);
     }
 
     @Override
@@ -611,8 +600,7 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final Parameters<Flag> options,
         final BufferedWriter writer
     ) throws IOException {
-        // TODO Auto-generated method stub
-
+        //do nothing
     }
 
     private Point findStartCorner(final List<Point> problem) {
