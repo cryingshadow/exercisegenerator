@@ -49,7 +49,7 @@ implements AlgorithmImplementation<PropositionalFormula, List<PropositionalFormu
         writer.write("Leiten Sie jeweils eine zu den folgenden aussagenlogischen Formeln ");
         writer.write("\\\"aquivalente aussagenlogische Formel in ");
         writer.write(this.normalForm);
-        writer.write(" ab, indem Sie äquivalente Umformungsschritte aus der Vorlesung anwenden.\\\\");
+        writer.write(" ab, indem Sie \\\"aquivalente Umformungsschritte aus der Vorlesung anwenden.\\\\");
         Main.newLine(writer);
     }
 
@@ -63,7 +63,7 @@ implements AlgorithmImplementation<PropositionalFormula, List<PropositionalFormu
         writer.write("Leiten Sie eine zur folgenden aussagenlogischen Formel ");
         writer.write("\\\"aquivalente aussagenlogische Formel in ");
         writer.write(this.normalForm);
-        writer.write(" ab, indem Sie äquivalente Umformungsschritte aus der Vorlesung anwenden:\\\\");
+        writer.write(" ab, indem Sie \\\"aquivalente Umformungsschritte aus der Vorlesung anwenden:\\\\");
         Main.newLine(writer);
     }
 

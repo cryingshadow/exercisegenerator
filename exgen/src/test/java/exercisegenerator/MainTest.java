@@ -3438,6 +3438,112 @@ public class MainTest {
     }
 
     @Test
+    public void grahamScan() throws IOException {
+        this.harness(
+            new String[] {
+                "-a", Algorithm.GRAHAMS_SCAN.name,
+                "-x", Main.EMBEDDED_EXAM,
+                "-i", "9/2,1;1,1/2;5,7;4,3;1/2,5;3/2,7/2",
+            },
+            MainTest.simpleComparison(
+                List.of(
+                    "F\\\"uhren Sie den Graham Scan f\\\"ur die folgende Liste an Punkten durch. Geben Sie dazu den Stack (inklusive aktueller Kandidaten) nach dem Hinzuf\\\"ugen der ersten beiden Punkte sowie nach jeder weiteren \\\"Anderung an.",
+                    "",
+                    "\\begin{minipage}{0.2\\linewidth}",
+                    "Punktliste:",
+                    "\\begin{itemize}",
+                    "\\item $(\\frac{9}{2}, 1)$",
+                    "\\item $(1, \\frac{1}{2})$",
+                    "\\item $(5, 7)$",
+                    "\\item $(4, 3)$",
+                    "\\item $(\\frac{1}{2}, 5)$",
+                    "\\item $(\\frac{3}{2}, \\frac{7}{2})$",
+                    "\\end{itemize}",
+                    "\\end{minipage}",
+                    "\\begin{minipage}{0.7\\linewidth}",
+                    "\\begin{adjustbox}{max width=\\linewidth,center}",
+                    "\\begin{tikzpicture}",
+                    "[framed,draw=black]",
+                    "\\filldraw[black] (4.50,1.00) circle (1pt);",
+                    "\\node[anchor=west] at (4.50,1.00) {$(\\frac{9}{2}, 1)$};",
+                    "\\filldraw[black] (1.00,0.50) circle (1pt);",
+                    "\\node[anchor=west] at (1.00,0.50) {$(1, \\frac{1}{2})$};",
+                    "\\filldraw[black] (5.00,7.00) circle (1pt);",
+                    "\\node[anchor=west] at (5.00,7.00) {$(5, 7)$};",
+                    "\\filldraw[black] (4.00,3.00) circle (1pt);",
+                    "\\node[anchor=west] at (4.00,3.00) {$(4, 3)$};",
+                    "\\filldraw[black] (0.50,5.00) circle (1pt);",
+                    "\\node[anchor=west] at (0.50,5.00) {$(\\frac{1}{2}, 5)$};",
+                    "\\filldraw[black] (1.50,3.50) circle (1pt);",
+                    "\\node[anchor=west] at (1.50,3.50) {$(\\frac{3}{2}, \\frac{7}{2})$};",
+                    "\\end{tikzpicture}",
+                    "\\end{adjustbox}",
+                    "\\end{minipage}"
+                ),
+                List.of(
+                    "\\begin{multicols}{2}",
+                    "\\begin{enumerate}",
+                    "\\item \\begin{minipage}[t]{\\columnwidth}",
+                    "\\begin{itemize}[label={}]",
+                    "\\item $(\\frac{9}{2}, 1)$",
+                    "\\item $(1, \\frac{1}{2})$",
+                    "\\end{itemize}",
+                    "\\end{minipage}",
+                    "\\item \\begin{minipage}[t]{\\columnwidth}",
+                    "\\begin{itemize}[label={}]",
+                    "\\item $(4, 3)$",
+                    "\\item $(\\frac{9}{2}, 1)$",
+                    "\\item $(1, \\frac{1}{2})$",
+                    "\\end{itemize}",
+                    "\\end{minipage}",
+                    "\\item \\begin{minipage}[t]{\\columnwidth}",
+                    "\\begin{itemize}[label={}]",
+                    "\\item $(5, 7)$",
+                    "\\item $(4, 3)$",
+                    "\\item $(\\frac{9}{2}, 1)$",
+                    "\\item $(1, \\frac{1}{2})$",
+                    "\\end{itemize}",
+                    "\\end{minipage}",
+                    "\\item \\begin{minipage}[t]{\\columnwidth}",
+                    "\\begin{itemize}[label={}]",
+                    "\\item $(5, 7)$",
+                    "\\item $(\\frac{9}{2}, 1)$",
+                    "\\item $(1, \\frac{1}{2})$",
+                    "\\end{itemize}",
+                    "\\end{minipage}",
+                    "\\item \\begin{minipage}[t]{\\columnwidth}",
+                    "\\begin{itemize}[label={}]",
+                    "\\item $(\\frac{3}{2}, \\frac{7}{2})$",
+                    "\\item $(5, 7)$",
+                    "\\item $(\\frac{9}{2}, 1)$",
+                    "\\item $(1, \\frac{1}{2})$",
+                    "\\end{itemize}",
+                    "\\end{minipage}",
+                    "\\item \\begin{minipage}[t]{\\columnwidth}",
+                    "\\begin{itemize}[label={}]",
+                    "\\item $(\\frac{1}{2}, 5)$",
+                    "\\item $(\\frac{3}{2}, \\frac{7}{2})$",
+                    "\\item $(5, 7)$",
+                    "\\item $(\\frac{9}{2}, 1)$",
+                    "\\item $(1, \\frac{1}{2})$",
+                    "\\end{itemize}",
+                    "\\end{minipage}",
+                    "\\item \\begin{minipage}[t]{\\columnwidth}",
+                    "\\begin{itemize}[label={}]",
+                    "\\item $(\\frac{1}{2}, 5)$",
+                    "\\item $(5, 7)$",
+                    "\\item $(\\frac{9}{2}, 1)$",
+                    "\\item $(1, \\frac{1}{2})$",
+                    "\\end{itemize}",
+                    "\\end{minipage}",
+                    "\\end{enumerate}",
+                    "\\end{multicols}"
+                )
+            )
+        );
+    }
+
+    @Test
     public void hashing() throws IOException {
         final int contentLength = 1;
         int nodeNumber = 0;
@@ -5472,7 +5578,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Leiten Sie eine zur folgenden aussagenlogischen Formel \\\"aquivalente aussagenlogische Formel in CNF ab, indem Sie äquivalente Umformungsschritte aus der Vorlesung anwenden:\\\\",
+                    "Leiten Sie eine zur folgenden aussagenlogischen Formel \\\"aquivalente aussagenlogische Formel in CNF ab, indem Sie \\\"aquivalente Umformungsschritte aus der Vorlesung anwenden:\\\\",
                     "\\[((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{C}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{C}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B}))))\\]"
                 ),
                 List.of(
@@ -5566,7 +5672,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "Leiten Sie eine zur folgenden aussagenlogischen Formel \\\"aquivalente aussagenlogische Formel in DNF ab, indem Sie äquivalente Umformungsschritte aus der Vorlesung anwenden:\\\\",
+                    "Leiten Sie eine zur folgenden aussagenlogischen Formel \\\"aquivalente aussagenlogische Formel in DNF ab, indem Sie \\\"aquivalente Umformungsschritte aus der Vorlesung anwenden:\\\\",
                     "\\[(((\\var{D} \\wedge ((\\var{A} \\wedge \\neg\\var{B}) \\vee (\\neg\\var{A} \\wedge \\var{B}))) \\vee (\\neg\\var{D} \\wedge ((\\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{A} \\wedge \\neg\\var{B})))) \\wedge ((\\var{C} \\wedge \\var{A} \\wedge \\var{B}) \\vee (\\neg\\var{C} \\wedge (\\neg\\var{A} \\vee \\neg\\var{B}))))\\]"
                 ),
                 List.of(
