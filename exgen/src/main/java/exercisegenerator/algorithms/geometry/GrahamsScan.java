@@ -134,9 +134,9 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
             final Point b = sortedList.get(i + 1);
             if (GrahamsScan.orientation(start, a, b) == 0) {
                 if (GrahamsScan.distance(start, a) < GrahamsScan.distance(start, b)) {
-                    sortedList.remove(i + 1);
-                } else {
                     sortedList.remove(i);
+                } else {
+                    sortedList.remove(i + 1);
                 }
                 i--;
             }

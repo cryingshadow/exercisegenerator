@@ -51,6 +51,44 @@ public class GeometryAlgorithmsTest {
                         new Point(BigFraction.ZERO, BigFraction.ZERO)
                     )
                 )
+            },
+            {
+                List.of(
+                    new Point(BigFraction.ONE, BigFraction.TWO),
+                    new Point(new BigFraction(5), BigFraction.ZERO),
+                    new Point(new BigFraction(3), new BigFraction(4)),
+                    new Point(new BigFraction(6), new BigFraction(7)),
+                    new Point(new BigFraction(3), BigFraction.ONE),
+                    new Point(BigFraction.TWO, new BigFraction(5))
+                ),
+                List.of(
+                    List.of(
+                        new Point(new BigFraction(6), new BigFraction(7)),
+                        new Point(new BigFraction(5), BigFraction.ZERO)
+                    ),
+                    List.of(
+                        new Point(new BigFraction(3), new BigFraction(4)),
+                        new Point(new BigFraction(6), new BigFraction(7)),
+                        new Point(new BigFraction(5), BigFraction.ZERO)
+                    ),
+                    List.of(
+                        new Point(BigFraction.TWO, new BigFraction(5)),
+                        new Point(new BigFraction(3), new BigFraction(4)),
+                        new Point(new BigFraction(6), new BigFraction(7)),
+                        new Point(new BigFraction(5), BigFraction.ZERO)
+                    ),
+                    List.of(
+                        new Point(BigFraction.TWO, new BigFraction(5)),
+                        new Point(new BigFraction(6), new BigFraction(7)),
+                        new Point(new BigFraction(5), BigFraction.ZERO)
+                    ),
+                    List.of(
+                        new Point(BigFraction.ONE, BigFraction.TWO),
+                        new Point(BigFraction.TWO, new BigFraction(5)),
+                        new Point(new BigFraction(6), new BigFraction(7)),
+                        new Point(new BigFraction(5), BigFraction.ZERO)
+                    )
+                )
             }
         };
     }
