@@ -102,6 +102,9 @@ public class Store {
 
     public void removeParameter(final Flag flag) {
         this.parameters.remove(flag);
+        for (final ParametersObserver observer : this.parametersObservers) {
+            observer.notify(this.parameters);
+        }
     }
 
     public void setAlgorithms(final Collection<Algorithm> algorithms) {
@@ -122,7 +125,7 @@ public class Store {
 
     public void setParameter(final Flag key, final String value) {
         final String oldValue = this.parameters.put(key, value);
-        if (oldValue != null && !oldValue.equals(value)) {
+        if (oldValue == null || !oldValue.equals(value)) {
             for (final ParametersObserver observer : this.parametersObservers) {
                 observer.notify(this.parameters);
             }
