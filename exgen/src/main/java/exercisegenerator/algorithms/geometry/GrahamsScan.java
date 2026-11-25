@@ -144,7 +144,6 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final Stack<Point> stack = new Stack<Point>();
         stack.push(start);
         stack.push(sortedList.removeFirst());
-        result.add(new LinkedList<Point>(stack.reversed()));
         for (final Point p : sortedList) {
             Point candidate = stack.pop();
             List<Point> snapshot = new LinkedList<Point>(stack);
@@ -223,8 +222,8 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final BufferedWriter writer
     ) throws IOException {
         writer.write("F\\\"uhren Sie den Graham Scan f\\\"ur jede der folgenden Listen an Punkten durch. Geben Sie ");
-        writer.write("dazu jeweils den Stack (inklusive aktueller Kandidaten) nach dem Hinzuf\\\"ugen der ersten ");
-        writer.write("beiden Punkte sowie nach jeder weiteren \\\"Anderung an.");
+        writer.write("dazu jeweils den Stack (inklusive aktueller Kandidaten) jeweils zu Beginn der \\\"au\\ss{}eren ");
+        writer.write("Schleife sowie nach jeder Iteration der inneren Schleife an.");
         Main.newLine(writer);
     }
 
@@ -236,8 +235,8 @@ public class GrahamsScan implements AlgorithmImplementation<List<Point>, List<Li
         final BufferedWriter writer
     ) throws IOException {
         writer.write("F\\\"uhren Sie den Graham Scan f\\\"ur die folgende Liste an Punkten durch. Geben Sie dazu den ");
-        writer.write("Stack (inklusive aktueller Kandidaten) nach dem Hinzuf\\\"ugen der ersten beiden Punkte sowie ");
-        writer.write("nach jeder weiteren \\\"Anderung an.");
+        writer.write("Stack (inklusive aktueller Kandidaten) jeweils zu Beginn der \\\"au\\ss{}eren Schleife sowie ");
+        writer.write("nach jeder Iteration der inneren Schleife an.");
         Main.newLine(writer);
     }
 

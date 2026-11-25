@@ -3447,7 +3447,7 @@ public class MainTest {
             },
             MainTest.simpleComparison(
                 List.of(
-                    "F\\\"uhren Sie den Graham Scan f\\\"ur die folgende Liste an Punkten durch. Geben Sie dazu den Stack (inklusive aktueller Kandidaten) nach dem Hinzuf\\\"ugen der ersten beiden Punkte sowie nach jeder weiteren \\\"Anderung an.",
+                    "F\\\"uhren Sie den Graham Scan f\\\"ur die folgende Liste an Punkten durch. Geben Sie dazu den Stack (inklusive aktueller Kandidaten) jeweils zu Beginn der \\\"au\\ss{}eren Schleife sowie nach jeder Iteration der inneren Schleife an.",
                     "",
                     "\\begin{minipage}{0.2\\linewidth}",
                     "Punktliste:",
@@ -3483,12 +3483,6 @@ public class MainTest {
                 List.of(
                     "\\begin{multicols}{2}",
                     "\\begin{enumerate}",
-                    "\\item \\begin{minipage}[t]{\\columnwidth}",
-                    "\\begin{itemize}[label={}]",
-                    "\\item $(\\frac{9}{2}, 1)$",
-                    "\\item $(1, \\frac{1}{2})$",
-                    "\\end{itemize}",
-                    "\\end{minipage}",
                     "\\item \\begin{minipage}[t]{\\columnwidth}",
                     "\\begin{itemize}[label={}]",
                     "\\item $(4, 3)$",
